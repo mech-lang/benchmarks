@@ -1,30 +1,9 @@
-# Runtime Gate A benchmark evidence
+# Archived runtime Gate A benchmark evidence
 
-This directory stores controlled-machine evidence for the value/executor Gate
-A stack. The benchmark target uses Criterion and the runtime's non-default
-`runtime_bench_probes` feature. Setup constructs source, retained history, and
-fixtures outside the measured operation.
-
-Run the complete release benchmark and print a deterministic JSON summary:
-
-```sh
-python scripts/run-gate-a-benchmarks.py
-```
-
-If automatic CPU/model discovery is unavailable, provide the controlled
-machine's stable identity with `--machine-label <model>`; the runner rejects
-generic architecture-only labels.
-
-Run the A3 recording-primitives benchmark with:
-
-```sh
-python scripts/run-gate-a-benchmarks.py --bench recording_primitives
-```
-
-Pass `--output <path>` only when a summary should be written. By default the
-runner writes raw combined output beneath `target/gate-a-benchmark-runs/`,
-keeps Criterion's raw data beneath `target/criterion/`, and prints the summary
-without changing tracked source files.
+This directory preserves completed controlled-machine evidence for the former
+value/executor Gate A stack. It is not a live architecture or CI gate. The
+maintained Criterion target is `recording_primitives`; new performance results
+belong to benchmark ownership rather than the pull-request contract suite.
 
 The full-turn and direct-event histories are 0, 32, 1,024, and 16,384. Minimal
 store commits contain one transaction and two events and run against 0, 1,000,
