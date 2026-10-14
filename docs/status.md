@@ -31,7 +31,7 @@ Current qualification tools and results are organized by implementation under
 | Language | Planned runtime | Workloads | Status |
 | --- | --- | --- | --- |
 | Scala | JVM | All ten | [All ten programs compiled and inspected](../experiments/scala/compiled-applications-v1/run-v1/terminal.json); [all 149 correctness cases passed](../experiments/scala/bounded-v1/run-v1/terminal.json); [canonical source counts qualified](../experiments/scala/source-counts-v1/canonical-owner-review-v1/qualified-source-counts-v1.json). [Bytecode review](../experiments/scala/compiled-applications-v1/required-work-review-v1.json) passes 27 static work contracts. Tree allocation/lifetime and pi division execution-path observations, then full measurements, remain |
-| TypeScript | Node.js / V8, using emitted JavaScript | All ten | [Strict compilation and native AST capture passed](../experiments/typescript/native-stage-v1/run-v1/terminal.json), with [independent artifact review](../experiments/typescript/native-stage-v1/independent-native-review-v1.json): ten emitted programs and source maps, forty AST inputs. Program correctness, required work, canonical source counts and full measurements remain |
+| TypeScript | Node.js / V8, using emitted JavaScript | All ten | [Strict compilation and native AST capture passed](../experiments/typescript/native-stage-v1/run-v1/terminal.json): ten emitted programs and source maps, forty AST inputs. [All 149 correctness cases passed independent review](../experiments/typescript/bounded-v1/independent-results-review-v1.json). Required work, canonical source counts and full measurements remain |
 
 Each addition requires its own source bundles, compiler/runtime provenance,
 correctness and required-work checks, source counts, and sequential fresh-process
@@ -43,8 +43,8 @@ The [shared correctness corpus](../experiments/shared/bounded-corpus-v1/)
 contains 149 prepared cases for each addition. Scala 3.10.0 is retained and its
 compiler/JDK versions have been observed locally. TypeScript 7.0.2 and its
 declaration dependencies are retained; native version checks also verify
-Node 24.19.0. Scala has executed all 149 bounded correctness cases; the emitted
-TypeScript programs have not executed yet. Neither addition has full-size timings.
+Node 24.19.0. Both additions have passed all 149 bounded correctness cases.
+Neither addition has full-size timings.
 The output checker has pure regression coverage for complete output, exact
 numeric tolerances and language-specific rejections. Source-count preparation
 includes [41 Scala owner fixtures and 29 capture fixtures](../experiments/scala/source-counts-v1/) and
