@@ -72,9 +72,12 @@ def export(root=ROOT):
                 name = file_key[:8] + '-' + name
             names.add(name.casefold())
             (directory / name).write_bytes(content)
+            role = program.get('file_roles', {}).get(file_key, source.get('role', 'application'))
+            role_evidence = {'role_evidence': role} if isinstance(role, dict) else {}
+            if isinstance(role, dict):
+                role = role['role']
             sources.append({'file': name, 'sha256': source['sha256'],
-                            'original_path': source['path'],
-                            'role': program.get('file_roles', {}).get(file_key, source.get('role', 'application'))})
+                            'original_path': source['path'], 'role': role, **role_evidence})
         runs = program.get('samples', [])
         record = {'key': key, 'language': program['language'], 'benchmark': program['benchmark'],
                   'program': program['id'], 'loc': program.get('loc'),

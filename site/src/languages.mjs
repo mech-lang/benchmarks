@@ -1,4 +1,4 @@
-// Explicit reviewed taxonomy for each measured variant. See language-audit.json for saved-report evidence.
+// Explicit reviewed taxonomy for each measured variant. See data/languages.json for saved-report evidence.
 export const languageMetadata = {
   "c": {
     "platform": "native",
@@ -1048,6 +1048,30 @@ export const languageMetadata = {
     "sources": [
       "https://docs.vlang.io/memory-management.html",
       "https://github.com/vlang/v/wiki/FAQ"
+    ]
+  },
+  "pony": {
+    "platform": "native",
+    "runtime": "Pony native compiler/runtime",
+    "execution": [
+      "aot"
+    ],
+    "typing": "static",
+    "style": [
+      "imperative",
+      "object"
+    ],
+    "memory": [
+      "gc",
+      "rc",
+      "cycles"
+    ],
+    "note": "Actor-based, statically typed native language with reference capabilities. Actor-local heaps use tracing GC; cross-actor references and actor cycles use runtime collection. Reference capabilities are not manual allocation or RAII ownership.",
+    "sources": [
+      "https://www.ponylang.io/blog/2017/05/an-early-history-of-pony/",
+      "https://www.ponylang.io/media/papers/OGC.pdf",
+      "https://www.ponylang.io/media/papers/a_string_of_ponies.pdf",
+      "https://www.ponylang.io/use/compiler/runtime-options/"
     ]
   }
 };

@@ -18,6 +18,11 @@ receipt even when a check fails.
 
 `generate_vectors.py` writes a new vector file and never runs Elixir. Running
 `probe.exs` requires a reviewed, serialized supervisor, the original compiled
-module directory, the vector file, and a fresh summary path. No native execution
-has been recorded here. These cases do not qualify algorithmic work, source
-counts, regex behavior, or full benchmark timings.
+module directory, the vector file, and a fresh summary path.
+
+`results-v1/report.json` records successful checks for all twenty retained
+helpers, including complete binary I/O and all 1,536 formatting cases per
+profile. Its terminal receipt retains the native results and unchanged input
+hashes. `preflight-v1.json` records an earlier path check failure before any
+native dispatch. These cases do not qualify algorithmic work, source counts,
+regex behavior, or full benchmark timings.

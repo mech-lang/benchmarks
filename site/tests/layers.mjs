@@ -41,6 +41,8 @@ vm.runInContext(executable+`\nglobalThis.harness={
   initialize(fixture){data=fixture;programCatalog=fixture.programs;Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
   render(options){Object.assign(state,options);model=comparison(data,allSelection());renderChart();},
   table(){renderTable();},
+  locAudit:renderLocAudit,
+  programSource,
   selection(){return state;},
   play(){const original=update;update=()=>{};try{playYears();}finally{update=original;pauseYears();}}
 };`,context);
@@ -97,4 +99,30 @@ assert.ok(!('trail' in context.harness.selection()));
 assert.doesNotMatch(source+html+css,/median-trail|medianHistory|currentHistory|historyCache|getMedianHistory/);
 assert.ok(!('medianHistory' in math));
 assert.match(source,/filterDrawer\.append\(filterControls\)/,'Keep the shared mobile filter drawer');
-console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback and trail removal.`);
+// The saved Pony audit groups line entries by source, including the counted Pi helper.
+const recorded=JSON.parse(fs.readFileSync(new URL('../../data/benchmarks.json',import.meta.url),'utf8'));
+context.harness.initialize(recorded);
+const pony=Object.values(recorded.program_inventory).filter(program=>program.language==='pony');
+assert.equal(pony.length,20);
+let helperLinks=0;
+for(const program of pony){
+  const audit=context.harness.locAudit(program);
+  assert.doesNotMatch(audit,/undefined|\[object Object\]/);
+  assert.match(audit,/canonical LOC/);
+  for(const source of program.loc_expansions){
+    for(const entry of source.expansions)assert.ok(audit.includes(`Line ${entry.line} · ${entry.units} canonical LOC`));
+  }
+  for(const key of program.files){
+    const source=context.harness.programSource(program,key);
+    assert.equal(source.role,program.file_roles[key].role);
+    assert.equal(decodeURI(source.source_url),recorded.repository.url+'/blob/main/'+program.file_roles[key].source_path);
+    if(source.role==='application-helper'){
+      helperLinks++;
+      assert.notEqual(source.source_url,program.source_url);
+      assert.match(audit,/application helper/);
+      assert.ok(source.loc_note);
+    }
+  }
+}
+assert.equal(helperLinks,2);
+console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback, trail removal, and all ${pony.length} Pony source audits.`);

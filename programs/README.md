@@ -43,6 +43,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Pascal](pascal/)
 - [Perl](perl/)
 - [PHP](php/)
+- [Pony](pony/)
 - [Python (CPython)](python/)
 - [R](r/)
 - [Racket](racket/)

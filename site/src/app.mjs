@@ -831,7 +831,24 @@ function selectedProgram(){
   const selected=candidates.reduce((a,b)=>state.detail.kind==='fast'?(b.seconds<a.seconds||b.seconds===a.seconds&&b.loc<a.loc?b:a):(b.loc<a.loc||b.loc===a.loc&&b.seconds<a.seconds?b:a));
   return catalogProgram(selected.key);
 }
+function programSource(program,key){
+  const file=data.files[key],metadata=program.file_roles?.[key];
+  const details=metadata&&typeof metadata==='object'?metadata:{};
+  const sourceURL=details.source_path&&data.repository?.url?`${data.repository.url.replace(/\/$/,'')}/blob/main/${details.source_path.split('/').map(encodeURIComponent).join('/')}`:program.source_url;
+  return {...file,...details,role:typeof metadata==='string'?metadata:details.role??file.role,source_url:sourceURL};
+}
+function sourceRoleLabel(role){
+  return role==='runtime-support'?' · runtime support':role==='application-helper'?' · application helper':'';
+}
 function renderLocAudit(program){
+  if(program.loc_expansion_format!=='source-bound-canonical-owner-audit-v1'&&program.loc_expansions?.some(source=>typeof source.source==='string'&&Array.isArray(source.expansions))){
+    return `<details class="loc-audit"><summary>LOC audit: ${program.physical_loc} physical lines → ${program.loc} canonical LOC</summary><p class="profile-note">Counts include every authored source and helper. The recorded line entries show canonical units, including wrapped lines counted within another entry.</p>${program.loc_expansions.map(source=>{
+      const key=program.files.find(key=>source.source.endsWith('/'+data.files[key].path));
+      const file=key?programSource(program,key):null;
+      const name=file?.name??source.source.split('/').pop();
+      return `<details><summary>${esc(name)}${sourceRoleLabel(file?.role)}${file?.normalized_loc!=null?` · ${file.physical_loc} physical lines → ${file.normalized_loc} canonical LOC`:''}</summary>${source.expansions.map(entry=>`<p class="profile-note">Line ${entry.line} · ${entry.units} canonical LOC</p><pre>${esc(entry.original??entry.reason??'')}</pre>`).join('')}</details>`;
+    }).join('')}</details>`;
+  }
   if(program.loc_expansion_format==='source-bound-canonical-owner-audit-v1'){
     return `<details class="loc-audit"><summary>LOC audit: ${program.physical_loc} physical lines → ${program.loc} canonical LOC</summary><p class="profile-note">Reviewed owners from every counted source and helper. Owner units are shown directly; they are not inferred extra physical lines.</p>${program.loc_expansions.map(source=>{
       const file=data.files[source.sha256];
@@ -859,7 +876,7 @@ function renderInspector(){
   $('#inspector-context').textContent=state.detail.aggregate?'Geometric mean contributors':b.title;
   $('#inspector-title').textContent=lang.label;
   const aggregate=state.detail.aggregate&&entry?`<p class="profile-note">${state.detail.kind==='fast'?'Fastest':'Fewest-LOC'} profile: <strong>${ratio(entry[state.detail.kind].x)} LOC · ${ratio(entry[state.detail.kind].y)} time</strong>, geometric means across ${coverageLabel(entry)} selected benchmarks.${partialEntry(entry)?` Missing: ${esc(missingNames(entry))}.`:''} Choose a benchmark below to inspect a contributor.</p>`:'';
-  const file=data.files[program.files[Math.min(state.detail.file,program.files.length-1)]];
+  const file=programSource(program,program.files[Math.min(state.detail.file,program.files.length-1)]);
   if(tableSort.timings.key==='wall_seconds'&&!residentTiming(program))tableSort.timings.key='elapsed';
   const samples=sortedRows('timings',program.samples.map((elapsed,i)=>({...program.sample_details?.[i],run:i+1,elapsed})),(sample,key)=>sample[key]);
   const availablePrograms=benchmarkPrograms(b.key,program.language);
@@ -878,7 +895,7 @@ function renderInspector(){
     ${program.timing_summary?`<p class="profile-note timing-boundary">${esc(program.timing_summary)}</p>`:''}
     <section class="detail-section"><h3>Recorded timing samples</h3>${pending?'<p class="profile-note">Timing pending. This source is included for its audited LOC only and contributes no speed ratio, geometric mean, or standard-deviation ellipse.</p>':`<div class="timings-table-wrap"><table class="timings-table"><thead><tr>${sortHeader('timings','run','Run')}${sortHeader('timings','elapsed','Measured seconds')}${residentTiming(program)?sortHeader('timings','wall_seconds','Whole process seconds'):''}<th scope="col">${program.samples.length} samples</th></tr></thead><tbody>${samples.map(sample=>`<tr><td>${sample.run}</td><td class="sample-value">${sample.elapsed.toFixed(6)}</td>${residentTiming(program)?`<td class="sample-value">${sample.wall_seconds.toFixed(6)}</td>`:''}<td><div class="sample-bar" style="width:${sample.elapsed/Math.max(...program.samples)*100}%"></div></td></tr>`).join('')}</tbody></table></div>`}</section>
     ${renderLocAudit(program)}
-    <section class="detail-section"><div class="code-toolbar"><select id="detail-file" aria-label="Source file">${program.files.map((key,i)=>`<option value="${i}" ${i===Math.min(state.detail.file,program.files.length-1)?'selected':''}>${esc(data.files[key].name)}${data.files[key].role==='runtime-support'?' · runtime support':''}</option>`).join('')}</select><a id="download-source" href="#">Download source</a>${program.source_url?`<a href="${esc(program.source_url)}" target="_blank" rel="noopener">${esc(program.source_link_label??'Upstream listing')}</a>`:''}${program.license_url?`<a href="${esc(program.license_url)}" target="_blank" rel="noopener">License</a>`:''}</div><pre><code id="source-code"></code></pre><div class="source-meta">${file.loc_note?esc(file.loc_note)+'<br>':''}Verified source SHA-256: ${file.sha256}<br>Timing report: ${esc(program.report)}</div></section>
+    <section class="detail-section"><div class="code-toolbar"><select id="detail-file" aria-label="Source file">${program.files.map((key,i)=>`<option value="${i}" ${i===Math.min(state.detail.file,program.files.length-1)?'selected':''}>${esc(data.files[key].name)}${sourceRoleLabel(programSource(program,key).role)}</option>`).join('')}</select><a id="download-source" href="#">Download source</a>${file.source_url?`<a href="${esc(file.source_url)}" target="_blank" rel="noopener">${esc(program.source_link_label??'Upstream listing')}</a>`:''}${program.license_url?`<a href="${esc(program.license_url)}" target="_blank" rel="noopener">License</a>`:''}</div><pre><code id="source-code"></code></pre><div class="source-meta">${file.loc_note?esc(file.loc_note)+'<br>':''}Verified source SHA-256: ${file.sha256}<br>Timing report: ${esc(program.report)}</div></section>
     ${program.local_adaptation?`<p class="profile-note source-provenance">${esc(program.source_provenance)}</p>`:''}${program.algorithm?.reason?`<p class="profile-note">${esc(program.algorithm.reason)}</p>`:''}${program.runtime_policy?`<p class="profile-note">Runtime policy: ${esc(program.runtime_policy)}</p>`:''}${program.runtime_support?`<p class="profile-note">${esc(program.runtime_support)}</p>`:''}
     <section class="detail-section"><h3>Benchmark programs</h3><div class="variant-list"><table><thead><tr>${sortHeader('implementations','show','Show')}${sortHeader('implementations','program','Program')}${sortHeader('implementations','loc','LOC')}${sortHeader('implementations','median','Median')}</tr></thead><tbody>${implementations.map(item=>`<tr class="${item.key===program.key?'chosen':''}"><td><label><input data-toggle-program="${item.key}" type="checkbox" aria-label="Include ${esc(item.id)}" ${item.seconds==null||inLanguageView()||!group?.programs.includes(item.key)?'disabled':''} ${item.seconds==null||state.disabled.has(item.key)?'':'checked'}></label></td><td><button data-inspect-program="${item.key}">${esc(item.id)}</button></td><td>${item.loc}</td><td>${seconds(item.seconds)}</td></tr>`).join('')}</tbody></table></div></section>`;
   $('#source-code').textContent=file.code;

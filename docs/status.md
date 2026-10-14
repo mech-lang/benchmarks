@@ -1,6 +1,6 @@
 # Benchmark coverage
 
-The current dataset contains **52 execution variants across 46 language families**, **10 workloads**, and **834 selected timed program profiles**. The source inventory retains **843 profiles**, including nine measured candidates that are not selected endpoints. Forty-seven execution variants cover the complete suite.
+The current dataset contains **53 execution variants across 47 language families**, **10 workloads**, and **847 selected timed program profiles**. The source inventory retains **863 profiles**, including sixteen measured candidates that are not selected endpoints. Forty-eight execution variants cover the complete suite.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -10,7 +10,20 @@ The current dataset contains **52 execution variants across 46 language families
 | Uiua | 7 / 10 | N-body, binary trees, fannkuch-redux |
 | GNU APL | 4 / 10 | N-body, mandelbrot, k-nucleotide, binary trees, fannkuch-redux, FASTA |
 
-Pony, Prolog, Julia AOT, Rebol, Elixir, and Kotlin are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
+Prolog, Julia AOT, Rebol, Elixir, and Kotlin are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
+
+| Implementation | Completed qualification | Remaining before timing publication |
+| --- | --- | --- |
+| Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
+| Prolog | Twenty source forms, required work, canonical LOC, and bounded output checks | Full-workload measurements and publication review |
+| Elixir | Twenty compiled source forms; all compiled helpers passed binary I/O and formatting checks | Workload execution, required-work and source-count qualification, then measurements |
+| Kotlin | Twenty compiled source forms and source/class review | Runtime and helper checks, required-work and source-count qualification, then measurements |
+| Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | Execution-path qualification and the remaining suite |
+| Rebol | Retained toolchain sources and resolved build specification | SDK and runtime qualification, benchmark implementations, and measurements |
+
+Current qualification tools and results are organized by implementation under
+[`experiments/`](../experiments/); earlier evidence remains under
+[`archive/languages/`](../archive/languages/).
 
 ## Planned additions
 

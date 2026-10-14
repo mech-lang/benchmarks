@@ -190,8 +190,13 @@ def verify(root, check_index=False):
             exported = (root / relative / name).read_bytes()
             require(exported == source['code'].encode('utf-8')
                     and hashlib.sha256(exported).hexdigest() == source['sha256'], f'Exported source changed: {relative / name}')
+            role = p.get('file_roles', {}).get(file_key, source.get('role', 'application'))
+            role_evidence = {'role_evidence': role} if isinstance(role, dict) else {}
+            if isinstance(role, dict):
+                role = role['role']
+            require(isinstance(role, str) and role, f'Invalid source role: {key}/{file_key}')
             sources.append({'file': name, 'sha256': source['sha256'], 'original_path': source['path'],
-                            'role': p.get('file_roles', {}).get(file_key, source.get('role', 'application'))})
+                            'role': role, **role_evidence})
             source_copies += 1
         expected_record = {'key': key, 'language': p['language'], 'benchmark': p['benchmark'], 'program': p['id'],
                            'loc': p.get('loc'), 'loc_metric': p.get('loc_metric', 'statement-normalized'),

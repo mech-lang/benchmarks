@@ -149,7 +149,7 @@ def main():
         for path, digest in compiled['pins'].items():
             if Path(path).is_relative_to(ELIXIR) or Path(path).is_relative_to(OTP):
                 bind(path, digest)
-        require(str(ELIXIR/'bin/elixir') in pins and str(OTP/'erts-17.1/bin/beam.smp') in pins,
+        require(str(ELIXIR/'bin/elixir') in pins and str(OTP/'lib/erlang/erts-17.1/bin/beam.smp') in pins,
                 'Missing retained runtime executable pins')
         probe = ROOT/'experiments/elixir/helper-semantics/probe.exs'
         vectors = probe.with_name('format-vectors.tsv')

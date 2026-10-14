@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **52 measured execution variants in 46 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **53 measured execution variants in 47 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
@@ -66,6 +66,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | Pascal | Free Pascal | AOT | Static | Manual, RC |
 | Perl | Perl 5 interpreter | Interpreted | Dynamic | RC |
 | PHP | PHP / Zend Engine / OPcache | JIT, Interpreted | Dynamic | RC, Cycles |
+| Pony | ponyc / LLVM / Pony runtime | AOT | Static | Tracing GC, RC, Cycles |
 | Python (CPython) | CPython bytecode interpreter | Interpreted | Dynamic | RC, Cycles |
 | R | GNU R bytecode interpreter | Interpreted | Dynamic | Tracing GC |
 | Racket | Racket CS / Chez precompiled native modules | AOT | Dynamic | Tracing GC |
