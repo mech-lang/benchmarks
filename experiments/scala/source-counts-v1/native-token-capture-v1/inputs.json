@@ -1,0 +1,1634 @@
+[
+  {
+    "id": "owner-packed-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "21c81db3b5a20af9599e627038c164fae82b3fc4fdcec7185ff3c3498f91ef40",
+    "fixture": {
+      "id": "packed-method",
+      "text": "def f(): Int = { val x = 1; val y = 2; x + y }\n",
+      "source_sha256": "21c81db3b5a20af9599e627038c164fae82b3fc4fdcec7185ff3c3498f91ef40",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Method header, two independent declarations, final expression and written close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0000-owner-packed-method.scala",
+    "index": 0
+  },
+  {
+    "id": "owner-expanded-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "623ac2ad821b737b0b087aaec85e6bade6c8e8338a35127850fe764e152510d7",
+    "fixture": {
+      "id": "expanded-method",
+      "text": "def f(): Int = {\n  val x = 1\n  val y = 2\n  x + y\n}\n",
+      "source_sha256": "623ac2ad821b737b0b087aaec85e6bade6c8e8338a35127850fe764e152510d7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Executable layout changes do not alter the five owners.",
+      "equivalent_to": "packed-method"
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0001-owner-expanded-method.scala",
+    "index": 1
+  },
+  {
+    "id": "owner-expression-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "47569e29ae99605546e4f9943c3790c852fcb4758c6495865a208144f7c41017",
+    "fixture": {
+      "id": "expression-method",
+      "text": "def inc(x: Int): Int = x + 1\n",
+      "source_sha256": "47569e29ae99605546e4f9943c3790c852fcb4758c6495865a208144f7c41017",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One composed method declaration; formal and result types are retained without synthetic body boundaries."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0002-owner-expression-method.scala",
+    "index": 2
+  },
+  {
+    "id": "owner-generic-expression-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "64fc0fdc6b3396a4cd38d1d3b258ac6f014da31aa6ce0faa8e9b8b20f8a5696c",
+    "fixture": {
+      "id": "generic-expression-method",
+      "text": "def identity[T](value: T): T = value\n",
+      "source_sha256": "64fc0fdc6b3396a4cd38d1d3b258ac6f014da31aa6ce0faa8e9b8b20f8a5696c",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Type parameter, formal and result types belong to the authored method header."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0003-owner-generic-expression-method.scala",
+    "index": 3
+  },
+  {
+    "id": "owner-tuple-type-alias",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "6d3c9fdbe3ac8b3002cc56339b047cdeccdbea700c710fe0594876772bf3e924",
+    "fixture": {
+      "id": "tuple-type-alias",
+      "text": "type Pair = (String, Int)\n",
+      "source_sha256": "6d3c9fdbe3ac8b3002cc56339b047cdeccdbea700c710fe0594876772bf3e924",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One authored type declaration; tuple components are structural type syntax."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0004-owner-tuple-type-alias.scala",
+    "index": 4
+  },
+  {
+    "id": "owner-constructor-fields-no-body",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "a552625c6610286135722c9f789796eebb75d9e08e0948b8409bc0696cdfeaed",
+    "fixture": {
+      "id": "constructor-fields-no-body",
+      "text": "class Node(val left: Node, val right: Node)\n",
+      "source_sha256": "a552625c6610286135722c9f789796eebb75d9e08e0948b8409bc0696cdfeaed",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "One class header and two explicitly authored val fields; there is no written class-body close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0005-owner-constructor-fields-no-body.scala",
+    "index": 5
+  },
+  {
+    "id": "owner-constructor-plain-formals",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "407193dc5020ba335f02d3053d4bbac533ba691d4c06a849b6da696fa1a6854e",
+    "fixture": {
+      "id": "constructor-plain-formals",
+      "text": "class Point(x: Double, y: Double)\n",
+      "source_sha256": "407193dc5020ba335f02d3053d4bbac533ba691d4c06a849b6da696fa1a6854e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Plain constructor formals add no explicitly authored val/var fields or synthetic constructor body."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0006-owner-constructor-plain-formals.scala",
+    "index": 6
+  },
+  {
+    "id": "owner-constructor-fields-packed-body",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "584c14d75cfa6e2414f0f83d4bc66621ff9ac9efed6ef5d30621281c987dc41e",
+    "fixture": {
+      "id": "constructor-fields-packed-body",
+      "text": "class Node(val left: Node, val right: Node) { def check(): Int = 1 }\n",
+      "source_sha256": "584c14d75cfa6e2414f0f83d4bc66621ff9ac9efed6ef5d30621281c987dc41e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Class header, two constructor fields, composed method and written class close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0007-owner-constructor-fields-packed-body.scala",
+    "index": 7
+  },
+  {
+    "id": "owner-constructor-fields-expanded-body",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "a14cc9cfcf53c323f300f6070b161ec8a4906bd4c19abf8b795c089331796b52",
+    "fixture": {
+      "id": "constructor-fields-expanded-body",
+      "text": "class Node(\n  val left: Node,\n  val right: Node\n) {\n  def check(): Int = 1\n}\n",
+      "source_sha256": "a14cc9cfcf53c323f300f6070b161ec8a4906bd4c19abf8b795c089331796b52",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Formal wrapping does not add data rows or separate synthetic accessors.",
+      "equivalent_to": "constructor-fields-packed-body"
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0008-owner-constructor-fields-expanded-body.scala",
+    "index": 8
+  },
+  {
+    "id": "owner-explicit-class-fields",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "d2f32ff21a1055ad1d55510d1918ba879ee4f69b172cb41a2bf3cbf45a3513c7",
+    "fixture": {
+      "id": "explicit-class-fields",
+      "text": "class Body { var x: Double = 0.0; var y: Double = 0.0 }\n",
+      "source_sha256": "d2f32ff21a1055ad1d55510d1918ba879ee4f69b172cb41a2bf3cbf45a3513c7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "Class header, two independent member fields and written close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0009-owner-explicit-class-fields.scala",
+    "index": 9
+  },
+  {
+    "id": "owner-object-main",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "b9964b8cef7f8cdd81acb5e597bae3c2a37d1babe4b1f6d18d41029dcb75c423",
+    "fixture": {
+      "id": "object-main",
+      "text": "object Main { def main(args: Array[String]): Unit = { println(args.length) } }\n",
+      "source_sha256": "b9964b8cef7f8cdd81acb5e597bae3c2a37d1babe4b1f6d18d41029dcb75c423",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Object header, method header, call and two written closes; no generated module or static forwarder owners."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0010-owner-object-main.scala",
+    "index": 10
+  },
+  {
+    "id": "owner-tuple-pattern-binding",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "8527a151b7c8a94dc90df9797b0144a0cc880b1a426e8f56745d58475b2b0fdc",
+    "fixture": {
+      "id": "tuple-pattern-binding",
+      "text": "val (a, b) = pair()\n",
+      "source_sha256": "8527a151b7c8a94dc90df9797b0144a0cc880b1a426e8f56745d58475b2b0fdc",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One destructuring binding; parser-generated temporaries and extracted selectors are not authored units."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0011-owner-tuple-pattern-binding.scala",
+    "index": 11
+  },
+  {
+    "id": "owner-expression-lambda",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "b800c24e482b34980888cb2dd37117cfd761c8b2abea5629fcf5a43d9c2e5ea5",
+    "fixture": {
+      "id": "expression-lambda",
+      "text": "val inc = (x: Int) => x + 1\n",
+      "source_sha256": "b800c24e482b34980888cb2dd37117cfd761c8b2abea5629fcf5a43d9c2e5ea5",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The typed expression lambda remains part of its containing declaration."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0012-owner-expression-lambda.scala",
+    "index": 12
+  },
+  {
+    "id": "owner-braced-callback-packed",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "4e1b9d6f28de7be4bd112090c72ffc6514e94749d8192c290656dc61ed8ab953",
+    "fixture": {
+      "id": "braced-callback-packed",
+      "text": "val result = values.map { x => val y = x + 1; println(y); y }\n",
+      "source_sha256": "4e1b9d6f28de7be4bd112090c72ffc6514e94749d8192c290656dc61ed8ab953",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Combined containing declaration/callback header, independent declaration, call, final value and written callback close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0013-owner-braced-callback-packed.scala",
+    "index": 13
+  },
+  {
+    "id": "owner-braced-callback-expanded",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "82153e1dc9aba371d87e55403dfbcf7bd7843411acb0c38ea75b18ef1bd5add7",
+    "fixture": {
+      "id": "braced-callback-expanded",
+      "text": "val result = values.map { x =>\n  val y = x + 1\n  println(y)\n  y\n}\n",
+      "source_sha256": "82153e1dc9aba371d87e55403dfbcf7bd7843411acb0c38ea75b18ef1bd5add7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Callback body layout retains the same five owners.",
+      "equivalent_to": "braced-callback-packed"
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0014-owner-braced-callback-expanded.scala",
+    "index": 14
+  },
+  {
+    "id": "owner-braced-one-expression-callback",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "91baf0bf51865c407d7037a47da8f864ff6cb7584040ecb4daf27957587402e6",
+    "fixture": {
+      "id": "braced-one-expression-callback",
+      "text": "val result = values.map { x => x + 1 }\n",
+      "source_sha256": "91baf0bf51865c407d7037a47da8f864ff6cb7584040ecb4daf27957587402e6",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "An explicitly braced callback retains its header, final expression and written close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0015-owner-braced-one-expression-callback.scala",
+    "index": 15
+  },
+  {
+    "id": "owner-parenthesized-expression-callback",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "42d95aa76f6887ef5a39da2c3ec5223f4b395ee8ba67012612ac8b8e1985501b",
+    "fixture": {
+      "id": "parenthesized-expression-callback",
+      "text": "val result = values.map(x => x + 1)\n",
+      "source_sha256": "42d95aa76f6887ef5a39da2c3ec5223f4b395ee8ba67012612ac8b8e1985501b",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "A parenthesized expression callback has no authored block close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0016-owner-parenthesized-expression-callback.scala",
+    "index": 16
+  },
+  {
+    "id": "owner-while-and-compound-updates",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "3effdff0eb11b849c4f153c2866b65fc25dd0e78cb59ff5a54b81a7b0e762902",
+    "fixture": {
+      "id": "while-and-compound-updates",
+      "text": "def f(): Unit = { while (i < n) { total += i; i += 1 } }\n",
+      "source_sha256": "3effdff0eb11b849c4f153c2866b65fc25dd0e78cb59ff5a54b81a7b0e762902",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "reason": "Method header/close plus loop header, two independent updates and loop close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0017-owner-while-and-compound-updates.scala",
+    "index": 17
+  },
+  {
+    "id": "owner-unbraced-if-else",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "d42e2591ee7f8faa3db3fb37fcafc45f3878823f38b0530889d90396a49f02a7",
+    "fixture": {
+      "id": "unbraced-if-else",
+      "text": "def f(): Unit = { if (x > 0) println(x) else println(0) }\n",
+      "source_sha256": "d42e2591ee7f8faa3db3fb37fcafc45f3878823f38b0530889d90396a49f02a7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "reason": "Method header/close plus if header/call and else branch/call; no invented branch closes."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0018-owner-unbraced-if-else.scala",
+    "index": 18
+  },
+  {
+    "id": "owner-scalar-conditional-value",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "90fc67c90163a90acaf8e4a2fd99155e1f4217be376384edc2c08f8189e4aa71",
+    "fixture": {
+      "id": "scalar-conditional-value",
+      "text": "val chosen = if (x > 0) x else 0\n",
+      "source_sha256": "90fc67c90163a90acaf8e4a2fd99155e1f4217be376384edc2c08f8189e4aa71",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "A scalar conditional is retained as one composed declaration value."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0019-owner-scalar-conditional-value.scala",
+    "index": 19
+  },
+  {
+    "id": "owner-try-finally",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "89f014038d9c9d1e3e3564d2f9acfbf913baa65a7c784e6372cc14c7afdf99fc",
+    "fixture": {
+      "id": "try-finally",
+      "text": "def f(): Unit = { try { run() } finally { close() } }\n",
+      "source_sha256": "89f014038d9c9d1e3e3564d2f9acfbf913baa65a7c784e6372cc14c7afdf99fc",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 8,
+      "reason": "Method header/close and two written control header/body/close groups."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0020-owner-try-finally.scala",
+    "index": 20
+  },
+  {
+    "id": "owner-updates",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "2efcd84845f6cc8847c1d8681a6abfc2ec8157965622018c9e9476d2f55be488",
+    "fixture": {
+      "id": "updates",
+      "text": "def f(): Unit = { a += 1; b *= 2; values(i) = x }\n",
+      "source_sha256": "2efcd84845f6cc8847c1d8681a6abfc2ec8157965622018c9e9476d2f55be488",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Three independent written updates between method header/close; rewritten applications do not add owners."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0021-owner-updates.scala",
+    "index": 21
+  },
+  {
+    "id": "owner-indented-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "e324cd3c9473a16587a31c354fbdfe1dffe855f2556a3333946f5a5c201931e7",
+    "fixture": {
+      "id": "indented-method",
+      "text": "def f(): Int =\n  val x = 1\n  x + 1\n",
+      "source_sha256": "e324cd3c9473a16587a31c354fbdfe1dffe855f2556a3333946f5a5c201931e7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "Method header and two body units; inferred dedent has no written closing token."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0022-owner-indented-method.scala",
+    "index": 22
+  },
+  {
+    "id": "owner-braced-layout-counterpart",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "a2f9f0d26a19016c8460b11cf94229ab58d42b2a17749c5824d9efd62bd5bc11",
+    "fixture": {
+      "id": "braced-layout-counterpart",
+      "text": "def f(): Int = {\n  val x = 1\n  x + 1\n}\n",
+      "source_sha256": "a2f9f0d26a19016c8460b11cf94229ab58d42b2a17749c5824d9efd62bd5bc11",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "The corresponding written brace adds one close relative to the indentation fixture; these are deliberately not an equivalent-count pair."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0023-owner-braced-layout-counterpart.scala",
+    "index": 23
+  },
+  {
+    "id": "owner-written-end-marker",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "9a22bd1826c5d9122afb72caf879bd48152adb3239606f25a824bd635e4081d2",
+    "fixture": {
+      "id": "written-end-marker",
+      "text": "def f(): Int =\n  val x = 1\n  x + 1\nend f\n",
+      "source_sha256": "9a22bd1826c5d9122afb72caf879bd48152adb3239606f25a824bd635e4081d2",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "Retain the explicit end marker separately from layout exit; its canonical owner needs review."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0024-owner-written-end-marker.scala",
+    "index": 24
+  },
+  {
+    "id": "owner-wrapped-literal-data",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "92b3617bc022aea5aaeb14f22df61b859284b3232dc69badc392003fe38ee60e",
+    "fixture": {
+      "id": "wrapped-literal-data",
+      "text": "val values = Array(\n  1, 2,\n  3, 4\n)\n",
+      "source_sha256": "92b3617bc022aea5aaeb14f22df61b859284b3232dc69badc392003fe38ee60e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "The established physical-row policy retains all four nonblank literal/argument data rows."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0025-owner-wrapped-literal-data.scala",
+    "index": 25
+  },
+  {
+    "id": "owner-packed-literal-data",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "e74d30b15a4d584f0ce47ca34e5b561af08a6bb770a8f085b90670a857f4373a",
+    "fixture": {
+      "id": "packed-literal-data",
+      "text": "val values = Array(1, 2, 3, 4)\n",
+      "source_sha256": "e74d30b15a4d584f0ce47ca34e5b561af08a6bb770a8f085b90670a857f4373a",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Packed literal data occupies one physical row; it is deliberately not equivalent to the wrapped-data fixture."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0026-owner-packed-literal-data.scala",
+    "index": 26
+  },
+  {
+    "id": "owner-grouped-import",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "5c4462ce5a3bf8831b58b2585d22e71260463a22a1e093c37bdf9829c6a3f00d",
+    "fixture": {
+      "id": "grouped-import",
+      "text": "import java.util.{Locale, Objects}\n",
+      "source_sha256": "5c4462ce5a3bf8831b58b2585d22e71260463a22a1e093c37bdf9829c6a3f00d",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Import selectors are not executable blocks and add no block close."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0027-owner-grouped-import.scala",
+    "index": 27
+  },
+  {
+    "id": "owner-nested-comments-and-literal",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "9ed5ef1507db1f54927b5b932623972ba91435b4bcee17e8c5a863f05225db5b",
+    "fixture": {
+      "id": "nested-comments-and-literal",
+      "text": "/* outer /* nested */ done */\nval text = \"// literal /* data */\"\n",
+      "source_sha256": "9ed5ef1507db1f54927b5b932623972ba91435b4bcee17e8c5a863f05225db5b",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Nested comments are excluded while the complete comment-looking string remains owned literal source."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0028-owner-nested-comments-and-literal.scala",
+    "index": 28
+  },
+  {
+    "id": "owner-protected-character-literals",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "3855f133cbfa43f7857bab4e1cfa8cb3834bb2eebb3b7ff512269058d6bc03b1",
+    "fixture": {
+      "id": "protected-character-literals",
+      "text": "val quote: Char = '\\''\nval slash: Char = '/'\nval close: Char = '}'\nval newline: Char = '\\n'\n",
+      "source_sha256": "3855f133cbfa43f7857bab4e1cfa8cb3834bb2eebb3b7ff512269058d6bc03b1",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "Four independent typed declarations; escaped quote, slash, closing brace and escaped newline are literal tokens, not comments, scopes or actual source newlines."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0029-owner-protected-character-literals.scala",
+    "index": 29
+  },
+  {
+    "id": "owner-scalar-interpolation",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "8bb10759a835748f02edbb6927589b1a468d646beeaf045904092558e6aae435",
+    "fixture": {
+      "id": "scalar-interpolation",
+      "text": "val message = s\"value ${value + 1} // literal\"\n",
+      "source_sha256": "8bb10759a835748f02edbb6927589b1a468d646beeaf045904092558e6aae435",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The scalar interpolation remains composed, with its expression span retained separately from inert literal fragments."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0030-owner-scalar-interpolation.scala",
+    "index": 30
+  },
+  {
+    "id": "owner-executable-interpolation",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "f21f4bf02c86b2fbcd41f8d1495efc4407c772ee8ce429ffa37cb392dffe6fd8",
+    "fixture": {
+      "id": "executable-interpolation",
+      "text": "val message = s\"value ${ { val x = next(); println(x); x } }\"\n",
+      "source_sha256": "f21f4bf02c86b2fbcd41f8d1495efc4407c772ee8ce429ffa37cb392dffe6fd8",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A literal envelope cannot hide the executable interpolation block; native nested ownership requires review."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0031-owner-executable-interpolation.scala",
+    "index": 31
+  },
+  {
+    "id": "owner-match-expression",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "befd9d77ec32c88a9e1763204b93d1f3307152557bd057bf6ac216da290ee2b1",
+    "fixture": {
+      "id": "match-expression",
+      "text": "def classify(x: Int): Int = x match { case 0 => 1; case n if n > 0 => n; case _ => -1 }\n",
+      "source_sha256": "befd9d77ec32c88a9e1763204b93d1f3307152557bd057bf6ac216da290ee2b1",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "Written cases, guard and result bodies require explicit ownership; synthetic matches/functions cannot supply units."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0032-owner-match-expression.scala",
+    "index": 32
+  },
+  {
+    "id": "owner-pattern-callback",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "8d2a5d643530dd04820451669e7756e96705a21b194d6945f9f600866fe00607",
+    "fixture": {
+      "id": "pattern-callback",
+      "text": "val result = pairs.map { case (key, value) => key + value }\n",
+      "source_sha256": "8d2a5d643530dd04820451669e7756e96705a21b194d6945f9f600866fe00607",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A written pattern callback must be distinguished from any parser-generated function or match."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0033-owner-pattern-callback.scala",
+    "index": 33
+  },
+  {
+    "id": "owner-anonymous-runnable",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "acddda9c976f05f5abcfd33a189227075f1ddfab68708aa086d05d1554604c8d",
+    "fixture": {
+      "id": "anonymous-runnable",
+      "text": "val task = new Runnable { def run(): Unit = { consume() } }\n",
+      "source_sha256": "acddda9c976f05f5abcfd33a189227075f1ddfab68708aa086d05d1554604c8d",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Combined declaration/anonymous-class header, method header, body call and two written closes; no synthesized constructor units."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0034-owner-anonymous-runnable.scala",
+    "index": 34
+  },
+  {
+    "id": "owner-unicode-crlf",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "e244d48cf36c151b602c4d3096bad219ce79e8e4dcd54f375e859a4a8f3b8a44",
+    "fixture": {
+      "id": "unicode-crlf",
+      "text": "val value = \"\u03bb\ud83d\ude00\"\r\ndef f(): String = value\r\n",
+      "source_sha256": "e244d48cf36c151b602c4d3096bad219ce79e8e4dcd54f375e859a4a8f3b8a44",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 2,
+      "reason": "Two declarations; the UTF-8 bytes, CRLF and non-BMP offset mapping must survive transport exactly."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0035-owner-unicode-crlf.scala",
+    "index": 35
+  },
+  {
+    "id": "owner-comment-only",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "efe6cd287a9d5251a4871d8d21a6876192878e6705a8333f21d66ade36da5be2",
+    "fixture": {
+      "id": "comment-only",
+      "text": "// no source units\n/* nested /* inner */ outer */\n",
+      "source_sha256": "efe6cd287a9d5251a4871d8d21a6876192878e6705a8333f21d66ade36da5be2",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 0,
+      "reason": "Comment text must not become executable units or disappear from retained lexical evidence."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0036-owner-comment-only.scala",
+    "index": 36
+  },
+  {
+    "id": "owner-never-evaluate",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "c08bca5370252aae7b5167f3db1e11234f215bed4055e8d0e481cdeee7eb5caa",
+    "fixture": {
+      "id": "never-evaluate",
+      "text": "val bomb = throw new IllegalStateException(\"Source-count fixtures must never be evaluated\")\n",
+      "source_sha256": "c08bca5370252aae7b5167f3db1e11234f215bed4055e8d0e481cdeee7eb5caa",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The reader parses source without initialization, compilation backend or subject evaluation."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0037-owner-never-evaluate.scala",
+    "index": 37
+  },
+  {
+    "id": "owner-meaningful-directive",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "433aba724d60f1ea7595eabb7030e63b8121319a13991f47109c0562f4065e70",
+    "fixture": {
+      "id": "meaningful-directive",
+      "text": "//> using option \"-deprecation\"\nval value = 1\n",
+      "source_sha256": "433aba724d60f1ea7595eabb7030e63b8121319a13991f47109c0562f4065e70",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A build directive remains retained and review-gated even if the selected compiler parser reports it as a comment."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0038-owner-meaningful-directive.scala",
+    "index": 38
+  },
+  {
+    "id": "owner-unclosed-method",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "1bbbac3f47640e14259f4c5933d7b1feef5856e4d8c631d033e0ad498b6ea70d",
+    "fixture": {
+      "id": "unclosed-method",
+      "text": "def f(): Int = {\n  1\n",
+      "source_sha256": "1bbbac3f47640e14259f4c5933d7b1feef5856e4d8c631d033e0ad498b6ea70d",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "reason": "A malformed source must retain parser diagnostics and admit no count."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0039-owner-unclosed-method.scala",
+    "index": 39
+  },
+  {
+    "id": "owner-mismatched-array-delimiter",
+    "group": "owner",
+    "contract": "source-counts-v1/fixtures.json",
+    "source_sha256": "d8b056eaadec60057fbf646c87bf80d968113f258e51963d33ab836bf5d6ab31",
+    "fixture": {
+      "id": "mismatched-array-delimiter",
+      "text": "val values = Array(1, 2]\n",
+      "source_sha256": "d8b056eaadec60057fbf646c87bf80d968113f258e51963d33ab836bf5d6ab31",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "reason": "Delimiter recovery cannot turn invalid source into an admitted count."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0040-owner-mismatched-array-delimiter.scala",
+    "index": 40
+  },
+  {
+    "id": "capture-empty-input",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "fixture": {
+      "id": "empty-input",
+      "text": "",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "No positive-width physical token events",
+        "EOF is retained only as a zero-width sentinel",
+        "No constructor diagnostic or graph difference"
+      ],
+      "reason": "Exercise the empty discarded base scanner and the actual empty source independently."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0041-capture-empty-input.scala",
+    "index": 41
+  },
+  {
+    "id": "capture-whitespace-only-crlf",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "7838f07af6ae27465dfc351adb76066600fe279aed1cf65cc4fcf3cd91ab64d8",
+    "fixture": {
+      "id": "whitespace-only-crlf",
+      "text": " \t\r\n\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "All bytes survive exactly",
+        "Entire source is checked whitespace",
+        "No inferred separator becomes a written token"
+      ],
+      "reason": "Coverage must work without an authored token and must preserve CRLF."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0042-capture-whitespace-only-crlf.scala",
+    "index": 42
+  },
+  {
+    "id": "capture-first-token-through-eof",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "66c997d522a063f260312d9a7c676a4a0f08b4d833b5b4c9f2ffa6532351f1e6",
+    "fixture": {
+      "id": "first-token-through-eof",
+      "text": "val x = 1",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        },
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "First token captured during actual scanner construction exactly once",
+        "Final integer ends at the source length",
+        "Repeated EOF observations add no physical source width"
+      ],
+      "reason": "A sink enabled only after construction would lose the first physical token."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0043-capture-first-token-through-eof.scala",
+    "index": 43
+  },
+  {
+    "id": "capture-terminal-native-su-source-character",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "3496801a66251bba3822cac8dd6f07500ba99a2ac3974b870f02a4d25761d781",
+    "fixture": {
+      "id": "terminal-native-su-source-character",
+      "text": "val x = 1\u001a",
+      "expected_parse": "ok",
+      "expected_capture": "reject-unexplained-gap",
+      "required_raw_lexemes": [
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Preserve the terminal physical U+001A code unit and its UTF-8 byte",
+        "Stock and observed parser transports must agree without a parse error",
+        "Record eof_before_source_end because lastCharOffset is source length minus one",
+        "Record unexplained_source_gap for U+001A; native EOF must not erase this physical character",
+        "Coverage remains false despite successful parser parity"
+      ],
+      "reason": "Native fetchToken treats SU as EOF when charOffset has reached endIdx, including an actual terminal U+001A read from source. The coverage gate must reject that unaccounted source character independently of parser errors."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0044-capture-terminal-native-su-source-character.scala",
+    "index": 44
+  },
+  {
+    "id": "capture-first-token-case-class-fusion",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "d1f2efc41943fc1ea5a2a90998c28d2ea6b0f871cdc034635db27cb783c0c89f",
+    "fixture": {
+      "id": "first-token-case-class-fusion",
+      "text": "case class Item(value: Int)\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "case",
+          "occurrence": 0,
+          "native_token_constant": "CASE"
+        },
+        {
+          "text": "class",
+          "occurrence": 0,
+          "native_token_constant": "CLASS"
+        }
+      ],
+      "checks": [
+        "Both physical keywords survive constructor-time fusion to CASECLASS",
+        "The peekAhead CLASS event is not duplicated when consumed"
+      ],
+      "reason": "The first nextToken can call peekAhead before the observed scanner subclass finishes initialization."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0045-capture-first-token-case-class-fusion.scala",
+    "index": 45
+  },
+  {
+    "id": "capture-case-object-fusion-with-comment",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "39bf7f68d387d131975e3f1f287d16524ef33a90b408e53f499b9344acbc2a6b",
+    "fixture": {
+      "id": "case-object-fusion-with-comment",
+      "text": "case /* between */ object Empty\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "case",
+          "occurrence": 0,
+          "native_token_constant": "CASE"
+        },
+        {
+          "text": "object",
+          "occurrence": 0,
+          "native_token_constant": "OBJECT"
+        }
+      ],
+      "checks": [
+        "CASEOBJECT fusion preserves two keyword intervals and the intervening native comment",
+        "No duplicate leading scan/comment from the discarded base scanner"
+      ],
+      "reason": "Fusion and comment retention interact during construction."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0046-capture-case-object-fusion-with-comment.scala",
+    "index": 46
+  },
+  {
+    "id": "capture-first-character-error",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "558a44c1a73754d52534224f6abc734cdc6c55235634a06d5c886274775c0021",
+    "fixture": {
+      "id": "first-character-error",
+      "text": "\u0000val x = 1\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "Retain the first-character scanner diagnostic",
+        "Diagnostic multiplicity equals the unmodified parser",
+        "Never mark recovered partial events complete"
+      ],
+      "reason": "An ordinary overridden Parser.in would scan the first source character twice and can duplicate this diagnostic."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0047-capture-first-character-error.scala",
+    "index": 47
+  },
+  {
+    "id": "capture-unterminated-leading-comment",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "afc4ad2b40ef88baf57a8b4e43d9430dff33f4f8b9a29a87c4fac55590153903",
+    "fixture": {
+      "id": "unterminated-leading-comment",
+      "text": "/* unfinished",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "Preserve constructor-time incomplete-input diagnostics without duplication",
+        "Retain partial evidence and reject coverage"
+      ],
+      "reason": "The first-token scan can consume an entire malformed source before construction returns."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0048-capture-unterminated-leading-comment.scala",
+    "index": 48
+  },
+  {
+    "id": "capture-leading-nested-comments",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "f61821e5ce591fa042354044df4f6c7e6e64d21c0517b367b37511fa0ae70c6f",
+    "fixture": {
+      "id": "leading-nested-comments",
+      "text": "/* outer /* inner */ tail */\n// lead\nval x = 1\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        }
+      ],
+      "checks": [
+        "Both native comments are preserved once",
+        "The nested block comment has its native outer interval",
+        "First code token remains captured"
+      ],
+      "reason": "A raw fetch skips whitespace and comments before returning its first code token."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0049-capture-leading-nested-comments.scala",
+    "index": 49
+  },
+  {
+    "id": "capture-semicolon-before-else",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "3690737a1d3d3496c010197356de85148f4bd2bd9086abc9779ce282a349913f",
+    "fixture": {
+      "id": "semicolon-before-else",
+      "text": "def f(x: Boolean): Int = { if (x) 1; else 2 }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "else",
+          "occurrence": 0,
+          "native_token_constant": "ELSE"
+        }
+      ],
+      "checks": [
+        "The semicolon remains a physical event when postProcessToken consumes it before ELSE",
+        "ELSE remains a separate physical event"
+      ],
+      "reason": "An after-nextToken-only observer loses a written separator here."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0050-capture-semicolon-before-else.scala",
+    "index": 50
+  },
+  {
+    "id": "capture-trailing-comma-before-close",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "ba6a899444910a1d5f240615d0fbac938787ed86d4d21ce955cf24c0cc671455",
+    "fixture": {
+      "id": "trailing-comma-before-close",
+      "text": "val values = List(\n  1,\n  2,\n)\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ",",
+          "occurrence": 0,
+          "native_token_constant": "COMMA"
+        },
+        {
+          "text": ",",
+          "occurrence": 1,
+          "native_token_constant": "COMMA"
+        },
+        {
+          "text": ")",
+          "occurrence": 0,
+          "native_token_constant": "RPAREN"
+        }
+      ],
+      "checks": [
+        "The trailing comma survives postProcessToken removal",
+        "The close is retained once despite peekAhead and lastOffset adjustment"
+      ],
+      "reason": "Physical coverage must not rely on the parser-visible fused token or lastOffset."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0051-capture-trailing-comma-before-close.scala",
+    "index": 51
+  },
+  {
+    "id": "capture-explicit-and-inferred-separators",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "9f3226e25ba1d9c528cc42c6db8cb842c0f6fc7a76e673525e6e60b1b038732c",
+    "fixture": {
+      "id": "explicit-and-inferred-separators",
+      "text": "def f(): Int = { val a = 1;\n  val b = 2\n\n  a + b }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        }
+      ],
+      "checks": [
+        "The written semicolon has its own source interval",
+        "NEWLINE/NEWLINES observations never become positive-width written separators",
+        "No buffered physical event is counted twice"
+      ],
+      "reason": "Separate scanner layout events from physical punctuation."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0052-capture-explicit-and-inferred-separators.scala",
+    "index": 52
+  },
+  {
+    "id": "capture-indentation-and-written-end",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "d89b4d7f8e665f2d9e243deeacac1b3a3e88b660377bb596e41e0403d9f091ce",
+    "fixture": {
+      "id": "indentation-and-written-end",
+      "text": "object Box:\n  def f(): Int =\n    1\n  end f\nend Box\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "end",
+          "occurrence": 0
+        },
+        {
+          "text": "end",
+          "occurrence": 1
+        },
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Written end names and keywords remain visible independently of OUTDENT",
+        "Parser token reassignment during checkEndMarker does not erase physical events",
+        "End-marker graph fields equal the stock parser"
+      ],
+      "reason": "Parser-dependent regions and direct token mutation must not change physical coverage."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0053-capture-indentation-and-written-end.scala",
+    "index": 53
+  },
+  {
+    "id": "capture-multiple-outdents-before-token",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "87d345f4f15536d47c9cfcf563a9545f9ab37b321638f11b058b2dd56b7dea4c",
+    "fixture": {
+      "id": "multiple-outdents-before-token",
+      "text": "object Box:\n  def f(): Int =\n    if true then\n      1\n    else\n      2\nval tail = 3\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        },
+        {
+          "text": "tail",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        }
+      ],
+      "checks": [
+        "A physical token buffered through multiple OUTDENTs is retained exactly once",
+        "Every synthetic layout event has zero authored width"
+      ],
+      "reason": "Repeated layout insertion reuses the same next token."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0054-capture-multiple-outdents-before-token.scala",
+    "index": 54
+  },
+  {
+    "id": "capture-self-arrow-reclassification",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "90c2599a1c18974f0970a953bde194cfefa7341e781ff5d9ece5b02ed0ef23ed",
+    "fixture": {
+      "id": "self-arrow-reclassification",
+      "text": "trait Box { self => val x = 1 }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "=>",
+          "occurrence": 0,
+          "native_token_constant": "ARROW"
+        }
+      ],
+      "checks": [
+        "The physical arrow survives the parser's SELFARROW reassignment",
+        "No invented INDENT width or token replaces the written arrow"
+      ],
+      "reason": "selfType changes the token directly to suppress indentation insertion."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0055-capture-self-arrow-reclassification.scala",
+    "index": 55
+  },
+  {
+    "id": "capture-colon-argument-region",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "5972830a462d386ddefc1785591b839546dfde3ccc9230b6ceb6f0e01eb58e45",
+    "fixture": {
+      "id": "colon-argument-region",
+      "text": "val result = values.map:\n  x =>\n    x + 1\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ":",
+          "occurrence": 0
+        },
+        {
+          "text": "=>",
+          "occurrence": 0,
+          "native_token_constant": "ARROW"
+        }
+      ],
+      "checks": [
+        "Physical colon and arrow intervals survive observeColonEOL and region changes",
+        "Scalar lambda body remains visible in graph and physical coverage"
+      ],
+      "reason": "Use the actual parser's region decisions rather than a standalone scanner's layout."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0056-capture-colon-argument-region.scala",
+    "index": 56
+  },
+  {
+    "id": "capture-interpolation-prefetched-identifiers",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "96180ddc0303be742e1a53daaff7b5016de6c8b2b4aec9a3f73af440335a1417",
+    "fixture": {
+      "id": "interpolation-prefetched-identifiers",
+      "text": "val text = s\"left $value and $other right\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"left $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "value",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": " and $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "other",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": " right\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Split each prefetched identifier at native next.offset",
+        "Identifier replay produces no duplicate interval",
+        "Literal fragments cannot absorb interpolation identifiers"
+      ],
+      "reason": "getStringPart scans a literal fragment and its next identifier in one fresh fetch."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0057-capture-interpolation-prefetched-identifiers.scala",
+    "index": 57
+  },
+  {
+    "id": "capture-interpolation-prefetched-this",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "a9d009afacb1ad83e2a55807518d76b1027c6317ebd070a5b932f9fcd2fe079d",
+    "fixture": {
+      "id": "interpolation-prefetched-this",
+      "text": "class Box { val text = s\"$this\" }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"$",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "this",
+          "occurrence": 0,
+          "native_token_constant": "THIS"
+        }
+      ],
+      "checks": [
+        "Preserve the actual native prefetched token THIS",
+        "Do not replace every prefetched interpolation token with IDENTIFIER"
+      ],
+      "reason": "finishNamedToken converts the prefetched identifier through the native keyword table."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0058-capture-interpolation-prefetched-this.scala",
+    "index": 58
+  },
+  {
+    "id": "capture-interpolation-executable-block",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "2a5c40e1c41764a42367454dcc79ee9bbfe68e50a55a578df21696a3b9e15113",
+    "fixture": {
+      "id": "interpolation-executable-block",
+      "text": "val text = s\"value ${ { val x = next(); x + 1 } } tail\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"value $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "{",
+          "occurrence": 0,
+          "native_token_constant": "LBRACE"
+        },
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        },
+        {
+          "text": " tail\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Literal fragment ends before the interpolation brace",
+        "Retain both nested braces and all executable block tokens",
+        "Return to literal scanning after the outer interpolation close"
+      ],
+      "reason": "A literal envelope must not hide executable interpolation."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0059-capture-interpolation-executable-block.scala",
+    "index": 59
+  },
+  {
+    "id": "capture-interpolation-escaped-dollar",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "6f30985451845a24db6e79e91998eeb0417ca7312c17f897ae2009f89823d9f2",
+    "fixture": {
+      "id": "interpolation-escaped-dollar",
+      "text": "val text = s\"$$value // literal\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"$$value // literal\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "No prefetched identifier or comment is invented inside escaped-dollar literal text"
+      ],
+      "reason": "The escaped dollar follows a different branch from executable interpolation."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0060-capture-interpolation-escaped-dollar.scala",
+    "index": 60
+  },
+  {
+    "id": "capture-multiline-interpolation-crlf",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "d09b59a1fda1c4d41c73586bc41cbf5164a7f5c97fa33e32ac04acfb9832d5cf",
+    "fixture": {
+      "id": "multiline-interpolation-crlf",
+      "text": "val text = s\"\"\"row\r\n$value\r\n${value + 1}\r\ntail\"\"\"\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"\"\"row\r\n$",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "value",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        },
+        {
+          "text": "\r\ntail\"\"\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Raw CRLF inside the literal is preserved",
+        "Both prefetched identifier and braced-expression interpolation routes remain separate from literal fragments",
+        "Closing quotes belong to the final literal interval"
+      ],
+      "reason": "String scanning switches between nextRawChar and nextChar around literal and expression boundaries."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0061-capture-multiline-interpolation-crlf.scala",
+    "index": 61
+  },
+  {
+    "id": "capture-unicode-supplementary-identifier",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "49b8fee192876e9537e15d941d51eeb683ee2e231a2090ba4ed3bc14cbafd175",
+    "fixture": {
+      "id": "unicode-supplementary-identifier",
+      "text": "val \ud801\udc00 = 1\nval text = s\"$\ud801\udc00\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\ud801\udc00",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": "\ud801\udc00",
+          "occurrence": 1,
+          "native_token_constant": "IDENTIFIER"
+        }
+      ],
+      "checks": [
+        "Each supplementary identifier spans two UTF-16 code units and four UTF-8 bytes",
+        "No event endpoint lies inside its surrogate pair",
+        "The interpolation prefetch retains the complete identifier"
+      ],
+      "reason": "Exercise both ordinary and interpolation-specific supplementary-identifier branches."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0062-capture-unicode-supplementary-identifier.scala",
+    "index": 62
+  },
+  {
+    "id": "capture-unicode-literal-and-crlf",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "2c7dcdbac310ca7392cad35f61a6836a25014b6e545fd37748dc3fe30d543512",
+    "fixture": {
+      "id": "unicode-literal-and-crlf",
+      "text": "val text = \"\u03bb\ud83d\ude00\"\r\nval tail = 2\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"\u03bb\ud83d\ude00\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        },
+        {
+          "text": "2",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Literal end excludes the following CRLF",
+        "UTF-16 and UTF-8 offsets remain distinct",
+        "Both CRLF pairs remain unchanged"
+      ],
+      "reason": "lastCharOffset must identify the first unconsumed source boundary through CRLF normalization."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0063-capture-unicode-literal-and-crlf.scala",
+    "index": 63
+  },
+  {
+    "id": "capture-comment-crlf-native-span-overhang",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "c7948ece199aca495f19b352173aec458ab08ab7e1deb02e533645269011f6fe",
+    "fixture": {
+      "id": "comment-crlf-native-span-overhang",
+      "text": "// line\r\n/* block */\r\nval x = 1\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        }
+      ],
+      "checks": [
+        "Retain native comment raw text and native spans without correction",
+        "Explicitly record the reviewed terminal-CR overhang before LF",
+        "Do not generalize this exception to arbitrary adjacent whitespace or code",
+        "Do not overlap a physical code token when validating comment coverage"
+      ],
+      "reason": "Native Comment uses charOffset - 1 after nextChar may have consumed a CRLF pair."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0064-capture-comment-crlf-native-span-overhang.scala",
+    "index": 64
+  },
+  {
+    "id": "capture-line-comment-at-eof",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "41efa565ed38f5e1e024976bb20912c45f9c2e7735bc381c7327360c81d363ba",
+    "fixture": {
+      "id": "line-comment-at-eof",
+      "text": "val x = 1 // terminal comment",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Retain the comment through exact source EOF",
+        "Do not invent a final newline",
+        "Comment-only tail is covered separately from the integer token"
+      ],
+      "reason": "Terminal comments use the EOF boundary rather than the CRLF exception."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0065-capture-line-comment-at-eof.scala",
+    "index": 65
+  },
+  {
+    "id": "capture-literal-comment-and-delimiter-text",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "094744945fcceb6658e69e472a06d3bdadff603d61bac6033c3038e0a3dffc70",
+    "fixture": {
+      "id": "literal-comment-and-delimiter-text",
+      "text": "val text = \"// not a comment /* } ; */\"\nval quote: Char = '\\''\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"// not a comment /* } ; */\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        },
+        {
+          "text": "'\\''",
+          "occurrence": 0,
+          "native_token_constant": "CHARLIT"
+        }
+      ],
+      "checks": [
+        "No comment, close brace or semicolon event is invented inside the string",
+        "Escaped character literal remains one physical interval"
+      ],
+      "reason": "Coverage classification must follow native literal boundaries rather than text-shaped delimiters."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0066-capture-literal-comment-and-delimiter-text.scala",
+    "index": 66
+  },
+  {
+    "id": "capture-unterminated-string-recovery",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "1cf3129747cd71b4893a1c16c6afa22bd43a858f0cdbf2dfd2b7d54c52f98ab6",
+    "fixture": {
+      "id": "unterminated-string-recovery",
+      "text": "val text = \"unfinished\nval tail = 1\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "required_raw_lexemes": [],
+      "checks": [
+        "Retain unclosed-string diagnostics and recovery events",
+        "A recovery SEMI cannot certify a written semicolon or complete coverage"
+      ],
+      "reason": "The scanner can synthesize SEMI after an unterminated string."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0067-capture-unterminated-string-recovery.scala",
+    "index": 67
+  },
+  {
+    "id": "capture-mismatched-delimiter-recovery",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "bd08aee9b1e2e954280e44bbbdf89eb995dc43f5bc162d79a5d64dbe030ee92b",
+    "fixture": {
+      "id": "mismatched-delimiter-recovery",
+      "text": "val values = List(1, 2]\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "required_raw_lexemes": [],
+      "checks": [
+        "Diagnostic and recovered graph parity with the unmodified parser",
+        "Retain partial events without qualification"
+      ],
+      "reason": "Error recovery must not turn a malformed source into a successful coverage result."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0068-capture-mismatched-delimiter-recovery.scala",
+    "index": 68
+  },
+  {
+    "id": "capture-xml-direct-reader-handoff",
+    "group": "capture",
+    "contract": "source-counts-v1/candidate-token-capture-v1/fixtures.json",
+    "source_sha256": "117c92f67c0a7d54385569125fe9dbead8a4d83e6c4f014bb29fb8faf08f611a",
+    "fixture": {
+      "id": "xml-direct-reader-handoff",
+      "text": "val node = <node value=\"x\">text</node>\n",
+      "expected_parse": "diagnostic",
+      "expected_capture": "reject-xml",
+      "required_raw_lexemes": [],
+      "checks": [
+        "Retain the stock parser's XML diagnostic with exact severity",
+        "Reject complete coverage on XMLSTART or XML handoff regardless of diagnostic severity",
+        "Do not bridge the XML body's unread event gap with an invented token"
+      ],
+      "reason": "MarkupParser advances the main character reader directly, bypassing the reviewed scanner event boundaries."
+    },
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/inputs/0069-capture-xml-direct-reader-handoff.scala",
+    "index": 69
+  },
+  {
+    "id": "scala-binarytrees-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/binarytrees/Main.scala",
+    "source_sha256": "bdcebd103b9da8de792d8f59da68125aad57d1bb286f10a4074506cb8d5a518b",
+    "index": 70
+  },
+  {
+    "id": "scala-fannkuchredux-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/fannkuchredux/Main.scala",
+    "source_sha256": "ba8c9dd5dafea3ecca8e9033e3f608120f6b922c58d3a702933adf7819812762",
+    "index": 71
+  },
+  {
+    "id": "scala-fasta-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/fasta/Main.scala",
+    "source_sha256": "a3e2f78453acff46081258324f49040b8a9a93ce48377eae1a5a3d5c30ae37f1",
+    "index": 72
+  },
+  {
+    "id": "scala-knucleotide-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/knucleotide/Main.scala",
+    "source_sha256": "8ab9a123c499bbad40b3c09aebf0910dc6977ec564bb3d025941206fc6a2d269",
+    "index": 73
+  },
+  {
+    "id": "scala-mandelbrot-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/mandelbrot/Main.scala",
+    "source_sha256": "de29618bbbfb47d11770eb62e771e5e659a8707a2781fbc5df7eb324e71471b7",
+    "index": 74
+  },
+  {
+    "id": "scala-nbody-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/nbody/Main.scala",
+    "source_sha256": "74b6a0eb04fa87240d47b903969898314c400e8715c436515d503f6f4112957b",
+    "index": 75
+  },
+  {
+    "id": "scala-pidigits-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/pidigits/Main.scala",
+    "source_sha256": "5dca3a4127f2283792a2dfa0fc1fff47366d70405b28d14d156c8b0609408ad5",
+    "index": 76
+  },
+  {
+    "id": "scala-regexredux-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/regexredux/Main.scala",
+    "source_sha256": "3e4db60819b528f72b39d7d2571a9c8493b054c13cee95f6b56a831e0cbbc362",
+    "index": 77
+  },
+  {
+    "id": "scala-revcomp-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/revcomp/Main.scala",
+    "source_sha256": "bd54d135034e035e77594fc22cec60b943356452ec5f5cb0fa50c27bfa381b6f",
+    "index": 78
+  },
+  {
+    "id": "scala-spectralnorm-jvm-v1",
+    "group": "application",
+    "source": "/private/tmp/mech-benchmark-completion/experiments/scala/source-v1/spectralnorm/Main.scala",
+    "source_sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+    "index": 79
+  }
+]
