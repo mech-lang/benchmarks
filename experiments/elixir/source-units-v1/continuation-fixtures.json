@@ -1,0 +1,20 @@
+{
+  "schema": "elixir-source-unit-continuation-fixtures-v1",
+  "status": "source-only-native-examples-awaiting-parser-observation",
+  "purpose": "General examples for native position review of callback composition. These are not observed native ASTs and do not alter the frozen source reader's fourteen-input fixture inventory. The retained application AST replay also exposes pipelines and following data values directly.",
+  "rule": "A scalar tail belonging to the same enclosing independent expression adds no unit on an already-owned closer row. Distinct physical continuation rows retain the physical baseline. New independent expressions retain separate owners. Matches, independent sequences and additional executable blocks in a continuation remain unqualified review cases.",
+  "fixtures": [
+    {"id": "callback-scalar-pipeline", "text": "Enum.map(items, fn x -> x end) |> Enum.count()\n", "expected_parse": "ok", "candidate_canonical_units": 3},
+    {"id": "callback-next-list-value", "text": "[Enum.map(items, fn x -> x end), \"\\n\"]\n", "expected_parse": "ok", "candidate_canonical_units": 3},
+    {"id": "callback-next-call-value", "text": "use(Enum.map(items, fn x -> x end), value)\n", "expected_parse": "ok", "candidate_canonical_units": 3},
+    {"id": "callback-wrapped-pipeline", "text": "Enum.map(items, fn x -> x end)\n|> Enum.count()\n", "expected_parse": "ok", "candidate_canonical_units": 4},
+    {"id": "callback-wrapped-list-value", "text": "[Enum.map(items, fn x -> x end),\n \"\\n\"]\n", "expected_parse": "ok", "candidate_canonical_units": 4},
+    {"id": "callback-packed-next-statement", "text": "Enum.map(items, fn x -> x end); next()\n", "expected_parse": "ok", "candidate_canonical_units": 4},
+    {"id": "callback-following-work", "text": "use(fn x -> x end, (a = 1; a))\n", "expected_parse": "ok", "candidate_canonical_units": null, "diagnostic": "non-scalar-expression-continuation-needs-review"},
+    {"id": "callback-following-chain", "text": "use(fn x -> x end, a = b = 1)\n", "expected_parse": "ok", "candidate_canonical_units": null, "diagnostic": "non-scalar-expression-continuation-needs-review"}
+  ],
+  "native_parser_executed": false,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false
+}

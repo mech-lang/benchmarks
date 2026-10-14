@@ -1,0 +1,26 @@
+{
+  "schema": "elixir-source-unit-fixture-contract-v1",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "status": "source-reviewed-expectations-awaiting-native-parser-replay",
+  "reader_fixture_source": "experiments/elixir/source-counts-v1/fixtures.json",
+  "evidence": "Expected original-source counts derive from the approved canonical rule. They are not observed native parser results. Fixture IDs select assertions only; application classification never depends on paths or source hashes.",
+  "fixtures": [
+    {"id": "fixture--packed-statements", "outcome": "candidate-count", "canonical_units": 3, "reason": "Three independent statements."},
+    {"id": "fixture--expanded-statements", "outcome": "candidate-count", "canonical_units": 3, "reason": "The same three statements on separate rows."},
+    {"id": "fixture--comment-literal-boundaries", "outcome": "candidate-count", "canonical_units": 3, "reason": "Comment rows disappear; literal punctuation does not introduce executable owners."},
+    {"id": "fixture--inline-and-block-functions", "outcome": "candidate-count", "canonical_units": 7, "reason": "Module header/close: two. Expression-only definition: one. Explicit definition header, two body statements and close: four."},
+    {"id": "fixture--callback-with-independent-bodies", "outcome": "candidate-count", "canonical_units": 5, "reason": "Surrounding call plus fn header: one. Three body statements. Written end: one."},
+    {"id": "fixture--case-branches", "outcome": "candidate-count", "canonical_units": 7, "reason": "Case header/close: two. First pattern header plus two body statements: three. Second pattern header and body: two."},
+    {"id": "fixture--keyword-expressions", "outcome": "candidate-count", "canonical_units": 6, "reason": "Keyword-only if expression: one. Bound explicit case header, pattern header, body and end: four. Final tuple expression: one."},
+    {"id": "fixture--match-chains-and-patterns", "outcome": "candidate-count", "canonical_units": 4, "reason": "Two chained bindings plus one destructuring match and one bitstring match."},
+    {"id": "fixture--wrapped-data", "outcome": "candidate-count", "canonical_units": 5, "reason": "All five nonblank source rows remain; data wrapping is not collapsed."},
+    {"id": "fixture--interpolation-work", "outcome": "needs-review", "diagnostic": "interpolation-with-independent-work-needs-review", "reason": "An interpolation containing assignment/independent expressions is not silently treated as scalar literal data."},
+    {"id": "fixture--unicode-crlf", "outcome": "candidate-count", "canonical_units": 2, "reason": "Two statements with original Unicode columns and CRLF boundaries preserved."},
+    {"id": "fixture--never-evaluate", "outcome": "candidate-count", "canonical_units": 1, "reason": "One parsed source statement; it must never execute."},
+    {"id": "fixture--unclosed-module", "outcome": "parse-rejected", "reason": "The native reader must reject the unterminated block."},
+    {"id": "fixture--mismatched-delimiter", "outcome": "parse-rejected", "reason": "The native reader must reject mismatched data delimiters."}
+  ],
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false
+}
