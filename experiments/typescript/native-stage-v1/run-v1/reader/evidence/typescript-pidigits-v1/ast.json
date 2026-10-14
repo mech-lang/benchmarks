@@ -1,0 +1,4253 @@
+{
+  "schema": "typescript-native-ast-source-v1",
+  "id": "typescript-pidigits-v1",
+  "source_path": "/private/tmp/mech-benchmark-completion/experiments/typescript/source-v1/pidigits.ts",
+  "source_sha256": "e8ed3a16a8d53c8119af7caccf9e788b0c598ea07f014ac2b1b21578232dda49",
+  "source_bytes": 1170,
+  "source_utf16_length": 1170,
+  "source_text": "import process = require(\"node:process\");\n\n// Typed source draft; compilation, conformance, work and counts are pending.\n/* The Computer Language Benchmarks Game\n   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/\n\n   transliterated from Alexander Fyodorov's program by Isaac Gouy\n*/\n\nfunction calculatePi(arg: number): void {\n  if (arg === 0) return;\n  let i = 0;\n  let digits = \"\";\n\n  let k: bigint = 0n;\n  let k1: bigint = 1n;\n  let a: bigint = 0n;\n  let d: bigint = 1n;\n  let m: bigint = 0n;\n  let n: bigint = 1n;\n  let t: bigint = 0n;\n  let u: bigint = 1n;\n\n  while (true) {\n    k += 1n;\n    k1 += 2n;\n    t = n << 1n;\n    n *= k;\n    a += t;\n    a *= k1;\n    d *= k1;\n\n    if (a > n) {\n      m = n * 3n + a;\n      t = m / d;\n      u = (m + n) / d;\n\n      if (t === u) {\n        digits += t.toString();\n        i += 1;\n\n        let last = i >= arg;\n        if (i % 10 == 0 || last) {\n\n          console.log(digits.padEnd(10, \" \") + '\\t:' + i);\n          digits = \"\";\n        }\n\n        if (last) break;\n\n        a = (a - d * t) * 10n;\n        n = n * 10n;\n      }\n    }\n  }\n}\n\n\ncalculatePi(process.argv[2] === undefined ? 30 : Number(process.argv[2]));\n",
+  "virtual_path": "/typescript-source-counts/typescript-pidigits-v1.ts",
+  "offset_units": "UTF-16 code units",
+  "parser": "TypeScript 7.0.2 native API",
+  "native_transport_verified": false,
+  "parse_diagnostics": [],
+  "nodes": [
+    {
+      "id": 0,
+      "parent": -1,
+      "kind": "SourceFile",
+      "native_kind": 307,
+      "flags": 0,
+      "start_utf16": 0,
+      "end_utf16": 1170,
+      "full_start_utf16": 0,
+      "text_sha256": "e8ed3a16a8d53c8119af7caccf9e788b0c598ea07f014ac2b1b21578232dda49",
+      "children": [
+        1,
+        5,
+        241,
+        263
+      ],
+      "roles": {
+        "statements": [
+          1,
+          5,
+          241
+        ],
+        "endOfFileToken": 263
+      }
+    },
+    {
+      "id": 1,
+      "parent": 0,
+      "kind": "ImportEqualsDeclaration",
+      "native_kind": 272,
+      "flags": 0,
+      "start_utf16": 0,
+      "end_utf16": 41,
+      "full_start_utf16": 0,
+      "text_sha256": "faae7fa9fca45bc0ea4b6109962c73701fc8ef72ee5edd7662d3146b37f15f3d",
+      "children": [
+        2,
+        3
+      ],
+      "roles": {
+        "name": 2,
+        "moduleReference": 3
+      }
+    },
+    {
+      "id": 2,
+      "parent": 1,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 7,
+      "end_utf16": 14,
+      "full_start_utf16": 6,
+      "text_sha256": "19ed40bf62c399b8492efda5b9a9184b68cf4d9d4a165b38557b9d14201d0c03",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 3,
+      "parent": 1,
+      "kind": "ExternalModuleReference",
+      "native_kind": 284,
+      "flags": 0,
+      "start_utf16": 17,
+      "end_utf16": 40,
+      "full_start_utf16": 16,
+      "text_sha256": "ef9ca98cd88f23ee0b1a4307ca1af6b17a2dfe1c4dad463b6dfdd1b9cb3182cb",
+      "children": [
+        4
+      ],
+      "roles": {
+        "expression": 4
+      }
+    },
+    {
+      "id": 4,
+      "parent": 3,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 25,
+      "end_utf16": 39,
+      "full_start_utf16": 25,
+      "text_sha256": "73270e6b992006c80f109f69d94ea917e63cd05929df04585adeccab06bd64ca",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 5,
+      "parent": 0,
+      "kind": "FunctionDeclaration",
+      "native_kind": 263,
+      "flags": 768,
+      "start_utf16": 297,
+      "end_utf16": 1092,
+      "full_start_utf16": 41,
+      "text_sha256": "3adb0ba191940c31f10b974adeea8a452302c0fd6844f3308c151ed53a39b4e3",
+      "children": [
+        6,
+        7,
+        10,
+        11
+      ],
+      "roles": {
+        "name": 6,
+        "type": 10,
+        "parameters": [
+          7
+        ],
+        "body": 11
+      }
+    },
+    {
+      "id": 6,
+      "parent": 5,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 306,
+      "end_utf16": 317,
+      "full_start_utf16": 305,
+      "text_sha256": "daf26740b16294db28366d4b5506adaed1ca06a9a4223956e2ca1cf1ee3fab36",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 7,
+      "parent": 5,
+      "kind": "Parameter",
+      "native_kind": 170,
+      "flags": 0,
+      "start_utf16": 318,
+      "end_utf16": 329,
+      "full_start_utf16": 318,
+      "text_sha256": "c951b1b86685e662201c242a716c302aae548e63537d8267c81b90ec85b05fdf",
+      "children": [
+        8,
+        9
+      ],
+      "roles": {
+        "name": 8,
+        "type": 9
+      }
+    },
+    {
+      "id": 8,
+      "parent": 7,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 318,
+      "end_utf16": 321,
+      "full_start_utf16": 318,
+      "text_sha256": "b25f03dedd69be07f356a06fe35c1b0ddc0de77dcd9066c4be0c6bbde14b23ff",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 9,
+      "parent": 7,
+      "kind": "NumberKeyword",
+      "native_kind": 150,
+      "flags": 0,
+      "start_utf16": 323,
+      "end_utf16": 329,
+      "full_start_utf16": 322,
+      "text_sha256": "12886f9d00055adf24c40579e22d31b2b45f2023f892954ffd5567beb60825f8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 10,
+      "parent": 5,
+      "kind": "VoidKeyword",
+      "native_kind": 115,
+      "flags": 0,
+      "start_utf16": 332,
+      "end_utf16": 336,
+      "full_start_utf16": 331,
+      "text_sha256": "445be54d48a2e6294369c84c61cd0929209d4e1084536159bdf7002bddfe094b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 11,
+      "parent": 5,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 337,
+      "end_utf16": 1092,
+      "full_start_utf16": 336,
+      "text_sha256": "50553d6e34570e4df51bf8c8217ec79714a79c465694478f28f5dd730fe44c70",
+      "children": [
+        12,
+        18,
+        23,
+        28,
+        34,
+        40,
+        46,
+        52,
+        58,
+        64,
+        70,
+        76
+      ],
+      "roles": {
+        "statements": [
+          12,
+          18,
+          23,
+          28,
+          34,
+          40,
+          46,
+          52,
+          58,
+          64,
+          70,
+          76
+        ]
+      }
+    },
+    {
+      "id": 12,
+      "parent": 11,
+      "kind": "IfStatement",
+      "native_kind": 246,
+      "flags": 0,
+      "start_utf16": 341,
+      "end_utf16": 363,
+      "full_start_utf16": 338,
+      "text_sha256": "25a0455d5f364484fc1a9961263ecaa1dfb70e822100002e5f435578e21e8935",
+      "children": [
+        13,
+        17
+      ],
+      "roles": {
+        "expression": 13,
+        "thenStatement": 17
+      }
+    },
+    {
+      "id": 13,
+      "parent": 12,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 345,
+      "end_utf16": 354,
+      "full_start_utf16": 345,
+      "text_sha256": "55a3887e46b0feaf0e69a6ccbd3bd9b6f85b55e921cad30953966ed10a5b186e",
+      "children": [
+        14,
+        15,
+        16
+      ],
+      "roles": {
+        "left": 14,
+        "right": 16,
+        "operatorToken": 15
+      }
+    },
+    {
+      "id": 14,
+      "parent": 13,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 345,
+      "end_utf16": 348,
+      "full_start_utf16": 345,
+      "text_sha256": "b25f03dedd69be07f356a06fe35c1b0ddc0de77dcd9066c4be0c6bbde14b23ff",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 15,
+      "parent": 13,
+      "kind": "EqualsEqualsEqualsToken",
+      "native_kind": 36,
+      "flags": 0,
+      "start_utf16": 349,
+      "end_utf16": 352,
+      "full_start_utf16": 348,
+      "text_sha256": "2cf2b04b1bae57d1fb472a2e73a6066ad6df8fe5dfd000336dead1b2f7627caa",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 16,
+      "parent": 13,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 353,
+      "end_utf16": 354,
+      "full_start_utf16": 352,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 17,
+      "parent": 12,
+      "kind": "ReturnStatement",
+      "native_kind": 254,
+      "flags": 0,
+      "start_utf16": 356,
+      "end_utf16": 363,
+      "full_start_utf16": 355,
+      "text_sha256": "8beaabe25ab7e0a80d1e25bada55a2f5a227101c2210eadf0b368d3c2be4a83f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 18,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 366,
+      "end_utf16": 376,
+      "full_start_utf16": 363,
+      "text_sha256": "ecbbe1fcdd50e1f1da514083b11d87c12577b723a650dc01fee5237dd019c70e",
+      "children": [
+        19
+      ],
+      "roles": {
+        "declarationList": 19
+      }
+    },
+    {
+      "id": 19,
+      "parent": 18,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 366,
+      "end_utf16": 375,
+      "full_start_utf16": 363,
+      "text_sha256": "ecb911a18b7e4f7e3d05338b1911654076ff099d86eec25f8baa3d2034759ef0",
+      "children": [
+        20
+      ],
+      "roles": {
+        "declarations": [
+          20
+        ]
+      }
+    },
+    {
+      "id": 20,
+      "parent": 19,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 370,
+      "end_utf16": 375,
+      "full_start_utf16": 369,
+      "text_sha256": "ccf15e4f87ae433747e877839acfb8e28394cad1fad691056df99a5fef893bc4",
+      "children": [
+        21,
+        22
+      ],
+      "roles": {
+        "name": 21,
+        "initializer": 22
+      }
+    },
+    {
+      "id": 21,
+      "parent": 20,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 370,
+      "end_utf16": 371,
+      "full_start_utf16": 369,
+      "text_sha256": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 22,
+      "parent": 20,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 374,
+      "end_utf16": 375,
+      "full_start_utf16": 373,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 23,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 379,
+      "end_utf16": 395,
+      "full_start_utf16": 376,
+      "text_sha256": "26fecb87e7874fceb129416430f3403ca2e56e57c379ec8c6d466caf1b849d8a",
+      "children": [
+        24
+      ],
+      "roles": {
+        "declarationList": 24
+      }
+    },
+    {
+      "id": 24,
+      "parent": 23,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 379,
+      "end_utf16": 394,
+      "full_start_utf16": 376,
+      "text_sha256": "25dbbce98bbf965097c265c138b797e48ef754963e60d92c329a46b0c03f9fe7",
+      "children": [
+        25
+      ],
+      "roles": {
+        "declarations": [
+          25
+        ]
+      }
+    },
+    {
+      "id": 25,
+      "parent": 24,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 383,
+      "end_utf16": 394,
+      "full_start_utf16": 382,
+      "text_sha256": "83ddd944c36129a3c6a3641c3a5a0b5aef985e1e06a3cdb00106ebedbc05b2d2",
+      "children": [
+        26,
+        27
+      ],
+      "roles": {
+        "name": 26,
+        "initializer": 27
+      }
+    },
+    {
+      "id": 26,
+      "parent": 25,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 383,
+      "end_utf16": 389,
+      "full_start_utf16": 382,
+      "text_sha256": "cc6b6bad31a0ff4d6dfd4953a6346a1c463d884723898a2af964b998e5499e22",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 27,
+      "parent": 25,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 392,
+      "end_utf16": 394,
+      "full_start_utf16": 391,
+      "text_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 28,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 399,
+      "end_utf16": 418,
+      "full_start_utf16": 395,
+      "text_sha256": "c4051e6fbd94e4e1443ea9fa51ccacd91639c35342a569f5994147d4986df4ea",
+      "children": [
+        29
+      ],
+      "roles": {
+        "declarationList": 29
+      }
+    },
+    {
+      "id": 29,
+      "parent": 28,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 399,
+      "end_utf16": 417,
+      "full_start_utf16": 395,
+      "text_sha256": "f57a0f4dad05bde38ffad00c2b35d3c7351f7fa8af3e1789a4ed4f3c0ec93a6a",
+      "children": [
+        30
+      ],
+      "roles": {
+        "declarations": [
+          30
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "parent": 29,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 403,
+      "end_utf16": 417,
+      "full_start_utf16": 402,
+      "text_sha256": "5c8db3f1f1ab47a6bbad8272c104a4a200b0b258136d42f4147dc7101d45d65a",
+      "children": [
+        31,
+        32,
+        33
+      ],
+      "roles": {
+        "name": 31,
+        "type": 32,
+        "initializer": 33
+      }
+    },
+    {
+      "id": 31,
+      "parent": 30,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 403,
+      "end_utf16": 404,
+      "full_start_utf16": 402,
+      "text_sha256": "8254c329a92850f6d539dd376f4816ee2764517da5e0235514af433164480d7a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 32,
+      "parent": 30,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 406,
+      "end_utf16": 412,
+      "full_start_utf16": 405,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 33,
+      "parent": 30,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 415,
+      "end_utf16": 417,
+      "full_start_utf16": 414,
+      "text_sha256": "3ad4ee182e21c25db763cda6359ecc441b8ea32ea4d6631c012aac7fa7d362dc",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 34,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 421,
+      "end_utf16": 441,
+      "full_start_utf16": 418,
+      "text_sha256": "a84ac6bd7054b338c2bf323b1f3890ef886222678545848a9806b579f03d66fb",
+      "children": [
+        35
+      ],
+      "roles": {
+        "declarationList": 35
+      }
+    },
+    {
+      "id": 35,
+      "parent": 34,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 421,
+      "end_utf16": 440,
+      "full_start_utf16": 418,
+      "text_sha256": "ef9eac136eb994f771b50f61135053bd95ebcd40d71b4bb6ba2ac57db781d784",
+      "children": [
+        36
+      ],
+      "roles": {
+        "declarations": [
+          36
+        ]
+      }
+    },
+    {
+      "id": 36,
+      "parent": 35,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 425,
+      "end_utf16": 440,
+      "full_start_utf16": 424,
+      "text_sha256": "e0356f107f1d2274502df072c6bf7ec531750e09792460a518a013aa75aa5ba9",
+      "children": [
+        37,
+        38,
+        39
+      ],
+      "roles": {
+        "name": 37,
+        "type": 38,
+        "initializer": 39
+      }
+    },
+    {
+      "id": 37,
+      "parent": 36,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 425,
+      "end_utf16": 427,
+      "full_start_utf16": 424,
+      "text_sha256": "6ab9f1eb8f7d3388f4f9d586f66e99fd54080df2c446f0e58668b09c08a16dd0",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 38,
+      "parent": 36,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 429,
+      "end_utf16": 435,
+      "full_start_utf16": 428,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 39,
+      "parent": 36,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 438,
+      "end_utf16": 440,
+      "full_start_utf16": 437,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 40,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 444,
+      "end_utf16": 463,
+      "full_start_utf16": 441,
+      "text_sha256": "9771314a761acb13480891006e2e87db0445fef49ae1ed29e467543a558d4ed1",
+      "children": [
+        41
+      ],
+      "roles": {
+        "declarationList": 41
+      }
+    },
+    {
+      "id": 41,
+      "parent": 40,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 444,
+      "end_utf16": 462,
+      "full_start_utf16": 441,
+      "text_sha256": "fdc869418a7c3d0701eb1763884e43745e69aee3021009c637029e92cd2e44f6",
+      "children": [
+        42
+      ],
+      "roles": {
+        "declarations": [
+          42
+        ]
+      }
+    },
+    {
+      "id": 42,
+      "parent": 41,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 448,
+      "end_utf16": 462,
+      "full_start_utf16": 447,
+      "text_sha256": "e0b8fb49211fa46ca1c83444727027629806400ac68918266c03257c34fb9e2c",
+      "children": [
+        43,
+        44,
+        45
+      ],
+      "roles": {
+        "name": 43,
+        "type": 44,
+        "initializer": 45
+      }
+    },
+    {
+      "id": 43,
+      "parent": 42,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 448,
+      "end_utf16": 449,
+      "full_start_utf16": 447,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 44,
+      "parent": 42,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 451,
+      "end_utf16": 457,
+      "full_start_utf16": 450,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 45,
+      "parent": 42,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 460,
+      "end_utf16": 462,
+      "full_start_utf16": 459,
+      "text_sha256": "3ad4ee182e21c25db763cda6359ecc441b8ea32ea4d6631c012aac7fa7d362dc",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 46,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 466,
+      "end_utf16": 485,
+      "full_start_utf16": 463,
+      "text_sha256": "e1ad2445b3096e4c24a560addaf7a27173362c421c587c82a53abd03e24fc827",
+      "children": [
+        47
+      ],
+      "roles": {
+        "declarationList": 47
+      }
+    },
+    {
+      "id": 47,
+      "parent": 46,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 466,
+      "end_utf16": 484,
+      "full_start_utf16": 463,
+      "text_sha256": "5aecffd159c017d79104f2760ce651d4a488e10b848e0faded05822c6cd1532a",
+      "children": [
+        48
+      ],
+      "roles": {
+        "declarations": [
+          48
+        ]
+      }
+    },
+    {
+      "id": 48,
+      "parent": 47,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 470,
+      "end_utf16": 484,
+      "full_start_utf16": 469,
+      "text_sha256": "aa69c423495cf2a06d030fef43e249bc270cc016cc8ab6b1af54f54b9d94e6e1",
+      "children": [
+        49,
+        50,
+        51
+      ],
+      "roles": {
+        "name": 49,
+        "type": 50,
+        "initializer": 51
+      }
+    },
+    {
+      "id": 49,
+      "parent": 48,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 470,
+      "end_utf16": 471,
+      "full_start_utf16": 469,
+      "text_sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 50,
+      "parent": 48,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 473,
+      "end_utf16": 479,
+      "full_start_utf16": 472,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 51,
+      "parent": 48,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 482,
+      "end_utf16": 484,
+      "full_start_utf16": 481,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 52,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 488,
+      "end_utf16": 507,
+      "full_start_utf16": 485,
+      "text_sha256": "8653d806075ec3e9d1cd1945d3fb158958c96810ec6537a3e167728ed9da3727",
+      "children": [
+        53
+      ],
+      "roles": {
+        "declarationList": 53
+      }
+    },
+    {
+      "id": 53,
+      "parent": 52,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 488,
+      "end_utf16": 506,
+      "full_start_utf16": 485,
+      "text_sha256": "556e1ead4fa3d5f5f8bba59f5015a64e468b3e2a25df510822aaaca76f4fa855",
+      "children": [
+        54
+      ],
+      "roles": {
+        "declarations": [
+          54
+        ]
+      }
+    },
+    {
+      "id": 54,
+      "parent": 53,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 492,
+      "end_utf16": 506,
+      "full_start_utf16": 491,
+      "text_sha256": "bbd6cee009b8cf12eb055bbb4b3aca41e3647ee3740ac332d076fea49c15a633",
+      "children": [
+        55,
+        56,
+        57
+      ],
+      "roles": {
+        "name": 55,
+        "type": 56,
+        "initializer": 57
+      }
+    },
+    {
+      "id": 55,
+      "parent": 54,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 492,
+      "end_utf16": 493,
+      "full_start_utf16": 491,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 56,
+      "parent": 54,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 495,
+      "end_utf16": 501,
+      "full_start_utf16": 494,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 57,
+      "parent": 54,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 504,
+      "end_utf16": 506,
+      "full_start_utf16": 503,
+      "text_sha256": "3ad4ee182e21c25db763cda6359ecc441b8ea32ea4d6631c012aac7fa7d362dc",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 58,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 510,
+      "end_utf16": 529,
+      "full_start_utf16": 507,
+      "text_sha256": "7d991a4b7f509f0da701666704a985d811eeccbdf16562438b23aaea8d78be69",
+      "children": [
+        59
+      ],
+      "roles": {
+        "declarationList": 59
+      }
+    },
+    {
+      "id": 59,
+      "parent": 58,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 510,
+      "end_utf16": 528,
+      "full_start_utf16": 507,
+      "text_sha256": "d42efa9e4af0e30f24ca2d62e597fabb3815c26b42d78f6e75e19eed93037f6f",
+      "children": [
+        60
+      ],
+      "roles": {
+        "declarations": [
+          60
+        ]
+      }
+    },
+    {
+      "id": 60,
+      "parent": 59,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 514,
+      "end_utf16": 528,
+      "full_start_utf16": 513,
+      "text_sha256": "cdc08d9152d90d0915ff8398dd06e03a48031e26f4ff1f26bee103503bf92fe3",
+      "children": [
+        61,
+        62,
+        63
+      ],
+      "roles": {
+        "name": 61,
+        "type": 62,
+        "initializer": 63
+      }
+    },
+    {
+      "id": 61,
+      "parent": 60,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 514,
+      "end_utf16": 515,
+      "full_start_utf16": 513,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 62,
+      "parent": 60,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 517,
+      "end_utf16": 523,
+      "full_start_utf16": 516,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 63,
+      "parent": 60,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 526,
+      "end_utf16": 528,
+      "full_start_utf16": 525,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 64,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 532,
+      "end_utf16": 551,
+      "full_start_utf16": 529,
+      "text_sha256": "b33951a1f1d041ed53a56816afdc9b49404daf0e61d4d5796ff1c3925c467f24",
+      "children": [
+        65
+      ],
+      "roles": {
+        "declarationList": 65
+      }
+    },
+    {
+      "id": 65,
+      "parent": 64,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 532,
+      "end_utf16": 550,
+      "full_start_utf16": 529,
+      "text_sha256": "006de1f5830b0bfa6f0066d4198d27659f169e5078933e3f4255dd659207b7b7",
+      "children": [
+        66
+      ],
+      "roles": {
+        "declarations": [
+          66
+        ]
+      }
+    },
+    {
+      "id": 66,
+      "parent": 65,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 536,
+      "end_utf16": 550,
+      "full_start_utf16": 535,
+      "text_sha256": "709180824d0381f37b459a876407a430138916735051aa924cb952d68bf1b908",
+      "children": [
+        67,
+        68,
+        69
+      ],
+      "roles": {
+        "name": 67,
+        "type": 68,
+        "initializer": 69
+      }
+    },
+    {
+      "id": 67,
+      "parent": 66,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 536,
+      "end_utf16": 537,
+      "full_start_utf16": 535,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 68,
+      "parent": 66,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 539,
+      "end_utf16": 545,
+      "full_start_utf16": 538,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 69,
+      "parent": 66,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 548,
+      "end_utf16": 550,
+      "full_start_utf16": 547,
+      "text_sha256": "3ad4ee182e21c25db763cda6359ecc441b8ea32ea4d6631c012aac7fa7d362dc",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 70,
+      "parent": 11,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 554,
+      "end_utf16": 573,
+      "full_start_utf16": 551,
+      "text_sha256": "2e7a2276fefdc405e40cec78038fe382023bd0a446c3c4183a7f22ff9f75b90f",
+      "children": [
+        71
+      ],
+      "roles": {
+        "declarationList": 71
+      }
+    },
+    {
+      "id": 71,
+      "parent": 70,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 554,
+      "end_utf16": 572,
+      "full_start_utf16": 551,
+      "text_sha256": "e04be6b1af46af96d45cb40ed7d5f3686559852a19cae50e51a3a4f7ad76e0da",
+      "children": [
+        72
+      ],
+      "roles": {
+        "declarations": [
+          72
+        ]
+      }
+    },
+    {
+      "id": 72,
+      "parent": 71,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 558,
+      "end_utf16": 572,
+      "full_start_utf16": 557,
+      "text_sha256": "96ed30f3ed1bdc613e93410391d08a527c3f07fd64c3bcdef6f6be8bf583d121",
+      "children": [
+        73,
+        74,
+        75
+      ],
+      "roles": {
+        "name": 73,
+        "type": 74,
+        "initializer": 75
+      }
+    },
+    {
+      "id": 73,
+      "parent": 72,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 558,
+      "end_utf16": 559,
+      "full_start_utf16": 557,
+      "text_sha256": "0bfe935e70c321c7ca3afc75ce0d0ca2f98b5422e008bb31c00c6d7f1f1c0ad6",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 74,
+      "parent": 72,
+      "kind": "BigIntKeyword",
+      "native_kind": 163,
+      "flags": 0,
+      "start_utf16": 561,
+      "end_utf16": 567,
+      "full_start_utf16": 560,
+      "text_sha256": "75d012fe28656e0a51e783b2a42c2b30b807009894b8a0cc0ea5e54f928d93a2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 75,
+      "parent": 72,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 570,
+      "end_utf16": 572,
+      "full_start_utf16": 569,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 76,
+      "parent": 11,
+      "kind": "WhileStatement",
+      "native_kind": 248,
+      "flags": 0,
+      "start_utf16": 577,
+      "end_utf16": 1090,
+      "full_start_utf16": 573,
+      "text_sha256": "0dc6db1e41110d7a17a21e016fc471f95cccbcb5d5c524b20a396b565ddc6125",
+      "children": [
+        77,
+        78
+      ],
+      "roles": {
+        "expression": 77,
+        "statement": 78
+      }
+    },
+    {
+      "id": 77,
+      "parent": 76,
+      "kind": "TrueKeyword",
+      "native_kind": 111,
+      "flags": 0,
+      "start_utf16": 584,
+      "end_utf16": 588,
+      "full_start_utf16": 584,
+      "text_sha256": "b5bea41b6c623f7c09f1bf24dcae58ebab3c0cdd90ad966bc43a45b44867e12b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 78,
+      "parent": 76,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 590,
+      "end_utf16": 1090,
+      "full_start_utf16": 589,
+      "text_sha256": "0eab99f72759a007aca98557acbd0bedf7240ee9a5967652cd9941c3971b4aba",
+      "children": [
+        79,
+        84,
+        89,
+        97,
+        102,
+        107,
+        112,
+        117
+      ],
+      "roles": {
+        "statements": [
+          79,
+          84,
+          89,
+          97,
+          102,
+          107,
+          112,
+          117
+        ]
+      }
+    },
+    {
+      "id": 79,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 596,
+      "end_utf16": 604,
+      "full_start_utf16": 591,
+      "text_sha256": "027a4b9210cd72c2a157b57041f17b30cda5f922fd98a1c3069b40afa0b16310",
+      "children": [
+        80
+      ],
+      "roles": {
+        "expression": 80
+      }
+    },
+    {
+      "id": 80,
+      "parent": 79,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 596,
+      "end_utf16": 603,
+      "full_start_utf16": 591,
+      "text_sha256": "66e96890d2811dfea60ba2a3c073f6c350d20d4b6ad2d5121cf07fc45c8fa040",
+      "children": [
+        81,
+        82,
+        83
+      ],
+      "roles": {
+        "left": 81,
+        "right": 83,
+        "operatorToken": 82
+      }
+    },
+    {
+      "id": 81,
+      "parent": 80,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 596,
+      "end_utf16": 597,
+      "full_start_utf16": 591,
+      "text_sha256": "8254c329a92850f6d539dd376f4816ee2764517da5e0235514af433164480d7a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 82,
+      "parent": 80,
+      "kind": "PlusEqualsToken",
+      "native_kind": 64,
+      "flags": 0,
+      "start_utf16": 598,
+      "end_utf16": 600,
+      "full_start_utf16": 597,
+      "text_sha256": "6254c28f7a6304931425ed7d57780e8b39a9f8ef7d0a63f9853eec9f5dd040d5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 83,
+      "parent": 80,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 601,
+      "end_utf16": 603,
+      "full_start_utf16": 600,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 84,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 609,
+      "end_utf16": 618,
+      "full_start_utf16": 604,
+      "text_sha256": "192143a50f1cffc8beff450c04a3d46c7095bc5060fe999124e3058a1dc98d2f",
+      "children": [
+        85
+      ],
+      "roles": {
+        "expression": 85
+      }
+    },
+    {
+      "id": 85,
+      "parent": 84,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 609,
+      "end_utf16": 617,
+      "full_start_utf16": 604,
+      "text_sha256": "5d4793648642d07231f93e2d5478fdccb29fb18c976df2e29e8a26b0f3152e45",
+      "children": [
+        86,
+        87,
+        88
+      ],
+      "roles": {
+        "left": 86,
+        "right": 88,
+        "operatorToken": 87
+      }
+    },
+    {
+      "id": 86,
+      "parent": 85,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 609,
+      "end_utf16": 611,
+      "full_start_utf16": 604,
+      "text_sha256": "6ab9f1eb8f7d3388f4f9d586f66e99fd54080df2c446f0e58668b09c08a16dd0",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 87,
+      "parent": 85,
+      "kind": "PlusEqualsToken",
+      "native_kind": 64,
+      "flags": 0,
+      "start_utf16": 612,
+      "end_utf16": 614,
+      "full_start_utf16": 611,
+      "text_sha256": "6254c28f7a6304931425ed7d57780e8b39a9f8ef7d0a63f9853eec9f5dd040d5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 88,
+      "parent": 85,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 615,
+      "end_utf16": 617,
+      "full_start_utf16": 614,
+      "text_sha256": "8438925a75f710ecc7c410008eb3f67dc1c184bdbb5598faf2f120101491ebd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 89,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 623,
+      "end_utf16": 635,
+      "full_start_utf16": 618,
+      "text_sha256": "5f19edb2035597d66cbf585da76c16a7c2d98015eed73a48a0cd5dd2d4d5e81a",
+      "children": [
+        90
+      ],
+      "roles": {
+        "expression": 90
+      }
+    },
+    {
+      "id": 90,
+      "parent": 89,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 623,
+      "end_utf16": 634,
+      "full_start_utf16": 618,
+      "text_sha256": "e9a4867bf317982b53018396a4c5ce23cb5d5c10fc550187192c3bb2b5974047",
+      "children": [
+        91,
+        92,
+        93
+      ],
+      "roles": {
+        "left": 91,
+        "right": 93,
+        "operatorToken": 92
+      }
+    },
+    {
+      "id": 91,
+      "parent": 90,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 623,
+      "end_utf16": 624,
+      "full_start_utf16": 618,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 92,
+      "parent": 90,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 625,
+      "end_utf16": 626,
+      "full_start_utf16": 624,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 93,
+      "parent": 90,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 627,
+      "end_utf16": 634,
+      "full_start_utf16": 626,
+      "text_sha256": "681db42d886ec633430b854f8628ea5f3dcbdb1a52a45902315033404366677f",
+      "children": [
+        94,
+        95,
+        96
+      ],
+      "roles": {
+        "left": 94,
+        "right": 96,
+        "operatorToken": 95
+      }
+    },
+    {
+      "id": 94,
+      "parent": 93,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 627,
+      "end_utf16": 628,
+      "full_start_utf16": 626,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 95,
+      "parent": 93,
+      "kind": "LessThanLessThanToken",
+      "native_kind": 47,
+      "flags": 0,
+      "start_utf16": 629,
+      "end_utf16": 631,
+      "full_start_utf16": 628,
+      "text_sha256": "4be261c018f23deac37f17f24abb5f42c4f32044fa3116d7b618446fb03ca09e",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 96,
+      "parent": 93,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 632,
+      "end_utf16": 634,
+      "full_start_utf16": 631,
+      "text_sha256": "741d14df730e53a5a019a710116f696db4ec23a132b74cf6fbb3cf7617e68313",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 97,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 640,
+      "end_utf16": 647,
+      "full_start_utf16": 635,
+      "text_sha256": "83eae224e4b868e7641b76ee8972b82cea2755a22ab480e66db934560dd0c8e1",
+      "children": [
+        98
+      ],
+      "roles": {
+        "expression": 98
+      }
+    },
+    {
+      "id": 98,
+      "parent": 97,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 640,
+      "end_utf16": 646,
+      "full_start_utf16": 635,
+      "text_sha256": "af9760886e03a58fcf329a93bf5a6f4f40e6606369de6712e107d8307a61f7e9",
+      "children": [
+        99,
+        100,
+        101
+      ],
+      "roles": {
+        "left": 99,
+        "right": 101,
+        "operatorToken": 100
+      }
+    },
+    {
+      "id": 99,
+      "parent": 98,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 640,
+      "end_utf16": 641,
+      "full_start_utf16": 635,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 100,
+      "parent": 98,
+      "kind": "AsteriskEqualsToken",
+      "native_kind": 66,
+      "flags": 0,
+      "start_utf16": 642,
+      "end_utf16": 644,
+      "full_start_utf16": 641,
+      "text_sha256": "05f1b874896fea9dd7aa6b682e6b0d8be8e810cdd3706947c7579500af980be3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 101,
+      "parent": 98,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 645,
+      "end_utf16": 646,
+      "full_start_utf16": 644,
+      "text_sha256": "8254c329a92850f6d539dd376f4816ee2764517da5e0235514af433164480d7a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 102,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 652,
+      "end_utf16": 659,
+      "full_start_utf16": 647,
+      "text_sha256": "136aab627f1123a5c780a892c26c80f2c0366217eac3ef94f5cffa9df4d2e825",
+      "children": [
+        103
+      ],
+      "roles": {
+        "expression": 103
+      }
+    },
+    {
+      "id": 103,
+      "parent": 102,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 652,
+      "end_utf16": 658,
+      "full_start_utf16": 647,
+      "text_sha256": "266885c0142d016fa1163da64a0c4fc62d9230cb9000f6c7a8a4e997cde8493a",
+      "children": [
+        104,
+        105,
+        106
+      ],
+      "roles": {
+        "left": 104,
+        "right": 106,
+        "operatorToken": 105
+      }
+    },
+    {
+      "id": 104,
+      "parent": 103,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 652,
+      "end_utf16": 653,
+      "full_start_utf16": 647,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 105,
+      "parent": 103,
+      "kind": "PlusEqualsToken",
+      "native_kind": 64,
+      "flags": 0,
+      "start_utf16": 654,
+      "end_utf16": 656,
+      "full_start_utf16": 653,
+      "text_sha256": "6254c28f7a6304931425ed7d57780e8b39a9f8ef7d0a63f9853eec9f5dd040d5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 106,
+      "parent": 103,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 657,
+      "end_utf16": 658,
+      "full_start_utf16": 656,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 107,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 664,
+      "end_utf16": 672,
+      "full_start_utf16": 659,
+      "text_sha256": "9caaf44749776f5e4b50c516e6df1376bda860c7a69340abfa44e5fc4a12d7fb",
+      "children": [
+        108
+      ],
+      "roles": {
+        "expression": 108
+      }
+    },
+    {
+      "id": 108,
+      "parent": 107,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 664,
+      "end_utf16": 671,
+      "full_start_utf16": 659,
+      "text_sha256": "5e8c29074bf5fb035b0d132c42fae6dead8d597d5b0650425f855983987ba393",
+      "children": [
+        109,
+        110,
+        111
+      ],
+      "roles": {
+        "left": 109,
+        "right": 111,
+        "operatorToken": 110
+      }
+    },
+    {
+      "id": 109,
+      "parent": 108,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 664,
+      "end_utf16": 665,
+      "full_start_utf16": 659,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 110,
+      "parent": 108,
+      "kind": "AsteriskEqualsToken",
+      "native_kind": 66,
+      "flags": 0,
+      "start_utf16": 666,
+      "end_utf16": 668,
+      "full_start_utf16": 665,
+      "text_sha256": "05f1b874896fea9dd7aa6b682e6b0d8be8e810cdd3706947c7579500af980be3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 111,
+      "parent": 108,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 669,
+      "end_utf16": 671,
+      "full_start_utf16": 668,
+      "text_sha256": "6ab9f1eb8f7d3388f4f9d586f66e99fd54080df2c446f0e58668b09c08a16dd0",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 112,
+      "parent": 78,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 677,
+      "end_utf16": 685,
+      "full_start_utf16": 672,
+      "text_sha256": "e85be734f1d74c698cd16d2d1025d1d7ee978aee87a5f713726ada0bfcbf05c1",
+      "children": [
+        113
+      ],
+      "roles": {
+        "expression": 113
+      }
+    },
+    {
+      "id": 113,
+      "parent": 112,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 677,
+      "end_utf16": 684,
+      "full_start_utf16": 672,
+      "text_sha256": "b3289ea57769a576924eb696d0c0ddd5ff2ec00b46c688882beba800fb05e687",
+      "children": [
+        114,
+        115,
+        116
+      ],
+      "roles": {
+        "left": 114,
+        "right": 116,
+        "operatorToken": 115
+      }
+    },
+    {
+      "id": 114,
+      "parent": 113,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 677,
+      "end_utf16": 678,
+      "full_start_utf16": 672,
+      "text_sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 115,
+      "parent": 113,
+      "kind": "AsteriskEqualsToken",
+      "native_kind": 66,
+      "flags": 0,
+      "start_utf16": 679,
+      "end_utf16": 681,
+      "full_start_utf16": 678,
+      "text_sha256": "05f1b874896fea9dd7aa6b682e6b0d8be8e810cdd3706947c7579500af980be3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 116,
+      "parent": 113,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 682,
+      "end_utf16": 684,
+      "full_start_utf16": 681,
+      "text_sha256": "6ab9f1eb8f7d3388f4f9d586f66e99fd54080df2c446f0e58668b09c08a16dd0",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 117,
+      "parent": 78,
+      "kind": "IfStatement",
+      "native_kind": 246,
+      "flags": 0,
+      "start_utf16": 691,
+      "end_utf16": 1086,
+      "full_start_utf16": 685,
+      "text_sha256": "70110644cd0593730afabe9fa39ac1372fab5cfebc7149eeba479eaa1b9378fe",
+      "children": [
+        118,
+        122
+      ],
+      "roles": {
+        "expression": 118,
+        "thenStatement": 122
+      }
+    },
+    {
+      "id": 118,
+      "parent": 117,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 695,
+      "end_utf16": 700,
+      "full_start_utf16": 695,
+      "text_sha256": "70aa1b5480905cdee1753fc8ab5c98adad5edada5ad0ee20d66529484f6f1353",
+      "children": [
+        119,
+        120,
+        121
+      ],
+      "roles": {
+        "left": 119,
+        "right": 121,
+        "operatorToken": 120
+      }
+    },
+    {
+      "id": 119,
+      "parent": 118,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 695,
+      "end_utf16": 696,
+      "full_start_utf16": 695,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 120,
+      "parent": 118,
+      "kind": "GreaterThanToken",
+      "native_kind": 31,
+      "flags": 0,
+      "start_utf16": 697,
+      "end_utf16": 698,
+      "full_start_utf16": 696,
+      "text_sha256": "62b67e1f685b7fef51102005dddd27774be3fee38c42965c53aab035d0b6b221",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 121,
+      "parent": 118,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 699,
+      "end_utf16": 700,
+      "full_start_utf16": 698,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 122,
+      "parent": 117,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 702,
+      "end_utf16": 1086,
+      "full_start_utf16": 701,
+      "text_sha256": "ebc9fcec7863f3d78b156cf5aab1135431b9d3947268936a44ad3e5f5532536b",
+      "children": [
+        123,
+        134,
+        142,
+        154
+      ],
+      "roles": {
+        "statements": [
+          123,
+          134,
+          142,
+          154
+        ]
+      }
+    },
+    {
+      "id": 123,
+      "parent": 122,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 710,
+      "end_utf16": 725,
+      "full_start_utf16": 703,
+      "text_sha256": "164ba98a48ea7c9414a091c19cfe3d182889ecf1da2908bc1d6ebc6674156561",
+      "children": [
+        124
+      ],
+      "roles": {
+        "expression": 124
+      }
+    },
+    {
+      "id": 124,
+      "parent": 123,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 710,
+      "end_utf16": 724,
+      "full_start_utf16": 703,
+      "text_sha256": "0361913360d7db611065f8d9996044635e16226c6cc0345c26e57a61552e5072",
+      "children": [
+        125,
+        126,
+        127
+      ],
+      "roles": {
+        "left": 125,
+        "right": 127,
+        "operatorToken": 126
+      }
+    },
+    {
+      "id": 125,
+      "parent": 124,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 710,
+      "end_utf16": 711,
+      "full_start_utf16": 703,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 126,
+      "parent": 124,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 712,
+      "end_utf16": 713,
+      "full_start_utf16": 711,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 127,
+      "parent": 124,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 714,
+      "end_utf16": 724,
+      "full_start_utf16": 713,
+      "text_sha256": "ef7dd86c2a44546e16b0ff0cc74f2f500e921a188b5f7f08c6f7fb8107b9885f",
+      "children": [
+        128,
+        132,
+        133
+      ],
+      "roles": {
+        "left": 128,
+        "right": 133,
+        "operatorToken": 132
+      }
+    },
+    {
+      "id": 128,
+      "parent": 127,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 714,
+      "end_utf16": 720,
+      "full_start_utf16": 713,
+      "text_sha256": "15e74d9d0d08becce2afea0f1b5228c6d72a87b8af47337643a5c1e7e815df66",
+      "children": [
+        129,
+        130,
+        131
+      ],
+      "roles": {
+        "left": 129,
+        "right": 131,
+        "operatorToken": 130
+      }
+    },
+    {
+      "id": 129,
+      "parent": 128,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 714,
+      "end_utf16": 715,
+      "full_start_utf16": 713,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 130,
+      "parent": 128,
+      "kind": "AsteriskToken",
+      "native_kind": 41,
+      "flags": 0,
+      "start_utf16": 716,
+      "end_utf16": 717,
+      "full_start_utf16": 715,
+      "text_sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 131,
+      "parent": 128,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 718,
+      "end_utf16": 720,
+      "full_start_utf16": 717,
+      "text_sha256": "e96ac948ff1486a98d66d9f38f7ab44ad83a01b709b6a3a9c5a41d9dbbe2699f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 132,
+      "parent": 127,
+      "kind": "PlusToken",
+      "native_kind": 39,
+      "flags": 0,
+      "start_utf16": 721,
+      "end_utf16": 722,
+      "full_start_utf16": 720,
+      "text_sha256": "a318c24216defe206feeb73ef5be00033fa9c4a74d0b967f6532a26ca5906d3b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 133,
+      "parent": 127,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 723,
+      "end_utf16": 724,
+      "full_start_utf16": 722,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 134,
+      "parent": 122,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 732,
+      "end_utf16": 742,
+      "full_start_utf16": 725,
+      "text_sha256": "d35c8915bf2aec4305c64aa57c6c6d7938ab62fe17ffcfa29dc16766181f8509",
+      "children": [
+        135
+      ],
+      "roles": {
+        "expression": 135
+      }
+    },
+    {
+      "id": 135,
+      "parent": 134,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 732,
+      "end_utf16": 741,
+      "full_start_utf16": 725,
+      "text_sha256": "5700515d95018748ae59ccdc30660720d89e873c28f9f8ee0d363ab6b921ab34",
+      "children": [
+        136,
+        137,
+        138
+      ],
+      "roles": {
+        "left": 136,
+        "right": 138,
+        "operatorToken": 137
+      }
+    },
+    {
+      "id": 136,
+      "parent": 135,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 732,
+      "end_utf16": 733,
+      "full_start_utf16": 725,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 137,
+      "parent": 135,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 734,
+      "end_utf16": 735,
+      "full_start_utf16": 733,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 138,
+      "parent": 135,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 736,
+      "end_utf16": 741,
+      "full_start_utf16": 735,
+      "text_sha256": "2b9a3cdb070fb03c2a71d3406b6b48aab0a67a8a128e94c19ac014108e908e54",
+      "children": [
+        139,
+        140,
+        141
+      ],
+      "roles": {
+        "left": 139,
+        "right": 141,
+        "operatorToken": 140
+      }
+    },
+    {
+      "id": 139,
+      "parent": 138,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 736,
+      "end_utf16": 737,
+      "full_start_utf16": 735,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 140,
+      "parent": 138,
+      "kind": "SlashToken",
+      "native_kind": 43,
+      "flags": 0,
+      "start_utf16": 738,
+      "end_utf16": 739,
+      "full_start_utf16": 737,
+      "text_sha256": "8a5edab282632443219e051e4ade2d1d5bbc671c781051bf1437897cbdfea0f1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 141,
+      "parent": 138,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 740,
+      "end_utf16": 741,
+      "full_start_utf16": 739,
+      "text_sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 142,
+      "parent": 122,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 749,
+      "end_utf16": 765,
+      "full_start_utf16": 742,
+      "text_sha256": "5ade8f0a6f1b10ab8e6473c04309f867ce967895e8dc5b8d856a6862fc112fea",
+      "children": [
+        143
+      ],
+      "roles": {
+        "expression": 143
+      }
+    },
+    {
+      "id": 143,
+      "parent": 142,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 749,
+      "end_utf16": 764,
+      "full_start_utf16": 742,
+      "text_sha256": "6ac88dc234ab37d540de49adfd12be9495bdf781d350260c056d040e6db55f42",
+      "children": [
+        144,
+        145,
+        146
+      ],
+      "roles": {
+        "left": 144,
+        "right": 146,
+        "operatorToken": 145
+      }
+    },
+    {
+      "id": 144,
+      "parent": 143,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 749,
+      "end_utf16": 750,
+      "full_start_utf16": 742,
+      "text_sha256": "0bfe935e70c321c7ca3afc75ce0d0ca2f98b5422e008bb31c00c6d7f1f1c0ad6",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 145,
+      "parent": 143,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 751,
+      "end_utf16": 752,
+      "full_start_utf16": 750,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 146,
+      "parent": 143,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 753,
+      "end_utf16": 764,
+      "full_start_utf16": 752,
+      "text_sha256": "d6d038f1c77c458d8b630bf986af608b25b1a3a9477fd47c97330deff2b8fe01",
+      "children": [
+        147,
+        152,
+        153
+      ],
+      "roles": {
+        "left": 147,
+        "right": 153,
+        "operatorToken": 152
+      }
+    },
+    {
+      "id": 147,
+      "parent": 146,
+      "kind": "ParenthesizedExpression",
+      "native_kind": 218,
+      "flags": 0,
+      "start_utf16": 753,
+      "end_utf16": 760,
+      "full_start_utf16": 752,
+      "text_sha256": "722b67448e8e6a8351b0e96c0de0d1c64d4b618b3a2911f059a10e15dac1c08b",
+      "children": [
+        148
+      ],
+      "roles": {
+        "expression": 148
+      }
+    },
+    {
+      "id": 148,
+      "parent": 147,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 754,
+      "end_utf16": 759,
+      "full_start_utf16": 754,
+      "text_sha256": "1f7b0771c31a860f6c5584950c8e11de44886a8408d0ecda736a32885d25e39c",
+      "children": [
+        149,
+        150,
+        151
+      ],
+      "roles": {
+        "left": 149,
+        "right": 151,
+        "operatorToken": 150
+      }
+    },
+    {
+      "id": 149,
+      "parent": 148,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 754,
+      "end_utf16": 755,
+      "full_start_utf16": 754,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 150,
+      "parent": 148,
+      "kind": "PlusToken",
+      "native_kind": 39,
+      "flags": 0,
+      "start_utf16": 756,
+      "end_utf16": 757,
+      "full_start_utf16": 755,
+      "text_sha256": "a318c24216defe206feeb73ef5be00033fa9c4a74d0b967f6532a26ca5906d3b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 151,
+      "parent": 148,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 758,
+      "end_utf16": 759,
+      "full_start_utf16": 757,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 152,
+      "parent": 146,
+      "kind": "SlashToken",
+      "native_kind": 43,
+      "flags": 0,
+      "start_utf16": 761,
+      "end_utf16": 762,
+      "full_start_utf16": 760,
+      "text_sha256": "8a5edab282632443219e051e4ade2d1d5bbc671c781051bf1437897cbdfea0f1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 153,
+      "parent": 146,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 763,
+      "end_utf16": 764,
+      "full_start_utf16": 762,
+      "text_sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 154,
+      "parent": 122,
+      "kind": "IfStatement",
+      "native_kind": 246,
+      "flags": 0,
+      "start_utf16": 773,
+      "end_utf16": 1080,
+      "full_start_utf16": 765,
+      "text_sha256": "d9d0d31eb57af20346957fae55f909ab911f1aedf22f096da109ccf3b27f2e47",
+      "children": [
+        155,
+        159
+      ],
+      "roles": {
+        "expression": 155,
+        "thenStatement": 159
+      }
+    },
+    {
+      "id": 155,
+      "parent": 154,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 777,
+      "end_utf16": 784,
+      "full_start_utf16": 777,
+      "text_sha256": "6920f9ae08cc47efaf2745ab340fd64dc859783622285a2d6b55181757569818",
+      "children": [
+        156,
+        157,
+        158
+      ],
+      "roles": {
+        "left": 156,
+        "right": 158,
+        "operatorToken": 157
+      }
+    },
+    {
+      "id": 156,
+      "parent": 155,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 777,
+      "end_utf16": 778,
+      "full_start_utf16": 777,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 157,
+      "parent": 155,
+      "kind": "EqualsEqualsEqualsToken",
+      "native_kind": 36,
+      "flags": 0,
+      "start_utf16": 779,
+      "end_utf16": 782,
+      "full_start_utf16": 778,
+      "text_sha256": "2cf2b04b1bae57d1fb472a2e73a6066ad6df8fe5dfd000336dead1b2f7627caa",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 158,
+      "parent": 155,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 783,
+      "end_utf16": 784,
+      "full_start_utf16": 782,
+      "text_sha256": "0bfe935e70c321c7ca3afc75ce0d0ca2f98b5422e008bb31c00c6d7f1f1c0ad6",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 159,
+      "parent": 154,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 786,
+      "end_utf16": 1080,
+      "full_start_utf16": 785,
+      "text_sha256": "4c0bee1d3e3ea281f8d79a8afdca2f039a70f13f8df7694be9445a30275d85b3",
+      "children": [
+        160,
+        168,
+        173,
+        181,
+        215,
+        218,
+        233
+      ],
+      "roles": {
+        "statements": [
+          160,
+          168,
+          173,
+          181,
+          215,
+          218,
+          233
+        ]
+      }
+    },
+    {
+      "id": 160,
+      "parent": 159,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 796,
+      "end_utf16": 819,
+      "full_start_utf16": 787,
+      "text_sha256": "cb8eae6e0ff855ab10e2b5dc82c965a07b1dc11b4d1ad78f6dbcb79a9aba6675",
+      "children": [
+        161
+      ],
+      "roles": {
+        "expression": 161
+      }
+    },
+    {
+      "id": 161,
+      "parent": 160,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 796,
+      "end_utf16": 818,
+      "full_start_utf16": 787,
+      "text_sha256": "cde0aadeeb9136eb3194047f00e7c7f437b7e43843577f7c9230ffb11093c879",
+      "children": [
+        162,
+        163,
+        164
+      ],
+      "roles": {
+        "left": 162,
+        "right": 164,
+        "operatorToken": 163
+      }
+    },
+    {
+      "id": 162,
+      "parent": 161,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 796,
+      "end_utf16": 802,
+      "full_start_utf16": 787,
+      "text_sha256": "cc6b6bad31a0ff4d6dfd4953a6346a1c463d884723898a2af964b998e5499e22",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 163,
+      "parent": 161,
+      "kind": "PlusEqualsToken",
+      "native_kind": 64,
+      "flags": 0,
+      "start_utf16": 803,
+      "end_utf16": 805,
+      "full_start_utf16": 802,
+      "text_sha256": "6254c28f7a6304931425ed7d57780e8b39a9f8ef7d0a63f9853eec9f5dd040d5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 164,
+      "parent": 161,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 806,
+      "end_utf16": 818,
+      "full_start_utf16": 805,
+      "text_sha256": "1efd2175c12c6787f93782fa2b95bf68eaa957f13576dd2709a3764ccbd5b7c7",
+      "children": [
+        165
+      ],
+      "roles": {
+        "expression": 165,
+        "arguments": []
+      }
+    },
+    {
+      "id": 165,
+      "parent": 164,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 806,
+      "end_utf16": 816,
+      "full_start_utf16": 805,
+      "text_sha256": "92bc55afb08589a728c26087ecaef69c3f1dcca8c4a283c9ddb0ab6f02d5f39d",
+      "children": [
+        166,
+        167
+      ],
+      "roles": {
+        "name": 167,
+        "expression": 166
+      }
+    },
+    {
+      "id": 166,
+      "parent": 165,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 806,
+      "end_utf16": 807,
+      "full_start_utf16": 805,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 167,
+      "parent": 165,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 808,
+      "end_utf16": 816,
+      "full_start_utf16": 808,
+      "text_sha256": "bbb522f7e532f10d2d79413a98bdec613444b049a3c98639fb17831d712a2ca2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 168,
+      "parent": 159,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 828,
+      "end_utf16": 835,
+      "full_start_utf16": 819,
+      "text_sha256": "48eb3131a719861c35d447570694c3317f8d5dbe339741a8c9991c23bd30112f",
+      "children": [
+        169
+      ],
+      "roles": {
+        "expression": 169
+      }
+    },
+    {
+      "id": 169,
+      "parent": 168,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 828,
+      "end_utf16": 834,
+      "full_start_utf16": 819,
+      "text_sha256": "a09689f630889c59847ae8ec5a79b4814606b22ddc8108c1e51ab99e6b31258a",
+      "children": [
+        170,
+        171,
+        172
+      ],
+      "roles": {
+        "left": 170,
+        "right": 172,
+        "operatorToken": 171
+      }
+    },
+    {
+      "id": 170,
+      "parent": 169,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 828,
+      "end_utf16": 829,
+      "full_start_utf16": 819,
+      "text_sha256": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 171,
+      "parent": 169,
+      "kind": "PlusEqualsToken",
+      "native_kind": 64,
+      "flags": 0,
+      "start_utf16": 830,
+      "end_utf16": 832,
+      "full_start_utf16": 829,
+      "text_sha256": "6254c28f7a6304931425ed7d57780e8b39a9f8ef7d0a63f9853eec9f5dd040d5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 172,
+      "parent": 169,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 833,
+      "end_utf16": 834,
+      "full_start_utf16": 832,
+      "text_sha256": "6b86b273ff34fce19d6b804eff5a3f5747ada4eaa22f1d49c01e52ddb7875b4b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 173,
+      "parent": 159,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 845,
+      "end_utf16": 865,
+      "full_start_utf16": 835,
+      "text_sha256": "e45abdad7cb05d0347b69d19e24f4fce655a3e2ac12bac26aa591b3e0e4fbd47",
+      "children": [
+        174
+      ],
+      "roles": {
+        "declarationList": 174
+      }
+    },
+    {
+      "id": 174,
+      "parent": 173,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 845,
+      "end_utf16": 864,
+      "full_start_utf16": 835,
+      "text_sha256": "d84b767535e9245fcb284236b4ff56e10ef844466da1e6961b7c3b9ba11d55aa",
+      "children": [
+        175
+      ],
+      "roles": {
+        "declarations": [
+          175
+        ]
+      }
+    },
+    {
+      "id": 175,
+      "parent": 174,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 849,
+      "end_utf16": 864,
+      "full_start_utf16": 848,
+      "text_sha256": "810cfe72b0f7ef1d4aeee214d2340ee4e2adcd6034c1ebe7cc02d17551289ace",
+      "children": [
+        176,
+        177
+      ],
+      "roles": {
+        "name": 176,
+        "initializer": 177
+      }
+    },
+    {
+      "id": 176,
+      "parent": 175,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 849,
+      "end_utf16": 853,
+      "full_start_utf16": 848,
+      "text_sha256": "3547cb112ac4489af2310c0626cdba6f3097a2ad5a3b42ddd3b59c76c7a079a3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 177,
+      "parent": 175,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 856,
+      "end_utf16": 864,
+      "full_start_utf16": 855,
+      "text_sha256": "ee22fae7ca5298724ebd8f8d1495a720abf9fbcb8847dc9ca0140c559cbbceda",
+      "children": [
+        178,
+        179,
+        180
+      ],
+      "roles": {
+        "left": 178,
+        "right": 180,
+        "operatorToken": 179
+      }
+    },
+    {
+      "id": 178,
+      "parent": 177,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 856,
+      "end_utf16": 857,
+      "full_start_utf16": 855,
+      "text_sha256": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 179,
+      "parent": 177,
+      "kind": "GreaterThanEqualsToken",
+      "native_kind": 33,
+      "flags": 0,
+      "start_utf16": 858,
+      "end_utf16": 860,
+      "full_start_utf16": 857,
+      "text_sha256": "92a00d7d91da9f0f06c3f218c49c9b98323469962b291365b85d3c16b6b7f95f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 180,
+      "parent": 177,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 861,
+      "end_utf16": 864,
+      "full_start_utf16": 860,
+      "text_sha256": "b25f03dedd69be07f356a06fe35c1b0ddc0de77dcd9066c4be0c6bbde14b23ff",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 181,
+      "parent": 159,
+      "kind": "IfStatement",
+      "native_kind": 246,
+      "flags": 0,
+      "start_utf16": 874,
+      "end_utf16": 993,
+      "full_start_utf16": 865,
+      "text_sha256": "b577a4b935c2e059b4464cb290d334e791303f426ac396778d79db35ddeeae96",
+      "children": [
+        182,
+        192
+      ],
+      "roles": {
+        "expression": 182,
+        "thenStatement": 192
+      }
+    },
+    {
+      "id": 182,
+      "parent": 181,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 878,
+      "end_utf16": 897,
+      "full_start_utf16": 878,
+      "text_sha256": "426a3b9415f6896928720c62096fa432303c2f74bc996e1cb8b3d517f1051123",
+      "children": [
+        183,
+        190,
+        191
+      ],
+      "roles": {
+        "left": 183,
+        "right": 191,
+        "operatorToken": 190
+      }
+    },
+    {
+      "id": 183,
+      "parent": 182,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 878,
+      "end_utf16": 889,
+      "full_start_utf16": 878,
+      "text_sha256": "a9ae0129a4bb3077357df877ee587d1d4a6530e3f299f937999f54cd6a682ae6",
+      "children": [
+        184,
+        188,
+        189
+      ],
+      "roles": {
+        "left": 184,
+        "right": 189,
+        "operatorToken": 188
+      }
+    },
+    {
+      "id": 184,
+      "parent": 183,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 878,
+      "end_utf16": 884,
+      "full_start_utf16": 878,
+      "text_sha256": "93fdc8f22b1d0f22472aad1df6bf5c0dc363c7e5b39c73b81f0b37165284b66e",
+      "children": [
+        185,
+        186,
+        187
+      ],
+      "roles": {
+        "left": 185,
+        "right": 187,
+        "operatorToken": 186
+      }
+    },
+    {
+      "id": 185,
+      "parent": 184,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 878,
+      "end_utf16": 879,
+      "full_start_utf16": 878,
+      "text_sha256": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 186,
+      "parent": 184,
+      "kind": "PercentToken",
+      "native_kind": 44,
+      "flags": 0,
+      "start_utf16": 880,
+      "end_utf16": 881,
+      "full_start_utf16": 879,
+      "text_sha256": "bbf3f11cb5b43e700273a78d12de55e4a7eab741ed2abf13787a4d2dc832b8ec",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 187,
+      "parent": 184,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 882,
+      "end_utf16": 884,
+      "full_start_utf16": 881,
+      "text_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 188,
+      "parent": 183,
+      "kind": "EqualsEqualsToken",
+      "native_kind": 34,
+      "flags": 0,
+      "start_utf16": 885,
+      "end_utf16": 887,
+      "full_start_utf16": 884,
+      "text_sha256": "f16474a9900a44186e87098f5fcb153a1fab2e401e1a6db587168b204761b276",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 189,
+      "parent": 183,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 888,
+      "end_utf16": 889,
+      "full_start_utf16": 887,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 190,
+      "parent": 182,
+      "kind": "BarBarToken",
+      "native_kind": 56,
+      "flags": 0,
+      "start_utf16": 890,
+      "end_utf16": 892,
+      "full_start_utf16": 889,
+      "text_sha256": "565d240f5343e625ae579a4d45a770f1f02c6368b5ed4d06da4fbe6f47c28866",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 191,
+      "parent": 182,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 893,
+      "end_utf16": 897,
+      "full_start_utf16": 892,
+      "text_sha256": "3547cb112ac4489af2310c0626cdba6f3097a2ad5a3b42ddd3b59c76c7a079a3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 192,
+      "parent": 181,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 899,
+      "end_utf16": 993,
+      "full_start_utf16": 898,
+      "text_sha256": "6147991a7f643cb5a8999ffb7bed3a2d1acb40c0867319c334f875755be5d55d",
+      "children": [
+        193,
+        210
+      ],
+      "roles": {
+        "statements": [
+          193,
+          210
+        ]
+      }
+    },
+    {
+      "id": 193,
+      "parent": 192,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 912,
+      "end_utf16": 960,
+      "full_start_utf16": 900,
+      "text_sha256": "4a5a8aa924ef440411e837137addac92e04b3783642cf1b1f69456ba1fd9b7c3",
+      "children": [
+        194
+      ],
+      "roles": {
+        "expression": 194
+      }
+    },
+    {
+      "id": 194,
+      "parent": 193,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 912,
+      "end_utf16": 959,
+      "full_start_utf16": 900,
+      "text_sha256": "f41564ecc79ebad2d816e336da872940812fafebef9f40e085b4f3339e422379",
+      "children": [
+        195,
+        198
+      ],
+      "roles": {
+        "expression": 195,
+        "arguments": [
+          198
+        ]
+      }
+    },
+    {
+      "id": 195,
+      "parent": 194,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 912,
+      "end_utf16": 923,
+      "full_start_utf16": 900,
+      "text_sha256": "3b549ed051f07d14ca03241c68ed10f3e8647f5d0e18d315e47534f2ba5c1e3b",
+      "children": [
+        196,
+        197
+      ],
+      "roles": {
+        "name": 197,
+        "expression": 196
+      }
+    },
+    {
+      "id": 196,
+      "parent": 195,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 912,
+      "end_utf16": 919,
+      "full_start_utf16": 900,
+      "text_sha256": "93d8874c8c86f0fc893dbe15c765ffa0fcd342f798dbf669e08f8cbe095d230c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 197,
+      "parent": 195,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 920,
+      "end_utf16": 923,
+      "full_start_utf16": 920,
+      "text_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 198,
+      "parent": 194,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 924,
+      "end_utf16": 958,
+      "full_start_utf16": 924,
+      "text_sha256": "0a299a0cfb0a543d717f7d7bc95e0d3add0eee50fc9368ebd815778423fbcfa7",
+      "children": [
+        199,
+        208,
+        209
+      ],
+      "roles": {
+        "left": 199,
+        "right": 209,
+        "operatorToken": 208
+      }
+    },
+    {
+      "id": 199,
+      "parent": 198,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 924,
+      "end_utf16": 954,
+      "full_start_utf16": 924,
+      "text_sha256": "541b2df4ad776bff33d8f465589305f3f45e6482a5aca798681db8a0f1505b0b",
+      "children": [
+        200,
+        206,
+        207
+      ],
+      "roles": {
+        "left": 200,
+        "right": 207,
+        "operatorToken": 206
+      }
+    },
+    {
+      "id": 200,
+      "parent": 199,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 924,
+      "end_utf16": 946,
+      "full_start_utf16": 924,
+      "text_sha256": "590b7630f1b4c5649029f339ad06360572e84dcd8ae536a6567a01ba7f899863",
+      "children": [
+        201,
+        204,
+        205
+      ],
+      "roles": {
+        "expression": 201,
+        "arguments": [
+          204,
+          205
+        ]
+      }
+    },
+    {
+      "id": 201,
+      "parent": 200,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 924,
+      "end_utf16": 937,
+      "full_start_utf16": 924,
+      "text_sha256": "144a835119adf21fa3067b119ee5b6cf072a6bed081b7a706e4f8e7e36509be2",
+      "children": [
+        202,
+        203
+      ],
+      "roles": {
+        "name": 203,
+        "expression": 202
+      }
+    },
+    {
+      "id": 202,
+      "parent": 201,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 924,
+      "end_utf16": 930,
+      "full_start_utf16": 924,
+      "text_sha256": "cc6b6bad31a0ff4d6dfd4953a6346a1c463d884723898a2af964b998e5499e22",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 203,
+      "parent": 201,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 931,
+      "end_utf16": 937,
+      "full_start_utf16": 931,
+      "text_sha256": "ce9adf9858ef4f404f3f08fb70ba8d8394653d389c8e3f7f67782feebef06a7c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 204,
+      "parent": 200,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 938,
+      "end_utf16": 940,
+      "full_start_utf16": 938,
+      "text_sha256": "4a44dc15364204a80fe80e9039455cc1608281820fe2b24f1e5233ade6af1dd5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 205,
+      "parent": 200,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 942,
+      "end_utf16": 945,
+      "full_start_utf16": 941,
+      "text_sha256": "52109349dabf69106e04ec2f493fb8b6ade94ea100227cccce6559ab8b96553f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 206,
+      "parent": 199,
+      "kind": "PlusToken",
+      "native_kind": 39,
+      "flags": 0,
+      "start_utf16": 947,
+      "end_utf16": 948,
+      "full_start_utf16": 946,
+      "text_sha256": "a318c24216defe206feeb73ef5be00033fa9c4a74d0b967f6532a26ca5906d3b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 207,
+      "parent": 199,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 949,
+      "end_utf16": 954,
+      "full_start_utf16": 948,
+      "text_sha256": "a3f0da3659146548cb944a4778b9ab0cb1202dec991112944967e0316770b262",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 208,
+      "parent": 198,
+      "kind": "PlusToken",
+      "native_kind": 39,
+      "flags": 0,
+      "start_utf16": 955,
+      "end_utf16": 956,
+      "full_start_utf16": 954,
+      "text_sha256": "a318c24216defe206feeb73ef5be00033fa9c4a74d0b967f6532a26ca5906d3b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 209,
+      "parent": 198,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 957,
+      "end_utf16": 958,
+      "full_start_utf16": 956,
+      "text_sha256": "de7d1b721a1e0632b7cf04edf5032c8ecffa9f9a08492152b926f1a5a7e765d7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 210,
+      "parent": 192,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 971,
+      "end_utf16": 983,
+      "full_start_utf16": 960,
+      "text_sha256": "594c8c8952c01d39f4042df57da0a521d18f53fe321c331f69c0398094f912ca",
+      "children": [
+        211
+      ],
+      "roles": {
+        "expression": 211
+      }
+    },
+    {
+      "id": 211,
+      "parent": 210,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 971,
+      "end_utf16": 982,
+      "full_start_utf16": 960,
+      "text_sha256": "83ddd944c36129a3c6a3641c3a5a0b5aef985e1e06a3cdb00106ebedbc05b2d2",
+      "children": [
+        212,
+        213,
+        214
+      ],
+      "roles": {
+        "left": 212,
+        "right": 214,
+        "operatorToken": 213
+      }
+    },
+    {
+      "id": 212,
+      "parent": 211,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 971,
+      "end_utf16": 977,
+      "full_start_utf16": 960,
+      "text_sha256": "cc6b6bad31a0ff4d6dfd4953a6346a1c463d884723898a2af964b998e5499e22",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 213,
+      "parent": 211,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 978,
+      "end_utf16": 979,
+      "full_start_utf16": 977,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 214,
+      "parent": 211,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 980,
+      "end_utf16": 982,
+      "full_start_utf16": 979,
+      "text_sha256": "12ae32cb1ec02d01eda3581b127c1fee3b0dc53572ed6baf239721a03d82e126",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 215,
+      "parent": 159,
+      "kind": "IfStatement",
+      "native_kind": 246,
+      "flags": 0,
+      "start_utf16": 1003,
+      "end_utf16": 1019,
+      "full_start_utf16": 993,
+      "text_sha256": "05cf618d16fe5855875aabfbbb8285b222cae983305610e522a9001a705a5c14",
+      "children": [
+        216,
+        217
+      ],
+      "roles": {
+        "expression": 216,
+        "thenStatement": 217
+      }
+    },
+    {
+      "id": 216,
+      "parent": 215,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1007,
+      "end_utf16": 1011,
+      "full_start_utf16": 1007,
+      "text_sha256": "3547cb112ac4489af2310c0626cdba6f3097a2ad5a3b42ddd3b59c76c7a079a3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 217,
+      "parent": 215,
+      "kind": "BreakStatement",
+      "native_kind": 253,
+      "flags": 0,
+      "start_utf16": 1013,
+      "end_utf16": 1019,
+      "full_start_utf16": 1012,
+      "text_sha256": "42af036c740443455b79633c4ad8b5b729798d3a7a26ae1ca2f96dda0e1d266f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 218,
+      "parent": 159,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1029,
+      "end_utf16": 1051,
+      "full_start_utf16": 1019,
+      "text_sha256": "c75e765b4534932b3ceb06dcc64b51361b08645cb978b9d2effae1369f92a370",
+      "children": [
+        219
+      ],
+      "roles": {
+        "expression": 219
+      }
+    },
+    {
+      "id": 219,
+      "parent": 218,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1029,
+      "end_utf16": 1050,
+      "full_start_utf16": 1019,
+      "text_sha256": "e36f8f9878bfcf731d961ae682743ba419028c123f13f8f5f291a27fe4dccc34",
+      "children": [
+        220,
+        221,
+        222
+      ],
+      "roles": {
+        "left": 220,
+        "right": 222,
+        "operatorToken": 221
+      }
+    },
+    {
+      "id": 220,
+      "parent": 219,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1029,
+      "end_utf16": 1030,
+      "full_start_utf16": 1019,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 221,
+      "parent": 219,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 1031,
+      "end_utf16": 1032,
+      "full_start_utf16": 1030,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 222,
+      "parent": 219,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1033,
+      "end_utf16": 1050,
+      "full_start_utf16": 1032,
+      "text_sha256": "11df61d9551738fb2b4b4b87379659258353465013db9d3b0c9d8d3c97f5beca",
+      "children": [
+        223,
+        231,
+        232
+      ],
+      "roles": {
+        "left": 223,
+        "right": 232,
+        "operatorToken": 231
+      }
+    },
+    {
+      "id": 223,
+      "parent": 222,
+      "kind": "ParenthesizedExpression",
+      "native_kind": 218,
+      "flags": 0,
+      "start_utf16": 1033,
+      "end_utf16": 1044,
+      "full_start_utf16": 1032,
+      "text_sha256": "6d479af22aab185015d2c1d8c4166d9f396b92a593bfe848b23a2da92b3a748c",
+      "children": [
+        224
+      ],
+      "roles": {
+        "expression": 224
+      }
+    },
+    {
+      "id": 224,
+      "parent": 223,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1034,
+      "end_utf16": 1043,
+      "full_start_utf16": 1034,
+      "text_sha256": "b862962320d89443588624e2e335ed8698ab021bb8fa7380757fc25aa856fcfd",
+      "children": [
+        225,
+        226,
+        227
+      ],
+      "roles": {
+        "left": 225,
+        "right": 227,
+        "operatorToken": 226
+      }
+    },
+    {
+      "id": 225,
+      "parent": 224,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1034,
+      "end_utf16": 1035,
+      "full_start_utf16": 1034,
+      "text_sha256": "ca978112ca1bbdcafac231b39a23dc4da786eff8147c4e72b9807785afee48bb",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 226,
+      "parent": 224,
+      "kind": "MinusToken",
+      "native_kind": 40,
+      "flags": 0,
+      "start_utf16": 1036,
+      "end_utf16": 1037,
+      "full_start_utf16": 1035,
+      "text_sha256": "3973e022e93220f9212c18d0d0c543ae7c309e46640da93a4a0314de999f5112",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 227,
+      "parent": 224,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1038,
+      "end_utf16": 1043,
+      "full_start_utf16": 1037,
+      "text_sha256": "edc989b7026ed855749255d5cb6d01d8942933e9405012bd392ecb2985ab146e",
+      "children": [
+        228,
+        229,
+        230
+      ],
+      "roles": {
+        "left": 228,
+        "right": 230,
+        "operatorToken": 229
+      }
+    },
+    {
+      "id": 228,
+      "parent": 227,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1038,
+      "end_utf16": 1039,
+      "full_start_utf16": 1037,
+      "text_sha256": "18ac3e7343f016890c510e93f935261169d9e3f565436429830faf0934f4f8e4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 229,
+      "parent": 227,
+      "kind": "AsteriskToken",
+      "native_kind": 41,
+      "flags": 0,
+      "start_utf16": 1040,
+      "end_utf16": 1041,
+      "full_start_utf16": 1039,
+      "text_sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 230,
+      "parent": 227,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1042,
+      "end_utf16": 1043,
+      "full_start_utf16": 1041,
+      "text_sha256": "e3b98a4da31a127d4bde6e43033f66ba274cab0eb7eb1c70ec41402bf6273dd8",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 231,
+      "parent": 222,
+      "kind": "AsteriskToken",
+      "native_kind": 41,
+      "flags": 0,
+      "start_utf16": 1045,
+      "end_utf16": 1046,
+      "full_start_utf16": 1044,
+      "text_sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 232,
+      "parent": 222,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 1047,
+      "end_utf16": 1050,
+      "full_start_utf16": 1046,
+      "text_sha256": "7ad82a245c1f89e7839c8590607d9e00d67257eb16dd1205800e7865aa654442",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 233,
+      "parent": 159,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1060,
+      "end_utf16": 1072,
+      "full_start_utf16": 1051,
+      "text_sha256": "e332b908980a595ac2ba050e282aa917e81a4ef35dd73a838cfb36e3588627f3",
+      "children": [
+        234
+      ],
+      "roles": {
+        "expression": 234
+      }
+    },
+    {
+      "id": 234,
+      "parent": 233,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1060,
+      "end_utf16": 1071,
+      "full_start_utf16": 1051,
+      "text_sha256": "913bd31b6fee6012e8319697d3acdf05955b0c974fdd3461b4024224c041c695",
+      "children": [
+        235,
+        236,
+        237
+      ],
+      "roles": {
+        "left": 235,
+        "right": 237,
+        "operatorToken": 236
+      }
+    },
+    {
+      "id": 235,
+      "parent": 234,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1060,
+      "end_utf16": 1061,
+      "full_start_utf16": 1051,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 236,
+      "parent": 234,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 1062,
+      "end_utf16": 1063,
+      "full_start_utf16": 1061,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 237,
+      "parent": 234,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1064,
+      "end_utf16": 1071,
+      "full_start_utf16": 1063,
+      "text_sha256": "7e8fbc1f9ebee845c93f8982d2464b0ceda391d6dd0f1ecbbb70103739ba5853",
+      "children": [
+        238,
+        239,
+        240
+      ],
+      "roles": {
+        "left": 238,
+        "right": 240,
+        "operatorToken": 239
+      }
+    },
+    {
+      "id": 238,
+      "parent": 237,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1064,
+      "end_utf16": 1065,
+      "full_start_utf16": 1063,
+      "text_sha256": "1b16b1df538ba12dc3f97edbb85caa7050d46c148134290feba80f8236c83db9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 239,
+      "parent": 237,
+      "kind": "AsteriskToken",
+      "native_kind": 41,
+      "flags": 0,
+      "start_utf16": 1066,
+      "end_utf16": 1067,
+      "full_start_utf16": 1065,
+      "text_sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 240,
+      "parent": 237,
+      "kind": "BigIntLiteral",
+      "native_kind": 9,
+      "flags": 0,
+      "start_utf16": 1068,
+      "end_utf16": 1071,
+      "full_start_utf16": 1067,
+      "text_sha256": "7ad82a245c1f89e7839c8590607d9e00d67257eb16dd1205800e7865aa654442",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 241,
+      "parent": 0,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1095,
+      "end_utf16": 1169,
+      "full_start_utf16": 1092,
+      "text_sha256": "94b1af39a7b0f4c94e748225ca858ef324fece6aeeafa6f1d6472828292db6b8",
+      "children": [
+        242
+      ],
+      "roles": {
+        "expression": 242
+      }
+    },
+    {
+      "id": 242,
+      "parent": 241,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1095,
+      "end_utf16": 1168,
+      "full_start_utf16": 1092,
+      "text_sha256": "9f3982abfef48508c074685a2d0c115648c81bf4f99271b1cf5a3805f58627dc",
+      "children": [
+        243,
+        244
+      ],
+      "roles": {
+        "expression": 243,
+        "arguments": [
+          244
+        ]
+      }
+    },
+    {
+      "id": 243,
+      "parent": 242,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1095,
+      "end_utf16": 1106,
+      "full_start_utf16": 1092,
+      "text_sha256": "daf26740b16294db28366d4b5506adaed1ca06a9a4223956e2ca1cf1ee3fab36",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 244,
+      "parent": 242,
+      "kind": "ConditionalExpression",
+      "native_kind": 228,
+      "flags": 0,
+      "start_utf16": 1107,
+      "end_utf16": 1167,
+      "full_start_utf16": 1107,
+      "text_sha256": "0aab3befa96f3d2e3e773372cb2150d3bfcb735437b4c8292c49f99533702c6f",
+      "children": [
+        245,
+        253,
+        254,
+        255,
+        256
+      ],
+      "roles": {
+        "condition": 245,
+        "questionToken": 253,
+        "whenTrue": 254,
+        "whenFalse": 256
+      }
+    },
+    {
+      "id": 245,
+      "parent": 244,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1107,
+      "end_utf16": 1136,
+      "full_start_utf16": 1107,
+      "text_sha256": "17d48abf0de9221bd75fc89968df84359b21b480e339a9e4bc68f97cc4ca33e2",
+      "children": [
+        246,
+        251,
+        252
+      ],
+      "roles": {
+        "left": 246,
+        "right": 252,
+        "operatorToken": 251
+      }
+    },
+    {
+      "id": 246,
+      "parent": 245,
+      "kind": "ElementAccessExpression",
+      "native_kind": 213,
+      "flags": 0,
+      "start_utf16": 1107,
+      "end_utf16": 1122,
+      "full_start_utf16": 1107,
+      "text_sha256": "9e32f9eacaf16e44e19da3a714832d714a2af995a79ef08cc8c6b5a5924c987e",
+      "children": [
+        247,
+        250
+      ],
+      "roles": {
+        "expression": 247,
+        "argumentExpression": 250
+      }
+    },
+    {
+      "id": 247,
+      "parent": 246,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1107,
+      "end_utf16": 1119,
+      "full_start_utf16": 1107,
+      "text_sha256": "c283158c8d73d1c63276ea715deb4c4018aa4641add855dc0f23a02b7d5144b9",
+      "children": [
+        248,
+        249
+      ],
+      "roles": {
+        "name": 249,
+        "expression": 248
+      }
+    },
+    {
+      "id": 248,
+      "parent": 247,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1107,
+      "end_utf16": 1114,
+      "full_start_utf16": 1107,
+      "text_sha256": "19ed40bf62c399b8492efda5b9a9184b68cf4d9d4a165b38557b9d14201d0c03",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 249,
+      "parent": 247,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1115,
+      "end_utf16": 1119,
+      "full_start_utf16": 1115,
+      "text_sha256": "5a6e537c2ba28ef19cad9f47cbb139af0bc071b53c3969479e06ff8868284e33",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 250,
+      "parent": 246,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 1120,
+      "end_utf16": 1121,
+      "full_start_utf16": 1120,
+      "text_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 251,
+      "parent": 245,
+      "kind": "EqualsEqualsEqualsToken",
+      "native_kind": 36,
+      "flags": 0,
+      "start_utf16": 1123,
+      "end_utf16": 1126,
+      "full_start_utf16": 1122,
+      "text_sha256": "2cf2b04b1bae57d1fb472a2e73a6066ad6df8fe5dfd000336dead1b2f7627caa",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 252,
+      "parent": 245,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1127,
+      "end_utf16": 1136,
+      "full_start_utf16": 1126,
+      "text_sha256": "eb045d78d273107348b0300c01d29b7552d622abbc6faf81b3ec55359aa9950c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 253,
+      "parent": 244,
+      "kind": "QuestionToken",
+      "native_kind": 57,
+      "flags": 0,
+      "start_utf16": 1137,
+      "end_utf16": 1138,
+      "full_start_utf16": 1136,
+      "text_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 254,
+      "parent": 244,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 1139,
+      "end_utf16": 1141,
+      "full_start_utf16": 1138,
+      "text_sha256": "624b60c58c9d8bfb6ff1886c2fd605d2adeb6ea4da576068201b6c6958ce93f4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 255,
+      "parent": 244,
+      "kind": "ColonToken",
+      "native_kind": 58,
+      "flags": 0,
+      "start_utf16": 1142,
+      "end_utf16": 1143,
+      "full_start_utf16": 1141,
+      "text_sha256": "e7ac0786668e0ff0f02b62bd04f45ff636fd82db63b1104601c975dc005f3a67",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 256,
+      "parent": 244,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1144,
+      "end_utf16": 1167,
+      "full_start_utf16": 1143,
+      "text_sha256": "f52287832ee77de0942123b92101bc9a4e863512c2c65c6dd51a1760da7e80e7",
+      "children": [
+        257,
+        258
+      ],
+      "roles": {
+        "expression": 257,
+        "arguments": [
+          258
+        ]
+      }
+    },
+    {
+      "id": 257,
+      "parent": 256,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1144,
+      "end_utf16": 1150,
+      "full_start_utf16": 1143,
+      "text_sha256": "bd82cf16699be29ec05cbb763199c12f0dced428dde8381dbdd31c1d5dd0e8d4",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 258,
+      "parent": 256,
+      "kind": "ElementAccessExpression",
+      "native_kind": 213,
+      "flags": 0,
+      "start_utf16": 1151,
+      "end_utf16": 1166,
+      "full_start_utf16": 1151,
+      "text_sha256": "9e32f9eacaf16e44e19da3a714832d714a2af995a79ef08cc8c6b5a5924c987e",
+      "children": [
+        259,
+        262
+      ],
+      "roles": {
+        "expression": 259,
+        "argumentExpression": 262
+      }
+    },
+    {
+      "id": 259,
+      "parent": 258,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1151,
+      "end_utf16": 1163,
+      "full_start_utf16": 1151,
+      "text_sha256": "c283158c8d73d1c63276ea715deb4c4018aa4641add855dc0f23a02b7d5144b9",
+      "children": [
+        260,
+        261
+      ],
+      "roles": {
+        "name": 261,
+        "expression": 260
+      }
+    },
+    {
+      "id": 260,
+      "parent": 259,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1151,
+      "end_utf16": 1158,
+      "full_start_utf16": 1151,
+      "text_sha256": "19ed40bf62c399b8492efda5b9a9184b68cf4d9d4a165b38557b9d14201d0c03",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 261,
+      "parent": 259,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1159,
+      "end_utf16": 1163,
+      "full_start_utf16": 1159,
+      "text_sha256": "5a6e537c2ba28ef19cad9f47cbb139af0bc071b53c3969479e06ff8868284e33",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 262,
+      "parent": 258,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 1164,
+      "end_utf16": 1165,
+      "full_start_utf16": 1164,
+      "text_sha256": "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 263,
+      "parent": 0,
+      "kind": "EndOfFile",
+      "native_kind": 1,
+      "flags": 0,
+      "start_utf16": 1170,
+      "end_utf16": 1170,
+      "full_start_utf16": 1169,
+      "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "children": [],
+      "roles": {}
+    }
+  ],
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "chart_admission": false
+}

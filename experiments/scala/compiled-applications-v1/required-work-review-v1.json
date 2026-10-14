@@ -1,0 +1,765 @@
+{
+  "schema": "scala-actual-bytecode-required-work-review-v1",
+  "status": "ten-static-contracts-passed-two-targeted-runtime-questions-open",
+  "reviewed_at": "2026-10-14T13:49:43.001535+00:00",
+  "compilation_report": {
+    "path": "experiments/scala/compiled-applications-v1/run-v1/report.json",
+    "sha256": "55e266372bf64595430fc83aeb47dd68149075ff53d9d0d8b9627bf21c14f782",
+    "bytes": 226830
+  },
+  "compilation_terminal": {
+    "path": "experiments/scala/compiled-applications-v1/run-v1/terminal.json",
+    "sha256": "ccd911b9e313c085e86466ff9cd6bdf5e7c5a1fdf4617b54efc0a21edb3f2522",
+    "bytes": 293
+  },
+  "independent_closure_review": {
+    "path": "experiments/scala/compiled-applications-v1/independent-compilation-plan-review-v1.json",
+    "sha256": "4688c8180e3149515ef0cdfdcc3f6b0373c7cf8f717001e075708d735b2108c3",
+    "bytes": 1991
+  },
+  "source_contracts": {
+    "path": "experiments/scala/source-v1/README.md",
+    "sha256": "c1e997021d3a91ad7e3cd747a6250f2c1c5a7f10ca475c208a7d06ecbe585fd1",
+    "bytes": 5818
+  },
+  "scope": "Authored Scala sources and actual retained javap listings from the ten compiled application class inventories. This record separates bytecode-level findings from unobserved optimized JVM behavior.",
+  "profiles": [
+    {
+      "id": "scala-binarytrees-jvm-v1",
+      "benchmark": "binarytrees",
+      "source": {
+        "path": "experiments/scala/source-v1/binarytrees/Main.scala",
+        "sha256": "bdcebd103b9da8de792d8f59da68125aad57d1bb286f10a4074506cb8d5a518b",
+        "bytes": 1735
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/Main.scala",
+        "sha256": "bdcebd103b9da8de792d8f59da68125aad57d1bb286f10a4074506cb8d5a518b",
+        "bytes": 1735
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/bytecode/stdout.bin",
+        "sha256": "eb09654e6b7189e15647f2ad08214d95bd7c675a3dabcb6edf9533f816cf2333",
+        "bytes": 47074
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/classes/Main$$anon$1.class",
+          "sha256": "88d706823a6d4fb067e44692a23a010711851a3d73e13daf2aac12e2670f3de4",
+          "bytes": 1587
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/classes/Main$.class",
+          "sha256": "fd45258f8adbc42830f4224b6669edb95b126616e9a0ec5d0482a7f365c0090a",
+          "bytes": 4182
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/classes/Main$Node.class",
+          "sha256": "505a8500e8eda53c0bb93e2058c3c77e14ef7ed0d956ad3483f0de3125b44414",
+          "bytes": 813
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/classes/Main.class",
+          "sha256": "5e1bfa837ca6502c447ac353ec19946c090331bf9107058d477c40d2e4adfdfb",
+          "bytes": 379
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/binarytrees/classes/Main.tasty",
+          "sha256": "a885f549a425cc1c2ab3c771924587926bf629ad1e2a737ae8302e155d487531",
+          "bytes": 3444
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "recursive-node-construction",
+          "static_result": "passed",
+          "finding": "Main$.tree(int) emits distinct Node allocations in both leaf and recursive cases; both depth-1 recursive child calls feed the constructor.",
+          "bytecode_lines": {
+            "first": 490,
+            "last": 517
+          }
+        },
+        {
+          "contract": "recursive-checks",
+          "static_result": "passed",
+          "finding": "Main$Node.check reads both children and recursively sums both checks rather than substituting a closed-form count.",
+          "bytecode_lines": {
+            "first": 832,
+            "last": 851
+          }
+        },
+        {
+          "contract": "stretch-temporary-long-lived-trees",
+          "static_result": "passed",
+          "finding": "Main creates/checks the stretch tree, stores the long-lived tree in local 4, completes depth futures, then checks local 4. Each depth task loops over the prescribed iteration count and calls tree and check.",
+          "bytecode_lines": {
+            "first": 531,
+            "last": 610
+          }
+        },
+        {
+          "contract": "temporary-allocation-loop",
+          "static_result": "passed",
+          "finding": "Depth task computes 1 << (maxDepth-depth+4), and its loop calls tree(depth).check for every iteration.",
+          "bytecode_lines": {
+            "first": 130,
+            "last": 167
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [
+        "The retained javap proves allocations and root use before JVM optimization. It does not establish surviving Node allocations or GC reachability in installed optimized code. One fresh direct-main diagnostic with the existing classes should capture tree/check/main nmethods, allocation-elimination records, OopMaps and GC/class origins."
+      ],
+      "additional_targeted_runtime_capture_identified": true
+    },
+    {
+      "id": "scala-fannkuchredux-jvm-v1",
+      "benchmark": "fannkuchredux",
+      "source": {
+        "path": "experiments/scala/source-v1/fannkuchredux/Main.scala",
+        "sha256": "ba8c9dd5dafea3ecca8e9033e3f608120f6b922c58d3a702933adf7819812762",
+        "bytes": 3899
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/Main.scala",
+        "sha256": "ba8c9dd5dafea3ecca8e9033e3f608120f6b922c58d3a702933adf7819812762",
+        "bytes": 3899
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/bytecode/stdout.bin",
+        "sha256": "cf2650048ee8101d0cb533300ec1b921dd1bc043886bde24bc5f69b8139a6283",
+        "bytes": 70652
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/classes/Main$.class",
+          "sha256": "6df7f11ff9f09af6f89205a8b6addf0ef9b8f68a637b4b412159275d289c74f4",
+          "bytes": 6149
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/classes/Main$Worker.class",
+          "sha256": "4d7ae0e172f1d46db042fdf11c1faee8cded200453e7d587ea7fb3b2f25bb82f",
+          "bytes": 3167
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/classes/Main.class",
+          "sha256": "c0ea51738b309bc0ef2a4dc5d309ba34e860be260c383eb51eb470b73335811c",
+          "bytes": 315
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fannkuchredux/classes/Main.tasty",
+          "sha256": "7b4018084f72bb6e89300d4473aa2952c5739ebe7a086f86a8dd9d161bab768d",
+          "bytes": 7245
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "factoradic-starts",
+          "static_result": "passed",
+          "finding": "Worker.firstPermutation uses factorial division/remainder, copied permutation state and rotation to start each assigned contiguous chunk.",
+          "bytecode_lines": {
+            "first": 956,
+            "last": 1043
+          }
+        },
+        {
+          "contract": "complete-permutation-traversal",
+          "static_result": "passed",
+          "finding": "Worker.call claims chunks atomically, uses the factorial(n) upper bound, advances permutation on every remaining index, and records per-chunk signed checksum and maximum.",
+          "bytecode_lines": {
+            "first": 1320,
+            "last": 1409
+          }
+        },
+        {
+          "contract": "copied-flip-workspace",
+          "static_result": "passed",
+          "finding": "Worker.flips copies the entire permutation into temporary and reverses prefixes until the first entry is zero. nextPermutation retains the rotation/count carry loop.",
+          "bytecode_lines": {
+            "first": 1098,
+            "last": 1287
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-fasta-jvm-v1",
+      "benchmark": "fasta",
+      "source": {
+        "path": "experiments/scala/source-v1/fasta/Main.scala",
+        "sha256": "a3e2f78453acff46081258324f49040b8a9a93ce48377eae1a5a3d5c30ae37f1",
+        "bytes": 2250
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/fasta/Main.scala",
+        "sha256": "a3e2f78453acff46081258324f49040b8a9a93ce48377eae1a5a3d5c30ae37f1",
+        "bytes": 2250
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/fasta/bytecode/stdout.bin",
+        "sha256": "6fe480aa8ccff8781a1ece8f9f88f6e27c974bb4bbcb9624181879495904df10",
+        "bytes": 31146
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fasta/classes/Main$.class",
+          "sha256": "3e35537774892239313445ab838e6cfccffedf54457db69bf875055bbcf82ad9",
+          "bytes": 3922
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fasta/classes/Main.class",
+          "sha256": "345acf2cee8ae51fbf198b6dbdb5a61458535182d54c27b9bb37e5251cd70464",
+          "bytes": 258
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/fasta/classes/Main.tasty",
+          "sha256": "d032857429fab70f51c20e7db43d3b16575124f2896ebba010306c089a3ae685",
+          "bytes": 4020
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "repeat-and-random-records",
+          "static_result": "passed",
+          "finding": "Main writes the repeat record, then calls randomRecord twice with the same IntRef seeded once at 42, using lengths 3*n and 5*n; repeat length is 2*n.",
+          "bytecode_lines": {
+            "first": 245,
+            "last": 420
+          }
+        },
+        {
+          "contract": "continuous-weighted-rng",
+          "static_result": "passed",
+          "finding": "randomRecord builds cumulative probabilities and advances state by (state*3877+29573)%139968 for each symbol. Selection compares the generated double against the cumulative distribution and writes each byte with 60-column breaks.",
+          "bytecode_lines": {
+            "first": 495,
+            "last": 583
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-knucleotide-jvm-v1",
+      "benchmark": "knucleotide",
+      "source": {
+        "path": "experiments/scala/source-v1/knucleotide/Main.scala",
+        "sha256": "8ab9a123c499bbad40b3c09aebf0910dc6977ec564bb3d025941206fc6a2d269",
+        "bytes": 3146
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/knucleotide/Main.scala",
+        "sha256": "8ab9a123c499bbad40b3c09aebf0910dc6977ec564bb3d025941206fc6a2d269",
+        "bytes": 3146
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/knucleotide/bytecode/stdout.bin",
+        "sha256": "302d2cf0a367a675f14243b6c0dc4a521de48d702bdc9436a9c09c1c13e9cf72",
+        "bytes": 84971
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/knucleotide/classes/Main$.class",
+          "sha256": "19d6b41a2f649f7c3f9ccab1c69f2b59d284e00ba0f23f14b63315bb2cb4c464",
+          "bytes": 10431
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/knucleotide/classes/Main.class",
+          "sha256": "e81e3aeb95cf017f32593694125f241e245ae9191d90d7579e0d21397f0448a9",
+          "bytes": 715
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/knucleotide/classes/Main.tasty",
+          "sha256": "5e011bace68e8920b53c7c96e443ea63aac84bbb6ed4a6fb39d623bf97aadadc",
+          "bytes": 6925
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "seven-map-sizes",
+          "static_result": "passed",
+          "finding": "Main constructs the exact seven lengths 1, 2, 3, 4, 6, 12 and 18 and visits their complete index range. The callback calls table before either full frequency output or query lookup.",
+          "bytecode_lines": {
+            "first": 970,
+            "last": 1045
+          }
+        },
+        {
+          "contract": "complete-fresh-maps",
+          "static_result": "passed",
+          "finding": "table creates a new LongMap before scanning the complete sequence, rolls and masks each key, and increments the map for every valid window without filtering by requested query.",
+          "bytecode_lines": {
+            "first": 787,
+            "last": 841
+          }
+        },
+        {
+          "contract": "map-consumption",
+          "static_result": "passed",
+          "finding": "Each callback receives a fresh complete map. Lengths 1/2 enumerate and sort all entries; longer lengths perform the specified query only after table has returned.",
+          "bytecode_lines": {
+            "first": 1330,
+            "last": 1408
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-mandelbrot-jvm-v1",
+      "benchmark": "mandelbrot",
+      "source": {
+        "path": "experiments/scala/source-v1/mandelbrot/Main.scala",
+        "sha256": "de29618bbbfb47d11770eb62e771e5e659a8707a2781fbc5df7eb324e71471b7",
+        "bytes": 2161
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/Main.scala",
+        "sha256": "de29618bbbfb47d11770eb62e771e5e659a8707a2781fbc5df7eb324e71471b7",
+        "bytes": 2161
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/bytecode/stdout.bin",
+        "sha256": "0c1476973faf14ae3ad52f474fd49686d18bf3e02f374290b72a7e934f5725d6",
+        "bytes": 53713
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/classes/Main$$anon$1.class",
+          "sha256": "64c82a3764e9f5138c7c513ea7d45fad49070183fedbcb3843ace220473edd43",
+          "bytes": 1719
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/classes/Main$.class",
+          "sha256": "ada277d95c3140b0415af1eb4263e641cbb7a11908e6f51dd972116b41436866",
+          "bytes": 5903
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/classes/Main.class",
+          "sha256": "8c1da6d3b5a51139d9da3c9e3071360d6c1d3931ac37bb74f37f6ea8eaf32164",
+          "bytes": 258
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/mandelbrot/classes/Main.tasty",
+          "sha256": "f649301e9660c0f1f51d22c30c8fabd9fe2665888a26c93b144d155ad30c8ed0",
+          "bytes": 4416
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "binary64-recurrence",
+          "static_result": "passed",
+          "finding": "Each row worker loops over every real/imaginary coordinate, retains the authored double recurrence and the 50-iteration/escape tests.",
+          "bytecode_lines": {
+            "first": 133,
+            "last": 216
+          }
+        },
+        {
+          "contract": "pbm-packing-and-padding",
+          "static_result": "passed",
+          "finding": "Rows begin as zeroed byte arrays; only coordinates x<n set their MSB-first output bits, leaving padding zero. Each claimed row is completed before the next atomic row claim.",
+          "bytecode_lines": {
+            "first": 217,
+            "last": 255
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-nbody-jvm-v1",
+      "benchmark": "nbody",
+      "source": {
+        "path": "experiments/scala/source-v1/nbody/Main.scala",
+        "sha256": "74b6a0eb04fa87240d47b903969898314c400e8715c436515d503f6f4112957b",
+        "bytes": 3840
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/Main.scala",
+        "sha256": "74b6a0eb04fa87240d47b903969898314c400e8715c436515d503f6f4112957b",
+        "bytes": 3840
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/bytecode/stdout.bin",
+        "sha256": "e831b1a26f8b9154eb231a746cc5e2c25e5923048a5b00861b79a7aed1a49c7b",
+        "bytes": 45941
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/classes/Main$.class",
+          "sha256": "47bf30e66a6a27329e8af2a7e5ac92c59015974ffc9c02e8b28002846181ecbb",
+          "bytes": 1858
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/classes/Main$SystemState.class",
+          "sha256": "a11dbbd2aade77dcdc51c8d705f40426e9c563c34088e8f685956b64873ed5f4",
+          "bytes": 2924
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/classes/Main.class",
+          "sha256": "88c9f5359a88e569b2e9baa7bbd0a0c0f9fc47ef4c9933391a6e195cb9be4c16",
+          "bytes": 325
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/nbody/classes/Main.tasty",
+          "sha256": "ecbb651a49d6db9df97d984ca2a6aa8860447dadf02ed1cce8901dcbbd4d124f",
+          "bytes": 7386
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "fresh-state-and-step-loop",
+          "static_result": "passed",
+          "finding": "Main creates SystemState, offsets momentum, evaluates energy, calls advance(0.01) once per requested step, and evaluates energy again.",
+          "bytecode_lines": {
+            "first": 173,
+            "last": 236
+          }
+        },
+        {
+          "contract": "pairwise-updates",
+          "static_result": "passed",
+          "finding": "advance retains the five-body upper-triangle pair loop, squared-distance/square-root magnitude, opposite velocity updates for both bodies, and a subsequent position pass.",
+          "bytecode_lines": {
+            "first": 761,
+            "last": 1030
+          }
+        },
+        {
+          "contract": "energy-reduction",
+          "static_result": "passed",
+          "finding": "energy retains per-body kinetic energy and all pairwise potential-energy terms.",
+          "bytecode_lines": {
+            "first": 1088,
+            "last": 1221
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-pidigits-jvm-v1",
+      "benchmark": "pidigits",
+      "source": {
+        "path": "experiments/scala/source-v1/pidigits/Main.scala",
+        "sha256": "5dca3a4127f2283792a2dfa0fc1fff47366d70405b28d14d156c8b0609408ad5",
+        "bytes": 1032
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/pidigits/Main.scala",
+        "sha256": "5dca3a4127f2283792a2dfa0fc1fff47366d70405b28d14d156c8b0609408ad5",
+        "bytes": 1032
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/pidigits/bytecode/stdout.bin",
+        "sha256": "d778ad2770cd82b64a83699857223848a3e2955be55f0ab0dd28618f74a79a52",
+        "bytes": 28279
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/pidigits/classes/Main$.class",
+          "sha256": "34d1b63edd3e9f4e676f3ef67bee9513248f09cc543cb55df9f9fe28514222ca",
+          "bytes": 3042
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/pidigits/classes/Main.class",
+          "sha256": "510c65ae506bcd9a532a202cda9cb8271170ef78d7ed148c3c0d8b6c31467342",
+          "bytes": 258
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/pidigits/classes/Main.tasty",
+          "sha256": "25849059bda951fbb4cd20a5797dcb92a472856c91a2edf7c907ec465f18e316",
+          "bytes": 2477
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "two-independent-divisions",
+          "static_result": "passed",
+          "finding": "Main computes (3*q+r)/t at BCI 115 and (4*q+r)/t at BCI 138 using separate BigInt.$div invocations. Both dominate the equality comparison at BCI 147.",
+          "bytecode_lines": {
+            "first": 267,
+            "last": 293
+          }
+        },
+        {
+          "contract": "unbounded-spigot-and-output",
+          "static_result": "passed",
+          "finding": "Candidate acceptance updates q/r and emits padded ten-digit lines; refinement updates k/r/q/t with BigInt arithmetic. Both paths return to loop header BCI 91 until n digits have been emitted.",
+          "bytecode_lines": {
+            "first": 294,
+            "last": 389
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [
+        "The retained javap proves both BigInt.$div calls dominate comparison. It does not establish whether Scala Main runs interpreted or compiled, or both calls survive its installed path. One fresh direct-main diagnostic should capture Main$, Scala BigInt.$div and the reached BigInteger/MutableBigInteger division methods, and complete compiler records sufficient to identify an interpreted caller if Main has no installed or inlined compiled body."
+      ],
+      "additional_targeted_runtime_capture_identified": true
+    },
+    {
+      "id": "scala-regexredux-jvm-v1",
+      "benchmark": "regexredux",
+      "source": {
+        "path": "experiments/scala/source-v1/regexredux/Main.scala",
+        "sha256": "3e4db60819b528f72b39d7d2571a9c8493b054c13cee95f6b56a831e0cbbc362",
+        "bytes": 2028
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/Main.scala",
+        "sha256": "3e4db60819b528f72b39d7d2571a9c8493b054c13cee95f6b56a831e0cbbc362",
+        "bytes": 2028
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/bytecode/stdout.bin",
+        "sha256": "55c7999f14acb81c5ff1081901660f043703f93bf21e5c1986fd304238ce94f4",
+        "bytes": 70838
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/classes/Main$$anon$1.class",
+          "sha256": "f43e5e15ae55400f78373ed227c4db1484498c4d8e2d4b5ce5c4457a07b3bd1e",
+          "bytes": 1356
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/classes/Main$$anon$2.class",
+          "sha256": "07afac13b8e7478944150bfb873b824bf1610c3f8912bda1b895ec561736a260",
+          "bytes": 2786
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/classes/Main$.class",
+          "sha256": "0abf7793fbcdcb89b54178ef5a77242224f002e7126bab3b507e53a42766efe9",
+          "bytes": 6088
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/classes/Main.class",
+          "sha256": "79c732c219ffc3886236275544e636ca4de511211c2cb04fad4f434e8adac086",
+          "bytes": 258
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/regexredux/classes/Main.tasty",
+          "sha256": "de221b2d92e54c5b80eb697a67fc667d60bf74760826e622c9fda534f2b10b1f",
+          "bytes": 4369
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "all-nine-counts",
+          "static_result": "passed",
+          "finding": "Main retains all nine literal patterns, submits one complete Pattern/Matcher traversal per pattern, obtains each Future result and writes the counts in original pattern order.",
+          "bytecode_lines": {
+            "first": 866,
+            "last": 1136
+          }
+        },
+        {
+          "contract": "complete-matcher-loop",
+          "static_result": "passed",
+          "finding": "Count task compiles its pattern, constructs a matcher over the complete cleaned sequence, and loops on Matcher.find while incrementing a long counter.",
+          "bytecode_lines": {
+            "first": 119,
+            "last": 142
+          }
+        },
+        {
+          "contract": "five-ordered-replacements",
+          "static_result": "passed",
+          "finding": "Replacement task constructs all five ordered rules, applies the callback sequentially to a mutable result reference and returns the final length. The callback invokes Pattern.compile, matcher and replaceAll.",
+          "bytecode_lines": {
+            "first": 377,
+            "last": 438
+          }
+        },
+        {
+          "contract": "replacement-library-dispatch",
+          "static_result": "passed",
+          "finding": "The replacement callback dispatches to java.util.regex rather than a precomputed workload result.",
+          "bytecode_lines": {
+            "first": 1062,
+            "last": 1095
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-revcomp-jvm-v1",
+      "benchmark": "revcomp",
+      "source": {
+        "path": "experiments/scala/source-v1/revcomp/Main.scala",
+        "sha256": "bd54d135034e035e77594fc22cec60b943356452ec5f5cb0fa50c27bfa381b6f",
+        "bytes": 1917
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/revcomp/Main.scala",
+        "sha256": "bd54d135034e035e77594fc22cec60b943356452ec5f5cb0fa50c27bfa381b6f",
+        "bytes": 1917
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/revcomp/bytecode/stdout.bin",
+        "sha256": "d4b8f0e7bf3f9e921fe8650acfb3df3ff04d5e18b1ff6c65778fda22aac37f37",
+        "bytes": 41259
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/revcomp/classes/Main$.class",
+          "sha256": "2a8e0526c3a64133e7cac829f51fcfd44a45aae96115d57b7740684e652676a4",
+          "bytes": 5544
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/revcomp/classes/Main.class",
+          "sha256": "59d3bead4ab990135040a752843fa1872a8f1027038c796f5550fe60464f6c0a",
+          "bytes": 258
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/revcomp/classes/Main.tasty",
+          "sha256": "9cc39e9c526fd9bd891f58dcdd16e761f93bddeba34dac81cc478e1cc17bfd90",
+          "bytes": 3407
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "record-parser-and-mapping",
+          "static_result": "passed",
+          "finding": "Main constructs the both-case IUPAC mapping and reads ISO-8859-1 records with BufferedReader, preserving headers, skipping comments and flushing each completed record.",
+          "bytecode_lines": {
+            "first": 345,
+            "last": 519
+          }
+        },
+        {
+          "contract": "reverse-complement-output",
+          "static_result": "passed",
+          "finding": "emit reads the retained sequence from length-1 down to 0, maps every byte, rejects unmapped values, writes 60-column output and preserves the final partial line.",
+          "bytecode_lines": {
+            "first": 538,
+            "last": 608
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "scala-spectralnorm-jvm-v1",
+      "benchmark": "spectralnorm",
+      "source": {
+        "path": "experiments/scala/source-v1/spectralnorm/Main.scala",
+        "sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+        "bytes": 2161
+      },
+      "compiled_source": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/Main.scala",
+        "sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+        "bytes": 2161
+      },
+      "disassembly": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/bytecode/stdout.bin",
+        "sha256": "bc6a03eefe23a06b7240fccb2f7c1313214f03cd783a02d3f12cb19e8d67d8ac",
+        "bytes": 54569
+      },
+      "class_artifacts": [
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/classes/Main$$anon$1.class",
+          "sha256": "00c2eeb84ef593ab363d3cfa069aaa3540cfa84e87203a9bbdd9ca5a8977e777",
+          "bytes": 1589
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/classes/Main$.class",
+          "sha256": "2c1902ec4d930b692b18f53b4d5971b4fdcb166251484709324bd4191900073f",
+          "bytes": 5882
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/classes/Main.class",
+          "sha256": "f35a074abb78909ec1d77577fdb9fec9d09cc29bc86e8ed6874542cd2cb160a6",
+          "bytes": 368
+        },
+        {
+          "path": "experiments/scala/compiled-applications-v1/run-v1/spectralnorm/classes/Main.tasty",
+          "sha256": "39d39ca584a3f3a635e2a2defa262be72c6cb1c54ecfd8c56d127adf79c92a0c",
+          "bytes": 4225
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "both-matrix-orientations",
+          "static_result": "passed",
+          "finding": "Each worker partitions the output rows, selects row/column according to transpose, evaluates the denominator and accumulates input(j)/denominator over every input element.",
+          "bytecode_lines": {
+            "first": 161,
+            "last": 246
+          }
+        },
+        {
+          "contract": "ten-power-iterations",
+          "static_result": "passed",
+          "finding": "Main executes four multiply calls with alternating transpose flags in a loop of ten iterations and then reduces u*v and v*v before sqrt.",
+          "bytecode_lines": {
+            "first": 719,
+            "last": 856
+          }
+        }
+      ],
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    }
+  ],
+  "minimal_remaining_runtime_scope": {
+    "fresh_subject_processes": 2,
+    "workloads": [
+      "binarytrees",
+      "pidigits"
+    ],
+    "reuse_existing_classes": true,
+    "recompile_required": false,
+    "rerun_bounded_corpus_required": false,
+    "timing_samples": false,
+    "reference_approach": "experiments/kotlin/single-entry-remaining-v1/README.md",
+    "candidate_inputs": {
+      "binarytrees": 21,
+      "pidigits": 10000
+    },
+    "flags_policy": "Use the eventual scored fresh-JVM worker/heap/GC settings, with additive logging and print directives only; do not alter optimizer thresholds, disable optimization or add wrapper warmup. The bounded 1 GiB preparation heap is not a final full-timing policy.",
+    "capture_targets": {
+      "binarytrees": [
+        "Main$::tree",
+        "Main$Node::check",
+        "Main$::main",
+        "Main$$anon$1::call"
+      ],
+      "pidigits": [
+        "Main$::main",
+        "scala.math.BigInt::$div",
+        "java.math.BigInteger::divide",
+        "java.math.BigInteger::divideKnuth",
+        "java.math.MutableBigInteger::divideKnuth",
+        "java.math.MutableBigInteger::divideMagnitude"
+      ]
+    },
+    "execution_controller_ready": false,
+    "controller_note": "Existing Kotlin diagnostic controllers hardcode Kotlin owners and evidence. Reuse their frozen observer/capture approach with Scala-specific owners; do not invoke those Kotlin cohorts as substitutes."
+  },
+  "source_work_qualified": false,
+  "full_timings_qualified": false,
+  "native_executions_by_review": 0,
+  "benchmark_samples": 0,
+  "chart_admission": false
+}

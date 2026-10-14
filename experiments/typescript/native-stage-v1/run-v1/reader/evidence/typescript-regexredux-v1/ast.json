@@ -1,0 +1,2583 @@
+{
+  "schema": "typescript-native-ast-source-v1",
+  "id": "typescript-regexredux-v1",
+  "source_path": "/private/tmp/mech-benchmark-completion/experiments/typescript/source-v1/regexredux.ts",
+  "source_sha256": "83c96161b3420c81f4d7604b02b4c692e594e894d6dd3bd32ce6d140849a682f",
+  "source_bytes": 1582,
+  "source_utf16_length": 1582,
+  "source_text": "// Typed source draft; compilation, conformance, work and counts are pending.\n/* The Computer Language Benchmarks Game\n   https://salsa.debian.org/benchmarksgame-team/benchmarksgame/\n\n   regex-dna program contributed by Jesse Millikan\n   Base on the Ruby version by jose fco. gonzalez\n   fixed by Matthew Wilson\n   ported to Node.js and sped up by Roman Pletnev\n   converted from regex-dna program\n   fixed by Josh Goldfoot\n   multi thread by Andrey Filatkin\n   sequential by Isaac Gouy\n*/\n\nimport { readFileSync } from 'node:fs';\n\nfunction mainThread(): void {\n    const regExps: RegExp[] = [\n        /agggtaaa|tttaccct/g,\n        /[cgt]gggtaaa|tttaccc[acg]/g,\n        /a[act]ggtaaa|tttacc[agt]t/g,\n        /ag[act]gtaaa|tttac[agt]ct/g,\n        /agg[act]taaa|ttta[agt]cct/g,\n        /aggg[acg]aaa|ttt[cgt]ccct/g,\n        /agggt[cgt]aa|tt[acg]accct/g,\n        /agggta[cgt]a|t[acg]taccct/g,\n        /agggtaa[cgt]|[acg]ttaccct/g\n    ];\n\n    let data = readFileSync(0, 'latin1');\n    const initialLen = data.length;\n\n    data = data.replace(/>[^\\n]*\\n|\\n/g, '');\n    const cleanedLen = data.length;\n\n    for (let j = 0; j < regExps.length; j++) {\n        const re = regExps[j];\n        const m = data.match(re);\n        console.log(re.source, m ? m.length : 0);\n    }\n\n    const endLen = data\n        .replace(/tHa[Nt]/g, '<4>')\n        .replace(/aND|caN|Ha[DS]|WaS/g, '<3>')\n        .replace(/a[NSt]|BY/g, '<2>')\n        .replace(/<[^>]*>/g, '|')\n        .replace(/\\|[^|][^|]*\\|/g, '-')\n        .length;\n\n    console.log(`\\n${initialLen}\\n${cleanedLen}\\n${endLen}`);\n}\n\nmainThread();\n",
+  "virtual_path": "/typescript-source-counts/typescript-regexredux-v1.ts",
+  "offset_units": "UTF-16 code units",
+  "parser": "TypeScript 7.0.2 native API",
+  "native_transport_verified": false,
+  "parse_diagnostics": [],
+  "nodes": [
+    {
+      "id": 0,
+      "parent": -1,
+      "kind": "SourceFile",
+      "native_kind": 307,
+      "flags": 0,
+      "start_utf16": 491,
+      "end_utf16": 1582,
+      "full_start_utf16": 0,
+      "text_sha256": "22516b690e97b65a902a1042ccb4765288322e1e6f72238b6a3bc7fdbefc6520",
+      "children": [
+        1,
+        7,
+        154,
+        157
+      ],
+      "roles": {
+        "statements": [
+          1,
+          7,
+          154
+        ],
+        "endOfFileToken": 157
+      }
+    },
+    {
+      "id": 1,
+      "parent": 0,
+      "kind": "ImportDeclaration",
+      "native_kind": 273,
+      "flags": 0,
+      "start_utf16": 491,
+      "end_utf16": 530,
+      "full_start_utf16": 0,
+      "text_sha256": "acdb187297667b502b21af95a1d232ab0b1e8950445003ecaa44631d7d1588b6",
+      "children": [
+        2,
+        6
+      ],
+      "roles": {
+        "importClause": 2,
+        "moduleSpecifier": 6
+      }
+    },
+    {
+      "id": 2,
+      "parent": 1,
+      "kind": "ImportClause",
+      "native_kind": 274,
+      "flags": 0,
+      "start_utf16": 498,
+      "end_utf16": 514,
+      "full_start_utf16": 497,
+      "text_sha256": "481668ed8f36a8886c4ed7b88ec476549e22d13020bdf44f3a9ae2aba234e402",
+      "children": [
+        3
+      ],
+      "roles": {
+        "namedBindings": 3
+      }
+    },
+    {
+      "id": 3,
+      "parent": 2,
+      "kind": "NamedImports",
+      "native_kind": 276,
+      "flags": 0,
+      "start_utf16": 498,
+      "end_utf16": 514,
+      "full_start_utf16": 497,
+      "text_sha256": "481668ed8f36a8886c4ed7b88ec476549e22d13020bdf44f3a9ae2aba234e402",
+      "children": [
+        4
+      ],
+      "roles": {
+        "elements": [
+          4
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "parent": 3,
+      "kind": "ImportSpecifier",
+      "native_kind": 277,
+      "flags": 0,
+      "start_utf16": 500,
+      "end_utf16": 512,
+      "full_start_utf16": 499,
+      "text_sha256": "3b39c73917e54cc522dc0e9e595cafb1f783e8487a5782ba0278e794c88f393d",
+      "children": [
+        5
+      ],
+      "roles": {
+        "name": 5
+      }
+    },
+    {
+      "id": 5,
+      "parent": 4,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 500,
+      "end_utf16": 512,
+      "full_start_utf16": 499,
+      "text_sha256": "3b39c73917e54cc522dc0e9e595cafb1f783e8487a5782ba0278e794c88f393d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 6,
+      "parent": 1,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 520,
+      "end_utf16": 529,
+      "full_start_utf16": 519,
+      "text_sha256": "a3d8173c814bc4e976d847e41c2b29a800ccebff9bef1469bf5d33b8a7fa386a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 7,
+      "parent": 0,
+      "kind": "FunctionDeclaration",
+      "native_kind": 263,
+      "flags": 256,
+      "start_utf16": 532,
+      "end_utf16": 1566,
+      "full_start_utf16": 530,
+      "text_sha256": "adb4e6b649fac4aea1bf9e3644574b5b42fbe9f165f219711167da32b610c8f8",
+      "children": [
+        8,
+        9,
+        10
+      ],
+      "roles": {
+        "name": 8,
+        "type": 9,
+        "parameters": [],
+        "body": 10
+      }
+    },
+    {
+      "id": 8,
+      "parent": 7,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 541,
+      "end_utf16": 551,
+      "full_start_utf16": 540,
+      "text_sha256": "4f2c6ecc526c637934eca999ee5779c16a53be8093936af46a5fd6e20ab24175",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 9,
+      "parent": 7,
+      "kind": "VoidKeyword",
+      "native_kind": 115,
+      "flags": 0,
+      "start_utf16": 555,
+      "end_utf16": 559,
+      "full_start_utf16": 554,
+      "text_sha256": "445be54d48a2e6294369c84c61cd0929209d4e1084536159bdf7002bddfe094b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 10,
+      "parent": 7,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 560,
+      "end_utf16": 1566,
+      "full_start_utf16": 559,
+      "text_sha256": "a1a95ed79abb674daf7e3db1ce7f44ca932f694708817f355e5e835f67863c70",
+      "children": [
+        11,
+        28,
+        36,
+        43,
+        53,
+        60,
+        106,
+        138
+      ],
+      "roles": {
+        "statements": [
+          11,
+          28,
+          36,
+          43,
+          53,
+          60,
+          106,
+          138
+        ]
+      }
+    },
+    {
+      "id": 11,
+      "parent": 10,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 566,
+      "end_utf16": 933,
+      "full_start_utf16": 561,
+      "text_sha256": "43183fb2911e6993eadb1623a38e2c73b2779b61b6d2a42e74f94e1475afcbb8",
+      "children": [
+        12
+      ],
+      "roles": {
+        "declarationList": 12
+      }
+    },
+    {
+      "id": 12,
+      "parent": 11,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 566,
+      "end_utf16": 932,
+      "full_start_utf16": 561,
+      "text_sha256": "9c961a2ae904f1717af41b35a10e0500bf9add93a5f97c9ebcb68077b253a8c1",
+      "children": [
+        13
+      ],
+      "roles": {
+        "declarations": [
+          13
+        ]
+      }
+    },
+    {
+      "id": 13,
+      "parent": 12,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 572,
+      "end_utf16": 932,
+      "full_start_utf16": 571,
+      "text_sha256": "12408c5a4de1cd24285a51bd6ec8c16044a5d30ba5298f52041fa1fd31daa1b7",
+      "children": [
+        14,
+        15,
+        18
+      ],
+      "roles": {
+        "name": 14,
+        "type": 15,
+        "initializer": 18
+      }
+    },
+    {
+      "id": 14,
+      "parent": 13,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 572,
+      "end_utf16": 579,
+      "full_start_utf16": 571,
+      "text_sha256": "9f533e7ceb4d8fd94bbd31fdd6a3a162a3d65b8c2330b88b98d54008cd5dd250",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 15,
+      "parent": 13,
+      "kind": "ArrayType",
+      "native_kind": 189,
+      "flags": 0,
+      "start_utf16": 581,
+      "end_utf16": 589,
+      "full_start_utf16": 580,
+      "text_sha256": "ae5e7fd574d1afd6ab4e0bf3f68b20c501e789275a910608a81cba62d2655975",
+      "children": [
+        16
+      ],
+      "roles": {
+        "elementType": 16
+      }
+    },
+    {
+      "id": 16,
+      "parent": 15,
+      "kind": "TypeReference",
+      "native_kind": 184,
+      "flags": 0,
+      "start_utf16": 581,
+      "end_utf16": 587,
+      "full_start_utf16": 580,
+      "text_sha256": "eefd1c8d7e793bf3f57077e8578712929f88b190f90d3045532426b9135cd2a3",
+      "children": [
+        17
+      ],
+      "roles": {}
+    },
+    {
+      "id": 17,
+      "parent": 16,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 581,
+      "end_utf16": 587,
+      "full_start_utf16": 580,
+      "text_sha256": "eefd1c8d7e793bf3f57077e8578712929f88b190f90d3045532426b9135cd2a3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 18,
+      "parent": 13,
+      "kind": "ArrayLiteralExpression",
+      "native_kind": 210,
+      "flags": 0,
+      "start_utf16": 592,
+      "end_utf16": 932,
+      "full_start_utf16": 591,
+      "text_sha256": "a6d48087e9004f459858f546ce08c7f3695c1b3a9f71ad8ac267d3b0714c2a2c",
+      "children": [
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27
+      ],
+      "roles": {
+        "elements": [
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27
+        ]
+      }
+    },
+    {
+      "id": 19,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 602,
+      "end_utf16": 622,
+      "full_start_utf16": 593,
+      "text_sha256": "907f84b6b8b281a9533ff1b2eec5281991001e6e9b3215bd2bccbc7d8bf5acef",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 20,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 632,
+      "end_utf16": 660,
+      "full_start_utf16": 623,
+      "text_sha256": "1d0284d8e5efa457e194348da33c379412a2eafb521e5f6981d453f1f1e4b91b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 21,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 670,
+      "end_utf16": 698,
+      "full_start_utf16": 661,
+      "text_sha256": "8b6f198578488025c3c9013c9b3b167b41c384d42546bf672b38d4637128e0a7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 22,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 708,
+      "end_utf16": 736,
+      "full_start_utf16": 699,
+      "text_sha256": "288810e73de50fc30d1fdb60f2336ea29f1435ef58ccbabac24841bf5200faf3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 23,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 746,
+      "end_utf16": 774,
+      "full_start_utf16": 737,
+      "text_sha256": "e6b251e62236952d2a871d12c102aa1a6c5d316c0afdbb9688afb561cdce738f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 24,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 784,
+      "end_utf16": 812,
+      "full_start_utf16": 775,
+      "text_sha256": "55c86c1da345386c43428a49f92d33acfc0fa73c26950047a1e19ff987d722e2",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 25,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 822,
+      "end_utf16": 850,
+      "full_start_utf16": 813,
+      "text_sha256": "5e1e6645b49e3cd78350d8914f809cb8eaa879fa95d1e26c0a4afa395038e16a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 26,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 860,
+      "end_utf16": 888,
+      "full_start_utf16": 851,
+      "text_sha256": "1469b92723845dc5284753cece8ffec70151ff6c5619bf6487c518d23a6b824f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 27,
+      "parent": 18,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 898,
+      "end_utf16": 926,
+      "full_start_utf16": 889,
+      "text_sha256": "716716db479148388aebba0ae987d8da2472e079fa4ba9743c0d652ecf5dcfed",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 28,
+      "parent": 10,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 939,
+      "end_utf16": 976,
+      "full_start_utf16": 933,
+      "text_sha256": "90d756170bb206afdcd3127bde77497b51d0f77e60f9b9fded1f19b2f558b9ec",
+      "children": [
+        29
+      ],
+      "roles": {
+        "declarationList": 29
+      }
+    },
+    {
+      "id": 29,
+      "parent": 28,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 939,
+      "end_utf16": 975,
+      "full_start_utf16": 933,
+      "text_sha256": "00f75e09409d2444d5bbe8b9b696a8bf4fe3f3315e140d8685a8de24e2cc8052",
+      "children": [
+        30
+      ],
+      "roles": {
+        "declarations": [
+          30
+        ]
+      }
+    },
+    {
+      "id": 30,
+      "parent": 29,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 943,
+      "end_utf16": 975,
+      "full_start_utf16": 942,
+      "text_sha256": "47fe17a94c24558a17bce35765dafcb8ae89b364abf367ecae9d4102cc3cb992",
+      "children": [
+        31,
+        32
+      ],
+      "roles": {
+        "name": 31,
+        "initializer": 32
+      }
+    },
+    {
+      "id": 31,
+      "parent": 30,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 943,
+      "end_utf16": 947,
+      "full_start_utf16": 942,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 32,
+      "parent": 30,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 950,
+      "end_utf16": 975,
+      "full_start_utf16": 949,
+      "text_sha256": "88d19aade78de8267ce8ff1ef607509b7c62a7785cdba92c24cefc0d10608617",
+      "children": [
+        33,
+        34,
+        35
+      ],
+      "roles": {
+        "expression": 33,
+        "arguments": [
+          34,
+          35
+        ]
+      }
+    },
+    {
+      "id": 33,
+      "parent": 32,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 950,
+      "end_utf16": 962,
+      "full_start_utf16": 949,
+      "text_sha256": "3b39c73917e54cc522dc0e9e595cafb1f783e8487a5782ba0278e794c88f393d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 34,
+      "parent": 32,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 963,
+      "end_utf16": 964,
+      "full_start_utf16": 963,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 35,
+      "parent": 32,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 966,
+      "end_utf16": 974,
+      "full_start_utf16": 965,
+      "text_sha256": "ab46f3d5f2c9c8ec0509121a1222bffd3ed8c3b4759ef18a0e9368774488e167",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 36,
+      "parent": 10,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 981,
+      "end_utf16": 1012,
+      "full_start_utf16": 976,
+      "text_sha256": "1c2d3c7a198809048c204d14f7e7e10547763f571b7bcab4587b9b62eb87dbdd",
+      "children": [
+        37
+      ],
+      "roles": {
+        "declarationList": 37
+      }
+    },
+    {
+      "id": 37,
+      "parent": 36,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 981,
+      "end_utf16": 1011,
+      "full_start_utf16": 976,
+      "text_sha256": "cd9e20be936d92bd75ae500779a2b3afa843d1dc1745ce375b917938348ce43c",
+      "children": [
+        38
+      ],
+      "roles": {
+        "declarations": [
+          38
+        ]
+      }
+    },
+    {
+      "id": 38,
+      "parent": 37,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 987,
+      "end_utf16": 1011,
+      "full_start_utf16": 986,
+      "text_sha256": "c2ca9df0696c7a41e083d9d043e186556307c7e36fdf5dc37adb3bc37e1fdcf8",
+      "children": [
+        39,
+        40
+      ],
+      "roles": {
+        "name": 39,
+        "initializer": 40
+      }
+    },
+    {
+      "id": 39,
+      "parent": 38,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 987,
+      "end_utf16": 997,
+      "full_start_utf16": 986,
+      "text_sha256": "116aec36bfadc69cb418eb80eae45953c547e54764191b1f80cae07acf9adcad",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 40,
+      "parent": 38,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1000,
+      "end_utf16": 1011,
+      "full_start_utf16": 999,
+      "text_sha256": "5112417b26dcabce32653d1f32793b43b5ab7ff07de91af3d7cdcb5799a503ed",
+      "children": [
+        41,
+        42
+      ],
+      "roles": {
+        "name": 42,
+        "expression": 41
+      }
+    },
+    {
+      "id": 41,
+      "parent": 40,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1000,
+      "end_utf16": 1004,
+      "full_start_utf16": 999,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 42,
+      "parent": 40,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1005,
+      "end_utf16": 1011,
+      "full_start_utf16": 1005,
+      "text_sha256": "0f82aca66af91493b1ff401de5f1f7e3e24e14560df3f6f7e465dbc915b9947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 43,
+      "parent": 10,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1018,
+      "end_utf16": 1059,
+      "full_start_utf16": 1012,
+      "text_sha256": "cad2c35dfd5526eff0dd36ed930d4f4267bd2f3d7668768b239fd6c0c392f4a8",
+      "children": [
+        44
+      ],
+      "roles": {
+        "expression": 44
+      }
+    },
+    {
+      "id": 44,
+      "parent": 43,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1018,
+      "end_utf16": 1058,
+      "full_start_utf16": 1012,
+      "text_sha256": "8e94de9e0916dfb7dda03e85d44128a7f48339526176a180be053c8fdf486fa0",
+      "children": [
+        45,
+        46,
+        47
+      ],
+      "roles": {
+        "left": 45,
+        "right": 47,
+        "operatorToken": 46
+      }
+    },
+    {
+      "id": 45,
+      "parent": 44,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1018,
+      "end_utf16": 1022,
+      "full_start_utf16": 1012,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 46,
+      "parent": 44,
+      "kind": "EqualsToken",
+      "native_kind": 63,
+      "flags": 0,
+      "start_utf16": 1023,
+      "end_utf16": 1024,
+      "full_start_utf16": 1022,
+      "text_sha256": "380918b946a526640a40df5dced6516794f3d97bbd9e6bb553d037c4439f31c3",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 47,
+      "parent": 44,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1025,
+      "end_utf16": 1058,
+      "full_start_utf16": 1024,
+      "text_sha256": "edca7aed50caa768cf06802c687cb7f5ead740ff422dcbe056cd46883dc31707",
+      "children": [
+        48,
+        51,
+        52
+      ],
+      "roles": {
+        "expression": 48,
+        "arguments": [
+          51,
+          52
+        ]
+      }
+    },
+    {
+      "id": 48,
+      "parent": 47,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1025,
+      "end_utf16": 1037,
+      "full_start_utf16": 1024,
+      "text_sha256": "38d0410620a3701080c719f04f881e61dd46d82f556f63456bc33daa343c64bf",
+      "children": [
+        49,
+        50
+      ],
+      "roles": {
+        "name": 50,
+        "expression": 49
+      }
+    },
+    {
+      "id": 49,
+      "parent": 48,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1025,
+      "end_utf16": 1029,
+      "full_start_utf16": 1024,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 50,
+      "parent": 48,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1030,
+      "end_utf16": 1037,
+      "full_start_utf16": 1030,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 51,
+      "parent": 47,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1038,
+      "end_utf16": 1053,
+      "full_start_utf16": 1038,
+      "text_sha256": "a27c59b2ae0fdac3824e981a8fad1cddf61a17f44fe5295a8bfa790ef3f6633f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 52,
+      "parent": 47,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1055,
+      "end_utf16": 1057,
+      "full_start_utf16": 1054,
+      "text_sha256": "6f49cdbd80e1b95d5e6427e1501fc217790daee87055fa5b4e71064288bddede",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 53,
+      "parent": 10,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 1064,
+      "end_utf16": 1095,
+      "full_start_utf16": 1059,
+      "text_sha256": "3dea2b4759b5a5391e233ee8589bac50bff70ed9ea50ba0b8b9dea0c92a4cdab",
+      "children": [
+        54
+      ],
+      "roles": {
+        "declarationList": 54
+      }
+    },
+    {
+      "id": 54,
+      "parent": 53,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 1064,
+      "end_utf16": 1094,
+      "full_start_utf16": 1059,
+      "text_sha256": "eff20c5dafe2031c64b319834105f92459e49c414e94089d469511d292e7bce9",
+      "children": [
+        55
+      ],
+      "roles": {
+        "declarations": [
+          55
+        ]
+      }
+    },
+    {
+      "id": 55,
+      "parent": 54,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 1070,
+      "end_utf16": 1094,
+      "full_start_utf16": 1069,
+      "text_sha256": "c063aeaf2ba475f087014269056bcab94e1cb388fc1ff78f499baf4c39774783",
+      "children": [
+        56,
+        57
+      ],
+      "roles": {
+        "name": 56,
+        "initializer": 57
+      }
+    },
+    {
+      "id": 56,
+      "parent": 55,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1070,
+      "end_utf16": 1080,
+      "full_start_utf16": 1069,
+      "text_sha256": "017d8f3a71dcd07b2a6fa23c2ea683bc5acba573fb74935f5c9bf385e9c8e84b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 57,
+      "parent": 55,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1083,
+      "end_utf16": 1094,
+      "full_start_utf16": 1082,
+      "text_sha256": "5112417b26dcabce32653d1f32793b43b5ab7ff07de91af3d7cdcb5799a503ed",
+      "children": [
+        58,
+        59
+      ],
+      "roles": {
+        "name": 59,
+        "expression": 58
+      }
+    },
+    {
+      "id": 58,
+      "parent": 57,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1083,
+      "end_utf16": 1087,
+      "full_start_utf16": 1082,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 59,
+      "parent": 57,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1088,
+      "end_utf16": 1094,
+      "full_start_utf16": 1088,
+      "text_sha256": "0f82aca66af91493b1ff401de5f1f7e3e24e14560df3f6f7e465dbc915b9947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 60,
+      "parent": 10,
+      "kind": "ForStatement",
+      "native_kind": 249,
+      "flags": 0,
+      "start_utf16": 1101,
+      "end_utf16": 1264,
+      "full_start_utf16": 1095,
+      "text_sha256": "d00f857dcaf1fdb4d1b8990e9e01a5ec153d74349a7af5750789ce0760d236e4",
+      "children": [
+        61,
+        65,
+        71,
+        73
+      ],
+      "roles": {
+        "initializer": 61,
+        "statement": 73,
+        "condition": 65,
+        "incrementor": 71
+      }
+    },
+    {
+      "id": 61,
+      "parent": 60,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 1,
+      "start_utf16": 1106,
+      "end_utf16": 1115,
+      "full_start_utf16": 1106,
+      "text_sha256": "b612370d62572f5362ea4b490c6aea768fe4c30e289b92b82fe082b7fd3aabb6",
+      "children": [
+        62
+      ],
+      "roles": {
+        "declarations": [
+          62
+        ]
+      }
+    },
+    {
+      "id": 62,
+      "parent": 61,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 1024,
+      "start_utf16": 1110,
+      "end_utf16": 1115,
+      "full_start_utf16": 1109,
+      "text_sha256": "3ba96ebb7eccfa3167a193ac39c9ed2a5a7555095a34ed288054225bb918a372",
+      "children": [
+        63,
+        64
+      ],
+      "roles": {
+        "name": 63,
+        "initializer": 64
+      }
+    },
+    {
+      "id": 63,
+      "parent": 62,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 1024,
+      "start_utf16": 1110,
+      "end_utf16": 1111,
+      "full_start_utf16": 1109,
+      "text_sha256": "189f40034be7a199f1fa9891668ee3ab6049f82d38c68be70f596eab2e1857b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 64,
+      "parent": 62,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 1024,
+      "start_utf16": 1114,
+      "end_utf16": 1115,
+      "full_start_utf16": 1113,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 65,
+      "parent": 60,
+      "kind": "BinaryExpression",
+      "native_kind": 227,
+      "flags": 0,
+      "start_utf16": 1117,
+      "end_utf16": 1135,
+      "full_start_utf16": 1116,
+      "text_sha256": "c2183971b388aed608960faef080211564936cfb136c904378dc9192f1d6f0ac",
+      "children": [
+        66,
+        67,
+        68
+      ],
+      "roles": {
+        "left": 66,
+        "right": 68,
+        "operatorToken": 67
+      }
+    },
+    {
+      "id": 66,
+      "parent": 65,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1117,
+      "end_utf16": 1118,
+      "full_start_utf16": 1116,
+      "text_sha256": "189f40034be7a199f1fa9891668ee3ab6049f82d38c68be70f596eab2e1857b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 67,
+      "parent": 65,
+      "kind": "LessThanToken",
+      "native_kind": 29,
+      "flags": 0,
+      "start_utf16": 1119,
+      "end_utf16": 1120,
+      "full_start_utf16": 1118,
+      "text_sha256": "dabd3aff769f07eb2965401eb029974ebba3407afd02b26ddb564ea5f8efae72",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 68,
+      "parent": 65,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1121,
+      "end_utf16": 1135,
+      "full_start_utf16": 1120,
+      "text_sha256": "74358148e7f7a52a489b5be7fbb8505d344ae04573e8aec8ddb08df494b24c20",
+      "children": [
+        69,
+        70
+      ],
+      "roles": {
+        "name": 70,
+        "expression": 69
+      }
+    },
+    {
+      "id": 69,
+      "parent": 68,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1121,
+      "end_utf16": 1128,
+      "full_start_utf16": 1120,
+      "text_sha256": "9f533e7ceb4d8fd94bbd31fdd6a3a162a3d65b8c2330b88b98d54008cd5dd250",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 70,
+      "parent": 68,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1129,
+      "end_utf16": 1135,
+      "full_start_utf16": 1129,
+      "text_sha256": "0f82aca66af91493b1ff401de5f1f7e3e24e14560df3f6f7e465dbc915b9947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 71,
+      "parent": 60,
+      "kind": "PostfixUnaryExpression",
+      "native_kind": 226,
+      "flags": 0,
+      "start_utf16": 1137,
+      "end_utf16": 1140,
+      "full_start_utf16": 1136,
+      "text_sha256": "84588e6add192755d201a2460eb702dbb7eeaa79389ade5471133ade8d1d16a3",
+      "children": [
+        72
+      ],
+      "roles": {
+        "operand": 72
+      },
+      "operator_kind": "PlusPlusToken"
+    },
+    {
+      "id": 72,
+      "parent": 71,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1137,
+      "end_utf16": 1138,
+      "full_start_utf16": 1136,
+      "text_sha256": "189f40034be7a199f1fa9891668ee3ab6049f82d38c68be70f596eab2e1857b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 73,
+      "parent": 60,
+      "kind": "Block",
+      "native_kind": 242,
+      "flags": 0,
+      "start_utf16": 1142,
+      "end_utf16": 1264,
+      "full_start_utf16": 1141,
+      "text_sha256": "0507f0521a2c56c005e8d73bf8f2fd50b70359f7d8f8c2ec544aa051be3fdf9c",
+      "children": [
+        74,
+        81,
+        90
+      ],
+      "roles": {
+        "statements": [
+          74,
+          81,
+          90
+        ]
+      }
+    },
+    {
+      "id": 74,
+      "parent": 73,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 1152,
+      "end_utf16": 1174,
+      "full_start_utf16": 1143,
+      "text_sha256": "d89bf48048b96e1ec5e66d940e1fee623d24e15ed6a17013485044fbfec61b3b",
+      "children": [
+        75
+      ],
+      "roles": {
+        "declarationList": 75
+      }
+    },
+    {
+      "id": 75,
+      "parent": 74,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 1152,
+      "end_utf16": 1173,
+      "full_start_utf16": 1143,
+      "text_sha256": "3a16843606c03b822fb4ad8559c54b818218a5d1f9be8e32669693c2a04dcbcd",
+      "children": [
+        76
+      ],
+      "roles": {
+        "declarations": [
+          76
+        ]
+      }
+    },
+    {
+      "id": 76,
+      "parent": 75,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 1158,
+      "end_utf16": 1173,
+      "full_start_utf16": 1157,
+      "text_sha256": "b7038a13b887bf50f75d42bf0bd295d334100580fa19a299aac28754ecb5767a",
+      "children": [
+        77,
+        78
+      ],
+      "roles": {
+        "name": 77,
+        "initializer": 78
+      }
+    },
+    {
+      "id": 77,
+      "parent": 76,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1158,
+      "end_utf16": 1160,
+      "full_start_utf16": 1157,
+      "text_sha256": "3ac1ecbd2220c6757eb9f289fee88c4068c6791c5b0affef7644e77adfc97b45",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 78,
+      "parent": 76,
+      "kind": "ElementAccessExpression",
+      "native_kind": 213,
+      "flags": 0,
+      "start_utf16": 1163,
+      "end_utf16": 1173,
+      "full_start_utf16": 1162,
+      "text_sha256": "bb1c876bea21058ee530b970e3960b3e9dbf348339fb9d4cca9f3f2a25b92c05",
+      "children": [
+        79,
+        80
+      ],
+      "roles": {
+        "expression": 79,
+        "argumentExpression": 80
+      }
+    },
+    {
+      "id": 79,
+      "parent": 78,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1163,
+      "end_utf16": 1170,
+      "full_start_utf16": 1162,
+      "text_sha256": "9f533e7ceb4d8fd94bbd31fdd6a3a162a3d65b8c2330b88b98d54008cd5dd250",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 80,
+      "parent": 78,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1171,
+      "end_utf16": 1172,
+      "full_start_utf16": 1171,
+      "text_sha256": "189f40034be7a199f1fa9891668ee3ab6049f82d38c68be70f596eab2e1857b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 81,
+      "parent": 73,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 1183,
+      "end_utf16": 1208,
+      "full_start_utf16": 1174,
+      "text_sha256": "8a0f0ed4b645203cd5f788aa96d7bd0094745e0672f8e46a3a433df2e408e230",
+      "children": [
+        82
+      ],
+      "roles": {
+        "declarationList": 82
+      }
+    },
+    {
+      "id": 82,
+      "parent": 81,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 1183,
+      "end_utf16": 1207,
+      "full_start_utf16": 1174,
+      "text_sha256": "8cef0a1281cdbf08b418127aa210cc2076ef9355724c9412e9aea71e04bc4dc4",
+      "children": [
+        83
+      ],
+      "roles": {
+        "declarations": [
+          83
+        ]
+      }
+    },
+    {
+      "id": 83,
+      "parent": 82,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 1189,
+      "end_utf16": 1207,
+      "full_start_utf16": 1188,
+      "text_sha256": "3b94f67758aaaeb7fe4e03684a5396e8031f6fe60d6691cc746394f7fc853d3b",
+      "children": [
+        84,
+        85
+      ],
+      "roles": {
+        "name": 84,
+        "initializer": 85
+      }
+    },
+    {
+      "id": 84,
+      "parent": 83,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1189,
+      "end_utf16": 1190,
+      "full_start_utf16": 1188,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 85,
+      "parent": 83,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1193,
+      "end_utf16": 1207,
+      "full_start_utf16": 1192,
+      "text_sha256": "14aedd527823c421dba8f6d9e2a99b421256b9190dfa267cc0ebd09e8ee489ad",
+      "children": [
+        86,
+        89
+      ],
+      "roles": {
+        "expression": 86,
+        "arguments": [
+          89
+        ]
+      }
+    },
+    {
+      "id": 86,
+      "parent": 85,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1193,
+      "end_utf16": 1203,
+      "full_start_utf16": 1192,
+      "text_sha256": "0e96ce4e96a3042c24af7b5839810ec6adbe3e2853ef138fea3d2bca57eac874",
+      "children": [
+        87,
+        88
+      ],
+      "roles": {
+        "name": 88,
+        "expression": 87
+      }
+    },
+    {
+      "id": 87,
+      "parent": 86,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1193,
+      "end_utf16": 1197,
+      "full_start_utf16": 1192,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 88,
+      "parent": 86,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1198,
+      "end_utf16": 1203,
+      "full_start_utf16": 1198,
+      "text_sha256": "4945a70fa7f9c13fe1931a3372ac5798140d42eba74d0dd805a4a216ed3a8142",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 89,
+      "parent": 85,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1204,
+      "end_utf16": 1206,
+      "full_start_utf16": 1204,
+      "text_sha256": "3ac1ecbd2220c6757eb9f289fee88c4068c6791c5b0affef7644e77adfc97b45",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 90,
+      "parent": 73,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1217,
+      "end_utf16": 1258,
+      "full_start_utf16": 1208,
+      "text_sha256": "c9b236a87fe3a01d021f536f7551093a3dd53400b86c379711912c803584f9f4",
+      "children": [
+        91
+      ],
+      "roles": {
+        "expression": 91
+      }
+    },
+    {
+      "id": 91,
+      "parent": 90,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1217,
+      "end_utf16": 1257,
+      "full_start_utf16": 1208,
+      "text_sha256": "f4198968a10a7ce47e1433e9408a3ca70b581fbfd4d1db8ae44145bb33ff2942",
+      "children": [
+        92,
+        95,
+        98
+      ],
+      "roles": {
+        "expression": 92,
+        "arguments": [
+          95,
+          98
+        ]
+      }
+    },
+    {
+      "id": 92,
+      "parent": 91,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1217,
+      "end_utf16": 1228,
+      "full_start_utf16": 1208,
+      "text_sha256": "3b549ed051f07d14ca03241c68ed10f3e8647f5d0e18d315e47534f2ba5c1e3b",
+      "children": [
+        93,
+        94
+      ],
+      "roles": {
+        "name": 94,
+        "expression": 93
+      }
+    },
+    {
+      "id": 93,
+      "parent": 92,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1217,
+      "end_utf16": 1224,
+      "full_start_utf16": 1208,
+      "text_sha256": "93d8874c8c86f0fc893dbe15c765ffa0fcd342f798dbf669e08f8cbe095d230c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 94,
+      "parent": 92,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1225,
+      "end_utf16": 1228,
+      "full_start_utf16": 1225,
+      "text_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 95,
+      "parent": 91,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1229,
+      "end_utf16": 1238,
+      "full_start_utf16": 1229,
+      "text_sha256": "11a77c524fc41b2ed5a740a0355d68dd417653f00070a943e839873e9812b478",
+      "children": [
+        96,
+        97
+      ],
+      "roles": {
+        "name": 97,
+        "expression": 96
+      }
+    },
+    {
+      "id": 96,
+      "parent": 95,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1229,
+      "end_utf16": 1231,
+      "full_start_utf16": 1229,
+      "text_sha256": "3ac1ecbd2220c6757eb9f289fee88c4068c6791c5b0affef7644e77adfc97b45",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 97,
+      "parent": 95,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1232,
+      "end_utf16": 1238,
+      "full_start_utf16": 1232,
+      "text_sha256": "41cf6794ba4200b839c53531555f0f3998df4cbb01a4d5cb0b94e3ca5e23947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 98,
+      "parent": 91,
+      "kind": "ConditionalExpression",
+      "native_kind": 228,
+      "flags": 0,
+      "start_utf16": 1240,
+      "end_utf16": 1256,
+      "full_start_utf16": 1239,
+      "text_sha256": "7f490f6b15333e4ff595bf9d4e7ee212e380fb6af151baab730ca71ebe65e2c5",
+      "children": [
+        99,
+        100,
+        101,
+        104,
+        105
+      ],
+      "roles": {
+        "condition": 99,
+        "questionToken": 100,
+        "whenTrue": 101,
+        "whenFalse": 105
+      }
+    },
+    {
+      "id": 99,
+      "parent": 98,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1240,
+      "end_utf16": 1241,
+      "full_start_utf16": 1239,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 100,
+      "parent": 98,
+      "kind": "QuestionToken",
+      "native_kind": 57,
+      "flags": 0,
+      "start_utf16": 1242,
+      "end_utf16": 1243,
+      "full_start_utf16": 1241,
+      "text_sha256": "8a8de823d5ed3e12746a62ef169bcf372be0ca44f0a1236abc35df05d96928e1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 101,
+      "parent": 98,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1244,
+      "end_utf16": 1252,
+      "full_start_utf16": 1243,
+      "text_sha256": "27e82b05b93908fa7bda76ed854fcb612aace3b3438815444a3ad7ee7d976595",
+      "children": [
+        102,
+        103
+      ],
+      "roles": {
+        "name": 103,
+        "expression": 102
+      }
+    },
+    {
+      "id": 102,
+      "parent": 101,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1244,
+      "end_utf16": 1245,
+      "full_start_utf16": 1243,
+      "text_sha256": "62c66a7a5dd70c3146618063c344e531e6d4b59e379808443ce962b3abd63c5a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 103,
+      "parent": 101,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1246,
+      "end_utf16": 1252,
+      "full_start_utf16": 1246,
+      "text_sha256": "0f82aca66af91493b1ff401de5f1f7e3e24e14560df3f6f7e465dbc915b9947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 104,
+      "parent": 98,
+      "kind": "ColonToken",
+      "native_kind": 58,
+      "flags": 0,
+      "start_utf16": 1253,
+      "end_utf16": 1254,
+      "full_start_utf16": 1252,
+      "text_sha256": "e7ac0786668e0ff0f02b62bd04f45ff636fd82db63b1104601c975dc005f3a67",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 105,
+      "parent": 98,
+      "kind": "NumericLiteral",
+      "native_kind": 8,
+      "flags": 0,
+      "start_utf16": 1255,
+      "end_utf16": 1256,
+      "full_start_utf16": 1254,
+      "text_sha256": "5feceb66ffc86f38d952786c6d696c79c2dbc239dd4e91b46729d73a27fb57e9",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 106,
+      "parent": 10,
+      "kind": "VariableStatement",
+      "native_kind": 244,
+      "flags": 0,
+      "start_utf16": 1270,
+      "end_utf16": 1501,
+      "full_start_utf16": 1264,
+      "text_sha256": "8d0e520efc483c498c13e975e77bb41bbaa95830df3458e08f031c1131fa3357",
+      "children": [
+        107
+      ],
+      "roles": {
+        "declarationList": 107
+      }
+    },
+    {
+      "id": 107,
+      "parent": 106,
+      "kind": "VariableDeclarationList",
+      "native_kind": 262,
+      "flags": 2,
+      "start_utf16": 1270,
+      "end_utf16": 1500,
+      "full_start_utf16": 1264,
+      "text_sha256": "71b37e158afdd82bbbf267636ddee958493ee76e1e97e8789d1cf71b38f92d44",
+      "children": [
+        108
+      ],
+      "roles": {
+        "declarations": [
+          108
+        ]
+      }
+    },
+    {
+      "id": 108,
+      "parent": 107,
+      "kind": "VariableDeclaration",
+      "native_kind": 261,
+      "flags": 0,
+      "start_utf16": 1276,
+      "end_utf16": 1500,
+      "full_start_utf16": 1275,
+      "text_sha256": "454e40ea2c5c620fd57fa202b7358d80ab12bc3c8d8f6c88e9739627588201c3",
+      "children": [
+        109,
+        110
+      ],
+      "roles": {
+        "name": 109,
+        "initializer": 110
+      }
+    },
+    {
+      "id": 109,
+      "parent": 108,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1276,
+      "end_utf16": 1282,
+      "full_start_utf16": 1275,
+      "text_sha256": "44849f46e9141b3f714c4508f3a8d4f135d5df3a8fcaed8b6d4975f934a6bbee",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 110,
+      "parent": 108,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1500,
+      "full_start_utf16": 1284,
+      "text_sha256": "eae52602ad7c902afd0415982576c3ef3a9c941f7ae9b3eacf2ba86a034ef77c",
+      "children": [
+        111,
+        137
+      ],
+      "roles": {
+        "name": 137,
+        "expression": 111
+      }
+    },
+    {
+      "id": 111,
+      "parent": 110,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1484,
+      "full_start_utf16": 1284,
+      "text_sha256": "7bd1b97dd0e52ec48f0862cb9a2513cf1cfa3c2ee79a50b037d489a8b20abdab",
+      "children": [
+        112,
+        135,
+        136
+      ],
+      "roles": {
+        "expression": 112,
+        "arguments": [
+          135,
+          136
+        ]
+      }
+    },
+    {
+      "id": 112,
+      "parent": 111,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1461,
+      "full_start_utf16": 1284,
+      "text_sha256": "3a1ad787255915e6bb2e95d0e3da81bb4820fbaaa80cdae9ce1e6769c12d3300",
+      "children": [
+        113,
+        134
+      ],
+      "roles": {
+        "name": 134,
+        "expression": 113
+      }
+    },
+    {
+      "id": 113,
+      "parent": 112,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1444,
+      "full_start_utf16": 1284,
+      "text_sha256": "cf0836451049d2591b669279ee591890271d500fdac5ef6c21c1a394f9325246",
+      "children": [
+        114,
+        132,
+        133
+      ],
+      "roles": {
+        "expression": 114,
+        "arguments": [
+          132,
+          133
+        ]
+      }
+    },
+    {
+      "id": 114,
+      "parent": 113,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1427,
+      "full_start_utf16": 1284,
+      "text_sha256": "0a0c9cc5800cf7c28c41f650a75bb5bbd685227dfb942b2452bdfbc2abaf5665",
+      "children": [
+        115,
+        131
+      ],
+      "roles": {
+        "name": 131,
+        "expression": 115
+      }
+    },
+    {
+      "id": 115,
+      "parent": 114,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1410,
+      "full_start_utf16": 1284,
+      "text_sha256": "f7bd24582c1ab88bc73441fc7d12e052324bbcca260b2beecef3443e245d479c",
+      "children": [
+        116,
+        129,
+        130
+      ],
+      "roles": {
+        "expression": 116,
+        "arguments": [
+          129,
+          130
+        ]
+      }
+    },
+    {
+      "id": 116,
+      "parent": 115,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1389,
+      "full_start_utf16": 1284,
+      "text_sha256": "a9642d9dbd60e88261556e62fe75db39817f5218b1198182a2ffdeb67b6da4d1",
+      "children": [
+        117,
+        128
+      ],
+      "roles": {
+        "name": 128,
+        "expression": 117
+      }
+    },
+    {
+      "id": 117,
+      "parent": 116,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1372,
+      "full_start_utf16": 1284,
+      "text_sha256": "04c74d4877a9e444cdfa9ba6f6b3a6e9d810638103b68357bb4e7b108bc02b25",
+      "children": [
+        118,
+        126,
+        127
+      ],
+      "roles": {
+        "expression": 118,
+        "arguments": [
+          126,
+          127
+        ]
+      }
+    },
+    {
+      "id": 118,
+      "parent": 117,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1342,
+      "full_start_utf16": 1284,
+      "text_sha256": "5f3d34337d6988d9003f2baf431cbcc5eb95643329122cbcb88d182ff2430004",
+      "children": [
+        119,
+        125
+      ],
+      "roles": {
+        "name": 125,
+        "expression": 119
+      }
+    },
+    {
+      "id": 119,
+      "parent": 118,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1325,
+      "full_start_utf16": 1284,
+      "text_sha256": "0085479a36b0e181c5a6aba0489e41601c9a795434ba2fd76db3e276dc17e4ed",
+      "children": [
+        120,
+        123,
+        124
+      ],
+      "roles": {
+        "expression": 120,
+        "arguments": [
+          123,
+          124
+        ]
+      }
+    },
+    {
+      "id": 120,
+      "parent": 119,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1306,
+      "full_start_utf16": 1284,
+      "text_sha256": "e014031324dd16e43a730dba4b433fd480565316091ffa2f1fc8447879e79d53",
+      "children": [
+        121,
+        122
+      ],
+      "roles": {
+        "name": 122,
+        "expression": 121
+      }
+    },
+    {
+      "id": 121,
+      "parent": 120,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1285,
+      "end_utf16": 1289,
+      "full_start_utf16": 1284,
+      "text_sha256": "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 122,
+      "parent": 120,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1299,
+      "end_utf16": 1306,
+      "full_start_utf16": 1299,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 123,
+      "parent": 119,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1307,
+      "end_utf16": 1317,
+      "full_start_utf16": 1307,
+      "text_sha256": "fef7b252fe2c1899794050d25aacbd40b3bde2bae7221703328c2c9be94abbf5",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 124,
+      "parent": 119,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1319,
+      "end_utf16": 1324,
+      "full_start_utf16": 1318,
+      "text_sha256": "f838cb18b59349083b13a6106c6e27f7f12003c8025a581ce960f76db3abdc38",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 125,
+      "parent": 118,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1335,
+      "end_utf16": 1342,
+      "full_start_utf16": 1335,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 126,
+      "parent": 117,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1343,
+      "end_utf16": 1364,
+      "full_start_utf16": 1343,
+      "text_sha256": "2d9a728452dca398bf1633f5fb5e8f341494b7923f7075fc3ab2ca7b10e574f1",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 127,
+      "parent": 117,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1366,
+      "end_utf16": 1371,
+      "full_start_utf16": 1365,
+      "text_sha256": "e300cbac59ece2fc12d46b5b983465104e1db2a46104808843cb81be3ec7e784",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 128,
+      "parent": 116,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1382,
+      "end_utf16": 1389,
+      "full_start_utf16": 1382,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 129,
+      "parent": 115,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1390,
+      "end_utf16": 1402,
+      "full_start_utf16": 1390,
+      "text_sha256": "d19ed9fde74f680f861ee16e884bad84f40045c4861ba1d3cefa18cac083e4cc",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 130,
+      "parent": 115,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1404,
+      "end_utf16": 1409,
+      "full_start_utf16": 1403,
+      "text_sha256": "3716fc462f4eff54de060a3148864adc379270f89016384d83385fdca867148c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 131,
+      "parent": 114,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1420,
+      "end_utf16": 1427,
+      "full_start_utf16": 1420,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 132,
+      "parent": 113,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1428,
+      "end_utf16": 1438,
+      "full_start_utf16": 1428,
+      "text_sha256": "b1c95ce487c256457d6390594115712580b882f1b17c1bf677d79f0cf2799a3e",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 133,
+      "parent": 113,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1440,
+      "end_utf16": 1443,
+      "full_start_utf16": 1439,
+      "text_sha256": "cf79003f36ebe2b99fe87442a4118988ee4d197d964dbddb63e3a143e92524ea",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 134,
+      "parent": 112,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1454,
+      "end_utf16": 1461,
+      "full_start_utf16": 1454,
+      "text_sha256": "7ab3778776cde4fa728a162a53ad3abcc967d1bd7361039e0942888240c4ce86",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 135,
+      "parent": 111,
+      "kind": "RegularExpressionLiteral",
+      "native_kind": 13,
+      "flags": 0,
+      "start_utf16": 1462,
+      "end_utf16": 1478,
+      "full_start_utf16": 1462,
+      "text_sha256": "60318fb2d91d0b6acf4a3c6de6a659346634f09d40b1bf5aa1f3d69f92bb053f",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 136,
+      "parent": 111,
+      "kind": "StringLiteral",
+      "native_kind": 10,
+      "flags": 0,
+      "start_utf16": 1480,
+      "end_utf16": 1483,
+      "full_start_utf16": 1479,
+      "text_sha256": "01f86083c0c7d2b1fdd3d4e93cc502990ce51bada47b4da56d987d4efbad6d98",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 137,
+      "parent": 110,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1494,
+      "end_utf16": 1500,
+      "full_start_utf16": 1494,
+      "text_sha256": "0f82aca66af91493b1ff401de5f1f7e3e24e14560df3f6f7e465dbc915b9947d",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 138,
+      "parent": 10,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1507,
+      "end_utf16": 1564,
+      "full_start_utf16": 1501,
+      "text_sha256": "df3a62ff679349901a74106655205e30417e6d1c0da50d285cd7016f9dd793f8",
+      "children": [
+        139
+      ],
+      "roles": {
+        "expression": 139
+      }
+    },
+    {
+      "id": 139,
+      "parent": 138,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1507,
+      "end_utf16": 1563,
+      "full_start_utf16": 1501,
+      "text_sha256": "a1404814b706bb87c679f377d6302fc4e9843bf5e000d0e977c7faaaca54cbb9",
+      "children": [
+        140,
+        143
+      ],
+      "roles": {
+        "expression": 140,
+        "arguments": [
+          143
+        ]
+      }
+    },
+    {
+      "id": 140,
+      "parent": 139,
+      "kind": "PropertyAccessExpression",
+      "native_kind": 212,
+      "flags": 0,
+      "start_utf16": 1507,
+      "end_utf16": 1518,
+      "full_start_utf16": 1501,
+      "text_sha256": "3b549ed051f07d14ca03241c68ed10f3e8647f5d0e18d315e47534f2ba5c1e3b",
+      "children": [
+        141,
+        142
+      ],
+      "roles": {
+        "name": 142,
+        "expression": 141
+      }
+    },
+    {
+      "id": 141,
+      "parent": 140,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1507,
+      "end_utf16": 1514,
+      "full_start_utf16": 1501,
+      "text_sha256": "93d8874c8c86f0fc893dbe15c765ffa0fcd342f798dbf669e08f8cbe095d230c",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 142,
+      "parent": 140,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1515,
+      "end_utf16": 1518,
+      "full_start_utf16": 1515,
+      "text_sha256": "836ff184e7b41b1e13cb5fd89fa1de98dbbab99e9d2918913ff43b86a5c7c213",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 143,
+      "parent": 139,
+      "kind": "TemplateExpression",
+      "native_kind": 229,
+      "flags": 0,
+      "start_utf16": 1519,
+      "end_utf16": 1562,
+      "full_start_utf16": 1519,
+      "text_sha256": "6cba25cca93d10fb1172519154527be6c464e4b36c469cecf21516c08bd44047",
+      "children": [
+        144,
+        145,
+        148,
+        151
+      ],
+      "roles": {
+        "head": 144,
+        "templateSpans": [
+          145,
+          148,
+          151
+        ]
+      }
+    },
+    {
+      "id": 144,
+      "parent": 143,
+      "kind": "TemplateHead",
+      "native_kind": 15,
+      "flags": 0,
+      "start_utf16": 1519,
+      "end_utf16": 1524,
+      "full_start_utf16": 1519,
+      "text_sha256": "72f54a4b9c4510a87686bc0acac92c7ebae4238cf2d265dfc66aaf37085523ec",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 145,
+      "parent": 143,
+      "kind": "TemplateSpan",
+      "native_kind": 240,
+      "flags": 0,
+      "start_utf16": 1524,
+      "end_utf16": 1539,
+      "full_start_utf16": 1524,
+      "text_sha256": "81e949e0e0f7ab464370183cdab274d844e3b927fcdb5123b907d3e3219bef6c",
+      "children": [
+        146,
+        147
+      ],
+      "roles": {
+        "expression": 146,
+        "literal": 147
+      }
+    },
+    {
+      "id": 146,
+      "parent": 145,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1524,
+      "end_utf16": 1534,
+      "full_start_utf16": 1524,
+      "text_sha256": "116aec36bfadc69cb418eb80eae45953c547e54764191b1f80cae07acf9adcad",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 147,
+      "parent": 145,
+      "kind": "TemplateMiddle",
+      "native_kind": 16,
+      "flags": 0,
+      "start_utf16": 1534,
+      "end_utf16": 1539,
+      "full_start_utf16": 1534,
+      "text_sha256": "852f4e96a499d1026623b188dbd19f5165ef160907933cd32a92e5d1d3b0379a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 148,
+      "parent": 143,
+      "kind": "TemplateSpan",
+      "native_kind": 240,
+      "flags": 0,
+      "start_utf16": 1539,
+      "end_utf16": 1554,
+      "full_start_utf16": 1539,
+      "text_sha256": "a38cb98adb16e9175ceee186feb888475b4935b95ea203132bd7deae220a20e8",
+      "children": [
+        149,
+        150
+      ],
+      "roles": {
+        "expression": 149,
+        "literal": 150
+      }
+    },
+    {
+      "id": 149,
+      "parent": 148,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1539,
+      "end_utf16": 1549,
+      "full_start_utf16": 1539,
+      "text_sha256": "017d8f3a71dcd07b2a6fa23c2ea683bc5acba573fb74935f5c9bf385e9c8e84b",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 150,
+      "parent": 148,
+      "kind": "TemplateMiddle",
+      "native_kind": 16,
+      "flags": 0,
+      "start_utf16": 1549,
+      "end_utf16": 1554,
+      "full_start_utf16": 1549,
+      "text_sha256": "852f4e96a499d1026623b188dbd19f5165ef160907933cd32a92e5d1d3b0379a",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 151,
+      "parent": 143,
+      "kind": "TemplateSpan",
+      "native_kind": 240,
+      "flags": 0,
+      "start_utf16": 1554,
+      "end_utf16": 1562,
+      "full_start_utf16": 1554,
+      "text_sha256": "470a7fc3c658c0b49a77b88882ceb5f4f7ff9363d7f8ab26d7fd50ecb4962364",
+      "children": [
+        152,
+        153
+      ],
+      "roles": {
+        "expression": 152,
+        "literal": 153
+      }
+    },
+    {
+      "id": 152,
+      "parent": 151,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1554,
+      "end_utf16": 1560,
+      "full_start_utf16": 1554,
+      "text_sha256": "44849f46e9141b3f714c4508f3a8d4f135d5df3a8fcaed8b6d4975f934a6bbee",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 153,
+      "parent": 151,
+      "kind": "TemplateTail",
+      "native_kind": 17,
+      "flags": 0,
+      "start_utf16": 1560,
+      "end_utf16": 1562,
+      "full_start_utf16": 1560,
+      "text_sha256": "01095f85622a5f8f8efac09814216f2655ad516c1c3200721544b423ed41bb85",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 154,
+      "parent": 0,
+      "kind": "ExpressionStatement",
+      "native_kind": 245,
+      "flags": 0,
+      "start_utf16": 1568,
+      "end_utf16": 1581,
+      "full_start_utf16": 1566,
+      "text_sha256": "21d3228d8cd8d5d5a834d252b1f22692938cafd883cde3bbfb63ddae53363be3",
+      "children": [
+        155
+      ],
+      "roles": {
+        "expression": 155
+      }
+    },
+    {
+      "id": 155,
+      "parent": 154,
+      "kind": "CallExpression",
+      "native_kind": 214,
+      "flags": 0,
+      "start_utf16": 1568,
+      "end_utf16": 1580,
+      "full_start_utf16": 1566,
+      "text_sha256": "ead547d86d4e19e5c52e74d84b055f5543fbaaf35955ac9fbfbc60eb04c32ac9",
+      "children": [
+        156
+      ],
+      "roles": {
+        "expression": 156,
+        "arguments": []
+      }
+    },
+    {
+      "id": 156,
+      "parent": 155,
+      "kind": "Identifier",
+      "native_kind": 79,
+      "flags": 0,
+      "start_utf16": 1568,
+      "end_utf16": 1578,
+      "full_start_utf16": 1566,
+      "text_sha256": "4f2c6ecc526c637934eca999ee5779c16a53be8093936af46a5fd6e20ab24175",
+      "children": [],
+      "roles": {}
+    },
+    {
+      "id": 157,
+      "parent": 0,
+      "kind": "EndOfFile",
+      "native_kind": 1,
+      "flags": 0,
+      "start_utf16": 1582,
+      "end_utf16": 1582,
+      "full_start_utf16": 1581,
+      "text_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "children": [],
+      "roles": {}
+    }
+  ],
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "chart_admission": false
+}
