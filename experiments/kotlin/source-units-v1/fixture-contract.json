@@ -1,0 +1,26 @@
+{
+  "schema": "kotlin-source-unit-fixture-contract-v1",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "status": "source-reviewed-expectations-awaiting-native-psi-replay",
+  "reader_fixture_source": "experiments/kotlin/source-counts-v1/fixtures.json",
+  "evidence": "Expected original-source units derive from the approved canonical rule. These are not observed native parser results. Fixture IDs select assertions only; no application ownership decision depends on a path, benchmark name or source hash.",
+  "fixtures": [
+    {"id": "fixture--packed-statements", "outcome": "candidate-count", "canonical_units": 5, "reason": "Function header and written close plus three independent body statements."},
+    {"id": "fixture--expanded-statements", "outcome": "candidate-count", "canonical_units": 5, "reason": "The same header, three statements and close on separate rows."},
+    {"id": "fixture--comment-literal-boundaries", "outcome": "candidate-count", "canonical_units": 2, "reason": "Two declarations; native comment ownership excludes nested/trailing comments and preserves literal punctuation."},
+    {"id": "fixture--expression-and-block-functions", "outcome": "candidate-count", "canonical_units": 5, "reason": "Expression-only function: one. Explicit function header, two statements and written close: four."},
+    {"id": "fixture--callback-statements", "outcome": "candidate-count", "canonical_units": 5, "reason": "One combined enclosing-expression/lambda header, three body statements and one written close."},
+    {"id": "fixture--control-bodies", "outcome": "candidate-count", "canonical_units": 10, "reason": "Function header/close: two. For header/close: two. If and else headers plus their unbraced bodies: four. While header and unbraced body: two."},
+    {"id": "fixture--when-branches", "outcome": "candidate-count", "canonical_units": 8, "reason": "When header/close: two. First branch header and body: two. Second branch header, two statements and written block close: four."},
+    {"id": "fixture--destructuring-and-fields", "outcome": "candidate-count", "canonical_units": 6, "reason": "Two promoted constructor fields. Function header/close plus one destructuring declaration and one call: four."},
+    {"id": "fixture--wrapped-data", "outcome": "candidate-count", "canonical_units": 4, "reason": "All four nonblank data/argument rows retain their physical baseline."},
+    {"id": "fixture--string-interpolation", "outcome": "needs-review", "diagnostic": "interpolation-with-independent-work-needs-review", "reason": "A block lambda with independent statements inside interpolation is not silently treated as scalar literal data."},
+    {"id": "fixture--unicode-crlf", "outcome": "candidate-count", "canonical_units": 2, "reason": "Two physical source units; original and newline-normalized text are bound explicitly and UTF-16 ranges preserve the supplementary character."},
+    {"id": "fixture--never-evaluate", "outcome": "candidate-count", "canonical_units": 1, "reason": "One source declaration; its error call must never execute during source counting."},
+    {"id": "fixture--unclosed-function", "outcome": "parse-rejected", "reason": "The native reader must reject the unterminated function body."},
+    {"id": "fixture--mismatched-delimiter", "outcome": "parse-rejected", "reason": "The native reader must reject mismatched data delimiters."}
+  ],
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false
+}

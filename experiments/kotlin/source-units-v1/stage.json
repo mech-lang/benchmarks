@@ -1,0 +1,90 @@
+{
+  "schema": "kotlin-source-unit-stage-v1",
+  "status": "source-only-implementation-awaiting-native-psi-replay",
+  "counter": "tools/qualification/kotlin_source_units.py",
+  "synthetic_tests": "tools/qualification/test_kotlin_source_units.py",
+  "native_reader": "experiments/kotlin/source-counts-v1/SourceReader.java",
+  "native_reader_controller": "tools/qualification/kotlin_loc.py",
+  "native_reader_controller_sha256": "0f64cbd36435d578de238248a890b581e2389de240534a6a2c4d439147c73710",
+  "fixture_contract": "experiments/kotlin/source-units-v1/fixture-contract.json",
+  "rule_sources": [
+    "docs/methodology.md",
+    "archive/validation/loc-normalization/20261012/canonical.py",
+    "archive/validation/loc-normalization/20261012/foreign_core.py"
+  ],
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "grammar": "kotlin-native-psi-owners-v1",
+  "scope": {
+    "retained_forms": 20,
+    "physical_application_inputs_expected_by_reader": 40,
+    "counted_roles": ["application", "application-helper"],
+    "reviewed_input_inventory": "experiments/kotlin/source-owner-review-v1/review.json",
+    "inventory_fields": "profiles[].source_inputs[].reviewed_source",
+    "reviewed_main_workloads": ["binarytrees", "fannkuchredux", "fasta", "knucleotide", "mandelbrot", "nbody", "pidigits", "regexredux", "revcomp", "spectralnorm"],
+    "reviewed_helper": "archive/languages/kotlin/20261013/drafts/private-v1/support/Support.kt",
+    "distinct_reviewed_source_files_read": 11,
+    "source_inputs_rehashed_during_preparation": false
+  },
+  "input_contract": {
+    "count_source_api": "count_source(original_source, {'psi': exact_psi_json, 'psi_source': exact_saved_psi_source_text})",
+    "native_schema": "kotlin-native-psi-source-v1",
+    "native_offsets": "UTF-16 code units",
+    "validation": "Check the exact frozen kotlin_loc.py SHA-256 before loading its definitions, then reuse only validate_psi: exact source/PSI-source binding, explicitly allowed newline normalization, preorder parent/child inventory, partitioned ranges, complete leaf text and parser-error inventory. No reader prepare/run/preflight function is invoked.",
+    "offset_conversion": "Map complete UTF-16 character boundaries to Python Unicode character offsets for counting. Reject any native node boundary that splits a surrogate pair. Report normalized-source ownership coordinates explicitly.",
+    "lexical_authority": "Native PSI classes, node types, leaf spans, comment flags, whitespace flags and parent/child relationships. No Kotlin lexer or regular-expression language parser supplies ownership."
+  },
+  "algorithm": [
+    "Mask native comment nodes and literal data while preserving physical rows. Scalar string interpolation remains part of its literal expression; interpolation containing declarations, assignments or executable blocks receives a review diagnostic.",
+    "Use KtNamedFunction/KtClassBody/KtBlockExpression ownership and actual delimiter leaves for explicit headers and written closers. Expression-only functions receive no artificial header or close.",
+    "Use THEN/ELSE/BODY containers to distinguish statement-role if/for/while controls from scalar if expressions in initializers, operands, returns and expression functions. A final scalar if in a lambda supplies that lambda's value; preceding packed statements retain statement ownership.",
+    "Use KtWhenExpression braces and KtWhenEntry arrows for the written when header, individual branch headers, branch bodies and explicit closers, including expression-bodied functions.",
+    "Use KtLambdaExpression/KtFunctionLiteral and their native body ranges for lambda headers, each independent body statement and written close. Enclosing expression identity and disjoint successive headers handle callbacks inside arguments and chained calls.",
+    "A scalar continuation in the same enclosing expression adds no extra unit on an already-owned closer row. Independently wrapped continuation rows retain their physical unit. Inner callback body owners cannot be suppressed by an outer continuation.",
+    "Native KtProperty and KtDestructuringDeclaration nodes supply one declaration each; native assignment operators supply chained assignment expansion. Semicolon-packed native sibling statements remain separate. Literal/data wrapping remains physical.",
+    "KtParameter val/var nodes under a primary constructor are actual promoted fields; ordinary parameters remain structural. Headerless class rows expand to their independent fields without inventing a class header/close. With a written class body, the real class header and promoted fields each count, followed by the written close.",
+    "Reject unsupported executable owners, annotations without reviewed ownership, unowned bodies/braces, overlapping events, malformed PSI and non-scalar continuation work instead of supplying a qualified count."
+  ],
+  "constructor_examples": [
+    {"source": "class Node(val left: Node?, val right: Node?)", "candidate_units": 2},
+    {"source": "class Plain(left: Int, right: Int)", "candidate_units": 1},
+    {"source": "class Node(val left: Node?, val right: Node?) {}", "candidate_units": 4}
+  ],
+  "native_role_source_evidence": {
+    "primary_psi_description": "https://raw.githubusercontent.com/JetBrains/kotlin/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtFunctionLiteral.java",
+    "primary_loop_description": "https://raw.githubusercontent.com/JetBrains/kotlin/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtLoopExpression.java",
+    "primary_parser_structure": "https://raw.githubusercontent.com/JetBrains/kotlin/master/compiler/psi/parser/src/org/jetbrains/kotlin/parsing/KotlinExpressionParsing.java",
+    "retained_metadata_review": "A small source-only read of four retained compiler class constant pools confirmed PSI class/node role names. This was not parser execution or observed PSI evidence."
+  },
+  "commands": {
+    "pure_synthetic_tests": "python3 -I -S -B tools/qualification/test_kotlin_source_units.py",
+    "one_saved_pair": "python3 -I -S -B tools/qualification/kotlin_source_units.py count --source PATH/source.kt --psi-source PATH/psi-source.kt --psi PATH/psi.json --output NEW-candidate.json",
+    "saved_reader_replay": "python3 -I -S -B tools/qualification/kotlin_source_units.py replay --plan SOURCE-READER-PLAN.json --reader-directory SOURCE-READER-OUTPUT/native-reader/sources --output NEW-source-units.json",
+    "relocated_controller_report": "The optional --controller-report PATH supplies the saved completed controller report if it is no longer at plan.output/report.json."
+  },
+  "replay_contract": {
+    "controller_binding": "Bind the native report hash and plan hash to the completed reader controller report. Runtime reader_path values come from completed controller inputs, which must otherwise equal the prepared plan inputs.",
+    "source_binding": "Verify saved source.kt, psi-source.kt and psi.json against each native report item and the plan. Replay source validation, original-source owner accounting and fourteen native fixture assertions.",
+    "bundles": "Sum every application and helper count in each authored profile only when all source counts are unambiguous. No alias/path/name exemptions exist.",
+    "terminal_provenance": "native_reader_terminal_verified remains false. The existing reader controller's runtime provenance, process cleanup and terminal receipt still need independent review before qualification.",
+    "formatter": "No formatter evidence is supplied by this native PSI reader. formatted_loc remains null and formatted_loc_qualified remains false.",
+    "admission": "All emitted source/profile counts are candidates. Canonical qualification and chart admission remain false even after a clean replay until actual native evidence and owner review are complete."
+  },
+  "source_only_validation": {
+    "synthetic_tests_passed": 36,
+    "synthetic_test_elapsed_seconds": 0.016,
+    "synthetic_native_report_replay_cases": 1,
+    "python_ast_syntax_files": 2,
+    "json_documents_validated": 2,
+    "reviewed_inventory_profiles": 20,
+    "reviewed_inventory_physical_inputs": 40,
+    "reviewed_inventory_distinct_source_paths": 11,
+    "reviewed_inventory_paths_exist": true,
+    "native_execution_count": 0,
+    "actual_native_reader_replays": 0
+  },
+  "native_parser_executed": false,
+  "actual_reader_replay_executed": false,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false
+}
