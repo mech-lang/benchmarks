@@ -1,0 +1,448 @@
+{
+  "schema": "typescript-ten-workload-source-draft-v1",
+  "status": "source-only-uncompiled-unqualified",
+  "language": "typescript",
+  "runtime": "Node.js / V8 executing emitted JavaScript",
+  "profiles": [
+    {
+      "id": "typescript-binarytrees-v1",
+      "workload": "binarytrees",
+      "source": "binarytrees.ts",
+      "source_sha256": "33f535c0880d29a584de91270238f49f5467a2de4265deff90e4239b1afbd052",
+      "source_bytes": 1631,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/binarytrees/binarytrees-node-7/binarytrees-node-7.js",
+        "sha256": "76e31ce5920f663b83785481bd7bf2678418889dfd946b5b1dac2b1c5738db39",
+        "program_key": "binarytrees:binarytrees-node-7"
+      },
+      "changes": [
+        "Explicit nullable recursive class and numeric function signatures.",
+        "Replace the JavaScript constructor that returns an object literal with a typed class allocating the retained node.",
+        "Check both nullable children before recursion; preserve prescribed depths, tree counts, checks and long-lived root."
+      ],
+      "required_work": "Fresh distinct node objects including leaves; prescribed stretch and short-lived trees, recursive checks, retained long-lived tree.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-fannkuchredux-v1",
+      "workload": "fannkuchredux",
+      "source": "fannkuchredux.ts",
+      "source_sha256": "8513ece192d5008a70a0f46a5382c630cce039660b90e15fa26d4e893f556c2d",
+      "source_bytes": 1780,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/fannkuchredux/fannkuchredux-node-8/fannkuchredux-node-8.js",
+        "sha256": "e0b2deab1695b68464df8d3d129d6bda0f72ab8e684da94c3c01666ccd71164e",
+        "program_key": "fannkuchredux:fannkuchredux-node-8"
+      },
+      "changes": [
+        "Typed numeric arrays, parameters, result and loop variables.",
+        "Declare previously implicit globals f, flips, nperm and checksum as function locals; retain full permutation enumeration and prefix reversals.",
+        "An explicit zero emits checksum zero and maximum zero."
+      ],
+      "required_work": "All n! permutations, actual prefix reversals and alternating checksum.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-fasta-v1",
+      "workload": "fasta",
+      "source": "fasta.ts",
+      "source_sha256": "78007554fd2d3ee914ddabfc9bd7346f3475c5a0050a5bfd9bbc28c692490d50",
+      "source_bytes": 2297,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/fasta/fasta-node-1/fasta-node-1.js",
+        "sha256": "0a88341debe90a8e03e082acbfe4ea36b29ece6a3ec71a9b2b82449c8d30515d",
+        "program_key": "fasta:fasta-node-1"
+      },
+      "changes": [
+        "Typed probability dictionaries, nullable cumulative-key state, string buffers and function signatures.",
+        "Preserve original LCG seed and recurrence, literal sequence, probability order, 2n/3n/5n lengths and 60-column wrapping."
+      ],
+      "required_work": "Sequential LCG, 2n repeated and 3n+5n random bases, complete headers and wrapping.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-knucleotide-v1",
+      "workload": "knucleotide",
+      "source": "knucleotide.ts",
+      "source_sha256": "975ef7d9ed4a80497b7526b701e7c3373edd687cff3bf13e1e3a3d81547f5f3b",
+      "source_bytes": 2461,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/knucleotide/knucleotide-node-8/knucleotide-node-8.js",
+        "sha256": "ff858c7699b55616a3efb6b0280201c5cf83443ca0d8792d0dc0cc9e5ca27c7b",
+        "program_key": "knucleotide:knucleotide-node-8"
+      },
+      "changes": [
+        "Use typed Node readline import, string arrays, Map<string, number> and named frequency tuples.",
+        "Declare previous counts/size globals inside each function; make missing-count handling explicit and remove the unused numeric main argument.",
+        "Select only the exact THREE identifier before space, tab or line end; ignore complete comment lines, handle CRLF consistently and validate selected A/C/G/T bases.",
+        "Retain complete substring maps for all seven k values; sort frequencies by descending count then ascending ASCII key, matching the retained independent oracle."
+      ],
+      "required_work": "Read THREE sequence, uppercase it, build overlapping substring counts for lengths 1,2,3,4,6,12,18 and print required summaries.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-mandelbrot-v1",
+      "workload": "mandelbrot",
+      "source": "mandelbrot.ts",
+      "source_sha256": "e691deb96787f3b5c1eff6f3fc46e62ccd839525c39ede69320a9f4704475e6a",
+      "source_bytes": 1811,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/mandelbrot/mandelbrot-node-1/mandelbrot-node-1.js",
+        "sha256": "35264a14b1859359929a50b802e9f74da30d31f6abd26a3995cef9b84eea5990",
+        "program_key": "mandelbrot:mandelbrot-node-1"
+      },
+      "changes": [
+        "Explicit numeric iteration state and fixed 65536-byte Uint8Array output buffer.",
+        "Use a missing-argument default so an explicit zero dimension remains zero.",
+        "Preserve the 50-step recurrence, escape condition and final PBM padding.",
+        "Replace mutable one-byte asynchronous stream writes with bounded synchronous fs.writeSync output; handle partial writes and reject zero progress."
+      ],
+      "required_work": "Every pixel, up to fifty recurrence iterations, exact escape test and binary PBM output.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-nbody-v1",
+      "workload": "nbody",
+      "source": "nbody.ts",
+      "source_sha256": "e7a4ecb4b50fe0c8450dd279fd9791935cc84a82e101e6470d74c0ff506bc03b",
+      "source_bytes": 4408,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/nbody/nbody-node-8/nbody-node-8.js",
+        "sha256": "e3fc1b072456c57acd7c64a17907c1445f8aea284b94c5b24193efeeeaccbb43",
+        "program_key": "nbody:nbody-node-8"
+      },
+      "changes": [
+        "Explicit numeric Body fields, constructor, Body[] parameters and function returns.",
+        "Declare px, py and pz locally; preserve all literals, pair force updates, step loop and both energy outputs."
+      ],
+      "required_work": "Fresh five-body state, momentum offset, fifty-million full-input integration steps and two computed energies.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-pidigits-v1",
+      "workload": "pidigits",
+      "source": "pidigits.ts",
+      "source_sha256": "e8ed3a16a8d53c8119af7caccf9e788b0c598ea07f014ac2b1b21578232dda49",
+      "source_bytes": 1170,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/pidigits/pidigits-node-2-two-extracts/pidigits-node-2-two-extracts.js",
+        "sha256": "ee3fc53d842622faa6d8bab55a6ed307282fa41190245dfaa6dd8c2ffad8fff0",
+        "program_key": "pidigits:pidigits-node-2-two-extracts"
+      },
+      "changes": [
+        "Explicit bigint state and numeric function argument.",
+        "Retain both independent division extractions from the corrected JavaScript source.",
+        "Accept explicit zero digits as empty output instead of applying the old nonzero default.",
+        "Accumulate actual digit characters and right-pad the final row to ten columns so leading zeroes survive in partial groups."
+      ],
+      "required_work": "Sequential unbounded bigint spigot, both extract(3) and extract(4) divisions, ten digits per output row.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-regexredux-v1",
+      "workload": "regexredux",
+      "source": "regexredux.ts",
+      "source_sha256": "83c96161b3420c81f4d7604b02b4c692e594e894d6dd3bd32ce6d140849a682f",
+      "source_bytes": 1582,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/regexredux/regexredux-node-4/regexredux-node-4.js",
+        "sha256": "54ec5e0c2af825da9cddd5bdd0180c67aff876b12d3a58f2b35257cff9d17c16",
+        "program_key": "regexredux:regexredux-node-4"
+      },
+      "changes": [
+        "Typed RegExp[] and Node file import; retain all nine count expressions and five ordered replacements.",
+        "Make count patterns case-sensitive to match the retained independent oracle.",
+        "Read descriptor zero with Latin-1 decoding so every input byte is preserved.",
+        "Use unanchored >[^\\n]*\\n|\\n cleanup to match the byte oracle, including embedded markers and CR or high-byte header content."
+      ],
+      "required_work": "Nine whole-input pattern counts and five ordered substitutions with reported lengths.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-revcomp-v1",
+      "workload": "revcomp",
+      "source": "revcomp.ts",
+      "source_sha256": "a9375f462d746f1cdae006c8e6f07a1d9291c0c1f0184ec288704c2cb259197c",
+      "source_bytes": 3060,
+      "lineage": "new-implementation-with-reference",
+      "reference": {
+        "path": "programs/javascript/revcomp/revcomp-node-2/revcomp-node-2.js",
+        "sha256": "82714ddef156ebaee52c6804c5c5e214d39c8dd9a72d60cd9cf8a40082c09850",
+        "program_key": "revcomp:revcomp-node-2"
+      },
+      "changes": [
+        "New whole-input byte parser and typed record state; no old linked-buffer parser copied.",
+        "Ignore preamble and complete semicolon comment lines; preserve binary headers; split CR, LF and CRLF; handle empty records and EOF without newline.",
+        "Copy sequence bytes into a reusable bounded-by-input buffer, then reverse and complement in TypeScript with a 60-column output buffer.",
+        "Reject unrecognized bytes in reverse traversal order with exit 1 and explicit stderr; all other exits and output still require native checking."
+      ],
+      "required_work": "All record sequence bytes reversed and IUPAC-complemented with exact headers and sixty-column output.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    },
+    {
+      "id": "typescript-spectralnorm-v1",
+      "workload": "spectralnorm",
+      "source": "spectralnorm.ts",
+      "source_sha256": "d08f3300b0219e75c873bf49e03f194a245958d88011a5f755165cee98ae3e2e",
+      "source_bytes": 1390,
+      "lineage": "typed-adaptation",
+      "reference": {
+        "path": "programs/javascript/spectralnorm/spectralnorm-node-8/spectralnorm-node-8.js",
+        "sha256": "148e45a0e8a7b1fdc67f468900b73e8814383f76dbb30cdb328ea3e7f01f64a1",
+        "program_key": "spectralnorm:spectralnorm-node-8"
+      },
+      "changes": [
+        "Explicit numeric arrays and function signatures.",
+        "Replace leaked i/j/v/vBv/vv globals with scoped declarations.",
+        "Preserve forty implicit coefficient products, fresh intermediate arrays and runtime input; no coefficient matrix cache."
+      ],
+      "required_work": "Forty implicit A/A-transpose products and final Rayleigh ratio; no retained matrix.",
+      "workers": 1,
+      "runtime_dependencies": [
+        "Node.js standard library",
+        "V8 builtins"
+      ],
+      "compiler_dependencies": [
+        "TypeScript compiler",
+        "@types/node and its declared type dependencies"
+      ],
+      "compiled": false,
+      "emitted_javascript": null,
+      "canonical_loc": null,
+      "formatted_loc": null,
+      "conformance_qualified": false,
+      "required_work_qualified": false,
+      "benchmark_samples": 0,
+      "chart_admission": false
+    }
+  ],
+  "compiler_config": "tsconfig.json",
+  "package_config": "package.json",
+  "compiler_version": null,
+  "compiler_sha256": null,
+  "node_runtime_sha256": null,
+  "type_dependency_lock": null,
+  "runtime_candidate": "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+  "historical_node_version_receipt": "archive/qualification/platform/checks/platform-frontend-v3/node-version/version.stdout",
+  "historical_node_version_text": "v24.19.0",
+  "current_node_version_verified": false,
+  "source_counter_status": "Version-pinned TypeScript 7.0.2 AST reader and 30 fixtures prepared; native reader and counter qualification pending; canonical and formatted counts are null",
+  "existing_counter_files": [
+    "archive/validation/loc-normalization/20261012/lexical.py",
+    "archive/validation/loc-normalization/20261012/canonical.py",
+    "archive/validation/loc-normalization/20261012/normalizer.py"
+  ],
+  "revcomp_independent_oracle": "experiments/prolog/revcomp-linear-v1/fixtures.py",
+  "native_processes_started": 0,
+  "benchmarks_run": 0,
+  "timings_imported": 0,
+  "chart_admission": false,
+  "packet_files": {
+    "tsconfig.json": "ebde65206600290649a1ab699767c8da341f1460ebb6e50c8d4b7c83d1d2053d",
+    "package.json": "d7eae4a432ea4f05021fd3d13b7d2af3b92f0622784d91384e5460b5a4660917",
+    "LICENSE.benchmarksgame": "23d55e525513e2c59bd0b6ff3b0d49fdf43b45daa2ebec75bcfded92a10d63e1",
+    "INVENTORY.md": "7f68d4f61a0386c09c74036ab42211f8ab888d257e61bea602325c8792731615"
+  },
+  "source_contract_references": [
+    "archive/languages/v/20261012/dna_oracles.py",
+    "archive/languages/c3/20261012/revisions/private-v1/references.py",
+    "experiments/prolog/revcomp-linear-v1/fixtures.py"
+  ],
+  "source_review": {
+    "scope": "All ten authored workload drafts; source-level structure and reference provenance only",
+    "reviewed": true,
+    "native_compilation_performed": false,
+    "native_conformance_qualified": false,
+    "compiled_work_qualified": false,
+    "canonical_LOC_admitted": false,
+    "recorded_findings": [
+      "Exact THREE token selection, comments, base validation and deterministic frequency ties.",
+      "Pi output preserves leading zeroes in complete and partial groups.",
+      "Mandelbrot uses a bounded synchronous output buffer with complete writes.",
+      "Regex counts are case-sensitive and byte-preserving; header cleanup matches the independent byte oracle.",
+      "Zero-sized fannkuch emits both summary lines.",
+      "TypeScript 7 rejects esModuleInterop:false; configuration now enables interop, with native compiler acceptance and emission review pending."
+    ]
+  },
+  "compiler_candidate_version": "7.0.2",
+  "compiler_candidate_source": "https://registry.npmjs.org/typescript/7.0.2",
+  "compiler_candidate_installed": false,
+  "bounded_corpus": {
+    "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+    "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1",
+    "cases": 149,
+    "subject_executions": 0
+  },
+  "toolchain_selection": {
+    "path": "experiments/typescript/toolchain-v1/selection.json",
+    "sha256": "c310b03926f5c1424a413ddcf8705bf7bec5aabe43d771ebcb14b79583787a3b"
+  },
+  "source_reader_packet": "experiments/typescript/source-counts-v1",
+  "source_reader_files": {
+    "experiments/typescript/source-counts-v1/README.md": "eb8033a4b84c62b89ef71824a546d4e6f1b2673a5dc1a5c465008faa95f7d348",
+    "experiments/typescript/source-counts-v1/fixtures.json": "1bb37feb2effab6984fbcf2895677c2ff79ea69ff01d2de39a9b4d3a360eb867",
+    "experiments/typescript/source-counts-v1/reader.mjs": "5376ab0a67541801ec3265d213f3fbb884101a49a15945638d8021600c36e219"
+  },
+  "source_reader_fixture_count": 30,
+  "output_checker": {
+    "path": "tools/qualification/scala_typescript_outputs.py",
+    "sha256": "88efb309f9ef6054b4541bd1605d98c323711acf2a62ce7c0080cc3bbcd08d0d",
+    "native_adapters_qualified": false,
+    "pure_review": {
+      "path": "experiments/shared/bounded-corpus-v1/output-checker-review.json",
+      "sha256": "b9978d2f55d0e31604209894988618111a50f58466d9bbe5cfa1a08a79ad4832"
+    }
+  }
+}

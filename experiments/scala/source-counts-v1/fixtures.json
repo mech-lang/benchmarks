@@ -1,0 +1,387 @@
+{
+  "schema": "scala-source-unit-fixture-contract-v1",
+  "status": "source-only-unexecuted",
+  "canonical_rule": "canonical-source-units-20261012-approved-rule-v2",
+  "compiler_version": "3.10.0",
+  "compiler_parser_api_verified": false,
+  "expected_parse_basis": "Hand-reviewed Scala 3 syntax; exact 3.10.0 parser observations remain pending. Fixtures may contain unresolved names because this stage must not type-check or evaluate them.",
+  "count_basis": "Proposed authored-source owners; these are not observed native parser results or admitted LOC.",
+  "native_cases_run": 0,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false,
+  "fixtures": [
+    {
+      "id": "packed-method",
+      "text": "def f(): Int = { val x = 1; val y = 2; x + y }\n",
+      "source_sha256": "21c81db3b5a20af9599e627038c164fae82b3fc4fdcec7185ff3c3498f91ef40",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Method header, two independent declarations, final expression and written close."
+    },
+    {
+      "id": "expanded-method",
+      "text": "def f(): Int = {\n  val x = 1\n  val y = 2\n  x + y\n}\n",
+      "source_sha256": "623ac2ad821b737b0b087aaec85e6bade6c8e8338a35127850fe764e152510d7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Executable layout changes do not alter the five owners.",
+      "equivalent_to": "packed-method"
+    },
+    {
+      "id": "expression-method",
+      "text": "def inc(x: Int): Int = x + 1\n",
+      "source_sha256": "47569e29ae99605546e4f9943c3790c852fcb4758c6495865a208144f7c41017",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One composed method declaration; formal and result types are retained without synthetic body boundaries."
+    },
+    {
+      "id": "generic-expression-method",
+      "text": "def identity[T](value: T): T = value\n",
+      "source_sha256": "64fc0fdc6b3396a4cd38d1d3b258ac6f014da31aa6ce0faa8e9b8b20f8a5696c",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Type parameter, formal and result types belong to the authored method header."
+    },
+    {
+      "id": "tuple-type-alias",
+      "text": "type Pair = (String, Int)\n",
+      "source_sha256": "6d3c9fdbe3ac8b3002cc56339b047cdeccdbea700c710fe0594876772bf3e924",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One authored type declaration; tuple components are structural type syntax."
+    },
+    {
+      "id": "constructor-fields-no-body",
+      "text": "class Node(val left: Node, val right: Node)\n",
+      "source_sha256": "a552625c6610286135722c9f789796eebb75d9e08e0948b8409bc0696cdfeaed",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "One class header and two explicitly authored val fields; there is no written class-body close."
+    },
+    {
+      "id": "constructor-plain-formals",
+      "text": "class Point(x: Double, y: Double)\n",
+      "source_sha256": "407193dc5020ba335f02d3053d4bbac533ba691d4c06a849b6da696fa1a6854e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Plain constructor formals add no explicitly authored val/var fields or synthetic constructor body."
+    },
+    {
+      "id": "constructor-fields-packed-body",
+      "text": "class Node(val left: Node, val right: Node) { def check(): Int = 1 }\n",
+      "source_sha256": "584c14d75cfa6e2414f0f83d4bc66621ff9ac9efed6ef5d30621281c987dc41e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Class header, two constructor fields, composed method and written class close."
+    },
+    {
+      "id": "constructor-fields-expanded-body",
+      "text": "class Node(\n  val left: Node,\n  val right: Node\n) {\n  def check(): Int = 1\n}\n",
+      "source_sha256": "a14cc9cfcf53c323f300f6070b161ec8a4906bd4c19abf8b795c089331796b52",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Formal wrapping does not add data rows or separate synthetic accessors.",
+      "equivalent_to": "constructor-fields-packed-body"
+    },
+    {
+      "id": "explicit-class-fields",
+      "text": "class Body { var x: Double = 0.0; var y: Double = 0.0 }\n",
+      "source_sha256": "d2f32ff21a1055ad1d55510d1918ba879ee4f69b172cb41a2bf3cbf45a3513c7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "Class header, two independent member fields and written close."
+    },
+    {
+      "id": "object-main",
+      "text": "object Main { def main(args: Array[String]): Unit = { println(args.length) } }\n",
+      "source_sha256": "b9964b8cef7f8cdd81acb5e597bae3c2a37d1babe4b1f6d18d41029dcb75c423",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Object header, method header, call and two written closes; no generated module or static forwarder owners."
+    },
+    {
+      "id": "tuple-pattern-binding",
+      "text": "val (a, b) = pair()\n",
+      "source_sha256": "8527a151b7c8a94dc90df9797b0144a0cc880b1a426e8f56745d58475b2b0fdc",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "One destructuring binding; parser-generated temporaries and extracted selectors are not authored units."
+    },
+    {
+      "id": "expression-lambda",
+      "text": "val inc = (x: Int) => x + 1\n",
+      "source_sha256": "b800c24e482b34980888cb2dd37117cfd761c8b2abea5629fcf5a43d9c2e5ea5",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The typed expression lambda remains part of its containing declaration."
+    },
+    {
+      "id": "braced-callback-packed",
+      "text": "val result = values.map { x => val y = x + 1; println(y); y }\n",
+      "source_sha256": "4e1b9d6f28de7be4bd112090c72ffc6514e94749d8192c290656dc61ed8ab953",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Combined containing declaration/callback header, independent declaration, call, final value and written callback close."
+    },
+    {
+      "id": "braced-callback-expanded",
+      "text": "val result = values.map { x =>\n  val y = x + 1\n  println(y)\n  y\n}\n",
+      "source_sha256": "82153e1dc9aba371d87e55403dfbcf7bd7843411acb0c38ea75b18ef1bd5add7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Callback body layout retains the same five owners.",
+      "equivalent_to": "braced-callback-packed"
+    },
+    {
+      "id": "braced-one-expression-callback",
+      "text": "val result = values.map { x => x + 1 }\n",
+      "source_sha256": "91baf0bf51865c407d7037a47da8f864ff6cb7584040ecb4daf27957587402e6",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "An explicitly braced callback retains its header, final expression and written close."
+    },
+    {
+      "id": "parenthesized-expression-callback",
+      "text": "val result = values.map(x => x + 1)\n",
+      "source_sha256": "42d95aa76f6887ef5a39da2c3ec5223f4b395ee8ba67012612ac8b8e1985501b",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "A parenthesized expression callback has no authored block close."
+    },
+    {
+      "id": "while-and-compound-updates",
+      "text": "def f(): Unit = { while (i < n) { total += i; i += 1 } }\n",
+      "source_sha256": "3effdff0eb11b849c4f153c2866b65fc25dd0e78cb59ff5a54b81a7b0e762902",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "reason": "Method header/close plus loop header, two independent updates and loop close."
+    },
+    {
+      "id": "unbraced-if-else",
+      "text": "def f(): Unit = { if (x > 0) println(x) else println(0) }\n",
+      "source_sha256": "d42e2591ee7f8faa3db3fb37fcafc45f3878823f38b0530889d90396a49f02a7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "reason": "Method header/close plus if header/call and else branch/call; no invented branch closes."
+    },
+    {
+      "id": "scalar-conditional-value",
+      "text": "val chosen = if (x > 0) x else 0\n",
+      "source_sha256": "90fc67c90163a90acaf8e4a2fd99155e1f4217be376384edc2c08f8189e4aa71",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "A scalar conditional is retained as one composed declaration value."
+    },
+    {
+      "id": "try-finally",
+      "text": "def f(): Unit = { try { run() } finally { close() } }\n",
+      "source_sha256": "89f014038d9c9d1e3e3564d2f9acfbf913baa65a7c784e6372cc14c7afdf99fc",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 8,
+      "reason": "Method header/close and two written control header/body/close groups."
+    },
+    {
+      "id": "updates",
+      "text": "def f(): Unit = { a += 1; b *= 2; values(i) = x }\n",
+      "source_sha256": "2efcd84845f6cc8847c1d8681a6abfc2ec8157965622018c9e9476d2f55be488",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Three independent written updates between method header/close; rewritten applications do not add owners."
+    },
+    {
+      "id": "indented-method",
+      "text": "def f(): Int =\n  val x = 1\n  x + 1\n",
+      "source_sha256": "e324cd3c9473a16587a31c354fbdfe1dffe855f2556a3333946f5a5c201931e7",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "reason": "Method header and two body units; inferred dedent has no written closing token."
+    },
+    {
+      "id": "braced-layout-counterpart",
+      "text": "def f(): Int = {\n  val x = 1\n  x + 1\n}\n",
+      "source_sha256": "a2f9f0d26a19016c8460b11cf94229ab58d42b2a17749c5824d9efd62bd5bc11",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "The corresponding written brace adds one close relative to the indentation fixture; these are deliberately not an equivalent-count pair."
+    },
+    {
+      "id": "written-end-marker",
+      "text": "def f(): Int =\n  val x = 1\n  x + 1\nend f\n",
+      "source_sha256": "9a22bd1826c5d9122afb72caf879bd48152adb3239606f25a824bd635e4081d2",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "Retain the explicit end marker separately from layout exit; its canonical owner needs review."
+    },
+    {
+      "id": "wrapped-literal-data",
+      "text": "val values = Array(\n  1, 2,\n  3, 4\n)\n",
+      "source_sha256": "92b3617bc022aea5aaeb14f22df61b859284b3232dc69badc392003fe38ee60e",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "The established physical-row policy retains all four nonblank literal/argument data rows."
+    },
+    {
+      "id": "packed-literal-data",
+      "text": "val values = Array(1, 2, 3, 4)\n",
+      "source_sha256": "e74d30b15a4d584f0ce47ca34e5b561af08a6bb770a8f085b90670a857f4373a",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Packed literal data occupies one physical row; it is deliberately not equivalent to the wrapped-data fixture."
+    },
+    {
+      "id": "grouped-import",
+      "text": "import java.util.{Locale, Objects}\n",
+      "source_sha256": "5c4462ce5a3bf8831b58b2585d22e71260463a22a1e093c37bdf9829c6a3f00d",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Import selectors are not executable blocks and add no block close."
+    },
+    {
+      "id": "nested-comments-and-literal",
+      "text": "/* outer /* nested */ done */\nval text = \"// literal /* data */\"\n",
+      "source_sha256": "9ed5ef1507db1f54927b5b932623972ba91435b4bcee17e8c5a863f05225db5b",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "Nested comments are excluded while the complete comment-looking string remains owned literal source."
+    },
+    {
+      "id": "protected-character-literals",
+      "text": "val quote: Char = '\\''\nval slash: Char = '/'\nval close: Char = '}'\nval newline: Char = '\\n'\n",
+      "source_sha256": "3855f133cbfa43f7857bab4e1cfa8cb3834bb2eebb3b7ff512269058d6bc03b1",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "reason": "Four independent typed declarations; escaped quote, slash, closing brace and escaped newline are literal tokens, not comments, scopes or actual source newlines."
+    },
+    {
+      "id": "scalar-interpolation",
+      "text": "val message = s\"value ${value + 1} // literal\"\n",
+      "source_sha256": "8bb10759a835748f02edbb6927589b1a468d646beeaf045904092558e6aae435",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The scalar interpolation remains composed, with its expression span retained separately from inert literal fragments."
+    },
+    {
+      "id": "executable-interpolation",
+      "text": "val message = s\"value ${ { val x = next(); println(x); x } }\"\n",
+      "source_sha256": "f21f4bf02c86b2fbcd41f8d1495efc4407c772ee8ce429ffa37cb392dffe6fd8",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A literal envelope cannot hide the executable interpolation block; native nested ownership requires review."
+    },
+    {
+      "id": "match-expression",
+      "text": "def classify(x: Int): Int = x match { case 0 => 1; case n if n > 0 => n; case _ => -1 }\n",
+      "source_sha256": "befd9d77ec32c88a9e1763204b93d1f3307152557bd057bf6ac216da290ee2b1",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "Written cases, guard and result bodies require explicit ownership; synthetic matches/functions cannot supply units."
+    },
+    {
+      "id": "pattern-callback",
+      "text": "val result = pairs.map { case (key, value) => key + value }\n",
+      "source_sha256": "8d2a5d643530dd04820451669e7756e96705a21b194d6945f9f600866fe00607",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A written pattern callback must be distinguished from any parser-generated function or match."
+    },
+    {
+      "id": "anonymous-runnable",
+      "text": "val task = new Runnable { def run(): Unit = { consume() } }\n",
+      "source_sha256": "acddda9c976f05f5abcfd33a189227075f1ddfab68708aa086d05d1554604c8d",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 5,
+      "reason": "Combined declaration/anonymous-class header, method header, body call and two written closes; no synthesized constructor units."
+    },
+    {
+      "id": "unicode-crlf",
+      "text": "val value = \"λ😀\"\r\ndef f(): String = value\r\n",
+      "source_sha256": "e244d48cf36c151b602c4d3096bad219ce79e8e4dcd54f375e859a4a8f3b8a44",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 2,
+      "reason": "Two declarations; the UTF-8 bytes, CRLF and non-BMP offset mapping must survive transport exactly."
+    },
+    {
+      "id": "comment-only",
+      "text": "// no source units\n/* nested /* inner */ outer */\n",
+      "source_sha256": "efe6cd287a9d5251a4871d8d21a6876192878e6705a8333f21d66ade36da5be2",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 0,
+      "reason": "Comment text must not become executable units or disappear from retained lexical evidence."
+    },
+    {
+      "id": "never-evaluate",
+      "text": "val bomb = throw new IllegalStateException(\"Source-count fixtures must never be evaluated\")\n",
+      "source_sha256": "c08bca5370252aae7b5167f3db1e11234f215bed4055e8d0e481cdeee7eb5caa",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "reason": "The reader parses source without initialization, compilation backend or subject evaluation."
+    },
+    {
+      "id": "meaningful-directive",
+      "text": "//> using option \"-deprecation\"\nval value = 1\n",
+      "source_sha256": "433aba724d60f1ea7595eabb7030e63b8121319a13991f47109c0562f4065e70",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "reason": "A build directive remains retained and review-gated even if the selected compiler parser reports it as a comment."
+    },
+    {
+      "id": "unclosed-method",
+      "text": "def f(): Int = {\n  1\n",
+      "source_sha256": "1bbbac3f47640e14259f4c5933d7b1feef5856e4d8c631d033e0ad498b6ea70d",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "reason": "A malformed source must retain parser diagnostics and admit no count."
+    },
+    {
+      "id": "mismatched-array-delimiter",
+      "text": "val values = Array(1, 2]\n",
+      "source_sha256": "d8b056eaadec60057fbf646c87bf80d968113f258e51963d33ab836bf5d6ab31",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "reason": "Delimiter recovery cannot turn invalid source into an admitted count."
+    }
+  ]
+}

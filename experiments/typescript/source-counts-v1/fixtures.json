@@ -1,0 +1,285 @@
+{
+  "schema": "typescript-source-unit-fixture-contract-v1",
+  "status": "source-only-unexecuted",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "native_reader_version": "TypeScript 7.0.2 unstable API",
+  "fixtures": [
+    {
+      "id": "packed-bindings",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 7,
+      "text": "function f(): number { let x = 1, y = 2; x = y = 0; return x; }\n",
+      "source_sha256": "4239d57018460b4a598e80e1fc3b5c2de8200fc5e6782ac4af7d7e606435ac30",
+      "reason": "Function header/close, two declarations, two chained assignments and one return."
+    },
+    {
+      "id": "expanded-bindings",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 7,
+      "text": "function f(): number\n{\n  let x = 1;\n  let y = 2;\n  x = y = 0;\n  return x;\n}\n",
+      "source_sha256": "13167cecb8e9afcc4712a4c85701c0db95395f1a32df4331b48a9b4b3b61e5fd",
+      "reason": "Same independent owners with header opener moved and declarators split.",
+      "equivalent_to": "packed-bindings"
+    },
+    {
+      "id": "nullable-generic-header",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 3,
+      "text": "function identity<T>(value: T | null): T | null { return value; }\n",
+      "source_sha256": "9599706b4e3dbb02f921f7dfff6e600a10b89f57b8b052143a0c8dfee145a7b4",
+      "reason": "Complete generic/typed function header, return and explicit close."
+    },
+    {
+      "id": "named-tuple-alias",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "text": "type Frequency = [sequence: string, percentage: number];\n",
+      "source_sha256": "a08d8abdac2bcc356aeaf46b8e71cfedd95b096e766849b213769ff3f196a2d3",
+      "reason": "An authored type alias remains one declaration, including both named tuple members."
+    },
+    {
+      "id": "parameter-properties-packed",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "text": "class Node { constructor(readonly left: Node | null, private right: Node | null) {} }\n",
+      "source_sha256": "9d2328ebf3729c7f577e371821dee82f189af3fa57d07de5bfac41ce67c44f59",
+      "reason": "Class header/close, constructor header/close and two parameter-property fields."
+    },
+    {
+      "id": "parameter-properties-expanded",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "text": "class Node\n{\n  constructor(\n    readonly left: Node | null,\n    private right: Node | null\n  )\n  {\n  }\n}\n",
+      "source_sha256": "a5603a19bf440b1c1398c1245b6652f60965435f4af9cf394d6026494c6e0d39",
+      "reason": "Parameter-property fields remain two units; formal wrapping adds none.",
+      "equivalent_to": "parameter-properties-packed"
+    },
+    {
+      "id": "explicit-fields",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 8,
+      "text": "class Body { x: number; y: number; constructor(x: number, y: number) { this.x = x; this.y = y; } }\n",
+      "source_sha256": "ecb87b200aca80b894d0846503fcaf561d0b81a0278225520e172a4c7b451b31",
+      "reason": "Class header/close, two fields, constructor header/close and two assignments."
+    },
+    {
+      "id": "destructuring",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 2,
+      "text": "const [a, b] = pair(); const {x, y} = record();\n",
+      "source_sha256": "0993dcee43ba6536710e53837d2f1637202e9748b2f0b79ab36c8c2dfbec9513",
+      "reason": "Two destructuring declarations; pattern names are not independent declarations."
+    },
+    {
+      "id": "expression-arrow",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "text": "const increment = (x: number): number => x + 1;\n",
+      "source_sha256": "afbd962beaba939c3068f066c520a2955b606ec86f6e5e5548ba467369a8aace",
+      "reason": "One composed declaration; the expression arrow introduces no written executable block."
+    },
+    {
+      "id": "block-callback-packed",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "text": "run((x: number) => { let y = x; consume(y); });\n",
+      "source_sha256": "03759fa76b4d474969d06be8843db273b8303ede52f5edce46f9958134b9bb84",
+      "reason": "Combined call/callback header, declaration, call and written callback close."
+    },
+    {
+      "id": "block-callback-expanded",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "text": "run((x: number) =>\n{\n  let y = x;\n  consume(y);\n}\n);\n",
+      "source_sha256": "c3ed15d4d2f2dd0cfd6408fb0dbff432dc4f654607540a66f121fbd867c43373",
+      "reason": "Callback suffix punctuation is structural even when wrapped.",
+      "equivalent_to": "block-callback-packed"
+    },
+    {
+      "id": "nested-block-callback",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 7,
+      "text": "run(() => { call(() => { a = 1; b = 2; }); c = 3; });\n",
+      "source_sha256": "ebdb5747a8ed663a908f97108a606cb90275446cad04703b4b883cc1e68baf24",
+      "reason": "Two callback headers/closes and three independently written assignments."
+    },
+    {
+      "id": "control-header",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 6,
+      "text": "for (let i = 0, j = 1; i < 3; i++, j++) { if (i) x += j; else x--; }\n",
+      "source_sha256": "9a7c6311b3d38939bdfc24eb39ba7e263b2fe1a7b0d229af7e335386c833747c",
+      "reason": "For header/close, if and else headers and their two unbraced statements; for-header bindings stay structural."
+    },
+    {
+      "id": "try-catch-finally",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 9,
+      "text": "try { run(); } catch (error: unknown) { report(error); } finally { close(); }\n",
+      "source_sha256": "2f9ce48db967cc3c0de73a17a54fd963bdd0b8b8e8f5b056b18e76994095786d",
+      "reason": "Three headers, three calls and three written closes; catch parameter type belongs to its header."
+    },
+    {
+      "id": "wrapped-data",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "text": "const values: number[] = [\n  1, 2,\n  3, 4\n];\n",
+      "source_sha256": "14fe0a28356e1a23a2dccff80ee0af80c5722e18f4f21b3d6f0ce646c1f401da",
+      "reason": "Literal/data wrapping retains all four physical rows; commas add no statements."
+    },
+    {
+      "id": "packed-data",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "text": "const values: number[] = [1, 2, 3, 4];\n",
+      "source_sha256": "ed5f2b304189bb013a903fefb71b4dfe77df21c7ba27d0138e3335d1a962f49c",
+      "reason": "One data declaration. Deliberately not equivalent in LOC to the wrapped-data fixture."
+    },
+    {
+      "id": "comments-and-regex",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 2,
+      "text": "// whole comment\nconst pattern = /https?:\\/\\/[^/]+/g; /* trailing comment */\nconst text = \"/* not a comment; } */\";\n",
+      "source_sha256": "c41b22d83786c856e1f43918211810f54746eaddb4d18de2cefeaa8e88cc8961",
+      "reason": "Two declarations; compiler-owned regex and string spans protect comment-like punctuation."
+    },
+    {
+      "id": "template-expression",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "text": "const message = `value ${value + 1} // literal /* text */`;\n",
+      "source_sha256": "e695674c71a3e3ef21fab223a3b405321538430ce34ed802644218e3854e3698",
+      "reason": "One template-valued declaration with scalar interpolation."
+    },
+    {
+      "id": "unicode-crlf",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 4,
+      "text": "const value: string = \"λ😀\"; // comment\r\nfunction f(): string { return value; }\r\n",
+      "source_sha256": "750df385ac06189b4d14ed07fe6dde00da6633b1db00372efac34767f3dcc7f1",
+      "reason": "One declaration plus function header/return/close; AST offsets must not split the non-BMP character."
+    },
+    {
+      "id": "empty-comments",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 0,
+      "text": "\n// comment only\n/* multiline\ncomment */\n",
+      "source_sha256": "acdab2e4a4d3545b0102a1e92ef1c45a9f23e2568875ab33a115ed718fa5ac8f",
+      "reason": "No noncomment source owners."
+    },
+    {
+      "id": "never-evaluate",
+      "expected_parse": "ok",
+      "expected_owner_status": "candidate",
+      "proposed_normalized_loc": 1,
+      "text": "throw new Error(\"Source-count fixtures must never be evaluated\");\n",
+      "source_sha256": "1facdcf547cb5be9cd1941f06068f4d9be0ea4607b7b8638b5636adb92ed05d7",
+      "reason": "A parse-only reader must retain this statement without executing it."
+    },
+    {
+      "id": "callback-continuation-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "run(() => { a = 1; }).collect();\n",
+      "source_sha256": "f0be81b2c20ab68f96b9c3a18abf3db46db1431bfc5a68654e59d27760cee7e3",
+      "reason": "Following callback composition needs explicit continuation ownership; preserve the existing JavaScript review gate."
+    },
+    {
+      "id": "interpolation-work-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "const text = `${(() => { let x = 1; return x; })()}`;\n",
+      "source_sha256": "92fbb92192f93cc551c8519f04061402fad396b5d2b3a6f516687a4579f329b0",
+      "reason": "Executable interpolation must remain visible; no whole-template masking or assumed count."
+    },
+    {
+      "id": "type-literal-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "type Shape = { width: number; height: number };\n",
+      "source_sha256": "69a046a23718fe7708855387f7334187f1a89bd164e6296539e7a41216fbf2f9",
+      "reason": "Type-member ownership is outside the initial tuple/union/reference alias policy."
+    },
+    {
+      "id": "mapped-type-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "type Flags<T> = { [K in keyof T]: boolean };\n",
+      "source_sha256": "0ad2ed72ef23a20fdc3f13b4c6994a064be5f4b6d05e86b45d265a8c44899f0a",
+      "reason": "Mapped-type declaration ownership remains unsupported by the narrow initial projection."
+    },
+    {
+      "id": "interface-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "interface Shape { area: number; }\n",
+      "source_sha256": "7dabd191f9749c188dce331c596a4400c8c76517a47d28fb8d72023c4812fc6a",
+      "reason": "An interface cannot be silently counted as a JavaScript object or class."
+    },
+    {
+      "id": "ambient-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "declare function foreign(value: number): number;\n",
+      "source_sha256": "0b66a6d0065fea87f8248914dbacb2d00c22d8440e303967269556da6764f055",
+      "reason": "Ambient application declarations require an explicit source-owner policy."
+    },
+    {
+      "id": "compiler-directive-review",
+      "expected_parse": "ok",
+      "expected_owner_status": "review",
+      "proposed_normalized_loc": null,
+      "text": "// @ts-ignore\nconst value: number = \"not a number\";\n",
+      "source_sha256": "8969a9fb81834bef9c48b7bc79b352b9afb20a126be04925351df660d0059bee",
+      "reason": "A meaningful compiler directive cannot disappear as an ordinary comment."
+    },
+    {
+      "id": "unclosed-body",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "text": "function broken(): void {\n  consume(1);\n",
+      "source_sha256": "82ef852d2537b7c6642c4b1f13564572327a74a60dc1a295935f0b74ad5209b3",
+      "reason": "Native syntactic diagnostics are required; no source-unit count."
+    },
+    {
+      "id": "mismatched-delimiter",
+      "expected_parse": "error",
+      "expected_owner_status": "parse-rejection",
+      "proposed_normalized_loc": null,
+      "text": "const values: number[] = [1, 2);\n",
+      "source_sha256": "ac03dbf82587752d7d302bc0aab3a86c854215d61df48cea8e51b2ccb7483d4d",
+      "reason": "Native syntactic diagnostics are required; no recovery-tree owner count."
+    }
+  ],
+  "native_cases_run": 0,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "chart_admission": false
+}

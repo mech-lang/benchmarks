@@ -1,0 +1,71 @@
+{
+  "schema": "prolog-linear-source-fixtures-v1",
+  "fixtures": [
+    {
+      "id": "ordinary",
+      "source_text": ":- module(m, []).\np(S,C) :- string_codes(S,C).\n",
+      "expected_canonical_loc": 4,
+      "expected_diagnostic_kinds": [],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/ordinary.pl",
+      "source_sha256": "49f9ccfe716e1f4314014f97c33999013fcd534c3284ef773d298e1da03fd2a8"
+    },
+    {
+      "id": "system-qualified",
+      "source_text": ":- module(m, []).\np(S,C) :- system:string_codes(S,C).\n",
+      "expected_canonical_loc": 4,
+      "expected_diagnostic_kinds": [],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/system-qualified.pl",
+      "source_sha256": "dbc58c24090e7b36cf4e0afbfaf57af3a4d9097a85a3213a10ffa781530fc3cc"
+    },
+    {
+      "id": "comments",
+      "source_text": ":- module(m, []).\n% . :- , ; -> string_codes(fake, goals)\np(S,C) :- string_codes(S,C). /* ! */\n",
+      "expected_canonical_loc": 4,
+      "expected_diagnostic_kinds": [],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/comments.pl",
+      "source_sha256": "ecba93cabcc625742be86e134d65136afe340f5a695a3d1c8da44b06e44866e9"
+    },
+    {
+      "id": "local-definition",
+      "source_text": ":- module(m, []).\nstring_codes(_,_).\np(S,C) :- string_codes(S,C).\n",
+      "expected_canonical_loc": 5,
+      "expected_diagnostic_kinds": [],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/local-definition.pl",
+      "source_sha256": "6a0cce72af7ece9ca9af147f855d3940ba52783ed683f167db9983b47ab28057"
+    },
+    {
+      "id": "other-module",
+      "source_text": ":- module(m, []).\np(S,C) :- other:string_codes(S,C).\n",
+      "expected_canonical_loc": null,
+      "expected_diagnostic_kinds": [
+        "prolog-unproved-call-target"
+      ],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/other-module.pl",
+      "source_sha256": "431feed401e8f9ce8f8ede36b63bf7068004a970527a6b6761b618c02a41a3f8"
+    },
+    {
+      "id": "other-builtin",
+      "source_text": ":- module(m, []).\np(S,C) :- string_chars(S,C).\n",
+      "expected_canonical_loc": null,
+      "expected_diagnostic_kinds": [
+        "prolog-unproved-call-target"
+      ],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/other-builtin.pl",
+      "source_sha256": "cf873ddac6099b9da9954eec9d1a75945a4918f9419d52658471616e04ef0faa"
+    },
+    {
+      "id": "hidden-control",
+      "source_text": ":- module(m, []).\np(S) :- string_codes(S,(true,fail)).\n",
+      "expected_canonical_loc": null,
+      "expected_diagnostic_kinds": [
+        "prolog-hidden-goal-data"
+      ],
+      "source": "/private/tmp/mech-benchmark-completion/experiments/prolog/revcomp-linear-v1/source-counts-v1/fixtures-v1/hidden-control.pl",
+      "source_sha256": "4d732a6402d85caea0a835436173811bed23d8b8bf50a2f2465c86e75b6ff69f"
+    }
+  ],
+  "native_executions": 0,
+  "fixtures_qualified": false,
+  "canonical_LOC_admitted": false,
+  "chart_admission": false
+}

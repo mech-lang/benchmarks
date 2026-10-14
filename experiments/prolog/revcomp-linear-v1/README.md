@@ -211,6 +211,11 @@ plus long headers and comments. Handwritten oracle self-checks have passed;
 the candidate has not been run against these cases. Invalid-case expectations
 identify the rejected code without specifying partial stdout.
 
+The separate [bounded conformance protocol](bounded-protocol.md) covers all 54
+fixtures through the production entry and nine diagnostic capacities. Its
+controller is prepared as source; compilation and native execution remain
+pending the shared measurement lane.
+
 The pure oracle checks can be repeated with:
 
 ```sh
