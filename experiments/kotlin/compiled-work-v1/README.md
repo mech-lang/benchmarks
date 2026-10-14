@@ -1,16 +1,29 @@
 # Kotlin retained compiled-work witnesses
 
-This source-only packet prepares a runnable diagnostic stage after the twenty
-retained Kotlin forms have passed all 156 original bounded output checks and
-the 30 specified supplemental checks. It has not been compiled or executed.
-Preparation requires the actual completed report and terminal hashes for both
-stages; future success receipts are not assumed.
+The completed [second attempt](run-v2/report.json) recorded compiled-work,
+JIT-method and runtime-dependency evidence for all twenty retained Kotlin forms.
+It follows 156 original bounded output checks and thirty supplemental checks.
+The [terminal receipt](run-v2/terminal.json) records twenty JVMs and one diagnostic
+compile. Bounded work witnesses, required-method JIT evidence and observed
+runtime dependency closure passed for every form. Actual optimized-main
+allocation/lifetime and final compiled-work review remain separate gates.
 
-`tools/qualification/kotlin_work.py` imports the unchanged bounded controller at
-SHA-256 `916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e`.
+`tools/qualification/kotlin_work_v2.py` imports `kotlin_bounded_v2.py` at
+SHA-256 `c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc`.
 It reuses that controller's tested atomic process supervisor, zombie-aware
 ownership, inherited timing mutex, RSS/file limits and retained-class checks.
-Neither the bounded controller nor its earlier evidence is modified.
+The required bounded report is the completed `bounded-work-v1/run-v2`.
+The preserved `run-v1` stopped on an RSS-monitor teardown race, an observation
+infrastructure failure that established no subject-source fault. The v2
+observer retries that race briefly within unchanged process/resource bounds.
+The original controller and all earlier execution evidence remain unchanged.
+
+The first compiled-work attempt exited its JVM normally but its class-origin
+validator rejected JDK-generated dynamic proxies. The revised validator accepts
+only the JDK proxy naming pattern and exact `__dynamic_proxy__` origin marker,
+with preceding trusted Java-base proxy-factory records. It preserves those
+origins and applies the original strict validator to every other class.
+Twenty-five pure tests pass; the second native attempt completed the full cohort.
 
 ## Exact inputs and sequence
 
@@ -163,7 +176,7 @@ After both actual output stages complete and their receipts have been reviewed:
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
   tools/qualification/kotlin_work.py prepare \
-  --bounded-report experiments/kotlin/bounded-work-v1/run-v1/report.json \
+  --bounded-report experiments/kotlin/bounded-work-v1/run-v2/report.json \
   --bounded-report-sha256 ACTUAL_COMPLETED_BOUNDED_REPORT_SHA256 \
   --bounded-terminal-sha256 ACTUAL_COMPLETED_BOUNDED_TERMINAL_SHA256 \
   --supplement-report experiments/kotlin/specified-cases-v1/run-v1/report.json \

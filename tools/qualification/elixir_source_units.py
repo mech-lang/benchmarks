@@ -21,8 +21,8 @@ import re
 RULE_VERSION = 'canonical-source-units-20261012-approved-rule-v2'
 GRAMMAR = 'elixir-native-position-owners-v1'
 FIXTURE_CONTRACT = Path(__file__).resolve().parents[2] / 'experiments/elixir/source-units-v1/fixture-contract.json'
-EXPLICIT = {'defmodule', 'def', 'defp', 'defmacro', 'defmacrop', 'if', 'unless',
-            'case', 'cond', 'for', 'with', 'try', 'receive'}
+VALUE_CONTROLS = {'if', 'unless', 'case', 'cond', 'for', 'with', 'try', 'receive'}
+EXPLICIT = {'defmodule', 'def', 'defp', 'defmacro', 'defmacrop'} | VALUE_CONTROLS
 BRANCHES = {'do', 'else', 'rescue', 'catch', 'after'}
 FALSE_FLAGS = dict(canonical_loc_qualified=False, formatted_loc_qualified=False,
                    chart_admission=False)
@@ -382,6 +382,17 @@ class Owners:
             self.regions.append((at + 2, limit))
         self.walk(arguments[1], limit=limit)
 
+    def continuation(self, first, end, limit):
+        # Native sequence siblings and executable bodies bound the enclosing
+        # expression. Both fn values and explicit control values can feed a
+        # scalar tail in that expression. Declarations do not gain this rule.
+        # Accounting suppresses a tail only on its closer's physical row;
+        # _finish rejects assignments, independent sequences and new owners.
+        if end + 3 < limit:
+            self.continuations.append(dict(start=end + 3, end=limit,
+                                           expression_start=first, close=end))
+            self.boundaries.add(limit)
+
     def walk(self, term, statement_start=None, limit=None):
         if limit is None:
             limit = len(self.source.text)
@@ -420,15 +431,7 @@ class Owners:
                 stop = self.start(arguments[index + 1]) if index + 1 < len(arguments) else end
                 self.arrow(clause, first if index == 0 else None, stop)
             self.event('close', end, end + 3, owner='fn')
-            # Ordinary AST descent preserves the enclosing independent
-            # expression's [first, limit) span. Only native sequence siblings
-            # and executable bodies establish a new span. This is stronger
-            # evidence than a textual `end)` suffix: a following pipeline or
-            # data/call value can belong to this very same expression.
-            if end + 3 < limit:
-                self.continuations.append(dict(start=end + 3, end=limit,
-                                               expression_start=first, close=end))
-                self.boundaries.add(limit)
+            self.continuation(first, end, limit)
             return
         if 'do' in meta or 'end' in meta:
             if name not in EXPLICIT:
@@ -453,6 +456,8 @@ class Owners:
                     self.event('branch', branch_start, branch_start + len(branch), owner=str(name))
                 stop = self.start(pairs[index + 1][0]) if index + 1 < len(pairs) else end
                 self.body(value, stop)
+            if name in VALUE_CONTROLS:
+                self.continuation(first, end, limit)
             return
         if name == '->':
             self.issue('arrow-without-executable-owner', here or 0)

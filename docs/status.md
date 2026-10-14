@@ -16,8 +16,8 @@ Prolog, Julia AOT, Rebol, Elixir, and Kotlin are not selectable series in this d
 | --- | --- | --- |
 | Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
 | Prolog | Twenty source forms, required work, canonical LOC, bounded output checks, and provisional regex measurements | Full study cancelled after identifying quadratic reverse-complement copying; replacement qualification, remaining measurements, and publication review |
-| Elixir | Twenty compiled source forms; all helper and 156 bounded workload checks passed; native reader completed for all sixty authored inputs and fourteen grammar fixtures | Compiled required-work witnesses, canonical source ownership review, and full measurements |
-| Kotlin | Twenty compiled source forms, source/class and helper review, and all 156 bounded workload checks | Supplemental workload checks, required-work and source-count qualification, then measurements |
+| Elixir | Twenty compiled source forms; helper and 156 bounded workload checks; canonical and formatted source counts for all forms; fifteen native diagnostic fixtures; compiled-work observations for all forms | Final instruction review and full measurements |
+| Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, and native parsing of forty authored inputs | Single-main tree/pi work verification and source-count ownership review, then measurements |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | Execution-path qualification and the remaining suite |
 | Rebol | Retained toolchain sources and resolved build specification | SDK and runtime qualification, benchmark implementations, and measurements |
 

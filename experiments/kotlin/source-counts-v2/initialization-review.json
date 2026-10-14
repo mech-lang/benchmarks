@@ -1,0 +1,110 @@
+{
+  "schema": "kotlin-native-reader-initialization-review-v2",
+  "status": "source-only-revision-awaiting-native-execution",
+  "native_executions_during_review": 0,
+  "full_runtime_or_compiler_jar_hashes_recomputed": 0,
+  "old_reader_sha256": "a8906fd2b5483bd8f5a0bbdc0da9a88117e7b2c291ae9acf2e78c08cd881388e",
+  "old_controller_sha256": "56b5e45b939189e5e4ce19fa405b60847ee90f99b6f3644e807ddd423d700125",
+  "preserved_failed_run": {
+    "plan": "experiments/kotlin/source-counts-v1/plan-v1.json",
+    "plan_sha256": "6a8c8e06de5af1c970c3835f5cbdebc29ddd4834a365779807d5d4a2bcbda490",
+    "report_sha256": "bb3536fad4d75064b1ea2d14a73d35fc0a9fe66915664c15f4637770e491e9cd",
+    "terminal_sha256": "cb577106edc106bbc7ae1d3c854b26c31c8a2623af852cd8197866cc679a5aab",
+    "native_processes_started": 2,
+    "native_reader_process_sha256": "bdc33d3b7c8d6fb262bfb9e19640e0ec38abe76d19880cbf9228f8a3d113b618",
+    "reader_exit_status": 1,
+    "direct_child_reaped": true,
+    "stop_signals": [],
+    "cleanup_errors": [],
+    "exception": "java.lang.IllegalStateException: Extensions storage is not registered",
+    "first_frame": "org.jetbrains.kotlin.compiler.plugin.ExtensionPointUtilsKt.getCompilerExtensions(ExtensionPointUtils.kt:14)",
+    "reader_frame": "sourcequalification.SourceReader.main(SourceReader.java:174)",
+    "classification": "diagnostic reader environment initialization failed before source inspection; no application source fault established"
+  },
+  "retained_compiler": {
+    "version": "2.4.21",
+    "jar": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/compiler/kotlinc/lib/kotlin-compiler.jar",
+    "jar_sha256_recorded_in_original_plan_not_recomputed": "dc96436fac5160a39a071f3b82d7683f2912bbbf19fe7e26be66533c045a824e"
+  },
+  "inspection_method": "Read selected class entries with Python zipfile; decode JVM constant pool, method access flags/descriptors and referenced field/method instructions. The four entries below directly establish the missing initialization. No compiler, JVM, native javap or subject executed.",
+  "class_entries": [
+    {
+      "entry": "org/jetbrains/kotlin/cli/FrontendConfigurationKeysKt.class",
+      "bytes": 4108,
+      "sha256": "17552aac85bb8fc67b49d82503d4d5d207d05c60e7d176e68e93c00a9c7f7106",
+      "method": "setExtensionsStorage",
+      "access_flags_hex": "0019",
+      "descriptor": "(Lorg/jetbrains/kotlin/config/CompilerConfiguration;Lorg/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage;)V",
+      "references": [
+        {
+          "offset": 7,
+          "opcode": "getstatic",
+          "target": "org.jetbrains.kotlin.cli.FrontendConfigurationKeys.EXTENSIONS_STORAGE"
+        },
+        {
+          "offset": 43,
+          "opcode": "invokevirtual",
+          "target": "org.jetbrains.kotlin.config.CompilerConfiguration.put"
+        }
+      ]
+    },
+    {
+      "entry": "org/jetbrains/kotlin/compiler/plugin/CompilerPluginRegistrar$ExtensionStorage.class",
+      "bytes": 4995,
+      "sha256": "5967a96d9886076cb41c2c2e0b8831db2ab381b2637f7d360e43a6816cf13095",
+      "method": "<init>",
+      "access_flags_hex": "0001",
+      "descriptor": "()V",
+      "constructor_effect": "Creates only empty LinkedHashMap registeredExtensions and ArrayList disposables.",
+      "get_descriptor": "(Lorg/jetbrains/kotlin/extensions/ExtensionPointDescriptor;)Ljava/util/List;",
+      "absent_extension_result": "kotlin.collections.CollectionsKt.emptyList at bytecode offset 24"
+    },
+    {
+      "entry": "org/jetbrains/kotlin/compiler/plugin/ExtensionPointUtilsKt.class",
+      "bytes": 2318,
+      "sha256": "0649ae95496004c5cc2535c318decfb637705112401c7fac985c7e962b633ebe",
+      "method": "getCompilerExtensions",
+      "access_flags_hex": "0019",
+      "references": [
+        {
+          "offset": 13,
+          "opcode": "invokestatic",
+          "target": "org.jetbrains.kotlin.cli.FrontendConfigurationKeysKt.getExtensionsStorage"
+        },
+        {
+          "offset": 25,
+          "opcode": "ldc",
+          "target": "Extensions storage is not registered"
+        },
+        {
+          "offset": 37,
+          "opcode": "invokevirtual",
+          "target": "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar$ExtensionStorage.get"
+        }
+      ]
+    },
+    {
+      "entry": "org/jetbrains/kotlin/cli/jvm/compiler/KotlinCoreEnvironment$Companion.class",
+      "bytes": 29750,
+      "sha256": "24d5896b1082047bb4e37268f1fbbf173388668dc2d2faaf1ef8da336ec6149b",
+      "method": "configureProjectEnvironment",
+      "access_flags_hex": "0011",
+      "references": [
+        {
+          "offset": 115,
+          "opcode": "invokestatic",
+          "target": "org.jetbrains.kotlin.compiler.plugin.ExtensionPointUtilsKt.getCompilerExtensions"
+        }
+      ]
+    }
+  ],
+  "minimal_change": "Initialize an empty CompilerPluginRegistrar.ExtensionStorage on the CompilerConfiguration through FrontendConfigurationKeysKt.setExtensionsStorage before createForProduction.",
+  "new_reader_sha256": "0de2dc4fb6acd510d3c7d17961fdec4c953a772596057cbc1db514d2e58346d7",
+  "new_controller_sha256": "92639ed5e389bf1d951205112bdf562877cfc778915610dbf97afed76912813e",
+  "unchanged_fixtures_sha256": "f24f481175398549c95f88c81b4d069009c8828cf05c874ea993d5a979ddd81b",
+  "native_initialization_verified": false,
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "source_work_qualified": false,
+  "chart_admission": false
+}

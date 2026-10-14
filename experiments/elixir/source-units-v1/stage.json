@@ -1,6 +1,6 @@
 {
   "schema": "elixir-source-unit-stage-v1",
-  "status": "source-only-implementation-awaiting-native-replay",
+  "status": "twenty-retained-source-counts-qualified",
   "controller": "tools/qualification/elixir_source_units.py",
   "synthetic_tests": "tools/qualification/test_elixir_source_units.py",
   "native_reader": "experiments/elixir/source-counts-v1/read_sources.exs",
@@ -21,20 +21,51 @@
     "Use native multi-expression blocks and match operators to expand packed independent statements and chained assignments. Do not expand destructuring variable count.",
     "Keep keyword-only do: definitions/conditionals as expressions. Preserve literal/data wrapping, counting physical nonblank/noncomment rows outside explicit executable owners.",
     "Suppress only proved enclosing argument/data closing punctuation after executable closers. Never discard following real code.",
-    "Resolve scalar callback composition using enclosing native AST expression ancestry: sequence siblings, clause bodies and do/else bodies supply exact expression bounds. A scalar continuation on the callback closer's physical row adds no independent unit; a continuation on another physical row retains that row's baseline unit. A packed next expression keeps its own unit.",
-    "The lexical composition review case in canonical.py:415-421 is resolved only for a continuation proved to belong to the same native expression. Continuations containing matches, independent expression sequences or another executable owner remain review cases. All expression bounds are emitted for inspection.",
+    "Resolve scalar composition after fn and value-producing explicit if/unless/case/cond/for/with/try/receive controls using enclosing native AST expression ancestry: sequence siblings, clause bodies and do/else bodies supply exact expression bounds. A scalar continuation on the closer's physical row adds no independent unit; a continuation on another physical row retains that row's baseline unit. A packed next expression keeps its own unit. Module and named-function declarations do not receive this continuation rule.",
+    "The lexical composition review case in canonical.py:415-421 is resolved only for a continuation proved to belong to the same native expression. The same ownership rule applies to anonymous-function values and explicit control values. Continuations containing matches, independent expression sequences or another executable owner remain review cases. All expression bounds are emitted for inspection.",
     "Emit diagnostics and a null normalized_loc for missing/mismatched/overlapping owner metadata, unsupported explicit macros, unowned executable tokens, assignment within data, or independent work inside interpolation.",
-    "Replay future saved original and formatted AST/source artifacts, compare original native grammar fixtures with rule expectations, and sum each plan's authored application bundle only when every source has an unambiguous candidate count."
+    "Replay saved original and formatted AST/source artifacts, compare original native grammar fixtures with rule expectations, and sum each plan's authored application bundle only when every source has an unambiguous candidate count."
   ],
   "scope": {
     "retained_forms": 20,
     "physical_application_inputs_expected_by_reader": 60,
-    "counted_roles": ["application", "application-helper", "application-launcher"],
-    "source_reviewed_main_workloads": ["binarytrees", "fannkuchredux", "fasta", "knucleotide", "mandelbrot", "nbody", "pidigits", "regexredux", "revcomp", "spectralnorm"],
+    "counted_roles": [
+      "application",
+      "application-helper",
+      "application-launcher"
+    ],
+    "source_reviewed_main_workloads": [
+      "binarytrees",
+      "fannkuchredux",
+      "fasta",
+      "knucleotide",
+      "mandelbrot",
+      "nbody",
+      "pidigits",
+      "regexredux",
+      "revcomp",
+      "spectralnorm"
+    ],
     "source_reviewed_main_root": "archive/languages/elixir/20261013/drafts/private-v1/sources",
     "source_reviewed_helper": "archive/languages/elixir/20261013/drafts/private-v1/support/support.ex",
     "source_reviewed_launcher": "archive/languages/elixir/20261013/revisions/retained-otp-intake-v1/runner.exs",
-    "source_observed_constructs": ["explicit modules/functions", "keyword-only expression functions", "guards", "nested anonymous callbacks", "case pattern clauses", "keyword-only conditionals", "binary comprehensions", "tuple/list/map/bitstring data", "bitstring destructuring", "module attributes", "quoted literals", "character literals", "sigils", "scalar interpolation", "pipelines"]
+    "source_observed_constructs": [
+      "explicit modules/functions",
+      "keyword-only expression functions",
+      "guards",
+      "nested anonymous callbacks",
+      "case pattern clauses",
+      "keyword-only conditionals",
+      "binary comprehensions",
+      "tuple/list/map/bitstring data",
+      "bitstring destructuring",
+      "module attributes",
+      "quoted literals",
+      "character literals",
+      "sigils",
+      "scalar interpolation",
+      "pipelines"
+    ]
   },
   "commands": {
     "pure_synthetic_tests": "python3 -I -S -B tools/qualification/test_elixir_source_units.py",
@@ -56,7 +87,11 @@
     "pure_synthetic_tests_passed": 38,
     "pure_synthetic_test_duration_seconds": 0.007,
     "test_python": "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12",
-    "test_python_flags": ["-I", "-S", "-B"],
+    "test_python_flags": [
+      "-I",
+      "-S",
+      "-B"
+    ],
     "source_files_lexically_read": 12,
     "source_lexical_diagnostics": 0,
     "source_review": "Independent source review closed for the covered grammar and synthetic fixtures.",
@@ -64,9 +99,41 @@
     "actual_native_ast_replays": 0,
     "actual_application_canonical_counts_produced": 0
   },
-  "native_parser_executed": false,
-  "actual_reader_replay_executed": false,
-  "canonical_loc_qualified": false,
-  "formatted_loc_qualified": false,
-  "chart_admission": false
+  "continuation_owner_correction": {
+    "status": "source-fix-tested-awaiting-independent-review-and-new-replay",
+    "previous_replay_evidence": "experiments/elixir/source-units-v1/replay-v1-evidence.json",
+    "observed_case": "Native spectralnorm AST places for/end inside the same pipeline expression as the following List.to_tuple call. Its same-row tail previously gained an extra unit while equivalent fn scalar tails did not.",
+    "scope": "Reuse the existing bounded scalar-continuation accounting for fn and value-producing explicit controls; preserve body/header/closer owners, separate physical continuation rows, independent next statements and complex-tail rejection.",
+    "expected_changes": {
+      "spectralnorm_original_main_each_form": [
+        29,
+        28
+      ],
+      "spectralnorm_original_bundle_each_form": [
+        91,
+        90
+      ],
+      "spectralnorm_formatted_main_each_form": [
+        29,
+        29
+      ],
+      "all_other_original_and_formatted_application_counts": "unchanged"
+    },
+    "pure_tests_passed": 49,
+    "synthetic_test_methods": 46,
+    "saved_native_test_methods": 3,
+    "saved_application_source_ast_pairs_checked": 120,
+    "existing_native_fixture_expectations_checked": 14,
+    "new_native_executions": 0,
+    "new_final_replay_written": false,
+    "previous_replay_modified": false,
+    "qualification_granted": false
+  },
+  "native_parser_executed": true,
+  "actual_reader_replay_executed": true,
+  "canonical_loc_qualified": true,
+  "formatted_loc_qualified": true,
+  "chart_admission": false,
+  "qualification": "experiments/elixir/source-units-v1/qualified-source-counts.json",
+  "qualification_sha256": "1fd0401a8dc46a70268beb6dd2a287b7725e74b9a4a0d33d4c6e92d8ff1df755"
 }

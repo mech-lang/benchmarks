@@ -62,7 +62,7 @@ def fixture(root):
         process=dict(kind='elixir-compiled-work-witness',status='native-passed',native_process_started=True,
             pid=pid,pgid=pid,exit_status=0,direct_child_reaped=True,remaining_process_group=[],cleanup_errors=[],
             inherited_common_mutex=True,common_mutex_inode=79859134,cwd=str(directory),
-            command=['/fixture/elixir','-pa',row['witness_spec']['ebin'],str(work.STAGE/'probe.exs'),str(directory/'spec.json')],
+            command=['/fixture/elixir','-pa',row['witness_spec']['ebin'],str(work.STAGE/'probe-v2.exs'),str(directory/'spec.json')],
             environment=dict(row['runtime_environment'],HOME=str(directory/'home'),XDG_CONFIG_HOME=str(directory/'config'),
                 TMPDIR=str(directory/'tmp')+os.sep,ERL_CRASH_DUMP=str(directory/'erl-crash.dump')),
             process_timeout_seconds=30,cleanup_timeout_seconds=5,maximum_process_group_rss_bytes=SUPERVISOR.RSS_LIMIT,

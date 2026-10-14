@@ -3,9 +3,9 @@
   "status": "source-only-implementation-awaiting-native-psi-replay",
   "counter": "tools/qualification/kotlin_source_units.py",
   "synthetic_tests": "tools/qualification/test_kotlin_source_units.py",
-  "native_reader": "experiments/kotlin/source-counts-v1/SourceReader.java",
-  "native_reader_controller": "tools/qualification/kotlin_loc.py",
-  "native_reader_controller_sha256": "0f64cbd36435d578de238248a890b581e2389de240534a6a2c4d439147c73710",
+  "native_reader": "experiments/kotlin/source-counts-v3/SourceReader.java",
+  "native_reader_controller": "tools/qualification/kotlin_loc_v3.py",
+  "native_reader_controller_sha256": "7e7bf707e96651559c53ea67909547adce9a6a05d30da07dca266d89d6d4e63f",
   "fixture_contract": "experiments/kotlin/source-units-v1/fixture-contract.json",
   "rule_sources": [
     "docs/methodology.md",
@@ -29,7 +29,7 @@
     "count_source_api": "count_source(original_source, {'psi': exact_psi_json, 'psi_source': exact_saved_psi_source_text})",
     "native_schema": "kotlin-native-psi-source-v1",
     "native_offsets": "UTF-16 code units",
-    "validation": "Check the exact frozen kotlin_loc.py SHA-256 before loading its definitions, then reuse only validate_psi: exact source/PSI-source binding, explicitly allowed newline normalization, preorder parent/child inventory, partitioned ranges, complete leaf text and parser-error inventory. No reader prepare/run/preflight function is invoked.",
+    "validation": "Check the exact frozen kotlin_loc_v3.py SHA-256 before loading its definitions, then reuse only validate_psi: exact source/PSI-source binding, explicitly allowed newline normalization, preorder parent/child inventory, partitioned ranges, complete leaf text and parser-error inventory. No reader prepare/run/preflight function is invoked.",
     "offset_conversion": "Map complete UTF-16 character boundaries to Python Unicode character offsets for counting. Reject any native node boundary that splits a surrogate pair. Report normalized-source ownership coordinates explicitly.",
     "lexical_authority": "Native PSI classes, node types, leaf spans, comment flags, whitespace flags and parent/child relationships. No Kotlin lexer or regular-expression language parser supplies ownership."
   },
@@ -82,7 +82,14 @@
     "native_execution_count": 0,
     "actual_native_reader_replays": 0
   },
+  "prior_native_parser_attempt": {
+    "reader": "experiments/kotlin/source-counts-v2/run-v1",
+    "status": "failed after partial PSI collection at the unicode-crlf fixture",
+    "failure": "KtPsiFactory retained CRLF; a carriage return became a BAD_CHARACTER leaf. V3 explicitly normalizes CRLF and lone CR before parsing.",
+    "completed_reader_evidence": false
+  },
   "native_parser_executed": false,
+  "native_parser_executed_scope": "current source-counts-v3 reader revision",
   "actual_reader_replay_executed": false,
   "canonical_loc_qualified": false,
   "formatted_loc_qualified": false,

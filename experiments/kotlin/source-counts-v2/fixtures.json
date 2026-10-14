@@ -1,0 +1,16 @@
+[
+  {"id":"packed-statements", "expected_parse":"ok", "text":"fun f() { val x = 1; val y = 2; println(x + y) }\n"},
+  {"id":"expanded-statements", "expected_parse":"ok", "text":"fun f() {\n  val x = 1\n  val y = 2\n  println(x + y)\n}\n"},
+  {"id":"comment-literal-boundaries", "expected_parse":"ok", "text":"// whole comment\nval x = \"// literal; }\" /* trailing */\nval y = /* outer /* nested */ comment */ 1\n"},
+  {"id":"expression-and-block-functions", "expected_parse":"ok", "text":"fun a(x: Int) = x + 1\nfun b(x: Int): Int { val y = x + 1; return y }\n"},
+  {"id":"callback-statements", "expected_parse":"ok", "text":"fun f() = listOf(1, 2).map { x -> val y = x + 1; println(y); y }\n"},
+  {"id":"control-bodies", "expected_parse":"ok", "text":"fun f(n: Int) { for (i in 0 until n) { if (i > 0) println(i) else println(0) }; while (false) println(n) }\n"},
+  {"id":"when-branches", "expected_parse":"ok", "text":"fun f(x: Int) = when (x) { 0 -> 1; else -> { val y = x + 1; y } }\n"},
+  {"id":"destructuring-and-fields", "expected_parse":"ok", "text":"class Node(val left: Node?, val right: Node?)\nfun f() { val (a, b) = Pair(1, 2); println(a + b) }\n"},
+  {"id":"wrapped-data", "expected_parse":"ok", "text":"val values = intArrayOf(\n  1,\n  2\n)\n"},
+  {"id":"string-interpolation", "expected_parse":"ok", "text":"fun f(x: Int) = \"value: ${run { val y = x + 1; y }}\"\n"},
+  {"id":"unicode-crlf", "expected_parse":"ok", "text":"val value = \"λ😀\" // comment\r\nfun f() = value\r\n"},
+  {"id":"never-evaluate", "expected_parse":"ok", "text":"val value = error(\"Source-count fixtures must never be evaluated\")\n"},
+  {"id":"unclosed-function", "expected_parse":"error", "text":"fun f() {\n  println(1)\n"},
+  {"id":"mismatched-delimiter", "expected_parse":"error", "text":"fun f() { val values = listOf(1, 2] }\n"}
+]

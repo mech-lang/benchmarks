@@ -1,0 +1,22 @@
+** (SyntaxError) invalid syntax found on probe.exs:88:55:
+    error: unexpected comma. Parentheses are required to solve ambiguity in nested calls.
+
+    This error happens when you have nested function calls without parentheses. For example:
+
+        parent_call a, nested_call b, c, d
+
+    In the example above, we don't know if the parameters "c" and "d" apply to the function "parent_call" or "nested_call". You can solve this by explicitly adding parentheses:
+
+        parent_call a, nested_call(b, c, d)
+
+    Or by adding commas (in case a nested call is not intended):
+
+        parent_call a, nested_call, b, c, d
+
+    Elixir cannot compile otherwise. Syntax error before: ','
+    \x{2502}
+ 88 \x{2502}       artifact(output, stem <> "-function-inventory", for {:function, name, arity, entry, _code} <- functions, do: {name, arity, entry})
+    \x{2502}                                                       ^
+    \x{2502}
+    \x{2514}\x{2500} probe.exs:88:55
+    probe-review-tests.exs:8: (file)

@@ -29,12 +29,13 @@ ROOT = Path(__file__).resolve().parents[2]
 STAGE = ROOT / 'experiments/elixir/compiled-work-v1'
 BOUNDED = ROOT / 'experiments/elixir/bounded-work-v1'
 LOCK = Path('/tmp/mech-clbg-timing.lock')
-SUPERVISOR = ROOT / 'tools/qualification/kotlin_bounded.py'
+SUPERVISOR = ROOT / 'tools/qualification/kotlin_bounded_v2.py'
 PYTHON = Path('/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12')
 PYTHON_SHA = 'ac60cfe0268614638d0ffa35f3b0284fc7b3a11482723793455e17eeb278509e'
 PRIOR_REPORT_SHA = 'a7f2700bebd56df569478721fc254e93a2982e230d27862026dc88a38cfe06f2'
 PRIOR_TERMINAL_SHA = 'b4e85ac05e86d25c2dc2b25a3243da2b43344f58e25ba50c95577c9d3f71f672'
-SUPERVISOR_SHA = '916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e'
+SUPERVISOR_SHA = 'c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc'
+FIXTURE_REVIEW_SHA = 'ea4d1bea1f4863c65609247f62a72154d122166bf7f9fecf83735237f46ddfae'
 COMPLETE = 'all20-compiled-work-observed-awaiting-direct-instruction-review'
 IMMUTABLE_RECEIPT_FIELDS = ('kind', 'command', 'environment', 'cwd', 'started_at',
     'process_timeout_seconds', 'cleanup_timeout_seconds', 'inherited_common_mutex',
@@ -109,7 +110,7 @@ def inventory():
                          physical_inputs=sources, beams=profile['beams'], owners=profile['owners'],
                          runtime_environment=profile['runtime_environment'], retained_command=profile['command'],
                          witness_command=[profile['command'][0], '-pa', profile['ebin'],
-                                          str(STAGE / 'probe.exs'), '{fresh-spec.json}'],
+                                          str(STAGE / 'probe-v2.exs'), '{fresh-spec.json}'],
                          witness_spec=spec, reference_case=case, bounded_process_receipt=passed,
                          separate_loc_stage='experiments/elixir/source-counts-v1/',
                          alias_policy='Inspect and witness each compiled form separately; no optimization claim.',
@@ -188,6 +189,24 @@ def prepare(args, lock):
             and sha(BOUNDED / 'plan.json') == result['bounded_plan_sha256_recorded'],
             'Recorded bounded report or plan changed')
     pins = dict(result.pop('inherited_pin_inventory'))
+    fixture_review_path = STAGE / 'probe-fixtures-v2-review.json'
+    require(sha(fixture_review_path) == FIXTURE_REVIEW_SHA, 'Native probe fixture review changed')
+    fixture_review = read(fixture_review_path)
+    require(fixture_review['status'] == 'fifteen-native-diagnostic-fixtures-qualified'
+            and fixture_review['diagnostic_fixtures_passed'] is True
+            and fixture_review['tests'] == 15 and fixture_review['failures'] == 0
+            and fixture_review['native_exit_status'] == 0
+            and fixture_review['owned_process_reaped'] is True,
+            'Native diagnostic fixtures are not qualified')
+    pins[str(fixture_review_path)] = FIXTURE_REVIEW_SHA
+    for relative, digest in fixture_review['pins'].items():
+        path = ROOT / relative
+        require(not Path(relative).is_absolute() and '..' not in Path(relative).parts,
+                'Unsafe fixture review path')
+        require(str(path) not in pins or pins[str(path)] == digest, 'Conflicting fixture input identity')
+        pins[str(path)] = digest
+    result['native_probe_fixture_qualification'] = dict(path=str(fixture_review_path),
+        sha256=FIXTURE_REVIEW_SHA, tests=15, failures=0, source_work_qualified=False)
     # Reuse the existing proven provenance closure. This is a byte-integrity
     # check, not a new recursive semantic/toolchain audit.
     for path, digest in pins.items():
@@ -195,7 +214,7 @@ def prepare(args, lock):
     for path in (Path(__file__).resolve(), SUPERVISOR,
                  ROOT / 'tools/qualification/kotlin_helpers.py',
                  ROOT / 'tools/qualification/elixir_bounded.py',
-                 STAGE / 'probe.exs', STAGE / 'contracts.json',
+                 STAGE / 'probe-v2.exs', STAGE / 'contracts.json',
                  BOUNDED / 'plan.json', BOUNDED / 'results-v1/report.json',
                  BOUNDED / 'results-v1/terminal.json', BOUNDED / 'source-review.json',
                  PYTHON):
@@ -226,7 +245,7 @@ def prepare(args, lock):
                   pins_verified=True, pins=pins, output=str(output),
                   controller=str(Path(__file__).resolve()), controller_sha256=sha(__file__),
                   python=str(PYTHON), python_sha256=PYTHON_SHA,
-                  probe=str(STAGE / 'probe.exs'), supervisor=str(SUPERVISOR),
+                  probe=str(STAGE / 'probe-v2.exs'), supervisor=str(SUPERVISOR),
                   native_timeout_seconds=supervisor.TIMEOUT,
                   maximum_process_group_rss_bytes=supervisor.RSS_LIMIT,
                   per_file_limit_bytes=supervisor.FILE_LIMIT,
@@ -338,7 +357,7 @@ def validate_native_receipt(process, row, directory, supervisor, controller_pid)
                            pid=process['pid'], pgid=process['pgid'], identity=process['identity'])
     equal(read(directory / 'active.json'), expected_active, 'Native launch observation and final receipt differ')
     expected_command = [row['retained_command'][0], '-pa', row['witness_spec']['ebin'],
-                        str(STAGE / 'probe.exs'), str(directory / 'spec.json')]
+                        str(STAGE / 'probe-v2.exs'), str(directory / 'spec.json')]
     expected_environment = dict(row['runtime_environment'], HOME=str(directory / 'home'),
         XDG_CONFIG_HOME=str(directory / 'config'), TMPDIR=str(directory / 'tmp') + os.sep,
         ERL_CRASH_DUMP=str(directory / 'erl-crash.dump'))

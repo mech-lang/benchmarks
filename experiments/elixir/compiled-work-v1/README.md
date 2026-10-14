@@ -1,9 +1,18 @@
 # Retained Elixir compiled-work evidence
 
 This stage inspects the twenty separately retained Elixir main/support BEAM
-pairs after their completed 156-case bounded output study. It does not recompile
-the subjects or collect benchmark timings. Native work remains pending until the
-shared timing lane is available and a concrete plan has been prepared.
+pairs after their completed 156-case bounded output study. The
+[native study](run-v1/report.json) completed all twenty observations using retained
+BEAM files. Direct compiled-instruction review remains required. The study does
+not recompile the subjects or collect benchmark timings.
+
+Fifteen native diagnostic fixtures passed before the study. The
+[fixture review](probe-fixtures-v2-review.json) binds the clean native exit and
+ExUnit's `Result: 15 passed` output. The original summary parser expected the
+older summary format; the separate review preserves that controller failure
+and verifies the successful execution without repeating it. The executed
+`probe-v2.exs` also fixes parentheses around a nested comprehension in a diagnostic
+artifact call; the original probe and failed attempt remain retained.
 
 `tools/qualification/elixir_work.py` provides four commands:
 
@@ -21,11 +30,15 @@ shared timing lane is available and a concrete plan has been prepared.
 Use the retained Python with `-I -S -B`, without optimization. Every command
 except metadata-only `draft` acquires the existing nonblocking common timing
 mutex and verifies its inode. The native observer is the exact reviewed
-`kotlin_bounded.py` implementation at SHA-256
-`916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e`.
+`kotlin_bounded_v2.py` implementation at SHA-256
+`c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc`.
 It supplies the 30-second process deadline, five-second cleanup bound,
 2 GiB observed process-group RSS limit, 8 MiB native-file limit, bounded stdout
 pipe, atomic launch registration, inherited lock, and owned-child cleanup.
+The v2 observer retries a transient RSS-monitor teardown race within the
+original bounds. The earlier Kotlin bounded-run infrastructure failure
+established no Elixir subject-source fault. This stage continues to require
+the unchanged completed Elixir 156-case report and terminal.
 
 The diagnostic records BEAM chunks, decoded instructions and function inventories,
 framed traces, call counts, dynamic observations, and complete output. Witnesses

@@ -1,0 +1,55 @@
+{
+  "schema": "kotlin-native-reader-newline-review-v3",
+  "status": "source-only-revision-awaiting-native-execution",
+  "native_executions_during_review": 0,
+  "full_runtime_or_jar_hashes_recomputed": 0,
+  "prior_reader_sha256": "0de2dc4fb6acd510d3c7d17961fdec4c953a772596057cbc1db514d2e58346d7",
+  "prior_controller_sha256": "92639ed5e389bf1d951205112bdf562877cfc778915610dbf97afed76912813e",
+  "preserved_failed_run": {
+    "directory": "experiments/kotlin/source-counts-v2/run-v1",
+    "plan_sha256": "a8e73ed065c9c00b29e12884a90c8c2865de8ddf3d09e3f2eb36808917d0da82",
+    "report_sha256": "6424a5d79e0c65d575d3cbb01053089f0c93d6204e2be3e81d9faf196f3fbd74",
+    "terminal_sha256": "8504b165356eb5bd4a7d987cf9c28600f2dfcda1ae72da626228eab2c0bc8fad",
+    "status": "failed",
+    "native_processes_started": 2,
+    "application_input_directories_emitted": 40,
+    "failure_classification": "reader preprocessing failure at CRLF grammar fixture; no application-source fault established"
+  },
+  "fixture_evidence": {
+    "directory": "experiments/kotlin/source-counts-v2/run-v1/native-reader/sources/fixture--unicode-crlf",
+    "source_sha256": "dc926f535a568ecb3103546ddcc28dae9c76e45f6945f2e1a60ac46857ee57ba",
+    "psi_source_sha256": "dc926f535a568ecb3103546ddcc28dae9c76e45f6945f2e1a60ac46857ee57ba",
+    "psi_sha256": "65fcd5fbf9837d988a6143350254c921df96207d231b1a926baf08223a4f9853",
+    "source_utf8_bytes": 50,
+    "newline_normalization_observed": false,
+    "error_leaf": {
+      "id": 31,
+      "parent": 30,
+      "start_utf16": 45,
+      "end_utf16": 46,
+      "psi_class": "com.intellij.psi.impl.source.tree.LeafPsiElement",
+      "element_type": "BAD_CHARACTER",
+      "comment": false,
+      "whitespace": false,
+      "children": [],
+      "text": "\r"
+    },
+    "parse_errors": [
+      {
+        "node": 30,
+        "start_utf16": 45,
+        "end_utf16": 46,
+        "message": "Expecting a top level declaration"
+      }
+    ]
+  },
+  "minimal_change": "Move CRLF/lone-CR to LF normalization before createFile, pass normalized text, require PSI to preserve that text exactly. Preserve original source bytes independently.",
+  "new_reader_sha256": "9d187a018bb096742ebdba49a7c5f48976e447cd795914625a27a1d455371f01",
+  "new_controller_sha256": "7e7bf707e96651559c53ea67909547adce9a6a05d30da07dca266d89d6d4e63f",
+  "unchanged_fixtures_sha256": "f24f481175398549c95f88c81b4d069009c8828cf05c874ea993d5a979ddd81b",
+  "native_parser_acceptance_verified": false,
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "source_work_qualified": false,
+  "chart_admission": false
+}

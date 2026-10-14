@@ -1,14 +1,16 @@
 # Kotlin specified bounded cases
 
-This source-only packet adds the original Kotlin specification's missing output
-cases. Preparation and native execution have not run. The existing 156-case
-controller and corpus remain unchanged. This packet requires their actual
+The completed [supplement](run-v1/report.json) passed all thirty additional
+form checks, bringing the retained cohort to **186 passing output checks**.
+The [terminal receipt](run-v1/terminal.json) records thirty JVMs and one diagnostic
+compile with no integrity, artifact or process-receipt errors. The existing 156-case
+controller and corpus remain unchanged. Preparation requires their actual
 completed report and terminal hashes before it can prepare its own references.
 It reconciles all 156 saved case validation/process hashes with the original
 terminal inventory, requires their exact input/output artifacts, and checks
 that the retained output bytes reproduce the saved output validation. This
-binds existing output evidence; it launches no native process and proves no
-additional runtime arithmetic, allocation or JIT behavior.
+binds existing output evidence before the thirty new executions; these output
+checks do not independently prove runtime arithmetic, allocation or JIT behavior.
 
 `gap-analysis.json` records the source comparison against the immutable
 `source-owner-review-v1/bounded-checks.json` and the closed 78-reference corpus.
@@ -71,9 +73,15 @@ work.
 
 ## Execution and evidence
 
-The new controller imports the immutable atomic observer at
-`kotlin_bounded.py` SHA-256
-`916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e`.
+The new controller imports the reviewed atomic observer at
+`kotlin_bounded_v2.py` SHA-256
+`c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc`.
+Its prerequisite is the completed `bounded-work-v1/run-v2` report and terminal.
+The preserved `run-v1` stopped on an RSS-monitor teardown race; this was an
+observation infrastructure failure, with no subject-source failure established.
+The v2 observer adds a short bounded retry for that race while retaining the
+original process deadlines and resource limits. The original controller,
+corpus, execution plans and failed-run evidence remain unchanged.
 It compiles only an unchanged copy of `BoundedProbe.java`, with the original
 retained `javac`. No Kotlin source, helper or subject class is recompiled.
 All twenty original profile bindings, forty authored main/helper inputs,
@@ -117,7 +125,7 @@ After the actual 156-case bounded run succeeds:
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
   tools/qualification/kotlin_supplement.py prepare \
-  --bounded-report experiments/kotlin/bounded-work-v1/run-v1/report.json \
+  --bounded-report experiments/kotlin/bounded-work-v1/run-v2/report.json \
   --bounded-report-sha256 ACTUAL_COMPLETED_BOUNDED_REPORT_SHA256 \
   --bounded-terminal-sha256 ACTUAL_COMPLETED_BOUNDED_TERMINAL_SHA256 \
   --plan experiments/kotlin/specified-cases-v1/plan-v1.json \

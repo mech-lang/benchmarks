@@ -1,11 +1,13 @@
-"""Synthetic owner-rule fixtures; these are NOT observed native parser results.
+"""Pure counter tests using synthetic terms and separately named saved native ASTs.
 
-Only the Python source-unit counter is exercised. These cases never invoke
-Elixir, a compiler, a formatter, a subprocess, application code, or a retained
-source/artifact inventory. Actual native AST/position replay remains a gate.
+Only the Python source-unit counter is exercised. No test invokes Elixir, a
+compiler, a formatter, a subprocess, or application code. Synthetic fixtures
+remain distinct from the already retained source-reader artifacts consumed by
+SavedNativeOwnerRegressions; these tests do not qualify process provenance.
 """
 import base64
 import importlib.util
+import json
 from pathlib import Path
 import sys
 import unittest
@@ -85,6 +87,13 @@ def definition(source, body, *, name='f', args=(), do_occurrence=0,
     return node(source, 'def', 'def',
                 [head, [(key(source, 'do', do_occurrence, keyword), body)]],
                 def_occurrence, **extra)
+
+
+def for_value(source):
+    generator = node(source, '<-', arguments=[node(source, 'item'), node(source, 'items')])
+    return node(source, 'for', arguments=[generator, [
+        (key(source, 'do'), node(source, 'item', occurrence=2))]],
+        do=position(source, 'do'), end=position(source, 'end'))
 
 
 class SourceUnitFixtures(unittest.TestCase):
@@ -186,6 +195,67 @@ class SourceUnitFixtures(unittest.TestCase):
         call = node(source, 'map', arguments=[node(source, 'items'), callback], closing=position(source, ')'))
         finish = node(source, 'finish', arguments=[], closing=position(source, ')', 1))
         self.counted(source, node(source, '|>', arguments=[call, finish]), 3, physical=1)
+
+    def test_explicit_control_scalar_pipeline_shares_expression_unit(self):
+        source = 'for item <- items do item end |> finish()\n'
+        finish = node(source, 'finish', arguments=[], closing=position(source, ')'))
+        result = self.counted(source, node(source, '|>', arguments=[for_value(source), finish]), 3, physical=1)
+        self.assertEqual(len(result['expression_continuations']), 1)
+
+    def test_explicit_control_wrapped_pipeline_preserves_physical_row(self):
+        source = 'for item <- items do item end\n|> finish()\n'
+        finish = node(source, 'finish', arguments=[], closing=position(source, ')'))
+        self.counted(source, node(source, '|>', arguments=[for_value(source), finish]), 4, physical=2)
+
+    def test_explicit_control_pipeline_stops_before_packed_next_statement(self):
+        source = 'for item <- items do item end |> finish(); next()\n'
+        finish = node(source, 'finish', arguments=[], closing=position(source, ')'))
+        following = node(source, 'next', arguments=[], closing=position(source, ')', 1))
+        pipe = node(source, '|>', arguments=[for_value(source), finish])
+        self.counted(source, sequence(pipe, following), 4, physical=1)
+
+    def test_explicit_control_following_match_is_not_scalar_tail(self):
+        source = 'use((for item <- items do item end), following = 1)\n'
+        following = node(source, '=', arguments=[node(source, 'following'), literal(source, 1, '1')])
+        ast = node(source, 'use', arguments=[for_value(source), following], closing=position(source, ')', 1))
+        result = self.gated(source, ast)
+        self.assertIn('non-scalar-expression-continuation-needs-review',
+                      [d['kind'] for d in result['diagnostics']])
+
+    def test_explicit_control_following_sequence_is_not_scalar_tail(self):
+        source = 'use((for item <- items do item end), (first(); second()))\n'
+        first = node(source, 'first', arguments=[], closing=position(source, ')', 1))
+        second = node(source, 'second', arguments=[], closing=position(source, ')', 2))
+        ast = node(source, 'use', arguments=[for_value(source), sequence(first, second)],
+                   closing=position(source, ')', 4))
+        result = self.gated(source, ast)
+        self.assertIn('non-scalar-expression-continuation-needs-review',
+                      [d['kind'] for d in result['diagnostics']])
+
+    def test_explicit_control_following_callback_is_not_scalar_tail(self):
+        source = 'use((for item <- items do item end), fn x -> x end)\n'
+        clause = node(source, '->', arguments=[[node(source, 'x')], node(source, 'x', occurrence=1)])
+        callback = node(source, 'fn', arguments=[clause], closing=position(source, 'end', 1))
+        ast = node(source, 'use', arguments=[for_value(source), callback], closing=position(source, ')', 1))
+        result = self.gated(source, ast)
+        self.assertIn('non-scalar-expression-continuation-needs-review',
+                      [d['kind'] for d in result['diagnostics']])
+
+    def test_explicit_if_pipeline_preserves_both_branch_bodies(self):
+        source = 'if ready do yes else no end |> finish()\n'
+        control = node(source, 'if', arguments=[node(source, 'ready'), [
+            (key(source, 'do'), node(source, 'yes')), (key(source, 'else'), node(source, 'no'))]],
+            do=position(source, 'do'), end=position(source, 'end'))
+        finish = node(source, 'finish', arguments=[], closing=position(source, ')'))
+        self.counted(source, node(source, '|>', arguments=[control, finish]), 5, physical=1)
+
+    def test_explicit_case_pipeline_preserves_pattern_and_body(self):
+        source = 'case value do :ok -> 1 end |> finish()\n'
+        clause = node(source, '->', arguments=[[literal(source, Atom('ok'), ':ok')], literal(source, 1, '1')])
+        control = node(source, 'case', arguments=[node(source, 'value'), [(key(source, 'do'), [clause])]],
+                       do=position(source, 'do'), end=position(source, 'end'))
+        finish = node(source, 'finish', arguments=[], closing=position(source, ')'))
+        self.counted(source, node(source, '|>', arguments=[control, finish]), 4, physical=1)
 
     def test_callback_followed_by_scalar_list_value_shares_expression_unit(self):
         source = '[map(items, fn x -> x end), "\\n"]\n'
@@ -453,6 +523,79 @@ class SourceUnitFixtures(unittest.TestCase):
         interpolated = (Atom('::'), place, [conversion, (Atom('binary'), place, Atom('nil'))])
         ast = node(source, '<<>>', '"', ['value: ', interpolated], delimiter='"')
         self.gated(source, ast)
+
+
+class SavedNativeOwnerRegressions(unittest.TestCase):
+    """Read the completed native reader; never generate ASTs or rewrite replay-v1."""
+
+    @classmethod
+    def setUpClass(cls):
+        root = COUNTER.resolve().parents[2]
+        cls.reader = root/'experiments/elixir/source-counts-v1/run-v1/reader'
+        cls.previous = json.loads((root/'experiments/elixir/source-units-v1/replay-v1.json').read_bytes())
+        cls.native = json.loads((cls.reader/'report.json').read_bytes())
+
+    def saved_count(self, identity, formatted=False):
+        directory = self.reader/identity
+        source = directory/('formatted.exs' if formatted else 'source.exs')
+        ast = directory/('formatted-ast.json' if formatted else 'ast.json')
+        return count_source(source.read_bytes().decode('utf-8'), json.loads(ast.read_bytes()))
+
+    def test_actual_control_and_callback_continuations(self):
+        for benchmark, original, formatted in [('spectralnorm', 28, 29), ('nbody', 68, 112),
+                                               ('knucleotide', 47, 52)]:
+            identity = 'elixir-'+benchmark+'-compact--application'
+            with self.subTest(benchmark=benchmark):
+                result = self.saved_count(identity)
+                self.assertEqual(result['diagnostics'], [])
+                self.assertEqual(result['normalized_loc'], original)
+                self.assertEqual(self.saved_count(identity, True)['normalized_loc'], formatted)
+                if benchmark == 'spectralnorm':
+                    row = next(e for e in result['expansions'] if e['line'] == 12)
+                    self.assertEqual(row['original'].strip(), 'end |> List.to_tuple()')
+                    self.assertEqual(row['units'], 1)
+                    self.assertEqual([e['kind'] for e in row['canonical_events']], ['close'])
+                    self.assertEqual(row['statements'][0]['reason'], 'same-native-expression-scalar-continuation')
+
+    def test_all_retained_sources_change_only_original_spectralnorm_unit(self):
+        reviewed = 0
+        for identity, previous in self.previous['files'].items():
+            if not identity.startswith('elixir-'):
+                continue
+            for variant, formatted in [('original', False), ('formatted', True)]:
+                with self.subTest(identity=identity, variant=variant):
+                    result = self.saved_count(identity, formatted)
+                    expected = previous[variant]['normalized_loc']
+                    if not formatted and identity in {
+                            'elixir-spectralnorm-compact--application',
+                            'elixir-spectralnorm-optimized--application'}:
+                        expected -= 1
+                    self.assertEqual(result['diagnostics'], [])
+                    self.assertEqual(result['normalized_loc'], expected)
+                    self.assertEqual(result['physical_loc'], previous[variant]['physical_loc'])
+                    self.assertIs(result['canonical_loc_qualified'], False)
+                    reviewed += 1
+        self.assertEqual(reviewed, 120)
+
+    def test_original_fourteen_native_fixture_contracts_are_preserved(self):
+        actual = {item['id']: item for item in self.native['items']}
+        checks = self.previous['fixture_checks']
+        self.assertEqual(len(checks), 14)
+        for check in checks:
+            expected = check['expectation']
+            with self.subTest(identity=check['id']):
+                if expected['outcome'] == 'parse-rejected':
+                    self.assertEqual(actual[check['id']]['status'], 'expected-parse-rejection')
+                    self.assertTrue((self.reader/check['id']/'parse-error.json').is_file())
+                    continue
+                result = self.saved_count(check['id'])
+                if expected['outcome'] == 'candidate-count':
+                    self.assertEqual(result['diagnostics'], [])
+                    self.assertEqual(result['normalized_loc'], expected['canonical_units'])
+                else:
+                    self.assertEqual(expected['outcome'], 'needs-review')
+                    self.assertIsNone(result['normalized_loc'])
+                    self.assertIn(expected['diagnostic'], [d['kind'] for d in result['diagnostics']])
 
 
 if __name__ == '__main__':

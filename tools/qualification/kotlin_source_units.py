@@ -20,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PACKET = ROOT / 'experiments/kotlin/source-units-v1'
 RULE_VERSION = 'canonical-source-units-20261012-approved-rule-v2'
 GRAMMAR = 'kotlin-native-psi-owners-v1'
-READER_VALIDATOR_SHA256 = '0f64cbd36435d578de238248a890b581e2389de240534a6a2c4d439147c73710'
+READER_VALIDATOR_SHA256 = '7e7bf707e96651559c53ea67909547adce9a6a05d30da07dca266d89d6d4e63f'
 FALSE_FLAGS = dict(canonical_loc_qualified=False, formatted_loc_qualified=False,
                    chart_admission=False)
 ASSIGNMENTS = {'=', '+=', '-=', '*=', '/=', '%='}
@@ -51,7 +51,7 @@ def reader_validator():
     runtime pin functions are never called. compile/exec avoids writing pyc files.
     validate_psi hashes only the supplied source text, never runtime artifacts.
     """
-    path = Path(__file__).with_name('kotlin_loc.py')
+    path = Path(__file__).with_name('kotlin_loc_v3.py')
     raw = path.read_bytes()
     require(hashlib.sha256(raw).hexdigest() == READER_VALIDATOR_SHA256,
             'Frozen native PSI validator bytes differ from the reviewed definition')

@@ -26,17 +26,18 @@ runtime closure, reader and supervisor before freezing a fresh plan. Execution
 uses the atomic unreaped-child supervisor, with a 300-second limit and five
 seconds for cleanup. It records partial outputs on failure and never retries.
 
-Canonical and formatted LOC remain null. The remaining work is to map the
-native positions to the suite's existing source-unit rule, review packed
-header/body/close and independent assignment expansions, and reconcile every
-physical input and alias. Successful parsing or formatting alone cannot supply
-the chart's source-size coordinate.
+The reader's original canonical and formatted LOC fields remain null. A separate
+[qualification record](../source-units-v1/qualified-source-counts.json) now binds
+the native positions, reviewed source-unit rule, every authored input, formatter
+evidence, and equivalent-source pairs. It qualifies both source-size metrics for
+all twenty forms; compiled required work and timing publication remain separate.
 
 The [native reader run](run-v1/report.json) completed on 14 October 2026 in one
 owned process. All sixty authored files and fourteen fixtures were read; the
 twelve valid fixtures parsed and the two invalid fixtures were rejected as
 expected. The [terminal receipt](run-v1/terminal.json) binds all 372 artifacts,
 with no integrity, artifact or process-receipt errors. Original and formatted
-ASTs preserve semantics. The [source-unit replay](../source-units-v1/replay-v1.json)
-passes all fourteen fixture expectations and supplies candidate counts for all
-twenty forms; canonical ownership review remains pending.
+ASTs preserve semantics. The corrected [source-unit replay](../source-units-v1/replay-v2.json)
+passes all fourteen fixture expectations. The completed
+[ownership review](../source-units-v1/review.md) explains the counts and the
+one-unit spectral-norm correction.

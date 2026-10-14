@@ -22,8 +22,8 @@ import xml.etree.ElementTree as ET
 
 ROOT = Path(__file__).resolve().parents[2]
 PACKET = ROOT/'experiments/kotlin/compiled-work-v1'
-BOUNDED_CONTROLLER_SHA = '916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e'
-SUPPLEMENT_CONTROLLER_SHA = '5e5438f93d77e114319e1b9b38f2f2d28468dd1d377104fc5ccd4746f1fbf4fa'
+BOUNDED_CONTROLLER_SHA = 'c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc'
+SUPPLEMENT_CONTROLLER_SHA = '107d32625ca4cace589c9e94b6110fa79cdb256ebfc8330adf98fcbce7368685'
 
 
 def require(value,message):
@@ -35,7 +35,7 @@ def sha(path):
 
 
 def load_bounded():
-    path = ROOT/'tools/qualification/kotlin_bounded.py'; raw = path.read_bytes()
+    path = ROOT/'tools/qualification/kotlin_bounded_v2.py'; raw = path.read_bytes()
     require(hashlib.sha256(raw).hexdigest() == BOUNDED_CONTROLLER_SHA, 'Qualified supervision source changed')
     spec = importlib.util.spec_from_file_location('retained_kotlin_bounded',path)
     module = importlib.util.module_from_spec(spec); exec(compile(raw,str(path),'exec'),module.__dict__)
@@ -197,7 +197,7 @@ def prepare(args):
         rows.append(dict(row,diagnostic_case=case,required_jit_methods=methods,
             source_owner_review=dict(path=str(review_path),sha256=pins[str(review_path)]),
             retained_disassembly=dict(path=str(disassembly),sha256=reviewed['recorded_disassembly_sha256'])))
-    for path in (Path(__file__).resolve(),ROOT/'tools/qualification/kotlin_bounded.py',
+    for path in (Path(__file__).resolve(),ROOT/'tools/qualification/kotlin_bounded_v2.py',
             PACKET/'WorkProbe.java',ROOT/'experiments/kotlin/bounded-work-v1/BoundedProbe.java',kb.kh.PYTHON):
         bind(path,sha(path),pins)
     require(pins[str(kb.kh.PYTHON)] == kb.kh.PYTHON_SHA, 'Wrong controller interpreter')

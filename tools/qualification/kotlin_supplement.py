@@ -19,7 +19,7 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[2]
 PACKET = ROOT/'experiments/kotlin/specified-cases-v1'
-BOUNDED_CONTROLLER_SHA = '916a94f68e191cce8d074121859121351517c8ab2132bb5953ebc62621ba710e'
+BOUNDED_CONTROLLER_SHA = 'c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc'
 SPEC = ROOT/'experiments/kotlin/source-owner-review-v1/bounded-checks.json'
 SPEC_SHA = '8ba71e98e63e29f40351b028368c8e2bcf0ddf8d47ac240b69aa48d562e812cd'
 NUMERIC = {'pidigits':[100], 'fasta':[19,20,21,59,1000], 'mandelbrot':[64],
@@ -47,7 +47,7 @@ def module(path, digest, name):
     return result
 
 
-kb = module(ROOT/'tools/qualification/kotlin_bounded.py', BOUNDED_CONTROLLER_SHA, 'supplement_bounded')
+kb = module(ROOT/'tools/qualification/kotlin_bounded_v2.py', BOUNDED_CONTROLLER_SHA, 'supplement_bounded')
 save, atomic, LOCK, FLAGS = kb.save, kb.atomic, kb.LOCK, kb.FLAGS
 
 
@@ -226,7 +226,7 @@ def prepare(args):
             validation='finite-two-energy-lines-within-1e-8' if fixture['benchmark']=='nbody' else 'exact-complete-bytes'))
     rows = [dict(row,bounded_cases=cases[row['benchmark']]) for row in bounded['profiles']]
     schedule = validate_coverage(rows,fixtures)
-    for path in (Path(__file__).resolve(),ROOT/'tools/qualification/kotlin_bounded.py',
+    for path in (Path(__file__).resolve(),ROOT/'tools/qualification/kotlin_bounded_v2.py',
                  ROOT/'experiments/kotlin/bounded-work-v1/BoundedProbe.java',kb.kh.PYTHON): bind(path,sha(path),pins)
     require(pins[str(kb.kh.PYTHON)] == kb.kh.PYTHON_SHA, 'Wrong controller interpreter')
     plan = dict(schema='kotlin-specified-cases-plan-v1',status='prepared-awaiting-native-supplemental-execution',

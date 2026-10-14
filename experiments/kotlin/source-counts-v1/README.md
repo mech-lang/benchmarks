@@ -22,6 +22,13 @@ common timing mutex and the reviewed bounded supervisor. The reader classpath
 contains the diagnostic and the retained compiler libraries, with no benchmark
 class directories.
 
+The observer is `kotlin_bounded_v2.py`, pinned at SHA-256
+`c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc`.
+It adds a short bounded retry for the RSS-monitor teardown race that stopped
+the first Kotlin bounded-output run. That observation infrastructure failure
+established no source or parser fault. This reader needs the retained helper
+and compiler evidence; it does not require bounded-output completion.
+
 Native parser results are evidence for the subsequent canonical owner review.
 They do not themselves define the source-unit rule. Packed header/body/close
 boundaries, independent assignments, callback bodies, constructor properties,
