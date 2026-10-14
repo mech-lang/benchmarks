@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import * as math from '../src/math.mjs';
+import * as formatted from '../src/formatted_axis.mjs';
 
 // Exercise the real SVG renderer with a small DOM adapter; no browser or benchmark workers.
 class Element {
@@ -31,18 +32,20 @@ const document={querySelector:element,createComment:()=>new Element('comment'),c
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
-const context=vm.createContext({...math,document,window:{},innerWidth:1000,
+const context=vm.createContext({...math,...formatted,document,window:{},innerWidth:1000,
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
   setTimeout:()=>0,clearTimeout(){}});
 const executable=source.replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'file:///test/app.mjs'")
   .replace(/start\(\)\.catch\(error=>\{[^\n]+\}\);\s*$/,'');
 vm.runInContext(executable+`\nglobalThis.harness={
-  initialize(fixture){data=fixture;programCatalog=fixture.programs;Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
+  initialize(fixture){data=fixture;programCatalog={...fixture.program_inventory,...fixture.programs};Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
   render(options){Object.assign(state,options);model=comparison(data,allSelection());renderChart();},
   table(){renderTable();},
   locAudit:renderLocAudit,
   programSource,
+  compare(key){state.languageFocus={keys:[catalogProgram(key).language],comparison:true,comparisonProgram:key};return comparisonData();},
+  inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview;renderLanguageOverview=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;}},
   selection(){return state;},
   play(){const original=update;update=()=>{};try{playYears();}finally{update=original;pauseYears();}}
 };`,context);
@@ -125,4 +128,53 @@ for(const program of pony){
   }
 }
 assert.equal(helperLinks,2);
-console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback, trail removal, and all ${pony.length} Pony source audits.`);
+// Every newly admitted Elixir form exposes its counted application, helper and
+// launcher, including the source aliases retained outside selected endpoints.
+const elixir=Object.values(recorded.program_inventory).filter(program=>program.language==='elixir');
+assert.equal(elixir.length,20);
+for(const program of elixir){
+  assert.equal(program.samples.length,3);
+  assert.equal(program.eligible_for_chart,true);
+  assert.equal(program.formatted_loc_status,'qualified');
+  assert.deepEqual(program.files.map(key=>program.file_roles[key].role),
+    ['application','application-helper','application-launcher']);
+  for(const key of program.files){
+    const source=context.harness.programSource(program,key);
+    assert.equal(source.role,program.file_roles[key].role);
+    assert.equal(decodeURI(source.source_url),recorded.repository.url+'/blob/main/'+program.file_roles[key].source_path);
+  }
+  context.harness.inspect(program.key);
+  const detail=element('#inspector-body').innerHTML;
+  assert.doesNotMatch(detail,/undefined|\[object Object\]/);
+  assert.match(detail,/application helper/);
+  assert.match(detail,/application launcher/);
+  assert.match(detail,/3 samples/);
+  assert.match(detail,/best-comparison/);
+}
+// A successful subject with a failed matched control remains inspectable, but
+// neither inventory selection nor the language-view renderer may chart it.
+const excludedFixture=structuredClone(fixture);
+excludedFixture.files={source:{name:'main.ex',path:'retained/main.ex',sha256:'a'.repeat(64),code:'IO.puts(1)\n'}};
+const excluded={...excludedFixture.programs['alpha-b1-fast'],key:'alpha-b1-excluded',id:'excluded',files:['source'],
+  eligible_for_chart:false,exclusion_reason:'Matched control failed.',timing_sd:0.2,report:'synthetic/report.json',
+  physical_loc:1,formatted_loc:2,formatted_loc_status:'qualified',formatted_loc_complete:true,formatted_x:2};
+excludedFixture.program_inventory={[excluded.key]:excluded};
+context.harness.initialize(excludedFixture);
+const compared=context.harness.compare(excluded.key),excludedGroup=compared.benchmarks[0].groups.find(g=>g.language==='alpha');
+assert.equal(excludedGroup.programs.length,0);
+assert.equal(excludedGroup.fast,null);assert.equal(excludedGroup.small,null);
+assert.equal(excludedGroup.formatted_fast,null);assert.equal(excludedGroup.formatted_small,null);
+context.harness.render({view:'language',languageFocus:{keys:['alpha'],label:'Alpha'},global:true,sampleMode:'highlight',medianMode:'highlight',densityMode:'highlight'});
+assert.ok(element('#chart').querySelectorAll('[data-program]').every(node=>node.dataset.program!==excluded.key));
+context.harness.inspect(excluded.key);
+assert.match(element('#inspector-body').innerHTML,/Excluded from charts and comparisons/);
+assert.match(element('#inspector-body').innerHTML,/Matched control failed/);
+assert.match(element('#inspector-body').innerHTML,/3 samples/);
+assert.doesNotMatch(element('#inspector-body').innerHTML,/best-comparison/);
+assert.equal(element('#source-code').textContent,excludedFixture.files.source.code);
+excluded.seconds=null;excluded.timing_sd=null;excluded.samples=[1,2];excluded.exclusion_reason='Failed third sample.';
+context.harness.inspect(excluded.key);
+assert.match(element('#inspector-body').innerHTML,/No qualified timing median/);
+assert.match(element('#inspector-body').innerHTML,/2 samples/);
+assert.doesNotMatch(element('#inspector-body').innerHTML,/undefined|\[object Object\]/);
+console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback, trail removal, ${pony.length} Pony source audits and ${elixir.length} Elixir inspectors.`);

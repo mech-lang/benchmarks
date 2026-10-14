@@ -1073,5 +1073,26 @@ export const languageMetadata = {
       "https://www.ponylang.io/media/papers/a_string_of_ponies.pdf",
       "https://www.ponylang.io/use/compiler/runtime-options/"
     ]
+  },
+  "elixir": {
+    "platform": "beam",
+    "runtime": "Elixir 1.20.4 on Erlang/OTP 29 / ERTS 17.1 BEAM JIT",
+    "execution": [
+      "jit"
+    ],
+    "typing": "dynamic",
+    "style": [
+      "functional"
+    ],
+    "memory": [
+      "gc",
+      "rc"
+    ],
+    "note": "BEAM JIT with per-process tracing heaps and reference-counted large binaries; identical source aliases remain independently measured.",
+    "sources": [
+      "https://www.erlang.org/doc/system/beamjit.html",
+      "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
+      "https://www.erlang.org/doc/system/binaryhandling.html"
+    ]
   }
 };

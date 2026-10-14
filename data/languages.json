@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "audited_on": "2026-10-14",
-  "scope": "53 measured variants; all classifications explicit. Static typing is never inferred merely from absence in a dynamic-language list.",
+  "scope": "54 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2433,6 +2433,99 @@
       "displayed_program_count": 13,
       "evidence_scope": "Saved successful production builds, pinned native binaries and static runtime artifacts, recorded architecture and linked-image inspections, exact commands/environment and complete authored-source inventory. Recorded DYLD_LIBRARY_PATH and install names identify pinned library candidates; actual loaded-image paths and runtime GC configuration were not observed by this check.",
       "runtime_gc_configuration_observed": false
+    },
+    "elixir": {
+      "key": "elixir",
+      "label": "Elixir",
+      "family": "elixir",
+      "platform": "beam",
+      "runtime": "Elixir 1.20.4 on Erlang/OTP 29 / ERTS 17.1 BEAM JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc",
+        "rc"
+      ],
+      "note": "BEAM JIT with per-process tracing heaps and reference-counted large binaries; identical source aliases remain independently measured.",
+      "sources": [
+        "https://www.erlang.org/doc/system/beamjit.html",
+        "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
+        "https://www.erlang.org/doc/system/binaryhandling.html"
+      ],
+      "taxonomy_basis": "Existing reviewed BEAM taxonomy in data/languages.json; specific retained Elixir execution is bound below",
+      "runtime_policy": "Elixir 1.20.4 on Erlang/OTP 29 / ERTS 17.1 BEAM JIT; +S 8:8 +A 1 +SDcpu 1:1 +SDio 1",
+      "memory_policy": "Retained default BEAM GC; no GC/heap override in recorded flags or literal authored-source scan",
+      "normal_schedulers_online": 8,
+      "dirty_cpu_schedulers": 1,
+      "dirty_io_schedulers": 1,
+      "async_threads": 1,
+      "native_architecture": "aarch64-apple",
+      "word_bytes": 8,
+      "maximum_total_vm_threads_claimed": false,
+      "runtime_gc_configuration_observed": false,
+      "gc_numeric_defaults_claimed": false,
+      "regex_jit_observed": false,
+      "exact_regex_engine_version": null,
+      "regex_support": "Elixir Regex with the pinned OTP :re general-purpose engine",
+      "observed_in_closed_qualification_processes": true,
+      "observed_in_each_timed_process": false,
+      "runtime_evidence": {
+        "path": "experiments/elixir/compiled-work-v1/probe-v2.exs",
+        "sha256": "aa46dbb8d4fee6350ca63fade5b9619fa4c3cb96ce850a54e880b1585711c946"
+      },
+      "runtime_pins": {
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/erts-17.1/bin/beam.smp": "317a5aa96d7f488ee1f5377f76cb87f47279e235b3eff835ec3c98265074116b",
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/erts-17.1/bin/erlexec": "60877b262a4aa18ad0d6aaf528e4ded12ad33b89cba9f245678411668c6997e6",
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/lib/stdlib-8.1/ebin/re.beam": "7a6d8965ba7d802795f648a388ab243ec5f83df7816caf4d6552bbcb943deb6c",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/elixir-comparison/20261013/.build/retained-otp-toolchain-v1/elixir/lib/elixir/ebin/Elixir.Regex.beam": "d15a26fb6786e638e03573093b9c576d7b0105d3fe78d68ba20dde38324833e0"
+      },
+      "qualification_evidence": {
+        "path": "experiments/elixir/compiled-work-v1/qualified-work-v1.json",
+        "sha256": "a96ed85f0f0d1da05cca428d18dfeb9d0d702158b7aa0f7a5c87ae827b4588bf"
+      },
+      "reader_runtime": {
+        "common_mutex_inode": 79859134,
+        "elixir_version": "1.20.4",
+        "otp_release": "29",
+        "source_evaluations": 0,
+        "system_version": "Erlang/OTP 29 [erts-17.1] [source] [64-bit] [smp:8:8] [ds:1:1:1] [async-threads:1] [jit] [dtrace]\n"
+      },
+      "formatter": {
+        "api": "Code.format_string!/2",
+        "elixir": "1.20.4",
+        "line_length": 98
+      },
+      "literal_gc_override_markers": [
+        "process_flag",
+        "system_flag",
+        "garbage_collect",
+        "fullsweep_after",
+        "min_heap_size",
+        "min_bin_vheap_size",
+        "max_heap_size"
+      ],
+      "source_scan_files": 60,
+      "source_scan_limit": "Literal marker scan; no numeric GC defaults or per-timed-process runtime probe is claimed",
+      "evidence_scope": "Version, JIT, architecture and scheduler assertions belong to separately closed retained qualification processes. Timed-process evidence binds the unchanged launch, source/BEAM/runtime closure, full output and lifecycle; each timed process was not instrumented for runtime metadata.",
+      "runtime_publication_metadata_qualified": true,
+      "chart_admission": false,
+      "release_year": 2012,
+      "release_name": "Elixir v0.5.0",
+      "release_source": "https://elixir-lang.org/blog/2012/05/25/elixir-v0-5-0-released/",
+      "release_note": "Year of the public v0.5.0 release of the rewritten language. The creator also records an earlier v0.3.0 predecessor around April 2011; 2012 does not mean that development or every earlier release began then.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/elixir/full90-v1/publication-candidate-v1.json",
+          "sha256": "070ef5a759d2da21d9a30e3df78a96d58e44971d1c0add51661e578f9fe0978f",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
     }
   }
 }

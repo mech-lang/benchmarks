@@ -77,7 +77,7 @@ passed in 0.108 seconds. No native process is launched by these tests.
 
 The draft SHA is
 `fab709a1e51c4d3079590a498b8bdaa5c916f2baadef368944119a0a58e4a7d4`.
-After review, the root owner may prepare it with the retained Python:
+Prepare the reviewed draft with the retained Python:
 
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B /private/tmp/mech-benchmark-completion/tools/qualification/elixir_full.py prepare --draft /private/tmp/mech-benchmark-completion/experiments/elixir/full90-v1/plan-draft-v1.json --draft-sha256 fab709a1e51c4d3079590a498b8bdaa5c916f2baadef368944119a0a58e4a7d4 --plan /private/tmp/mech-benchmark-completion/experiments/elixir/full90-v1/plan-v1.json

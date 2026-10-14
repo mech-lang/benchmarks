@@ -1,4 +1,7 @@
 export const gm=values=>Math.exp(values.reduce((sum,v)=>sum+Math.log(v),0)/values.length);
+// An explicit publication exclusion applies to every chart path. Older rows
+// without the field retain their existing admission behavior.
+export const eligibleForChart=program=>!!program&&program.eligible_for_chart!==false;
 export function median(values){
   if(!values.length)return null;
   const sorted=values.slice().sort((a,b)=>a-b),middle=Math.floor(sorted.length/2);
@@ -86,7 +89,7 @@ export function recordedSamplePoints(entries,{samples=true,disabled=new Set(),pr
   if(!samples)return [];
   const points=[],seen=new Set();
   for(const entry of entries)for(const input of entry.inputs)for(const program of programsForInput(input,entry)){
-    if(!program||disabled.has(program.key)||seen.has(program.key)||!Array.isArray(program.samples)||
+    if(!eligibleForChart(program)||disabled.has(program.key)||seen.has(program.key)||!Array.isArray(program.samples)||
       ![program.loc,program.x,program.y,program.seconds,input.benchmark.baseline_seconds].every(value=>Number.isFinite(value)&&value>0))continue;
     seen.add(program.key);
     for(const [index,elapsed] of program.samples.entries())if(Number.isFinite(elapsed)&&elapsed>0)
@@ -97,7 +100,7 @@ export function recordedSamplePoints(entries,{samples=true,disabled=new Set(),pr
 export function sampleDensityPoints(samples){
   const points=[],seen=new Set();
   for(const sample of samples){
-    if(!sample.program?.key||!Number.isInteger(sample.run)||sample.run<=0||
+    if(!eligibleForChart(sample.program)||!sample.program.key||!Number.isInteger(sample.run)||sample.run<=0||
       ![sample.x,sample.y].every(value=>Number.isFinite(value)&&value>0))continue;
     const identity=JSON.stringify([sample.program.key,sample.run]);
     if(seen.has(identity))continue;
@@ -181,7 +184,7 @@ export function sharedBenchmarks(data,selection){
   if(!languages.length)return [];
   return data.benchmarks.filter(b=>selection.benchmarks.has(b.key)&&languages.every(l=>{
     const group=b.groups.find(g=>g.language===l.key);
-    return group?.programs.some(k=>!selection.disabled.has(k)&&[data.programs[k]?.seconds,data.programs[k]?.loc,data.programs[k]?.x,data.programs[k]?.y].every(value=>Number.isFinite(value)&&value>0));
+    return group?.programs.some(k=>!selection.disabled.has(k)&&eligibleForChart(data.programs[k])&&[data.programs[k]?.seconds,data.programs[k]?.loc,data.programs[k]?.x,data.programs[k]?.y].every(value=>Number.isFinite(value)&&value>0));
   }));
 }
 export function comparison(data,selection){
@@ -192,7 +195,7 @@ export function comparison(data,selection){
     const inputs=[];
     for(const benchmark of benchmarks){
       const group=benchmark.groups.find(g=>g.language===language.key);
-      const programs=(group?.programs??[]).filter(k=>!selection.disabled.has(k)).map(k=>data.programs[k]).filter(p=>Number.isFinite(p?.seconds)&&p.seconds>0&&Number.isFinite(p.loc)&&p.loc>0&&Number.isFinite(p.x)&&p.x>0&&Number.isFinite(p.y)&&p.y>0);
+      const programs=(group?.programs??[]).filter(k=>!selection.disabled.has(k)).map(k=>data.programs[k]).filter(p=>eligibleForChart(p)&&Number.isFinite(p.seconds)&&p.seconds>0&&Number.isFinite(p.loc)&&p.loc>0&&Number.isFinite(p.x)&&p.x>0&&Number.isFinite(p.y)&&p.y>0);
       if(!programs.length)continue;
       const fast=programs.reduce((a,b)=>b.seconds<a.seconds||(b.seconds===a.seconds&&b.loc<a.loc)?b:a);
       const small=programs.reduce((a,b)=>b.loc<a.loc||(b.loc===a.loc&&b.seconds<a.seconds)?b:a);
@@ -218,7 +221,7 @@ export function chartDomain(data,{benchmarks,view='summary',focus='nbody',focusM
   const addCohort=items=>{if(items.length)cohorts.set(items.map(b=>b.key).join(','),items);};
   addCohort(requested);
   for(const language of languages){
-    const available=requested.filter(b=>b.groups.some(g=>g.language===language.key&&g.programs.some(key=>data.programs[key].seconds>0)));
+    const available=requested.filter(b=>b.groups.some(g=>g.language===language.key&&g.programs.some(key=>eligibleForChart(data.programs[key])&&data.programs[key].seconds>0)));
     // Intersections also cover groups of partially measured languages.
     for(const cohort of [...cohorts.values()])addCohort(cohort.filter(b=>available.includes(b)));
     addCohort(available);

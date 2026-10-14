@@ -31,6 +31,9 @@ def export(root=ROOT):
     # the same slug, including on case-insensitive filesystems.
     destinations = {}
     for key, program in sorted(catalog.items()):
+        publication = program.get('publication_record')
+        if 'publication_record' in program and (not isinstance(publication, dict) or 'timing_sd' not in publication):
+            raise ValueError(f'Invalid publication record: {key}')
         for field in ('language', 'benchmark'):
             value = program[field]
             if value in ('.', '..') or not re.fullmatch(r'[A-Za-z0-9_.-]+', value):
@@ -79,16 +82,23 @@ def export(root=ROOT):
             sources.append({'file': name, 'sha256': source['sha256'],
                             'original_path': source['path'], 'role': role, **role_evidence})
         runs = program.get('samples', [])
+        # New publication records retain the independently reviewed statistics,
+        # including an explicit null for an incomplete sample cohort. Historical
+        # records without this additive field keep their original export shape.
+        publication = program.get('publication_record')
+        sd = publication['timing_sd'] if publication is not None else statistics.stdev(runs) if len(runs) > 1 else None
         record = {'key': key, 'language': program['language'], 'benchmark': program['benchmark'],
                   'program': program['id'], 'loc': program.get('loc'),
                   'loc_metric': program.get('loc_metric', 'statement-normalized'),
                   'physical_loc': program.get('physical_loc'),
                   'seconds': program.get('seconds'), 'samples': runs,
-                  'standard_deviation': statistics.stdev(runs) if len(runs) > 1 else None,
+                  'standard_deviation': sd,
                   'selected_for_chart': key in data['programs'],
                   'original_timing_report': program.get('report'),
                   'archive_timing_report': data.get('archive_paths', {}).get(program.get('report')),
                   'sources': sources}
+        if publication is not None:
+            record['publication_record'] = publication
         save_json(directory / 'program.json', record)
         language_rows[program['language']].append((program, relative))
         totals.append([program['language'], program['benchmark'], program['id'], program.get('loc'),

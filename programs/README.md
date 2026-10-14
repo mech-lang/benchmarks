@@ -17,6 +17,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [D](d/)
 - [Dart (AOT)](dart/)
 - [Dart (JIT)](dart-jit/)
+- [Elixir](elixir/)
 - [Elm](elm/)
 - [Erlang](erlang/)
 - [F# (AOT)](fsharp-aot/)

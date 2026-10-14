@@ -178,7 +178,10 @@ def verify(root, check_index=False):
         manifest_path = relative / 'program.json'; manifests.add(manifest_path.as_posix())
         record = read_json(root / manifest_path)
         runs = p.get('samples', [])
-        sd = statistics.stdev(runs) if len(runs) > 1 else None
+        publication = p.get('publication_record')
+        if 'publication_record' in p:
+            require(isinstance(publication, dict) and 'timing_sd' in publication, f'Invalid publication record: {key}')
+        sd = publication['timing_sd'] if publication is not None else statistics.stdev(runs) if len(runs) > 1 else None
         sources, names = [], {'program.json'}
         for file_key in p['files']:
             source = data['files'][file_key]
@@ -204,6 +207,8 @@ def verify(root, check_index=False):
                            'standard_deviation': sd, 'selected_for_chart': key in data['programs'],
                            'original_timing_report': p.get('report'),
                            'archive_timing_report': data.get('archive_paths', {}).get(p.get('report')), 'sources': sources}
+        if publication is not None:
+            expected_record['publication_record'] = publication
         require(record == expected_record, f'Exported program manifest changed: {manifest_path}')
         expected_programs.append([p['language'], p['benchmark'], p['id'], p.get('loc'), p.get('physical_loc'),
                                   p.get('seconds'), sd, len(runs), int(key in data['programs']), manifest_path.as_posix()])

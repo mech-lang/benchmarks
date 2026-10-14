@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **53 measured execution variants in 47 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **54 measured execution variants in 48 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |

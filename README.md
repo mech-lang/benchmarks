@@ -22,6 +22,7 @@ The [methodology](docs/methodology.md) describes timing boundaries, source count
 | [data/](data/) | Explorer dataset and language metadata |
 | [site/](site/) | Interactive explorer source and tests |
 | [docs/](docs/) | Methodology, language classifications, and optimization studies |
+| [experiments/](experiments/) | Qualification protocols, active studies, and publication evidence organized by implementation |
 | [archive/](archive/) | Detailed measurement reports and experimental evidence |
 
 ## Run locally
@@ -47,6 +48,7 @@ python3 tools/export_catalog.py
 python3 tools/verify_repository.py
 node site/tests/layers.mjs
 node site/tests/languages.mjs data/benchmarks.json
+node site/tests/publication.mjs
 ```
 
 These commands export and check recorded results. Running the benchmarks requires the toolchains and dependencies specified in the measurement reports. Measurements run sequentially, without competing benchmark or compilation jobs.
