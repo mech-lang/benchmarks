@@ -1,0 +1,55 @@
+{
+  "flags": 6,
+  "disable_aslr": false,
+  "stop_at_entry": true,
+  "breakpoints": [
+    {
+      "name": "main",
+      "id": 1,
+      "locations": 46
+    },
+    {
+      "name": "calibration_probe",
+      "id": 2,
+      "locations": 1
+    }
+  ],
+  "settings": [
+    {
+      "command": "settings set target.disable-aslr false",
+      "succeeded": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "settings set target.skip-prologue false",
+      "succeeded": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "settings set target.inherit-env false",
+      "succeeded": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "log enable -f /private/tmp/julia-generic-direct-launch-aslr-v1/result/gdb-remote.log gdb-remote packets process",
+      "succeeded": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "log enable -f /private/tmp/julia-generic-direct-launch-aslr-v1/result/lldb-process.log lldb process",
+      "succeeded": true,
+      "stdout": "",
+      "stderr": ""
+    },
+    {
+      "command": "settings show target.disable-aslr target.skip-prologue target.inherit-env",
+      "succeeded": true,
+      "stdout": "target.disable-aslr (boolean) = false\ntarget.skip-prologue (boolean) = false\ntarget.inherit-env (boolean) = false\n",
+      "stderr": ""
+    }
+  ]
+}
