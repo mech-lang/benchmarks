@@ -1,21 +1,21 @@
 # Benchmark coverage
 
-The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **884 selected timed program profiles**. The source inventory retains **927 profiles**, including forty-three measured candidates that are not selected endpoints. Fifty-two execution variants cover the complete suite.
+The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **886 selected timed program profiles**. The source inventory retains **931 profiles**, including forty-five measured candidates that are not selected endpoints. Fifty-three execution variants cover the complete suite.
 
 The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Reset stays within the active view. Its [current deployment](../site/publications/language-hero-v1/deployment.json), build `f8fd1024ae7b55d9`, passed verification of all 33 live assets on October 14, 2026 at 20:51 UTC. [Mobile, desktop and interaction checks](../site/publications/language-hero-v1/validation.json) also passed.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
-| Lua interpreter | 9 / 10 | Pi digits: completed samples await catalog admission |
 | Futhark | 9 / 10 | Binary trees: array representation does not meet the per-node allocation contract |
 | GNU APL | 9 / 10 | Binary trees: the full-size run exceeded its workspace allocation |
 
-Eleven chart gaps have been filled from **93 preserved observations: 60 subject
-observations and 33 matched Mech controls**. No replacement timing run was needed.
-R and Uiua now cover all ten workloads, and GNU APL covers nine. The admission
+Twelve chart gaps have been filled from **111 preserved observations: 72 subject
+observations and 39 matched Mech controls**. No replacement timing run was needed.
+Lua, R and Uiua now cover all ten workloads, and GNU APL covers nine. The admission
 receipts retain exact source counts, output validation, original exclusions,
 source aliases, and the recovered GNU APL fannkuch observation:
 
+- [Lua: pi digits](../experiments/lua/retained-pidigits-v1/publication/apply-target-lua-v1/SUCCESS.json).
 - [R: N-body, binary trees and fannkuch](../experiments/r/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
 - [Uiua: fannkuch](../experiments/uiua/fann-v5-publication-v1/publication/apply-target-v1/SUCCESS.json) and [N-body/binary trees](../experiments/uiua/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
 - [GNU APL: five additional workloads](../experiments/apl/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
@@ -28,11 +28,11 @@ validates evidence in its original checkout and writes a separate publication
 checkout. GNU APL's [runtime-scope review](../experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json)
 records static dependency evidence without claiming a per-process loaded-library inventory.
 
-[Lua pi digits](../experiments/lua/retained-pidigits-v1/) has twelve retained Lua
-observations across four source forms and six matched Mech controls. Its
-[candidate export](../experiments/lua/retained-pidigits-v1/publication/export-v1/candidate.json)
-and complete application-plus-GMP-helper source counts are verified. Catalog
-admission remains pending. A [reviewed additive publication adapter](../experiments/lua/retained-pidigits-v1/PUBLICATION-TARGET.md) supports the existing nine-workload series with no stored aggregate row; its publication, history and transaction checks passed. No timing rerun is required.
+[Lua pi digits](../experiments/lua/retained-pidigits-v1/) retains four distinct
+applications, their shared GMP helper, twelve subject observations and six
+matched Mech controls. Its [admission](../experiments/lua/retained-pidigits-v1/publication/apply-target-lua-v1/SUCCESS.json)
+adds the tenth workload and a complete-suite aggregate while preserving the
+absence of a historical partial aggregate. LuaJIT and existing timings are unchanged.
 
 GNU APL binary trees remains a separate failed workload without valid full-size
 samples. A [bounded workspace-configuration packet](../experiments/apl/binarytrees-workspace-v1/)
@@ -80,6 +80,6 @@ includes [41 Scala owner fixtures and 29 capture fixtures](../experiments/scala/
 [a TypeScript reader draft with 30 fixtures](../experiments/typescript/source-counts-v1/).
 Reader diagnostics and prepared correctness cases do not grant benchmark qualification or timings.
 
-Compiler improvements are tracked separately in [Mech PR #897](https://github.com/mech-lang/mech/pull/897). At head `4c420233`, [CI run 38624354538](https://github.com/mech-lang/mech/actions/runs/38624354538) passed 153 tests in the Linux native-regression step before its 25-minute limit interrupted compilation for the final CLI test. The CLI regression remains unverified; the workflow budget correction and macOS checks are pending. The retained [earlier CI snapshot](../migration/compiler-ci-status.json) describes head `3445f901` and its completed checks.
+Compiler improvements are tracked separately in [Mech PR #897](https://github.com/mech-lang/mech/pull/897). Current head `f6280e4f` has [CI run 38636427209](https://github.com/mech-lang/mech/actions/runs/38636427209) pending. The final CLI regression now has its own 25-minute step within a 75-minute job. At the prior head, 153 native/engine tests passed before the combined step timed out during CLI compilation; the CLI test remains unverified until the new run executes it. The retained [earlier CI snapshot](../migration/compiler-ci-status.json) describes head `3445f901` and its completed checks.
 
 See [methodology](methodology.md) for admission rules, timing boundaries, and reproduction limits; [language classifications](languages.md) for runtime and language metadata; and [results/current/](../results/current/) for program and sample tables.

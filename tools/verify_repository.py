@@ -99,7 +99,7 @@ def check_previous(root, data):
     publication = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(publication)
     normalization_spec = importlib.util.spec_from_file_location(
-        'saved_normalization_history', root / 'tools/normalization_history.py')
+        'saved_normalization_history', root / 'tools/normalization_history_v2.py')
     normalization = importlib.util.module_from_spec(normalization_spec)
     normalization_spec.loader.exec_module(normalization)
     # A rebase may change derived chart coordinates only. All legacy raw-field
