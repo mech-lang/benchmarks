@@ -98,6 +98,13 @@ def check_previous(root, data):
     spec = importlib.util.spec_from_file_location('interpreted_publication', root / 'tools/import_mech_interpreted_rerun.py')
     publication = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(publication)
+    normalization_spec = importlib.util.spec_from_file_location(
+        'saved_normalization_history', root / 'tools/normalization_history.py')
+    normalization = importlib.util.module_from_spec(normalization_spec)
+    normalization_spec.loader.exec_module(normalization)
+    # A rebase may change derived chart coordinates only. All legacy raw-field
+    # and immediate-input checks run unchanged against validated historical axes.
+    data = normalization.historical_view(root, data)
     replaced_interpreted = publication.verify_saved_publication(root, data, previous)
     benches = {b['key']: b for b in data['benchmarks']}
     for old in previous['benchmarks']:

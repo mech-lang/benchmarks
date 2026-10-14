@@ -1,0 +1,859 @@
+{
+  "schema": "rebol-general-primitive-fixtures-source-v1",
+  "status": "source-draft-native-execution-pending",
+  "native_processes_started": 0,
+  "fixture_native_qualified": false,
+  "benchmark_source_work_qualified": false,
+  "chart_admission": false,
+  "runtime_target": "retained Oldes/Rebol3 3.22.1 Bulk macOS arm64",
+  "immutable_source_pins": {
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/binarytrees/main.reb": "3b64b0c84db6a25b1dc5b156e4ecf9229be7e0db54f4cbc19692199de4eb8932",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/fannkuchredux/main.reb": "57be8162c3d45ddd4d90ab58fb04cd4505f85ee174d8270a7ed9b8a7c5636cdc",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/fasta/main.reb": "0962389330453dddc4d59b56a1f01457b0dabf7ad416fc78e5cf71754d35ba79",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/knucleotide/main.reb": "5c16c9be1685627f47e71ef690f3d7f180b7d34e9ae496e648062b34601a8140",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/mandelbrot/main.reb": "7e832d3550725d057da1799c796c08d99ebf438c64a980bda8796affb5f622c2",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/nbody/main.reb": "b1312f55e83406e1fdb1f2f7feab78d17e7c433bc42e6589dbbbc66223bb7f8d",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/pidigits/main.reb": "2278a48451ab7e3e497779365b29a0a1b23818787eda7abcd2e635f08f02e16b",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/regexredux/main.reb": "11ae616b62e40366e4877576363ffc7b70c3861ed6bbdb28ea2ee6c095571674",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/revcomp/main.reb": "3fd70087f252e98103342fb7326087d547a93200fa374bc69ede21421ad8797f",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/spectralnorm/main.reb": "88c0c0742f9b9a3529f7a93231b257407148b363b6b08b2d2e3394638b75016c",
+    "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_big.reb": "21d5223674dd7d065115fbb0ba5a061dde0ce050f26544dad1b63ac7f326d217",
+    "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_io.reb": "731c641d9cac19e03073c9a95b8e51f64b2f4a4d0d1492ba51f1ca079ee2e847",
+    "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_primitives.c": "6c3a75db45df5c9a2cf81e88eba3749101fb3e9bf6888ab1e526064f0d403a16",
+    "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_primitives.reb": "2671ebf31535aee49afbf9f27de1122556dda5f8962b1fc92acf9c27bcffed34",
+    "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_regex.reb": "9d23c7a5776d56a808d6c9216df022ed46969682e16759f7bdd2b311f5c83a0a",
+    "archive/languages/rebol/20261013/drafts/private-v1/PRIMITIVE_CONTRACT.md": "6a3ccf6c4007b8295ffbc495c6e651c873357870a972326be615a76a05c813e3"
+  },
+  "fixture_source_pins": {
+    "README.md": "9ef93242e22933c4ce8564fabdd472f0f999eacf941225f6ee850ddb3728e6b7",
+    "arithmetic.reb": "fad1b29b0dc22385d6e5dd9606251d38199eb17f3f35381fc4f6c9847b936322",
+    "bounded-corpus-map.json": "2f9af54925c2a6af2d13002981458dc9f2eb13cd98cabf0f243b537763a38728",
+    "common.reb": "e0633162f20f8a86cc56377deca2d6f123aa948e8f36867e14c363783bf8da12",
+    "formatting.reb": "f498c65eea2e8b895d24341dd155ac8e0466b7b0e8a57c64f2731d26cdfd8930",
+    "gc-ownership.reb": "08c4547bd05dd581c556dfa71440068beee5b291e7786e0dfe0b15243bfaba9c",
+    "io-faults.c": "4560bd6f1bdbc27a89b9d4b67824eb2e64a3f3daa9e414e603c3374358d51552",
+    "io-roundtrip.reb": "1ff528ceddc7f07a88ceebd77bd9bb6c610caeadad071154f0bd58c3f298d726",
+    "regex.reb": "61c0e87c76b5e67edbfd8be4210337470d67733b9bc81892f90ab54f27e5d6b6"
+  },
+  "case_count": 18,
+  "environment": {
+    "LC_ALL": "C",
+    "LANG": "C",
+    "REBOL_HOME": "{isolated_runtime_home}",
+    "MECH_REBOL_FIXTURE_SUPPORT": "{retained_support}",
+    "MECH_CLBG_REBOL_PRIMITIVES": "{qualified_extension}"
+  },
+  "absent_environment_for_ordinary_cases": [
+    "DYLD_INSERT_LIBRARIES",
+    "DYLD_LIBRARY_PATH",
+    "DYLD_FRAMEWORK_PATH",
+    "MECH_REBOL_IO_FAULT_REPORT"
+  ],
+  "startup_policy": "Reuse the independently reviewed isolated runtime/bootstrap. Bind all adjacent and user startup inputs; do not inherit unreviewed code or change global HOME.",
+  "limits": {
+    "per_process_seconds": 180,
+    "per_process_rss_bytes": 536870912,
+    "stdout_limit_bytes": 1048576,
+    "stderr_limit_bytes": 1048576,
+    "automatic_retry": false
+  },
+  "interposer_build_template": {
+    "argv": [
+      "{clang}",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-arch",
+      "arm64",
+      "-dynamiclib",
+      "-isysroot",
+      "{macos_sdk}",
+      "{fixture_root}/io-faults.c",
+      "-o",
+      "{fresh_output}/io-faults.dylib"
+    ],
+    "executed": false,
+    "dependency_requirements": [
+      "pin actual clang, SDK header closure and selected dyld-interposing.h",
+      "retain compiler stdout/stderr and exact exit",
+      "retain actual image identity and dependency inspection",
+      "interposer must be absent from every benchmark environment"
+    ],
+    "official_api": "https://raw.githubusercontent.com/apple-oss-distributions/dyld/main/include/mach-o/dyld-interposing.h"
+  },
+  "preparation_gates": [
+    "successful retained complete SDK generation and native header/API review",
+    "successful independently reviewed original extension compilation and load/ABI identity",
+    "selected GMP/PCRE2 headers, source/runtime image identities and compiler/SDK closure bound",
+    "source-only fixture peer review and native parse/type checks",
+    "fresh explicit output paths, exact runtime/bootstrap/environment and pre/post closure plan",
+    "common timing mutex and independent plan approval before serial supervised execution"
+  ],
+  "required_receipts": [
+    "raw stdin/stdout/stderr bytes and their hashes",
+    "actual process argv/cwd/environment/birth identity and exclusive group ownership",
+    "native exit, deadline/RSS observations and complete cleanup",
+    "actual named sidecars and independent checks of their data",
+    "pre/post source, runtime and dependency pins",
+    "closed artifact inventory and independent review"
+  ],
+  "claims_excluded": [
+    "forced nonfinite decimal argument ABI cases",
+    "forced VM allocation traps and vendor fatal OOM",
+    "absence of all native leaks",
+    "all ten benchmark required-work proofs",
+    "canonical source counts",
+    "benchmark timing or chart admission"
+  ],
+  "cases": [
+    {
+      "id": "arithmetic",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/arithmetic.reb"
+      ],
+      "stdin": {
+        "kind": "empty"
+      },
+      "stdout": {
+        "kind": "exact-ascii",
+        "text": "ok arithmetic\n"
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false
+    },
+    {
+      "id": "formatting",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/formatting.reb"
+      ],
+      "stdin": {
+        "kind": "empty"
+      },
+      "stdout": {
+        "kind": "exact-ascii",
+        "text": "ok formatting\n"
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false
+    },
+    {
+      "id": "regex",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/regex.reb"
+      ],
+      "stdin": {
+        "kind": "empty"
+      },
+      "stdout": {
+        "kind": "exact-ascii",
+        "text": "ok regex\n"
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false
+    },
+    {
+      "id": "gc-ownership",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/gc-ownership.reb",
+        "{output}/gc-observation.reb"
+      ],
+      "stdin": {
+        "kind": "empty"
+      },
+      "stdout": {
+        "kind": "exact-ascii",
+        "text": "ok gc-ownership\n"
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/gc-observation.reb",
+        "schema": "rebol-primitive-gc-observation-v1",
+        "predicates": [
+          "before and after are nonnegative integers",
+          "after > before",
+          "discarded-buffer-count = 65536",
+          "discarded-buffer-capacity = 1024",
+          "manual-gc = false",
+          "policy-changed = false"
+        ]
+      }
+    },
+    {
+      "id": "file-0",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "0",
+        "{output}/file-0.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 0,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 0,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-0.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 0,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-1",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "1",
+        "{output}/file-1.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 1,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 1,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-1.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 1,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-255",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "255",
+        "{output}/file-255.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 255,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 255,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-255.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 255,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-256",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "256",
+        "{output}/file-256.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 256,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 256,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-256.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 256,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-32767",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "32767",
+        "{output}/file-32767.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 32767,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 32767,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-32767.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 32767,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-32768",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "32768",
+        "{output}/file-32768.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 32768,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 32768,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-32768.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 32768,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-32769",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "32769",
+        "{output}/file-32769.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 32769,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 32769,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-32769.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 32769,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-65537",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "65537",
+        "{output}/file-65537.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-65537.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 65537,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "file-131089",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "131089",
+        "{output}/file-131089.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 131089,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "regular-file"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 131089,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/file-131089.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 131089,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      }
+    },
+    {
+      "id": "pipe-collect-65537",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "collect",
+        "65537",
+        "{output}/pipe-collect-65537.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "pipe"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/pipe-collect-65537.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "collect",
+        "bytes": 65537,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      },
+      "pipe_policy": {
+        "concurrent_feeder_and_reader": true,
+        "feed_fragment_cycle": [
+          1,
+          2,
+          255,
+          32767,
+          3,
+          4096
+        ],
+        "stdout_read_cap": 13,
+        "short_syscall_claim": false
+      }
+    },
+    {
+      "id": "pipe-stream-65537",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "stream",
+        "65537",
+        "{output}/pipe-stream-65537.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "pipe"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/pipe-stream-65537.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "stream",
+        "bytes": 65537,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      },
+      "pipe_policy": {
+        "concurrent_feeder_and_reader": true,
+        "feed_fragment_cycle": [
+          1,
+          2,
+          255,
+          32767,
+          3,
+          4096
+        ],
+        "stdout_read_cap": 13,
+        "short_syscall_claim": false
+      }
+    },
+    {
+      "id": "pipe-indexed-65537",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "indexed",
+        "65537",
+        "{output}/pipe-indexed-65537.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "pipe"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/pipe-indexed-65537.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "indexed",
+        "bytes": 65537,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      },
+      "pipe_policy": {
+        "concurrent_feeder_and_reader": true,
+        "feed_fragment_cycle": [
+          1,
+          2,
+          255,
+          32767,
+          3,
+          4096
+        ],
+        "stdout_read_cap": 13,
+        "short_syscall_claim": false
+      }
+    },
+    {
+      "id": "pipe-indexed-0",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "indexed",
+        "0",
+        "{output}/pipe-indexed-0.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 0,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "pipe"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 0,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": ""
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/pipe-indexed-0.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "indexed",
+        "bytes": 0,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      },
+      "pipe_policy": {
+        "concurrent_feeder_and_reader": true,
+        "feed_fragment_cycle": [
+          1,
+          2,
+          255,
+          32767,
+          3,
+          4096
+        ],
+        "stdout_read_cap": 13,
+        "short_syscall_claim": false
+      }
+    },
+    {
+      "id": "pipe-injected-short-io",
+      "argv": [
+        "{runtime}",
+        "-q",
+        "-s",
+        "{fixture_root}/io-roundtrip.reb",
+        "faults",
+        "65537",
+        "{output}/pipe-injected-short-io.reb"
+      ],
+      "stdin": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "transport": "pipe"
+      },
+      "stdout": {
+        "kind": "byte-cycle",
+        "length": 65537,
+        "formula": "byte[i] = i % 256, i in [0,length)",
+        "prefix_hex": "4d4543482d494f2d4641554c542d563100"
+      },
+      "exit": 0,
+      "stderr": {
+        "kind": "empty"
+      },
+      "native_executed": false,
+      "sidecar": {
+        "path": "{output}/pipe-injected-short-io.reb",
+        "schema": "rebol-primitive-io-observation-v1",
+        "mode": "faults",
+        "bytes": 65537,
+        "predicates": [
+          "chunks contains only positive integers <= 32768",
+          "sum(chunks) = bytes",
+          "eof = true"
+        ]
+      },
+      "pipe_policy": {
+        "concurrent_feeder_and_reader": true,
+        "feed_fragment_cycle": [
+          1,
+          2,
+          255,
+          32767,
+          3,
+          4096
+        ],
+        "stdout_read_cap": 13,
+        "short_syscall_claim": false
+      },
+      "environment_additions": {
+        "DYLD_INSERT_LIBRARIES": "{qualified_io_fault_interposer}",
+        "MECH_REBOL_IO_FAULT_REPORT": "{output}/io-faults.json"
+      },
+      "fault_sidecar": {
+        "path": "{output}/io-faults.json",
+        "schema": "rebol-primitive-io-fault-observation-v1",
+        "exact": {
+          "armed": 1,
+          "read_eintr": 2,
+          "write_eintr": 2,
+          "read_bytes": 65537,
+          "write_bytes": 65554
+        },
+        "predicates": [
+          "read_short > 0",
+          "write_short > 0",
+          "read_calls > read_eintr",
+          "write_calls > write_eintr",
+          "all counters are nonnegative integers"
+        ],
+        "required_before_qualification": true
+      }
+    }
+  ],
+  "negative_case_policy": "A caught Rebol error must contain the exact retained C diagnostic payload in its molded value; unrelated errors fail. Actual representation remains unrun.",
+  "regex_match_error_api": "https://www.pcre.org/current/doc/html/pcre2pattern.html"
+}

@@ -1,0 +1,51 @@
+{
+  "schema": "kotlin-pages-pending-observation-v1",
+  "status": "pending-external-pages-deployment",
+  "observation_date_utc": "2026-10-14",
+  "approximate_observation_window_utc": "15:14–15:18",
+  "observation_host": "mac-mini-runner",
+  "website_commit": "c3b76934d6feb39c4ea1421ff10de5a5503f5243",
+  "pipeline": {
+    "id": 2947188925,
+    "status": "success",
+    "finished_at": "2026-10-14T14:33:07.119Z",
+    "web_url": "https://gitlab.com/mech-lang/web/website/-/pipelines/2947188925",
+    "latest": true,
+    "merge_train_pipeline": false
+  },
+  "artifact_job": {
+    "id": 17174156330,
+    "status": "success",
+    "archive_bytes": 554733697,
+    "artifacts_expire_at": "2026-11-13T14:33:04.442Z",
+    "erased_at": null
+  },
+  "implicit_pages_deployment": {
+    "observed_in_pipeline_json": false,
+    "observed_in_independent_stage_endpoint": false,
+    "previous_pipeline_deployment_is_visible": true,
+    "previous_pipeline": 2947032680,
+    "previous_deployment_job": 17173041003
+  },
+  "live_build": {
+    "expected": "39db5a51e6b47f9f",
+    "observed": "1686cf939293c94d",
+    "verified_deployed": false
+  },
+  "official_service_status": {
+    "url": "https://status.gitlab.com/",
+    "api": "https://status.gitlab.com/1.0/status/5b36dc6502d06804c08349f7",
+    "cicd": "Partial Service Disruption",
+    "gitlab_pages": "Operational",
+    "background_processing": "Operational",
+    "active_incident": "Merge train pipelines delayed or not starting",
+    "incident_started_at": "2026-10-14T14:33:00Z",
+    "incident_issue": "https://gitlab.com/gitlab-com/gl-infra/production/-/work_items/23192",
+    "causal_connection_to_this_branch_pipeline_established": false
+  },
+  "diagnosis": "Artifact upload completed, but the implicit deployment has not appeared and live bytes remain old. Public endpoints do not expose the background worker's cause. The prior implicit deployment is visible through the same API, so no pagination or shared cache explanation was observed.",
+  "ci_changes": false,
+  "job_retries": false,
+  "repeat_pushes": false,
+  "next_action": "Continue bounded remote live-manifest monitoring. Verify all expected assets remotely once the expected build is live; write deployment.json only after successful byte and data checks."
+}

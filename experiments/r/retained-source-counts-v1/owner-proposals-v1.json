@@ -1,0 +1,1885 @@
+{
+  "schema": "r-six-retained-canonical-owner-proposals-v1",
+  "status": "all-six-owners-counted-awaiting-independent-review",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "policy": "r-six-retained-source-owners-v1",
+  "checker": {
+    "path": "tools/qualification/r_retained_source_units.py",
+    "sha256": "1da6c798290d28a8fa0785fe7ec9bc1937248c0710a17a6003f0d31c68fd417c"
+  },
+  "tests": {
+    "path": "tools/qualification/test_r_retained_source_units.py",
+    "sha256": "249675f08baea3a14cddab805d0d8375287c8013c0098b9bc2ac04a55805b78e"
+  },
+  "retained_coverage_inventory": {
+    "path": "experiments/shared/retained-coverage-audit-v1/report-inventory.json",
+    "sha256": "aeb41c832cd002ecb31f2818ba75b9c6bbac14e4b328eadc91e7ade4d395066c"
+  },
+  "policy_dependencies": [
+    {
+      "path": "archive/validation/loc-normalization/20261012/normalizer.py",
+      "sha256": "1241817791f7a2b14569c440e462bc2a513128fcae3d34504cdb003c07cac0ff"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/canonical.py",
+      "sha256": "b3395da2cf7e3ae99c0c444e8b321414456f0579f6fb670d68258273d9bee732"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/value_forms.py",
+      "sha256": "0e506caa30e342586bea6d3a878f5b7698a211f38585675d12b18bf66265c7fe"
+    }
+  ],
+  "profiles": {
+    "nbody:nbody-r-compact": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "nbody:nbody-r-compact",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/nbody/compact.R",
+      "source_sha256": "f8fdbaa8a2f7977b8f082610b691160b01f9c6916ec796acfffe0b5318a5f5ff",
+      "canonical_loc": 19,
+      "physical_loc": 19,
+      "original_physical_loc": 19,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 2,
+          "start": 81,
+          "end": 99,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 2,
+          "start": 100,
+          "end": 101,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "p",
+          "line": 3,
+          "start": 104,
+          "end": 390,
+          "canonical_units": 1,
+          "text": "p <- matrix(c(0,0,0,4.84143144246472090,-1.16032004402742839,-0.103622044471123109,8.34336671824457987,4.12479856412430479,-0.403523417114321381,12.8943695621391310,-15.1111514016986312,-0.223307578892655734,15.3796971148509165,-25.9193146099879641,0.179258772950371181),5,3,byrow=TRUE)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v",
+          "line": 4,
+          "start": 393,
+          "end": 718,
+          "canonical_units": 1,
+          "text": "v <- matrix(c(0,0,0,1.66007664274403694e-3,7.69901118419740425e-3,-6.90460016972063023e-5,-2.76742510726862411e-3,4.99852801234917238e-3,2.30417297573763929e-5,2.96460137564761618e-3,2.37847173959480950e-3,-2.96589568540237556e-5,2.68067772490389322e-3,1.62824170038242295e-3,-9.51592254519715870e-5),5,3,byrow=TRUE) * 365.24"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "m",
+          "line": 5,
+          "start": 721,
+          "end": 834,
+          "canonical_units": 1,
+          "text": "m <- c(1,9.54791938424326609e-4,2.85885980666130812e-4,4.36624404335156298e-5,5.15138902046611451e-5) * (4*pi*pi)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "pair",
+          "line": 6,
+          "start": 837,
+          "end": 857,
+          "canonical_units": 1,
+          "text": "pair <- combn(5L,2L)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "incidence",
+          "line": 7,
+          "start": 860,
+          "end": 942,
+          "canonical_units": 1,
+          "text": "incidence <- outer(seq_len(5L),pair[1L,],`==`) - outer(seq_len(5L),pair[2L,],`==`)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v[1L,]",
+          "line": 8,
+          "start": 945,
+          "end": 974,
+          "canonical_units": 1,
+          "text": "v[1L,] <- -colSums(v*m)/m[1L]"
+        },
+        {
+          "kind": "expression-function-binding",
+          "name": "energy",
+          "line": 9,
+          "start": 977,
+          "end": 1099,
+          "canonical_units": 1,
+          "text": "energy <- function() sum(m*rowSums(v*v)/2) - sum(m[pair[1L,]]*m[pair[2L,]]/sqrt(rowSums((p[pair[1L,],]-p[pair[2L,],])^2)))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "initial-energy",
+          "line": 10,
+          "start": 1102,
+          "end": 1133,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.9f\\n\",energy()))"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "step",
+          "line": 11,
+          "start": 1136,
+          "end": 1160,
+          "canonical_units": 1,
+          "text": "for (step in seq_len(n))"
+        },
+        {
+          "kind": "written-open",
+          "name": "step",
+          "line": 11,
+          "start": 1161,
+          "end": 1162,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "delta",
+          "line": 12,
+          "start": 1167,
+          "end": 1205,
+          "canonical_units": 1,
+          "text": "delta <- p[pair[1L,],] - p[pair[2L,],]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "distance",
+          "line": 13,
+          "start": 1210,
+          "end": 1248,
+          "canonical_units": 1,
+          "text": "distance <- sqrt(rowSums(delta*delta))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "force",
+          "line": 14,
+          "start": 1253,
+          "end": 1329,
+          "canonical_units": 1,
+          "text": "force <- delta*(0.01/(distance*distance*distance))*m[pair[1L,]]*m[pair[2L,]]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v",
+          "line": 15,
+          "start": 1334,
+          "end": 1366,
+          "canonical_units": 1,
+          "text": "v <- v - (incidence %*% force)/m"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "p",
+          "line": 16,
+          "start": 1371,
+          "end": 1386,
+          "canonical_units": 1,
+          "text": "p <- p + 0.01*v"
+        },
+        {
+          "kind": "written-close",
+          "name": "step",
+          "line": 17,
+          "start": 1389,
+          "end": 1390,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "final-energy",
+          "line": 18,
+          "start": 1393,
+          "end": 1424,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.9f\\n\",energy()))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 19,
+          "start": 1425,
+          "end": 1426,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 20,
+          "start": 1427,
+          "end": 1465,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [],
+      "named_arguments": [
+        {
+          "line": 3,
+          "name": "byrow",
+          "start": 379,
+          "end": 385,
+          "independent_binding": false
+        },
+        {
+          "line": 4,
+          "name": "byrow",
+          "start": 698,
+          "end": 704,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 81,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    },
+    "nbody:nbody-r-optimized": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "nbody:nbody-r-optimized",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/nbody/optimized.R",
+      "source_sha256": "2c3969aa76d27160af75bcd4273cb4223de0d6b72282f190b4b5e7095fc76ed7",
+      "canonical_loc": 24,
+      "physical_loc": 24,
+      "original_physical_loc": 24,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 2,
+          "start": 75,
+          "end": 93,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 2,
+          "start": 94,
+          "end": 95,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "p",
+          "line": 3,
+          "start": 98,
+          "end": 384,
+          "canonical_units": 1,
+          "text": "p <- matrix(c(0,0,0,4.84143144246472090,-1.16032004402742839,-0.103622044471123109,8.34336671824457987,4.12479856412430479,-0.403523417114321381,12.8943695621391310,-15.1111514016986312,-0.223307578892655734,15.3796971148509165,-25.9193146099879641,0.179258772950371181),5,3,byrow=TRUE)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v",
+          "line": 4,
+          "start": 387,
+          "end": 712,
+          "canonical_units": 1,
+          "text": "v <- matrix(c(0,0,0,1.66007664274403694e-3,7.69901118419740425e-3,-6.90460016972063023e-5,-2.76742510726862411e-3,4.99852801234917238e-3,2.30417297573763929e-5,2.96460137564761618e-3,2.37847173959480950e-3,-2.96589568540237556e-5,2.68067772490389322e-3,1.62824170038242295e-3,-9.51592254519715870e-5),5,3,byrow=TRUE) * 365.24"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "m",
+          "line": 5,
+          "start": 715,
+          "end": 828,
+          "canonical_units": 1,
+          "text": "m <- c(1,9.54791938424326609e-4,2.85885980666130812e-4,4.36624404335156298e-5,5.15138902046611451e-5) * (4*pi*pi)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "i",
+          "line": 6,
+          "start": 831,
+          "end": 855,
+          "canonical_units": 1,
+          "text": "i <- rep(seq_len(5L),5L)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "j",
+          "line": 7,
+          "start": 858,
+          "end": 887,
+          "canonical_units": 1,
+          "text": "j <- rep(seq_len(5L),each=5L)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "pairs",
+          "line": 8,
+          "start": 890,
+          "end": 904,
+          "canonical_units": 1,
+          "text": "pairs <- i < j"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "diagonal",
+          "line": 9,
+          "start": 907,
+          "end": 925,
+          "canonical_units": 1,
+          "text": "diagonal <- i == j"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v[1L,]",
+          "line": 10,
+          "start": 928,
+          "end": 957,
+          "canonical_units": 1,
+          "text": "v[1L,] <- -colSums(v*m)/m[1L]"
+        },
+        {
+          "kind": "expression-function-binding",
+          "name": "energy",
+          "line": 11,
+          "start": 960,
+          "end": 1059,
+          "canonical_units": 1,
+          "text": "energy <- function() sum(m*rowSums(v*v)/2) - sum((m[i]*m[j]/sqrt(rowSums((p[i,]-p[j,])^2)))[pairs])"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "initial-energy",
+          "line": 12,
+          "start": 1062,
+          "end": 1093,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.9f\\n\",energy()))"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "step",
+          "line": 13,
+          "start": 1096,
+          "end": 1120,
+          "canonical_units": 1,
+          "text": "for (step in seq_len(n))"
+        },
+        {
+          "kind": "written-open",
+          "name": "step",
+          "line": 13,
+          "start": 1121,
+          "end": 1122,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "delta",
+          "line": 14,
+          "start": 1127,
+          "end": 1149,
+          "canonical_units": 1,
+          "text": "delta <- p[i,] - p[j,]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "d2",
+          "line": 15,
+          "start": 1154,
+          "end": 1180,
+          "canonical_units": 1,
+          "text": "d2 <- rowSums(delta*delta)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "d2[diagonal]",
+          "line": 16,
+          "start": 1185,
+          "end": 1204,
+          "canonical_units": 1,
+          "text": "d2[diagonal] <- Inf"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "mag",
+          "line": 17,
+          "start": 1209,
+          "end": 1234,
+          "canonical_units": 1,
+          "text": "mag <- 0.01/(d2*sqrt(d2))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v[,1L]",
+          "line": 18,
+          "start": 1239,
+          "end": 1300,
+          "canonical_units": 1,
+          "text": "v[,1L] <- v[,1L] - as.vector(matrix(delta[,1L]*mag,5L) %*% m)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v[,2L]",
+          "line": 19,
+          "start": 1305,
+          "end": 1366,
+          "canonical_units": 1,
+          "text": "v[,2L] <- v[,2L] - as.vector(matrix(delta[,2L]*mag,5L) %*% m)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "v[,3L]",
+          "line": 20,
+          "start": 1371,
+          "end": 1432,
+          "canonical_units": 1,
+          "text": "v[,3L] <- v[,3L] - as.vector(matrix(delta[,3L]*mag,5L) %*% m)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "p",
+          "line": 21,
+          "start": 1437,
+          "end": 1452,
+          "canonical_units": 1,
+          "text": "p <- p + 0.01*v"
+        },
+        {
+          "kind": "written-close",
+          "name": "step",
+          "line": 22,
+          "start": 1455,
+          "end": 1456,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "final-energy",
+          "line": 23,
+          "start": 1459,
+          "end": 1490,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.9f\\n\",energy()))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 24,
+          "start": 1491,
+          "end": 1492,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 25,
+          "start": 1493,
+          "end": 1531,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [],
+      "named_arguments": [
+        {
+          "line": 3,
+          "name": "byrow",
+          "start": 373,
+          "end": 379,
+          "independent_binding": false
+        },
+        {
+          "line": 4,
+          "name": "byrow",
+          "start": 692,
+          "end": 698,
+          "independent_binding": false
+        },
+        {
+          "line": 7,
+          "name": "each",
+          "start": 879,
+          "end": 884,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 75,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    },
+    "binarytrees:binarytrees-r-compact": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "binarytrees:binarytrees-r-compact",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/binarytrees/compact.R",
+      "source_sha256": "441e3d954b41cc3c1356eba42eed13c1f4ee547b475303f5a822cfd3585493dc",
+      "canonical_loc": 15,
+      "physical_loc": 15,
+      "original_physical_loc": 15,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "expression-function-binding",
+          "name": "make",
+          "line": 2,
+          "start": 54,
+          "end": 145,
+          "canonical_units": 1,
+          "text": "make <- function(depth) if (depth) list(make(depth-1L),make(depth-1L)) else list(NULL,NULL)"
+        },
+        {
+          "kind": "expression-function-binding",
+          "name": "check",
+          "line": 3,
+          "start": 146,
+          "end": 239,
+          "canonical_units": 1,
+          "text": "check <- function(tree) if (is.null(tree[[1L]])) 1 else 1+check(tree[[1L]])+check(tree[[2L]])"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 4,
+          "start": 240,
+          "end": 258,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 4,
+          "start": 259,
+          "end": 260,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "depth",
+          "line": 5,
+          "start": 263,
+          "end": 281,
+          "canonical_units": 1,
+          "text": "depth <- max(6L,n)"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "stretch-output",
+          "line": 6,
+          "start": 284,
+          "end": 371,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"stretch tree of depth %d\\t check: %.0f\\n\",depth+1L,check(make(depth+1L))))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "gc",
+          "line": 7,
+          "start": 374,
+          "end": 383,
+          "canonical_units": 1,
+          "text": "gc(FALSE)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "long",
+          "line": 8,
+          "start": 386,
+          "end": 405,
+          "canonical_units": 1,
+          "text": "long <- make(depth)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "depth-iteration",
+          "line": 9,
+          "start": 408,
+          "end": 442,
+          "canonical_units": 1,
+          "text": "for (d in seq.int(4L,depth,by=2L))"
+        },
+        {
+          "kind": "written-open",
+          "name": "depth-iteration",
+          "line": 9,
+          "start": 443,
+          "end": 444,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "iterations",
+          "line": 10,
+          "start": 449,
+          "end": 477,
+          "canonical_units": 1,
+          "text": "iterations <- 2^(depth-d+4L)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "total",
+          "line": 11,
+          "start": 482,
+          "end": 554,
+          "canonical_units": 1,
+          "text": "total <- sum(vapply(seq_len(iterations),function(i) check(make(d)),0.0))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "iteration-output",
+          "line": 12,
+          "start": 559,
+          "end": 634,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.0f\\t trees of depth %d\\t check: %.0f\\n\",iterations,d,total))"
+        },
+        {
+          "kind": "written-close",
+          "name": "depth-iteration",
+          "line": 13,
+          "start": 637,
+          "end": 638,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "retained-root-output",
+          "line": 14,
+          "start": 641,
+          "end": 718,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"long lived tree of depth %d\\t check: %.0f\\n\",depth,check(long)))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 15,
+          "start": 719,
+          "end": 720,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 16,
+          "start": 721,
+          "end": 759,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [],
+      "named_arguments": [
+        {
+          "line": 9,
+          "name": "by",
+          "start": 435,
+          "end": 438,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 54,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    },
+    "binarytrees:binarytrees-r-optimized": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "binarytrees:binarytrees-r-optimized",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/binarytrees/optimized.R",
+      "source_sha256": "b8ae857e270ab9dc85c816117d912005cd1a159aac2dfb38d565887701a05f66",
+      "canonical_loc": 21,
+      "physical_loc": 20,
+      "original_physical_loc": 20,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "expression-function-binding",
+          "name": "make",
+          "line": 2,
+          "start": 83,
+          "end": 192,
+          "canonical_units": 1,
+          "text": "make <- compiler::cmpfun(function(depth) if (depth) list(make(depth-1L),make(depth-1L)) else list(NULL,NULL))"
+        },
+        {
+          "kind": "expression-function-binding",
+          "name": "check",
+          "line": 3,
+          "start": 193,
+          "end": 304,
+          "canonical_units": 1,
+          "text": "check <- compiler::cmpfun(function(tree) if (is.null(tree[[1L]])) 1 else 1+check(tree[[1L]])+check(tree[[2L]]))"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "task",
+          "line": 4,
+          "start": 305,
+          "end": 330,
+          "canonical_units": 1,
+          "text": "task <- function(d,depth)"
+        },
+        {
+          "kind": "written-open",
+          "name": "task",
+          "line": 4,
+          "start": 331,
+          "end": 332,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "iterations",
+          "line": 5,
+          "start": 335,
+          "end": 363,
+          "canonical_units": 1,
+          "text": "iterations <- 2^(depth-d+4L)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "total",
+          "line": 6,
+          "start": 366,
+          "end": 376,
+          "canonical_units": 1,
+          "text": "total <- 0"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "iteration",
+          "line": 7,
+          "start": 379,
+          "end": 409,
+          "canonical_units": 1,
+          "text": "for (i in seq_len(iterations))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "total",
+          "line": 7,
+          "start": 410,
+          "end": 439,
+          "canonical_units": 1,
+          "text": "total <- total+check(make(d))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "task-result",
+          "line": 8,
+          "start": 442,
+          "end": 512,
+          "canonical_units": 1,
+          "text": "sprintf(\"%.0f\\t trees of depth %d\\t check: %.0f\\n\",iterations,d,total)"
+        },
+        {
+          "kind": "written-close",
+          "name": "task",
+          "line": 9,
+          "start": 513,
+          "end": 514,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 10,
+          "start": 515,
+          "end": 533,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 10,
+          "start": 534,
+          "end": 535,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "depth",
+          "line": 11,
+          "start": 538,
+          "end": 556,
+          "canonical_units": 1,
+          "text": "depth <- max(6L,n)"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "stretch-output",
+          "line": 12,
+          "start": 559,
+          "end": 646,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"stretch tree of depth %d\\t check: %.0f\\n\",depth+1L,check(make(depth+1L))))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "gc",
+          "line": 13,
+          "start": 649,
+          "end": 658,
+          "canonical_units": 1,
+          "text": "gc(FALSE)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "long",
+          "line": 14,
+          "start": 661,
+          "end": 680,
+          "canonical_units": 1,
+          "text": "long <- make(depth)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "cluster",
+          "line": 15,
+          "start": 683,
+          "end": 724,
+          "canonical_units": 1,
+          "text": "cluster <- parallel::makePSOCKcluster(8L)"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "cluster-cleanup",
+          "line": 16,
+          "start": 727,
+          "end": 766,
+          "canonical_units": 1,
+          "text": "on.exit(parallel::stopCluster(cluster))"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "export-functions",
+          "line": 17,
+          "start": 769,
+          "end": 837,
+          "canonical_units": 1,
+          "text": "parallel::clusterExport(cluster,c(\"make\",\"check\"),envir=globalenv())"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "parallel-iteration-output",
+          "line": 18,
+          "start": 840,
+          "end": 923,
+          "canonical_units": 1,
+          "text": "cat(unlist(parallel::parLapply(cluster,seq.int(4L,depth,by=2L),task,depth)),sep=\"\")"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "retained-root-output",
+          "line": 19,
+          "start": 926,
+          "end": 1003,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"long lived tree of depth %d\\t check: %.0f\\n\",depth,check(long)))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 20,
+          "start": 1004,
+          "end": 1005,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 21,
+          "start": 1006,
+          "end": 1044,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [
+        {
+          "line": 7,
+          "canonical_units": 2
+        }
+      ],
+      "named_arguments": [
+        {
+          "line": 17,
+          "name": "envir",
+          "start": 819,
+          "end": 825,
+          "independent_binding": false
+        },
+        {
+          "line": 18,
+          "name": "by",
+          "start": 896,
+          "end": 899,
+          "independent_binding": false
+        },
+        {
+          "line": 18,
+          "name": "sep",
+          "start": 916,
+          "end": 920,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 83,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    },
+    "fannkuchredux:fannkuchredux-r-array-compact": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "fannkuchredux:fannkuchredux-r-array-compact",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/fannkuchredux/array-compact.R",
+      "source_sha256": "8402f39b4815ac28f05a8bf646f43aaa99762c4396bd691060f918733c0d68d6",
+      "canonical_loc": 31,
+      "physical_loc": 30,
+      "original_physical_loc": 30,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 2,
+          "start": 77,
+          "end": 95,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 2,
+          "start": 96,
+          "end": 97,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "factorials",
+          "line": 3,
+          "start": 100,
+          "end": 138,
+          "canonical_units": 1,
+          "text": "factorials <- c(1,cumprod(seq_len(n)))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "checksum",
+          "line": 4,
+          "start": 141,
+          "end": 154,
+          "canonical_units": 1,
+          "text": "checksum <- 0"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "maximum",
+          "line": 5,
+          "start": 157,
+          "end": 170,
+          "canonical_units": 1,
+          "text": "maximum <- 0L"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "batch",
+          "line": 6,
+          "start": 173,
+          "end": 228,
+          "canonical_units": 1,
+          "text": "for (start in seq.int(0L,factorials[n+1L]-1L,by=8192L))"
+        },
+        {
+          "kind": "written-open",
+          "name": "batch",
+          "line": 6,
+          "start": 229,
+          "end": 230,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "ranks",
+          "line": 7,
+          "start": 235,
+          "end": 295,
+          "canonical_units": 1,
+          "text": "ranks <- seq.int(start,min(start+8191L,factorials[n+1L]-1L))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "remainder",
+          "line": 8,
+          "start": 300,
+          "end": 318,
+          "canonical_units": 1,
+          "text": "remainder <- ranks"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation",
+          "line": 9,
+          "start": 323,
+          "end": 377,
+          "canonical_units": 1,
+          "text": "permutation <- matrix(rep(seq_len(n),length(ranks)),n)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "rank-width-condition",
+          "line": 10,
+          "start": 382,
+          "end": 394,
+          "canonical_units": 1,
+          "text": "if (n >= 2L)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "unrank-loop",
+          "line": 10,
+          "start": 395,
+          "end": 426,
+          "canonical_units": 1,
+          "text": "for (i in seq.int(n,2L,by=-1L))"
+        },
+        {
+          "kind": "written-open",
+          "name": "unrank-loop",
+          "line": 10,
+          "start": 427,
+          "end": 428,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "digit",
+          "line": 11,
+          "start": 435,
+          "end": 471,
+          "canonical_units": 1,
+          "text": "digit <- remainder %/% factorials[i]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "remainder",
+          "line": 12,
+          "start": 478,
+          "end": 517,
+          "canonical_units": 1,
+          "text": "remainder <- remainder %% factorials[i]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "gather",
+          "line": 13,
+          "start": 524,
+          "end": 628,
+          "canonical_units": 1,
+          "text": "gather <- (rep(seq_len(i)-1L,length(ranks))+rep(digit,each=i)) %% i+1L+rep(seq_along(ranks)-1L,each=i)*n"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation[seq_len(i),]",
+          "line": 14,
+          "start": 635,
+          "end": 682,
+          "canonical_units": 1,
+          "text": "permutation[seq_len(i),] <- permutation[gather]"
+        },
+        {
+          "kind": "written-close",
+          "name": "unrank",
+          "line": 15,
+          "start": 687,
+          "end": 688,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "flips",
+          "line": 16,
+          "start": 693,
+          "end": 724,
+          "canonical_units": 1,
+          "text": "flips <- integer(length(ranks))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "active",
+          "line": 17,
+          "start": 729,
+          "end": 768,
+          "canonical_units": 1,
+          "text": "active <- which(permutation[1L,] != 1L)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "flip",
+          "line": 18,
+          "start": 773,
+          "end": 795,
+          "canonical_units": 1,
+          "text": "while (length(active))"
+        },
+        {
+          "kind": "written-open",
+          "name": "flip",
+          "line": 18,
+          "start": 796,
+          "end": 797,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "first",
+          "line": 19,
+          "start": 804,
+          "end": 847,
+          "canonical_units": 1,
+          "text": "first <- rep(permutation[1L,active],each=n)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "rows",
+          "line": 20,
+          "start": 854,
+          "end": 892,
+          "canonical_units": 1,
+          "text": "rows <- rep(seq_len(n),length(active))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "gather",
+          "line": 21,
+          "start": 899,
+          "end": 973,
+          "canonical_units": 1,
+          "text": "gather <- ifelse(rows <= first,first+1L-rows,rows)+rep(active-1L,each=n)*n"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation[,active]",
+          "line": 22,
+          "start": 980,
+          "end": 1023,
+          "canonical_units": 1,
+          "text": "permutation[,active] <- permutation[gather]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "flips[active]",
+          "line": 23,
+          "start": 1030,
+          "end": 1063,
+          "canonical_units": 1,
+          "text": "flips[active] <- flips[active]+1L"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "active",
+          "line": 24,
+          "start": 1070,
+          "end": 1116,
+          "canonical_units": 1,
+          "text": "active <- active[permutation[1L,active] != 1L]"
+        },
+        {
+          "kind": "written-close",
+          "name": "flip",
+          "line": 25,
+          "start": 1121,
+          "end": 1122,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "checksum",
+          "line": 26,
+          "start": 1127,
+          "end": 1185,
+          "canonical_units": 1,
+          "text": "checksum <- checksum+sum(flips*ifelse(ranks %% 2L,-1L,1L))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "maximum",
+          "line": 27,
+          "start": 1190,
+          "end": 1219,
+          "canonical_units": 1,
+          "text": "maximum <- max(maximum,flips)"
+        },
+        {
+          "kind": "written-close",
+          "name": "batch",
+          "line": 28,
+          "start": 1222,
+          "end": 1223,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "result-output",
+          "line": 29,
+          "start": 1226,
+          "end": 1291,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.0f\\nPfannkuchen(%d) = %.0f\\n\",checksum,n,maximum))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 30,
+          "start": 1292,
+          "end": 1293,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 31,
+          "start": 1294,
+          "end": 1332,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [
+        {
+          "line": 10,
+          "canonical_units": 2
+        }
+      ],
+      "named_arguments": [
+        {
+          "line": 6,
+          "name": "by",
+          "start": 218,
+          "end": 221,
+          "independent_binding": false
+        },
+        {
+          "line": 10,
+          "name": "by",
+          "start": 418,
+          "end": 421,
+          "independent_binding": false
+        },
+        {
+          "line": 13,
+          "name": "each",
+          "start": 578,
+          "end": 583,
+          "independent_binding": false
+        },
+        {
+          "line": 13,
+          "name": "each",
+          "start": 619,
+          "end": 624,
+          "independent_binding": false
+        },
+        {
+          "line": 19,
+          "name": "each",
+          "start": 840,
+          "end": 845,
+          "independent_binding": false
+        },
+        {
+          "line": 21,
+          "name": "each",
+          "start": 964,
+          "end": 969,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 77,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    },
+    "fannkuchredux:fannkuchredux-r-array-batched": {
+      "schema": "r-exact-retained-source-unit-count-v1",
+      "policy": "r-six-retained-source-owners-v1",
+      "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+      "identity": "fannkuchredux:fannkuchredux-r-array-batched",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/fannkuchredux/array-batched.R",
+      "source_sha256": "1d87cf59c2081123649117fdaee3957537872eded5e4b8d300701f94aa2796a2",
+      "canonical_loc": 38,
+      "physical_loc": 37,
+      "original_physical_loc": 37,
+      "formatted_loc": null,
+      "formatted_loc_qualified": false,
+      "source_owners": [
+        {
+          "kind": "explicit-header",
+          "name": "run",
+          "line": 2,
+          "start": 79,
+          "end": 97,
+          "canonical_units": 1,
+          "text": "run <- function(n)"
+        },
+        {
+          "kind": "written-open",
+          "name": "run",
+          "line": 2,
+          "start": 98,
+          "end": 99,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "factorials",
+          "line": 3,
+          "start": 102,
+          "end": 140,
+          "canonical_units": 1,
+          "text": "factorials <- c(1,cumprod(seq_len(n)))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "total",
+          "line": 4,
+          "start": 143,
+          "end": 168,
+          "canonical_units": 1,
+          "text": "total <- factorials[n+1L]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "workers",
+          "line": 5,
+          "start": 171,
+          "end": 195,
+          "canonical_units": 1,
+          "text": "workers <- min(8L,total)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "ranges",
+          "line": 6,
+          "start": 198,
+          "end": 248,
+          "canonical_units": 1,
+          "text": "ranges <- floor(seq.int(0L,workers)*total/workers)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "task",
+          "line": 7,
+          "start": 251,
+          "end": 275,
+          "canonical_units": 1,
+          "text": "task <- function(worker)"
+        },
+        {
+          "kind": "written-open",
+          "name": "task",
+          "line": 7,
+          "start": 276,
+          "end": 277,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "checksum",
+          "line": 8,
+          "start": 282,
+          "end": 295,
+          "canonical_units": 1,
+          "text": "checksum <- 0"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "maximum",
+          "line": 9,
+          "start": 300,
+          "end": 313,
+          "canonical_units": 1,
+          "text": "maximum <- 0L"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "batch",
+          "line": 10,
+          "start": 318,
+          "end": 386,
+          "canonical_units": 1,
+          "text": "for (start in seq.int(ranges[worker],ranges[worker+1L]-1L,by=8192L))"
+        },
+        {
+          "kind": "written-open",
+          "name": "batch",
+          "line": 10,
+          "start": 387,
+          "end": 388,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "ranks",
+          "line": 11,
+          "start": 395,
+          "end": 456,
+          "canonical_units": 1,
+          "text": "ranks <- seq.int(start,min(start+8191L,ranges[worker+1L]-1L))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "remainder",
+          "line": 12,
+          "start": 463,
+          "end": 481,
+          "canonical_units": 1,
+          "text": "remainder <- ranks"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation",
+          "line": 13,
+          "start": 488,
+          "end": 542,
+          "canonical_units": 1,
+          "text": "permutation <- matrix(rep(seq_len(n),length(ranks)),n)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "rank-width-condition",
+          "line": 14,
+          "start": 549,
+          "end": 561,
+          "canonical_units": 1,
+          "text": "if (n >= 2L)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "unrank-loop",
+          "line": 14,
+          "start": 562,
+          "end": 593,
+          "canonical_units": 1,
+          "text": "for (i in seq.int(n,2L,by=-1L))"
+        },
+        {
+          "kind": "written-open",
+          "name": "unrank-loop",
+          "line": 14,
+          "start": 594,
+          "end": 595,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "digit",
+          "line": 15,
+          "start": 604,
+          "end": 640,
+          "canonical_units": 1,
+          "text": "digit <- remainder %/% factorials[i]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "remainder",
+          "line": 16,
+          "start": 649,
+          "end": 688,
+          "canonical_units": 1,
+          "text": "remainder <- remainder %% factorials[i]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "gather",
+          "line": 17,
+          "start": 697,
+          "end": 801,
+          "canonical_units": 1,
+          "text": "gather <- (rep(seq_len(i)-1L,length(ranks))+rep(digit,each=i)) %% i+1L+rep(seq_along(ranks)-1L,each=i)*n"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation[seq_len(i),]",
+          "line": 18,
+          "start": 810,
+          "end": 857,
+          "canonical_units": 1,
+          "text": "permutation[seq_len(i),] <- permutation[gather]"
+        },
+        {
+          "kind": "written-close",
+          "name": "unrank",
+          "line": 19,
+          "start": 864,
+          "end": 865,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "flips",
+          "line": 20,
+          "start": 872,
+          "end": 903,
+          "canonical_units": 1,
+          "text": "flips <- integer(length(ranks))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "active",
+          "line": 21,
+          "start": 910,
+          "end": 949,
+          "canonical_units": 1,
+          "text": "active <- which(permutation[1L,] != 1L)"
+        },
+        {
+          "kind": "explicit-header",
+          "name": "flip",
+          "line": 22,
+          "start": 956,
+          "end": 978,
+          "canonical_units": 1,
+          "text": "while (length(active))"
+        },
+        {
+          "kind": "written-open",
+          "name": "flip",
+          "line": 22,
+          "start": 979,
+          "end": 980,
+          "canonical_units": 0,
+          "text": "{"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "first",
+          "line": 23,
+          "start": 989,
+          "end": 1032,
+          "canonical_units": 1,
+          "text": "first <- rep(permutation[1L,active],each=n)"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "rows",
+          "line": 24,
+          "start": 1041,
+          "end": 1079,
+          "canonical_units": 1,
+          "text": "rows <- rep(seq_len(n),length(active))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "gather",
+          "line": 25,
+          "start": 1088,
+          "end": 1162,
+          "canonical_units": 1,
+          "text": "gather <- ifelse(rows <= first,first+1L-rows,rows)+rep(active-1L,each=n)*n"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "permutation[,active]",
+          "line": 26,
+          "start": 1171,
+          "end": 1214,
+          "canonical_units": 1,
+          "text": "permutation[,active] <- permutation[gather]"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "flips[active]",
+          "line": 27,
+          "start": 1223,
+          "end": 1256,
+          "canonical_units": 1,
+          "text": "flips[active] <- flips[active]+1L"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "active",
+          "line": 28,
+          "start": 1265,
+          "end": 1311,
+          "canonical_units": 1,
+          "text": "active <- active[permutation[1L,active] != 1L]"
+        },
+        {
+          "kind": "written-close",
+          "name": "flip",
+          "line": 29,
+          "start": 1318,
+          "end": 1319,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "checksum",
+          "line": 30,
+          "start": 1326,
+          "end": 1384,
+          "canonical_units": 1,
+          "text": "checksum <- checksum+sum(flips*ifelse(ranks %% 2L,-1L,1L))"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "maximum",
+          "line": 31,
+          "start": 1391,
+          "end": 1420,
+          "canonical_units": 1,
+          "text": "maximum <- max(maximum,flips)"
+        },
+        {
+          "kind": "written-close",
+          "name": "batch",
+          "line": 32,
+          "start": 1425,
+          "end": 1426,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "task-result",
+          "line": 33,
+          "start": 1431,
+          "end": 1450,
+          "canonical_units": 1,
+          "text": "c(checksum,maximum)"
+        },
+        {
+          "kind": "written-close",
+          "name": "task",
+          "line": 34,
+          "start": 1453,
+          "end": 1454,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "independent-binding",
+          "name": "result",
+          "line": 35,
+          "start": 1457,
+          "end": 1545,
+          "canonical_units": 1,
+          "text": "result <- parallel::mclapply(seq_len(workers),task,mc.cores=workers,mc.preschedule=TRUE)"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "result-output",
+          "line": 36,
+          "start": 1548,
+          "end": 1658,
+          "canonical_units": 1,
+          "text": "cat(sprintf(\"%.0f\\nPfannkuchen(%d) = %.0f\\n\",sum(vapply(result,`[`,0.0,1L)),n,max(vapply(result,`[`,0.0,2L))))"
+        },
+        {
+          "kind": "written-close",
+          "name": "run",
+          "line": 37,
+          "start": 1659,
+          "end": 1660,
+          "canonical_units": 1,
+          "text": "}"
+        },
+        {
+          "kind": "expression-statement",
+          "name": "invoke-run",
+          "line": 38,
+          "start": 1661,
+          "end": 1699,
+          "canonical_units": 1,
+          "text": "run(as.integer(commandArgs(TRUE)[1L]))"
+        }
+      ],
+      "packed_owner_lines": [
+        {
+          "line": 14,
+          "canonical_units": 2
+        }
+      ],
+      "named_arguments": [
+        {
+          "line": 10,
+          "name": "by",
+          "start": 376,
+          "end": 379,
+          "independent_binding": false
+        },
+        {
+          "line": 14,
+          "name": "by",
+          "start": 585,
+          "end": 588,
+          "independent_binding": false
+        },
+        {
+          "line": 17,
+          "name": "each",
+          "start": 751,
+          "end": 756,
+          "independent_binding": false
+        },
+        {
+          "line": 17,
+          "name": "each",
+          "start": 792,
+          "end": 797,
+          "independent_binding": false
+        },
+        {
+          "line": 23,
+          "name": "each",
+          "start": 1025,
+          "end": 1030,
+          "independent_binding": false
+        },
+        {
+          "line": 25,
+          "name": "each",
+          "start": 1153,
+          "end": 1158,
+          "independent_binding": false
+        },
+        {
+          "line": 35,
+          "name": "mc.cores",
+          "start": 1508,
+          "end": 1517,
+          "independent_binding": false
+        },
+        {
+          "line": 35,
+          "name": "mc.preschedule",
+          "start": 1525,
+          "end": 1540,
+          "independent_binding": false
+        }
+      ],
+      "comment_spans": [
+        {
+          "start": 0,
+          "end": 79,
+          "canonical_units": 0
+        }
+      ],
+      "unowned_significant_characters": [],
+      "generic_language_certificate": false,
+      "native_execution": false,
+      "chart_admission": false
+    }
+  },
+  "source_count": 6,
+  "canonical_units": 148,
+  "physical_code_rows": 145,
+  "source_bytes_changed": false,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "formatted_loc": null,
+  "source_work_qualified": false,
+  "full_timings_qualified": false,
+  "chart_admission": false,
+  "native_commands": 0,
+  "runtime_closure_hashes": 0,
+  "general_parser_claimed": false,
+  "producer_loc_values_used": false,
+  "pure_tests_passed": 4,
+  "pure_test_seconds": 0.006
+}

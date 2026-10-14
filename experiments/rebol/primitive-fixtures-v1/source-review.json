@@ -1,0 +1,65 @@
+{
+  "schema": "rebol-general-primitive-fixtures-source-review-v1",
+  "status": "independent-source-review-complete-native-gates-pending",
+  "files": {
+    "experiments/rebol/primitive-fixtures-v1/README.md": "9ef93242e22933c4ce8564fabdd472f0f999eacf941225f6ee850ddb3728e6b7",
+    "experiments/rebol/primitive-fixtures-v1/arithmetic.reb": "fad1b29b0dc22385d6e5dd9606251d38199eb17f3f35381fc4f6c9847b936322",
+    "experiments/rebol/primitive-fixtures-v1/bounded-corpus-map.json": "2f9af54925c2a6af2d13002981458dc9f2eb13cd98cabf0f243b537763a38728",
+    "experiments/rebol/primitive-fixtures-v1/common.reb": "e0633162f20f8a86cc56377deca2d6f123aa948e8f36867e14c363783bf8da12",
+    "experiments/rebol/primitive-fixtures-v1/formatting.reb": "f498c65eea2e8b895d24341dd155ac8e0466b7b0e8a57c64f2731d26cdfd8930",
+    "experiments/rebol/primitive-fixtures-v1/gc-ownership.reb": "08c4547bd05dd581c556dfa71440068beee5b291e7786e0dfe0b15243bfaba9c",
+    "experiments/rebol/primitive-fixtures-v1/io-faults.c": "4560bd6f1bdbc27a89b9d4b67824eb2e64a3f3daa9e414e603c3374358d51552",
+    "experiments/rebol/primitive-fixtures-v1/io-roundtrip.reb": "1ff528ceddc7f07a88ceebd77bd9bb6c610caeadad071154f0bd58c3f298d726",
+    "experiments/rebol/primitive-fixtures-v1/regex.reb": "61c0e87c76b5e67edbfd8be4210337470d67733b9bc81892f90ab54f27e5d6b6",
+    "experiments/rebol/primitive-fixtures-v1/spec.json": "3962c9c0782f4b8fae81555821e5ad5573ea4aa36b55a2d3396e570fa5bb2a79"
+  },
+  "source_review": {
+    "independent": true,
+    "scope": [
+      "six Rebol fixture/helper sources and C syscall interposer against retained extension contract",
+      "signed unbounded arithmetic and all floor-sign cases",
+      "binary64 rounding expectations and precision bounds",
+      "PCRE2 byte/index/NUL/empty/LF cases and exact error payloads",
+      "default-GC retained live operand/result references and actual recycle-count requirement",
+      "explicit17-byte marker, two EINTRs per direction, capped actual syscalls and fresh counter sidecar",
+      "final ordinary-byte zero match-limit error fixture"
+    ],
+    "concrete_blockers": []
+  },
+  "static_consistency_checks": {
+    "source_and_contract_pins": true,
+    "fixture_file_pins": true,
+    "unique_cases": 18,
+    "argv_script_paths_and_argument_counts": true,
+    "io_lengths_prefix_and_counter_bytes": true,
+    "hex_literal_decoding": true,
+    "ten_exact_mains_to149_case_ids": true,
+    "new_source_aliases": 0
+  },
+  "execution": {
+    "rebol_parser_run": false,
+    "native_fixture_execution": false,
+    "sdk_generation": false,
+    "extension_compilation": false,
+    "interposer_compilation": false,
+    "runtime_closure_replay": false
+  },
+  "qualification": {
+    "native_primitives": false,
+    "benchmark_correctness": false,
+    "required_work": false,
+    "canonical_source_counts": false,
+    "timing": false,
+    "chart_admission": false
+  },
+  "remaining": [
+    "complete SDK generation/API and extension ABI/build/load gates",
+    "native parse/argv/stats/profile/error-object behavior",
+    "selected PCRE2 match-limit behavior",
+    "actual C locale/rounding bytes",
+    "actual dyld interposer activation and syscall receipts",
+    "actual default-GC increase and retained values",
+    "owned controller/locked plan and immutable closed artifact receipts",
+    "forced nonfinite/VM allocation/vendor-OOM probes remain outside this packet"
+  ]
+}

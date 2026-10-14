@@ -1,0 +1,56 @@
+{
+  "schema": "scala-publication-source-review-v2",
+  "status": "interruption-restoration-repair-source-reviewed-no-concrete-blocker",
+  "reviewed_on": "2026-10-14",
+  "prior_independent_review": {
+    "path": "experiments/scala/full60-v1/publication/independent-source-review-v1.json",
+    "sha256": "8e3aacb863774a950e0fd973964cf7ea1541014f090bb7a3e75e9a4115ff224e"
+  },
+  "prior_source_pins": {
+    "tools/qualification/import_scala.py": "876db5b0e1d610ee5df8ed810c69d4e2ebd51d6a654b54be725c4d62970ee025",
+    "tools/qualification/test_import_scala.py": "95904500b51d4d997cd0847b0af7cfae5c86bca74f671e8627edda6d3eea741a"
+  },
+  "source_pins": {
+    "tools/qualification/import_scala.py": "4d539e86ee1f13b3f238044b85302e9a23ca3cd5c646f3649b3794ad461c555d",
+    "tools/qualification/test_import_scala.py": "f7b9a5f94617a323d41537716feaecf6719a671c02955ea5a377916243fa5167"
+  },
+  "changes": [
+    "Record replacement intent before each rename in a caller-owned journal created before apply.",
+    "Use that journal for restoration even if interrupted before the caller sets its applied flag.",
+    "Attempt restoration of every still-owned target even if another target is missing or externally changed.",
+    "Verify restored bytes and preserve both the initiating failure and any restoration failure."
+  ],
+  "author_validation": {
+    "independent": false,
+    "pure_tests_passed": 21,
+    "pure_test_seconds": 0.919,
+    "command": "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B tools/qualification/test_import_scala.py",
+    "new_regressions": [
+      "post-rename KeyboardInterrupt",
+      "interruption after apply returns before applied flag",
+      "missing target while other owned replacements require restoration"
+    ]
+  },
+  "independent_review": {
+    "status": "source-reviewed-no-concrete-blocker",
+    "source_approval": true,
+    "scope": "Independent source review of persistent caller journal, intent before rename, aggregate restoration and new regression tests. No independent test execution for this revision.",
+    "pure_tests_rerun": false
+  },
+  "native_commands": 0,
+  "benchmark_runs": 0,
+  "runtime_closure_hashes": 0,
+  "actual_plan_prepared": false,
+  "actual_full60_results_reviewed": false,
+  "actual_export_candidate_created": false,
+  "dataset_files_changed": false,
+  "chart_admission": false,
+  "scope": "The earlier independent review remains unchanged and bound to its earlier source bytes. This additive receipt records only the subsequent importer interruption/restoration repair; publication evidence and exporter behavior are unchanged.",
+  "root_review": {
+    "status": "source-approved-no-concrete-finding",
+    "source_approval": true,
+    "scope": "Reviewed apply_prepared, rollback_publication, the main pre-call mutation journal and undo_success, and three new failure regressions.",
+    "pure_tests_rerun": false,
+    "native_commands": 0
+  }
+}

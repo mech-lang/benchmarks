@@ -1,0 +1,277 @@
+{
+  "schema": "typescript-tree-native-required-work-review-v1",
+  "status": "actual-native-instruction-review-complete-awaiting-combined-admission",
+  "benchmark": "binarytrees",
+  "argument": 21,
+  "source_and_capture_bindings": [
+    {
+      "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+      "sha256": "97ec5af3f4facaac8f9b0d5fd831bd59acfd404652be00174e31330ea6122a68",
+      "bytes": 1678
+    },
+    {
+      "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/process.json",
+      "sha256": "cf1b8f1fb231117c86d72716d8250f6fc0ffee78b681a730b4b07a281f7fe04d",
+      "bytes": 2667
+    },
+    {
+      "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+      "sha256": "a76af3aa756118a5d17806c66b43297e2f51e667fc5136403710647472b8b16b",
+      "bytes": 268809
+    },
+    {
+      "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+      "sha256": "4bf2ad748644f4ea6617bd0784eb30510fdac6b109ea4d80aa211c63b0098d0a",
+      "bytes": 116644
+    },
+    {
+      "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+      "sha256": "7a75aac773768d07df2f51a86d2fc1b84b293a1613b2e078de97fe5c5807404e",
+      "bytes": 2584877
+    },
+    {
+      "path": "experiments/typescript/single-entry-work-v1/reconciliation-v1/output-review.json",
+      "sha256": "db88a1640b9a4e7b68bb1f0d07a82ae1f054483149761882d3dfa619554b98c8",
+      "bytes": 9551
+    }
+  ],
+  "native_subject_invocations": 1,
+  "new_native_processes": 0,
+  "tree_required_work_supported": true,
+  "required_work_qualified": false,
+  "runtime_dependency_closure_qualified": false,
+  "full_timings_qualified": false,
+  "benchmark_samples": 0,
+  "chart_admission": false,
+  "proof": [
+    {
+      "contract": "Fresh complete node allocation, including temporary trees and leaves",
+      "supported": true,
+      "reason": "The captured bytecode calls bottomUpTree twice at depth-1 and constructs a TreeNode on both internal and leaf paths. Maglev preserves the recursive calls and a 40-byte allocation on each path. TurboFan preserves both recursive calls, allocation-top advancement by 40 bytes, and both child stores; no depth-only numeric substitute or shared tree appears. The optimized work loop also retains its inlined root allocations on both peeled and steady-state iterations rather than eliminating the consumed root.",
+      "evidence": [
+        {
+          "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+          "line_start": 24,
+          "line_end": 46
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+          "line_start": 191,
+          "line_end": 231
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 480,
+          "line_end": 620
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 1029,
+          "line_end": 1175
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 1916,
+          "line_end": 2056
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 2170,
+          "line_end": 2308
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 3538,
+          "line_end": 3638
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 3740,
+          "line_end": 3854
+        }
+      ],
+      "native_addresses": {
+        "bottomUpTree_maglev_recursive_calls": [
+          "0x1266c1e18",
+          "0x1266c1e50"
+        ],
+        "bottomUpTree_maglev_alloc_top_stores": [
+          "0x1266c1e68",
+          "0x1266c1f10"
+        ],
+        "bottomUpTree_turbofan_recursive_calls": [
+          "0x1266c24f8",
+          "0x1266c2544"
+        ],
+        "bottomUpTree_turbofan_alloc_top_stores": [
+          "0x1266c2450",
+          "0x1266c2560"
+        ],
+        "work_turbofan_peel_internal_alloc_top_store": "0x126748f2c",
+        "work_turbofan_steady_internal_alloc_top_store": "0x126749238",
+        "work_maglev_peel_internal_alloc_top_store": "0x126747d14",
+        "work_maglev_steady_internal_alloc_top_store": "0x126748100"
+      },
+      "scope": "Addresses describe instructions in the actual compiled capture. They are not an instruction-by-instruction dynamic allocation counter."
+    },
+    {
+      "contract": "Full recursive checks of the stretch, long-lived and temporary trees",
+      "supported": true,
+      "reason": "The retained source and bytecode check the actual left and right fields and recurse down both non-null children. Captured Maglev and TurboFan itemCheck code keeps recursive calls and addition. Both optimized work bodies call the same checked helper after constructing a fresh root; their scalar check accumulator is updated within the counted iteration loop.",
+      "evidence": [
+        {
+          "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+          "line_start": 15,
+          "line_end": 22
+        },
+        {
+          "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+          "line_start": 24,
+          "line_end": 42
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+          "line_start": 293,
+          "line_end": 325
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 1324,
+          "line_end": 1415
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 1614,
+          "line_end": 1700
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 3638,
+          "line_end": 3735
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 3850,
+          "line_end": 3910
+        }
+      ]
+    },
+    {
+      "contract": "Long-lived tree remains reachable across the temporary-tree loop; stretch storage can die first",
+      "supported": true,
+      "reason": "The only mainThread code-creation event is Ignition bytecode. That bytecode constructs the long-lived tree at offset104 and stores it in r3 at108. The entire depth loop occupies112\u2013148 and does not overwrite r3. At180 the final itemCheck receives r3. The earlier stretch root is used for its check then its temporary receiver register is overwritten before long-lived construction. The inherited JavaScriptFrame root visitor scans the interpreter register area, so r3 is a live GC root throughout calls to work. Actual GC records continue between the early and final application output, and the final long-lived check is exact.",
+      "evidence": [
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+          "line_start": 57,
+          "line_end": 122
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+          "line_start": 2877,
+          "line_end": 2881
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+          "line_start": 1360,
+          "line_end": 1364
+        }
+      ],
+      "official_runtime_sources": [
+        {
+          "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/execution/frames.h#L1100",
+          "lines": [
+            1100,
+            1190
+          ],
+          "finding": "InterpretedFrame inherits UnoptimizedJSFrame, which inherits JavaScriptFrame; neither replaces the JavaScript root iteration used here."
+        },
+        {
+          "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/execution/frames.cc#L4153",
+          "lines": [
+            4153,
+            4164
+          ],
+          "finding": "JavaScriptFrame::Iterate visits stack object slots around the untagged argument-count slot."
+        },
+        {
+          "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/execution/frames.cc#L3359",
+          "lines": [
+            3359,
+            3366
+          ],
+          "finding": "Interpreter register indexing is within the unoptimized frame register-file expression area."
+        }
+      ],
+      "scope": "The proof uses the actual outer-function bytecode and retained runtime root semantics; it does not claim a sampled object-address trace or a separate native mainThread OopMap."
+    },
+    {
+      "contract": "Prescribed iteration/depth schedule and actual executed tier coverage",
+      "supported": true,
+      "reason": "The direct unchanged main receives21. Its bytecode retains the shift-derived iteration count and depth increment2. Native event records bind all subject functions to the emitted source and record first execution of Maglev and TurboFan bottomUpTree, TreeNode and itemCheck. work enters captured Maglev OSR and then captured TurboFan OSR; later deoptimizations are at bytecode46, after the completed loop, for console output feedback. They do not indicate omission of allocation or traversal. Baseline code is also created for the recursive helpers; its native disassembly was intentionally not requested, so retained compiler source is used to interpret its bytecode lowering, not to claim separately captured baseline machine code.",
+      "evidence": [
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/stdout.bin",
+          "line_start": 81,
+          "line_end": 103
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+          "line_start": 2879,
+          "line_end": 2913
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+          "line_start": 4695,
+          "line_end": 4708
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+          "line_start": 5806,
+          "line_end": 5814
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/isolate-0xbe340c000-175-v8.log",
+          "line_start": 7476,
+          "line_end": 7486
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 3483,
+          "line_end": 3489
+        },
+        {
+          "path": "experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/code-175-0.asm",
+          "line_start": 4537,
+          "line_end": 4558
+        }
+      ],
+      "official_runtime_sources": [
+        {
+          "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/baseline/baseline-compiler.cc#L1333",
+          "lines": [
+            1333,
+            1355
+          ],
+          "finding": "CallUndefinedReceiver bytecodes are lowered to corresponding BuildCall operations."
+        },
+        {
+          "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/baseline/baseline-compiler.cc#L1526",
+          "lines": [
+            1526,
+            1536
+          ],
+          "finding": "Construct bytecode emits Construct_Baseline with the source argument list and target."
+        }
+      ],
+      "scope": "Tier creation, first-execution and OSR records establish actual captured execution; complete stdout independently establishes the prescribed observable results."
+    }
+  ],
+  "limitations": [
+    "The original three-command producer report remains failed because its stdout partition assumed one diagnostic prefix. This additive source/instruction review does not rewrite that record.",
+    "V8 disabled concurrent Maglev while tracing. These are diagnostic captures of unchanged application work, not representative timing samples or proof that a later uninstrumented run takes identical tier transitions.",
+    "The review establishes required tree operations in the retained source/bytecode and observed optimized code. It does not derive allocation counts from RSS or GC byte totals.",
+    "The official runtime source is pinned to the Node24.19.0 release commit; matching release/API evidence is not a reproducible-build claim for the retained binary.",
+    "Combined TypeScript work admission and runtime dependency metadata remain separate."
+  ]
+}
