@@ -1,0 +1,147 @@
+{
+  "schema": 1,
+  "recorded_at": "2026-10-14T01:23:14.717144+00:00",
+  "compiler_repository": "https://github.com/mech-lang/mech",
+  "branch": "codex/native-execution-improvements",
+  "base": "c4777b7015fe8ff47fdfa48d18606c49aace7d97",
+  "head": "dd1e2afbe6d20fc46949001b45183afd430e5918",
+  "pull_request": "https://github.com/mech-lang/mech/pull/897",
+  "toolchain": "nightly-2026-03-03",
+  "platform": "aarch64-apple-darwin",
+  "environment": {
+    "C_INCLUDE_PATH": "/opt/homebrew/include",
+    "LIBRARY_PATH": "/opt/homebrew/lib",
+    "native_arithmetic": "system-gmp"
+  },
+  "checks": [
+    {
+      "name": "GPU native/backend tests",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "test",
+        "--locked",
+        "-j",
+        "1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--features",
+        "native-build,system-gmp",
+        "--lib",
+        "--test",
+        "native_fused_regressions",
+        "--test",
+        "native_map_regressions",
+        "--test",
+        "native_sequence_admission",
+        "--test",
+        "native_feature_admission",
+        "--test",
+        "batched_array_cpu",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "passed": 118,
+      "log": "compiler-validation/gpu.log"
+    },
+    {
+      "name": "Engine native-lowering unit tests",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "test",
+        "--locked",
+        "-j",
+        "1",
+        "-p",
+        "mech-engine",
+        "--no-default-features",
+        "--features",
+        "full_compiler,resident-artifact,native-sequence",
+        "--lib",
+        "native_sequence",
+        "--",
+        "--test-threads=1"
+      ],
+      "exit": 0,
+      "passed": 82,
+      "log": "compiler-validation/engine.log"
+    },
+    {
+      "name": "CI/harness contracts",
+      "command": [
+        "python3",
+        "-B",
+        "-m",
+        "unittest",
+        "tests.ci.test_ci_impact",
+        "tests.ci.test_ci_full_contract",
+        "tests.browser.harness.test_chrome_session",
+        "tests.browser.harness.test_completion_server"
+      ],
+      "exit": 0,
+      "passed": 97,
+      "log": "compiler-validation/ci-contracts.log"
+    },
+    {
+      "name": "Standard CLI with Cranelift",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "-j",
+        "1",
+        "-p",
+        "mech",
+        "--features",
+        "cranelift_build,system_gmp"
+      ],
+      "exit": 0,
+      "log": "compiler-validation/cli.log"
+    }
+  ],
+  "other_checks": {
+    "rustfmt": "passed",
+    "git_diff_check": "passed",
+    "architecture_and_safety_checks": {
+      "total": 15,
+      "result": "passed; 13 initially, warning-policy and no-retired-value-system after extraction fixes"
+    },
+    "example_verifier_python_syntax": "all 3 passed"
+  },
+  "corrections": [
+    {
+      "check": "standard CLI",
+      "attempt": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "-j",
+        "1",
+        "-p",
+        "mech",
+        "--no-default-features",
+        "--features",
+        "cranelift_build,system_gmp"
+      ],
+      "exit": 101,
+      "reason": "The initial no-default-features check omitted standard host factories; the documented default distribution plus cranelift_build passed."
+    },
+    {
+      "check": "GitHub CI helpers",
+      "initial_run": "https://github.com/mech-lang/mech/actions/runs/38494439517",
+      "reason": "Two jobs installed but did not select the pinned toolchain for helper-spawned plain Cargo. Job-scoped RUSTUP_TOOLCHAIN now selects the declared pinned toolchain; a regression assertion covers this."
+    }
+  ],
+  "notes": [
+    "No benchmarks were timed during extraction or integration.",
+    "Native test/build processes ran sequentially under the shared host timing lock.",
+    "The 200 native tests ran on a44e1b7f1b9f1c491e600b2f410403d86a7c01c8; production Rust and Cargo files are identical at the final head.",
+    "GitHub CI is rerunning at the final head; this record does not claim its completion.",
+    "Example verifier Python was syntax checked; full example AOT verification scripts were not rerun for the repository extraction."
+  ]
+}
