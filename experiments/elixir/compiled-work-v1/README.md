@@ -3,8 +3,16 @@
 This stage inspects the twenty separately retained Elixir main/support BEAM
 pairs after their completed 156-case bounded output study. The
 [native study](run-v1/report.json) completed all twenty observations using retained
-BEAM files. Direct compiled-instruction review remains required. The study does
-not recompile the subjects or collect benchmark timings.
+BEAM files. The [direct instruction review](direct-instruction-review-v1.json)
+covers all 68 numbered obligations, and the [qualification record](qualified-work-v1.json)
+confirms required work for every form after rechecking the complete artifact and
+runtime closure. The study did not recompile subjects or collect benchmark timings.
+
+The tree review traces both recursive allocations and the long-lived root's
+stack/register references across allocation-capable calls. The pi review traces
+two separate divisions and their operands before each candidate comparison.
+Saved dynamic observations corroborate these instruction findings; copied trace
+values are not presented as an independent GC-lifetime measurement.
 
 Fifteen native diagnostic fixtures passed before the study. The
 [fixture review](probe-fixtures-v2-review.json) binds the clean native exit and
@@ -25,7 +33,8 @@ artifact call; the original probe and failed attempt remain retained.
   not automatically retried.
 - `qualify --report PATH --report-sha256 SHA256 --decisions PATH
   --decisions-sha256 SHA256 --output PATH` records explicit review of every
-  numbered compiled-work obligation against actual retained artifacts.
+  numbered compiled-work obligation against actual retained artifacts. Use an
+  absolute report path matching the paths recorded in the native receipts.
 
 Use the retained Python with `-I -S -B`, without optimization. Every command
 except metadata-only `draft` acquires the existing nonblocking common timing
@@ -66,10 +75,9 @@ qualification result must be outside the closed native output directory.
 
 The Python tests use invented receipts and small temporary artifacts. They check
 failure handling and evidence binding without launching Elixir or hashing the
-runtime. `probe-review-tests.exs` contains diagnostic regression fixtures that
-require a later serialized Elixir execution; their presence is not an execution
-result. Neither test suite substitutes for the actual twenty-form witness run
-and direct instruction review.
+runtime. `probe-review-tests.exs` contains the fifteen diagnostic regression
+fixtures whose successful native execution is recorded above. These tests
+complement the actual twenty-form witness run and direct instruction review.
 
 A successful explicit review closes only required compiled work. Source-count
 qualification, full measurements, and chart admission remain separate stages.

@@ -42,7 +42,9 @@ The runtime closure, forty authored inputs, one diagnostic compilation, one
 parser JVM, 30-second deadline, five-second cleanup, 2 GiB RSS and 8 MiB file
 bounds are unchanged. Outputs must be fresh; no automatic retry occurs.
 The [first source-unit replay](../source-units-v1/replay-v1.json) passed all
-fourteen fixture assertions. It exposed unsupported PSI ownership shapes in
-the shared helper and reverse-complement main, so canonical LOC remains null
-pending that counter correction and owner review. Formatted LOC has no
-formatter evidence. Source-work, timing and chart qualification remain false.
+fourteen fixture assertions and exposed literal-body ownership gaps in the
+counter. The [corrected replay and owner review](../source-units-v1/README.md)
+resolved those gaps, and the separate source-count qualification now covers all
+twenty forms. This reader's original candidate flags remain unchanged.
+Formatted LOC has no formatter evidence. Source-work, timing and chart
+qualification remain separate.

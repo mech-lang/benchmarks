@@ -1,0 +1,1360 @@
+{
+  "schema": "kotlin-qualified-source-counts-v1",
+  "status": "twenty-retained-canonical-source-counts-qualified",
+  "reviewed_at": "2026-10-14T08:00:34.378367+00:00",
+  "controller": "/private/tmp/mech-benchmark-completion/tools/qualification/kotlin_loc_qualify.py",
+  "controller_sha256": "1dfdaf81bfd0b3bf9417f4b27a5e6a3bea5b855e4d3c219b530e99dab0d44528",
+  "review_manifest": "/private/tmp/mech-benchmark-completion/experiments/kotlin/source-units-v1/review-manifest-v2.json",
+  "review_manifest_sha256": "df966ec0a15f87783a20e7b71a94b52f6bbf61ff4410bcdc336a286e9fa01051",
+  "verified_closure_pin_count": 6013,
+  "source_plan": "/private/tmp/mech-benchmark-completion/experiments/kotlin/source-counts-v3/plan-v1.json",
+  "source_plan_sha256": "75048092055c76196358805c09acd9e4210b3b32d4ee59697d2a247402cf34e2",
+  "native_artifact_closure": {
+    "files": 192,
+    "bytes": 8847311
+  },
+  "report": "/private/tmp/mech-benchmark-completion/experiments/kotlin/source-counts-v3/run-v1/report.json",
+  "report_sha256": "52a45fc4d96358118dfc6ab5e011b55245ad4caeb5ba07283fcbd6a92a38b1be",
+  "terminal": "/private/tmp/mech-benchmark-completion/experiments/kotlin/source-counts-v3/run-v1/terminal.json",
+  "terminal_sha256": "5ca44bc9b157dedc23887e0128b2fb33dd59129d0c34458af1f46a5bb3ebb721",
+  "replay": "/private/tmp/mech-benchmark-completion/experiments/kotlin/source-units-v1/replay-v2.json",
+  "replay_sha256": "7fd28ae8ceb3330a6a026fc5dabc23d9ff547e9c94bf5c4c53a51ccc7504e8fa",
+  "counter_sha256": "6e5bd8da6c398cc5af47636896ca8911374f329034b6f6607d98df0b1d082814",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "grammar": "kotlin-native-psi-owners-v2",
+  "fixture_checks": [
+    {
+      "id": "fixture--packed-statements",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--packed-statements",
+        "outcome": "candidate-count",
+        "canonical_units": 5,
+        "reason": "Function header and written close plus three independent body statements."
+      }
+    },
+    {
+      "id": "fixture--expanded-statements",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--expanded-statements",
+        "outcome": "candidate-count",
+        "canonical_units": 5,
+        "reason": "The same header, three statements and close on separate rows."
+      }
+    },
+    {
+      "id": "fixture--comment-literal-boundaries",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--comment-literal-boundaries",
+        "outcome": "candidate-count",
+        "canonical_units": 2,
+        "reason": "Two declarations; native comment ownership excludes nested/trailing comments and preserves literal punctuation."
+      }
+    },
+    {
+      "id": "fixture--expression-and-block-functions",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--expression-and-block-functions",
+        "outcome": "candidate-count",
+        "canonical_units": 5,
+        "reason": "Expression-only function: one. Explicit function header, two statements and written close: four."
+      }
+    },
+    {
+      "id": "fixture--callback-statements",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--callback-statements",
+        "outcome": "candidate-count",
+        "canonical_units": 5,
+        "reason": "One combined enclosing-expression/lambda header, three body statements and one written close."
+      }
+    },
+    {
+      "id": "fixture--control-bodies",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--control-bodies",
+        "outcome": "candidate-count",
+        "canonical_units": 10,
+        "reason": "Function header/close: two. For header/close: two. If and else headers plus their unbraced bodies: four. While header and unbraced body: two."
+      }
+    },
+    {
+      "id": "fixture--when-branches",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--when-branches",
+        "outcome": "candidate-count",
+        "canonical_units": 8,
+        "reason": "When header/close: two. First branch header and body: two. Second branch header, two statements and written block close: four."
+      }
+    },
+    {
+      "id": "fixture--destructuring-and-fields",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--destructuring-and-fields",
+        "outcome": "candidate-count",
+        "canonical_units": 6,
+        "reason": "Two promoted constructor fields. Function header/close plus one destructuring declaration and one call: four."
+      }
+    },
+    {
+      "id": "fixture--wrapped-data",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--wrapped-data",
+        "outcome": "candidate-count",
+        "canonical_units": 4,
+        "reason": "All four nonblank data/argument rows retain their physical baseline."
+      }
+    },
+    {
+      "id": "fixture--string-interpolation",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--string-interpolation",
+        "outcome": "needs-review",
+        "diagnostic": "interpolation-with-independent-work-needs-review",
+        "reason": "A block lambda with independent statements inside interpolation is not silently treated as scalar literal data."
+      }
+    },
+    {
+      "id": "fixture--unicode-crlf",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--unicode-crlf",
+        "outcome": "candidate-count",
+        "canonical_units": 2,
+        "reason": "Two physical source units; original and newline-normalized text are bound explicitly and UTF-16 ranges preserve the supplementary character."
+      }
+    },
+    {
+      "id": "fixture--never-evaluate",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--never-evaluate",
+        "outcome": "candidate-count",
+        "canonical_units": 1,
+        "reason": "One source declaration; its error call must never execute during source counting."
+      }
+    },
+    {
+      "id": "fixture--unclosed-function",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--unclosed-function",
+        "outcome": "parse-rejected",
+        "reason": "The native reader must reject the unterminated function body."
+      }
+    },
+    {
+      "id": "fixture--mismatched-delimiter",
+      "passed": true,
+      "expectation": {
+        "id": "fixture--mismatched-delimiter",
+        "outcome": "parse-rejected",
+        "reason": "The native reader must reject mismatched data delimiters."
+      }
+    }
+  ],
+  "files": {
+    "kotlin-binarytrees-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-binarytrees-compact/Main.kt",
+      "source_sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+      "role": "application",
+      "original_physical_loc": 22,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+          "bytes": 977
+        },
+        "psi-source.kt": {
+          "sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+          "bytes": 977
+        },
+        "psi.json": {
+          "sha256": "b33aeb7bc5101df0d1db6f739108b4ce2eacc6196a8221fa55323296c71661bb",
+          "bytes": 138797
+        }
+      }
+    },
+    "kotlin-binarytrees-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-binarytrees-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "a6c1fd3656346a7dd8e09a55e5a9612510a136a6911c676f922557379b53f56a",
+          "bytes": 146912
+        }
+      }
+    },
+    "kotlin-binarytrees-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-binarytrees-optimized/Main.kt",
+      "source_sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+      "role": "application",
+      "original_physical_loc": 22,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+          "bytes": 977
+        },
+        "psi-source.kt": {
+          "sha256": "7624387b8a335041f9822cc14c0e5eb33cd708015e5df4366b61b77c46f05921",
+          "bytes": 977
+        },
+        "psi.json": {
+          "sha256": "498927be0b2505d17ebe11b1de74621260254bc225e5f99387088c4c5de0571a",
+          "bytes": 138801
+        }
+      }
+    },
+    "kotlin-binarytrees-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-binarytrees-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "fd308939c47b86df82b79d23d41d442027968a863332d7d16cb993821051586e",
+          "bytes": 146916
+        }
+      }
+    },
+    "kotlin-fannkuchredux-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fannkuchredux-compact/Main.kt",
+      "source_sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+      "role": "application",
+      "original_physical_loc": 39,
+      "canonical_loc": 60,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+          "bytes": 1118
+        },
+        "psi-source.kt": {
+          "sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+          "bytes": 1118
+        },
+        "psi.json": {
+          "sha256": "040be9a6e0bc9a4d1602ff49f3cf825ea59df725c4242ffbf9c522403181236d",
+          "bytes": 175611
+        }
+      }
+    },
+    "kotlin-fannkuchredux-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fannkuchredux-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "b16f92c2cf85ae9fe3adb17e9c43d698261125cf6c94cadf1a4ba3aa9e6e4659",
+          "bytes": 146916
+        }
+      }
+    },
+    "kotlin-fannkuchredux-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fannkuchredux-optimized/Main.kt",
+      "source_sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+      "role": "application",
+      "original_physical_loc": 39,
+      "canonical_loc": 60,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+          "bytes": 1118
+        },
+        "psi-source.kt": {
+          "sha256": "164d4acf3074c84637bd391561db270c912a8ffe04489a7cee5b9fc3381bf82c",
+          "bytes": 1118
+        },
+        "psi.json": {
+          "sha256": "da80dcbafadf245959896a0cc62a5fe54d6506a612adcc0c79fdd15dc97785e5",
+          "bytes": 175615
+        }
+      }
+    },
+    "kotlin-fannkuchredux-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fannkuchredux-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "7f0233f94eef70452a52733f7ac07c6ed0840751fd9bd6e3fc4ecabd43eafc47",
+          "bytes": 146920
+        }
+      }
+    },
+    "kotlin-fasta-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fasta-compact/Main.kt",
+      "source_sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+      "role": "application",
+      "original_physical_loc": 38,
+      "canonical_loc": 53,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+          "bytes": 2010
+        },
+        "psi-source.kt": {
+          "sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+          "bytes": 2010
+        },
+        "psi.json": {
+          "sha256": "10ce496de012df32bf348ff8325bb978e4413f2b0bc42bedd292e0dfffdd0987",
+          "bytes": 271136
+        }
+      }
+    },
+    "kotlin-fasta-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fasta-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "8e86b3c1066adeb62bb5b8207674b4996356faa93cd996d5614d8e77db6cd750",
+          "bytes": 146900
+        }
+      }
+    },
+    "kotlin-fasta-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fasta-optimized/Main.kt",
+      "source_sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+      "role": "application",
+      "original_physical_loc": 38,
+      "canonical_loc": 53,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+          "bytes": 2010
+        },
+        "psi-source.kt": {
+          "sha256": "c478153ce5775f9bc7592ab23376c5532d4f4e481a868b1f7bbe8b4cf47b27d5",
+          "bytes": 2010
+        },
+        "psi.json": {
+          "sha256": "523f23c0ac8a919217b17451841bcc462fdb07633af852dc8acb06c68eaaf6b6",
+          "bytes": 271140
+        }
+      }
+    },
+    "kotlin-fasta-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-fasta-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "59edb4fdd36f3159dac5ff012d4deb67e7444c9a4086a706f4c267dd3efc693f",
+          "bytes": 146904
+        }
+      }
+    },
+    "kotlin-knucleotide-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-knucleotide-compact/Main.kt",
+      "source_sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+      "role": "application",
+      "original_physical_loc": 43,
+      "canonical_loc": 56,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+          "bytes": 1755
+        },
+        "psi-source.kt": {
+          "sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+          "bytes": 1755
+        },
+        "psi.json": {
+          "sha256": "12866f273093eb8fa4160492954e93a6365e0dc3486aa526b84af61b152f69d9",
+          "bytes": 248963
+        }
+      }
+    },
+    "kotlin-knucleotide-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-knucleotide-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "3fd2f5fedfd69118668d3463f49602f7572a3a5c4cb96755864f5f8b94cb5b87",
+          "bytes": 146912
+        }
+      }
+    },
+    "kotlin-knucleotide-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-knucleotide-optimized/Main.kt",
+      "source_sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+      "role": "application",
+      "original_physical_loc": 43,
+      "canonical_loc": 56,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+          "bytes": 1755
+        },
+        "psi-source.kt": {
+          "sha256": "4beaba9f878383eaa002966a69c333c66a891b5eb23dde638015a0bd77a6293c",
+          "bytes": 1755
+        },
+        "psi.json": {
+          "sha256": "d57d91ae61ebad3c813b16332fde22e85ceb2d6c2e2521624d21451635b2d18c",
+          "bytes": 248967
+        }
+      }
+    },
+    "kotlin-knucleotide-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-knucleotide-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "96280701d1ec04caabdf3307e66be3d48fb4990b9e95a63488193a2dee9d3704",
+          "bytes": 146916
+        }
+      }
+    },
+    "kotlin-mandelbrot-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-mandelbrot-compact/Main.kt",
+      "source_sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+      "role": "application",
+      "original_physical_loc": 37,
+      "canonical_loc": 43,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+          "bytes": 991
+        },
+        "psi-source.kt": {
+          "sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+          "bytes": 991
+        },
+        "psi.json": {
+          "sha256": "93fec785f135dcbcfa4c963dc63d50de2cb59ee87186d41d2a575fe0fcdb2159",
+          "bytes": 151001
+        }
+      }
+    },
+    "kotlin-mandelbrot-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-mandelbrot-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "759a66207605a3e03be7ab82dba8a4540a83e779244444e222e5853be9e9107f",
+          "bytes": 146910
+        }
+      }
+    },
+    "kotlin-mandelbrot-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-mandelbrot-optimized/Main.kt",
+      "source_sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+      "role": "application",
+      "original_physical_loc": 37,
+      "canonical_loc": 43,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+          "bytes": 991
+        },
+        "psi-source.kt": {
+          "sha256": "4f04f2a3c709351a95c0412f5b5762adfd23c07183deda6ca6b777020f820f20",
+          "bytes": 991
+        },
+        "psi.json": {
+          "sha256": "a0adf2a3f970605da99d6fbd671be5876d784645be0d22ed0631996ac5f82707",
+          "bytes": 151005
+        }
+      }
+    },
+    "kotlin-mandelbrot-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-mandelbrot-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "ee56e2efe238bdbb1cc3976c8e31dee545e247c663547e2b54f1c51f5ac53540",
+          "bytes": 146914
+        }
+      }
+    },
+    "kotlin-nbody-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-nbody-compact/Main.kt",
+      "source_sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+      "role": "application",
+      "original_physical_loc": 55,
+      "canonical_loc": 77,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+          "bytes": 2831
+        },
+        "psi-source.kt": {
+          "sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+          "bytes": 2831
+        },
+        "psi.json": {
+          "sha256": "718a80339df84c6b3dff81c43a874c8f0c77c45ca8a70807c628f96a9af88a93",
+          "bytes": 424891
+        }
+      }
+    },
+    "kotlin-nbody-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-nbody-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "a82e95043bb7cbb693557f23daabbb7bd5e1b90df57fa4f3df360db5473bab57",
+          "bytes": 146900
+        }
+      }
+    },
+    "kotlin-nbody-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-nbody-optimized/Main.kt",
+      "source_sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+      "role": "application",
+      "original_physical_loc": 55,
+      "canonical_loc": 77,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+          "bytes": 2831
+        },
+        "psi-source.kt": {
+          "sha256": "a5280a8cee35d53a8a57657445d3bc52450d3de8a9f10268b4d7a5255b2dc08b",
+          "bytes": 2831
+        },
+        "psi.json": {
+          "sha256": "e556ac2f9e4384fbc427da46a9513736f95b074cdddacf0ec383b26e8437a5f2",
+          "bytes": 424895
+        }
+      }
+    },
+    "kotlin-nbody-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-nbody-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "83dfe96cd37e94958be118780b0a83fb7b52a84d44999b2e5bb56b0cdcb622c7",
+          "bytes": 146904
+        }
+      }
+    },
+    "kotlin-pidigits-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-pidigits-compact/Main.kt",
+      "source_sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+      "role": "application",
+      "original_physical_loc": 33,
+      "canonical_loc": 36,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+          "bytes": 1003
+        },
+        "psi-source.kt": {
+          "sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+          "bytes": 1003
+        },
+        "psi.json": {
+          "sha256": "21d6ec9b8ebbfae39bd6031cbfc4a961ff76fa399010155554d1b67a347db92f",
+          "bytes": 145279
+        }
+      }
+    },
+    "kotlin-pidigits-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-pidigits-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "00f651a62523eafe65a4c58252b534470642e54409bd3850ed656d6d9c49b8e7",
+          "bytes": 146906
+        }
+      }
+    },
+    "kotlin-pidigits-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-pidigits-optimized/Main.kt",
+      "source_sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+      "role": "application",
+      "original_physical_loc": 33,
+      "canonical_loc": 36,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+          "bytes": 1003
+        },
+        "psi-source.kt": {
+          "sha256": "19685b96cc0e7ec10bbab086f55d1b3d8bfb06268e1c9685d1772dcd9d65b9a6",
+          "bytes": 1003
+        },
+        "psi.json": {
+          "sha256": "693d062ef1570f21885669bde52418f62201b038157fd3bcc8a417920f857281",
+          "bytes": 145283
+        }
+      }
+    },
+    "kotlin-pidigits-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-pidigits-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "8838a467be01d280e1226d83c1b04beee17f1ccd920362db7f22c3a8b90de52d",
+          "bytes": 146910
+        }
+      }
+    },
+    "kotlin-regexredux-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-regexredux-compact/Main.kt",
+      "source_sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+      "role": "application",
+      "original_physical_loc": 32,
+      "canonical_loc": 35,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+          "bytes": 1518
+        },
+        "psi-source.kt": {
+          "sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+          "bytes": 1518
+        },
+        "psi.json": {
+          "sha256": "c90fc7ec0ecef0d9d7447e96bf464c34948954a6dc342f589a4af32276c07c60",
+          "bytes": 185067
+        }
+      }
+    },
+    "kotlin-regexredux-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-regexredux-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "01ea749806308de431a9ee48654ac6af19d71fe50c7a140afec431987bbdddc9",
+          "bytes": 146910
+        }
+      }
+    },
+    "kotlin-regexredux-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-regexredux-optimized/Main.kt",
+      "source_sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+      "role": "application",
+      "original_physical_loc": 32,
+      "canonical_loc": 35,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+          "bytes": 1518
+        },
+        "psi-source.kt": {
+          "sha256": "df65c89303e3624e11572c7dc3b299666b7b3388e32d2f3b7ba4c39e0eb136d7",
+          "bytes": 1518
+        },
+        "psi.json": {
+          "sha256": "90761efd8702b0424c8adc08c6339cdc0d5659c711226cbf2460e1f73695f5bc",
+          "bytes": 185071
+        }
+      }
+    },
+    "kotlin-regexredux-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-regexredux-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "fc9eda7bfd0fef6d1786b539a99c889bd15074c96a420967be9656198f5d3d23",
+          "bytes": 146914
+        }
+      }
+    },
+    "kotlin-revcomp-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-revcomp-compact/Main.kt",
+      "source_sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+      "role": "application",
+      "original_physical_loc": 29,
+      "canonical_loc": 70,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+          "bytes": 1215
+        },
+        "psi-source.kt": {
+          "sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+          "bytes": 1215
+        },
+        "psi.json": {
+          "sha256": "2920cfa611882ffce58c734689f0e6e24bdbb51e760d4e9cf3a0732b3b752034",
+          "bytes": 174272
+        }
+      }
+    },
+    "kotlin-revcomp-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-revcomp-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "df3fe33167267053410ddede9b140b8f9b5c7c3922fc9c7149d7cba054136a77",
+          "bytes": 146904
+        }
+      }
+    },
+    "kotlin-revcomp-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-revcomp-optimized/Main.kt",
+      "source_sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+      "role": "application",
+      "original_physical_loc": 29,
+      "canonical_loc": 70,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+          "bytes": 1215
+        },
+        "psi-source.kt": {
+          "sha256": "0c1d01bf11c6cd8488268e33a41a6f3c3dd22f24c3b022c3da0de00027bf5e8b",
+          "bytes": 1215
+        },
+        "psi.json": {
+          "sha256": "26ff88a949873088ce98d941d18bbe1078f055bdf9b1db41f92d31c4a01eef35",
+          "bytes": 174276
+        }
+      }
+    },
+    "kotlin-revcomp-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-revcomp-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "0b7bded2032412199d0f580d447984cd18f7d8436bcdcab64bd32ab3ee58ab43",
+          "bytes": 146908
+        }
+      }
+    },
+    "kotlin-spectralnorm-compact--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-spectralnorm-compact/Main.kt",
+      "source_sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+      "role": "application",
+      "original_physical_loc": 28,
+      "canonical_loc": 43,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+          "bytes": 1000
+        },
+        "psi-source.kt": {
+          "sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+          "bytes": 1000
+        },
+        "psi.json": {
+          "sha256": "4d990afbdb90e5ca931753a826457554e3d04f302945b43d7a28b022c35b6144",
+          "bytes": 172535
+        }
+      }
+    },
+    "kotlin-spectralnorm-compact--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-spectralnorm-compact/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "d378d1e80705041ef6eb3e2518863e4aaf52f3038f8ab6c55e008dc96e68eebc",
+          "bytes": 146914
+        }
+      }
+    },
+    "kotlin-spectralnorm-optimized--application": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-spectralnorm-optimized/Main.kt",
+      "source_sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+      "role": "application",
+      "original_physical_loc": 28,
+      "canonical_loc": 43,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+          "bytes": 1000
+        },
+        "psi-source.kt": {
+          "sha256": "08c827a27c60e666c0c94543d60ea574cb7bbb2b9de391afb2b50e4ed77dadc6",
+          "bytes": 1000
+        },
+        "psi.json": {
+          "sha256": "69e0c3f146a53711fba66b912b2fa0a8b18fc0a220543b3ee189f0fe1c354dc5",
+          "bytes": 172539
+        }
+      }
+    },
+    "kotlin-spectralnorm-optimized--application-helper": {
+      "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/kotlin-comparison/20261013/.build/official-compiler-retained-jdk-v1/forms/kotlin-spectralnorm-optimized/Support.kt",
+      "source_sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+      "role": "application-helper",
+      "original_physical_loc": 23,
+      "canonical_loc": 26,
+      "native_artifacts": {
+        "source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi-source.kt": {
+          "sha256": "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66",
+          "bytes": 1130
+        },
+        "psi.json": {
+          "sha256": "9904f792846a988d279da4ef2a0ad2b83709803168d53df509374fde45182cea",
+          "bytes": 146918
+        }
+      }
+    }
+  },
+  "profiles": [
+    {
+      "id": "kotlin-binarytrees-compact",
+      "benchmark": "binarytrees",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-binarytrees-compact--application",
+        "kotlin-binarytrees-compact--application-helper"
+      ],
+      "original_physical_loc": 45,
+      "canonical_loc": 52,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-binarytrees-optimized",
+      "benchmark": "binarytrees",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-binarytrees-optimized--application",
+        "kotlin-binarytrees-optimized--application-helper"
+      ],
+      "original_physical_loc": 45,
+      "canonical_loc": 52,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-fannkuchredux-compact",
+      "benchmark": "fannkuchredux",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-fannkuchredux-compact--application",
+        "kotlin-fannkuchredux-compact--application-helper"
+      ],
+      "original_physical_loc": 62,
+      "canonical_loc": 86,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-fannkuchredux-optimized",
+      "benchmark": "fannkuchredux",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-fannkuchredux-optimized--application",
+        "kotlin-fannkuchredux-optimized--application-helper"
+      ],
+      "original_physical_loc": 62,
+      "canonical_loc": 86,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-fasta-compact",
+      "benchmark": "fasta",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-fasta-compact--application",
+        "kotlin-fasta-compact--application-helper"
+      ],
+      "original_physical_loc": 61,
+      "canonical_loc": 79,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-fasta-optimized",
+      "benchmark": "fasta",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-fasta-optimized--application",
+        "kotlin-fasta-optimized--application-helper"
+      ],
+      "original_physical_loc": 61,
+      "canonical_loc": 79,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-knucleotide-compact",
+      "benchmark": "knucleotide",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-knucleotide-compact--application",
+        "kotlin-knucleotide-compact--application-helper"
+      ],
+      "original_physical_loc": 66,
+      "canonical_loc": 82,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-knucleotide-optimized",
+      "benchmark": "knucleotide",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-knucleotide-optimized--application",
+        "kotlin-knucleotide-optimized--application-helper"
+      ],
+      "original_physical_loc": 66,
+      "canonical_loc": 82,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-mandelbrot-compact",
+      "benchmark": "mandelbrot",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-mandelbrot-compact--application",
+        "kotlin-mandelbrot-compact--application-helper"
+      ],
+      "original_physical_loc": 60,
+      "canonical_loc": 69,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-mandelbrot-optimized",
+      "benchmark": "mandelbrot",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-mandelbrot-optimized--application",
+        "kotlin-mandelbrot-optimized--application-helper"
+      ],
+      "original_physical_loc": 60,
+      "canonical_loc": 69,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-nbody-compact",
+      "benchmark": "nbody",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-nbody-compact--application",
+        "kotlin-nbody-compact--application-helper"
+      ],
+      "original_physical_loc": 78,
+      "canonical_loc": 103,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-nbody-optimized",
+      "benchmark": "nbody",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-nbody-optimized--application",
+        "kotlin-nbody-optimized--application-helper"
+      ],
+      "original_physical_loc": 78,
+      "canonical_loc": 103,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-pidigits-compact",
+      "benchmark": "pidigits",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-pidigits-compact--application",
+        "kotlin-pidigits-compact--application-helper"
+      ],
+      "original_physical_loc": 56,
+      "canonical_loc": 62,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-pidigits-optimized",
+      "benchmark": "pidigits",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-pidigits-optimized--application",
+        "kotlin-pidigits-optimized--application-helper"
+      ],
+      "original_physical_loc": 56,
+      "canonical_loc": 62,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-regexredux-compact",
+      "benchmark": "regexredux",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-regexredux-compact--application",
+        "kotlin-regexredux-compact--application-helper"
+      ],
+      "original_physical_loc": 55,
+      "canonical_loc": 61,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-regexredux-optimized",
+      "benchmark": "regexredux",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-regexredux-optimized--application",
+        "kotlin-regexredux-optimized--application-helper"
+      ],
+      "original_physical_loc": 55,
+      "canonical_loc": 61,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-revcomp-compact",
+      "benchmark": "revcomp",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-revcomp-compact--application",
+        "kotlin-revcomp-compact--application-helper"
+      ],
+      "original_physical_loc": 52,
+      "canonical_loc": 96,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-revcomp-optimized",
+      "benchmark": "revcomp",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-revcomp-optimized--application",
+        "kotlin-revcomp-optimized--application-helper"
+      ],
+      "original_physical_loc": 52,
+      "canonical_loc": 96,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-spectralnorm-compact",
+      "benchmark": "spectralnorm",
+      "variant": "compact",
+      "inputs": [
+        "kotlin-spectralnorm-compact--application",
+        "kotlin-spectralnorm-compact--application-helper"
+      ],
+      "original_physical_loc": 51,
+      "canonical_loc": 69,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    },
+    {
+      "id": "kotlin-spectralnorm-optimized",
+      "benchmark": "spectralnorm",
+      "variant": "optimized",
+      "inputs": [
+        "kotlin-spectralnorm-optimized--application",
+        "kotlin-spectralnorm-optimized--application-helper"
+      ],
+      "original_physical_loc": 51,
+      "canonical_loc": 69,
+      "formatted_loc": null,
+      "canonical_loc_qualified": true,
+      "formatted_loc_qualified": false,
+      "source_work_qualified": false,
+      "full_timings_qualified": false,
+      "chart_admission": false
+    }
+  ],
+  "canonical_loc_qualified": true,
+  "formatted_loc_qualified": false,
+  "formatted_loc": null,
+  "source_work_qualified": false,
+  "full_timings_qualified": false,
+  "chart_admission": false,
+  "native_processes_started": 0,
+  "subject_recompilations": 0,
+  "subject_main_invocations": 0,
+  "original_native_processes": 2,
+  "common_mutex_inode": 79859134
+}
