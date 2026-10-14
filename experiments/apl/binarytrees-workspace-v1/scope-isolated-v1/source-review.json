@@ -1,0 +1,414 @@
+{
+  "schema": "apl-scope-isolated-allocation-source-review-v1",
+  "status": "source-prepared-native-qualification-pending",
+  "sources": [
+    {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/scope-isolated-v1/allocation.apl",
+      "sha256": "2248159002ddacb173726426e66d1751c84d8b872116b4ee343f826d34a3773b",
+      "bytes": 1146
+    },
+    {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/scope-isolated-v1/zero-allocation-control.apl",
+      "sha256": "a714403553dda1299e19f252e460d86cd948ffa4c7988cd26cd0de40bdfe0e5c",
+      "bytes": 1140
+    }
+  ],
+  "documentation": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/scope-isolated-v1/README.md",
+    "sha256": "491b3a5f937e55ae7e7d8be3d78c5e86693366d88c02a81c54c09143be0b87d3",
+    "bytes": 4843
+  },
+  "pure_source_tests": {
+    "source": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/scope-isolated-v1/test_source_contract.py",
+      "sha256": "c59606e230fe97bd4b929b07686e37c355189070bb7c96674fd6e5dea102959d",
+      "bytes": 6063
+    },
+    "tests": 10,
+    "passed": true,
+    "elapsed_seconds": 0.001,
+    "native_execution": false,
+    "scope": "Fixed source-contract and deliberate mutation checks; not an APL parser or runtime observation."
+  },
+  "unchanged_subject_definitions": {
+    "source": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/allocation-witness.apl",
+      "sha256": "405fd9b3f7274c2a7e2f801f13b45b7ee3d259d4db23b03cce24323347798445",
+      "bytes": 979
+    },
+    "functions": [
+      "Make",
+      "Check"
+    ],
+    "comparison": "Exact complete function text equality in both new files."
+  },
+  "preserved_failed_attempt": {
+    "report": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/run-v1/report.json",
+      "sha256": "98a72540c56d68d8ef45c51aa77d4b8c6054ed2513396a1504d0bd85e27b210b",
+      "bytes": 44822
+    },
+    "terminal": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/run-v1/terminal.json",
+      "sha256": "ad1903c45720afb638a81db57bf5917711818465c0e80418520acf9387397be0",
+      "bytes": 1543
+    },
+    "closure": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/actual-closure-v1.json",
+      "sha256": "846ecf32bbe84cec09670b418d12b1fc8f8f21dd012a6fea5185bb7a645669c6",
+      "bytes": 2056
+    },
+    "stdout": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/run-v1/02-allocation-ownership/stdout.bin",
+      "sha256": "1017ce17fbf4d7eafb3cc11f1ab5d6100f1dc73b5fe5b53dd8defa072a4109cc",
+      "bytes": 37
+    },
+    "stderr": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/run-v1/02-allocation-ownership/stderr.bin",
+      "sha256": "655309a962122bcdb65d5677af44fac7f041f0df5596e9baba5cbdfb62e146d5",
+      "bytes": 54
+    },
+    "status": "failed",
+    "exact_extra_object_attribution": "Unresolved: saved aggregate counts do not identify individual evaluator-owned objects."
+  },
+  "retained_runtime_source_evidence": [
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/SystemLimits.def",
+      "sha256": "64a2d6c6213f7e242e530c865402c986abfa2337b125538c742a97bb8f869522",
+      "bytes": 3399,
+      "findings": [
+        {
+          "lines": [
+            13,
+            18
+          ],
+          "finding": "Row 4 is the global Value::value_count."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/SystemVariable.cc",
+      "sha256": "2892b8bcf9d1a9f4dfd239ba1f919f9ad371326bab4be14415d13e019db6509e",
+      "bytes": 37121,
+      "findings": [
+        {
+          "lines": [
+            1036,
+            1052
+          ],
+          "finding": "The system-variable read itself constructs a Value and row-name Values before sampling."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Prefix.hh",
+      "sha256": "e6e0fbd5d9bb87d91a2c66c342e26921589042c737b94a201bda571ce46faf21",
+      "bytes": 15157,
+      "findings": [
+        {
+          "lines": [
+            232,
+            263
+          ],
+          "finding": "Logical pops do not clear inactive owning tokens."
+        },
+        {
+          "lines": [
+            405,
+            408
+          ],
+          "finding": "The context stores its tokens in a fixed member array."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Token.hh",
+      "sha256": "dd942330d014c4d47ec51c26d92a33274394f24dc82ae2e366822800cd2b4cec",
+      "bytes": 17004,
+      "findings": [
+        {
+          "lines": [
+            83,
+            100
+          ],
+          "finding": "Overwriting a token clears its previous owner."
+        },
+        {
+          "lines": [
+            178,
+            179
+          ],
+          "finding": "Every Token destructor releases its APL Value owner."
+        },
+        {
+          "lines": [
+            295,
+            300
+          ],
+          "finding": "Clearing a value token resets its owning pointer."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/StateIndicator.cc",
+      "sha256": "a2f4710e456aa05ff5272d68ed2a3a46ae6f264adeddb8a6cc6fac7465666ae1",
+      "bytes": 19996,
+      "findings": [
+        {
+          "lines": [
+            48,
+            69
+          ],
+          "finding": "Context destruction clears active state and pops locals; member destruction destroys the full prefix array."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Workspace.cc",
+      "sha256": "c34d4ce34e11d2a787106336af2b6d0786f625d66dbdbb926756d9f5b84cae6b",
+      "bytes": 40189,
+      "findings": [
+        {
+          "lines": [
+            181,
+            207
+          ],
+          "finding": "Returning from the current context deletes its StateIndicator."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Symbol.cc",
+      "sha256": "0c449f1b673acf147e2dff2afd8422371b4024a1251ef2e276eba7fa11b937be",
+      "bytes": 47300,
+      "findings": [
+        {
+          "lines": [
+            127,
+            168
+          ],
+          "finding": "Assignment replaces the symbol owner."
+        },
+        {
+          "lines": [
+            173,
+            186
+          ],
+          "finding": "Indexed assignment isolates before acquiring its temporary Value_P reference."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Symbol.hh",
+      "sha256": "1a5016d0e0bd92ec6b6e80cc6c4dcb6a46fcc0f30d5957e13bc4904496fb7b89",
+      "bytes": 16734,
+      "findings": [
+        {
+          "lines": [
+            60,
+            64
+          ],
+          "finding": "The symbol slot owns the assigned Value_P."
+        },
+        {
+          "lines": [
+            116,
+            117
+          ],
+          "finding": "Symbol isolation delegates to Value_P isolation."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Value_P.icc",
+      "sha256": "3fa77b4e3cd283d0e75e8e63fe3564be878cae00f345a0838de67eeaa41205b8",
+      "bytes": 11832,
+      "findings": [
+        {
+          "lines": [
+            276,
+            286
+          ],
+          "finding": "Copy on write clones only when the existing value has multiple owners."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Value.hh",
+      "sha256": "899b922ff1a2d05f0bb2607171fb56e26bec84b033b4a60417de136e117fb0c6",
+      "bytes": 39124,
+      "findings": [
+        {
+          "lines": [
+            752,
+            772
+          ],
+          "finding": "The retained source enables shared-until-mutation ownership."
+        },
+        {
+          "lines": [
+            884,
+            897
+          ],
+          "finding": "The last owner deletes the Value."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Value.cc",
+      "sha256": "7dceb15b252a30ecf1337715b689cac3ef673b4a5d66f4f8b74e697beed55090",
+      "bytes": 100262,
+      "findings": [
+        {
+          "lines": [
+            73,
+            84
+          ],
+          "finding": "Value construction increments the global counter."
+        },
+        {
+          "lines": [
+            416,
+            454
+          ],
+          "finding": "Value destruction releases nested pointer cells and decrements the counter."
+        },
+        {
+          "lines": [
+            2116,
+            2237
+          ],
+          "finding": "Runtime strand construction creates the node container and retains its child values."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/PointerCell.cc",
+      "sha256": "164c292614ecc6452168ee7b713536808886df39b96a84535fe48b54e0e11c9f",
+      "bytes": 11228,
+      "findings": [
+        {
+          "lines": [
+            33,
+            43
+          ],
+          "finding": "A child pointer owns the nested Value."
+        },
+        {
+          "lines": [
+            68,
+            90
+          ],
+          "finding": "Releasing a child pointer resets that ownership."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Tokenizer.cc",
+      "sha256": "f60631cfb0dc77f0855fe718589b1938094718ca23d64a8c8c1101ccd5a42942",
+      "bytes": 43354,
+      "findings": [
+        {
+          "lines": [
+            430,
+            437
+          ],
+          "finding": "Empty literals are allocated during tokenization."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Parser.cc",
+      "sha256": "db54d8c6bec0235e5ecb8f531ac23febffecc83217e0e0633e1db41ee48b7fe4",
+      "bytes": 70638,
+      "findings": [
+        {
+          "lines": [
+            270,
+            332
+          ],
+          "finding": "Constant collection precedes short-primitive folding; numeric indices are prepared before execution."
+        },
+        {
+          "lines": [
+            1199,
+            1223
+          ],
+          "finding": "A short literal reshape can be folded into a compiled Value."
+        },
+        {
+          "lines": [
+            1917,
+            1960
+          ],
+          "finding": "Literal scalars become APL Values while parsing."
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Quad_FIO.cc",
+      "sha256": "4cbac3a786cd5d001c29ac72066f4ec76e4aa0154d3f7bba29b4adecd5e49ab1",
+      "bytes": 110677,
+      "findings": [
+        {
+          "lines": [
+            211,
+            225
+          ],
+          "finding": "Formatted output returns a fresh scalar and consumes an assembled argument value."
+        }
+      ]
+    }
+  ],
+  "source_digest_scope": "New small-file source digests and existing saved receipt bytes only. No runtime closure, binary hash replay, compilation or native command was performed for this packet.",
+  "ownership_argument": {
+    "node_recurrence": "N(0)=1; N(d)=1+2*N(d-1).",
+    "live_root_sets": [
+      "A",
+      "A+B",
+      "A+B+T(depth=2)",
+      "A+B",
+      "B",
+      "none"
+    ],
+    "expected_additional_values": [
+      1,
+      2,
+      9,
+      2,
+      1,
+      0
+    ],
+    "control_expected_additional_values": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "constant_initialization": "All functions precede Probe; the initializer performs an indexed write to isolate Counts even when its literal reshape is folded.",
+    "context_boundaries": "Initializer, every build/drop operation, and every Record call are void functions whose whole contexts end before the next action.",
+    "result_storage": "Only a global preallocated Counts vector persists; the sequence writes scalar cells and never reads or returns the whole vector.",
+    "observer_neutrality": "Each read uses the same new Record context. No Check, output formatting, dynamic driver arithmetic or new output strand occurs inside the count sequence.",
+    "verification_separation": "After Probe returns and deltas are printed, Verify creates independent local trees and checks 1,1,7."
+  },
+  "expected_stdout": {
+    "allocation.apl": "live_deltas=1,2,9,2,1,0\nchecks=1,1,7\n",
+    "zero-allocation-control.apl": "control_deltas=0,0,0,0,0,0\nchecks=1,1,7\n"
+  },
+  "shutdown_diagnostic_disposition": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/remaining-three-v1/shutdown-diagnostic-review-v1.json",
+    "sha256": "7fd4ddbf576db0b76da43e03ec5a1c571597e8e3e2bd0ce1efa684d30360237b",
+    "bytes": 5069
+  },
+  "new_native_processes": 0,
+  "new_plans": 0,
+  "benchmark_samples": 0,
+  "native_syntax_qualified": false,
+  "allocation_ownership_qualified": false,
+  "required_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}

@@ -1,9 +1,14 @@
 # First full Scala timing cohort
 
-This packet prepares sixty sequential fresh-process samples: one retained Scala
-implementation and one matched Mech AOT control for each of ten workloads, with
-three observations per profile. Scala has ten real source bundles; no duplicate
-source aliases or invented optimization variants are added.
+All sixty sequential fresh-process samples completed and passed independent
+reconciliation: thirty Scala observations and thirty matched Mech AOT controls,
+three per profile across ten workloads. [All ten Scala implementations are
+admitted](publication/apply-receipt-v1.json), with one real source bundle per
+workload and no duplicate source aliases. The [closed run](run-v1/terminal.json),
+[independent reconciliation](reconciliation/actual-v1.json) and
+[publication candidate](publication/candidate-v1.json) retain their separate
+evidence boundaries. Existing measurements and chart baselines are preserved;
+no older measurement was rerun.
 
 The controller requires the exact saved compilation, 149-case correctness,
 canonical source-count and required-work admissions. The latter combines the
@@ -15,8 +20,9 @@ Each Scala command invokes the retained JDK directly with `Main` and only the
 retained application classes plus the two Scala runtime jars. The policy is
 `-XX:ActiveProcessorCount=8 -Xms64m -Xmx8g -XX:+UseG1GC`, default tiered JIT, one
 main invocation, and no diagnostics or wrapper warmup. It matches the work
-captures' execution settings. The full-size workload has not been assumed to
-fit the resource bounds merely because bounded correctness passed.
+captures' execution settings. All full-size samples passed output validation
+and the configured resource guards; sampled RSS does not establish an unsampled
+maximum.
 
 Elapsed time covers process startup, class loading, JIT, input, all work,
 complete output and exit. Source compilation, file-pin checks, environment
@@ -57,9 +63,10 @@ requires independent reconciliation and publication review.
 
 ## Preparation and execution
 
-These commands are templates for the retained host. No executable plan or native
-run is created by this source packet. Run preparation only when the timing mutex
-is free. Use fresh paths and independently review the prepared plan before launch.
+The [prepared plan](plan-v1.json) and `run-v1` directory below identify the completed
+cohort. These commands document its original preparation. A separate reproduction
+requires fresh paths, a free timing mutex and independent review before launch;
+existing results must not be overwritten or repeated as unfinished work.
 
 ```sh
 SCALA_FULL_PYTHON=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
@@ -74,8 +81,8 @@ SCALA_FULL_PYTHON=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/depe
 
 Set `SCALA_DRAFT_SHA` to the digest from the draft command. The prepare command
 verifies all bytes and produces the plan digest. The durable launcher is
-`experiments/shared/owned-jobs-v1/launch_durable.py`, with a fresh job name such as
-`scala-full60-v1`. Its JSON command must contain the absolute physical paths:
+`experiments/shared/owned-jobs-v1/launch_durable.py`; this cohort used the exact
+job name `scala-full60-v1`. Its JSON command contains the absolute physical paths:
 
 ```text
 ["<retained-python>", "-I", "-S", "-B", "-u",

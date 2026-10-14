@@ -19,7 +19,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 RECONCILER = Path(__file__).with_name('typescript_reconcile.py')
 # Independently reviewed source; the file phase binds this and both primitives.
-RECONCILER_SHA = '6278c660388210906b28338f1b288281e0b2b3c81adaba12300708ac55f9c9ee'
+RECONCILER_SHA = '25d3a55f8f70ea065c27e2f4f58a7db3bd89c112b35d552066d30060f48c8652'
 
 
 def load_reconciler():

@@ -23,7 +23,7 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPORTER = Path(__file__).with_name('typescript_export.py')
-EXPORTER_SHA = '57cf88e20809c5454234def201fdf87231f3196d6f1ffa9800a2876b2eca87ce'
+EXPORTER_SHA = '7a7d58d942c8a2266300b227d2d126580fed0d844ebed87399903d7c1839d48c'
 RELEASE = ROOT/'experiments/typescript/full60-v1/release-metadata-v1.json'
 RELEASE_SHA = '65bd9eb3ad7ba37496787b421cf0d19743e5d504386edb11fe926dc210720ba8'
 TARGETS = ('data/benchmarks.json', 'data/languages.json', 'site/src/languages.mjs')

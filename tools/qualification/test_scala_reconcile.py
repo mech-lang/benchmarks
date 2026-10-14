@@ -4,7 +4,7 @@ No actual prepared plan, new timing result, runtime launch or runtime hashing.
 The in-memory cohort uses immutable source/count metadata and invented receipts.
 """
 import copy
-from contextlib import contextmanager
+from contextlib import contextmanager,ExitStack
 from datetime import datetime,timedelta,timezone
 import importlib.util
 import json
@@ -286,6 +286,69 @@ class Ledger(unittest.TestCase):
         for field,number in [('median_seconds',float('nan')),('sample_stdev_seconds',-1e-13),('time_x_mech',True)]:
             value=fixture();next(iter(value['report']['programs'].values()))[field]=number
             with self.assertRaises(ValueError):audit.reconcile(**value)
+
+
+class FileStageInventories(unittest.TestCase):
+    @contextmanager
+    def file_stage(self):
+        # Real review_files orchestration, inventories and temporary flock leases.
+        # Semantic/native validators are stubbed: no actual runtime or job is read.
+        with tempfile.TemporaryDirectory() as directory, ExitStack() as patches:
+            root=Path(directory).resolve(); packet=root/'experiments/scala/full60-v1'
+            job=root/'experiments/shared/owned-jobs-v1/owned-jobs/scala-full60-v1'
+            output=packet/'run-v1'; output.mkdir(parents=True); job.mkdir(parents=True)
+            lock=root/'common.lock'; lock.write_bytes(b'')
+            (root/'experiments/scala/scala-full60.owner.lock').write_bytes(b'')
+            for name in ('owner.lock','request.json','launch.json','worker-started.json',
+                         'command-started.json','terminal.json','command.stdout','command.stderr','worker.log'):
+                (job/name).write_bytes(b'{}' if name.endswith('.json') else b'')
+            report_path=output/'report.json'
+            report_path.write_text(json.dumps(dict(attempts=[],independent_supervisors=[])))
+            report_sha=audit.hashlib.sha256(report_path.read_bytes()).hexdigest()
+            (output/'terminal.json').write_text(json.dumps(dict(report=str(report_path),report_sha256=report_sha,
+                available_evidence_pins={str(report_path):report_sha})))
+            plan_path=packet/'plan.json'
+            plan_path.write_text(json.dumps(dict(repository=str(root),output=str(output),pins={},
+                qualified_work={},qualified_source_counts={})))
+            plan_sha=audit.hashlib.sha256(plan_path.read_bytes()).hexdigest()
+            class Files:
+                def __init__(self): self.verified={}
+                def verify(self,path,digest): self.verified[path]=digest
+                def document(self,path,digest):
+                    self.verify(path,digest)
+                    return json.loads(Path(path).read_bytes())
+            for name,value in dict(ROOT=root,PACKET=packet,LOCK=lock,Files=Files,
+                    QUALIFICATION_REFS={},CONTROL_REFS={}).items():
+                patches.enter_context(mock.patch.object(audit,name,value))
+            patches.enter_context(mock.patch.object(audit.p,'LOCK_INODE',lock.stat().st_ino))
+            for name in ('schedule','check_durable','prerequisite_inventory'):
+                patches.enter_context(mock.patch.object(audit,name))
+            patches.enter_context(mock.patch.object(audit,'qualified_bindings',return_value={}))
+            patches.enter_context(mock.patch.object(audit,'reconcile',return_value={}))
+            yield plan_path,plan_sha,job
+
+    def test_matching_durable_inventory_passes_real_file_context(self):
+        with self.file_stage() as (plan,sha,job):
+            with audit.review_files(plan,sha,job) as result:
+                self.assertEqual(result['status'],'full60-reconciled-awaiting-runtime-and-publication-review')
+                self.assertTrue(result['file_integrity_verified'])
+
+    def test_missing_or_extra_durable_file_rejected_before_yield(self):
+        for missing in (False,True):
+            with self.subTest(missing=missing),self.file_stage() as (plan,sha,job):
+                if missing:(job/'worker.log').unlink()
+                else:(job/'unregistered').write_bytes(b'extra')
+                with self.assertRaisesRegex(ValueError,'missing or unregistered'):
+                    with audit.review_files(plan,sha,job):self.fail('Invalid inventory yielded')
+
+    def test_late_durable_file_rejected_and_restoration_runs(self):
+        with self.file_stage() as (plan,sha,job):
+            events=[]
+            with self.assertRaisesRegex(ValueError,'Durable artifact inventory changed'):
+                with audit.review_files(plan,sha,job,on_exit_failure=lambda:events.append('restored')):
+                    (job/'unregistered').write_bytes(b'external file')
+            self.assertEqual(events,['restored'])
+            self.assertEqual((job/'unregistered').read_bytes(),b'external file')
 
 
 class Closure(unittest.TestCase):

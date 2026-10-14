@@ -23,7 +23,7 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPORTER = Path(__file__).with_name('scala_export.py')
-EXPORTER_SHA = 'd1b767487ec269d2bbc752cb2e94571d9b1c8f8675a8d3f703d2abe4619fec6c'
+EXPORTER_SHA = '0a23097ff53f3c0ad9aa3b125059ed2d35ae5119f7a55ef545d553e853111114'
 RELEASE = ROOT/'experiments/scala/full60-v1/release-metadata-v1.json'
 RELEASE_SHA = '77e01130f6eca300b4f993a9c8022c446fcb79b9cc2932b7f5eeda468cc726c0'
 TARGETS = ('data/benchmarks.json', 'data/languages.json', 'site/src/languages.mjs')

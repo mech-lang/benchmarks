@@ -1116,5 +1116,26 @@ export const languageMetadata = {
       "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
       "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
     ]
+  },
+  "scala": {
+    "platform": "jvm",
+    "runtime": "Scala 3.10.0 / Eclipse Temurin HotSpot 25.0.4.1+1",
+    "execution": [
+      "jit"
+    ],
+    "typing": "static",
+    "style": [
+      "imperative",
+      "object",
+      "functional"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Scala classes run on HotSpot with tiered compilation and G1. Samples include JVM startup, class loading, runtime compilation, input/output and shutdown. The retained benchmark sources use imperative, object-oriented and functional constructs.",
+    "sources": [
+      "https://docs.scala-lang.org/scala3/book/scala-features.html",
+      "https://docs.scala-lang.org/scala3/book/why-scala-3.html"
+    ]
   }
 };

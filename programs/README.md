@@ -52,6 +52,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Roc](roc/)
 - [Ruby (YJIT)](ruby/)
 - [Rust](rust/)
+- [Scala (JVM)](scala/)
 - [Smalltalk (Pharo)](smalltalk/)
 - [Swift](swift/)
 - [Uiua](uiua/)

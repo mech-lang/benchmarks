@@ -619,7 +619,7 @@ def review_files(plan_path, expected_sha, durable_directory, on_exit_failure=Non
         durable = {}
         job_inventory = {str(job/name) for name in ('owner.lock','request.json','launch.json','worker-started.json',
             'command-started.json','terminal.json','command.stdout','command.stderr','worker.log')}
-        same(inventory(job), job_inventory, 'Durable job contains missing or unregistered artifacts')
+        require(inventory(job) == job_inventory, 'Durable job contains missing or unregistered artifacts')
         for name in ('request', 'launch', 'worker-started', 'command-started', 'terminal'):
             path = job/(name+'.json')
             durable[name] = files.document(str(path), hashlib.sha256(path.read_bytes()).hexdigest())
@@ -662,7 +662,7 @@ def review_files(plan_path, expected_sha, durable_directory, on_exit_failure=Non
             for path, digest in verified_pins:
                 files.verify(path, digest)
             require(inventory(output) == expected_inventory, 'Closed artifact inventory changed during review')
-            same(inventory(job),job_inventory,'Durable artifact inventory changed during review')
+            require(inventory(job) == job_inventory, 'Durable artifact inventory changed during review')
             prerequisite_inventory(plan, verify_files=True)
             verify_leases(leases)
         result.update(status='full60-reconciled-awaiting-runtime-and-publication-review',

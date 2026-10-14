@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "audited_on": "2026-10-14",
-  "scope": "55 measured variants; all classifications explicit.",
+  "scope": "56 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2612,6 +2612,104 @@
         {
           "path": "experiments/kotlin/full90-v2/publication-candidate-v1.json",
           "sha256": "ed03ac08527606717aba7eb37e312e3a5e4afcc6e7e91a6b5d0276844350db71",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
+    },
+    "scala": {
+      "schema": "scala-publication-runtime-metadata-v1",
+      "key": "scala",
+      "family": "scala",
+      "label": "Scala (JVM)",
+      "platform": "jvm",
+      "runtime": "Scala 3.10.0 / Eclipse Temurin HotSpot 25.0.4.1+1",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Scala classes run on HotSpot with tiered compilation and G1. Samples include JVM startup, class loading, runtime compilation, input/output and shutdown. The retained benchmark sources use imperative, object-oriented and functional constructs.",
+      "sources": [
+        "https://docs.scala-lang.org/scala3/book/scala-features.html",
+        "https://docs.scala-lang.org/scala3/book/why-scala-3.html"
+      ],
+      "compiler_version": "3.10.0",
+      "jvm_version": "25.0.4.1+1-LTS",
+      "jdk_implementor": "Eclipse Adoptium",
+      "architecture": "aarch64",
+      "operating_system": "Darwin",
+      "compiler_version_evidence": {
+        "path": "experiments/scala/toolchain-v1/native-v1/scala-version/stdout.bin",
+        "sha256": "8609d682843dd327338c4484e87280afa45d80604f8dae7e0684a1b91bb1149c"
+      },
+      "jdk_release_evidence": {
+        "path": "experiments/scala/full60-v1/retained-jdk-release.txt",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "jdk_release_original": {
+        "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/clojure-comparison/20261012/.build/private-v1/jdk/jdk-25.0.4.1+1/Contents/Home/release",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "compiled_artifact_evidence": {
+        "path": "experiments/scala/compiled-applications-v1/run-v1/report.json",
+        "sha256": "55e266372bf64595430fc83aeb47dd68149075ff53d9d0d8b9627bf21c14f782"
+      },
+      "jvm_flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "memory_policy": "G1 explicitly selected; initial heap 64 MiB, maximum heap 8 GiB. The process RSS limit is separately enforced at 10 GiB.",
+      "execution_scope": "JIT identifies the HotSpot execution mode. An individual main or method can remain interpreted during a single process. No warmup or extra main invocation precedes a measured sample.",
+      "compilation_outside_timer": "Scala source compilation to the retained JVM class artifacts",
+      "compilation_inside_timer": "HotSpot tiered runtime compilation during each fresh JVM process",
+      "runtime_evidence_scope": "Retained compiler version, JDK release and exact classpath identify this toolchain. The exporter must bind the explicit flags, JVM binary and two runtime libraries to each measured command. No additional diagnostic probe inside timed processes is claimed.",
+      "observed_in_each_timed_process": false,
+      "maximum_total_vm_threads_claimed": false,
+      "numeric_gc_defaults_claimed": false,
+      "runtime_publication_metadata_qualified": true,
+      "chart_admission": false,
+      "reviewed_on": "2026-10-14",
+      "runtime_library_evidence": [
+        {
+          "path": "experiments/scala/toolchain-v1/.build/distribution-v1/extracted/scala3-3.10.0-aarch64-apple-darwin/maven2/org/scala-lang/scala3-library_3/3.10.0/scala3-library_3-3.10.0.jar",
+          "sha256": "4daaede24ddfeea082bbed096ba0c492d99e8428632e9fd3c38f82cf7aad4b63"
+        },
+        {
+          "path": "experiments/scala/toolchain-v1/.build/distribution-v1/extracted/scala3-3.10.0-aarch64-apple-darwin/maven2/org/scala-lang/scala-library/3.10.0/scala-library-3.10.0.jar",
+          "sha256": "b47befb29e02bbc08a10bbd387b35cf80ff9bf04fda8fdf3dda6c8ad6895f325"
+        }
+      ],
+      "runtime_policy": "Scala 3.10.0 / Eclipse Temurin HotSpot 25.0.4.1+1; -XX:ActiveProcessorCount=8 -Xms64m -Xmx8g -XX:+UseG1GC",
+      "regex_support": "Retained JVM regular-expression library",
+      "evidence_scope": "Retained compiler version, JDK release and exact classpath identify this toolchain. The exporter must bind the explicit flags, JVM binary and two runtime libraries to each measured command. No additional diagnostic probe inside timed processes is claimed.",
+      "runtime_gc_configuration_observed": false,
+      "gc_numeric_defaults_claimed": false,
+      "qualification_evidence": {
+        "path": "experiments/scala/single-entry-work-v1/actual-instruction-review-v1.json",
+        "sha256": "32540d68a39aaeac3676ea5573cb48d7df2dbcdaea80e865ab30e7ef7c6c0cfc"
+      },
+      "metadata_evidence": {
+        "path": "experiments/scala/full60-v1/runtime-metadata-v1.json",
+        "sha256": "a18c3f2e2ae724052b2d2ce7fbdb004fb7f03c21d4212abb41665e6d94dfe3ab"
+      },
+      "release_year": 2004,
+      "release_name": "Scala first public release",
+      "release_source": "https://www.scala-lang.org/blog/2014/01/22/10-years-of-scala.html",
+      "release_note": "Martin Odersky dates the first Scala release to January 20, 2004.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/scala/full60-v1/publication/candidate-v1.json",
+          "sha256": "5ab423516858a86fa96f07e02b5e1943cdc62ed8cb967e631462fd6f426af9a0",
           "status": "independently-reproduced-publication-candidate"
         }
       ]

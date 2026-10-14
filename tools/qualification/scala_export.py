@@ -19,7 +19,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[2]
 RECONCILER = Path(__file__).with_name('scala_reconcile.py')
 # Independently reviewed source; the file phase binds this and both primitives.
-RECONCILER_SHA = '7e2a4770a64cc3dc8c1f147f0f9b1a4f1813d14134fc90fb9685f6939aeda823'
+RECONCILER_SHA = '6c20ecbb7fa188885d6f41e7d865b52a2ee6083d0055e9c3480f5d2e887dcc6f'
 
 
 def load_reconciler():
