@@ -37,6 +37,8 @@ def no_core():
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--disable-codegen-library', action='store_true',
+                        help='Use the official JULIA_LOAD_CODEGEN_LIB=0 loader control')
     args = parser.parse_args()
     receipt = ROOT / 'archive/languages/julia-aot/20261012/jobs/official-static-io-safe-link-v3/link-result.json'
     reference = ROOT / 'archive/workloads/nbody/results/apple-m3-v04-cranelift-aot-50m.json'
@@ -65,6 +67,8 @@ def main():
                        'JULIA_NUM_THREADS': '8', 'OMP_NUM_THREADS': '1',
                        'OPENBLAS_NUM_THREADS': '1', 'VECLIB_MAXIMUM_THREADS': '1',
                        'DYLD_PRINT_LIBRARIES': '1'}
+        if args.disable_codegen_library:
+            environment['JULIA_LOAD_CODEGEN_LIB'] = '0'
         command = [str(binary), '1000']
         report = {'status': 'running', 'started_at': datetime.datetime.now(datetime.timezone.utc).isoformat(),
                   'command': command, 'cwd': str(binary.parent), 'environment': environment,
@@ -72,6 +76,7 @@ def main():
                   'reference': str(reference.relative_to(ROOT)), 'reference_sha256': sha(reference),
                   'expected_stdout': expected, 'shared_lock': str(LOCK),
                   'common_mutex_inode': os.fstat(lock.fileno()).st_ino,
+                  'codegen_library_disabled_by_environment': args.disable_codegen_library,
                   'benchmark_samples': 0, 'runtime_aot_proven': False, 'chart_admission': False,
                   'observer': 'DYLD_PRINT_LIBRARIES; loaded-image observation only'}
         save(args.output/'report.json', report)
@@ -102,7 +107,9 @@ def main():
                     images.append(match[1])
         image_files = {path: sha(path) for path in images if Path(path).is_file()}
         unchanged = sha(binary) == report['binary_sha256']
-        passed = process.returncode == 0 and stdout.decode('utf-8', errors='replace') == expected and not timed_out and not remaining and unchanged
+        codegen_observed = any('libjulia-codegen' in path for path in images)
+        loader_control_matches = not args.disable_codegen_library or (bool(images) and not codegen_observed)
+        passed = process.returncode == 0 and stdout.decode('utf-8', errors='replace') == expected and not timed_out and not remaining and unchanged and loader_control_matches
         report.update(status='bounded-output-validated' if passed else 'bounded-output-failed',
                       exit_status=process.returncode, timeout=timed_out,
                       diagnostic_elapsed_seconds=time.monotonic()-started,
@@ -110,7 +117,8 @@ def main():
                       output_matches_reference=stdout.decode('utf-8', errors='replace') == expected,
                       binary_unchanged=unchanged, remaining_process_group=remaining,
                       loaded_images=images, loaded_image_file_hashes=image_files,
-                      codegen_image_observed=any('libjulia-codegen' in path for path in images),
+                      codegen_image_observed=codegen_observed,
+                      loader_control_matches=loader_control_matches,
                       actual_workload_executions=1)
         save(args.output/'report.json', report)
         print(json.dumps({key: report[key] for key in ['status', 'exit_status', 'output_matches_reference', 'codegen_image_observed', 'runtime_aot_proven', 'benchmark_samples']}))

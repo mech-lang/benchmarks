@@ -1,0 +1,236 @@
+{
+  "schema": "independent-Prolog-owner-review-v1",
+  "review_identity": "Independent qualification reviewer, 2026-10-14",
+  "reviewed_scope": {
+    "original_sources": 22,
+    "distinct_source_bytes": 12,
+    "compiler_bound_references": 44,
+    "profiles": 20,
+    "source_fingerprints_from_retained_replay": true,
+    "owner_grammar": "canonical-source-units-20261012-approved-rule-v2",
+    "no_new_native_observations": true,
+    "timings_qualified": false
+  },
+  "source_fingerprints": {
+    "00b81975683549caaff475bbb7bdc1fc649ef143a852298259605c408f99f625": {
+      "canonical_loc": 68,
+      "physical_loc": 52,
+      "source_role": "main-source"
+    },
+    "53ca5622a6e6195a3ea9d5ce7ab3aa593763ddba9bc5e41ac7c537db27d4dfa6": {
+      "canonical_loc": 126,
+      "physical_loc": 100,
+      "source_role": "main-source"
+    },
+    "b5d0670691272c9305fb71b825848bad4bbb8bac8be1e00d1d0b32a7c3493538": {
+      "canonical_loc": 87,
+      "physical_loc": 64,
+      "source_role": "main-source"
+    },
+    "ba1fdb0abf8ab0be068462bc58946ec0e2668c67db2664e4cf4dfe0412f386d5": {
+      "canonical_loc": 164,
+      "physical_loc": 109,
+      "source_role": "main-source"
+    },
+    "97e78601578af9c54a73bdc1cfed6ae6a36c90e8438fbc849a935d7f657fe09d": {
+      "canonical_loc": 67,
+      "physical_loc": 42,
+      "source_role": "main-source"
+    },
+    "d3e082e34d3fad47759021c921b016563f93a1aaec9d65220b34494ac31c3266": {
+      "canonical_loc": 188,
+      "physical_loc": 164,
+      "source_role": "main-source"
+    },
+    "70a0f6a01503c6d32e419d783c90676fdf1dbd520a5579b98eec0d8165d05f88": {
+      "canonical_loc": 62,
+      "physical_loc": 47,
+      "source_role": "main-source"
+    },
+    "912c4b20515cc8ad418697b1c8c1347b8db29b9efcc49fc162eb82920c2699b1": {
+      "canonical_loc": 49,
+      "physical_loc": 38,
+      "source_role": "main-source"
+    },
+    "2460ba65f9231222000980236c6c4ca7b101f6fef3313aa37f125dc171bc59fc": {
+      "canonical_loc": 76,
+      "physical_loc": 51,
+      "source_role": "main-source"
+    },
+    "1d868f9e772820b1b2e7a3c68e82f142b6704357f6fa1249ef3e828e78c02fda": {
+      "canonical_loc": 96,
+      "physical_loc": 67,
+      "source_role": "main-source"
+    },
+    "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3": {
+      "canonical_loc": 39,
+      "physical_loc": 24,
+      "source_role": "counted-authored-helper"
+    },
+    "efb32920c4c8c42ff5c1d6d3a521b9c2a0fc93d06a6f1e994e00c80d39f61b19": {
+      "canonical_loc": 34,
+      "physical_loc": 20,
+      "source_role": "counted-authored-helper"
+    }
+  },
+  "bundle_totals": {
+    "binarytrees": {
+      "canonical_loc": 107,
+      "physical_loc": 76
+    },
+    "fannkuchredux": {
+      "canonical_loc": 165,
+      "physical_loc": 124
+    },
+    "fasta": {
+      "canonical_loc": 126,
+      "physical_loc": 88
+    },
+    "knucleotide": {
+      "canonical_loc": 237,
+      "physical_loc": 153
+    },
+    "mandelbrot": {
+      "canonical_loc": 106,
+      "physical_loc": 66
+    },
+    "nbody": {
+      "canonical_loc": 227,
+      "physical_loc": 188
+    },
+    "pidigits": {
+      "canonical_loc": 101,
+      "physical_loc": 71
+    },
+    "regexredux": {
+      "canonical_loc": 88,
+      "physical_loc": 62
+    },
+    "revcomp": {
+      "canonical_loc": 149,
+      "physical_loc": 95
+    },
+    "spectralnorm": {
+      "canonical_loc": 135,
+      "physical_loc": 91
+    }
+  },
+  "owner_meaning": {
+    "directives": "Module and import directives are full source owners. Initialization counts the directive header once and follows both explicit nested meta-call bodies and written closes.",
+    "controls": "Conjunction commas are structural; each goal is a separate owner. If/then merges its first simple condition anchor with the header; branch headers and actual control/clause closes remain owners.",
+    "meta_flow": "clbg_io:run/1 declares meta mode 0. run_checked/1 forwards its written formal to call/1; catch/3 traverses goal and recovery. Formal references add no independent units. No dynamic construction occurs.",
+    "callback": "Selected pcre re_foldl/6 appends three arguments to the source-written count_match/3 callback. The callback reference adds zero units; its written definition and body remain counted.",
+    "literal_continuations": "FASTA IUB/Homo rows and regex pattern/replacement/options rows remain literal-data continuations. Formal/call argument and arithmetic wrapping gains no extra unit.",
+    "whole_helpers": "Whole clbg_io.pl counts in twenty profiles; whole clbg_records.pl additionally counts in all four knucleotide/revcomp profiles. Vendor sources and generated WAM/QLF are excluded.",
+    "alias_review": "Both original source forms are byte-identical for each workload. Both complete WAM dumps are identical after removing source-path records and clause addresses only."
+  },
+  "work_review": {
+    "binarytrees": {
+      "assessment": "Fresh node/2 compounds are created before the depth test, including leaves. checks allocates a fresh variable each iteration; main retains its root across depths and traverses it afterwards. Generic SWI PL_unify_functor allocates 1+arity global cells.",
+      "wam_required_fragments": [
+        "6 i_call(functor/3)",
+        "2 b_firstvar(4)",
+        "28 i_call(depths/2)",
+        "34 i_call(check/2)"
+      ]
+    },
+    "fannkuchredux": {
+      "assessment": "Every factorial-rank permutation receives a full work copy and prefix-flip count; next_permutation preserves factorial carry and parity checksum.",
+      "wam_required_fragments": [
+        "15 i_call(copy_permutation/4)",
+        "23 i_call(flips/3)",
+        "88 i_call(next_permutation/4)",
+        "118 i_depart(permutations/9)"
+      ]
+    },
+    "fasta": {
+      "assessment": "Source constructs both CDFs, advances every LCG sample with exact constants, emits 2N/3N/5N bases in 60-byte rows and carries the seed from TWO to THREE.",
+      "wam_required_fragments": [
+        "a_integer(139968)",
+        "a_integer(29573)",
+        "a_integer(3877)",
+        "34 i_call(select/3)",
+        "62 b_smallint(42)"
+      ]
+    },
+    "knucleotide": {
+      "assessment": "Seven separately growing tables cover widths 1,2,3,4,6,12,18 and every overlapping window. Map probes observe roots/capacity/final entries; full window coverage follows the original source and WAM loop, not a per-window trace.",
+      "wam_required_fragments": [
+        "11 i_call(ht_new/1)",
+        "41 i_call(windows/7)",
+        "57 i_call(ht_get/3)",
+        "67 a_add_fc(11,10,1)",
+        "77 i_call(ht_put/3)",
+        "85 a_add_fc(12,0,1)"
+      ]
+    },
+    "mandelbrot": {
+      "assessment": "Each real pixel executes up to 50 floating recurrences and escape comparisons. Eight-pixel packing only pads missing tail pixels.",
+      "wam_required_fragments": [
+        "15 b_smallint(50)",
+        "26 i_depart(escape/6)",
+        "99 i_depart(escape/6)"
+      ]
+    },
+    "nbody": {
+      "assessment": "Five canonical bodies, all ten unordered pair forces per step, all three velocity components and all positions remain source-written. Energy traversals bracket all N steps.",
+      "wam_required_fragments": [
+        "5 i_call(forces/3)",
+        "11 i_call(positions/3)",
+        "51 i_call(velocity/7)",
+        "65 i_call(velocity/7)",
+        "79 i_depart(velocity/7)"
+      ]
+    },
+    "pidigits": {
+      "assessment": "The source forms 3Q+R and 4Q+R and performs two separate unbounded integer divisions before comparing digits. Both recurrence branches and ten-column output remain explicit.",
+      "wam_required_fragments": [
+        "28 a_func2((div)/2)",
+        "37 a_func2((div)/2)",
+        "49 a_eq",
+        "147 i_depart(digits/7)",
+        "227 i_depart(digits/7)"
+      ]
+    },
+    "regexredux": {
+      "assessment": "Nine case-sensitive folds bind count_match/3 as the appended-arity callback. Five sequential replacement passes remain source-written. PCRE is a disclosed generic library and jit(false) is retained.",
+      "wam_required_fragments": [
+        "4 b_atom(count_match)",
+        "26 i_call(re_foldl/6)",
+        "32 i_call(re_replace/5)",
+        "112 i_call(replacements/3)"
+      ]
+    },
+    "revcomp": {
+      "assessment": "All input records and bases pass through the complete upper/lower IUPAC mapping, reverse index decrement and ordered 60-byte/tail output. Both whole helpers count.",
+      "wam_required_fragments": [
+        "16 i_call(complement/2)",
+        "18 a_add_fc(8,1,-1)",
+        "47 i_depart(reverse_codes/5)",
+        "3 i_call(line/1)"
+      ]
+    },
+    "spectralnorm": {
+      "assessment": "Dense source-written coefficient/product loops perform ten rounds with two ATA applications per round, followed by both dot sums; no matrix kernel substitutes for loops.",
+      "wam_required_fragments": [
+        "6 i_call(apply_ata/3)",
+        "14 i_call(apply_ata/3)",
+        "13 i_call(coefficient/3)",
+        "21 i_call(coefficient/3)",
+        "47 a_add_fc(12,0,1)"
+      ]
+    }
+  },
+  "limits": [
+    "This review reuses actual 156 bounded outputs and 30 independent work probes.",
+    "Full-size workload output and fresh-process timing remain pending.",
+    "Source-WAM allocation review does not claim a new allocator measurement."
+  ],
+  "original_replay_closure_pins": {
+    "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/prolog-comparison/20261013/source-counts/original22-replay-v1/terminal.json": "1f59886cf17ea7ffc2d8ef900a37c7dd4ff2f77dd27a85a34a7cbe809b523091",
+    "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/continuation/owned-jobs/prolog-original22-owner-replay-v1/terminal.json": "cfacff5314fe89ef71a422aa66358221205af649ddbf9743ab9fbba6a0a56f44",
+    "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/continuation/owned-jobs/prolog-original22-owner-replay-v1/request.json": "40e87e4b62b5f3d7823719693c2145b77543f2ea433f60725f62c70ea6cb7292",
+    "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/continuation/owned-jobs/prolog-original22-owner-replay-v1/command-started.json": "bde2497e0645f91691381fe17f4a8663355d7cf120be429a01189e770ac67dac",
+    "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/continuation/owned-jobs/prolog-original22-owner-replay-v1/worker-started.json": "4cc9fc9d2b27ac69fcb9689c530784e3172944b4cf43160a6b5019185b95c075"
+  }
+}
