@@ -1,10 +1,16 @@
 # Kotlin qualification
 
-The retained cohort contains twenty source forms across ten workloads. Each form
+The cohort contains twenty compiled source forms across ten workloads. Each form
 counts its Kotlin main and helper input. Three independent compilations and two
 complete `javap -p -c -s -v` owner captures succeeded before archive relocation
-interrupted prerequisite verification. Their receipts and generated classes are
-reused without recompilation. The closed generic JVM probe is also reused.
+interrupted prerequisite verification. `additive-compile-owners-v1/outcome.json`
+records the successful remaining seventeen compilations and eighteen captures.
+The first successful builds and captures were reused without repetition.
+
+`additive-compile-owners-v1/retained-artifacts/` preserves all 55 newly generated
+class and module files. `artifact-storage.json` maps their original execution
+paths to repository copies with identical SHA-256 hashes. The execution paths
+and original receipts remain unchanged.
 
 `tools/qualification/kotlin_resume.py` verifies the retained dependency closure,
 source bindings, command receipts, and exact generated class sets. It resolves

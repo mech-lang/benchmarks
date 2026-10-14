@@ -409,6 +409,8 @@ def main():
         try:
             e.bind(str(Path(__file__).resolve()), sha(__file__))
             e.bind(str(config.resolve()), sha(config))
+            mapping = (args.root/'migration/reorganization-paths.tsv').resolve()
+            e.bind(str(mapping), sha(mapping))
             saved, rows, retained = preflight(e)
             require(str(Path(sys.executable).resolve()) in e.pins, 'Qualification interpreter is outside the retained closure')
             save(args.output/'plan.json', dict(retained_compiles=COMPILED, retained_owner_dumps=DECODED,
