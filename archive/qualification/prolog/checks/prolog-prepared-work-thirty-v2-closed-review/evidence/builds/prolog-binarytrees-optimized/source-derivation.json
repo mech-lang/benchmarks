@@ -1,0 +1,28 @@
+{
+  "original_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-binarytrees-optimized/input/sources/binarytrees/optimized.pl",
+  "original_sha256": "00b81975683549caaff475bbb7bdc1fc649ef143a852298259605c408f99f625",
+  "instrumented_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-binarytrees-optimized/input/sources/binarytrees/optimized.pl",
+  "instrumented_sha256": "d745c64e3ea066bd061b83bfe8b4fcb91ca8848b5b615636a331f9c1781372c9",
+  "reverse_projection_exact": true,
+  "exact_insertions": [
+    {
+      "before": "    make(Depth, Tree),\n    check(Tree, Value),",
+      "after": "    clbg_observer:temporary_begin(Iterations, Depth),\n    make(Depth, Tree),\n    check(Tree, Value),\n    clbg_observer:temporary_checked(Iterations, Depth, Tree, Value),"
+    },
+    {
+      "before": "    check(Tree, Count),\n    format('stretch tree",
+      "after": "    check(Tree, Count),\n    clbg_observer:stretch_checked(Depth, Tree, Count),\n    format('stretch tree"
+    },
+    {
+      "before": "    make(Maximum, LongLived),\n    depths(4, Maximum),",
+      "after": "    make(Maximum, LongLived),\n    clbg_observer:retain(Maximum, LongLived),\n    depths(4, Maximum),"
+    },
+    {
+      "before": "    check(LongLived, Count),\n    format('long lived",
+      "after": "    check(LongLived, Count),\n    clbg_observer:retained_checked(Maximum, LongLived, Count),\n    format('long lived"
+    }
+  ],
+  "observer": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-binarytrees-optimized/input/support/clbg_observer.pl",
+  "observer_sha256": "b013882851c4d351c74b006cb83b22d55110782acf0bf7ae65949cdd1744f06b",
+  "original_scored_sources_unchanged": true
+}

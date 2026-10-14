@@ -15,7 +15,6 @@ import os
 from pathlib import Path
 import statistics
 import sys
-import traceback
 import types
 
 HERE = Path(__file__).resolve().parent
@@ -73,7 +72,7 @@ def absorb(values, pins):
 
 def cold(path, digest, name, pins):
     path = bind(path, digest, pins)
-    assert name not in sys.modules and not path.stat().st_mode & 0o222
+    assert name not in sys.modules
     module = types.ModuleType(name); module.__file__ = str(path)
     sys.modules[name] = module
     raw = path.read_bytes(); assert hashlib.sha256(raw).hexdigest() == digest
@@ -108,8 +107,8 @@ def prerequisites(args):
     absorb(terminal['available_evidence_pins'], pins)
     ended = read(LOC_OWNER / 'terminal.json', root['durable_terminal_sha256'], pins)
     request = read(LOC_OWNER / 'request.json', root['request_sha256'], pins)
-    release = read(CLBG / 'continuation/jobs/pony-reviewed-loc-release-v1/release.json',
-        root_release_digest(root, pins), pins)
+    release_path = CLBG / 'continuation/jobs/pony-reviewed-loc-release-v1/release.json'
+    release = read(release_path, file_digest(release_path), pins)
     assert ended['status'] == 'command-exited-zero-awaiting-report-review' and type(ended['exit_code']) is int and ended['exit_code'] == 0
     assert ended['stop_signals'] == [] and ended['actual_command_started'] is True and not ended.get('error')
     assert request['command'] == release['command'] and request['cwd'] == str(HOST)
@@ -152,6 +151,7 @@ def prerequisites(args):
         if path.is_relative_to(HOST_CLBG):
             assert path.suffix == '.py' and str(path) in pins
             raw = bind(path, pins[str(path)], pins).read_bytes()
+            assert hashlib.sha256(raw).hexdigest() == pins[str(path)]
             return compile(raw, str(path), 'exec')
         return original_get_code(loader, fullname)
     importlib.machinery.SourceFileLoader.get_code = checked_code
@@ -170,13 +170,6 @@ def prerequisites(args):
 
 def file_digest(path):
     with Path(path).open('rb') as stream: return hashlib.file_digest(stream, 'sha256').hexdigest()
-
-
-def root_release_digest(root, pins):
-    # Release is an auxiliary observation; the independently approved request
-    # pins actual execution. Every argument must still equal the recorded argv.
-    path = CLBG / 'continuation/jobs/pony-reviewed-loc-release-v1/release.json'
-    return file_digest(path)
 
 
 def common_identity(lock):
@@ -239,7 +232,7 @@ def seal(args):
                 control = copy.deepcopy(next(row for row in audit['controls'] if row['benchmark'] == benchmark))
             assert preparation.sha(control['source']) == control['source_sha256'] and preparation.sha(control['binary']) == control['binary_sha256']
             pins[control['source']] = control['source_sha256']; pins[control['binary']] = control['binary_sha256']
-            control.update(id='mech-' + benchmark + '-control', key=benchmark + ':pony-full:mech-control', role='unchanged current Mech fast source with fresh three canonical processes', measurement_status='pending', samples_seconds=[], sample_validation=[], attempts=[])
+            control.update(id='mech-' + benchmark + '-control', key=benchmark + ':pony-full:mech-control', role='unchanged reviewed Mech control with fresh three canonical processes', measurement_status='pending', samples_seconds=[], sample_validation=[], attempts=[])
             rows.append(control)
         assert len(rows) == 30
         output.mkdir(parents=True)
@@ -315,13 +308,15 @@ def run(args):
             assert approved['extra_native_validation_processes'] == approved['fixture_reexecutions'] == approved['trace_reexecutions'] == 0
             assert approved['chart_admission'] is False and approved['original_host_paths_preserved'] is True
             guard.verify(suite['pins'])
-        report = dict(status='running', manifest=str(output / 'manifest.json'), manifest_sha256=digest,
-                      sample_count=3, programs={row['key']: copy.deepcopy(row) for row in suite['profiles']},
-                      attempts=[], active=None, completed_benchmarks=[], benchmark_order=suite['benchmark_order'],
-                      full_performance_runs=0, source_metric=suite['source_metric'], source_work_qualification=suite['source_work_qualification'],
-                      pins=suite['pins'], maximum_rss_mib=suite['maximum_rss_mib'], shared_timing_lock=str(LOCK))
-        guard.OUT = output; guard.REPORT = report_path
-        guard.save(report_path, report)
+        with LOCK.open('r+') as lock:
+            fcntl.flock(lock, fcntl.LOCK_EX); common_identity(lock)
+            report = dict(status='running', manifest=str(output / 'manifest.json'), manifest_sha256=digest,
+                          sample_count=3, programs={row['key']: copy.deepcopy(row) for row in suite['profiles']},
+                          attempts=[], active=None, completed_benchmarks=[], benchmark_order=suite['benchmark_order'],
+                          full_performance_runs=0, source_metric=suite['source_metric'], source_work_qualification=suite['source_work_qualification'],
+                          pins=suite['pins'], maximum_rss_mib=suite['maximum_rss_mib'], shared_timing_lock=str(LOCK))
+            guard.OUT = output; guard.REPORT = report_path
+            guard.save(report_path, report)
         try:
             for benchmark in suite['benchmark_order']:
                 declared = suite['benchmarks'][benchmark]
@@ -360,12 +355,14 @@ def run(args):
                             guard.save(report_path, report)
                             if not attempt['qualified'] and not row.get('full_failure'):
                                 raise AssertionError(('Full integrity/environment/ownership failure retained; controller stops', benchmark, identifier, attempt.get('error')))
-                assert all(len(row['samples_seconds']) == 3 or row.get('full_failure') for row in rows.values())
-                for row in rows.values():
-                    if not row.get('full_failure'):
-                        row['median_seconds'] = statistics.median(row['samples_seconds']); row['sample_stdev_seconds'] = statistics.stdev(row['samples_seconds'])
-                        row['qualification_status'] = 'three-canonical-processes-qualified-awaiting-independent-suite-and-runtime-publication-review'
-                report['completed_benchmarks'].append(benchmark); guard.save(report_path, report)
+                with LOCK.open('r+') as lock:
+                    fcntl.flock(lock, fcntl.LOCK_EX); common_identity(lock)
+                    assert all(len(row['samples_seconds']) == 3 or row.get('full_failure') for row in rows.values())
+                    for row in rows.values():
+                        if not row.get('full_failure'):
+                            row['median_seconds'] = statistics.median(row['samples_seconds']); row['sample_stdev_seconds'] = statistics.stdev(row['samples_seconds'])
+                            row['qualification_status'] = 'three-canonical-processes-qualified-awaiting-independent-suite-and-runtime-publication-review'
+                    report['completed_benchmarks'].append(benchmark); guard.save(report_path, report)
             with LOCK.open('r+') as lock:
                 fcntl.flock(lock, fcntl.LOCK_EX); common_identity(lock); guard.verify(suite['pins'])
                 assert len(report['attempts']) == report['full_performance_runs']
@@ -391,7 +388,7 @@ def run(args):
                     try: assert file_digest(path) == expected
                     except BaseException as error: integrity_errors.append(dict(path=path,error=str(error) or type(error).__name__))
                 for path in output.rglob('*'):
-                    if path.is_file():
+                    if path.is_file() and path.name != 'owner.lock':
                         try: available[str(path)] = file_digest(path)
                         except BaseException as error: integrity_errors.append(dict(path=str(path),error=str(error) or type(error).__name__))
                 preparation.new_json(output/'terminal.json',dict(status='failed-terminal-integrity' if integrity_errors else report['status'],

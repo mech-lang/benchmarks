@@ -1,0 +1,24 @@
+{
+  "original_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-knucleotide-optimized/input/sources/knucleotide/optimized.pl",
+  "original_sha256": "ba1fdb0abf8ab0be068462bc58946ec0e2668c67db2664e4cf4dfe0412f386d5",
+  "instrumented_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-knucleotide-optimized/input/sources/knucleotide/optimized.pl",
+  "instrumented_sha256": "c74b1b4f7739bcb7bb9c8b970aada3946709c793801cd29628b662f09e35b65a",
+  "reverse_projection_exact": true,
+  "exact_insertions": [
+    {
+      "before": "    ht_new(Table),\n    Mask is",
+      "after": "    ht_new(Table),\n    clbg_observer:map_begin(Width, Table),\n    Mask is"
+    },
+    {
+      "before": "    windows(1, Length, Width, Mask, Sequence, 0, Table),\n    all_maps",
+      "after": "    windows(1, Length, Width, Mask, Sequence, 0, Table),\n    clbg_observer:map_completed(Width, Table, Sequence, Length),\n    all_maps"
+    },
+    {
+      "before": "    all_maps([1,2,3,4,6,12,18], Sequence, Length, Tables),\n    Tables =",
+      "after": "    all_maps([1,2,3,4,6,12,18], Sequence, Length, Tables),\n    clbg_observer:maps_returned(Tables),\n    Tables ="
+    }
+  ],
+  "observer": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-knucleotide-optimized/input/support/clbg_observer.pl",
+  "observer_sha256": "b013882851c4d351c74b006cb83b22d55110782acf0bf7ae65949cdd1744f06b",
+  "original_scored_sources_unchanged": true
+}

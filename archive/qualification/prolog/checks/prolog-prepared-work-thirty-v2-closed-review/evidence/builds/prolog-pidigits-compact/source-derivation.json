@@ -1,0 +1,20 @@
+{
+  "original_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-pidigits-compact/input/sources/pidigits/compact.pl",
+  "original_sha256": "70a0f6a01503c6d32e419d783c90676fdf1dbd520a5579b98eec0d8165d05f88",
+  "instrumented_main": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-pidigits-compact/input/sources/pidigits/compact.pl",
+  "instrumented_sha256": "2f99fc4060f04e13a915c143e3c6540e22e05c002c6a3a41b1e3cc548b21e4ce",
+  "reverse_projection_exact": true,
+  "exact_insertions": [
+    {
+      "before": "    Digit4 is Numerator4 div T,\n    (   Digit3 =:= Digit4",
+      "after": "    Digit4 is Numerator4 div T,\n    clbg_observer:pi_candidate(Count, Q, R, T, K, Numerator3, Numerator4, Digit3, Digit4),\n    (   Digit3 =:= Digit4"
+    },
+    {
+      "before": "    current_prolog_flag(bounded, false),\n    digits(N, 0, 0, 1, 0, 1, 1).",
+      "after": "    current_prolog_flag(bounded, false),\n    clbg_observer:pi_begin(N),\n    digits(N, 0, 0, 1, 0, 1, 1),\n    clbg_observer:pi_finished(N)."
+    }
+  ],
+  "observer": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/work-qualification/prepared-work-v2-probes-v1/builds/prolog-pidigits-compact/input/support/clbg_observer.pl",
+  "observer_sha256": "b013882851c4d351c74b006cb83b22d55110782acf0bf7ae65949cdd1744f06b",
+  "original_scored_sources_unchanged": true
+}
