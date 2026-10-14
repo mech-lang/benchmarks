@@ -64,17 +64,20 @@ export function globalStatistics(entries){
 }
 // Reuse the chart's coordinate median, with sample SD in the same log2 units
 // as its covariance. Each current eligible execution entry has one vote.
-export function medianRankings(entries){
+export function medianRankings(entries,{referenceLanguage=null}={}){
   const eligible=entries.filter(entry=>[entry.fast?.y,entry.small?.x].every(value=>Number.isFinite(value)&&value>0));
   const metric=field=>{
     const values=eligible.map(entry=>field==='speed'?entry.fast.y:entry.small.x),n=values.length;
-    if(!n)return {n:0,median:null,log_mean:null,log_sample_sd:0,max_abs_sigma:0,entries:[],ties:[],bands:[]};
+    if(!n)return {n:0,median:null,reference:null,reference_language:referenceLanguage,log_mean:null,log_sample_sd:0,max_abs_sigma:0,entries:[],ties:[],bands:[]};
     const midpoint=median(values),logs=values.map(Math.log2),mean=logs.reduce((sum,value)=>sum+value,0)/n;
     const sd=n<2?0:Math.sqrt(logs.reduce((sum,value)=>sum+(value-mean)**2,0)/(n-1));
+    const reference=referenceLanguage===null?midpoint:values[eligible.findIndex(entry=>entry.language.key===referenceLanguage)]??null;
+    // A filtered or unmeasured target cannot silently become a global-median view.
+    if(reference===null)return {n,median:midpoint,reference,reference_language:referenceLanguage,log_mean:mean,log_sample_sd:sd,max_abs_sigma:0,entries:[],ties:[],bands:[]};
     const rows=eligible.map((entry,index)=>{
-      const value=values[index],tie=value===midpoint,z=tie||sd===0?0:(logs[index]-Math.log2(midpoint))/sd;
-      return {entry,value,ratio_to_median:value/midpoint,sigma_distance:z,
-        direction:tie?'tie':value<midpoint?'below':'above',sigma_band:tie?0:Math.max(1,Math.ceil(Math.abs(z)))};
+      const value=values[index],tie=value===reference,z=tie||sd===0?0:(logs[index]-Math.log2(reference))/sd;
+      return {entry,value,ratio_to_median:value/midpoint,ratio_to_reference:value/reference,sigma_distance:z,
+        direction:tie?'tie':value<reference?'below':'above',sigma_band:tie?0:Math.max(1,Math.ceil(Math.abs(z)))};
     });
     const strongest=(a,b)=>Math.abs(b.sigma_distance)-Math.abs(a.sigma_distance)||
       (a.direction==='below'?a.value-b.value:b.value-a.value)||a.entry.language.key.localeCompare(b.entry.language.key);
@@ -83,7 +86,7 @@ export function medianRankings(entries){
     const bands=Array.from({length:Math.max(1,Math.ceil(max))},(_,index)=>({lower_sigma:index,upper_sigma:index+1,
       below:rows.filter(row=>row.direction==='below'&&row.sigma_band===index+1).sort(strongest),
       above:rows.filter(row=>row.direction==='above'&&row.sigma_band===index+1).sort(strongest)}));
-    return {n,median:midpoint,log_mean:mean,log_sample_sd:sd,max_abs_sigma:max,entries:rows,ties,bands};
+    return {n,median:midpoint,reference,reference_language:referenceLanguage,log_mean:mean,log_sample_sd:sd,max_abs_sigma:max,entries:rows,ties,bands};
   };
   return {speed:metric('speed'),loc:metric('loc')};
 }

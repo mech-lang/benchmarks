@@ -434,11 +434,19 @@ function darkColor(hex){
   return hex;
 }
 function allSelection(){const enabled=effectiveLanguages();return {benchmarks:state.benchmarks,languages:state.view==='mech'?new Set(mechKeys().filter(key=>enabled.has(key))):enabled,disabled:state.disabled};}
+function currentRankings(){
+  return medianRankings(currentEntries(),{referenceLanguage:languageOverviewVisible()?state.languageFocus.variant:null});
+}
 function renderMedianRankings(){
   const active=state.view==='rankings'||languageOverviewVisible(),panel=$('#median-rankings');panel.hidden=!active;$('.chart-card').hidden=state.view==='rankings';
   if(!active)return;
-  const rankings=medianRankings(currentEntries()),count=rankings.speed.n;
+  const rankings=currentRankings(),count=rankings.speed.entries.length,reference=rankings.speed.reference_language;
+  const origin=reference===null?'the ratio-coordinate median':shortName(reference);
   $('#median-rankings-summary').textContent=`${count} variant${count===1?'':'s'} · ${state.benchmarks.size} benchmarks · ${state.releaseYearStart}–${shownReleaseYear()}`;
+  $('#ranking-origin-note').textContent=`Zero is ${origin}.`;
+  $('#median-rankings-empty').textContent=reference!==null&&rankings.speed.reference===null?
+    `${shortName(reference)} has no eligible measured coordinates in this selection. Adjust the year window, benchmarks, language filters or disabled programs.`:
+    'No eligible measured comparisons in this selection. Adjust the year window, benchmarks, language filters or disabled programs.';
   $('#median-rankings-empty').hidden=count!==0;$('#median-ranking-cards').hidden=count===0;
   if(!count){$('#median-ranking-cards').replaceChildren();return;}
   renderRankingCharts({container:$('#median-ranking-cards'),rankings,labelFor:shortName,colorFor:displayColor,onOpenLanguage:showLanguageOverview,locTitle:state.locMetric==='formatted'?'Formatted LOC':'Canonical LOC'});
@@ -1111,7 +1119,7 @@ async function start(){
   window.benchmarkExplorer={getSelection:()=>({benchmarks:[...state.benchmarks],languages:[...effectiveLanguages()],selectedLanguages:[...state.languages],traits:Object.fromEntries(traitDimensions.map(({key})=>[key,[...state.traits[key]]])),releaseYearStart:state.releaseYearStart,releaseYear:state.releaseYear,shownReleaseYear:shownReleaseYear(),playbackYear:state.playbackYear,ellipses:[...state.ellipses],disabled:[...state.disabled],view:state.view,locMetric:state.locMetric,languageFocus:state.languageFocus?{keys:[...state.languageFocus.keys],program:state.languageFocus.program,comparison:state.languageFocus.comparison}:null,samples:samplesVisible(),sampleMode:state.sampleMode,medianMode:state.medianMode,densityMode:state.densityMode,focusMeans:state.focusMeans,global:state.global,playing:state.playing}),
     getDensity:currentDensityField,
     setLayerModes:({samples=state.sampleMode,medians=state.medianMode,density=state.densityMode}={})=>{for(const mode of [samples,medians,density])layerPresentation(mode);Object.assign(state,{sampleMode:samples,medianMode:medians,densityMode:density});update();},
-    getMedianRankings:()=>medianRankings(currentEntries()),
+    getMedianRankings:currentRankings,
     getGlobalStatistics:()=>inLanguageView()?currentEntries().filter(e=>focusKeys().has(e.language.key)).map(entry=>({language:entry.language.key,statistics:languageMedianStatistics(entry)})):globalStatistics(currentEntries()),
     getDomains:()=>({...currentDomain}),
     getSummary:()=>model.entries.map(e=>({language:e.language.key,fast:e.fast,small:e.small,n:e.inputs.length,selected:e.coverage.selected,missing:e.coverage.missing.map(b=>b.key),metrics:comparisonMetrics(e)})),setReleaseYear,setReleaseWindow,setLOCMetric,inspectProgram:key=>{const program=catalogProgram(key);if(!program)throw new Error('Unknown program.');openPoint({language:program.language,benchmark:program.benchmark,program:key});}};

@@ -48,6 +48,7 @@ vm.runInContext(executable+`\nglobalThis.harness={
   inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview;renderLanguageOverview=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;}},
   selection(){return state;},
   relativeTable(){renderLanguageComparisons();},
+  rankings(){model=comparison(data,allSelection());return currentRankings();},
   overview(){renderLanguageOverview();},
   resetLanguage(){const original=update;update=()=>{};try{reset();}finally{update=original;}},
   compareLanguage(key){const original=update;update=()=>{};try{compareOverviewLanguage(key);}finally{update=original;}},
@@ -77,6 +78,8 @@ assert.doesNotMatch(html,/id="leave-language-overview"/);
 const hero=context.harness.selection();
 hero.languageFocus={keys:['alpha'],selectionKey:'alpha',family:false,label:'Alpha',variant:'alpha',benchmark:'b1'};
 hero.view='language';hero.languages=new Set(['alpha']);
+assert.equal(context.harness.rankings().speed.reference_language,'alpha');
+assert.equal(context.harness.rankings().speed.entries[0].sigma_distance,0);
 context.harness.relativeTable();
 const comparisonTable=element('#language-comparison-table tbody').innerHTML;
 assert.match(comparisonTable,/Alpha · reference/);assert.match(comparisonTable,/1\.0×/);
@@ -86,9 +89,14 @@ context.harness.compareLanguage('beta');
 assert.equal(hero.languageFocus.variant,'alpha');assert.equal(hero.languageFocus.label,'Alpha');
 assert.equal(hero.languageFocus.comparisonLanguage,'beta');assert.deepEqual([...hero.languages],['alpha','beta']);
 assert.deepEqual([...hero.benchmarks],['b1','b2']);
+assert.equal(context.harness.rankings().speed.reference_language,'alpha','Pair comparisons preserve the hero origin.');
 context.harness.resetLanguage();
 assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
 assert.equal(hero.languageFocus.selectionKey,'alpha');assert.equal(hero.languageFocus.comparison,false);
+assert.equal(context.harness.rankings().loc.reference_language,'alpha','Local reset preserves the hero origin.');
+hero.languageFocus.variant='mech';
+assert.equal(context.harness.rankings().speed.reference_language,'mech','Variant changes recenter both rankings.');
+hero.languageFocus.variant='alpha';
 context.harness.selectBenchmarks(['b2']);
 assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
 context.harness.relativeTable();
@@ -115,6 +123,7 @@ context.harness.switchView('language');
 assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
 context.harness.selectBenchmarks(['b2']);context.harness.switchView('rankings');
 assert.equal(hero.view,'rankings');assert.equal(hero.languageFocus,null);
+assert.equal(context.harness.rankings().speed.reference_language,null,'Global Rankings retain the median origin.');
 context.harness.resetLanguage();assert.equal(hero.languageFocus,null);
 context.harness.switchView('language');
 assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');

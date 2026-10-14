@@ -21,19 +21,22 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
   const extent=Math.max(3,Math.ceil(Math.max(rankings.speed.max_abs_sigma,rankings.loc.max_abs_sigma)));
   for(const [key,title,below,above] of [['speed','Speed','Faster','Slower'],['loc',locTitle,'Smaller','Larger']]){
     const metric=rankings[key],card=html('article','ranking-card',container);
+    const referenceLanguage=metric.reference_language??null,referenceLabel=referenceLanguage===null?'Median':labelFor(referenceLanguage);
     card.dataset.rankingMetric=key;
     card.dataset.rankingMedian=String(metric.median);
+    card.dataset.rankingReference=String(metric.reference??metric.median);
+    if(referenceLanguage!==null)card.dataset.rankingReferenceLanguage=referenceLanguage;
     card.dataset.rankingLogSd=String(metric.log_sample_sd);
     html('h3','',card,title);
     html('p','ranking-metric-summary',card,metric.n?
-      `Median ${summaryNumber(metric.median)}× best${metric.log_sample_sd===0?' · zero log spread':''}`:
+      `${referenceLanguage===null?'Median':`${referenceLabel} = 0σ ·`} ${summaryNumber(metric.reference??metric.median)}× best${metric.log_sample_sd===0?' · zero log spread':''}`:
       'No eligible measured languages.');
     const directions=html('div','ranking-direction-labels',card);
     html('span','',directions,below);html('span','',directions,above);
     const width=Math.max(240,card.clientWidth||container.clientWidth||640),left=32,right=24;
     const plotWidth=width-left-right;
     const chart=svg('svg',{class:'ranking-chart',viewBox:`0 0 ${width} 100`,role:'group',
-      'aria-label':`${title} distances from the coordinate median in log₂ sample standard deviations`,
+      'aria-label':`${title} distances from ${referenceLanguage===null?'the coordinate median':referenceLabel} in log₂ sample standard deviations`,
       'data-ranking-metric':key,'data-ranking-extent':extent},card);
     const labels=new Map(metric.entries.map(row=>{
       const node=svg('text',{class:'ranking-language-label',visibility:'hidden'},chart,labelFor(row.entry.language.key));
@@ -70,7 +73,7 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       const edge=Math.abs(z)===extent;
       if(z===0||edge||z%tickStep===0&&extent-Math.abs(z)>=tickStep)
         svg('text',{x:X(z),y:top+plotHeight+20,class:'ranking-axis-label','text-anchor':'middle'},chart,
-          z===0?'Median':`${z<0?'−':'+'}${Math.abs(z)}σ`);
+          z===0?(referenceLanguage===null?'Median':'0σ'):`${z<0?'−':'+'}${Math.abs(z)}σ`);
     }
     const readout=html('div','ranking-readout',card);
     readout.setAttribute('role','status');readout.setAttribute('aria-live','polite');
@@ -84,14 +87,16 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       const {row,lane}=point,language=row.entry.language.key,label=labelFor(language),color=colorFor(language);
       const coverage=row.entry.coverage;
       const partial=coverage&&coverage.measured<coverage.selected?` · ${coverage.measured}/${coverage.selected} benchmarks · partial`:'';
-      const description=`${label} · ${summaryNumber(row.value)}× best · ${summaryNumber(row.sigma_distance,{signed:true})}σ${partial}`;
+      const distance=`${summaryNumber(row.sigma_distance,{signed:true})}σ${referenceLanguage===null?'':` from ${referenceLabel}`}`;
+      const description=`${label} · ${summaryNumber(row.value)}× best · ${distance}${partial}`;
       const y=top+10+lane*laneGap,labelPositioned=labelPosition(row,point.x);
       const mark=svg('g',{class:'ranking-mark',tabindex:0,role:'button',
         'aria-label':`${description}. Open language timings and sources.`,
         'data-ranking-language':language,'data-ranking-metric':key,'data-median-ratio':row.ratio_to_median,
-        'data-sigma-distance':row.sigma_distance,'data-ranking-value':row.value,'data-ranking-lane':lane},chart);
+        'data-sigma-distance':row.sigma_distance,'data-ranking-value':row.value,'data-ranking-lane':lane,
+        'data-ranking-reference':language===referenceLanguage},chart);
       svg('circle',{cx:left+point.x,cy:y,r:4.5,fill:color,
-        stroke:'var(--mech-surface-elevated)','stroke-width':1,class:'ranking-dot','aria-hidden':'true'},mark);
+        stroke:language===referenceLanguage?'var(--gold)':'var(--mech-surface-elevated)','stroke-width':language===referenceLanguage?2.5:1,class:'ranking-dot','aria-hidden':'true'},mark);
       const labelNode=labels.get(row).node;
       labelNode.setAttribute('x',left+labelPositioned.x);labelNode.setAttribute('y',y+labelPositioned.dy);
       labelNode.setAttribute('text-anchor',labelPositioned.anchor);labelNode.setAttribute('dominant-baseline','central');
@@ -99,7 +104,7 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       const show=()=>{
         selectedLanguage=language;languageButton.disabled=false;languageButton.textContent=label;
         languageButton.style.color=color;
-        values.textContent=`${summaryNumber(row.value)}× best · ${summaryNumber(row.sigma_distance,{signed:true})}σ${partial}`;
+        values.textContent=`${summaryNumber(row.value)}× best · ${distance}${partial}`;
       };
       const open=()=>onOpenLanguage(language);
       mark.addEventListener('pointerenter',show);mark.addEventListener('pointermove',show);mark.addEventListener('focus',show);

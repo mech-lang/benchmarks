@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import {renderRankingCharts} from '../src/rankings.mjs';
-import {languageRelativeComparisons} from '../src/math.mjs';
+import {languageRelativeComparisons,medianRankings} from '../src/math.mjs';
 import {axisData} from '../src/formatted_axis.mjs';
 
 // Target-relative means use the same benchmark on both sides, including
@@ -39,6 +39,38 @@ relativeFixture.programs['partial-b'].eligible_for_chart=false;
 assert.equal(languageRelativeComparisons(relativeFixture,'target')[2].time.ratio,null);
 assert.ok(languageRelativeComparisons(relativeFixture,'missing').every(row=>row.time.ratio===null));
 console.log('Language-relative comparisons: same-workload ratios, partial/missing coverage, formatted independence and source preservation passed.');
+
+// Hero charts translate the origin, preserving population spread and every
+// pairwise distance. Speed and LOC use the target's own distinct coordinates.
+const rankingEntries=[['fast',1,16],['target',4,2],['slow',32,8]].map(([key,y,x])=>({language:{key},fast:{y},small:{x}}));
+const beforeRankings=JSON.stringify(rankingEntries);
+const globalRankings=medianRankings(rankingEntries);
+const targetRankings=medianRankings(rankingEntries,{referenceLanguage:'target'});
+for(const key of ['speed','loc']){
+  const global=globalRankings[key],target=targetRankings[key];
+  assert.equal(target.reference_language,'target');assert.equal(target.log_sample_sd,global.log_sample_sd);
+  assert.equal(target.median,global.median);
+  const origin=target.entries.find(row=>row.entry.language.key==='target');
+  assert.equal(origin.sigma_distance,0);assert.equal(origin.ratio_to_reference,1);assert.equal(origin.direction,'tie');
+  const offset=global.entries.find(row=>row.entry.language.key==='target').sigma_distance;
+  for(const [index,row] of target.entries.entries()){
+    assert.ok(Math.abs(row.sigma_distance-(global.entries[index].sigma_distance-offset))<1e-12);
+    assert.equal(row.value,global.entries[index].value);
+  }
+  assert.equal(target.entries.find(row=>row.entry.language.key==='fast').direction,key==='speed'?'below':'above');
+}
+assert.equal(targetRankings.speed.reference,4);assert.equal(targetRankings.loc.reference,2);
+assert.equal(globalRankings.loc.reference,8);assert.equal(globalRankings.loc.reference_language,null);
+for(const entries of [[],rankingEntries.filter(row=>row.language.key!=='target')]){
+  const unavailable=medianRankings(entries,{referenceLanguage:'target'});
+  assert.equal(unavailable.speed.reference,null);assert.deepEqual(unavailable.speed.entries,[]);
+}
+for(const entries of [[rankingEntries[1]],[rankingEntries[1],{...rankingEntries[1],language:{key:'tied'}}]]){
+  const tied=medianRankings(entries,{referenceLanguage:'target'});
+  assert.equal(tied.speed.log_sample_sd,0);assert.ok(tied.speed.entries.every(row=>row.sigma_distance===0));
+}
+assert.equal(JSON.stringify(rankingEntries),beforeRankings);
+console.log('Hero ranking origins: target zero, distinct metric references, unchanged spread and pairwise distances, missing target and ties passed.');
 
 // Exercise label packing at phone and desktop widths without a browser process.
 let viewportWidth;
@@ -99,3 +131,19 @@ for(viewportWidth of [240,320,640,1200]){
   }
 }
 console.log('Ranking labels: 440 marks checked across four widths; positions, spacing and interactions passed.');
+for(viewportWidth of [240,390,1280]){
+  const container=new Element('div');
+  renderRankingCharts({container,rankings:targetRankings,labelFor:key=>key,colorFor:()=>'#abcdef',onOpenLanguage:()=>{}});
+  for(const card of container.children){
+    assert.equal(card.dataset.rankingReferenceLanguage,'target');
+    const chart=card.children.find(node=>node.tagName==='svg');
+    const mark=chart.children.find(node=>node.attributes['data-ranking-language']==='target');
+    assert.equal(mark.attributes['data-sigma-distance'],'0');
+    assert.equal(Number(mark.children[0].attributes.cx),32+(viewportWidth-56)/2);
+    assert.match(chart.attributes['aria-label'],/distances from target/);
+    assert.ok(chart.children.some(node=>node.attributes.class==='ranking-axis-label'&&node.textContent==='0σ'));
+    assert.match(card.children.find(node=>node.className==='ranking-metric-summary').textContent,/target = 0σ/);
+    mark.listeners.focus();
+    assert.match(descendants(card).find(node=>node.className==='ranking-readout-values').textContent,/0\.0σ from target/);
+  }
+}
