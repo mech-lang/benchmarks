@@ -1,0 +1,161 @@
+{
+  "schema": "elixir-compiled-required-work-contract-draft-v1",
+  "status": "draft-source-reviewed-design-not-executed",
+  "scope": "Inspect the actual retained Main and Support BEAM instruction streams for each of the twenty original forms, using the existing original compile/source bindings and completed bounded output corpus. Run one small diagnostic main per form only after the shared timing lock is available. Do not recompile or instrument subject source.",
+  "source_work_qualified": false,
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "chart_admission": false,
+  "cohort_rules": [
+    "The source aliases do not waive independent inspection/loading of twenty physically retained compiled forms.",
+    "Freeze controller/probe identities and verify exact Main/Support BEAM bytes, original main/helper/runner source hashes and retained runtime identities before native use.",
+    "Bind decoded instruction artifacts to the exact bytes loaded with code.load_binary and code.which, plus retained compile_info/source and debug_info/file. Debug metadata provides attribution, not proof that instructions perform the work.",
+    "Use a fresh bounded process per form with the retained runtime environment, an inherited common lock, complete raw stdout/stderr and owned-process terminal evidence. Use no subject compiler or full-size workload.",
+    "Use the existing closed bounded reference for the selected small case. Exact output validation remains independent of compiled work observations.",
+    "A direct diagnostic Main.main call is an untimed observation of the same compiled function, not an invocation of the retained source launcher. Existing bounded receipts cover that unchanged launcher.",
+    "Record failed/missing/untraceable owners as unresolved; do not infer zero calls or success from absent events.",
+    "A source-specific decoded control-flow review closes the obligations below. The probe never sets source_work_qualified or chart_admission."
+  ],
+  "direct_artifacts": [
+    "Exact retained Main/Support chunks, including compile_info, debug_info, exports and imports",
+    "beam_disasm decoded function instruction lists, including compiler-generated closures and local-call labels",
+    "Small-case raw trace events/selected terminal values and probe observation summary",
+    "Original bounded stdout reference, diagnostic stdout, stderr and native process receipt",
+    "Per-form reviewer decisions that cite instruction function/label ranges and witness artifact facts"
+  ],
+  "method_limits": [
+    "Do not recursively audit the runtime toolchain or re-run the independent oracle corpus; consume existing closed provenance and inspect the exact new compiled subjects.",
+    "Do not treat a count of div or make_ref opcodes as proof of their execution on the required paths. Inspect dataflow and branch dominance in their actual owners.",
+    "Trace messages can copy arguments/return values and extend their lifetime in an observer. Such copies establish identity/shape and call ordering, not independent evidence of subject heap retention through GC.",
+    "Keep automatic garbage collection and normal heap policies enabled. Use compiled stack/register liveness and later subject accesses for tree retention; if a separate GC witness is needed, trace only scalar identity facts without carrying the subject root across GC.",
+    "The small dynamic cases expose the original parameterized work paths. Full workload obligations additionally depend on decoded loop bounds/dataflow from the actual argument or input length; small outputs alone never establish them."
+  ],
+  "benchmarks": {
+    "nbody": {
+      "case": "n-2",
+      "owners": ["main/1", "steps/2", "advance/1", "energy/1", "planet/7", "owned reduction closures"],
+      "compiled_review": [
+        "main initializes five exact bodies and offsets all three momentum coordinates using all masses.",
+        "steps carries the actual input count and decrements it by one until zero, calling advance once for every positive count.",
+        "advance visits all ten i<j pairs, updates both velocity triples with their opposite masses, then visits all five position triples after the pair sweep.",
+        "energy computes every kinetic term and all ten pair potentials both before and after the requested steps."
+      ],
+      "small_witness": ["Two advance calls, steps inputs 2,1,0, two energy calls, finite five-body tuple shapes", "Complete two-line energy output within the existing 1e-8 bounded tolerance"],
+      "remaining_generalization": "Review anonymous Enum reduction owners and their range lengths in decoded instructions; named call totals alone do not establish every coordinate/pair update."
+    },
+    "mandelbrot": {
+      "case": "n-9",
+      "owners": ["main/1", "row/6", "inside/5"],
+      "compiled_review": [
+        "main visits every row and row visits every column derived from actual n, with x and y in 0..n-1.",
+        "Each pixel begins at zero complex state and follows the binary64 recurrence for up to fifty updates, stopping only at escape or the limit.",
+        "Rows pack bits most-significant first, emit complete bytes and zero-pad the low bits of a partial final byte."
+      ],
+      "small_witness": ["Nine distinct rows and 81 initial inside calls with 0 iteration count", "Recurrence argument progression and complete 9x9 PBM match, including partial row bytes"]
+    },
+    "spectralnorm": {
+      "case": "n-3",
+      "owners": ["main/1", "rounds/3", "ata/1", "multiply/2", "a/2", "owned reduction closures"],
+      "compiled_review": [
+        "Exactly ten rounds each perform ata(u), then ata(v), with data dependencies preserved.",
+        "Each ata performs A then transpose-A multiplication, and each multiply computes every one of n*n coefficients using actual input tuple length.",
+        "Final dot products traverse every vector element and produce the square root of uv/vv."
+      ],
+      "small_witness": ["Twenty ata calls; forty multiply calls, twenty per transpose value; 360 coefficient calls", "Every matrix index pair occurs forty times and complete numeric output matches the existing reference"]
+    },
+    "binarytrees": {
+      "case": "n-4",
+      "effective_maximum_depth": 6,
+      "owners": ["tree/1", "check/1", "repeat/3", "depths/4", "main/1"],
+      "compiled_review": [
+        "Both tree clauses execute make_ref and allocate a new three-field tuple. Internal nodes call the constructor independently for each child; leaves contain separate identities, not a shared literal leaf.",
+        "check recursively reads both child slots and the repeat loop constructs and checks a new root on every scheduled iteration. No analytic check/node-count substitute is accepted.",
+        "The stretch root is checked and ceases to be needed before short-tree loops. The long-lived root is constructed once and remains a live argument/register/stack value through every depths/repeat call, then check traverses that same root after all iterations.",
+        "Inspect live register counts at allocation/GC instructions and stack slots across non-tail calls: the long root must be rooted when short tree allocations can collect. The immutable input source and numeric checksum do not establish this compiler property."
+      ],
+      "small_witness": [
+        "Pair each constructor call/return, walk its actual returned child graph at the requested depth, require nil/nil leaves and distinct left/right descendant identity sets, and bind every child and check argument to the exact returned constructor value with that identity.",
+        "Observe recursive checks and expected iteration depths/counts. Track the same long-root identity passed through depths and reached by the final traversal after short trees.",
+        "Retain evidence that normal GC is enabled; separate scalar-only GC evidence is required if compiled liveness plus same-root final use leaves a retention question."
+      ],
+      "explicit_nonproof": "Full-tree values copied into trace messages may be retained by the tracer. The draft tree trace must never be labelled a normal-GC lifetime proof on its own."
+    },
+    "fannkuchredux": {
+      "case": "n-5",
+      "owners": ["visit/7", "ready/2", "carry/4", "rotate/2", "flips/1", "flip_work/2", "main/1"],
+      "compiled_review": [
+        "Factoradic carry/rotation enumerates all permutations and stops only at the n carry, with rank incremented once per permutation.",
+        "Each permutation receives a working tuple copy for reversal; every flip reverses the entire indicated prefix until its first value is zero.",
+        "Checksum uses alternating rank parity and maximum uses all permutation flip counts."
+      ],
+      "small_witness": ["120 visits with distinct valid permutations and ranks 0..119", "One flips entry per visit, correct reversal progression and complete checksum/maximum output"]
+    },
+    "fasta": {
+      "case": "n-31",
+      "owners": ["main/1", "repeated/5", "random/6", "cumulative/1", "choose/2", "finish/3"],
+      "compiled_review": [
+        "Repeat the exact ALU bytes for 2*n; source-written loops generate 3*n IUB and 5*n Homo bytes using complete cumulative floating probability tables.",
+        "Every random byte applies the LCG seed*3877+29573 mod 139968, followed by floating division by 139968.0 and unscaled cumulative probability comparison.",
+        "Initial seed 42 flows through the entire IUB loop into Homo without reset. All records wrap at sixty bytes with correct tails."
+      ],
+      "small_witness": ["62 repeat steps and 248 random-generation steps", "Countdowns 93 and 155, complete LCG seed continuity including transition between tables, all output bytes equal to retained reference"]
+    },
+    "knucleotide": {
+      "case": "arbitrary-widths",
+      "owners": ["main/1", "header_name/1", "sequence/3", "count/4", "owned map-construction closures"],
+      "compiled_review": [
+        "Select the exact THREE header token, uppercase/validate all selected sequence bytes, include every sequence line and stop at the next record header.",
+        "Construct seven complete maps for widths 1,2,3,4,6,12,18. Each starts empty and calls count for every overlapping offset up to input_length-k inclusive.",
+        "Every substring key is inserted/updated, including keys absent from the five printed queries. Finished maps flow into both frequency sorts and query lookup.",
+        "No query-only filter or precomputed answer path may bypass construction of unused keys."
+      ],
+      "small_witness": [
+        "Observe exactly one initial empty map and one terminal complete map for every width. Require the exact ordered offset sequence 0..n-k+1 for each width, yielding n-k+2 invocations when n>=k, and reconcile the aggregate with the independent VM function call counter.",
+        "Independently select the complete THREE DNA from the authentic Support.input return, bind its full contents to the counted sequence, and compare all seven terminal maps, including every nonquery key, with an independent complete overlapping-window histogram.",
+        "Require full initial/early map states at offsets 0,1,2 where present. Use the process arity trace flag plus match-spec extra messages: only initial/early/terminal states copy full arguments; all intermediate count invocations carry width/offset scalars. Keep sequence/3 initial and terminal arguments, with only remaining-line/selection/accumulator-length scalars for intermediate calls so repeated sequence copies remain within the existing trace bound."
+      ]
+    },
+    "pidigits": {
+      "case": "n-27",
+      "owners": ["emit/8", "main/1"],
+      "compiled_review": [
+        "The terminal count==wanted clause exits. Every other candidate state evaluates two separate integer divisions: (3*q+r) div t and (4*q+r) div t.",
+        "Follow the exact division operands through decoded instructions and show both divisions dominate the comparison/emission decision on the nonterminal candidate path. Merely finding two div opcodes is insufficient.",
+        "No candidate-state branch replaces one division with an algebraic comparison or reuses the other quotient; arbitrary integers remain unbounded.",
+        "On equal quotients emit and apply q'=10*q, r'=10*(r-t*digit); otherwise use factor=2*k+1 and update q,r,t,k exactly in spigot order."
+      ],
+      "small_witness": [
+        "Record every emit entry q,r,t,k,count,wanted. Independently replay each transition and verify both candidate quotients, positive denominators and terminal count.",
+        "Show a large-integer state beyond machine-integer range and the complete padded 27-digit output.",
+        "Derive a predicted two-div count only after the decoded nonterminal path is reviewed; a trace of emit does not observe BIF instructions directly."
+      ],
+      "explicit_nonproof": "The observer's own quotient calculation is a transition check, not proof that the subject executed both divisions. The actual compiled control-flow evidence closes that separate gate."
+    },
+    "regexredux": {
+      "case": "all-replacements",
+      "owners": ["main/1", "count/4", "replace/3", "replace/6", "owned variant/replacement closures"],
+      "compiled_review": [
+        "Clean input via the required header/newline pattern and preserve raw/cleaned/final byte counts.",
+        "Run all nine exact case-sensitive variant expressions independently; each count advances by start+max(size,1) and handles zero-size EOF correctly.",
+        "Apply all five substitutions in order to the previous pass output with authored cursor/tail copying and general Regex matching only."
+      ],
+      "small_witness": ["Nine independent initial count calls and all ordered replacement passes", "Returned replacement text feeds the next pass and all lines/lengths exactly match the retained reference"]
+    },
+    "revcomp": {
+      "case": "iupac",
+      "owners": ["main/1", "collect/4", "record/2", "wrap/3", "owned complement closure"],
+      "compiled_review": [
+        "Collect every FASTA record in order, combine all its sequence lines, then reverse the entire record and translate each byte through the exact upper/lower-case IUPAC complement map.",
+        "Keep headers, omit preheader/comment content, handle CR/LF and EOF, and wrap every emitted sequence at sixty columns with a correct final newline.",
+        "No record/prefix/tail or ambiguity byte is discarded before the source-written reverse/complement/wrap traversal."
+      ],
+      "small_witness": ["One record call per retained input header; wrap traversal covers every complemented byte", "Complete all-IUPAC output matches retained reference; broader CR/EOF/tail behavior already has separate bounded receipts"]
+    }
+  },
+  "admission": {
+    "automatic_probe_success": "Observation collected only; never final source-work qualification",
+    "required_review": "Twenty per-form instruction/dataflow reviews cross-referenced to original source owners and bounded witness facts",
+    "loc": "Separate tools/qualification/elixir_loc.py and experiments/elixir/source-counts-v1 stage; all three authored files remain in every form's count closure",
+    "timings": "No full run plan or chart admission is generated by this draft stage"
+  }
+}
