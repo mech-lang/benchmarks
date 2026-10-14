@@ -99,6 +99,9 @@ def export(root=ROOT):
                   'sources': sources}
         if publication is not None:
             record['publication_record'] = publication
+        for field in ('timing_measurement', 'timing_correction'):
+            if field in program:
+                record[field] = program[field]
         save_json(directory / 'program.json', record)
         language_rows[program['language']].append((program, relative))
         totals.append([program['language'], program['benchmark'], program['id'], program.get('loc'),

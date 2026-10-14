@@ -151,6 +151,19 @@ for(const program of elixir){
   assert.match(detail,/3 samples/);
   assert.match(detail,/best-comparison/);
 }
+// Ranked interpreted observations must be the saved outer wall interval, even
+// though historical diagnostic details still retain their internal phase.
+const interpreted=Object.values(recorded.program_inventory).filter(program=>program.language==='mech-resident');
+assert.equal(interpreted.length,15);
+for(const program of interpreted){
+  assert.deepEqual(program.samples,program.sample_details.map(sample=>sample.wall_seconds));
+  assert.notDeepEqual(program.samples,program.sample_details.map(sample=>sample.kernel_seconds));
+  context.harness.inspect(program.key);
+  const detail=element('#inspector-body').innerHTML;
+  assert.match(detail,/Whole process seconds/);
+  assert.doesNotMatch(detail,/Measured seconds|undefined|\[object Object\]/);
+  for(const value of program.samples)assert.ok(detail.includes(`<td class="sample-value">${value.toFixed(6)}</td>`));
+}
 // A successful subject with a failed matched control remains inspectable, but
 // neither inventory selection nor the language-view renderer may chart it.
 const excludedFixture=structuredClone(fixture);

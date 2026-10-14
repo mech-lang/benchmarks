@@ -3,6 +3,7 @@
 import argparse
 import csv
 import hashlib
+import importlib.util
 import json
 from pathlib import Path, PurePosixPath
 import re
@@ -94,6 +95,10 @@ def check_migration(root, check_index):
 
 def check_previous(root, data):
     previous = read_json(root / 'archive/site/explorer/dist/data.json')
+    spec = importlib.util.spec_from_file_location('interpreted_publication', root / 'tools/import_mech_interpreted_rerun.py')
+    publication = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(publication)
+    replaced_interpreted = publication.verify_saved_publication(root, data, previous)
     benches = {b['key']: b for b in data['benchmarks']}
     for old in previous['benchmarks']:
         require(old['key'] in benches, f'Missing original benchmark: {old["key"]}')
@@ -103,6 +108,8 @@ def check_previous(root, data):
                         f'Changed original baseline: {old["key"]}.{field}')
     for section in ('programs', 'program_inventory', 'files'):
         for key, value in previous.get(section, {}).items():
+            if section == 'programs' and key in replaced_interpreted:
+                continue
             preserve_fields(value, data.get(section, {}).get(key), f'{section}.{key}')
     return len(previous['programs'])
 
@@ -209,6 +216,9 @@ def verify(root, check_index=False):
                            'archive_timing_report': data.get('archive_paths', {}).get(p.get('report')), 'sources': sources}
         if publication is not None:
             expected_record['publication_record'] = publication
+        for field in ('timing_measurement', 'timing_correction'):
+            if field in p:
+                expected_record[field] = p[field]
         require(record == expected_record, f'Exported program manifest changed: {manifest_path}')
         expected_programs.append([p['language'], p['benchmark'], p['id'], p.get('loc'), p.get('physical_loc'),
                                   p.get('seconds'), sd, len(runs), int(key in data['programs']), manifest_path.as_posix()])

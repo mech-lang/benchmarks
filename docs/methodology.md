@@ -23,7 +23,7 @@ Admission requires the prescribed work, complete output validation, and actual f
 
 A profile's elapsed time is the median of its saved samples, usually three, with five-, seven-, and ten-sample cohorts retained where recorded. Fresh-process measurements include startup, runtime/module loading, execution-time JIT, input, computation, complete output, and shutdown. Ahead-of-time builds, hashing, and output comparisons are outside the timing interval. The cohort protocols retain their worker limits and controls for competing compilation and power changes.
 
-**Mech interpreted is a different timing boundary:** it measures the loaded typed interpreter after preparation, including input and output. Full-process and preparation timings are retained separately. This distinction must remain visible when comparing it with fresh-process AOT or JIT series.
+Mech interpreted uses a fresh whole-process cohort, including parsing and preparation, for every sample, median, standard deviation and chart coordinate. Internal preparation and execution measurements are retained as diagnostic phases only. A phase measurement cannot replace a whole-process observation in the language comparison. Historical interpreter optimization studies compare matching phases within their own cohorts; their execution-only figures do not supply the current rankings.
 
 Canonical LOC counts nonblank, noncomment application source, with packed independent statements/assignments expanded and meaningful compiler pragmas counted. This is not compressed source size. Formatting-based LOC is an optional separately supported metric; missing formatter evidence is not replaced by guessed counts. Source roles distinguish application code from general runtime support.
 

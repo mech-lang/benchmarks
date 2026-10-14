@@ -57,7 +57,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | LuaJIT | LuaJIT | JIT | Dynamic | Tracing GC |
 | MATLAB | MATLAB native runtime / JIT | JIT | Dynamic | RC, Cycles |
 | Mech (AOT) | Mech native AOT compiler/runtime | AOT | Static | Ownership/RAII, RC |
-| Mech (interpreted) | Mech loaded typed interpreter | Interpreted | Static | Ownership/RAII, RC |
+| Mech (interpreted) | Mech typed interpreter | Interpreted | Static | Ownership/RAII, RC |
 | Mech (JIT) | Mech native JIT runtime | JIT | Static | Ownership/RAII, RC |
 | Mojo | Mojo / MLIR / LLVM | AOT | Static | Ownership/RAII, Manual |
 | Nim | Nim C backend / Clang / ORC | AOT | Static | RC, Cycles, Ownership/RAII |

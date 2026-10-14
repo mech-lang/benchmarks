@@ -164,7 +164,7 @@ export const languageMetadata = {
   },
   "mech-resident": {
     "platform": "runtime",
-    "runtime": "Mech loaded typed interpreter",
+    "runtime": "Mech typed interpreter",
     "execution": [
       "interpreted"
     ],
@@ -178,7 +178,7 @@ export const languageMetadata = {
       "owned",
       "rc"
     ],
-    "note": "Loaded typed interpreter; its retained timing starts after preparation, unlike fresh-process timings. Runtime values use owned storage and reference counting.",
+    "note": "Typed interpreter with whole-process timing, including startup and source preparation. Runtime values use owned storage and reference counting.",
     "sources": [
       "https://github.com/mech-lang/mech"
     ]
