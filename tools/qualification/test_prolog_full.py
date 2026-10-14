@@ -1,5 +1,6 @@
 """Pure controller boundary tests; no imports of the harness or native work."""
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -24,6 +25,62 @@ def waiting_guard(harness,row,manifest,report,round_index,lock_fd):
     finally:
         os.kill(child,9)
         os.waitpid(child,0)
+
+
+class EditorialCompatibility(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.sealer = module.cold(module.ROOT/'tools/qualification/prolog_seal.py',
+                                module.SEALER_SHA, 'prolog_full_editorial_fixture')
+        module.install_sealed_editorial_reader(cls.sealer)
+
+    def test_archived_python_keeps_exact_raw_and_recorded_ast_fingerprints(self):
+        overrides = json.loads((module.ROOT/'experiments/prolog/editorial-substitutions.json').read_bytes())
+        selected = [item for item in overrides['substitutions']
+                    if item.get('field_rule') == 'python-migration-policy']
+        self.assertEqual(len(selected), 3)
+        evidence = self.sealer.Evidence(module.ROOT, overrides)
+        for item in selected:
+            with self.subTest(path=item['current_path']):
+                path = module.ROOT/item['current_path']
+                raw = evidence.read_bytes(str(path), item['historical_sha256'])
+                self.assertEqual(hashlib.sha256(raw).hexdigest(), item['current_sha256'])
+                self.assertEqual(self.sealer.noneditorial_digest(raw, item['field_rule']),
+                                 item['noneditorial_sha256'])
+
+    def test_raw_changes_and_noneditorial_changes_are_still_rejected(self):
+        original = b"dict(migration_policy='old narrative', samples=3)\n"
+        current = original.replace(b'old narrative', b'new narrative')
+        frozen_display = ("Module(body=[Expr(value=Call(func=Name(id='dict', ctx=Load()), "
+            "keywords=[keyword(arg='migration_policy', value=Constant(value=None)), "
+            "keyword(arg='samples', value=Constant(value=3))]))])")
+        expected = hashlib.sha256(original).hexdigest()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            (root/'migration').mkdir()
+            (root/'migration/reorganization-paths.tsv').write_text('original_path\tcurrent_path\n')
+            path = root/'manifest.py'
+            item = dict(current_path='manifest.py', historical_sha256=expected,
+                        current_sha256=hashlib.sha256(current).hexdigest(),
+                        technical_content_preserved=True, field_rule='python-migration-policy',
+                        noneditorial_sha256=hashlib.sha256(frozen_display.encode()).hexdigest())
+            path.write_bytes(current)
+            evidence = self.sealer.Evidence(root, {'substitutions': [item]})
+            self.assertEqual(evidence.read_bytes(str(path), expected), current)
+            changed = current.replace(b'samples=3', b'samples=4')
+            path.write_bytes(changed)
+            with self.assertRaises(AssertionError):
+                self.sealer.Evidence(root, {'substitutions': [item]}).read_bytes(str(path), expected)
+            item['current_sha256'] = hashlib.sha256(changed).hexdigest()
+            with self.assertRaises(AssertionError):
+                self.sealer.Evidence(root, {'substitutions': [item]}).read_bytes(str(path), expected)
+
+    def test_other_editorial_rules_still_use_the_frozen_reader(self):
+        raw = b'{"next_step":"editorial narrative","qualified":true}'
+        expected = hashlib.sha256(b'{"qualified":true}').hexdigest()
+        self.assertEqual(self.sealer.noneditorial_digest(raw, 'json-next-step'), expected)
+        with self.assertRaises(AssertionError):
+            self.sealer.noneditorial_digest(raw, 'unknown-rule')
 
 
 class SupervisorBoundary(unittest.TestCase):
@@ -86,6 +143,35 @@ class SupervisorBoundary(unittest.TestCase):
 
 
 class Full90Boundary(unittest.TestCase):
+    def test_bounded_preparation_includes_the_retained_first_receipt(self):
+        prep = dict(all20_bounded_outputs_qualified=True, terminal_evidence_complete=True,
+                    new_bounded_cases=155, attempts=list(range(155)),
+                    reused_attempts=['retained-regexredux-first-case'],
+                    total_bounded_cases=156, case_results=list(range(156)))
+        module.require_bounded_preparation(prep)
+        for field, value in [('reused_attempts', []), ('case_results', list(range(155))),
+                             ('attempts', list(range(156))), ('terminal_evidence_complete', False)]:
+            with self.subTest(field=field):
+                changed = dict(prep, **{field: value})
+                with self.assertRaises(AssertionError):
+                    module.require_bounded_preparation(changed)
+
+    def test_only_canonical_full_references_are_bound_from_the_control_audit(self):
+        audit = json.loads((module.ROOT/'archive/comparisons/r-apl-uiua-comparison/20261011/source-audit-r.json').read_bytes())
+        expected = {str(module.CLBG / path): digest for path, digest in {
+            'knucleotide/.build/knucleotide-input25000000.txt': '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa',
+            'regexredux/.build/input5000000.txt': '97197f5957a12f8a859ba7edff6d97994daa18afacd77db21fa68c6f2e447e38',
+            'pidigits/inputs/output-full.txt': 'bdfa7b6c756d96492f472f97aee9cc139bee954d271eacedfd7ace5d2875f06c',
+            'regexredux/inputs/output-full.txt': 'a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af',
+        }.items()}
+        resolver = SimpleNamespace(logical={'existing-pin': 'a'*64}, active={})
+        module.bind_full_reference_pins(resolver, audit)
+        self.assertEqual(resolver.logical, {'existing-pin': 'a'*64, **expected})
+        self.assertEqual(resolver.active, {})
+        resolver.logical[next(iter(expected))] = '0'*64
+        with self.assertRaises(AssertionError):
+            module.bind_full_reference_pins(resolver, audit)
+
     def test_launches_receipts_and_samples_are_separate_counts(self):
         registration=dict(pid=17,pgid=17,inherited_common_mutex=True,command=['/swipl','10000'])
         report=dict(programs={'one':dict(samples_seconds=[1.0])},attempts=[

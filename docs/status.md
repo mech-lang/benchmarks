@@ -16,7 +16,7 @@ Prolog, Julia AOT, Rebol, Elixir, and Kotlin are not selectable series in this d
 | --- | --- | --- |
 | Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
 | Prolog | Twenty source forms, required work, canonical LOC, and bounded output checks | Full-workload measurements and publication review |
-| Elixir | Twenty compiled source forms; all compiled helpers passed binary I/O and formatting checks | Workload execution, required-work and source-count qualification, then measurements |
+| Elixir | Twenty compiled source forms; all helper checks and 156 bounded workload checks passed with the retained BEAM JIT runtime | Compiled required-work witnesses, source-count qualification, and full measurements |
 | Kotlin | Twenty compiled source forms, source/class review, and binary I/O, formatting, and runtime checks of all twenty helpers | Workload execution, required-work and source-count qualification, then measurements |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | Execution-path qualification and the remaining suite |
 | Rebol | Retained toolchain sources and resolved build specification | SDK and runtime qualification, benchmark implementations, and measurements |

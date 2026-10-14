@@ -50,3 +50,18 @@ uses kernel identities instead of launching `ps`; sampler waits and owned-group
 cleanup are bounded. Each attempt retains a separate supervisor receipt,
 including native registrations, signals, and cleanup failures. The common
 mutex stays open through cleanup and remains inherited by any surviving child.
+
+`full90-preflight-v1` retains the controller used by the failed first plan
+preparation. No plan or native execution resulted. Its three ancillary Python
+editorial fingerprints were produced by Python 3.14, whose AST display omits
+empty lists. The current controller reproduces that display under measurement
+Python 3.12 while preserving the sealed raw-byte and noneditorial digest checks.
+The original seal, reader, editorial inventory and historical receipts remain
+unchanged.
+
+`full90-preflight-v2` retains the next failed preparation, which expected all
+156 bounded receipts in the new-attempt list. The sealed report contains 155
+new receipts and one retained successful receipt. The controller now checks
+that exact split and the complete case inventory. Full stdin and output-oracle
+pins come from the already pinned Mech control audit; their actual host bytes
+remain checked before plan creation.

@@ -5,6 +5,7 @@ output directory. Launch run through the existing durable job owner. All native
 lifetimes use the unchanged frozen sampler and inherit the common timing lock.
 """
 import argparse
+import ast
 import copy
 from contextlib import contextmanager
 import fcntl
@@ -93,10 +94,34 @@ def cold(path, expected, name):
     return module
 
 
+def sealed_editorial_digest(raw, kind, original):
+    """Reproduce the seal's Python 3.14 AST display using measurement Python 3.12."""
+    if kind != 'python-migration-policy':
+        return original(raw, kind)
+    tree = ast.parse(raw)
+    selected = [node for node in ast.walk(tree) if isinstance(node, ast.keyword)
+                and node.arg == 'migration_policy']
+    require(len(selected) == 1 and isinstance(selected[0].value, ast.Constant)
+            and type(selected[0].value.value) is str, 'Invalid editorial migration policy')
+    selected[0].value = ast.Constant(value=None)
+    # Python 3.14 omits empty-list fields by default; 3.12 prints them. These
+    # per-instance fields belong only to freshly parsed evidence, never code
+    # that is executed. Every nonempty field and original raw-byte pin remains.
+    for node in ast.walk(tree):
+        node._fields = tuple(name for name in node._fields if getattr(node, name, None) != [])
+    return hashlib.sha256(ast.dump(tree, include_attributes=False).encode()).hexdigest()
+
+
+def install_sealed_editorial_reader(sealer):
+    original = sealer.noneditorial_digest
+    sealer.noneditorial_digest = lambda raw, kind: sealed_editorial_digest(raw, kind, original)
+
+
 class Resolver:
     """Archive evidence may relocate; actual execution paths retain exact bytes."""
     def __init__(self):
         sealer = cold(ROOT / 'tools/qualification/prolog_seal.py', SEALER_SHA, 'full90_prolog_sealer')
+        install_sealed_editorial_reader(sealer)
         reader = cold(ROOT / 'tools/qualification/prolog_storage.py', READER_SHA, 'full90_prolog_storage')
         overrides = ROOT / 'experiments/prolog/editorial-substitutions.json'
         require(sha(overrides) == OVERRIDES_SHA, 'Editorial inventory changed')
@@ -211,6 +236,15 @@ def load_measurement(resolver):
     return guard, harness
 
 
+def require_bounded_preparation(prep):
+    require(prep['all20_bounded_outputs_qualified'] is prep['terminal_evidence_complete'] is True
+            and prep['new_bounded_cases'] == len(prep['attempts']) == 155
+            and len(prep['reused_attempts']) == 1
+            and prep['total_bounded_cases'] == len(prep['case_results'])
+            == len(prep['attempts']) + len(prep['reused_attempts']) == 156,
+            'Bounded evidence changed')
+
+
 def evidence_closure(resolver):
     outcome = resolver.read(QUALIFIED / 'outcome.json', OUTCOME_SHA)
     require(outcome['status'] == 'qualified-original-Prolog20-work-and-LOC-awaiting-full90'
@@ -241,8 +275,7 @@ def evidence_closure(resolver):
     resolver.absorb(work['pins'])
     resolver.absorb(loc['pins'])
     prep = resolver.read(work['original_bounded_preparation']['path'], work['original_bounded_preparation']['sha256'])
-    require(prep['all20_bounded_outputs_qualified'] is prep['terminal_evidence_complete'] is True
-            and prep['total_bounded_cases'] == len(prep['attempts']) == 156, 'Bounded evidence changed')
+    require_bounded_preparation(prep)
     expected_ids = {f'prolog-{bench}-{variant}' for bench in BENCHES for variant in ('compact', 'optimized')}
     require(set(prep['profiles']) == set(work['profiles']) == set(loc['profiles'])
             == set(loc['compiler_bound_input_inventory']) == expected_ids, 'Prolog cohort changed')
@@ -307,10 +340,22 @@ def candidate(resolver, original, work, counted, inventory, runtime):
     return row
 
 
+def bind_full_reference_pins(resolver, audit):
+    # Bounded preparation retains small inputs; the unchanged control audit
+    # supplies the canonical full inputs/oracles. reference_for verifies their
+    # actual host bytes before they become active execution pins.
+    paths = [str(CLBG / relative) for relative in (
+        'knucleotide/.build/knucleotide-input25000000.txt',
+        'regexredux/.build/input5000000.txt',
+        'pidigits/inputs/output-full.txt', 'regexredux/inputs/output-full.txt')]
+    resolver.logical = merge(resolver.logical, {path: audit['pins'][path] for path in paths})
+
+
 def controls(resolver):
     audit = resolver.read(AUDIT, AUDIT_SHA)
     special = resolver.read(MANDEL, MANDEL_SHA)
     require(audit['status'] == 'reviewed' and {r['benchmark'] for r in audit['controls']} == set(BENCHES), 'Control audit changed')
+    bind_full_reference_pins(resolver, audit)
     result = {}
     for bench in BENCHES:
         origin = (next(r for r in special['profiles'] if r['id'] == 'row16-aot-control') if bench == 'mandelbrot'
