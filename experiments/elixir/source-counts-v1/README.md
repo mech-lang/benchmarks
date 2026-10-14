@@ -32,4 +32,11 @@ header/body/close and independent assignment expansions, and reconcile every
 physical input and alias. Successful parsing or formatting alone cannot supply
 the chart's source-size coordinate.
 
-This source-only preparation has not been executed.
+The [native reader run](run-v1/report.json) completed on 14 October 2026 in one
+owned process. All sixty authored files and fourteen fixtures were read; the
+twelve valid fixtures parsed and the two invalid fixtures were rejected as
+expected. The [terminal receipt](run-v1/terminal.json) binds all 372 artifacts,
+with no integrity, artifact or process-receipt errors. Original and formatted
+ASTs preserve semantics. The [source-unit replay](../source-units-v1/replay-v1.json)
+passes all fourteen fixture expectations and supplies candidate counts for all
+twenty forms; canonical ownership review remains pending.

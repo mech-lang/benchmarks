@@ -1,11 +1,11 @@
-# Retained Kotlin bounded-main preparation
+# Retained Kotlin bounded-main qualification
 
-This is a new, unexecuted diagnostic stage. It checks the actual retained Kotlin
+The completed [second attempt](run-v2/report.json) passed all 156 checks of the actual retained Kotlin
 `MainKt.main(String[])` in 156 fresh JVMs: 78 closed reference cases for each of
 the compact and optimized forms. No Kotlin subject is recompiled. One new Java
 diagnostic wrapper is compiled once with the original retained JDK `javac`.
 
-The controller is `tools/qualification/kotlin_bounded.py`; the observer is
+The successful controller is `tools/qualification/kotlin_bounded_v2.py`; the observer is
 `BoundedProbe.java`. Both `prepare` and `run` acquire the existing common mutex
 `/tmp/mech-clbg-timing.lock`, inode **79859134**, nonblocking. Neither command
 should be started while any benchmark timing batch is active. A busy or replaced
@@ -24,7 +24,7 @@ its terminal receipt is pinned to
 Preparation verifies the helper's physical input pins, closed evidence resolution,
 terminal artifacts, source/owner review, complete retained class inventories,
 and the original runtime. This can hash large runtime files; it is deferred
-until the timing lane is free.
+until the timing lane is free. The completed preparation verified this closure.
 
 The reference loader is imported unchanged and hash-pinned from
 `tools/qualification/elixir_bounded.py`. It verifies the closed Prolog bounded
@@ -109,15 +109,15 @@ JVMs, 156 observed main invocations and returns, 156 qualified cases, all 20
 forms, clean ownership receipts, and unchanged pins. The final terminal receipt
 hashes all retained artifacts and binds the final report while the mutex is held.
 
-## Ready CLI, deferred until the timing lane is free
+## Reproduction
 
 From the repository root, after source review:
 
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
-  tools/qualification/kotlin_bounded.py prepare \
-  --plan experiments/kotlin/bounded-work-v1/plan-v1.json \
-  --output experiments/kotlin/bounded-work-v1/run-v1
+  tools/qualification/kotlin_bounded_v2.py prepare \
+  --plan /tmp/kotlin-bounded-reproduction/plan.json \
+  --output /tmp/kotlin-bounded-reproduction/results
 ```
 
 Preparation prints the exact plan SHA-256. Review the resulting plan and pass
@@ -125,23 +125,43 @@ that value explicitly:
 
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
-  tools/qualification/kotlin_bounded.py run \
-  --plan experiments/kotlin/bounded-work-v1/plan-v1.json \
+  tools/qualification/kotlin_bounded_v2.py run \
+  --plan /tmp/kotlin-bounded-reproduction/plan.json \
   --plan-sha256 PLAN_SHA256_PRINTED_BY_PREPARE
 ```
 
 A failed output tree remains evidence. Diagnose it before authorizing a new
 plan/output revision; successful prior cases are never silently overwritten.
 
-## Source review and checks performed
+## Execution evidence
+
+The [first attempt](run-v1/report.json) stopped on its first JVM because Darwin
+task RSS information became unavailable before the BSD process record reflected
+exit. The program itself exited normally with the expected output. The original
+controller and failed attempt remain unchanged.
+
+The revised observer makes at most five RSS reads, with four 5 ms pauses. It
+checks the full process identity before accepting a reading or a zombie state;
+a missing identity counts as exited only after an `ESRCH` result. Persistent
+failure and identity reuse still reject the attempt. Process deadlines and
+resource limits are unchanged.
+
+The independently reviewed [second plan](plan-v2.json) changes only the observer
+revision and output destination. Its execution recorded one diagnostic compile,
+156 JVM starts, 156 main invocations and returns, and 156 passing output checks.
+The [terminal receipt](run-v2/terminal.json) binds 1,881 retained artifacts,
+with no integrity, artifact, or process-receipt errors. This is bounded output
+qualification; no benchmark timing is admitted.
+
+## Source review and tests
 
 The Java probe had a separate source review. Independent source review found
 two failure-path gaps in the controller, now fixed only in this new
 controller: fallback cleanup signaling when kernel enumeration fails, and
 retention of final process receipts after an output artifact hash failure.
-A final review should cover those changes, complete source/class/runtime binding,
+Review covered those changes, complete source/class/runtime binding,
 probe/summary and class-log schema agreement, alias identity, closed reference
-reuse, native-versus-qualified accounting, and every remaining false gate.
+reuse, native-versus-qualified accounting, and the remaining qualification gates.
 
 Fourteen tiny pure fixtures pass. They exercise schedule substitution rejection,
 launch failure/accounting, identity-read failure after launch, registration failure, partial timeout cleanup,
@@ -151,12 +171,13 @@ handling, class-origin rejection and exact/tolerant output validation. They use
 fake processes and kernel interfaces; they do not launch subprocesses or hash
 the closed corpus/runtime. A metadata-only shape check also confirmed all 20
 retained runtime command shapes, compile/reader exit fields, helper summary pin
-paths and source-review pin keys. No native/JVM/compiler execution or full
-preparation occurred during this source preparation.
+paths and source-review pin keys. Ten additional pure tests exercise the RSS
+revision, including transient failure, exhaustion, PID reuse and missing identity.
+All 24 tests pass against the revised controller.
 
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
-  tools/qualification/test_kotlin_bounded.py
+  tools/qualification/test_kotlin_bounded_v2.py
 ```
 
 Even a complete bounded pass leaves `source_work_qualified`,
