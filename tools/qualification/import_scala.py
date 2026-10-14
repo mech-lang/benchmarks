@@ -17,6 +17,7 @@ import os
 from pathlib import Path
 import re
 import statistics
+import stat
 import sys
 from urllib.parse import quote
 
@@ -49,9 +50,59 @@ r, p, require, same = e.r, e.p, e.require, e.same
 
 def checked(path, digest):
     require(p.digest(digest), 'Explicit SHA-256 required: '+str(path))
-    raw = Path(path).read_bytes()
+    raw = regular(path).read_bytes()
     require(sha(raw) == digest, 'Pinned bytes changed: '+str(path))
     return raw
+
+
+def regular(path):
+    path = Path(path).absolute()
+    require(path.is_absolute() and '..' not in path.parts and path.resolve() == path,
+            'Publication paths must be physical and nonsymlinked: '+str(path))
+    require(stat.S_ISREG(path.lstat().st_mode), 'Regular publication file required: '+str(path))
+    return path
+
+
+def destination_root(value):
+    path = Path(value)
+    require(path.is_absolute() and '..' not in path.parts and path.resolve() == path and path.is_dir(),
+            'Publication root must be an existing physical directory')
+    require(not path.is_relative_to(ROOT) and not ROOT.is_relative_to(path),
+            'Publication and evidence roots must be disjoint')
+    return path
+
+
+def publication_links(candidate, refs):
+    """Direct portable links only; original physical proof pin maps stay original."""
+    links = {}
+    def add(relative, expected):
+        path = Path(relative)
+        require(not path.is_absolute() and '..' not in path.parts and path.as_posix() == relative
+                and relative not in TARGETS and p.digest(expected), 'Unsafe publication link')
+        require(relative not in links or links[relative] == expected, 'Conflicting publication link')
+        links[relative] = expected
+    def visit(value):
+        if type(value) is list:
+            for item in value: visit(item)
+        elif type(value) is dict:
+            if type(value.get('path')) is str and p.digest(value.get('sha256')):
+                path = Path(value['path'])
+                if path.is_absolute() and path.is_relative_to(ROOT):
+                    add(path.relative_to(ROOT).as_posix(), value['sha256'])
+            for item in value.values(): visit(item)
+    visit(candidate)
+    for binding in refs.values(): add(binding['path'], binding['sha256'])
+    for source in candidate['files'].values():
+        require(sha(source['code'].encode('utf-8')) == source['sha256'], 'Embedded source bytes differ')
+        add(source['archive_path'], source['sha256'])
+    return links
+
+
+def verify_publication_links(links, publication):
+    for relative, expected in links.items():
+        original = checked(regular(ROOT/relative), expected)
+        copied = checked(regular(publication/relative), expected)
+        require(copied == original, 'Copied publication link differs: '+relative)
 
 
 def public_ref(binding, root=ROOT):
@@ -91,6 +142,25 @@ def lease_identities(paths):
 
 def verify_named_leases(expected):
     require(lease_identities(expected) == expected, 'Completed-job lease pathname changed')
+
+
+def verify_private_outputs(owned):
+    for path,record in owned.items():
+        identity=regular(path).lstat()
+        require((identity.st_dev,identity.st_ino)==record['identity'],
+                'Private publication artifact replaced: '+str(path))
+        require(path.read_bytes()==record['raw'],'Private publication artifact changed: '+str(path))
+        identity=regular(path).lstat()
+        require((identity.st_dev,identity.st_ino)==record['identity'],
+                'Private publication artifact replaced during read: '+str(path))
+
+
+def write_private(path,raw,owned):
+    require(path.parent.resolve() == path.parent, 'Private output parent redirected')
+    with path.open('xb') as stream:
+        identity=os.fstat(stream.fileno())
+        owned[path]=dict(identity=(identity.st_dev,identity.st_ino),raw=raw)
+        stream.write(raw);stream.flush();os.fsync(stream.fileno())
 
 
 def validate_candidate(candidate):
@@ -344,7 +414,7 @@ def apply_prepared(root, prepared, originals, pins, verify_leases, journal=None)
             temporary.replace(root/name)
         verify_leases()
         for name,raw in prepared.items():
-            require((root/name).read_bytes()==raw,'Catalog changed during apply: '+name)
+            require(regular(root/name).read_bytes()==raw,'Catalog changed during apply: '+name)
     except BaseException as failure:
         restoration_errors=[]
         try:
@@ -355,7 +425,7 @@ def apply_prepared(root, prepared, originals, pins, verify_leases, journal=None)
                 if not path.exists() and not path.is_symlink():continue
                 current=path.lstat()
                 require(not path.is_symlink() and (current.st_dev,current.st_ino)==identity
-                        and raw.startswith(path.read_bytes()),'Temporary file changed; preserving unrelated bytes')
+                        and raw.startswith(regular(path).read_bytes()),'Temporary file changed; preserving unrelated bytes')
                 path.unlink()
             except BaseException as error:restoration_errors.append(error)
         if restoration_errors:
@@ -367,12 +437,12 @@ def rollback_publication(root, prepared, originals):
     errors=[]
     for name in reversed(tuple(prepared)):
         try:
-            current=(root/name).read_bytes()
+            current=regular(root/name).read_bytes()
             require(current in (prepared[name],originals[name]),
                     'Catalog changed after apply; preserving unrelated bytes: '+name)
             if current==prepared[name]:
                 (root/name).write_bytes(originals[name])
-                require((root/name).read_bytes()==originals[name], 'Restored catalog bytes changed: '+name)
+                require(regular(root/name).read_bytes()==originals[name], 'Restored catalog bytes changed: '+name)
         except BaseException as error:
             errors.append(name+': '+str(error))
     require(not errors,'Publication restoration conflicts: '+str(errors))
@@ -387,6 +457,8 @@ def main():
     parser.add_argument('--importer-sha256', required=True, help='Independently reviewed importer source SHA-256')
     for name in ('benchmarks', 'languages', 'module'):
         parser.add_argument('--'+name+'-sha256', required=True)
+    parser.add_argument('--publication-root', type=Path, required=True,
+                        help='Distinct physical checkout containing the three current publication targets')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--apply', action='store_true')
     args = parser.parse_args()
@@ -395,8 +467,12 @@ def main():
     tool_path = Path(__file__).resolve()
     tool_sha = args.importer_sha256
     checked(tool_path, tool_sha)
-    output = args.output.resolve()
-    require(not output.exists() and not output.is_relative_to(ROOT), 'Fresh private output must be outside repository')
+    publication = destination_root(args.publication_root)
+    identity = publication.stat()
+    publication_identity = (identity.st_dev, identity.st_ino)
+    output = args.output.absolute()
+    require(output.resolve() == output and not output.exists() and not output.is_relative_to(ROOT)
+            and not output.is_relative_to(publication), 'Fresh physical private output must be outside both repositories')
     pins = dict(zip(TARGETS, (args.benchmarks_sha256, args.languages_sha256, args.module_sha256)))
     # Capture names before entering the independently verified lock context.
     # Once it yields, its live handles have been matched to these same inodes;
@@ -407,29 +483,50 @@ def main():
     applied=False
     mutation_journal=[]
     prepared=originals=None
-    receipt_sha=None
+    owned_private={}
+    links={}
     def undo_success():
         nonlocal applied
         errors=[]
         if mutation_journal:
             try:
-                rollback_publication(ROOT,{name:prepared[name] for name in mutation_journal},originals)
+                check_destination()
+                rollback_publication(publication,{name:prepared[name] for name in mutation_journal},originals)
                 mutation_journal.clear()
                 applied=False
             except BaseException as error: errors.append(str(error))
-        try:e.remove_owned(output/'import-receipt.json',receipt_sha)
+        try:
+            receipt_path=output/'import-receipt.json'
+            record=owned_private.get(receipt_path)
+            if record:
+                if receipt_path.exists() or receipt_path.is_symlink():
+                    identity=regular(receipt_path).lstat()
+                    require((identity.st_dev,identity.st_ino)==record['identity'],
+                            'Success receipt replaced; preserving unrelated bytes')
+                    e.remove_owned(receipt_path,sha(record['raw']))
+                owned_private.pop(receipt_path)
+            elif record is not None:
+                # Exclusive creation never completed; no receipt was adopted.
+                owned_private.pop(receipt_path)
         except BaseException as error:errors.append(str(error))
         require(not errors,'Publication rollback errors: '+str(errors))
+    def check_destination():
+        require(destination_root(publication) == publication, 'Publication root changed')
+        current = publication.stat()
+        require((current.st_dev,current.st_ino) == publication_identity, 'Publication root replaced')
     def check_publication_inputs():
+        check_destination()
+        verify_publication_links(links, publication)
         for path,digest in e.EXTRA_PINS.items():checked(path,digest)
         for path,digest in ((args.candidate,args.candidate_sha256),(args.reconciliation,args.reconciliation_sha256),
                             (RELEASE,RELEASE_SHA),(EXPORTER,EXPORTER_SHA),(tool_path,tool_sha)):
             checked(path,digest)
         verify_named_leases(names)
+        verify_private_outputs(owned_private)
         if originals is not None:
             expected=prepared if applied else originals
             for name,raw in expected.items():
-                require((ROOT/name).read_bytes()==raw,'Catalog changed before publication closure: '+name)
+                require(regular(publication/name).read_bytes()==raw,'Catalog changed before publication closure: '+name)
     with r.review_files(args.plan,args.plan_sha256,args.durable_directory,on_exit_failure=undo_success,
                         final_consumer_check=check_publication_inputs) as fresh:
         with e.guarded_closure(check_publication_inputs,undo_success):
@@ -451,19 +548,21 @@ def main():
                 rebuilt['export_controller'] = e.ref(str(EXPORTER), EXPORTER_SHA)
                 same(candidate, rebuilt, 'Pinned candidate is not the exact independent export')
                 release = p.strict_json(checked(RELEASE, RELEASE_SHA))
-                refs = {name:public_ref(e.ref(str(path.resolve()), digest)) for name,path,digest in (
+                refs = {name:public_ref(e.ref(str(path.resolve()), digest), root=ROOT) for name,path,digest in (
                     ('candidate', args.candidate, args.candidate_sha256),
                     ('reconciliation', args.reconciliation, args.reconciliation_sha256), ('release', RELEASE, RELEASE_SHA),
                     ('import_controller', tool_path, tool_sha))}
-                originals = {name:checked(ROOT/name, digest) for name,digest in pins.items()}
-                prepared, audit = build_publication(originals, candidate, release, refs, plan)
+                links = publication_links(candidate, refs)
+                verify_publication_links(links, publication)
+                originals = {name:checked(publication/name, digest) for name,digest in pins.items()}
+                prepared, audit = build_publication(originals, candidate, release, refs, plan, root=ROOT)
                 # Full physical closure was independently established above. Recheck it
                 # before any write, retaining every lease through write/apply/receipt.
                 for path, digest in fresh['verified_file_pins'].items():
                     with Path(path).open('rb') as stream:
                         require(hashlib.file_digest(stream, 'sha256').hexdigest() == digest, 'Evidence changed during import')
                 for name,digest in pins.items():
-                    checked(ROOT/name, digest)
+                    checked(publication/name, digest)
                 checked(args.candidate, args.candidate_sha256)
                 checked(args.reconciliation, args.reconciliation_sha256)
                 checked(RELEASE, RELEASE_SHA)
@@ -474,6 +573,7 @@ def main():
                 require(r.inventory(Path(plan['output'])) == expected_inventory, 'Closed artifact inventory changed during import')
                 verify_named_leases(names)
                 checked(tool_path, tool_sha)
+                check_publication_inputs()
                 output.mkdir(parents=True)
                 for name, raw in prepared.items():
                     checked(tool_path, tool_sha)
@@ -481,22 +581,29 @@ def main():
                     target.parent.mkdir(parents=True, exist_ok=True)
                     backup.parent.mkdir(parents=True, exist_ok=True)
                     checked(tool_path, tool_sha)
-                    target.write_bytes(raw)
+                    write_private(target,raw,owned_private)
                     checked(tool_path, tool_sha)
-                    backup.write_bytes(originals[name])
+                    write_private(backup,originals[name],owned_private)
                 receipt = dict(audit, generated_at=datetime.now(timezone.utc).isoformat(), applied=False,
-                    inputs=pins, outputs={name:sha(raw) for name,raw in prepared.items()},
+                    evidence_root=str(ROOT), publication_root=str(publication),
+                    copied_publication_links=dict(links), inputs=pins, outputs={name:sha(raw) for name,raw in prepared.items()},
                     import_tool=dict(path=str(tool_path), sha256=tool_sha),
                     verified_artifact_count=len(fresh['verified_file_pins']))
                 if args.apply:
                     def verify_apply():
+                        check_destination()
+                        verify_publication_links(links, publication)
                         verify_named_leases(names)
                         checked(tool_path, tool_sha)
-                    apply_prepared(ROOT, prepared, originals, pins, verify_apply, mutation_journal)
+                    apply_prepared(publication, prepared, originals, pins, verify_apply, mutation_journal)
                     applied=True
                     receipt.update(applied=True, status='qualified-saved-cohort-imported')
                 checked(tool_path, tool_sha)
-                receipt_sha=e.write_new(output/'import-receipt.json', receipt)
+                receipt_path=output/'import-receipt.json';receipt_ownership={}
+                # The writer fills this caller-owned record immediately after
+                # exclusive creation, before a completed-write return can fail.
+                owned_private[receipt_path]=receipt_ownership
+                e.write_new(receipt_path,receipt,receipt_ownership)
             except BaseException as failure:
                 try:
                     undo_success()

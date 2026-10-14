@@ -12,6 +12,24 @@ Every candidate retains actual sample receipts, standard deviation, matched cont
 
 The [importer](../../../../tools/qualification/import_typescript.py) independently reproduces the pinned candidate, prepares the dataset, language catalog and site metadata module, and optionally applies all three under the same held leases. It preserves existing raw rows, sources, measurements, baselines and aggregate records. A newly winning TypeScript LOC or time minimum stops both preview and apply for a separately reviewed normalization change; this packet does not guess such a change. Canonical-only aggregate coverage explicitly lists the admitted workloads, and no formatted aggregate is added.
 
+The importer runs from the original measurement checkout and requires an explicit
+`--publication-root` naming a separate physical checkout. Its `ROOT`, exporter,
+reconciler, original runtime pins and three evidence leases remain unchanged.
+Only `data/benchmarks.json`, `data/languages.json` and `site/src/languages.mjs` in
+the publication checkout are eligible for replacement. The three caller-supplied
+catalog digests describe those destination files. Existing catalog metadata is
+preserved from their current bytes.
+
+Before preview or apply, copy the exact authored sources and directly linked
+receipts, projections, metadata and publication tools to the same relative paths
+in the publication checkout. The importer checks every converted local link
+against the original bytes before writing and again during final held closure.
+It does not traverse referenced documents to copy their physical pin maps or
+relocate runtime files, commands or original evidence paths. A missing or edited
+linked copy stops publication. Source proof pins remain checked only in the
+original evidence checkout. The preview directory must be fresh and outside
+both checkouts; its receipt records both roots and the copied-link digests.
+
 ## Closed-evidence commands
 
 Run these file phases only after the actual full60 cohort closes and the common timing lane is free. They verify the retained physical closure and do not launch native code. Use actual saved paths and digests from the completed cohort; none is supplied by this source-only packet.
@@ -22,6 +40,7 @@ ts_plan=experiments/typescript/full60-v1/plan-v1.json
 ts_job=experiments/shared/owned-jobs-v1/owned-jobs/typescript-full60-v1
 ts_review=experiments/typescript/full60-v1/reconciliation/review-v1.json
 ts_candidate=experiments/typescript/full60-v1/publication/candidate-v1.json
+ts_publication='/absolute/physical/clean-publication-checkout'
 ```
 
 Set `ts_plan_sha` and `ts_review_sha` to the actual closed plan and independently reviewed reconciliation digests. Export into a fresh retained candidate path:
@@ -34,7 +53,7 @@ Set `ts_plan_sha` and `ts_review_sha` to the actual closed plan and independentl
   --output "$ts_candidate"
 ```
 
-Set `ts_candidate_sha` from the successful export, `ts_importer_sha` from the independently reviewed importer source, and the three input digests from the actual current publication files. Preview into a fresh private directory outside the repository:
+Set `ts_candidate_sha` from the successful export, `ts_importer_sha` from the independently reviewed importer source, and the three input digests from the actual current publication files. Preview into a fresh private directory outside both checkouts:
 
 ```sh
 "$ts_python" -I -S -B tools/qualification/import_typescript.py \
@@ -42,7 +61,7 @@ Set `ts_candidate_sha` from the successful export, `ts_importer_sha` from the in
   --durable-directory "$ts_job" \
   --reconciliation "$ts_review" --reconciliation-sha256 "$ts_review_sha" \
   --candidate "$ts_candidate" --candidate-sha256 "$ts_candidate_sha" \
-  --importer-sha256 "$ts_importer_sha" \
+  --importer-sha256 "$ts_importer_sha" --publication-root "$ts_publication" \
   --benchmarks-sha256 "$ts_benchmarks_sha" \
   --languages-sha256 "$ts_languages_sha" --module-sha256 "$ts_module_sha" \
   --output /private/tmp/typescript-publication-preview-v1

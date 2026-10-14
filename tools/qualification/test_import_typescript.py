@@ -188,7 +188,7 @@ class Import(unittest.TestCase):
 
     def test_named_lease_replacement_is_rejected_even_while_old_handle_lives(self):
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory)/'lease'
+            path = Path(directory).resolve()/'lease'
             path.write_bytes(b'')
             with path.open('rb'):
                 expected = imp.lease_identities([path])
@@ -207,7 +207,7 @@ class Import(unittest.TestCase):
 
     def test_apply_rollback_restores_exact_three_original_files_after_late_failure(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             originals = {name:('original '+name+'\n').encode() for name in imp.TARGETS}
             prepared = {name:b'new\n' for name in imp.TARGETS}
             pins = {name:imp.sha(raw) for name,raw in originals.items()}
@@ -229,7 +229,7 @@ class Import(unittest.TestCase):
 
     def test_post_rename_interrupt_is_journaled_before_mutation(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);old={'a':b'old-a','b':b'old-b'};new={name:b'new-'+name.encode() for name in old}
+            root=Path(directory).resolve();old={'a':b'old-a','b':b'old-b'};new={name:b'new-'+name.encode() for name in old}
             for name,raw in old.items():(root/name).write_bytes(raw)
             actual=Path.replace;journal=[]
             def interrupted(path,target):
@@ -242,7 +242,7 @@ class Import(unittest.TestCase):
 
     def test_caller_journal_survives_apply_return_interruption(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);old={'a':b'old-a','b':b'old-b'};new={name:b'new-'+name.encode() for name in old}
+            root=Path(directory).resolve();old={'a':b'old-a','b':b'old-b'};new={name:b'new-'+name.encode() for name in old}
             for name,raw in old.items():(root/name).write_bytes(raw)
             journal=[]
             def interrupted_return():
@@ -255,7 +255,7 @@ class Import(unittest.TestCase):
 
     def test_missing_target_does_not_prevent_other_restorations(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);old={'a':b'old-a','b':b'old-b','c':b'old-c'}
+            root=Path(directory).resolve();old={'a':b'old-a','b':b'old-b','c':b'old-c'}
             new={name:b'new-'+name.encode() for name in old}
             for name,raw in new.items():(root/name).write_bytes(raw)
             (root/'b').unlink()
@@ -267,7 +267,7 @@ class Import(unittest.TestCase):
 
     def test_apply_pin_failure_never_replaces_first_file(self):
         with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
+            root = Path(directory).resolve()
             name = 'data/benchmarks.json'
             (root/name).parent.mkdir()
             (root/name).write_bytes(b'unreviewed')
@@ -277,7 +277,7 @@ class Import(unittest.TestCase):
 
     def test_apply_failure_restores_owned_targets_and_preserves_external_edit(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);old={'a':b'old-a','b':b'old-b','c':b'old-c'}
+            root=Path(directory).resolve();old={'a':b'old-a','b':b'old-b','c':b'old-c'}
             new={name:b'new-'+name.encode() for name in old}
             for name,raw in old.items():(root/name).write_bytes(raw)
             calls=[]
@@ -292,9 +292,31 @@ class Import(unittest.TestCase):
             self.assertEqual((root/'b').read_bytes(),b'external change')
             self.assertEqual((root/'c').read_bytes(),old['c'])
 
+    def test_earlier_installed_fifo_is_rejected_before_read_and_other_targets_restore(self):
+        with tempfile.TemporaryDirectory(dir='/private/tmp') as directory:
+            root=Path(directory);old={'a':b'old-a','b':b'old-b','c':b'old-c'}
+            new={name:b'new-'+name.encode() for name in old}
+            for name,raw in old.items():(root/name).write_bytes(raw)
+            calls=[];unguarded=[];read=Path.read_bytes
+            def verify():
+                calls.append(True)
+                if len(calls)==3:
+                    (root/'a').unlink();imp.os.mkfifo(root/'a')
+            def bounded_read(path):
+                if imp.stat.S_ISFIFO(path.lstat().st_mode):
+                    unguarded.append(path)
+                    raise AssertionError('FIFO read attempted')
+                return read(path)
+            with patch.object(Path,'read_bytes',bounded_read),self.assertRaises(BaseExceptionGroup):
+                imp.apply_prepared(root,new,old,{name:imp.sha(raw) for name,raw in old.items()},verify)
+            self.assertEqual(unguarded,[])
+            self.assertTrue(imp.stat.S_ISFIFO((root/'a').lstat().st_mode))
+            self.assertEqual((root/'b').read_bytes(),old['b'])
+            self.assertEqual((root/'c').read_bytes(),old['c'])
+
     def test_temporary_writer_failure_preserves_replaced_temporary(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);(root/'a').write_bytes(b'old');temporary=root/'a.typescript-import.tmp'
+            root=Path(directory).resolve();(root/'a').write_bytes(b'old');temporary=root/'a.typescript-import.tmp'
             def fail(_):
                 temporary.write_bytes(b'external temporary')
                 raise OSError('fsync failed')
@@ -306,8 +328,9 @@ class Import(unittest.TestCase):
 
     def test_missing_or_wrong_reviewed_importer_pin_stops_before_file_phase_or_writes(self):
         with tempfile.TemporaryDirectory() as directory:
-            output = Path(directory)/'must-not-exist'
-            argv = ['import_typescript.py', '--durable-directory', '/synthetic/job', '--output', str(output)]
+            output = Path(directory).resolve()/'must-not-exist'
+            argv = ['import_typescript.py', '--durable-directory', '/synthetic/job', '--output', str(output),
+                    '--publication-root', str(Path(directory).resolve())]
             for name in ('candidate', 'reconciliation', 'plan'):
                 argv += ['--'+name, '/synthetic/'+name+'.json', '--'+name+'-sha256', 'a'*64]
             for name in ('benchmarks', 'languages', 'module'):
@@ -362,7 +385,7 @@ class Import(unittest.TestCase):
 
     def test_post_apply_closure_failure_restores_catalog_without_overwriting_external_changes(self):
         with tempfile.TemporaryDirectory() as directory:
-            root=Path(directory);old={'a':b'old-a','b':b'old-b'};new={'a':b'new-a','b':b'new-b'}
+            root=Path(directory).resolve();old={'a':b'old-a','b':b'old-b'};new={'a':b'new-a','b':b'new-b'}
             for name,raw in new.items():(root/name).write_bytes(raw)
             imp.rollback_publication(root,new,old)
             self.assertEqual({name:(root/name).read_bytes() for name in old},old)
@@ -380,7 +403,7 @@ class Import(unittest.TestCase):
     def test_private_preview_backup_and_receipt_bytes_and_inodes_close(self):
         for change in ('bytes','replacement','symlink'):
             with tempfile.TemporaryDirectory() as directory:
-                root=Path(directory);target=root/'preview.json';owned={}
+                root=Path(directory).resolve();target=root/'preview.json';owned={}
                 imp.write_private(target,b'prepared',owned);imp.verify_private_outputs(owned)
                 if change=='bytes':target.write_bytes(b'external')
                 elif change=='replacement':
@@ -391,7 +414,7 @@ class Import(unittest.TestCase):
 
     def test_preexisting_private_output_is_not_overwritten_or_adopted(self):
         with tempfile.TemporaryDirectory() as directory:
-            target=Path(directory)/'existing';target.write_bytes(b'external');owned={}
+            target=Path(directory).resolve()/'existing';target.write_bytes(b'external');owned={}
             with self.assertRaises(FileExistsError):imp.write_private(target,b'new',owned)
             self.assertEqual(target.read_bytes(),b'external');self.assertEqual(owned,{})
 
@@ -407,6 +430,189 @@ class Import(unittest.TestCase):
             self.assertEqual(row['measured_backend']['key'],'node-jit')
 
 
+
+
+
+class DestinationMain(unittest.TestCase):
+    """Exercise the actual importer main with a synthetic held evidence context."""
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(dir='/private/tmp')
+        self.addCleanup(self.temp.cleanup)
+        self.base = Path(self.temp.name)
+        self.evidence, self.target = self.base/'evidence', self.base/'publication'
+        self.evidence.mkdir(); self.target.mkdir()
+        self.output = self.base/'private-output'
+        self.family = Path(imp.__file__).stem.removeprefix('import_')
+        self.packet = 'experiments/'+self.family+'/full60-v1'
+        self.events=[]; self.final_fault=None; self.body_fault=None
+        def put(relative, raw, copied=True):
+            path=self.evidence/relative;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+            if copied:
+                copy_path=self.target/relative;copy_path.parent.mkdir(parents=True,exist_ok=True);copy_path.write_bytes(raw)
+            return path,imp.sha(raw)
+        self.put=put
+        self.source,self.source_sha=put('sources/application.txt',b'authored source\n')
+        raw_path,raw_sha=put(self.packet+'/run-v1/attempts/001.json',b'{}')
+        work,work_sha=put(self.packet+'/work.json',b'{}')
+        counts,counts_sha=put(self.packet+'/counts.json',b'{}')
+        metadata,metadata_sha=put(self.packet+'/runtime-metadata.json',b'{}')
+        release,release_sha=put(self.packet+'/release-metadata.json',b'{}')
+        exporter,exporter_sha=put('tools/qualification/'+self.family+'_export.py',b'synthetic exporter')
+        tool,tool_sha=put('tools/qualification/import_'+self.family+'.py',b'synthetic importer')
+        # A proof pin is intentionally absent from the publication checkout.
+        proof,proof_sha=put('archive/original-proof.md',b'original evidence prose\n',copied=False)
+        self.proof=proof
+        self.plan=dict(output=str(raw_path.parent.parent),qualified_work=dict(path=str(work),sha256=work_sha),
+                       qualified_source_counts=dict(path=str(counts),sha256=counts_sha))
+        plan,plan_sha=put(self.packet+'/plan.json',json.dumps(self.plan).encode())
+        self.fresh=dict(verified_file_pins={str(p):h for p,h in
+            ((self.source,self.source_sha),(raw_path,raw_sha),(work,work_sha),(counts,counts_sha),(proof,proof_sha))})
+        review,review_sha=put(self.packet+'/review.json',json.dumps(self.fresh).encode())
+        self.candidate=dict(files={self.source_sha:dict(sha256=self.source_sha,code=self.source.read_text(),
+            archive_path='sources/application.txt')},raw=dict(path=str(raw_path),sha256=raw_sha),
+            work=self.plan['qualified_work'],counts=self.plan['qualified_source_counts'],
+            plan=dict(path=str(plan),sha256=plan_sha),metadata=dict(path=str(metadata),sha256=metadata_sha),
+            reconciliation=dict(path=str(review),sha256=review_sha),
+            export_controller=dict(path=str(exporter),sha256=exporter_sha))
+        candidate,candidate_sha=put(self.packet+'/candidate.json',json.dumps(self.candidate).encode())
+        self.candidate_path=candidate
+        self.before={name:('clean target '+name).encode() for name in imp.TARGETS}
+        self.after={name:('new target '+name).encode() for name in imp.TARGETS}
+        self.evidence_targets={name:('original evidence '+name).encode() for name in imp.TARGETS}
+        for name in imp.TARGETS:
+            for root,raw in ((self.target,self.before[name]),(self.evidence,self.evidence_targets[name])):
+                path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(raw)
+        history=self.target/'data/normalization-history.json';history.write_bytes(b'prior target history')
+        self.history=history
+        job=self.evidence/'job';lock=self.evidence/'common.lock'
+        for path in (job/'owner.lock',self.evidence/f'experiments/{self.family}/{self.family}-full60.owner.lock',lock):
+            path.parent.mkdir(parents=True,exist_ok=True);path.write_bytes(b'')
+        self.argv=[str(tool),'--publication-root',str(self.target),'--durable-directory',str(job),
+                   '--output',str(self.output),'--importer-sha256',tool_sha]
+        for name,path,h in (('plan',plan,plan_sha),('reconciliation',review,review_sha),('candidate',candidate,candidate_sha)):
+            self.argv.extend(['--'+name,str(path),'--'+name+'-sha256',h])
+        for label,name in zip(('benchmarks','languages','module'),imp.TARGETS):
+            self.argv.extend(['--'+label+'-sha256',imp.sha(self.before[name])])
+        @contextlib.contextmanager
+        def context(plan_path,expected,job_path,*,on_exit_failure,final_consumer_check):
+            self.assertEqual(plan_path,plan);self.assertEqual(expected,plan_sha);self.assertEqual(job_path,job)
+            self.events.append('held')
+            checks=[]
+            def recheck():
+                if checks:
+                    self.events.append('final evidence replay')
+                    if self.final_fault:self.final_fault()
+                checks.append(True)
+            def restore():
+                on_exit_failure();self.events.append('restored while held')
+            try:
+                with imp.r._yield_verified(copy.deepcopy(self.fresh),recheck,restore,final_consumer_check) as result:
+                    yield result
+            finally:self.events.append('released')
+        def candidate_builder(received_plan,fresh,*args):
+            self.assertEqual(received_plan,self.plan);self.assertEqual(fresh,self.fresh)
+            args[-1](str(self.source),self.source_sha)
+            return {k:copy.deepcopy(v) for k,v in self.candidate.items() if k not in ('reconciliation','export_controller')}
+        def build(originals,candidate,release,refs,plan,*,root):
+            self.assertEqual(root,self.evidence);self.assertEqual(originals,self.before)
+            self.assertEqual(candidate,self.candidate);self.assertEqual(plan,self.plan)
+            self.assertEqual(refs['import_controller']['path'],tool.relative_to(self.evidence).as_posix())
+            if self.body_fault:self.body_fault()
+            return dict(self.after),dict(status='synthetic-preview',imported_program_inventory=10,
+                imported_endpoint_programs=10,admitted_workloads=['synthetic'],excluded_profiles=[],baseline_changed=False)
+        replacements=[patch.object(imp,'ROOT',self.evidence),patch.object(imp,'__file__',str(tool)),
+            patch.object(imp,'EXPORTER',exporter),patch.object(imp,'EXPORTER_SHA',exporter_sha),
+            patch.object(imp,'RELEASE',release),patch.object(imp,'RELEASE_SHA',release_sha),
+            patch.object(imp.e,'EXTRA_PINS',{str(metadata):metadata_sha}),
+            patch.object(imp.e,'RUNTIME_METADATA',metadata),patch.object(imp.e,'RUNTIME_METADATA_SHA',metadata_sha),
+            patch.object(imp.e,'build_candidate',side_effect=candidate_builder),patch.object(imp,'build_publication',side_effect=build),
+            patch.object(imp.r,'review_files',side_effect=context),patch.object(imp.r,'LOCK',lock),
+            patch.object(imp.p,'LOCK_INODE',lock.stat().st_ino)]
+        for replacement in replacements:replacement.start();self.addCleanup(replacement.stop)
+    def run_main(self,apply=False):
+        with patch.object(sys,'argv',self.argv+(['--apply'] if apply else [])),contextlib.redirect_stdout(io.StringIO()):
+            imp.main()
+    def assert_evidence_unchanged(self):
+        self.assertEqual({name:(self.evidence/name).read_bytes() for name in imp.TARGETS},self.evidence_targets)
+        self.assertEqual(self.history.read_bytes(),b'prior target history')
+    def assert_targets(self,expected):
+        self.assertEqual({name:(self.target/name).read_bytes() for name in imp.TARGETS},expected)
+    def test_main_preview_and_apply_use_distinct_targets(self):
+        self.run_main();self.assert_targets(self.before);self.assert_evidence_unchanged()
+        receipt=json.loads((self.output/'import-receipt.json').read_bytes())
+        self.assertEqual(receipt['publication_root'],str(self.target));self.assertEqual(receipt['evidence_root'],str(self.evidence))
+        self.assertNotIn('archive/original-proof.md',receipt['copied_publication_links'])
+        self.output=self.base/'private-apply';self.argv[self.argv.index('--output')+1]=str(self.output)
+        self.run_main(apply=True);self.assert_targets(self.after);self.assert_evidence_unchanged()
+        self.assertEqual(self.events[-2:],['final evidence replay','released'])
+    def test_main_rejects_overlap_symlink_and_missing_destination(self):
+        for target in (self.evidence,self.evidence/'nested',self.base):
+            target.mkdir(exist_ok=True)
+            self.argv[self.argv.index('--publication-root')+1]=str(target)
+            with self.assertRaisesRegex(ValueError,'disjoint'):self.run_main()
+        alias=self.base/'alias';alias.symlink_to(self.target,target_is_directory=True)
+        self.argv[self.argv.index('--publication-root')+1]=str(alias)
+        with self.assertRaisesRegex(ValueError,'physical'):self.run_main()
+        self.assertFalse(self.output.exists())
+    def test_main_requires_publication_root_before_file_phase(self):
+        at=self.argv.index('--publication-root');del self.argv[at:at+2]
+        with contextlib.redirect_stderr(io.StringIO()),self.assertRaises(SystemExit):self.run_main()
+        self.assertEqual(self.events,[])
+    def test_main_rejects_candidate_from_publication_checkout(self):
+        self.argv[self.argv.index('--candidate')+1]=str(self.target/self.candidate_path.relative_to(self.evidence))
+        with self.assertRaisesRegex(ValueError,'retained in the repository'):self.run_main()
+        self.assertFalse(self.output.exists());self.assert_evidence_unchanged()
+    def test_main_copied_source_or_receipt_mismatch_blocks_writes(self):
+        for relative in ('sources/application.txt',self.packet+'/review.json','tools/qualification/import_'+self.family+'.py'):
+            path=self.target/relative;old=path.read_bytes();path.write_bytes(b'changed copy')
+            with self.assertRaisesRegex(ValueError,'Pinned bytes changed'):self.run_main()
+            path.write_bytes(old);self.assertFalse(self.output.exists());self.assert_targets(self.before)
+    def test_main_changed_target_or_fifo_is_rejected_without_open(self):
+        path=self.target/imp.TARGETS[0];path.write_bytes(b'changed target')
+        with self.assertRaisesRegex(ValueError,'Pinned bytes changed'):self.run_main()
+        path.unlink();imp.os.mkfifo(path)
+        with self.assertRaisesRegex(ValueError,'Regular publication file'):self.run_main()
+        self.assertFalse(self.output.exists());self.assert_evidence_unchanged()
+    def test_main_late_evidence_failure_restores_before_release(self):
+        def fail():raise ValueError('synthetic final proof drift')
+        self.final_fault=fail
+        with self.assertRaisesRegex(ValueError,'proof drift'):self.run_main(apply=True)
+        self.assert_targets(self.before);self.assert_evidence_unchanged()
+        self.assertFalse((self.output/'import-receipt.json').exists())
+        self.assertEqual(self.events[-2:],['restored while held','released'])
+    def test_main_late_copy_change_restores_catalog_and_preserves_edit(self):
+        path=self.target/'sources/application.txt';self.final_fault=lambda:path.write_bytes(b'external copy')
+        with self.assertRaisesRegex(ValueError,'Pinned bytes changed'):self.run_main(apply=True)
+        self.assert_targets(self.before);self.assert_evidence_unchanged();self.assertEqual(path.read_bytes(),b'external copy')
+    def test_main_late_missing_target_restores_other_targets(self):
+        missing=self.target/imp.TARGETS[1];self.final_fault=missing.unlink
+        with self.assertRaises(BaseExceptionGroup):self.run_main(apply=True)
+        self.assertFalse(missing.exists())
+        for name in (imp.TARGETS[0],imp.TARGETS[2]):self.assertEqual((self.target/name).read_bytes(),self.before[name])
+        self.assert_evidence_unchanged();self.assertFalse((self.output/'import-receipt.json').exists())
+    def test_main_apply_return_gap_uses_persistent_journal(self):
+        original=imp.apply_prepared
+        def interrupted(*args):original(*args);raise KeyboardInterrupt('apply return gap')
+        with patch.object(imp,'apply_prepared',side_effect=interrupted),self.assertRaises(KeyboardInterrupt):self.run_main(apply=True)
+        self.assert_targets(self.before);self.assert_evidence_unchanged()
+    def test_main_receipt_writer_return_gap_removes_owned_success(self):
+        write=imp.e.write_new
+        def interrupted(*args):
+            write(*args)
+            raise KeyboardInterrupt('receipt write return gap')
+        with patch.object(imp.e,'write_new',side_effect=interrupted),self.assertRaises(KeyboardInterrupt):
+            self.run_main(apply=True)
+        self.assert_targets(self.before);self.assert_evidence_unchanged()
+        self.assertFalse((self.output/'import-receipt.json').exists())
+        self.assertEqual(self.events[-1],'released')
+    def test_main_late_owned_receipt_change_restores_catalog(self):
+        path=self.output/'import-receipt.json';self.final_fault=lambda:path.write_bytes(b'{}')
+        with self.assertRaises(BaseExceptionGroup):self.run_main(apply=True)
+        self.assert_targets(self.before);self.assert_evidence_unchanged();self.assertEqual(path.read_bytes(),b'{}')
+    def test_main_original_source_pin_drift_stops_without_publication(self):
+        self.source.write_bytes(b'changed original')
+        with self.assertRaisesRegex(ValueError,'Pinned bytes changed'):self.run_main()
+        self.assertFalse(self.output.exists());self.assert_targets(self.before)
 
 
 if __name__=='__main__':unittest.main()

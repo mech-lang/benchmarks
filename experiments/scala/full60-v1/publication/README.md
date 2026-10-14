@@ -10,11 +10,29 @@ The [importer](../../../../tools/qualification/import_scala.py) accepts only an 
 
 [Release metadata](../release-metadata-v1.json) uses the first public Scala release, January 20, 2004, for the language-history controls. Runtime and language classification metadata are added consistently to the dataset, language catalog and site taxonomy module.
 
+The importer runs from the original measurement checkout and requires an explicit
+`--publication-root` naming a separate physical checkout. Its `ROOT`, exporter,
+reconciler, original runtime pins and three evidence leases remain unchanged.
+Only `data/benchmarks.json`, `data/languages.json` and `site/src/languages.mjs` in
+the publication checkout are eligible for replacement. The three caller-supplied
+catalog digests describe those destination files. Existing catalog metadata is
+preserved from their current bytes.
+
+Before preview or apply, copy the exact authored sources and directly linked
+receipts, projections, metadata and publication tools to the same relative paths
+in the publication checkout. The importer checks every converted local link
+against the original bytes before writing and again during final held closure.
+It does not traverse referenced documents to copy their physical pin maps or
+relocate runtime files, commands or original evidence paths. A missing or edited
+linked copy stops publication. Source proof pins remain checked only in the
+original evidence checkout. The preview directory must be fresh and outside
+both checkouts; its receipt records both roots and the copied-link digests.
+
 ## Closed-evidence procedure
 
 1. Complete the reviewed 60-slot cohort and independently reconcile its actual plan, report, terminal and durable receipts. Retain any workload failures; do not repeat completed observations.
 2. Run `tools/qualification/scala_export.py` with the actual `--plan`, `--plan-sha256`, `--durable-directory`, `--reconciliation`, `--reconciliation-sha256` and a fresh `--output` candidate path outside the original timing directory and publication inputs.
-3. Review the candidate and run `tools/qualification/import_scala.py` with those actual references plus `--candidate`, `--candidate-sha256`, the reviewed `--importer-sha256`, and exact current `--benchmarks-sha256`, `--languages-sha256` and `--module-sha256` values. Choose a fresh private `--output` directory outside the repository. The default produces a preview and exact original-byte backups.
+3. Review the candidate and run `tools/qualification/import_scala.py` with those actual references plus `--candidate`, `--candidate-sha256`, the reviewed `--importer-sha256`, an explicit `--publication-root`, and exact current `--benchmarks-sha256`, `--languages-sha256` and `--module-sha256` values. Choose a fresh private `--output` directory outside both checkouts. The default produces a preview and exact original-byte backups.
 4. Review the preview and preservation receipt. The same importer with `--apply` performs the guarded three-file replacement. Recheck the catalog, site build and published assets separately.
 
 Use the retained Python interpreter with `-I -S -B`. These file phases hash the retained closure and take the common timing mutex nonblockingly; schedule them only while the timing lane is free. Neither tool launches a compiler, runtime, benchmark or measurement producer.
