@@ -36,6 +36,10 @@ The destination must already contain exact copies of the exported candidate and
 its direct source, report, reconciliation, count, review and tool links. The
 adapter compares each required copy against its original digest and bytes; it
 does not follow physical proof-pin maps or provide editorial digest exceptions.
+Embedded matched-control algorithm evidence retains paths relative to its
+original compiler checkout. The original reviewer verifies that provenance;
+those two historical algorithm-evidence fields are not repository-relative
+publication links. Candidate records and their digests remain unchanged.
 Symlinks and nonregular inputs, including FIFOs, are rejected before opening.
 Current transaction files and earlier successful publication history are a
 different category: they belong to the publication checkout and are verified

@@ -302,6 +302,50 @@ class Transactions(unittest.TestCase):
         self.assertEqual(json.loads((self.publication/OLD.CATALOGS[0]).read_bytes()), self.before)
 
 
+class PublicationLinks(unittest.TestCase):
+    def test_retained_control_algorithm_paths_keep_their_original_context(self):
+        legacy = [dict(path='fannkuchredux/fannkuchredux.mec', sha256='1'*64),
+                  dict(path='../../hosts/gpu/src/control/runtime.rs', sha256='2'*64)]
+        direct = dict(path='experiments/example/reconciliation.json', sha256='3'*64)
+        control = dict(algorithm=dict(evidence=legacy),
+                       original_profile=dict(algorithm=dict(evidence=legacy)),
+                       reconciliation=direct)
+        candidate = dict(files={}, program_inventory={'example': dict(matched_mech_control=control)},
+                         report=dict(path='archive/example/report.json', sha256='4'*64))
+        original = copy.deepcopy(candidate)
+        links = a.publication_links(candidate, {}, {}, a.EVIDENCE_ROOT)
+        self.assertEqual(links, {direct['path']: '3'*64, 'archive/example/report.json': '4'*64})
+        self.assertEqual(candidate, original)
+
+    def test_escaped_direct_reference_still_rejected(self):
+        candidate = dict(files={}, report=dict(path='../../outside.json', sha256='1'*64))
+        with self.assertRaisesRegex(ValueError, 'Nonportable'):
+            a.publication_links(candidate, {}, {}, a.EVIDENCE_ROOT)
+
+    def test_subject_algorithm_is_not_a_historical_control_exception(self):
+        candidate = dict(files={}, program_inventory={'example': dict(
+            algorithm=dict(evidence=[dict(path='../../outside.json', sha256='1'*64)]))})
+        with self.assertRaisesRegex(ValueError, 'Nonportable'):
+            a.publication_links(candidate, {}, {}, a.EVIDENCE_ROOT)
+
+    def test_subject_algorithm_proof_requires_an_exact_target_copy(self):
+        with tempfile.TemporaryDirectory(dir='/private/tmp') as directory:
+            evidence, publication = Path(directory)/'evidence', Path(directory)/'publication'
+            evidence.mkdir(); publication.mkdir()
+            raw = b'{"work":"verified"}'
+            (evidence/'proof.json').write_bytes(raw)
+            candidate = dict(files={}, program_inventory={'example': dict(
+                algorithm=dict(evidence=[dict(path='proof.json', sha256=a.sha(raw))]))})
+            links = a.publication_links(candidate, {}, {}, evidence)
+            with self.assertRaisesRegex(ValueError, 'Required file'):
+                a.verify_links(OLD, links, evidence, publication)
+            (publication/'proof.json').write_bytes(raw)
+            a.verify_links(OLD, links, evidence, publication)
+            (publication/'proof.json').write_bytes(b'changed proof')
+            with self.assertRaisesRegex(ValueError, 'Pinned bytes differ'):
+                a.verify_links(OLD, links, evidence, publication)
+
+
 class OriginalSource(unittest.TestCase):
     def test_each_real_dependency_load_keeps_original_locations_and_pins(self):
         for cohort in OLD.COHORTS:

@@ -1,0 +1,2620 @@
+{
+  "schema_version": 1,
+  "audited_on": "2026-10-14",
+  "scope": "55 measured variants; all classifications explicit.",
+  "semantics": {
+    "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
+    "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
+    "typing": "Language type-checking model; dynamic escape hatches or FFI do not redefine its primary model.",
+    "style": "Established idiomatic language paradigms. Overlap is intentional; not a claim each benchmark source uses every paradigm.",
+    "memory": "Standard memory models of the measured language/runtime, including normal built-in managed types. Foreign libraries and purely optional alternate collectors are excluded. Different strategies may coexist.",
+    "evidence": "Missing historical binary or exact flags does not erase known runtime family; confidence limits are recorded separately."
+  },
+  "languages": {
+    "c": {
+      "key": "c",
+      "label": "C (GCC + LLVM)",
+      "family": "c",
+      "platform": "native",
+      "runtime": "GCC and Clang/LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "manual"
+      ],
+      "note": "Manual heap allocation; automatic local storage is not an ownership type system.",
+      "sources": [
+        "https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf"
+      ],
+      "measurement_basis": [
+        {
+          "path": "nbody/experiments/20261009-local-simd/final-confirmation-50m.json",
+          "sha256": "b6e31f3753d7039c267c9c72ce2a178dd6660932e42e88a5ed205d9a8f2faefe",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261009-local-simd/final-confirmation-50m.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "remaining-conformance/signed-division-confirmation.json",
+          "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/remaining-conformance/signed-division-confirmation.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "cpp": {
+      "key": "cpp",
+      "label": "C++ (GCC + LLVM)",
+      "family": "cpp",
+      "platform": "native",
+      "runtime": "G++ and Clang/LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "manual",
+        "owned",
+        "rc"
+      ],
+      "note": "RAII and standard smart pointers coexist with explicit allocation. Paradigms and memory models describe the language/runtime, not a claim every measured source uses every model.",
+      "sources": [
+        "https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rr-raii"
+      ],
+      "measurement_basis": [
+        {
+          "path": "nbody/experiments/20261011-shared-products/replication-50m.json",
+          "sha256": "e134c5634c4fb29add40281685147d339a4e68b61c54b90eea95d5bf5b087e59",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261011-shared-products/replication-50m.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "remaining-conformance/signed-division-confirmation.json",
+          "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/remaining-conformance/signed-division-confirmation.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "chapel": {
+      "key": "chapel",
+      "label": "Chapel",
+      "family": "chapel",
+      "platform": "native",
+      "runtime": "Chapel native compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "array"
+      ],
+      "memory": [
+        "manual",
+        "owned",
+        "rc"
+      ],
+      "note": "Distinct owned, shared (reference counted), and unmanaged class strategies; not one combined manual/ownership model.",
+      "sources": [
+        "https://chapel-lang.org/docs/language/spec/classes.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "nbody/experiments/20261011-shared-products/replication-50m.json",
+          "sha256": "e134c5634c4fb29add40281685147d339a4e68b61c54b90eea95d5bf5b087e59",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261011-shared-products/replication-50m.json"
+        },
+        {
+          "path": "remaining-conformance/signed-division-confirmation.json",
+          "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/remaining-conformance/signed-division-confirmation.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "go": {
+      "key": "go",
+      "label": "Go",
+      "family": "go",
+      "platform": "native",
+      "runtime": "Go native compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Native executable with a tracing-GC runtime; native compilation does not imply manual memory management.",
+      "sources": [
+        "https://go.dev/doc/gc-guide"
+      ],
+      "measurement_basis": [
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 20,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "java": {
+      "key": "java",
+      "label": "Java",
+      "family": "java",
+      "platform": "jvm",
+      "runtime": "OpenJDK HotSpot JVM",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "All 17 displayed profiles invoke the OpenJDK JVM and explicitly record JIT execution. GraalVM native-image describes the upstream submission only, not these measurements.",
+      "sources": [
+        "https://docs.oracle.com/en/java/javase/25/vm/java-hotspot-virtual-machine-performance-enhancements.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "julia": {
+      "key": "julia",
+      "label": "Julia",
+      "family": "julia",
+      "platform": "runtime",
+      "runtime": "Julia / LLVM runtime",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "functional",
+        "array"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Saved commands invoke the Julia LLVM runtime with -O3. JIT is the normal measured execution path; exact effective flags were not captured for every historical sample.",
+      "sources": [
+        "https://docs.julialang.org/en/v1/devdocs/jit/",
+        "https://docs.julialang.org/en/v1/devdocs/gc/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "remaining-conformance/signed-division-confirmation.json",
+          "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/remaining-conformance/signed-division-confirmation.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "mech": {
+      "key": "mech",
+      "label": "Mech (AOT)",
+      "family": "mech",
+      "platform": "native",
+      "runtime": "Mech native AOT compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "array",
+        "functional",
+        "reactive"
+      ],
+      "memory": [
+        "owned",
+        "rc"
+      ],
+      "note": "Typed array/dataflow language. Native storage ownership and runtime reference-counted values are distinct from user-managed allocation.",
+      "sources": [
+        "https://github.com/mech-lang/mech"
+      ],
+      "measurement_basis": [
+        {
+          "path": "additional-languages/20261009-full-suite/results/timings.json",
+          "sha256": "2af915b2b4af15342df200070bfa5e02c7f9177d82edb3144b92094956321958",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/additional-languages/20261009-full-suite/results/timings.json"
+        },
+        {
+          "path": "fasta/investigations/20261009-floating-cdf/results.json",
+          "sha256": "1a5dad6e522e68c61e1547413ade261bd69bdbdfd5466295b7186c736212df46",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/fasta/investigations/20261009-floating-cdf/results.json"
+        },
+        {
+          "path": "function-application-audit/20261009T171437Z/application-v3/timings.json",
+          "sha256": "0fe820d6a684ca9cc7344f3c90c04433c9165f79f9ea86ca0c01fdfde11589de",
+          "status": "saved-report-read",
+          "archive_path": "archive/compiler/function-application-audit/20261009T171437Z/application-v3/timings.json"
+        },
+        {
+          "path": "mandelbrot/experiments/20261011-array-state/full-study/report.json",
+          "sha256": "4537db0520a282d02fb2f5235e9c7e0ee9fdae09babd8742b15455041738dc1e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/mandelbrot/experiments/20261011-array-state/full-study/report.json"
+        },
+        {
+          "path": "nbody/experiments/20261011-shared-products/replication-50m.json",
+          "sha256": "e134c5634c4fb29add40281685147d339a4e68b61c54b90eea95d5bf5b087e59",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261011-shared-products/replication-50m.json"
+        },
+        {
+          "path": "work-audit/20261009/timings.json",
+          "sha256": "9c85e39d8d72357ee9f0867cdebb0968eba37f3577d013d3d21f661027abc33a",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/work-audit/20261009/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "mech-jit": {
+      "key": "mech-jit",
+      "label": "Mech (JIT)",
+      "family": "mech",
+      "platform": "runtime",
+      "runtime": "Mech native JIT runtime",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "array",
+        "functional",
+        "reactive"
+      ],
+      "memory": [
+        "owned",
+        "rc"
+      ],
+      "note": "Native JIT is distinct from the AOT and loaded-interpreter series; runtime values use owned storage and reference counting.",
+      "sources": [
+        "https://github.com/mech-lang/mech"
+      ],
+      "measurement_basis": [
+        {
+          "path": "execution-modes/20261010-final/timings.json",
+          "sha256": "b132b38d6e8e313fea5378426596aa6527c8af9af51bb91ae608f935c56a9b21",
+          "status": "saved-report-read",
+          "archive_path": "archive/compiler/execution-modes/20261010-final/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "mech-resident": {
+      "key": "mech-resident",
+      "label": "Mech (interpreted)",
+      "family": "mech",
+      "platform": "runtime",
+      "runtime": "Mech typed interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "static",
+      "style": [
+        "array",
+        "functional",
+        "reactive"
+      ],
+      "memory": [
+        "owned",
+        "rc"
+      ],
+      "note": "Typed interpreter with whole-process timing, including startup and source preparation. Runtime values use owned storage and reference counting.",
+      "sources": [
+        "https://github.com/mech-lang/mech"
+      ],
+      "measurement_basis": [
+        {
+          "path": "interpreter-integration/20261011/timings.json",
+          "sha256": "88aa48fc3dc53d57347819602026788d3ee8c5144680da4e927d1e7a62913820",
+          "status": "saved-report-read",
+          "archive_path": "archive/compiler/interpreter-integration/20261011/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "rust": {
+      "key": "rust",
+      "label": "Rust",
+      "family": "rust",
+      "platform": "native",
+      "runtime": "rustc / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "functional"
+      ],
+      "memory": [
+        "owned",
+        "rc"
+      ],
+      "note": "Ownership/borrowing with deterministic drop; standard Rc/Arc provide reference counting. Unsafe allocator APIs do not make manual allocation the default model.",
+      "sources": [
+        "https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html",
+        "https://doc.rust-lang.org/std/rc/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fasta/investigations/20261009-floating-cdf/results.json",
+          "sha256": "1a5dad6e522e68c61e1547413ade261bd69bdbdfd5466295b7186c736212df46",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/fasta/investigations/20261009-floating-cdf/results.json"
+        },
+        {
+          "path": "nbody/experiments/20261011-shared-products/replication-50m.json",
+          "sha256": "e134c5634c4fb29add40281685147d339a4e68b61c54b90eea95d5bf5b087e59",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261011-shared-products/replication-50m.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "remaining-conformance/signed-division-confirmation.json",
+          "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/remaining-conformance/signed-division-confirmation.json"
+        },
+        {
+          "path": "retime/results/apple-m3-ac-normal-20261008.json",
+          "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+          "status": "saved-report-read",
+          "archive_path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "python": {
+      "key": "python",
+      "label": "Python (CPython)",
+      "family": "python",
+      "platform": "runtime",
+      "runtime": "CPython bytecode interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "rc",
+        "cycles"
+      ],
+      "note": "CPython bytecode execution in the saved runner; optional CPython JIT was not enabled by the recorded command. Reference counting and a separate cycle collector are both represented.",
+      "sources": [
+        "https://docs.python.org/3/c-api/memory.html",
+        "https://docs.python.org/3/library/gc.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "fast-scripting/results/runtime-policies.json",
+          "sha256": "e359a645bfb3d4bb41f4092830db25c2cbe6795b2b61212987d842b22d517ffb",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/runtime-policies.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "ruby": {
+      "key": "ruby",
+      "label": "Ruby (YJIT)",
+      "family": "ruby",
+      "platform": "runtime",
+      "runtime": "CRuby / YJIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "All 19 selected saved commands explicitly enable --yjit; the old interpreted language-group membership was stale.",
+      "sources": [
+        "https://docs.ruby-lang.org/en/master/yjit/yjit_md.html",
+        "https://docs.ruby-lang.org/en/master/GC.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "fast-scripting/results/runtime-policies.json",
+          "sha256": "e359a645bfb3d4bb41f4092830db25c2cbe6795b2b61212987d842b22d517ffb",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/runtime-policies.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "perl": {
+      "key": "perl",
+      "label": "Perl",
+      "family": "perl",
+      "platform": "runtime",
+      "runtime": "Perl 5 interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://perldoc.perl.org/perlref"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "luajit": {
+      "key": "luajit",
+      "label": "LuaJIT",
+      "family": "lua",
+      "platform": "runtime",
+      "runtime": "LuaJIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://luajit.org/luajit.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 13,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "javascript": {
+      "key": "javascript",
+      "label": "JavaScript (V8)",
+      "family": "javascript",
+      "platform": "javascript",
+      "runtime": "Node.js / V8",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Node/V8 is an execution engine, not a JavaScript-only language platform. Elm in this cohort runs on the same engine. Saved commands use normal V8 execution; exact effective flags are incomplete for some historical samples.",
+      "sources": [
+        "https://nodejs.org/en/learn/getting-started/the-v8-javascript-engine",
+        "https://v8.dev/blog/trash-talk"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "pidigits-work-audit/20261011/results/timings.json",
+          "sha256": "f693d0c13cd88817d83bc3ffc03a31c2c974735f4b291329ddae5718acd228c9",
+          "status": "saved-report-read",
+          "archive_path": "archive/compiler/pidigits-work-audit/20261011/results/timings.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "php": {
+      "key": "php",
+      "label": "PHP",
+      "family": "php",
+      "platform": "runtime",
+      "runtime": "PHP / Zend Engine / OPcache",
+      "execution": [
+        "jit",
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "rc",
+        "cycles"
+      ],
+      "note": "Fourteen selected commands request OPcache tracing JIT; one selected binarytrees profile explicitly disables JIT. A later exact-flag runtime audit confirms OPcache JIT is available/enabled; it is corroboration, not per-sample historical state.",
+      "sources": [
+        "https://www.php.net/manual/en/features.gc.php",
+        "https://www.php.net/manual/en/opcache.configuration.php"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "fast-scripting/results/runtime-policies.json",
+          "sha256": "e359a645bfb3d4bb41f4092830db25c2cbe6795b2b61212987d842b22d517ffb",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/runtime-policies.json"
+        },
+        {
+          "path": "pidigits/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "8cb4fe825e100a7d2db9bbb92f1526de024b1c0c0eb62fca86d5e2c5387e073e",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/pidigits/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "lua": {
+      "key": "lua",
+      "label": "Lua (interpreted)",
+      "family": "lua",
+      "platform": "runtime",
+      "runtime": "PUC Lua bytecode interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://www.lua.org/manual/5.4/manual.html#2.5"
+      ],
+      "measurement_basis": [
+        {
+          "path": "fast-scripting/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "509f2f5932391e819ee2eef19aef777bbb9b16cac3babc66e61178416368fbb2",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/fast-scripting/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "regexredux/results/apple-m3-ac-normal-20261009.json",
+          "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 11,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "bqn": {
+      "key": "bqn",
+      "label": "BQN (CBQN)",
+      "family": "bqn",
+      "platform": "runtime",
+      "runtime": "CBQN interpreter on ARM64",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "functional"
+      ],
+      "memory": [
+        "rc",
+        "gc"
+      ],
+      "note": "The measured Apple ARM64 CBQN runs its interpreter; CBQN native-code compilation documented for x86 is not assumed on this machine. Reference counting is supplemented by tracing GC.",
+      "sources": [
+        "https://github.com/dzaima/CBQN/blob/master/src/README.md",
+        "https://mlochbaum.github.io/BQN/implementation/vm.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "array-comparison/all-20261009/results/faithful-timings.json",
+          "sha256": "8beacb22bcda5899d67219fe815018c8be22a0efb228876034da571114a95316",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/array-comparison/all-20261009/results/faithful-timings.json"
+        },
+        {
+          "path": "array-comparison/nbody-20261009/comparison-mech-compact.json",
+          "sha256": "30535144ef6ef3b40d3d7fed28ce44d4e7214bc964852c19429094d76935583e",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/array-comparison/nbody-20261009/comparison-mech-compact.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 11,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "k": {
+      "key": "k",
+      "label": "K (Growler)",
+      "family": "k",
+      "platform": "runtime",
+      "runtime": "Growler K interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "functional",
+        "imperative"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Growler K array interpreter; its value retain/release memory model is reference counted. This is not K running on JVM or a JavaScript K implementation.",
+      "sources": [
+        "https://github.com/growler/k"
+      ],
+      "measurement_basis": [
+        {
+          "path": "array-comparison/all-20261009/results/faithful-timings.json",
+          "sha256": "8beacb22bcda5899d67219fe815018c8be22a0efb228876034da571114a95316",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/array-comparison/all-20261009/results/faithful-timings.json"
+        },
+        {
+          "path": "array-comparison/nbody-20261009/comparison-mech-compact.json",
+          "sha256": "30535144ef6ef3b40d3d7fed28ce44d4e7214bc964852c19429094d76935583e",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/array-comparison/nbody-20261009/comparison-mech-compact.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 10,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "mojo": {
+      "key": "mojo",
+      "label": "Mojo",
+      "family": "mojo",
+      "platform": "native",
+      "runtime": "Mojo / MLIR / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "owned",
+        "manual"
+      ],
+      "note": "Ownership and prompt destructors coexist with explicit unsafe-pointer allocation. The compiled cohort has static types; Python interoperability is not the measured backend.",
+      "sources": [
+        "https://docs.modular.com/mojo/manual/values/ownership/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "additional-languages/20261009-full-suite/results/timings.json",
+          "sha256": "2af915b2b4af15342df200070bfa5e02c7f9177d82edb3144b92094956321958",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/additional-languages/20261009-full-suite/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 20,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "futhark": {
+      "key": "futhark",
+      "label": "Futhark",
+      "family": "futhark",
+      "platform": "native",
+      "runtime": "Futhark CPU C backend",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "array",
+        "functional"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "CPU backend in this cohort, not GPU/OpenCL execution. Array buffers are reference counted; uniqueness checking enables reuse and does not imply tracing GC.",
+      "sources": [
+        "https://futhark-lang.org/blog/2021-08-02-value-representation.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "additional-languages/20261009-full-suite/results/timings.json",
+          "sha256": "2af915b2b4af15342df200070bfa5e02c7f9177d82edb3144b92094956321958",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/additional-languages/20261009-full-suite/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "swift": {
+      "key": "swift",
+      "label": "Swift",
+      "family": "swift",
+      "platform": "native",
+      "runtime": "Swift / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://docs.swift.org/swift-book/documentation/the-swift-programming-language/automaticreferencecounting/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "swift-comparison/20261010/results/timings.json",
+          "sha256": "ea44fa3f6d9a6828f60fc60a8f1938c79185053c7c592949d8945840903188ee",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/swift/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "haskell": {
+      "key": "haskell",
+      "label": "Haskell",
+      "family": "haskell",
+      "platform": "native",
+      "runtime": "GHC native compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://www.haskell.org/definition/haskell2010.pdf",
+        "https://ghc.gitlab.haskell.org/ghc/doc/users_guide/runtime_control.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "functional-comparison/20261010/results/timings.json",
+          "sha256": "cf0d7c024e599c847232a9eed77edc56c88ad26d2292022f3d242c9af3be8d2b",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/functional-comparison/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "ocaml": {
+      "key": "ocaml",
+      "label": "OCaml",
+      "family": "ocaml",
+      "platform": "native",
+      "runtime": "OCaml native compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://ocaml.org/about",
+        "https://ocaml.org/manual/5.3/intfc.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "functional-comparison/20261010/results/timings.json",
+          "sha256": "cf0d7c024e599c847232a9eed77edc56c88ad26d2292022f3d242c9af3be8d2b",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/functional-comparison/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "matlab": {
+      "key": "matlab",
+      "label": "MATLAB",
+      "family": "matlab",
+      "platform": "runtime",
+      "runtime": "MATLAB native runtime / JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "rc",
+        "cycles"
+      ],
+      "note": "Saved policy says base MATLAB R2026b with standard JIT. Reference-counted values and cycle handling are distinct from the optional R2026b beta collector; beta use is not assumed.",
+      "sources": [
+        "https://www.mathworks.com/help/matlab/matlab_oop/object-life-cycle-management.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "matlab-comparison/20261010/exports/20261010T192801960763Z/timings.json",
+          "sha256": "35d26ef36401f00bb554824dff1667e05c172874984352976616c8eb71b631a3",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/matlab-comparison/20261010/exports/20261010T192801960763Z/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "erlang": {
+      "key": "erlang",
+      "label": "Erlang",
+      "family": "erlang",
+      "platform": "beam",
+      "runtime": "Erlang / BEAM JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc",
+        "rc"
+      ],
+      "note": "BEAM JIT and per-process tracing heaps, plus reference-counted large binaries outside those heaps.",
+      "sources": [
+        "https://www.erlang.org/doc/system/beamjit.html",
+        "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
+        "https://www.erlang.org/doc/system/binaryhandling.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "erlang-comparison/20261010/results/timings.json",
+          "sha256": "b2e6486b3905609bf46d2ef4072dea8b5a91ef4ce3a8fae8a206b68e3decba2b",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/erlang/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "lisp": {
+      "key": "lisp",
+      "label": "Common Lisp (SBCL)",
+      "family": "lisp",
+      "platform": "runtime",
+      "runtime": "SBCL precompiled native saved core",
+      "execution": [
+        "aot"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "SBCL compile-file/save-core happened before timing, so this series is AOT despite dynamic typing.",
+      "sources": [
+        "https://www.sbcl.org/manual/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "lisp-racket-comparison/20261010/results/timings.json",
+          "sha256": "ffe07ba6aa3d25828079f06560ed2be1a776769b5edfc940571af7d596a6a04b",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/lisp-racket-comparison/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "racket": {
+      "key": "racket",
+      "label": "Racket",
+      "family": "racket",
+      "platform": "runtime",
+      "runtime": "Racket CS / Chez precompiled native modules",
+      "execution": [
+        "aot"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Racket CS modules were precompiled by raco make; CS stores native machine code. Dynamic Racket is measured, not Typed Racket.",
+      "sources": [
+        "https://docs.racket-lang.org/guide/performance.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "lisp-racket-comparison/20261010/results/timings.json",
+          "sha256": "ffe07ba6aa3d25828079f06560ed2be1a776769b5edfc940571af7d596a6a04b",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/lisp-racket-comparison/20261010/results/timings.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 20,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "zig": {
+      "key": "zig",
+      "label": "Zig",
+      "family": "zig",
+      "platform": "native",
+      "runtime": "Zig / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "manual"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://ziglang.org/documentation/master/#Memory"
+      ],
+      "measurement_basis": [
+        {
+          "path": "nbody/experiments/20261011-shared-products/replication-50m.json",
+          "sha256": "e134c5634c4fb29add40281685147d339a4e68b61c54b90eea95d5bf5b087e59",
+          "status": "saved-report-read",
+          "archive_path": "archive/workloads/nbody/experiments/20261011-shared-products/replication-50m.json"
+        },
+        {
+          "path": "zig-odin-roc-elm-comparison/20261010/results/timings-complete.json",
+          "sha256": "ca849e1d3ba713c34464e897ea007fc291dfe21b8236b97bedb5288ed56895a7",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/results/timings-complete.json"
+        }
+      ],
+      "runtime_policy": "Zig 0.17.0 \u00b7 LLVM AOT \u00b7 ReleaseFast \u00b7 native CPU",
+      "displayed_program_count": 16,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "odin": {
+      "key": "odin",
+      "label": "Odin",
+      "family": "odin",
+      "platform": "native",
+      "runtime": "Odin / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "manual"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://odin-lang.org/docs/overview/#allocators"
+      ],
+      "measurement_basis": [
+        {
+          "path": "zig-odin-roc-elm-comparison/20261010/results/timings-complete.json",
+          "sha256": "ca849e1d3ba713c34464e897ea007fc291dfe21b8236b97bedb5288ed56895a7",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/results/timings-complete.json"
+        }
+      ],
+      "runtime_policy": "Odin dev-2026-10 \u00b7 AOT \u00b7 -o:speed -no-bounds-check \u00b7 native CPU",
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "roc": {
+      "key": "roc",
+      "label": "Roc",
+      "family": "roc",
+      "platform": "native",
+      "runtime": "Roc LLVM alpha4 compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Measured LLVM alpha4 compiler; newer compiler implementations do not replace the historical runtime identity.",
+      "sources": [
+        "https://www.roc-lang.org/docs/main/langref/lists/",
+        "https://github.com/roc-lang/roc/blob/main/Glossary.md"
+      ],
+      "measurement_basis": [
+        {
+          "path": "zig-odin-roc-elm-comparison/20261010/results/timings-complete.json",
+          "sha256": "ca849e1d3ba713c34464e897ea007fc291dfe21b8236b97bedb5288ed56895a7",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/results/timings-complete.json"
+        }
+      ],
+      "runtime_policy": "Roc alpha4 LLVM compiler \u00b7 2025-09-09 d73ea109cc2 \u00b7 --optimize",
+      "displayed_program_count": 11,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "elm": {
+      "key": "elm",
+      "label": "Elm",
+      "family": "elm",
+      "platform": "javascript",
+      "runtime": "Elm generated JavaScript on Node.js / V8",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Statically typed functional Elm compiled to JavaScript, then executed by Node/V8. Compile-to-JavaScript is not native AOT execution.",
+      "sources": [
+        "https://guide.elm-lang.org/",
+        "https://nodejs.org/en/learn/getting-started/the-v8-javascript-engine"
+      ],
+      "measurement_basis": [
+        {
+          "path": "zig-odin-roc-elm-comparison/20261010/results/timings-complete.json",
+          "sha256": "ca849e1d3ba713c34464e897ea007fc291dfe21b8236b97bedb5288ed56895a7",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/results/timings-complete.json"
+        }
+      ],
+      "runtime_policy": "Elm 0.19.3 --optimize \u00b7 Node 24.19.0",
+      "displayed_program_count": 11,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "csharp": {
+      "key": "csharp",
+      "label": "C# (JIT)",
+      "family": "csharp",
+      "platform": "dotnet",
+      "runtime": ".NET CoreCLR JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/clr",
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": ".NET 10.0.12 \u00b7 C# \u00b7 fresh optimizing JIT process",
+      "displayed_program_count": 20,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "csharp-aot": {
+      "key": "csharp-aot",
+      "label": "C# (AOT)",
+      "family": "csharp",
+      "platform": "dotnet",
+      "runtime": ".NET NativeAOT runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": ".NET NativeAOT includes native code and supporting .NET runtime/GC. It remains in the .NET family and has no execution-time JIT.",
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": ".NET 10.0.12 \u00b7 C# NativeAOT \u00b7 Release \u00b7 native ARM64",
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "fsharp": {
+      "key": "fsharp",
+      "label": "F# (JIT)",
+      "family": "fsharp",
+      "platform": "dotnet",
+      "runtime": ".NET CoreCLR JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/fsharp/what-is-fsharp",
+        "https://learn.microsoft.com/en-us/dotnet/standard/garbage-collection/fundamentals"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": ".NET 10.0.12 \u00b7 F# \u00b7 fresh optimizing JIT process",
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "fsharp-aot": {
+      "key": "fsharp-aot",
+      "label": "F# (AOT)",
+      "family": "fsharp",
+      "platform": "dotnet",
+      "runtime": ".NET NativeAOT runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": ".NET NativeAOT includes native code and supporting .NET runtime/GC. It remains in the .NET family and has no execution-time JIT.",
+      "sources": [
+        "https://learn.microsoft.com/en-us/dotnet/core/deploying/native-aot/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": ".NET 10.0.12 \u00b7 F# NativeAOT \u00b7 Release \u00b7 native ARM64",
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "ada": {
+      "key": "ada",
+      "label": "Ada",
+      "family": "ada",
+      "platform": "native",
+      "runtime": "GNAT / GCC",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "manual",
+        "owned"
+      ],
+      "note": "Explicit access-type deallocation plus controlled finalization/RAII; no default tracing GC.",
+      "sources": [
+        "https://www.adaic.org/resources/add_content/standards/12rm/html/RM-7-6.html",
+        "https://www.adaic.org/resources/add_content/standards/12rm/html/RM-13-11-2.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/ada-regex-repair.json",
+          "sha256": "79cd14804a173326bc21d297915e887b65163cc0e86b2e55e660abcce9ce7436",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/ada-regex-repair.json"
+        },
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "GNAT FSF 16.1.0-1 \u00b7 optimized native ARM64",
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "pascal": {
+      "key": "pascal",
+      "label": "Pascal",
+      "family": "pascal",
+      "platform": "native",
+      "runtime": "Free Pascal",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "manual",
+        "rc"
+      ],
+      "note": "Free Pascal managed strings/dynamic arrays use reference counting; ordinary class/pointer allocations have explicit lifetimes.",
+      "sources": [
+        "https://www.freepascal.org/docs-html/ref/refsu47.html",
+        "https://www.freepascal.org/docs-html/ref/refsu14.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "Free Pascal 3.2.2 \u00b7 optimized native ARM64",
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "fortran": {
+      "key": "fortran",
+      "label": "Fortran",
+      "family": "fortran",
+      "platform": "native",
+      "runtime": "GNU Fortran / GCC",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "array",
+        "object"
+      ],
+      "memory": [
+        "manual",
+        "owned"
+      ],
+      "note": "Allocatable variables can be automatically deallocated at scope exit; pointer/explicit allocations require separate lifetime management.",
+      "sources": [
+        "https://j3-fortran.org/doc/year/18/18-007r1.pdf"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "GNU Fortran 16.2 \u00b7 -O3 \u00b7 native CPU \u00b7 OpenMP \u00b7 binary64",
+      "displayed_program_count": 16,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "dart": {
+      "key": "dart",
+      "label": "Dart (AOT)",
+      "family": "dart",
+      "platform": "runtime",
+      "runtime": "Dart native AOT runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Dart native AOT executable retains the Dart tracing-GC runtime. The separate JIT series shares this runtime family.",
+      "sources": [
+        "https://dart.dev/overview"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "Dart 3.13.5 \u00b7 native ARM64 AOT",
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "dart-jit": {
+      "key": "dart-jit",
+      "label": "Dart (JIT)",
+      "family": "dart",
+      "platform": "runtime",
+      "runtime": "Dart VM JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://dart.dev/overview"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "Dart 3.13.5 \u00b7 fresh VM process \u00b7 optimizing JIT",
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "smalltalk": {
+      "key": "smalltalk",
+      "label": "Smalltalk (Pharo)",
+      "family": "smalltalk",
+      "platform": "runtime",
+      "runtime": "Pharo Cog/Spur VM",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://github.com/OpenSmalltalk/opensmalltalk-vm"
+      ],
+      "measurement_basis": [
+        {
+          "path": "remaining-languages-comparison/20261011/results/native-timings-v2.json",
+          "sha256": "d6758ce452be15c5796b5e21f3aaf33d2942dd5b64ea4d8a0872aa3a31f06dae",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/remaining-languages-comparison/20261011/results/native-timings-v2.json"
+        }
+      ],
+      "runtime_policy": "Pharo 14 snapshot \u00b7 native ARM64 Cog/Spur JIT \u00b7 fresh headless image process",
+      "displayed_program_count": 13,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "d": {
+      "key": "d",
+      "label": "D",
+      "family": "d",
+      "platform": "native",
+      "runtime": "LDC / LLVM / D runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc",
+        "manual",
+        "owned"
+      ],
+      "note": "D runtime tracing GC coexists with manual allocation and deterministic struct destruction; @nogc is available but not assumed for the whole cohort.",
+      "sources": [
+        "https://dlang.org/spec/garbage.html",
+        "https://dlang.org/spec/struct.html#struct-destructor"
+      ],
+      "measurement_basis": [
+        {
+          "path": "d-comparison/20261011/results/timings.json",
+          "sha256": "aa845b1dcd1bedde62cfb3812bd6b947b4c8e950115899cf21eeb07b354ae05b",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/d/20261011/results/timings.json"
+        }
+      ],
+      "runtime_policy": "LDC 1.43.0 \u00b7 LLVM 23.1.2 \u00b7 optimized native ARM64 \u00b7 Apple M3",
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "r": {
+      "key": "r",
+      "label": "R",
+      "family": "r",
+      "platform": "runtime",
+      "runtime": "GNU R bytecode interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "functional",
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "GNU R bytecode JIT compiles expressions to bytecode interpreted by the R VM; it is not a native-code JIT like V8 or HotSpot.",
+      "sources": [
+        "https://cran.r-project.org/doc/manuals/r-release/R-ints.html",
+        "https://stat.ethz.ch/R-manual/R-devel/library/compiler/html/compile.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "r-apl-uiua-comparison/20261011/results/timings-r.json",
+          "sha256": "ce37df0204cd7880033206f3afb2f91296d4b757090c5026947a414c224f1c6e",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/r-apl-uiua-comparison/20261011/results/timings-r.json"
+        }
+      ],
+      "runtime_policy": "GNU R 4.6.1 \u00b7 ARM64 \u00b7 bytecode JIT enabled",
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "apl": {
+      "key": "apl",
+      "label": "APL (GNU APL)",
+      "family": "apl",
+      "platform": "runtime",
+      "runtime": "GNU APL interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "imperative"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "GNU APL interpreter, not Dyalog or another APL runtime. Automatic value ownership/reference counts do not imply a language ownership type system.",
+      "sources": [
+        "https://www.gnu.org/software/apl/apl.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "r-apl-uiua-comparison/20261011/results/timings-apl.json",
+          "sha256": "f17725d71bb7886cdee79de7794dd55f399592bbe0695ed7baabcf2a83eb3dd1",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/r-apl-uiua-comparison/20261011/results/timings-apl.json"
+        }
+      ],
+      "runtime_policy": "GNU APL 2.0 \u00b7 native ARM64 interpreter \u00b7 serial array primitives on macOS",
+      "displayed_program_count": 14,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "uiua": {
+      "key": "uiua",
+      "label": "Uiua",
+      "family": "uiua",
+      "platform": "runtime",
+      "runtime": "Uiua interpreter",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "array",
+        "functional"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Dynamically typed stack/array interpreter. Its copy-on-write array backing uses reference counting; Rust implementation details do not make Uiua statically typed.",
+      "sources": [
+        "https://github.com/uiua-lang/uiua/blob/main/src/cowslice.rs",
+        "https://www.uiua.org/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "r-apl-uiua-comparison/20261011/results/timings-uiua.json",
+          "sha256": "da5ccf102e90dc2755388414390f6401402b2f67edb177ba74a377f2c5cae709",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/r-apl-uiua-comparison/20261011/results/timings-uiua.json"
+        },
+        {
+          "path": "r-apl-uiua-comparison/20261011/uiua-mandel-parallel-v4/results/full-study.json",
+          "sha256": "8b0cff489ba75129b78a80682f4e486da48a6ab8b338511a1e4c269bca192b12",
+          "status": "saved-report-read",
+          "archive_path": "archive/comparisons/r-apl-uiua-comparison/20261011/uiua-mandel-parallel-v4/results/full-study.json"
+        }
+      ],
+      "runtime_policy": "Uiua 0.19.1 \u00b7 official native ARM64 interpreter",
+      "displayed_program_count": 15,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "crystal": {
+      "key": "crystal",
+      "label": "Crystal",
+      "family": "crystal",
+      "platform": "native",
+      "runtime": "Crystal / LLVM / Boehm GC",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://crystal-lang.org/reference/latest/syntax_and_semantics/memory.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/binarytrees/report.json",
+          "sha256": "7ddec330c52ba906a5a8e80cba7ab382c61c2b242c0f2ff0d1ac9e56a67fb137",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/binarytrees/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/fannkuchredux/report.json",
+          "sha256": "9ff563491e2119550ac50041e3dcd4b9ab6de158994482276baf2f1d0d47b0a2",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/fannkuchredux/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/fasta/report.json",
+          "sha256": "131d2f99bec4bfc1ddd20a99153e380cc2c55df3dbebddeda231e7f5fcd742df",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/fasta/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/knucleotide/report.json",
+          "sha256": "14ff4372a93eff424ea4ca8051e6f042517e150c0f30772edca16c58cbcd4a0d",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/knucleotide/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/mandelbrot/report.json",
+          "sha256": "9767ae57f886f550109885f3597d645ad7d41e6548230a62261df575863fda5c",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/mandelbrot/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/nbody/report.json",
+          "sha256": "482a17f0ab4917ab72c663205b079f1976e3538b0ea91b5ef173ec24dd38c8bc",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/nbody/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/pidigits/report.json",
+          "sha256": "3e55e5af51cefa52f278e4db81d1e0d86bd30a6b81584768a669d6520cc066cf",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/pidigits/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/regexredux/report.json",
+          "sha256": "0d6f88033148b93580d29e6e994021f17a0c617acf2bb7bf02f795e9420bf637",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/regexredux/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/revcomp/report.json",
+          "sha256": "fc2e679372ddf5410f00e7be3028a2c739a7ad37f6289bf1bc05d32e97468342",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/revcomp/report.json"
+        },
+        {
+          "path": "crystal-comparison/20261012/studies/full-v1/spectralnorm/report.json",
+          "sha256": "55a86bdc0cfd4c5e69fe82ed75bb1b5fdb78ae7f83605afbcaa2b1c454844ea6",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/crystal/20261012/studies/full-v1/spectralnorm/report.json"
+        }
+      ],
+      "runtime_policy": "Crystal 1.21.1 / LLVM 15.0.7, native macOS ARM64",
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "c3": {
+      "key": "c3",
+      "label": "C3",
+      "family": "c3",
+      "platform": "native",
+      "runtime": "C3 / LLVM",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "manual"
+      ],
+      "note": "Explicit allocator/free model; scoped defer cleanup is not an ownership type system.",
+      "sources": [
+        "https://c3-lang.org/language-common/memory/"
+      ],
+      "measurement_basis": [
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/binarytrees/report.json",
+          "sha256": "a746d5f8eb87b04f1b55adddbe9cc71f0a94d0bc1779c39f23960aaf255f78ae",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/binarytrees/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/fannkuchredux/report.json",
+          "sha256": "ad0676276ecf9ea354ba45c597f93230bd4d6ed8a2ffe396f77a38b02ca29811",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/fannkuchredux/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/fasta/report.json",
+          "sha256": "73721302895ba28de47c3f5838f0563adae2ef5a05b92d0a5bc3654998e75aee",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/fasta/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/knucleotide/report.json",
+          "sha256": "adc94ba6d9f9ea0596cc17b696a90c1079cf54969103462473a019f3e1ceafe2",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/knucleotide/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/mandelbrot/report.json",
+          "sha256": "3e779f13b660e2d20592efb9d516644cd6353ab04c50c316524b920fde5cd5ab",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/mandelbrot/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/nbody/report.json",
+          "sha256": "764cb735d0cacd03c78ca9326a04a32cd66fddd4a05170b0b76b2d7a9f33eea4",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/nbody/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/pidigits/report.json",
+          "sha256": "3e9aadbecc02bb85436fb5978a6030184d5ddcdc2693fb0d80440cb805d2ae3d",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/pidigits/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/regexredux/report.json",
+          "sha256": "0e069cf847a2a1388efca38d4d951e3ee0f6907fe478199295d3893d44efadeb",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/regexredux/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/revcomp/report.json",
+          "sha256": "d3fe0095790ed04d0512638e974e040390d7ff2be103c36f646ef4f24660e3ac",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/revcomp/report.json"
+        },
+        {
+          "path": "c3-comparison/20261012/studies/full-v1/spectralnorm/report.json",
+          "sha256": "1564849d5dcc95903b86ea56ad30de9ca4e2f63f5bc4010b50e0273986389f31",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/c3/20261012/studies/full-v1/spectralnorm/report.json"
+        }
+      ],
+      "runtime_policy": "C3 0.8.5 / LLVM 23.1.2, Clang 22.1.8 link, native macOS ARM64",
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "clojure": {
+      "key": "clojure",
+      "label": "Clojure",
+      "family": "clojure",
+      "platform": "jvm",
+      "runtime": "Clojure on OpenJDK HotSpot JVM",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Measured implementation identified by the saved build/run reports; language traits describe its standard language/runtime model.",
+      "sources": [
+        "https://clojure.org/about/features",
+        "https://clojure.org/about/jvm_hosted"
+      ],
+      "measurement_basis": [
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/binarytrees/report.json",
+          "sha256": "4edb3c5f3e578fc9e444871a3f00c7a70e7e875a970710aad82db603b4d77555",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/fannkuchredux/report.json",
+          "sha256": "9f8fd4c4eacb5b750b82bad1ebf433089016e4ac520693d7d455ab43ffee482c",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/fasta/report.json",
+          "sha256": "492d991b1d2c100de9df3380f40447afe1f4a5064beb377e181cb003a704e169",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/knucleotide/report.json",
+          "sha256": "bb9b40da3421d3c7c5378a6435dc4e294f3c4884a9ec20856233058a7a3c98c6",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/mandelbrot/report.json",
+          "sha256": "6178d18f4a22ceb74fdafa3032ad45815eb5f346acff0c38b57932dd66ca7ee9",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/nbody/report.json",
+          "sha256": "ba843e5c4f1d0e7d1a272e10e9006c4e0631aac3a6181f6f06952bf3c803163f",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/pidigits/report.json",
+          "sha256": "e91f97974cd24748d5a56beb752eb94bda54a655ffc681b41c66bd7cdff4404a",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/regexredux/report.json",
+          "sha256": "4612e3bb56551d6407b8780de39c1c9887d3baaf11a3a52c7aa1b076d7c68537",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/revcomp/report.json",
+          "sha256": "3af2e73cef3475e5ed69de5c0809bb79a91f4f62c377ba3541a3d467c29b4604",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "clojure-comparison/20261012/studies/full-v1/spectralnorm/report.json",
+          "sha256": "c91a5d65789f828f2cc95a6e7850899ea7f4c98cb8c6aac1784cebc7fa1ffb2b",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        }
+      ],
+      "runtime_policy": "Clojure 1.12.6 bytecode / Temurin 25.0.4.1+1 HotSpot JIT, native macOS ARM64",
+      "displayed_program_count": 18,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "nim": {
+      "key": "nim",
+      "label": "Nim",
+      "family": "nim",
+      "platform": "native",
+      "runtime": "Nim C backend / Clang / ORC",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "rc",
+        "cycles",
+        "owned"
+      ],
+      "note": "The measured C backend uses ORC: reference counting plus trial-deletion cycle collection and deterministic destructors. ORC is not a global tracing collector.",
+      "sources": [
+        "https://nim-lang.org/2.0.4/mm.html",
+        "https://nim-lang.org/docs/destructors.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/binarytrees/report.json",
+          "sha256": "8dcf73ed368f84cdb55d22f226e5c7e5faab9eb5407cb9c1f1d31211ea6d73da",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/fannkuchredux/report.json",
+          "sha256": "e5381157aba85094414cfef3c397b40376c1ebb7551e540dad264209472eea34",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/fasta/report.json",
+          "sha256": "fe0927148addf2e7dc83bb37b961940a635036a596cb6279c37cbb50bd0fe5e9",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/knucleotide/report.json",
+          "sha256": "864c3c8029440bf99e0f64ac8f0d5f679866c8a5c906b523d0856ee2f91b5102",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/mandelbrot/report.json",
+          "sha256": "32faa3a13724821af77f8a8cd41539f43ebd68720b11c6e9436aac5d78c9810b",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/nbody/report.json",
+          "sha256": "849f0c3f9a900f36219d085339a93932521e00dc67b9f76de8855890eb098fbb",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/pidigits/report.json",
+          "sha256": "a2a9f98925224b3461fc5524eaa9b54be06d976545d7e0c4ba9ee34beb9f38cc",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/regexredux/report.json",
+          "sha256": "c8a62de395d0c42cc786e6dad457ac4a66051a998ca47077fd1e05da91034e3f",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/revcomp/report.json",
+          "sha256": "7b574ee4d5a825dd696cdcbf531cea9065724e367fb9eee854e221341e8154df",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "nim-comparison/20261012/studies/full-v6/spectralnorm/report.json",
+          "sha256": "43200b98bbea1ce60d666b67ce55ac4b9866459913b2dff438b80a8560a75286",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        }
+      ],
+      "runtime_policy": "Nim 2.2.12 C backend / Clang 22.1.8, native macOS ARM64",
+      "displayed_program_count": 20,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "gleam": {
+      "key": "gleam",
+      "label": "Gleam",
+      "family": "gleam",
+      "platform": "beam",
+      "runtime": "Gleam on Erlang / BEAM JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc",
+        "rc"
+      ],
+      "note": "Statically typed functional language using the measured Erlang target and BEAM load-time JIT; its available JavaScript target was not measured. BEAM heaps use tracing GC and large binaries use reference counts.",
+      "sources": [
+        "https://gleam.run/",
+        "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
+        "https://www.erlang.org/doc/system/binaryhandling.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/binarytrees/report.json",
+          "sha256": "eb6905feae265c2f4ad9c5ebd00ee71cdbb09d90bf652fe5a44bf7cd761d0d8a",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/fannkuchredux/report.json",
+          "sha256": "f9a44a401caf469d572910fa81e9ad5c4ee9b0c10fcbb7bc5bf483b314d36e0c",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/fasta/report.json",
+          "sha256": "eddba38566050775a3a09d88ec70d383b8b91c59e784228e6bf0c141fa6312a6",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/knucleotide/report.json",
+          "sha256": "aa1e2495bc4fd607d76e95a5db06a2adc12b76943c6e0e5bdb2fc12bafe95655",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/mandelbrot/report.json",
+          "sha256": "ba481e898dad69a81975da045502194889fa9dbb762e5adcdb7a60573367904c",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/nbody/report.json",
+          "sha256": "c21dd2e70e361fd1ecd19b8a79d96c6c0269ac0edbcd2e41cbb53819b5f335c3",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/pidigits/report.json",
+          "sha256": "e962adc933a22a58db98027dc692f56a3b0b495812d80a513a1745cb05025ea0",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/regexredux/report.json",
+          "sha256": "86692f3974956c5a44d8f3f335b7af9bb70809ddea6cc8d73d4f32c8ed4362f6",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/revcomp/report.json",
+          "sha256": "bba1da2df5c0ee7f5079771a894f98f2c45681105329f7b0f989aefdea2ae474",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        },
+        {
+          "path": "gleam-comparison/20261012/studies/full-v4/spectralnorm/report.json",
+          "sha256": "a6a56abc8a06ca348e14b662e03c86e15fbcb08306346f2bac4848b0af74cc7d",
+          "status": "dataset-provenance-only; report absent at original path",
+          "archive_path": null
+        }
+      ],
+      "runtime_policy": "Gleam 1.19.0 / Erlang OTP 29.1.1 ERTS 17.1 BEAM load-time JIT, native macOS ARM64",
+      "displayed_program_count": 17,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "v": {
+      "key": "v",
+      "label": "V",
+      "family": "v",
+      "platform": "native",
+      "runtime": "V C backend / Clang / Boehm GC",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Saved production builds use V C backend with Clang and default Boehm tracing GC. Neither experimental autofree nor -gc none is assumed.",
+      "sources": [
+        "https://docs.vlang.io/memory-management.html",
+        "https://github.com/vlang/v/wiki/FAQ"
+      ],
+      "measurement_basis": [
+        {
+          "path": "v-report-only/20261012/studies/binarytrees/full-study/report.json",
+          "sha256": "97bf80ab1f731f7b10bf2294f923e2d308ef4b9135634f647fc748f177ea93b1",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/binarytrees/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/fannkuchredux/full-study/report.json",
+          "sha256": "b8d1e14c8a7a27a56f4a165f8454d2aeaa0380dffff88bd31e3fed42fff464d2",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/fannkuchredux/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/fasta/full-study/report.json",
+          "sha256": "0481188dd4521cd3d11cfaa8a5d80b2e36b180cd794282bf6542f97da09d0e90",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/fasta/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/knucleotide/full-study/report.json",
+          "sha256": "c94e505ea92fa8c2059a662f4e387584da27fe1fcb82cab0bfdd7b8aa8af3aea",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/knucleotide/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/mandelbrot/full-study/report.json",
+          "sha256": "77f564041096cadad8c373f86c165532b09e4baa2200fb7cee0ece922708443e",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/mandelbrot/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/nbody/full-study/report.json",
+          "sha256": "a3659ca0725702f7402e97981a954a79525a6546938a0229b7cc4501d396a1bc",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/nbody/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/pidigits/full-study/report.json",
+          "sha256": "d96d9a8833ba4e18d2f8b3b5a9ba8f19e212afaa8f64202e139de5e2076b0689",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/pidigits/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/regexredux/full-study/report.json",
+          "sha256": "34d8de14577a4a61c1385b6d6dfa860bbd95d890b8da26be50b1805c798700f7",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/regexredux/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/revcomp/full-study/report.json",
+          "sha256": "56a1eac8997d24e79483ce2006a9e8941ca32b8f2c228be23defb760d32a1719",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/revcomp/full-study/report.json"
+        },
+        {
+          "path": "v-report-only/20261012/studies/spectralnorm/full-study/report.json",
+          "sha256": "13ec134eb0398c89fe707bd0357d22d486ba20b0d260d414a324ac388398d431",
+          "status": "saved-report-read",
+          "archive_path": "archive/languages/v/20261012/studies/spectralnorm/full-study/report.json"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
+    },
+    "pony": {
+      "key": "pony",
+      "label": "Pony",
+      "family": "pony",
+      "platform": "native",
+      "runtime": "Pony native compiler/runtime",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object"
+      ],
+      "memory": [
+        "gc",
+        "rc",
+        "cycles"
+      ],
+      "note": "Actor-based, statically typed native language with reference capabilities. Actor-local heaps use tracing GC; cross-actor references and actor cycles use runtime collection. Reference capabilities are not manual allocation or RAII ownership.",
+      "sources": [
+        "https://www.ponylang.io/blog/2017/05/an-early-history-of-pony/",
+        "https://www.ponylang.io/media/papers/OGC.pdf",
+        "https://www.ponylang.io/media/papers/a_string_of_ponies.pdf",
+        "https://www.ponylang.io/use/compiler/runtime-options/"
+      ],
+      "release_year": 2015,
+      "release_note": "First open-source release in May 2015 according to the creator; the earlier 2014 prototype is excluded.",
+      "measurement_basis": [
+        {
+          "path": "experiments/pony/migration-resume-v1/results/report.json",
+          "sha256": "e8305dbaa61d094b5a86df1ee61b4e497b3fe4bcadb9061b8c334c92a9b02161",
+          "status": "independently-reconciled-full90"
+        },
+        {
+          "path": "experiments/pony/runtime-metadata-v1/report.json",
+          "sha256": "bd3da7cba49802111e013f5bcdde2f6ea066c1f8397e3700ab01a61192ff9f00",
+          "status": "verified-recorded-runtime-metadata"
+        }
+      ],
+      "runtime_policy": "Pony 0.74.0-95ad180 release compiler/runtime, LLVM 23.1.2, native macOS ARM64; --ponymaxthreads 8",
+      "displayed_program_count": 13,
+      "evidence_scope": "Saved successful production builds, pinned native binaries and static runtime artifacts, recorded architecture and linked-image inspections, exact commands/environment and complete authored-source inventory. Recorded DYLD_LIBRARY_PATH and install names identify pinned library candidates; actual loaded-image paths and runtime GC configuration were not observed by this check.",
+      "runtime_gc_configuration_observed": false
+    },
+    "elixir": {
+      "key": "elixir",
+      "label": "Elixir",
+      "family": "elixir",
+      "platform": "beam",
+      "runtime": "Elixir 1.20.4 on Erlang/OTP 29 / ERTS 17.1 BEAM JIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "functional"
+      ],
+      "memory": [
+        "gc",
+        "rc"
+      ],
+      "note": "BEAM JIT with per-process tracing heaps and reference-counted large binaries; identical source aliases remain independently measured.",
+      "sources": [
+        "https://www.erlang.org/doc/system/beamjit.html",
+        "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
+        "https://www.erlang.org/doc/system/binaryhandling.html"
+      ],
+      "taxonomy_basis": "Existing reviewed BEAM taxonomy in data/languages.json; specific retained Elixir execution is bound below",
+      "runtime_policy": "Elixir 1.20.4 on Erlang/OTP 29 / ERTS 17.1 BEAM JIT; +S 8:8 +A 1 +SDcpu 1:1 +SDio 1",
+      "memory_policy": "Retained default BEAM GC; no GC/heap override in recorded flags or literal authored-source scan",
+      "normal_schedulers_online": 8,
+      "dirty_cpu_schedulers": 1,
+      "dirty_io_schedulers": 1,
+      "async_threads": 1,
+      "native_architecture": "aarch64-apple",
+      "word_bytes": 8,
+      "maximum_total_vm_threads_claimed": false,
+      "runtime_gc_configuration_observed": false,
+      "gc_numeric_defaults_claimed": false,
+      "regex_jit_observed": false,
+      "exact_regex_engine_version": null,
+      "regex_support": "Elixir Regex with the pinned OTP :re general-purpose engine",
+      "observed_in_closed_qualification_processes": true,
+      "observed_in_each_timed_process": false,
+      "runtime_evidence": {
+        "path": "experiments/elixir/compiled-work-v1/probe-v2.exs",
+        "sha256": "aa46dbb8d4fee6350ca63fade5b9619fa4c3cb96ce850a54e880b1585711c946"
+      },
+      "runtime_pins": {
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/erts-17.1/bin/beam.smp": "317a5aa96d7f488ee1f5377f76cb87f47279e235b3eff835ec3c98265074116b",
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/erts-17.1/bin/erlexec": "60877b262a4aa18ad0d6aaf528e4ded12ad33b89cba9f245678411668c6997e6",
+        "/opt/homebrew/Cellar/erlang/29.1.1_2/lib/erlang/lib/stdlib-8.1/ebin/re.beam": "7a6d8965ba7d802795f648a388ab243ec5f83df7816caf4d6552bbcb943deb6c",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/elixir-comparison/20261013/.build/retained-otp-toolchain-v1/elixir/lib/elixir/ebin/Elixir.Regex.beam": "d15a26fb6786e638e03573093b9c576d7b0105d3fe78d68ba20dde38324833e0"
+      },
+      "qualification_evidence": {
+        "path": "experiments/elixir/compiled-work-v1/qualified-work-v1.json",
+        "sha256": "a96ed85f0f0d1da05cca428d18dfeb9d0d702158b7aa0f7a5c87ae827b4588bf"
+      },
+      "reader_runtime": {
+        "common_mutex_inode": 79859134,
+        "elixir_version": "1.20.4",
+        "otp_release": "29",
+        "source_evaluations": 0,
+        "system_version": "Erlang/OTP 29 [erts-17.1] [source] [64-bit] [smp:8:8] [ds:1:1:1] [async-threads:1] [jit] [dtrace]\n"
+      },
+      "formatter": {
+        "api": "Code.format_string!/2",
+        "elixir": "1.20.4",
+        "line_length": 98
+      },
+      "literal_gc_override_markers": [
+        "process_flag",
+        "system_flag",
+        "garbage_collect",
+        "fullsweep_after",
+        "min_heap_size",
+        "min_bin_vheap_size",
+        "max_heap_size"
+      ],
+      "source_scan_files": 60,
+      "source_scan_limit": "Literal marker scan; no numeric GC defaults or per-timed-process runtime probe is claimed",
+      "evidence_scope": "Version, JIT, architecture and scheduler assertions belong to separately closed retained qualification processes. Timed-process evidence binds the unchanged launch, source/BEAM/runtime closure, full output and lifecycle; each timed process was not instrumented for runtime metadata.",
+      "runtime_publication_metadata_qualified": true,
+      "chart_admission": false,
+      "release_year": 2012,
+      "release_name": "Elixir v0.5.0",
+      "release_source": "https://elixir-lang.org/blog/2012/05/25/elixir-v0-5-0-released/",
+      "release_note": "Year of the public v0.5.0 release of the rewritten language. The creator also records an earlier v0.3.0 predecessor around April 2011; 2012 does not mean that development or every earlier release began then.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/elixir/full90-v1/publication-candidate-v1.json",
+          "sha256": "070ef5a759d2da21d9a30e3df78a96d58e44971d1c0add51661e578f9fe0978f",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
+    },
+    "kotlin": {
+      "schema": "kotlin-publication-runtime-metadata-v1",
+      "key": "kotlin",
+      "family": "kotlin",
+      "label": "Kotlin (JVM)",
+      "platform": "jvm",
+      "runtime": "Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Kotlin/JVM classes run on HotSpot with tiered compilation and G1. Each sample includes JVM startup, class loading, runtime compilation, input/output and shutdown. Authored helpers are included in source counts.",
+      "sources": [
+        "https://kotlinlang.org/docs/faq.html",
+        "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
+        "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
+      ],
+      "compiler_version": "2.4.21",
+      "jvm_version": "25.0.4.1+1-LTS",
+      "jdk_implementor": "Eclipse Adoptium",
+      "architecture": "aarch64",
+      "operating_system": "Darwin",
+      "compiler_version_evidence": {
+        "path": "archive/languages/kotlin/20261013/jobs/official-compiler-retained-jdk-v1/version/compiler-version.stderr",
+        "sha256": "bba0cabd9501db1643dbbfa6c646d27d129d61190024bc2a3c49c8a9be0f001a"
+      },
+      "jdk_release_evidence": {
+        "path": "experiments/kotlin/full90-v2/retained-jdk-release.txt",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "jdk_release_original": {
+        "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/clojure-comparison/20261012/.build/private-v1/jdk/jdk-25.0.4.1+1/Contents/Home/release",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "plan": {
+        "path": "experiments/kotlin/full90-v2/plan-v1.json",
+        "sha256": "fa50e8f327ac960623be79f99730aa94ba1c8588c9008854830a3b74495550f5"
+      },
+      "jvm_flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "memory_policy": "G1 explicitly selected; initial heap 64 MiB, maximum heap 8 GiB. The process RSS limit is separately enforced at 10 GiB.",
+      "execution_scope": "JIT identifies the HotSpot execution mode. An individual main or method can remain interpreted during a single process. No warmup or extra main invocation precedes a measured sample.",
+      "compilation_outside_timer": "Kotlin source compilation to the retained JVM class artifacts",
+      "compilation_inside_timer": "HotSpot tiered runtime compilation during each fresh JVM process",
+      "runtime_evidence_scope": "Compiler version and JDK identity are retained toolchain evidence. JVM flags are required in each timed launch; this metadata does not claim an extra diagnostic probe inside every timed process.",
+      "observed_in_each_timed_process": false,
+      "maximum_total_vm_threads_claimed": false,
+      "numeric_gc_defaults_claimed": false,
+      "runtime_publication_metadata_qualified": true,
+      "chart_admission": false,
+      "reviewed_on": "2026-10-14",
+      "runtime_policy": "Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1; -XX:ActiveProcessorCount=8 -Xms64m -Xmx8g -XX:+UseG1GC",
+      "regex_support": "Retained JVM regular-expression library",
+      "evidence_scope": "Compiler version and JDK identity are retained toolchain evidence. JVM flags are required in each timed launch; this metadata does not claim an extra diagnostic probe inside every timed process.",
+      "runtime_gc_configuration_observed": false,
+      "gc_numeric_defaults_claimed": false,
+      "qualification_evidence": {
+        "path": "experiments/kotlin/required-work-qualification-v2/qualified-work.json",
+        "sha256": "8df64fe0309de9331a8ef9645d0c8541bb03baed5d936bb14cb482a3b9b51cee"
+      },
+      "metadata_evidence": {
+        "path": "experiments/kotlin/full90-v2/runtime-metadata-v1.json",
+        "sha256": "4d2fe53efc54f84765dc16ddb40c711ce51d1fff0b1d2daf351b8b86163e62dc"
+      },
+      "release_year": 2011,
+      "release_name": "Kotlin public announcement at the JVM Language Summit",
+      "release_source": "https://blog.jetbrains.com/kotlin/2021/08/ten-years-of-kotlin/",
+      "release_note": "JetBrains dates the public announcement to July 19, 2011. Development began in 2010; the first 1.0 release was February 2016.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/kotlin/full90-v2/publication-candidate-v1.json",
+          "sha256": "ed03ac08527606717aba7eb37e312e3a5e4afcc6e7e91a6b5d0276844350db71",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
+    }
+  }
+}

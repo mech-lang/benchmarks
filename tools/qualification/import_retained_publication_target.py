@@ -121,10 +121,17 @@ def publication_links(candidate, candidate_ref, pins, evidence, runtime_scope=No
                 and all(c in '0123456789abcdef' for c in expected), 'Invalid publication evidence digest')
         require(name not in links or links[name] == expected, 'Conflicting publication link')
         links[name] = expected
-    def visit(value):
+    def visit(value, trail=()):
+        # These frozen control records use paths relative to the original
+        # compiler checkout, including sources outside benchmarks/clbg.
+        # The original reviewer verifies them; they are not publication links.
+        if (len(trail) >= 2 and trail[0] == 'program_inventory'
+                and trail[2:] in (('matched_mech_control', 'algorithm', 'evidence'),
+                                  ('matched_mech_control', 'original_profile', 'algorithm', 'evidence'))):
+            return
         if isinstance(value, list):
-            for item in value:
-                visit(item)
+            for index, item in enumerate(value):
+                visit(item, trail + (index,))
         elif isinstance(value, dict):
             if type(value.get('path')) is str and type(value.get('sha256')) is str:
                 path = Path(value['path'])
@@ -132,8 +139,8 @@ def publication_links(candidate, candidate_ref, pins, evidence, runtime_scope=No
                     add(value['path'], value['sha256'])
                 elif path.is_relative_to(evidence):
                     add(path.relative_to(evidence).as_posix(), value['sha256'])
-            for item in value.values():
-                visit(item)
+            for key, item in value.items():
+                visit(item, trail + (key,))
     visit(candidate)
     visit(candidate_ref)
     if runtime_scope is not None:

@@ -1,6 +1,6 @@
 # Benchmark coverage
 
-The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **867 selected timed program profiles**. The source inventory retains **904 profiles**, including thirty-seven measured candidates that are not selected endpoints. Fifty execution variants cover the complete suite.
+The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **884 selected timed program profiles**. The source inventory retains **927 profiles**, including forty-three measured candidates that are not selected endpoints. Fifty-two execution variants cover the complete suite.
 
 The live explorer has stacked, full-width ranking charts with persistent language labels. Its [current deployment](../site/publications/catalog-metadata-v1/deployment.json), build `8648eab65993f45c`, passed verification of all 33 live assets on October 14, 2026 at 19:45 UTC.
 
@@ -8,43 +8,37 @@ The live explorer has stacked, full-width ranking charts with persistent languag
 | --- | ---: | --- |
 | Lua interpreter | 9 / 10 | Pi digits: completed samples await catalog admission |
 | Futhark | 9 / 10 | Binary trees: array representation does not meet the per-node allocation contract |
-| R | 7 / 10 | N-body, binary trees, fannkuch-redux |
-| Uiua | 7 / 10 | N-body, binary trees, fannkuch-redux |
-| GNU APL | 4 / 10 | N-body, mandelbrot, k-nucleotide, binary trees, fannkuch-redux, FASTA |
+| GNU APL | 9 / 10 | Binary trees: the full-size run exceeded its workspace allocation |
 
-Eleven of the R, Uiua and GNU APL chart gaps already have complete retained
-sample sets: **60 subject observations and 33 matched controls**. The
-[retained-coverage audit](../experiments/shared/retained-coverage-audit-v1/)
-identifies their exact reports, aliases, exclusions and remaining publication
-checks. These completed measurements can be imported after reconciliation;
-replacement performance runs are unnecessary. GNU APL binary trees remains a
-separate failed workload without valid full-size samples. A [bounded workspace-configuration packet](../experiments/apl/binarytrees-workspace-v1/) proposes a supported memory-limit adjustment and allocation checks before any new full-size run. No native command in that packet has executed.
+Eleven chart gaps have been filled from **93 preserved observations: 60 subject
+observations and 33 matched Mech controls**. No replacement timing run was needed.
+R and Uiua now cover all ten workloads, and GNU APL covers nine. The admission
+receipts retain exact source counts, output validation, original exclusions,
+source aliases, and the recovered GNU APL fannkuch observation:
 
-Independent canonical source-count reviews now cover all twenty distinct saved
-sources: [six R sources](../experiments/r/retained-source-counts-v1/qualified-source-counts-v1.json),
-[nine GNU APL sources](../experiments/apl/retained-counts-v1/qualified-source-counts-v1.json),
-[three Uiua tree/N-body sources](../experiments/uiua/retained-counts-v1/qualified-source-counts.json),
-and [two Uiua fannkuch sources](../experiments/uiua/fann-v5-publication-v1/independent-source-review.json).
-Saved-observation reconciliation and candidate exporters have passed independent
-source review for [R](../experiments/r/retained-native-v1/),
-[GNU APL](../experiments/apl/retained-native-v1/),
-[Uiua N-body and trees](../experiments/uiua/retained-native-v1/), and
-[Uiua fannkuch](../experiments/uiua/fann-v5-publication-v1/).
-The checks preserve all 93 valid observations, original exclusions, aliases,
-and the recovered GNU APL fannkuch observation. Physical evidence replay and
-catalog admission remain pending while the serial timing run holds the machine.
-New canonical minima require derived LOC-coordinate updates; stored runtimes,
-samples and original source counts remain unchanged.
-The [shared publication tools](../experiments/shared/retained-publication-v1/)
-have passed independent review, including 23 normalization checks, 16 guarded
-import checks and eight candidate-to-catalog checks. GNU APL has a separate
-[recorded runtime-scope approval](../experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json);
-its static dependency evidence does not claim a per-process loaded-library
-inventory. These reviews have not changed the published catalog.
+- [R: N-body, binary trees and fannkuch](../experiments/r/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
+- [Uiua: fannkuch](../experiments/uiua/fann-v5-publication-v1/publication/apply-target-v1/SUCCESS.json) and [N-body/binary trees](../experiments/uiua/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
+- [GNU APL: five additional workloads](../experiments/apl/retained-native-v1/publication/apply-target-v2/SUCCESS.json).
 
-[Lua pi digits](../experiments/lua/retained-pidigits-v1/) also has a complete retained cohort: twelve Lua observations across four distinct source forms and six matched Mech controls. Complete application-plus-GMP-helper source counts, the Lua-only reconciler/exporter, and [shared publication support](../experiments/shared/retained-publication-v1/lua-publication-v2.md) have passed independent source review. Fifty-six pure checks cover candidate admission, guarded import and historical preservation. Physical evidence replay and catalog admission remain pending. Together with the R, Uiua and GNU APL cohorts above, **111 completed observations can fill twelve chart gaps without new timing runs**.
+The [normalization history](../data/normalization-history.json) records new
+canonical LOC minima: fannkuch 31 → 20, N-body 20 → 19, and binary trees 16 → 15.
+Only derived LOC coordinates change; saved runtimes, samples, source counts and
+best-time baselines are preserved. The [publication adapter](../experiments/shared/retained-publication-v1/TARGET-CHECKOUT-V2.md)
+validates evidence in its original checkout and writes a separate publication
+checkout. GNU APL's [runtime-scope review](../experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json)
+records static dependency evidence without claiming a per-process loaded-library inventory.
 
-The [separate-checkout publication adapter](../experiments/shared/retained-publication-v1/TARGET-CHECKOUT.md) for these 111 observations is published and has passed independent source review and 18 regression checks. It keeps the original measurement files and evidence checks in their original checkout while writing catalog changes to a separate publication checkout. Actual evidence replay, preview and import remain pending.
+[Lua pi digits](../experiments/lua/retained-pidigits-v1/) has twelve retained Lua
+observations across four source forms and six matched Mech controls. Its
+[candidate export](../experiments/lua/retained-pidigits-v1/publication/export-v1/candidate.json)
+and complete application-plus-GMP-helper source counts are verified. Catalog
+admission still needs support for the existing nine-workload Lua series, which
+has no stored aggregate row. No timing rerun is required.
+
+GNU APL binary trees remains a separate failed workload without valid full-size
+samples. A [bounded workspace-configuration packet](../experiments/apl/binarytrees-workspace-v1/)
+proposes a supported memory-limit adjustment and allocation checks before a new
+full-size run; its native commands have not executed.
 
 Prolog, Julia AOT, and Rebol are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
 
@@ -52,7 +46,7 @@ Prolog, Julia AOT, and Rebol are not selectable series in this dataset. Their ex
 | --- | --- | --- |
 | Mech interpreted | [Fresh whole-process cohort](../experiments/mech/interpreted-whole-process-v1/): fifteen unchanged source forms, three samples each, all 45 complete outputs validated | Published with preparation and shutdown included; AOT, JIT and other language measurements are preserved. [Live Pages publication verified](../experiments/mech/interpreted-whole-process-v1/deployment.json), including all 33 chart assets and the complete dataset. |
 | Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
-| Prolog | Twenty original forms plus a qualified linear reverse-complement replacement; a [k-nucleotide correction](../experiments/prolog/knucleotide-linear-v1/) is prepared for native qualification | **54 completed observations are preserved**: 40 earlier observations plus 14 from the [latest continuation](../experiments/prolog/full50-remaining-v1/). Its unfinished k-nucleotide attempt was deliberately stopped after the retained runtime source revealed a full-string copy on every indexed character read. The [closed stop record](../experiments/prolog/knucleotide-linear-v1/stop-v1/closure.json) verifies unchanged completed receipts and released process ownership; the interrupted attempt supplies no timing. Corrected k-nucleotide qualification, the 36 unfinished slots, reconciliation and import remain. Earlier quadratic reverse-complement work is also excluded. The existing [separate-checkout adapter](../experiments/prolog/full50-remaining-v1/publication/TARGET-CHECKOUT.md) is source-reviewed; the new closed-prefix continuation still needs preparation and review |
+| Prolog | Twenty original forms plus a qualified linear reverse-complement replacement; a [k-nucleotide correction](../experiments/prolog/knucleotide-linear-v1/) is prepared for native qualification | **54 completed observations are preserved**: 40 earlier observations plus 14 from the [latest continuation](../experiments/prolog/full50-remaining-v1/). Its unfinished k-nucleotide attempt was deliberately stopped after the retained runtime source revealed a full-string copy on every indexed character read. The [closed stop record](../experiments/prolog/knucleotide-linear-v1/stop-v1/closure.json) verifies unchanged completed receipts and released process ownership; the interrupted attempt supplies no timing. Corrected k-nucleotide qualification, the 36 unfinished slots, reconciliation and import remain. Earlier quadratic reverse-complement work is also excluded. The existing [separate-checkout adapter](../experiments/prolog/full50-remaining-v1/publication/TARGET-CHECKOUT.md) is source-reviewed; the [36-slot continuation](../experiments/prolog/full36-knucleotide-v1/) and [corrected native qualification](../experiments/prolog/knucleotide-linear-v1/qualification/) have passed independent source review; actual preparation and execution remain |
 | Elixir | Twenty compiled source forms; required work, canonical and formatted source counts, runtime metadata, and independent reconciliation of sixty Elixir samples and thirty matched Mech controls | Published in the dataset; identical source aliases retain separate measurements without a distinct optimization claim |
 | Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and independent reviews of all four fresh single-main tree/pi captures | [Published in the dataset](../experiments/kotlin/full90-v2/publication/) after all sixty Kotlin samples and thirty matched Mech controls passed independent reconciliation. All ten workloads have qualified canonical LOC and timings; formatted LOC remains unavailable. [Live Pages publication verified](../experiments/kotlin/full90-v2/publication/deployment.json) on October 14 at 15:21 UTC, including all 33 assets. Existing published timings remain unchanged |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | [Offline native inspection controller](../experiments/julia-aot/trimmed-native-inspection-v1/) source-reviewed; tool preparation, eleven captures, execution-path/fallback qualification and the remaining suite |

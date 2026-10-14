@@ -1,0 +1,33 @@
+{
+  "schema": "retained-publication-target-v2-independent-source-review-v1",
+  "status": "source-review-passed",
+  "files": {
+    "tools/qualification/import_retained_publication_target_v2.py": "204ddfc7e49e36efdbebea1754bf2fc5526f08581b9c1b8483434e1fba5b35f7",
+    "tools/qualification/test_import_retained_publication_target_v2.py": "2a6a8bf0000ac565ff2e5e1a4fc842c577232056d08b84eb184182d471ca0f7b",
+    "experiments/shared/retained-publication-v1/TARGET-CHECKOUT-V2.md": "f231bd70c481c724a7352679b31d122148f9318749b4bde5a3f12c138da33071"
+  },
+  "unchanged_prior_adapter": {
+    "path": "tools/qualification/import_retained_publication_target.py",
+    "sha256": "6f0b8a402afde9d6c9f459ade16f601a33a03b1556994a91fad319e648613f92"
+  },
+  "source_checks": [
+    "The revision changes only its own adapter identity and the order of newly added archive_paths keys after the unchanged publication transform.",
+    "Existing archive keys retain their original order and exact values. Missing or changed existing entries are rejected; new keys are appended in sorted order.",
+    "The complete archive mapping remains equal as parsed data. Scientific values, admission transforms, normalization rules, evidence consumers, ownership leases and guarded transaction behavior are unchanged.",
+    "The actual retained R transform is exercised with synthetic catalog metadata in three fresh Python processes using distinct hash seeds. The test reproduces the original serialization divergence and requires identical repaired bytes, metadata and audit.",
+    "Previously successful v1 receipts remain immutable; v2 requires fresh preview and apply directories and their own exact prepared digests."
+  ],
+  "independent_tests": {
+    "command": "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B tools/qualification/test_import_retained_publication_target_v2.py",
+    "passed": 25,
+    "failed": 0,
+    "seconds": 0.844,
+    "inherited_transaction_checks": 22,
+    "ordering_checks": 3
+  },
+  "actual_catalog_read": false,
+  "publication_file_phase_performed": false,
+  "runtime_closure_hashing_performed": false,
+  "native_subject_execution_performed": false,
+  "unresolved_source_blockers": []
+}
