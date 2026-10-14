@@ -1094,5 +1094,27 @@ export const languageMetadata = {
       "https://www.erlang.org/doc/apps/erts/garbagecollection.html",
       "https://www.erlang.org/doc/system/binaryhandling.html"
     ]
+  },
+  "kotlin": {
+    "platform": "jvm",
+    "runtime": "Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1",
+    "execution": [
+      "jit"
+    ],
+    "typing": "static",
+    "style": [
+      "imperative",
+      "object",
+      "functional"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Kotlin/JVM classes run on HotSpot with tiered compilation and G1. Each sample includes JVM startup, class loading, runtime compilation, input/output and shutdown. Authored helpers are included in source counts.",
+    "sources": [
+      "https://kotlinlang.org/docs/faq.html",
+      "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
+      "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
+    ]
   }
 };

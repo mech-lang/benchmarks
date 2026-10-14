@@ -1,6 +1,6 @@
 # Benchmark coverage
 
-The current dataset contains **54 execution variants across 48 language families**, **10 workloads**, and **857 selected timed program profiles**. The source inventory retains **884 profiles**, including twenty-seven measured candidates that are not selected endpoints. Forty-nine execution variants cover the complete suite.
+The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **867 selected timed program profiles**. The source inventory retains **904 profiles**, including thirty-seven measured candidates that are not selected endpoints. Fifty execution variants cover the complete suite.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -10,7 +10,7 @@ The current dataset contains **54 execution variants across 48 language families
 | Uiua | 7 / 10 | N-body, binary trees, fannkuch-redux |
 | GNU APL | 4 / 10 | N-body, mandelbrot, k-nucleotide, binary trees, fannkuch-redux, FASTA |
 
-Prolog, Julia AOT, Rebol, and Kotlin are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
+Prolog, Julia AOT, and Rebol are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
 
 | Implementation | Completed qualification | Remaining before timing publication |
 | --- | --- | --- |
@@ -18,7 +18,7 @@ Prolog, Julia AOT, Rebol, and Kotlin are not selectable series in this dataset. 
 | Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
 | Prolog | Twenty original forms plus a linear reverse-complement replacement; replacement passed 540 bounded cases, compiled-work review and nine native source readers with independently reviewed canonical LOC | Original quadratic reverse-complement run remains cancelled; 40 qualified observations are retained (nine earlier regex samples and 31 continuation samples). The [prepared continuation](../experiments/prolog/full50-remaining-v1/) schedules only the 50 missing full-size slots. Independent [result reconciliation](../experiments/prolog/full81-linear-v1/reconciliation.md), [runtime metadata review](../experiments/prolog/full81-linear-v1/runtime-metadata.md) and [publication tooling](../experiments/prolog/full81-linear-v1/publication.md) are source-reviewed; publication requires completing and reconciling the remaining samples |
 | Elixir | Twenty compiled source forms; required work, canonical and formatted source counts, runtime metadata, and independent reconciliation of sixty Elixir samples and thirty matched Mech controls | Published in the dataset; identical source aliases retain separate measurements without a distinct optimization claim |
-| Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and independent reviews of all four fresh single-main tree/pi captures | The first [90-slot timing cohort](../experiments/kotlin/full90-v2/run-v1/report.json) completed with all sixty Kotlin samples and thirty matched Mech controls valid. [Independent reconciliation](../experiments/kotlin/full90-v2/reconciliation-v1.json) verifies all samples and retained inputs; catalog publication remains. Existing published timings remain unchanged |
+| Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and independent reviews of all four fresh single-main tree/pi captures | [Published in the dataset](../experiments/kotlin/full90-v2/publication/) after all sixty Kotlin samples and thirty matched Mech controls passed independent reconciliation. All ten workloads have qualified canonical LOC and timings; formatted LOC remains unavailable. Existing published timings remain unchanged |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | [Offline native inspection](../experiments/julia-aot/trimmed-native-inspection-v1/) prepared; execution-path/fallback qualification and the remaining suite |
 | Rebol | Retained toolchain sources and resolved build specification | SDK and runtime qualification, benchmark implementations, and measurements |
 

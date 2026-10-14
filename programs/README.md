@@ -31,6 +31,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [JavaScript (V8)](javascript/)
 - [Julia](julia/)
 - [K (Growler)](k/)
+- [Kotlin (JVM)](kotlin/)
 - [Lua (interpreted)](lua/)
 - [LuaJIT](luajit/)
 - [MATLAB](matlab/)

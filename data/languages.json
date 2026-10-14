@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "audited_on": "2026-10-14",
-  "scope": "54 measured variants; all classifications explicit.",
+  "scope": "55 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2523,6 +2523,95 @@
         {
           "path": "experiments/elixir/full90-v1/publication-candidate-v1.json",
           "sha256": "070ef5a759d2da21d9a30e3df78a96d58e44971d1c0add51661e578f9fe0978f",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
+    },
+    "kotlin": {
+      "schema": "kotlin-publication-runtime-metadata-v1",
+      "key": "kotlin",
+      "family": "kotlin",
+      "label": "Kotlin (JVM)",
+      "platform": "jvm",
+      "runtime": "Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1",
+      "execution": [
+        "jit"
+      ],
+      "typing": "static",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Kotlin/JVM classes run on HotSpot with tiered compilation and G1. Each sample includes JVM startup, class loading, runtime compilation, input/output and shutdown. Authored helpers are included in source counts.",
+      "sources": [
+        "https://kotlinlang.org/docs/faq.html",
+        "https://kotlinlang.org/docs/java-to-kotlin-interop.html",
+        "https://docs.oracle.com/en/java/javase/25/gctuning/garbage-first-g1-garbage-collector1.html"
+      ],
+      "compiler_version": "2.4.21",
+      "jvm_version": "25.0.4.1+1-LTS",
+      "jdk_implementor": "Eclipse Adoptium",
+      "architecture": "aarch64",
+      "operating_system": "Darwin",
+      "compiler_version_evidence": {
+        "path": "archive/languages/kotlin/20261013/jobs/official-compiler-retained-jdk-v1/version/compiler-version.stderr",
+        "sha256": "bba0cabd9501db1643dbbfa6c646d27d129d61190024bc2a3c49c8a9be0f001a"
+      },
+      "jdk_release_evidence": {
+        "path": "experiments/kotlin/full90-v2/retained-jdk-release.txt",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "jdk_release_original": {
+        "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/clojure-comparison/20261012/.build/private-v1/jdk/jdk-25.0.4.1+1/Contents/Home/release",
+        "sha256": "e5e50f3c36e9ce7ac50ccbc499c8299880e8fb8fee57bb3a7a2b890477ce8498"
+      },
+      "plan": {
+        "path": "experiments/kotlin/full90-v2/plan-v1.json",
+        "sha256": "fa50e8f327ac960623be79f99730aa94ba1c8588c9008854830a3b74495550f5"
+      },
+      "jvm_flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "memory_policy": "G1 explicitly selected; initial heap 64 MiB, maximum heap 8 GiB. The process RSS limit is separately enforced at 10 GiB.",
+      "execution_scope": "JIT identifies the HotSpot execution mode. An individual main or method can remain interpreted during a single process. No warmup or extra main invocation precedes a measured sample.",
+      "compilation_outside_timer": "Kotlin source compilation to the retained JVM class artifacts",
+      "compilation_inside_timer": "HotSpot tiered runtime compilation during each fresh JVM process",
+      "runtime_evidence_scope": "Compiler version and JDK identity are retained toolchain evidence. JVM flags are required in each timed launch; this metadata does not claim an extra diagnostic probe inside every timed process.",
+      "observed_in_each_timed_process": false,
+      "maximum_total_vm_threads_claimed": false,
+      "numeric_gc_defaults_claimed": false,
+      "runtime_publication_metadata_qualified": true,
+      "chart_admission": false,
+      "reviewed_on": "2026-10-14",
+      "runtime_policy": "Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1; -XX:ActiveProcessorCount=8 -Xms64m -Xmx8g -XX:+UseG1GC",
+      "regex_support": "Retained JVM regular-expression library",
+      "evidence_scope": "Compiler version and JDK identity are retained toolchain evidence. JVM flags are required in each timed launch; this metadata does not claim an extra diagnostic probe inside every timed process.",
+      "runtime_gc_configuration_observed": false,
+      "gc_numeric_defaults_claimed": false,
+      "qualification_evidence": {
+        "path": "experiments/kotlin/required-work-qualification-v2/qualified-work.json",
+        "sha256": "8df64fe0309de9331a8ef9645d0c8541bb03baed5d936bb14cb482a3b9b51cee"
+      },
+      "metadata_evidence": {
+        "path": "experiments/kotlin/full90-v2/runtime-metadata-v1.json",
+        "sha256": "4d2fe53efc54f84765dc16ddb40c711ce51d1fff0b1d2daf351b8b86163e62dc"
+      },
+      "release_year": 2011,
+      "release_name": "Kotlin public announcement at the JVM Language Summit",
+      "release_source": "https://blog.jetbrains.com/kotlin/2021/08/ten-years-of-kotlin/",
+      "release_note": "JetBrains dates the public announcement to July 19, 2011. Development began in 2010; the first 1.0 release was February 2016.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/kotlin/full90-v2/publication-candidate-v1.json",
+          "sha256": "ed03ac08527606717aba7eb37e312e3a5e4afcc6e7e91a6b5d0276844350db71",
           "status": "independently-reproduced-publication-candidate"
         }
       ]

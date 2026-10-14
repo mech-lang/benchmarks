@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **54 measured execution variants in 48 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **55 measured execution variants in 49 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
@@ -14,7 +14,7 @@ The exact runtime name is retained even when the compact facet groups several im
 
 Key distinctions:
 
-- **Java and Clojure are JVM/JIT.** All 17 selected Java commands invoke OpenJDK `java` and record JIT execution. GraalVM NativeAOT identifies their upstream source submissions, not these measurements.
+- **Java, Clojure and Kotlin are JVM/JIT.** All 17 selected Java commands invoke OpenJDK `java` and record JIT execution. GraalVM NativeAOT identifies their upstream source submissions. Kotlin runs retained JVM classes on HotSpot with G1; JVM startup, class loading and runtime compilation are included in every sample.
 - **C# and F# include .NET JIT and NativeAOT.** NativeAOT remains part of .NET and retains runtime/GC support.
 - **Elm and JavaScript run on Node.js/V8.** Elm remains statically typed and functional. Compiling Elm to JavaScript does not make the measured execution native AOT.
 - **Ruby uses YJIT. PHP has both modes:** fourteen selected profiles request tracing JIT and one explicitly disables it. **R's JIT produces interpreted bytecode.** SBCL saved cores and Racket CS native modules were precompiled before timing.
@@ -54,6 +54,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | JavaScript (V8) | Node.js / V8 | JIT | Dynamic | Tracing GC |
 | Julia | Julia / LLVM runtime | JIT | Dynamic | Tracing GC |
 | K (Growler) | Growler K interpreter | Interpreted | Dynamic | RC |
+| Kotlin (JVM) | Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1 | JIT | Static | Tracing GC |
 | Lua (interpreted) | PUC Lua bytecode interpreter | Interpreted | Dynamic | Tracing GC |
 | LuaJIT | LuaJIT | JIT | Dynamic | Tracing GC |
 | MATLAB | MATLAB native runtime / JIT | JIT | Dynamic | RC, Cycles |
