@@ -1,4 +1,4 @@
-"""Guarded admission of already measured Uiua, R and GNU APL cohorts.
+"""Guarded admission of already measured Uiua, R, GNU APL and Lua cohorts.
 
 Preview reproduces saved evidence and proposes exact catalog/history bytes.
 Apply requires that preview's six digests and installs the two catalogs plus
@@ -18,7 +18,7 @@ HISTORY = 'data/normalization-history.json'
 TARGETS = CATALOGS + (HISTORY,)
 ABSENT = 'absent'
 WRITER_SHA = 'f57246c5ffb5d4c32f9dfb661f5e23c1e210c184aeb9145ea2a79f276b7e0a16'
-SHARED_SHA = 'e8a14b971bd07b041c1a08e7a46821a70bd068c5a931ac33a9f98227626c836f'
+SHARED_SHA = '219f4ab8bd4c3784b203c6e8654ab5f2e79aaf2fededecdcd3625ddc767be56c'
 COHORTS = {
     'r': dict(packet='experiments/r/retained-native-v1', reconciler='r_retained_reconcile.py',
         reconciler_sha='8015461d228fa1d72acb1fdf76373f20bcc257b813534bf874d850df308e062b',
@@ -36,6 +36,12 @@ COHORTS = {
         reconciler_sha='bf08aec948d4db505633e9e3898818f997fdd0738d6126c01fe9c9ac60e341dd',
         exporter='import_uiua_fann.py', exporter_sha=WRITER_SHA,
         audit_key='uiua_fann_v5_publication_audit', language='uiua'),
+    'lua': dict(packet='experiments/lua/retained-pidigits-v1', reconciler='lua_pidigits_reconcile.py',
+        reconciler_sha='7f18cb6870b084e9aa96ec0eb9874f550e831b6d93eceeb24939143ea7ab319b',
+        exporter='lua_pidigits_export.py', exporter_sha='183f6af5aa603e1e82d9aed53db6b10f57a955bf58c57be9185bf3eca68fc59e',
+        audit_key='lua_retained_publication_audit', language='lua',
+        source_counts='experiments/lua/retained-pidigits-v1/qualified-source-counts-v1.json',
+        source_counts_sha='8725633b2ffc195953368d38286d35bf327e54256648b7e32abc8cd37df642bf'),
 }
 FANN_PUBLICATION_SHA = '793d2bce677760cce6b0e2479742aee17e39094950b7486449416a9bc225f8a7'
 APL_RUNTIME_REVIEW = dict(path='experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json',
@@ -214,6 +220,10 @@ def reproduce(args, deps, review, read):
         fresh['consumer_sources'] = {
             'exporter':dict(path='tools/qualification/'+spec['exporter'], sha256=spec['exporter_sha']),
             'reconciler':dict(path='tools/qualification/'+spec['reconciler'], sha256=spec['reconciler_sha'])}
+    elif args.cohort == 'lua':
+        sources = {digest:read(ROOT/item['path'], digest)
+                   for digest,item in review['canonical_counts']['files'].items()}
+        fresh = e.build_candidate(review, sources, r)
     else:
         sources = {v:read(r.ARCHIVE/'sources'/(v+'.ua'), review['source_counts'][v]['source_sha256'])
                    for v in ('compact','fast')}
@@ -223,7 +233,7 @@ def reproduce(args, deps, review, read):
             'reconciler':dict(path='tools/qualification/uiua_fann_reconcile.py', sha256=spec['reconciler_sha']),
             'publication':dict(path='tools/qualification/uiua_fann_publication.py', sha256=FANN_PUBLICATION_SHA)}
     fresh['reconciliation'] = ref
-    if args.cohort in ('r','apl'):
+    if args.cohort in ('r','apl','lua'):
         fresh['exporter'] = dict(path='tools/qualification/'+spec['exporter'], sha256=spec['exporter_sha'])
     require(candidate == fresh, 'Candidate differs from independently reproduced frozen export')
     return candidate
@@ -261,6 +271,7 @@ def validate_apl_runtime(candidate, review, read, normalization):
 
 def plan_publication(args, deps, candidate, originals, apply_output, runtime_scope_ref=None):
     p, n, spec = (deps[k] for k in ('publication','normalization','spec'))
+    require(spec['audit_key'] in n.ADAPTERS, 'Reviewed history adapter required before publication')
     before = n.strict_json(originals[CATALOGS[0]])
     before_languages = n.strict_json(originals[CATALOGS[1]])
     # Verify the real preceding history; a proposed future receipt is never
@@ -372,7 +383,11 @@ def run(args, deps=None):
             checked(path, digest)
 
     context = r.review_files if args.cohort == 'r' else r.review_context
-    with context(spec['reconciler_sha'], on_exit_failure=cleanup, final_consumer_check=final_check) as (review, files):
+    context_args = ((spec['reconciler_sha'], ROOT/spec['source_counts'], spec['source_counts_sha'])
+                    if args.cohort == 'lua' else (spec['reconciler_sha'],))
+    with context(*context_args, on_exit_failure=cleanup, final_consumer_check=final_check) as evidence:
+        require(len(evidence) == (3 if args.cohort == 'lua' else 2), 'Unexpected evidence context shape')
+        review, files = evidence[:2]
         def read(path, digest):
             path = Path(path)
             require(path not in input_pins or input_pins[path] == digest, 'Consumer pin was rebound')

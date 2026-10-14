@@ -331,21 +331,22 @@ class Normalization(unittest.TestCase):
             with patch.dict(n.ADAPTERS,{'r_admission':adapters['r_admission']},clear=True),self.assertRaisesRegex(ValueError,'coverage/timing'):
                 n.historical_view(root,unbound)
 
-    def test_actual_three_retained_candidates_bind_counts_reports_and_transform(self):
+    def test_actual_four_retained_candidates_bind_counts_reports_and_transform(self):
         spec=importlib.util.spec_from_file_location('retained_saved_fixture',HERE/'qualification/test_retained_catalog_publication.py')
         module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
         candidates=module.candidates();real_checked=n.checked
         for language,candidate in candidates.items():
             with self.subTest(language=language):
                 raw=encode(candidate);ref=dict(path='experiments/fixture/candidate.json',sha256=hashlib.sha256(raw).hexdigest())
-                before,metadata=module.catalog(candidate,expanded_reference=language=='uiua')
+                before,metadata=module.catalog(candidate,expanded_reference=language in ('uiua','lua'))
                 after,_,audit=module.p.build_publication(before,metadata,candidate,ref,
                     runtime_scope_ref=module.p.APL_RUNTIME_REVIEW if language=='apl' else None)
                 def evidence(root,reference):
                     if reference==ref:return raw
                     return real_checked(HERE.parent,reference)
                 with patch.object(n,'checked',side_effect=evidence):
-                    added,refs=n.validate_retained(HERE.parent,audit,before,after)
+                    adapter=n.ADAPTERS[language+'_retained_publication_audit']
+                    added,refs=adapter(HERE.parent,audit,before,after)
                     boundaries=n.validate_transition(before,after,audit,added,refs)
                     self.assertEqual(len(boundaries),2 if language=='r' else 1 if language=='uiua' else 0)
                     for mutation in (('count','source_pin','native_sample','runtime_scope','runtime_flag','runtime_command')
@@ -360,7 +361,123 @@ class Normalization(unittest.TestCase):
                         else:bad_audit['source_counts']['sha256']='0'*64
                         raw=encode(broken);ref['sha256']=hashlib.sha256(raw).hexdigest()
                         bad_audit['candidate']=copy.deepcopy(ref)
-                        with self.assertRaises(ValueError):n.validate_retained(HERE.parent,bad_audit,before,after)
+                        with self.assertRaises(ValueError):adapter(HERE.parent,bad_audit,before,after)
+
+    def lua_fixture(self, existing_helper=False):
+        spec=importlib.util.spec_from_file_location('lua_saved_fixture',HERE/'qualification/test_retained_catalog_publication.py')
+        module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+        candidate=module.candidates()['lua'];before,metadata=module.catalog(candidate,expanded_reference=True)
+        if existing_helper:
+            before['files'][n.LUA_HELPER]=dict(code=candidate['files'][n.LUA_HELPER]['code'],
+                name='previously retained helper.c',path='sources/previous/gmp.c',retained_metadata=True)
+        # Include an existing LuaJIT row/reference: Lua admission must leave it exact.
+        old=copy.deepcopy(before['programs']['pidigits:old-c'])
+        old.update(key='pidigits:old-luajit',language='luajit')
+        old['publication_record']={k:copy.deepcopy(v) for k,v in old.items() if k!='publication_record'}
+        for pool in ('programs','program_inventory'):before[pool][old['key']]=copy.deepcopy(old)
+        before['benchmarks'][-1]['groups'].append(dict(language='luajit',label='LuaJIT',
+            fast=old['key'],small=old['key'],programs=[old['key']]))
+        before['reference_summary'].append(dict(lang='luajit',label='LuaJIT',measured_benchmarks=['pidigits'],
+            fast=dict(x=1,y=2),small=dict(x=1,y=2)))
+        raw=encode(candidate);ref=dict(path='experiments/lua-fixture/candidate.json',sha256=hashlib.sha256(raw).hexdigest())
+        after,_,audit=module.p.build_publication(before,metadata,candidate,ref)
+        return candidate,before,after,audit
+
+    def test_lua_existing_identical_helper_preserves_prior_source_metadata(self):
+        candidate,before,after,audit=self.lua_fixture(existing_helper=True)
+        raw=encode(candidate);real_checked=n.checked
+        def evidence(root,reference):
+            return raw if reference==audit['candidate'] else real_checked(HERE.parent,reference)
+        with patch.object(n,'checked',side_effect=evidence):
+            added,refs=n.validate_lua(HERE.parent,audit,before,after)
+            n.validate_transition(before,after,audit,added,refs)
+            self.assertEqual(after['files'][n.LUA_HELPER],before['files'][n.LUA_HELPER])
+            broken=copy.deepcopy(after);broken['files'][n.LUA_HELPER]=copy.deepcopy(candidate['files'][n.LUA_HELPER])
+            with self.assertRaises(ValueError):n.validate_lua(HERE.parent,audit,before,broken)
+
+    def test_lua_complete_bundle_controls_and_raw_metadata_are_independently_bound(self):
+        candidate,before,after,audit=self.lua_fixture();real_checked=n.checked
+        for fault in ('helper_source','helper_count','helper_omitted','role','raw_attempt','raw_routing',
+                      'control_samples','control_source','control_omitted','runtime','runtime_scope','boundary',
+                      'algorithm','old_count','alias'):
+            broken=copy.deepcopy(candidate);current=copy.deepcopy(after);record=copy.deepcopy(audit)
+            row=broken['program_inventory']['pidigits:lua-interpreted-gmp-listed-1']
+            if fault=='helper_source':broken['files'][n.LUA_HELPER]['code']+='changed'
+            elif fault=='helper_count':row['file_roles'][n.LUA_HELPER]['normalized_loc']-=1
+            elif fault=='helper_omitted':row['files'].pop()
+            elif fault=='role':row['file_roles'][n.LUA_HELPER]['role']='application'
+            elif fault=='raw_attempt':row['sample_execution_metadata'][0]['command'][-1]='9999'
+            elif fault=='raw_routing':row['sample_evidence']['receipts'][0]['path']='other.json'
+            elif fault=='control_samples':broken['matched_mech_controls']['mech-small-control']['samples'][0]+=1
+            elif fault=='control_source':broken['matched_mech_controls']['mech-fast-control']['source_sha256']='0'*64
+            elif fault=='control_omitted':broken['matched_mech_controls'].pop('mech-small-control')
+            elif fault=='runtime':row['runtime_arguments'][0]='luajit'
+            elif fault=='runtime_scope':row['runtime_policy']='JIT compiler'
+            elif fault=='boundary':row['timing_measurement']['kind']='kernel-only'
+            elif fault=='algorithm':row['algorithm']['native_benchmark_kernel']=True
+            elif fault=='old_count':row['original_producer_loc']+=1
+            else:row['timing_alias_of']='pidigits:lua-interpreted-gmp-listed-6'
+            raw=encode(broken);record['candidate']['sha256']=hashlib.sha256(raw).hexdigest()
+            # Reflect the forgery in both saved data and candidate; rejection
+            # must come from retained source/report evidence, not their mismatch.
+            current['files'].update(copy.deepcopy(broken['files']))
+            for pool in ('programs','program_inventory'):
+                for key,value in broken['program_inventory'].items():
+                    if key not in current[pool]:continue
+                    admitted=current[pool][key]
+                    admitted.update({k:copy.deepcopy(v) for k,v in value.items()
+                                     if k not in ('eligible_for_chart','chart_admission')})
+                    admitted['chart_admission']['candidate']=copy.deepcopy(record['candidate'])
+                    admitted['publication_record']={k:copy.deepcopy(v) for k,v in admitted.items() if k!='publication_record'}
+            def evidence(root,reference):
+                return raw if reference==record['candidate'] else real_checked(HERE.parent,reference)
+            with self.subTest(fault=fault),patch.object(n,'checked',side_effect=evidence),self.assertRaises(ValueError):
+                n.validate_lua(HERE.parent,record,before,current)
+
+    def test_lua_only_nine_to_ten_no_rebase_and_luajit_preservation(self):
+        candidate,before,after,audit=self.lua_fixture();raw=encode(candidate);real_checked=n.checked
+        def evidence(root,reference):
+            return raw if reference==audit['candidate'] else real_checked(HERE.parent,reference)
+        with patch.object(n,'checked',side_effect=evidence):
+            added,refs=n.validate_lua(HERE.parent,audit,before,after)
+            self.assertEqual(n.validate_transition(before,after,audit,added,refs),[])
+            self.assertEqual((len(added['programs']),len(added['program_inventory'])),(2,4))
+            self.assertEqual(audit['aggregate_change']['after']['measured_benchmarks'],[b['key'] for b in before['benchmarks']])
+            for fault in ('minimum','time_minimum','rebase','coverage','duplicate_coverage','luajit','other_row',
+                          'baseline','language_metadata','source_inventory','scalar_type'):
+                old=copy.deepcopy(before);new=copy.deepcopy(after);record=copy.deepcopy(audit)
+                if fault=='minimum':old['benchmarks'][-1]['baseline_loc']=300
+                elif fault=='time_minimum':old['benchmarks'][-1]['baseline_seconds']=1
+                elif fault=='rebase':record['normalizations']=[dict(benchmark='pidigits',before=300,after=275)]
+                elif fault=='coverage':next(r for r in old['reference_summary'] if r['lang']=='lua')['measured_benchmarks'].pop()
+                elif fault=='duplicate_coverage':next(r for r in old['reference_summary'] if r['lang']=='lua')['measured_benchmarks'][-1]='nbody'
+                elif fault=='luajit':new['programs']['pidigits:old-luajit']['seconds']+=1
+                elif fault=='other_row':new['programs']['nbody:old-c']['loc']+=1
+                elif fault=='language_metadata':new['languages'][0]['timed_benchmarks'].pop()
+                elif fault=='source_inventory':new['files']['unrelated']=dict(code='changed')
+                elif fault=='scalar_type':record['native_runs']=False
+                else:new['benchmarks'][0]['baseline_loc']-=1
+                with self.subTest(fault=fault),self.assertRaises(ValueError):
+                    added,refs=n.validate_lua(HERE.parent,record,old,new)
+                    n.validate_transition(old,new,record,added,refs)
+
+    def test_lua_saved_no_rebase_admission_keeps_expanded_coverage_in_historical_view(self):
+        candidate,before,after,audit=self.lua_fixture();raw=encode(candidate);real_checked=n.checked
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            entry=saved(root,before,after,audit,key='lua_retained_publication_audit',folder='lua')
+            write(root,n.HISTORY,dict(schema='canonical-loc-normalization-history-v1',admissions=[entry]))
+            def evidence(target,reference):
+                if reference==audit['candidate']:return raw
+                if reference in [dict(path=p,sha256=d) for p,d in n.LUA_PINS.values()]:
+                    return real_checked(HERE.parent,reference)
+                return real_checked(target,reference)
+            with patch.object(n,'checked',side_effect=evidence):
+                result=n.historical_view(root,after)
+                self.assertEqual(result,after)
+                self.assertEqual(len(next(r for r in result['reference_summary'] if r['lang']=='lua')['measured_benchmarks']),10)
+                altered=copy.deepcopy(after);altered['program_inventory']['pidigits:lua-interpreted-gmp-listed-1']['samples'][0]+=1
+                with self.assertRaises(ValueError):n.historical_view(root,altered)
 
     def test_new_coordinates_publication_and_own_metadata_are_checked(self):
         for mode in ('x','y','publication','aggregate_y','aggregate_label','missing_rebase'):

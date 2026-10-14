@@ -24,8 +24,20 @@ def candidates():
     a.Candidate.setUpClass()
     u = load('retained_uiua_fixture', 'test_export_uiua_retained.py')
     u.Candidate.setUpClass()
+    lua = load('retained_lua_fixture', 'test_lua_pidigits_retained.py')
+    lua.Retained.setUpClass()
+    try:
+        _, lua_candidate = lua.Retained().candidate()
+        # This is a synthetic file-phase input; no runtime pins are replayed.
+        lua_candidate['source_counts'] = copy.deepcopy(p.LUA_COUNTS)
+        for row in lua_candidate['program_inventory'].values():
+            for role in row['file_roles'].values():
+                role['source_owner_review'] = copy.deepcopy(p.LUA_COUNTS)
+    finally:
+        lua.Retained.tearDownClass()
     return dict(r=r.e.build_candidate(r.Candidate.review, r.Candidate.sources, r.t.r),
-                apl=a.Candidate().build(), uiua=u.e.build_candidate(u.Candidate.review, u.Candidate.sources))
+                apl=a.Candidate().build(), uiua=u.e.build_candidate(u.Candidate.review, u.Candidate.sources),
+                lua=lua_candidate)
 
 
 def catalog(candidate, expanded_reference=False):
@@ -80,14 +92,14 @@ class Publication(unittest.TestCase):
     def apply(self, language, data=None, meta=None):
         candidate = self.candidates[language]
         if data is None:
-            data, meta = catalog(candidate, expanded_reference=language == 'uiua')
+            data, meta = catalog(candidate, expanded_reference=language in ('uiua','lua'))
         return p.build_publication(data, meta, candidate, dict(path='experiments/candidate.json', sha256='a' * 64),
                                    runtime_scope_ref=p.APL_RUNTIME_REVIEW if language == 'apl' else None)
 
     def test_all_saved_candidates_preserve_raw_rows_and_selected_endpoints(self):
         for language, candidate in self.candidates.items():
             with self.subTest(language=language):
-                before, meta = catalog(candidate, expanded_reference=language == 'uiua')
+                before, meta = catalog(candidate, expanded_reference=language in ('uiua','lua'))
                 snapshot = copy.deepcopy((before, meta, candidate))
                 after, newmeta, audit = self.apply(language, before, meta)
                 self.assertEqual((before, meta, candidate), snapshot)
@@ -184,6 +196,76 @@ class Publication(unittest.TestCase):
             else:
                 row['full_workload_qualified'] = False
             with self.subTest(fault=fault), self.assertRaises(ValueError):
+                p.validate_candidate(candidate)
+
+    def test_lua_complete_bundles_both_controls_and_only_nine_to_ten_aggregate(self):
+        candidate = self.candidates['lua']
+        before, meta = catalog(candidate, expanded_reference=True)
+        # Equal-language-family rows must not be confused with Lua interpreted.
+        jit = copy.deepcopy(before['programs']['pidigits:old-c'])
+        jit.update(key='pidigits:old-luajit', language='luajit')
+        jit['publication_record'] = {k:copy.deepcopy(v) for k,v in jit.items() if k != 'publication_record'}
+        for pool in ('programs','program_inventory'):
+            before[pool][jit['key']] = copy.deepcopy(jit)
+        before['benchmarks'][-1]['groups'].append(dict(language='luajit', label='LuaJIT',
+            fast=jit['key'], small=jit['key'], programs=[jit['key']]))
+        before['reference_summary'].append(dict(lang='luajit',label='LuaJIT',
+            measured_benchmarks=['pidigits'],fast=dict(x=1,y=2),small=dict(x=1,y=2)))
+        meta['languages']['luajit'] = dict(displayed_program_count=1)
+        after, newmeta, audit = self.apply('lua', before, meta)
+        self.assertEqual(audit['normalizations'], [])
+        self.assertEqual((audit['source_forms'], audit['distinct_subject_sources'],
+            audit['counted_physical_files'], audit['counted_files_per_profile']), (4,4,5,2))
+        self.assertEqual((audit['subject_native_observations'], audit['control_native_observations']), (12,6))
+        self.assertEqual((len(audit['aggregate_change']['before']['measured_benchmarks']),
+                          len(audit['aggregate_change']['after']['measured_benchmarks'])), (9,10))
+        self.assertEqual((audit['imported_program_inventory'], audit['imported_endpoint_programs']), (4,2))
+        for key,row in candidate['program_inventory'].items():
+            actual = after['program_inventory'][key]
+            self.assertEqual(actual['files'], row['files'])
+            self.assertEqual(actual['additional_matched_mech_control'], candidate['matched_mech_controls']['mech-small-control'])
+            self.assertEqual(actual['matched_mech_control'], candidate['matched_mech_controls']['mech-fast-control'])
+        self.assertEqual(after['programs'][jit['key']], before['programs'][jit['key']])
+        self.assertEqual(after['reference_summary'][-1], before['reference_summary'][-1])
+        self.assertEqual(newmeta['languages']['luajit'], meta['languages']['luajit'])
+        self.assertEqual(audit['source_manifest'], candidate['source_manifest'])
+        self.assertNotIn('source_audit', audit)
+
+    def test_lua_missing_helper_controls_changed_roles_or_profile_fail(self):
+        for fault in ('helper','role','count','control','row_control','identity','scope','approval'):
+            candidate = copy.deepcopy(self.candidates['lua'])
+            row = next(iter(candidate['program_inventory'].values()))
+            if fault == 'helper': row['files'].pop()
+            elif fault == 'role': row['file_roles'][p.LUA_HELPER]['role'] = 'runtime'
+            elif fault == 'count': row['file_roles'][p.LUA_HELPER]['normalized_loc'] -= 1
+            elif fault == 'control': candidate['matched_mech_controls'].pop('mech-small-control')
+            elif fault == 'row_control': row['additional_matched_mech_control'] = row['matched_mech_control']
+            elif fault == 'identity': row['id'] = 'luajit-listed-1'
+            elif fault == 'scope': candidate['matched_control_samples'] = 3
+            else: candidate['source_counts']['sha256'] = '0'*64
+            with self.subTest(fault=fault), self.assertRaises((ValueError,KeyError)):
+                p.validate_candidate(candidate)
+
+    def test_lua_unreviewed_minimum_and_wrong_prior_coverage_fail(self):
+        for fault in ('minimum','coverage'):
+            before, meta = catalog(self.candidates['lua'], expanded_reference=True)
+            if fault == 'minimum':
+                bench = before['benchmarks'][-1]
+                bench['baseline_loc'] = 1000
+                key = bench['groups'][0]['fast']
+                for pool in ('programs','program_inventory'):
+                    before[pool][key]['loc'] = before[pool][key]['publication_record']['loc'] = 1000
+            else:
+                before['reference_summary'][-1]['measured_benchmarks'].pop()
+            with self.subTest(fault=fault), self.assertRaises(ValueError):
+                self.apply('lua', before, meta)
+
+    def test_existing_languages_still_require_one_application_file(self):
+        for language in ('r','apl','uiua'):
+            candidate = copy.deepcopy(self.candidates[language])
+            row = next(iter(candidate['program_inventory'].values()))
+            row['files'].append(row['files'][0])
+            with self.subTest(language=language), self.assertRaisesRegex(ValueError, 'source bundle'):
                 p.validate_candidate(candidate)
 
 

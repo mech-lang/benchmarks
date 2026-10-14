@@ -40,7 +40,7 @@ import checks and eight candidate-to-catalog checks. GNU APL has a separate
 its static dependency evidence does not claim a per-process loaded-library
 inventory. These reviews have not changed the published catalog.
 
-[Lua pi digits](../experiments/lua/retained-pidigits-v1/) also has a complete retained cohort: twelve Lua observations across four distinct source forms and six matched Mech controls. Complete application-plus-GMP-helper source counts and the Lua-only reconciler/exporter have passed independent source review. Shared publication support and physical evidence replay remain pending. Together with the R, Uiua and GNU APL cohorts above, **111 completed observations can fill twelve chart gaps without new timing runs**.
+[Lua pi digits](../experiments/lua/retained-pidigits-v1/) also has a complete retained cohort: twelve Lua observations across four distinct source forms and six matched Mech controls. Complete application-plus-GMP-helper source counts, the Lua-only reconciler/exporter, and [shared publication support](../experiments/shared/retained-publication-v1/lua-publication-v2.md) have passed independent source review. Fifty-six pure checks cover candidate admission, guarded import and historical preservation. Physical evidence replay and catalog admission remain pending. Together with the R, Uiua and GNU APL cohorts above, **111 completed observations can fill twelve chart gaps without new timing runs**.
 
 Prolog, Julia AOT, and Rebol are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
 

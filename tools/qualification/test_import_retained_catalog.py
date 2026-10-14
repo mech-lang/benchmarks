@@ -35,7 +35,7 @@ def fixture(cohort, candidate, existing_history=False):
         spec = copy.deepcopy(i.COHORTS[cohort])
         packet = root/spec['packet']; packet.mkdir(parents=True)
         (root/'data').mkdir()
-        data, metadata = f.catalog() if cohort == 'uiua-fann' else t.catalog(candidate, expanded_reference=cohort == 'uiua')
+        data, metadata = f.catalog() if cohort == 'uiua-fann' else t.catalog(candidate, expanded_reference=cohort in ('uiua','lua'))
         originals = dict(zip(i.CATALOGS, map(i.encoded, (data,metadata))))
         originals[i.HISTORY] = i.encoded(dict(schema='canonical-loc-normalization-history-v1', admissions=[])) if existing_history else None
         for name,raw in originals.items():
@@ -50,10 +50,11 @@ def fixture(cohort, candidate, existing_history=False):
                 i.checked(path,digest)
 
         @contextmanager
-        def context(*_,on_exit_failure=None,final_consumer_check=None):
+        def context(*context_args,on_exit_failure=None,final_consumer_check=None):
             state['held'] = True
+            state['context_args'] = context_args
             try:
-                yield {},Files()
+                yield ({},Files(),{}) if cohort == 'lua' else ({},Files())
                 state['replayed'] = True
                 if state['mutation'] is not None:
                     state['mutation']()
@@ -90,7 +91,8 @@ def fixture(cohort, candidate, existing_history=False):
             reconciler=SimpleNamespace(review_context=context,review_files=context),
             publication=f.p if cohort=='uiua-fann' else t.p,
             normalization=SimpleNamespace(strict_json=n.strict_json, validate_registry=n.validate_registry,
-                validate_transition=n.validate_transition,historical_view=history))
+                validate_transition=n.validate_transition,historical_view=history,
+                ADAPTERS={entry['audit_key']:None for entry in i.COHORTS.values()}))
 
         def args(mode='preview', preview=None, output=None):
             result = SimpleNamespace(cohort=cohort,mode=mode,output=output or packet/('preview' if mode=='preview' else 'apply'),
@@ -121,7 +123,7 @@ class Transaction(unittest.TestCase):
         for name,raw in value.originals.items():
             self.assertEqual((value.root/name).read_bytes() if (value.root/name).exists() else None, raw)
 
-    def test_four_cohort_preview_apply_and_exact_registry(self):
+    def test_five_cohort_preview_apply_and_exact_registry(self):
         for cohort,candidate in self.candidates.items():
             with self.subTest(cohort=cohort), fixture(cohort,candidate) as value:
                 preview=value.run(value.args())
@@ -136,6 +138,18 @@ class Transaction(unittest.TestCase):
                 self.assertNotIn(i.HISTORY,result['prepared'])
                 self.assertEqual(i.sha((value.packet/'apply/SUCCESS.json').read_bytes()),preview['proposed_apply']['sha256'])
                 self.assertEqual(i.sha((value.root/i.HISTORY).read_bytes()),preview['prepared'][i.HISTORY])
+                if cohort == 'lua':
+                    spec = i.COHORTS['lua']
+                    self.assertEqual(value.state['context_args'], (spec['reconciler_sha'],
+                        value.root/spec['source_counts'], spec['source_counts_sha']))
+
+    def test_missing_lua_history_adapter_rejects_before_output_or_install(self):
+        with fixture('lua',self.candidates['lua']) as value:
+            value.deps['normalization'].ADAPTERS.pop('lua_retained_publication_audit')
+            with self.assertRaisesRegex(ValueError,'history adapter'):
+                value.run(value.args())
+            self.unchanged(value)
+            self.assertFalse((value.packet/'preview').exists())
 
     def test_existing_empty_registry_is_distinct_from_absence(self):
         with fixture('r',self.candidates['r'],existing_history=True) as value:
@@ -284,7 +298,7 @@ class Transaction(unittest.TestCase):
 
 
 class CandidateRouting(unittest.TestCase):
-    def test_four_frozen_export_annotation_shapes_and_tamper_rejection(self):
+    def test_five_frozen_export_annotation_shapes_and_tamper_rejection(self):
         for cohort,spec in i.COHORTS.items():
             with self.subTest(cohort=cohort),tempfile.TemporaryDirectory() as directory:
                 root=Path(directory).resolve();packet=root/spec['packet'];packet.mkdir(parents=True)
@@ -292,6 +306,8 @@ class CandidateRouting(unittest.TestCase):
                 review=dict(canonical_counts={'key':dict(source=dict(path=source_path.relative_to(root).as_posix(),sha256=digest))},
                     profiles={'key':dict(original_profile=dict(source=str(source_path)),source_sha256=digest)},
                     source_counts={v:dict(source_sha256=digest) for v in ('compact','fast')})
+                if cohort == 'lua':
+                    review['canonical_counts'] = dict(files={digest:dict(path=source_path.relative_to(root).as_posix())})
                 for variant in ('compact','fast'):
                     (packet/'sources').mkdir(exist_ok=True);(packet/'sources'/(variant+'.ua')).write_bytes(source)
                 review_path=packet/'reconciliation.json';review_path.write_bytes(i.encoded(review))
@@ -299,7 +315,7 @@ class CandidateRouting(unittest.TestCase):
                 base=dict(schema='fixture-export',original_runtime_flag=False)
                 expected=copy.deepcopy(base)
                 expected['reconciliation']=dict(path=review_path.relative_to(root).as_posix(),sha256=i.sha(review_path.read_bytes()))
-                if cohort in ('r','apl'):
+                if cohort in ('r','apl','lua'):
                     expected['exporter']=dict(path='tools/qualification/'+spec['exporter'],sha256=spec['exporter_sha'])
                 elif cohort=='uiua':
                     expected['independent_source_review']=dict(path=source_review.relative_to(root).as_posix(),sha256=i.sha(b'{}'))

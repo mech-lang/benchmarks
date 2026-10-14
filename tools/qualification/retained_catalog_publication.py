@@ -1,4 +1,4 @@
-"""Pure catalog admission of already reconciled R, GNU APL and Uiua samples.
+"""Pure catalog admission of already reconciled R, GNU APL, Uiua and Lua samples.
 
 The guarded caller must reproduce the exported candidate from saved evidence.
 This module does not read catalogs, execute runtimes or create observations.
@@ -30,6 +30,21 @@ SCOPES = {
         language='uiua', label='Uiua', audit_key='uiua_retained_publication_audit',
         workloads=('nbody', 'binarytrees'), forms=4, sources=3, aliases=1,
         subjects=9, controls=6, counts='count_approval'),
+    'lua-retained-pidigits-publication-candidate-v1': dict(
+        language='lua', label='Lua (interpreted)', audit_key='lua_retained_publication_audit',
+        workloads=('pidigits',), forms=4, sources=5, subject_sources=4, aliases=0,
+        subjects=12, controls=6, counts='source_counts', source_evidence='source_manifest'),
+}
+
+LUA_PACKET = 'experiments/lua/retained-pidigits-v1'
+LUA_COUNTS = dict(path=LUA_PACKET+'/qualified-source-counts-v1.json',
+    sha256='8725633b2ffc195953368d38286d35bf327e54256648b7e32abc8cd37df642bf')
+LUA_HELPER = 'ae50244bd96f7961201a40780c2dfeab4bb193fc0e2da2184c37753469ef4e6c'
+LUA_APPLICATIONS = {
+    1: ('e2e0139198ef7b00dd616fdd82d756e079a96db64702c72c4f9bed0a2d9d1e82', 62),
+    5: ('00734d693c0968a606b8aef2cfeffa15da58e7f4ac81731c19fb7f1dde7a0c36', 77),
+    6: ('ce34fae5e45f842c8b414b18fa368e90809165fda0781b8a00da2bc29d50d930', 63),
+    7: ('cca5f009f82162b0bdd50d839add97ef21859b5d8ddd047b3db9f286973c9c2c', 57),
 }
 
 
@@ -81,6 +96,43 @@ def endpoint(rows, scope):
                 formatted_fast=None, formatted_small=None)
 
 
+def validate_lua_bundle(candidate):
+    """This reviewed two-file cohort does not relax other languages' bundles."""
+    inventory = candidate['program_inventory']
+    require(set(inventory) == {f'pidigits:lua-interpreted-gmp-listed-{v}' for v in LUA_APPLICATIONS}
+            and candidate['source_counts'] == LUA_COUNTS and candidate['luajit_mutated'] is False
+            and candidate['subject_samples'] == 12 and candidate['matched_control_samples'] == 6,
+            'Exact four-form Lua cohort required')
+    controls = candidate['matched_mech_controls']
+    require(set(controls) == {'mech-fast-control', 'mech-small-control'}, 'Both matched Mech controls required')
+    for identity, control in controls.items():
+        samples = control['samples']
+        require(control['key'] == 'pidigits:lua-study:'+identity and len(samples) == 3
+                and all(positive(v) for v in samples) and control['seconds'] == statistics.median(samples)
+                and control['timing_sd'] == statistics.stdev(samples), 'Lua matched control statistics differ')
+    for variant, (digest, count) in LUA_APPLICATIONS.items():
+        row = inventory[f'pidigits:lua-interpreted-gmp-listed-{variant}']
+        require(row['id'] == f'lua-listed-{variant}' and row['source_sha256'] == digest
+                and row['files'] == [digest, LUA_HELPER] and set(row['file_roles']) == {digest, LUA_HELPER}
+                and row['loc'] == count + 218 and row['physical_loc'] == count + 119
+                and row['helper_counted'] is True and row['original_helper_counted'] is False,
+                'Complete Lua application and general helper bundle required')
+        for source, role, path, units, physical in (
+                (digest, 'application', f'{LUA_PACKET}/sources/pidigits-lua-{variant}-normalized.lua', count, count),
+                (LUA_HELPER, 'general-library-helper', LUA_PACKET+'/support/gmp.c', 218, 119)):
+            item = row['file_roles'][source]
+            require(item['role'] == role and item['source_path'] == candidate['files'][source]['path'] == path
+                    and item['normalized_loc'] == units and item['physical_loc'] == physical
+                    and item['formatted_loc'] is None and item['source_owner_review'] == LUA_COUNTS,
+                    'Lua counted source role differs')
+        require(row['matched_mech_control'] == controls['mech-fast-control']
+                and row['additional_matched_mech_control'] == controls['mech-small-control']
+                and row['mech_comparison']['control_key'] == controls['mech-fast-control']['key']
+                and row['mech_comparison']['samples_seconds'] == controls['mech-fast-control']['samples']
+                and row['mech_comparison']['seconds'] == controls['mech-fast-control']['seconds'],
+                'Lua matched controls were dropped or rebound')
+
+
 def validate_candidate(candidate):
     require(candidate.get('schema') in SCOPES, 'Unreviewed retained candidate schema')
     scope = SCOPES[candidate['schema']]
@@ -92,6 +144,8 @@ def validate_candidate(candidate):
     require(len(inventory) == candidate['source_forms'] == scope['forms']
             and len(files) == scope['sources'], 'Candidate source inventory differs')
     require({r['benchmark'] for r in inventory.values()} == set(scope['workloads']), 'Workload set differs')
+    if scope['language'] == 'lua':
+        validate_lua_bundle(candidate)
     aliases = 0
     for key, row in inventory.items():
         require(row['key'] == key and row['language'] == scope['language']
@@ -103,11 +157,12 @@ def validate_candidate(candidate):
         require(type(row['loc']) is int and row['loc'] > 0 and row['loc'] == row['canonical_loc']
                 and row['formatted_loc'] is None and row['formatted_x'] is None
                 and row['formatted_loc_qualified'] is False, 'Canonical/formatted count scope differs')
-        require(len(row['files']) == 1 and row['files'][0] == row['source_sha256']
-                and set(row['file_roles']) == set(row['files']), 'Counted source bundle differs')
-        role = row['file_roles'][row['source_sha256']]
-        require(role['normalized_loc'] == row['loc'] and role['physical_loc'] == row['physical_loc']
-                and role['role'] == 'application', 'Authored source count differs')
+        if scope['language'] != 'lua':
+            require(len(row['files']) == 1 and row['files'][0] == row['source_sha256']
+                    and set(row['file_roles']) == set(row['files']), 'Counted source bundle differs')
+            role = row['file_roles'][row['source_sha256']]
+            require(role['normalized_loc'] == row['loc'] and role['physical_loc'] == row['physical_loc']
+                    and role['role'] == 'application', 'Authored source count differs')
         require(len(row['samples']) == 3 and all(positive(v) for v in row['samples'])
                 and row['seconds'] == statistics.median(row['samples'])
                 and row['timing_sd'] == statistics.stdev(row['samples']), 'Saved sample statistics differ')
@@ -188,6 +243,16 @@ def build_publication(original, original_languages, candidate, candidate_ref, ru
     for b in scope['workloads']:
         require(not any(g['language'] == language for g in benches[b]['groups']),
                 'Existing language endpoint requires explicit selection merge')
+    if language == 'lua':
+        prior_entries = [v for v in data['languages'] if v['key'] == 'lua']
+        prior_refs = [v for v in data['reference_summary'] if v['lang'] == 'lua']
+        previous = set(benches) - {'pidigits'}
+        require(len(benches) == 10 and len(prior_entries) == len(prior_refs) == 1
+                and len(prior_entries[0]['timed_benchmarks']) == len(prior_refs[0]['measured_benchmarks']) == 9
+                and set(prior_entries[0]['timed_benchmarks']) == previous
+                and set(prior_refs[0]['measured_benchmarks']) == previous
+                and all(sum(g['language'] == 'lua' for g in benches[b]['groups']) == 1 for b in previous),
+                'Lua admission requires the reviewed nine-to-ten workload expansion')
     for digest, source in candidate['files'].items():
         if digest in data['files']:
             require(data['files'][digest]['code'] == source['code'], 'Source content collision')
@@ -196,7 +261,8 @@ def build_publication(original, original_languages, candidate, candidate_ref, ru
     paths = {candidate_ref['path']}
     if runtime_scope_ref is not None:
         paths.add(runtime_scope_ref['path'])
-    for field in ('report', 'source_audit', scope['counts'], 'reconciliation'):
+    source_evidence = scope.get('source_evidence', 'source_audit')
+    for field in ('report', source_evidence, scope['counts'], 'reconciliation'):
         if field in candidate:
             paths.add(safe_path(candidate[field]['path']))
     for source in candidate['files'].values():
@@ -231,6 +297,7 @@ def build_publication(original, original_languages, candidate, candidate_ref, ru
                   if data['programs'][key].get('eligible_for_chart') is not False)
         require(low <= bench['baseline_loc'], 'Qualified current canonical minimum is absent')
         if low < bench['baseline_loc']:
+            require(language != 'lua', 'Lua canonical minimum change requires separate review')
             normalizations.append(normalize_loc(data, b, low))
     entries = [v for v in data['languages'] if v['key'] == language]
     require(len(entries) == 1 and language in languages['languages'], 'Existing language metadata missing')
@@ -255,14 +322,19 @@ def build_publication(original, original_languages, candidate, candidate_ref, ru
         row['language'] == language for row in data['programs'].values())
     audit = dict(schema='retained-language-catalog-admission-v1', status='prepared-qualified-retained-cohort',
         language=language, candidate=copy.deepcopy(candidate_ref), report=copy.deepcopy(candidate['report']),
-        source_audit=copy.deepcopy(candidate['source_audit']), source_counts=copy.deepcopy(candidate[scope['counts']]),
-        source_forms=scope['forms'], distinct_subject_sources=scope['sources'], timing_aliases=scope['aliases'],
+        source_counts=copy.deepcopy(candidate[scope['counts']]),
+        source_forms=scope['forms'], distinct_subject_sources=scope.get('subject_sources', scope['sources']),
+        timing_aliases=scope['aliases'],
         subject_native_observations=scope['subjects'], control_native_observations=scope['controls'],
         imported_program_inventory=len(candidate['program_inventory']),
         imported_endpoint_programs=sum(len(g['programs']) for g in endpoints.values()),
         endpoints=copy.deepcopy(endpoints), normalizations=normalizations,
         aggregate_change=dict(before=prior, after=copy.deepcopy(reference)),
         native_runs=0, historical_reports_mutated=False, old_raw_measurements_changed=False)
+    audit[source_evidence] = copy.deepcopy(candidate[source_evidence])
+    if language == 'lua':
+        audit.update(counted_physical_files=5, counted_files_per_profile=2,
+                     matched_control_ids=list(candidate['matched_mech_controls']), luajit_mutated=False)
     if runtime_scope_ref is not None:
         audit['runtime_publication_scope_review'] = copy.deepcopy(runtime_scope_ref)
     data[audit_key] = audit
