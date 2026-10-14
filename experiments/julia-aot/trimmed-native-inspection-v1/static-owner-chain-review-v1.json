@@ -1,0 +1,158 @@
+{
+  "schema": "julia-nbody-static-owner-chain-review-v1",
+  "status": "native-bodies-and-static-call-chain-confirmed-entry-dispatch-and-fallback-unqualified",
+  "reviewed_at": "2026-10-14T22:01:53.617768+00:00",
+  "capture_closure": {
+    "path": "experiments/julia-aot/trimmed-native-inspection-v1/remaining-two-actual-review-v1.json",
+    "sha256": "1d352638836bca5683f0758567ae181623b86d542adfa991488fec1d44369190"
+  },
+  "final_executable": {
+    "path": "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/julia-aot-comparison/20261012/.build/official-static-io-safe-link-v3/nbody-safe",
+    "sha256": "86260f83a90db739e82729ce869d21bb8aa747282c9bb8da0ad41a3210770187",
+    "bytes": 8217032
+  },
+  "native_archive": {
+    "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/official-static-io-safe-trim-nbody-v1/nbody-safe-o.a",
+    "sha256": "e25e9acec36b78baacc0e910df86503fc7de8918e4043b73c5328ac04b0d4654",
+    "bytes": 9444136
+  },
+  "evidence": {
+    "final_disassembly": {
+      "path": "experiments/julia-aot/trimmed-native-inspection-v1/run-remaining-v1/10-final-executable/stdout.bin",
+      "bytes": 3492324,
+      "sha256": "0c700f49d0894c694f3cddf64844f0db67463469f60e01ef27c033936b3e7464"
+    },
+    "archive_disassembly": {
+      "path": "experiments/julia-aot/trimmed-native-inspection-v1/run-remaining-v1/09-native-archive/stdout.bin",
+      "bytes": 4236666,
+      "sha256": "f77ebf13276d161102179f2ff3c6a71cc8eaeafbdcc329ca57e01dd111c1c9f0"
+    },
+    "entry_ir": {
+      "path": "experiments/julia-aot/trimmed-native-inspection-v1/run-v1/00-decode-00/stdout.bin",
+      "bytes": 971925,
+      "sha256": "54bc9a9292b1f884c8b70c433eb42aa5f96917ddc2e47d9cf1e4ae621e2e133d"
+    },
+    "dispatch_ir": {
+      "path": "experiments/julia-aot/trimmed-native-inspection-v1/run-v1/02-decode-02/stdout.bin",
+      "bytes": 991485,
+      "sha256": "713dd1da67565d06a330cca935cefdab3092cca3293f84d444900da7f7d04031"
+    }
+  },
+  "static_findings": [
+    {
+      "claim": "The final executable main passes argv past the executable name and branches to the exported compiled C entry.",
+      "evidence": "final_disassembly:6204-6209",
+      "addresses": [
+        "0x100004514",
+        "0x100004520",
+        "0x10000452c"
+      ]
+    },
+    {
+      "claim": "The native clbg entry contains direct calls to fresh runtime-state initialization and then the original driver. This establishes the compiled path once this body is selected, not the actual runtime selection of it.",
+      "evidence": "final_disassembly:30074-30075",
+      "addresses": [
+        "0x10001b1a4 -> 0x10002aa10",
+        "0x10001b1a8 -> 0x10002343c"
+      ]
+    },
+    {
+      "claim": "State construction contains fresh GC allocations, copies the planetary constants, updates the bodies binding and computes the momentum adjustment.",
+      "evidence": "archive_disassembly:50496-50630",
+      "addresses": [
+        "text#4.o+0x6cd0 -> ijl_gc_small_alloc",
+        "text#4.o+0x6d00 -> ijl_gc_small_alloc",
+        "text#4.o+0x6d5c bodies store"
+      ]
+    },
+    {
+      "claim": "The original driver directly calls energy before the loop, parses the runtime argument, passes that integer to nbody, then directly calls energy again and formats both results.",
+      "evidence": "final_disassembly:38632-38760",
+      "addresses": [
+        "0x100023498 -> 0x100040fe0",
+        "0x10002356c -> 0x100018578",
+        "0x100023594 -> 0x10002a310",
+        "0x1000235a4 -> 0x100040fe0"
+      ]
+    },
+    {
+      "claim": "The native integration body checks the argument, derives x13 from the supplied iteration count, performs floating-point body updates and stores, then decrements x13 and takes its nonzero backedge. The timestep constant is the native encoding of 0.01.",
+      "evidence": "final_disassembly:45921-45963 and46315-46369",
+      "addresses": [
+        "0x10002a33c input check",
+        "0x10002a364 counter from x1",
+        "0x10002a390-0x10002a3a4 timestep",
+        "0x10002a9e8 decrement",
+        "0x10002a9ec -> 0x10002a3ac backedge"
+      ]
+    }
+  ],
+  "unresolved_entry": {
+    "evidence": [
+      "entry_ir:363-403",
+      "dispatch_ir:7",
+      "dispatch_ir:354-382",
+      "archive_disassembly:616-635",
+      "final_disassembly:6233-6251"
+    ],
+    "details": "The exported entry loads jl_ext_4 fptr and last_world, compares against jl_world_counter, may call jl_get_abi_converter, then executes an indirect branch. jl_ext_4 includes native julia_clbg_entry_5209 and the compiled generic thunk j_5337_gfthunk, which boxes arguments and calls ijl_apply_generic. Static presence of the direct native path does not prove which target was returned or called in a process.",
+    "linked_slots": {
+      "jl_ext_4": "0x10004c5b0",
+      "native_target": "0x10001afcc",
+      "dispatch_instruction": "0x1000045c4"
+    }
+  },
+  "runtime_source_context": {
+    "url": "https://github.com/JuliaLang/julia/blob/v1.13.1/src/runtime_ccall.cpp",
+    "git_blob": "8f3f92c4fed2a2c551bec71da237fd9c28b2c244",
+    "lines": {
+      "cfuncdata_layout": "343-352",
+      "matching_existing_specptr": "355-365",
+      "world_and_existing_codeinstance": "383-428",
+      "generic_fallback_selection": "449-479"
+    },
+    "interpretation": "The tagged implementation can reuse a still-valid CodeInstance/native target or select its unspecialized thunk when code generation cannot provide an adapter. This source explanation is not a runtime observation of this executable.",
+    "codegen_stubs_url": "https://github.com/JuliaLang/julia/blob/v1.13.1/src/codegen-stubs.c#L42-L66",
+    "codegen_stubs_git_blob": "6d822fb97445303a5aec2d199823a8fe10bcf64b"
+  },
+  "serialized_image_gap": "No actual inspection yet establishes the relevant Method.source, CodeInstance.inferred, invoke/specptr fields or opaque-closure bodies after loading this serialized image. trim/strip_ir options and absence of libjulia-codegen are insufficient by themselves.",
+  "next_diagnostic": {
+    "status": "proposed-not-prepared-or-executed",
+    "subject_processes": 1,
+    "argument": "1000",
+    "reason": "Reuse the exact retained bounded output oracle while collecting dispatch evidence; no full-size benchmark or measurement repeat.",
+    "unchanged_executable_sha256": "86260f83a90db739e82729ce869d21bb8aa747282c9bb8da0ad41a3210770187",
+    "mode": "A supervisor-owned LLDB target launch of this executable; no attach to an unrelated process. No replacement executable or runtime code patch on disk.",
+    "environment_policy": "Use the retained no-codegen diagnostic environment, with JULIA_LOAD_CODEGEN_LIB=0. Save actual debugger and target environments separately; preserve normal stdout/stderr in separate files.",
+    "observations": [
+      "Validate exact loaded-image identities and slides; bind the real main image and matching libjulia-internal bytes to retained symbol offsets before setting or interpreting breakpoints.",
+      "Observe the exported-entry world-age branch and actual x8 immediately before its indirect call at image-relative0x45c4; require the observed target to equal image-relative0x1afcc for native entry selection.",
+      "Record hits at native entry, fresh-state constructor, original driver, energy and nbody; read the argument at nbody entry. Preserve the complete event order and all unexpected stops.",
+      "Place breakpoints by loaded address at all four retained local interpreter entry points and at relevant public/codegen/fallback routes. Save per-breakpoint resolved locations and hit counts; unresolved or zero-location breakpoints invalidate absence claims.",
+      "At the entry/ABI boundary use debugger memory inspection, without target expression evaluation, to retain the actual cfuncdata and selected CodeInstance/invoke/specptr/inferred fields. Derive layouts from exact matching runtime headers and debug types, and reject unavailable or inconsistent types."
+    ],
+    "local_interpreter_symbols": {
+      "runtime_sha256": "aaf25ba7ac705b5e0d564e6942da9d158bf59cf387fa9d5dca097a254764d816",
+      "symbol_receipt": "archive/languages/julia-aot/20261012/jobs/runtime-symbols-v1/images/libjulia-internal.1.13.1/symbols.stdout",
+      "file_values": {
+        "jl_fptr_interpret_call": "0x3f1f8",
+        "jl_interpret_opaque_closure": "0x3fe10",
+        "jl_interpret_toplevel_thunk": "0x40054",
+        "jl_interpret_toplevel_expr_in": "0x4018c"
+      },
+      "address_note": "These are file symbol values. Resolve the actual loaded slide and executable section; do not treat them as process addresses."
+    },
+    "preconditions": [
+      "Freeze the exact debugger/tool and Python scripting API path, target ownership/cleanup behavior, command timeout and log limits before launch.",
+      "Calibrate breakpoint resolution and a known captured stop; a negative missing-native or deliberately verifier-rejected dispatch case remains a separate explicit fallback-verifier test, never an inference from zero hits."
+    ],
+    "acceptance_limit": "One bounded trace can establish the actual entry path and any observed fallback for that run. It cannot alone prove every serialized method is stripped or that every possible input/error path excludes interpretation."
+  },
+  "new_native_commands": 0,
+  "static_compiled_work_path_present": true,
+  "native_owner_qualified": false,
+  "actual_ir_removal_qualified": false,
+  "fallback_closure_qualified": false,
+  "runtime_aot_proven": false,
+  "chart_admission": false
+}

@@ -39,11 +39,24 @@ remains unreaped until no live group members remain, so its PID cannot be
 reused while cleanup signals are possible. Historical services are not
 executed or modified. The closed Builder/source owners remain leased for reading.
 
+The common lock and all three historical leases are checked by both open-file
+and named-file identity again before terminal retention. Input and artifact
+reads require regular files; a FIFO, symlink, or other special file is rejected
+without a blocking read. Readable failure artifacts are retained alongside
+explicit errors.
+
 `test_supervisor.py` exercises timeout cleanup, descendant exit, PID ownership,
 deadline propagation, and partial evidence retention with mocked processes.
 An unreadable artifact is recorded alongside readable artifacts and does not
 prevent writing the report and terminal receipt. These are controller fixtures,
 not native SDK observations.
+
+`test_terminal.py` adds temporary-file faults for late input, generated-header,
+stream, report, inventory, and lease changes. It also covers special-file
+rejection and exact source-copy membership. These new closure tests and the
+updated supervisor fixtures pass: 13 terminal cases and 13 supervisor cases.
+They use temporary files and mocked processes, without SDK preparation or
+native execution.
 
 The wrapper records the actual `sw_vers -productVersion` and `ldd --version`
 shell calls. The selected PATH, shell, sw_vers binary, and system version plist
@@ -59,6 +72,12 @@ rechecks original inputs. A successful command means only that vendor SDK
 generation completed. The complete `reb-lib.h`, `reb-lib-lib.h`, `reb-host.h`,
 `host-lib.h`, `reb-ext.h`, and `ext-types.h` still require layout/API review
 before building the existing general extension.
+
+The validated generated files, native spec readbacks, command receipts, and
+complete output inventory are retained as exact digests. After writing the
+report, the controller rechecks immutable inputs, that inventory, and the
+serialized report bytes before its final lease check. A late change records a
+failed terminal instead of adopting new bytes as successful evidence.
 
 Remaining gates are generated SDK/API and extension ABI compatibility; exact
 Clang, macOS SDK, GMP, and PCRE2 source/header/image bindings; extension build

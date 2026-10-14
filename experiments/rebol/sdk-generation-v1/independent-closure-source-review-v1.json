@@ -1,0 +1,72 @@
+{
+  "schema": "rebol-sdk-closure-independent-source-review-v1",
+  "status": "source-review-passed-native-generation-not-executed",
+  "reviewed_at": "2026-10-14T21:55:21.321952+00:00",
+  "reviewed_files": {
+    "tools/qualification/rebol_sdk.py": {
+      "sha256": "620d852fdd01d17f385b6c79be493f364d8ca09ff53bef5d01f424933c489737",
+      "bytes": 28187
+    },
+    "experiments/rebol/sdk-generation-v1/test_terminal.py": {
+      "sha256": "900ec6d238a80b4b34e6f40135040251df44a3fce182982e49066c0cc2509dd7",
+      "bytes": 9148
+    },
+    "experiments/rebol/sdk-generation-v1/test_supervisor.py": {
+      "sha256": "809ab53cfade95f94c016d6e2171786c373a3df48d3b8530c9b37ae768a00195",
+      "bytes": 11710
+    },
+    "experiments/rebol/sdk-generation-v1/README.md": {
+      "sha256": "dc077afcea222766d68e952eb4678912baa0e9ade727d4511085af96066161a2",
+      "bytes": 5572
+    }
+  },
+  "preserved_native_components": {
+    "tools/qualification/rebol_sdk_exec.py": {
+      "sha256": "5b5ef739490fc63f4c8230d7b18217f5c28bc0f65915815e6ae84a7707e70583",
+      "bytes": 2005
+    },
+    "tools/qualification/rebol_sdk_supervisor.py": {
+      "sha256": "ff0ccf02ce703c8a41cfdf61abf2813915eb0b9d6e33b6a0eefcfa0f811fede3",
+      "bytes": 9083
+    },
+    "experiments/rebol/sdk-generation-v1/generate.reb": {
+      "sha256": "12697ae503cfe835b7f71300fb83b5bf6b1e250a0aa4c8f012db85a346854093",
+      "bytes": 4347
+    }
+  },
+  "previous_controller_sha256": "c34691cf8c12d2a03bcee9eb8c66d2b51fa22682c55334ef3cb60e1013692cb7",
+  "review": [
+    "Common mutex and all three historical read leases retain open descriptors and repeat exact named/open inode checks through terminal retention.",
+    "Generated files, native map readbacks, command/startup receipts and copied source membership are bound to the captured validated inventory; successful finalization cannot adopt additions, deletions or changed bytes.",
+    "After exact report serialization, immutable pins and complete artifact/report inventory are replayed before final lease checks. A late fault downgrades terminal status; external report changes are preserved.",
+    "Regular-only nonblocking reads reject symbolic links and special files, including FIFO replacement between lstat and open, while retaining readable failure artifacts.",
+    "Frozen owned-process supervisor, exec helper and vendor wrapper are unchanged. The repaired controller retains the original command, 300-second limit, five-second cleanup budget and no-retry behavior."
+  ],
+  "independent_tests": [
+    {
+      "path": "experiments/rebol/sdk-generation-v1/test_terminal.py",
+      "tests_run": 13,
+      "seconds": 0.031,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    },
+    {
+      "path": "experiments/rebol/sdk-generation-v1/test_supervisor.py",
+      "tests_run": 13,
+      "seconds": 0.009,
+      "failures": 0,
+      "errors": 0,
+      "exit_code": 0
+    }
+  ],
+  "test_scope": "Temporary regular files and FIFOs, mocked process/kernel interfaces, no native child or vendor source load. Tests invoked with retained Python -I -S -B.",
+  "native_commands_executed": 0,
+  "prepare_executed": false,
+  "actual_898_source_closure_replayed": false,
+  "generated_headers_qualified": false,
+  "extension_abi_qualified": false,
+  "source_work_qualified": false,
+  "chart_admission": false,
+  "remaining": "Actual pinned preparation, concrete plan review and one retained generation remain pending; generated header/API and extension ABI review follows actual evidence."
+}
