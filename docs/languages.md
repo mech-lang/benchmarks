@@ -7,7 +7,7 @@ The catalog explicitly defines all **54 measured execution variants in 48 langua
 | Runtime / toolchain | Measured engine or compiler family: native toolchains, JVM, .NET, BEAM, Node.js/V8, or another identified language runtime |
 | Execution | Native AOT, native JIT, or interpretation; mixed cohorts may have more than one mode |
 | Typing | The language's primary static or dynamic type-checking model |
-| Paradigm | Established language styles, with intentional overlap: imperative, object-oriented, functional, array, reactive/dataflow |
+| Paradigm | Established language styles, with intentional overlap: imperative, object-oriented, functional, logic, array, reactive/dataflow |
 | Memory | Standard models in the measured language/runtime: manual allocation, ownership/RAII, reference counting, tracing GC, cycle collection |
 
 The exact runtime name is retained even when the compact facet groups several implementations under “Other language runtimes.” This is a known category, not missing classification. Native compilation does not imply manual memory management. Paradigms and memory models do not claim that each individual benchmark exercises every supported model; foreign-library allocation and optional alternate collectors are excluded.

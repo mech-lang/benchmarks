@@ -42,7 +42,10 @@ Publication callers may keep the same four leases through candidate creation
 and guarded file replacement using `review_context`. The context repeats its
 immutable verified-pin and inventory checks before releasing the leases. If
 this final check fails, an optional restoration callback runs while the leases
-are still held. Read-only callers do not install this callback.
+are still held. An optional final consumer check runs after the evidence
+recheck, allowing publication callers to verify supplemental pins and the exact
+prepared target bytes under those same leases. Its failure invokes the same
+restoration path. Read-only callers install neither callback.
 
 ```sh
 /Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B /private/tmp/mech-benchmark-completion/tools/qualification/prolog_linear_metadata.py --reconciliation /private/tmp/mech-benchmark-completion/experiments/prolog/full81-linear-v1/reconciliation-v1.json --reconciliation-sha256 RECONCILIATION_SHA256 --output /private/tmp/mech-benchmark-completion/experiments/prolog/full81-linear-v1/runtime-metadata-v1.json
@@ -56,7 +59,7 @@ matched Mech control and receipt paths; the other nine workloads use the new
 cohort's controls. The cancelled original reverse-complement attempt contributes
 no admitted timing or timeout result.
 
-The [nineteen pure tests](../../../tools/qualification/test_prolog_linear_metadata.py)
+The [twenty pure tests](../../../tools/qualification/test_prolog_linear_metadata.py)
 combine actual saved metadata with an explicitly synthetic future timing ledger.
 They validate profile routing, source aliases, original compiler binding,
 warning bytes, process birth/reap/cleanup, QLF identity, canonical ownership and

@@ -160,5 +160,22 @@ class ReviewLeaseExit(unittest.TestCase):
             with m._yield_verified({},check,restore):pass
         self.assertEqual([str(x) for x in raised.exception.exceptions],['changed evidence','restore failed'])
 
+    def test_consumer_check_runs_after_evidence_and_restores_before_release(self):
+        events=[]
+        @contextmanager
+        def lease():
+            events.append('held')
+            try:yield
+            finally:events.append('released')
+        def consumer():
+            self.assertEqual(events,['held','body','evidence-checked'])
+            events.append('consumer-checked');raise ValueError('publication changed')
+        def restore():
+            self.assertNotIn('released',events);events.append('restored')
+        with self.assertRaisesRegex(ValueError,'publication changed'):
+            with lease(),m._yield_verified({},lambda:events.append('evidence-checked'),restore,consumer):
+                events.append('body')
+        self.assertEqual(events,['held','body','evidence-checked','consumer-checked','restored','released'])
+
 
 if __name__=='__main__':unittest.main()

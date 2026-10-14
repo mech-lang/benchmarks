@@ -336,13 +336,15 @@ def inspect(plan, previous, reconciliation, outcome, read, read_raw):
 
 
 @contextmanager
-def _yield_verified(result, recheck, on_exit_failure):
+def _yield_verified(result, recheck, on_exit_failure, final_consumer_check=None):
     """Restore a publication before the outer lease stack closes on an exit-check failure."""
     try:
         yield result
     finally:
         try:
             recheck()
+            if final_consumer_check is not None:
+                final_consumer_check()
         except BaseException as closure_error:
             if on_exit_failure is not None:
                 try:
@@ -354,7 +356,7 @@ def _yield_verified(result, recheck, on_exit_failure):
 
 
 @contextmanager
-def review_context(reconciliation_path, expected_sha, *, on_exit_failure=None):
+def review_context(reconciliation_path, expected_sha, *, on_exit_failure=None, final_consumer_check=None):
     """Keep all four leases through a caller's candidate construction or publication."""
     path=Path(reconciliation_path).resolve()
     require(path.is_relative_to(l.PACKET) and not path.is_relative_to(l.PACKET/'run-v1')
@@ -434,7 +436,7 @@ def review_context(reconciliation_path, expected_sha, *, on_exit_failure=None):
             verified_file_pins=dict(verified_pins),source_outcome=original['sealed_source_outcome'],
             new_full_native_processes=reconciliation['new_full_native_processes'],
             reused_qualified_samples=9,excluded_original_attempt=10)
-        with _yield_verified(result,recheck,on_exit_failure) as verified:
+        with _yield_verified(result,recheck,on_exit_failure,final_consumer_check) as verified:
             yield verified
 
 

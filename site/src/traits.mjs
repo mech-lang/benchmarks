@@ -12,7 +12,7 @@ export const traitDimensions = [
     {key:'static',label:'Static'}, {key:'dynamic',label:'Dynamic'}]},
   {key:'style',label:'Paradigm',note:'Established language styles; a language may support several.',options:[
     {key:'imperative',label:'Imperative'}, {key:'object',label:'Object-oriented'},
-    {key:'functional',label:'Functional'}, {key:'array',label:'Array'},
+    {key:'functional',label:'Functional'}, {key:'logic',label:'Logic'}, {key:'array',label:'Array'},
     {key:'reactive',label:'Reactive / dataflow'}]},
   {key:'memory',label:'Memory management',note:'Standard models of the measured language/runtime. Strategies can coexist; foreign libraries and optional alternate collectors are excluded.',options:[
     {key:'manual',label:'Manual allocation'}, {key:'owned',label:'Ownership / RAII'},
