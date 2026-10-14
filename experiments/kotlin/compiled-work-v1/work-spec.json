@@ -1,0 +1,103 @@
+{
+  "schema": "kotlin-retained-compiled-work-spec-v1",
+  "maximum_main_invocations_per_profile": 10000,
+  "main_invocation_time_bound_milliseconds": 20000,
+  "per_native_command_timeout_seconds": 30,
+  "automatic_retries": 0,
+  "jit_policy": "Original tiered compiler policy; diagnostic logging only. Missing relevant native method records leave the method gate open.",
+  "profiles": {
+    "binarytrees": {
+      "case": "n-4",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "tree": "(I)Lclbg/binarytrees/Node;",
+        "check": "(Lclbg/binarytrees/Node;)J"
+      },
+      "witness": "fresh complete disjoint scored trees and same descendant identities after bounded pressure with observed normal G1 collection"
+    },
+    "fannkuchredux": {
+      "case": "n-5",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "flips": "([I)I",
+        "rotate": "([II)V"
+      },
+      "witness": "scored flips returns independent reversal count without changing the supplied permutation"
+    },
+    "fasta": {
+      "case": "n-61",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "repeated": "(Ljava/io/ByteArrayOutputStream;I)V",
+        "random": "(Ljava/io/ByteArrayOutputStream;ILjava/util/List;I)I"
+      }
+    },
+    "knucleotide": {
+      "case": "ties-and-stop",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "table": "(Ljava/lang/String;I)Ljava/util/HashMap;"
+      },
+      "witness": "seven distinct full scored maps retained together for lengths 0,1,2,17,18,19 and a mixed sequence; all entries, window totals, fresh repeated table and prior-map immutability checked independently"
+    },
+    "mandelbrot": {
+      "case": "n-17",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "inside": "(DD)Z"
+      }
+    },
+    "nbody": {
+      "case": "n-2",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "advance": "([[D)V",
+        "energy": "([[D)D"
+      }
+    },
+    "pidigits": {
+      "case": "n-27",
+      "methods": {
+        "main": "([Ljava/lang/String;)V"
+      },
+      "static_work": "Both general BigInteger.divide bytecode calls and their dominance of candidate comparison are bound to the existing source/owner review. Output alone is not a runtime division-count proof."
+    },
+    "regexredux": {
+      "case": "all-replacements",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "matches": "(Ljava/lang/String;Ljava/lang/String;)I",
+        "replace": "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"
+      }
+    },
+    "revcomp": {
+      "case": "iupac",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "record": "(Ljava/lang/StringBuilder;Ljava/lang/String;Ljava/lang/StringBuilder;)V",
+        "complement": "(C)C"
+      }
+    },
+    "spectralnorm": {
+      "case": "n-9",
+      "methods": {
+        "main": "([Ljava/lang/String;)V",
+        "multiply": "([D[DZ)V",
+        "ata": "([D[D[D)V",
+        "a": "(II)D"
+      }
+    }
+  },
+  "remaining_gates": [
+    "Actual optimized binary-trees main allocation/lifetime is not proved by a reflective tree witness or sampled allocation events.",
+    "Actual division execution counts are not established solely by matching pi output.",
+    "Bounded maps do not prove prescribed-size memory feasibility.",
+    "Canonical/formatted LOC, full timings and chart admission remain separate and unqualified."
+  ],
+  "required_output_prerequisites": {
+    "original_cases": 156,
+    "specified_supplemental_cases": 30,
+    "combined_form_cases": 186,
+    "explicit_completed_report_and_terminal_hashes": true
+  }
+}
