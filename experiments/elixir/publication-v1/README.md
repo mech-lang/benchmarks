@@ -23,6 +23,10 @@ all 33 built asset hashes verified against their build manifest. The underlying
 and runtime provenance. Original producer admission flags remain unchanged;
 publication is recorded separately.
 
+[Deployment verification](deployment.json) binds the successful GitLab Pages
+pipeline and website commit to all 33 live assets at
+[mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/).
+
 Runtime details were observed in separate closed qualification processes and
 bound to the unchanged timed executable and source closure. Numeric GC defaults
 and regex JIT are not claimed. Full stdout is represented by the sampler's byte
