@@ -30,12 +30,30 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       'No eligible measured languages.');
     const directions=html('div','ranking-direction-labels',card);
     html('span','',directions,below);html('span','',directions,above);
-    const width=Math.max(280,card.clientWidth||container.clientWidth||640),left=32,right=24;
-    const plotWidth=width-left-right,layout=rankingDotLayout(metric.entries,{extent,width:plotWidth,gap:14});
-    const top=14,laneGap=14,plotHeight=Math.max(34,layout.lanes*laneGap+12),height=top+plotHeight+32;
-    const chart=svg('svg',{class:'ranking-chart',viewBox:`0 0 ${width} ${height}`,role:'group',
+    const width=Math.max(240,card.clientWidth||container.clientWidth||640),left=32,right=24;
+    const plotWidth=width-left-right;
+    const chart=svg('svg',{class:'ranking-chart',viewBox:`0 0 ${width} 100`,role:'group',
       'aria-label':`${title} distances from the coordinate median in log₂ sample standard deviations`,
-      'data-ranking-metric':key,'data-ranking-extent':extent,'data-ranking-lanes':layout.lanes},card);
+      'data-ranking-metric':key,'data-ranking-extent':extent},card);
+    const labels=new Map(metric.entries.map(row=>{
+      const node=svg('text',{class:'ranking-language-label',visibility:'hidden'},chart,labelFor(row.entry.language.key));
+      return [row,{node,width:node.getBBox().width}];
+    }));
+    const labelOffset=9;
+    const labelPosition=(row,x)=>{
+      const labelWidth=labels.get(row).width;
+      if(x+labelOffset+labelWidth<=plotWidth)
+        return {anchor:'start',x:x+labelOffset,dy:0,start:x-4.5,end:x+labelOffset+labelWidth};
+      if(x-labelOffset-labelWidth>=0)
+        return {anchor:'end',x:x-labelOffset,dy:0,start:x-labelOffset-labelWidth,end:x+4.5};
+      const labelX=Math.max(0,Math.min(x-labelWidth/2,plotWidth-labelWidth));
+      return {anchor:'start',x:labelX,dy:-13,start:Math.min(x-4.5,labelX),end:Math.max(x+4.5,labelX+labelWidth)};
+    };
+    const layout=rankingDotLayout(metric.entries,{extent,width:plotWidth,gap:12,
+      boundsFor:(row,x)=>{const label=labelPosition(row,x);return [label.start,label.end];}});
+    const top=14,laneGap=28,plotHeight=Math.max(38,layout.lanes*laneGap+12),height=top+plotHeight+32;
+    chart.setAttribute('viewBox',`0 0 ${width} ${height}`);
+    chart.dataset.rankingLanes=String(layout.lanes);
     const X=z=>left+(z+extent)/(2*extent)*plotWidth;
     for(let band=-extent;band<extent;band++){
       const distance=Math.ceil(Math.abs(band+.5));
@@ -67,20 +85,26 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       const coverage=row.entry.coverage;
       const partial=coverage&&coverage.measured<coverage.selected?` · ${coverage.measured}/${coverage.selected} benchmarks · partial`:'';
       const description=`${label} · ${summaryNumber(row.value)}× best · ${summaryNumber(row.sigma_distance,{signed:true})}σ${partial}`;
-      const dot=svg('circle',{cx:left+point.x,cy:top+10+lane*laneGap,r:4.5,fill:color,
-        stroke:'var(--mech-surface-elevated)','stroke-width':1,class:'ranking-dot',tabindex:0,role:'button',
+      const y=top+10+lane*laneGap,labelPositioned=labelPosition(row,point.x);
+      const mark=svg('g',{class:'ranking-mark',tabindex:0,role:'button',
         'aria-label':`${description}. Open language timings and sources.`,
         'data-ranking-language':language,'data-ranking-metric':key,'data-median-ratio':row.ratio_to_median,
         'data-sigma-distance':row.sigma_distance,'data-ranking-value':row.value,'data-ranking-lane':lane},chart);
+      svg('circle',{cx:left+point.x,cy:y,r:4.5,fill:color,
+        stroke:'var(--mech-surface-elevated)','stroke-width':1,class:'ranking-dot','aria-hidden':'true'},mark);
+      const labelNode=labels.get(row).node;
+      labelNode.setAttribute('x',left+labelPositioned.x);labelNode.setAttribute('y',y+labelPositioned.dy);
+      labelNode.setAttribute('text-anchor',labelPositioned.anchor);labelNode.setAttribute('dominant-baseline','central');
+      labelNode.setAttribute('aria-hidden','true');labelNode.removeAttribute('visibility');mark.append(labelNode);
       const show=()=>{
         selectedLanguage=language;languageButton.disabled=false;languageButton.textContent=label;
         languageButton.style.color=color;
         values.textContent=`${summaryNumber(row.value)}× best · ${summaryNumber(row.sigma_distance,{signed:true})}σ${partial}`;
       };
       const open=()=>onOpenLanguage(language);
-      dot.addEventListener('pointerenter',show);dot.addEventListener('pointermove',show);dot.addEventListener('focus',show);
-      dot.addEventListener('click',open);
-      dot.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}});
+      mark.addEventListener('pointerenter',show);mark.addEventListener('pointermove',show);mark.addEventListener('focus',show);
+      mark.addEventListener('click',open);
+      mark.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}});
     }
   }
 }

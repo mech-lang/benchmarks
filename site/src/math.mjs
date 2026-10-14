@@ -16,13 +16,15 @@ export function summaryNumber(value,{signed=false}={}){
   const rounded=Number(value.toFixed(1));
   return signed?`${rounded<0?'−':rounded>0?'+':''}${Math.abs(rounded).toFixed(1)}`:(rounded||0).toFixed(1);
 }
-export function rankingDotLayout(rows,{extent,width,gap=14}={}){
+export function rankingDotLayout(rows,{extent,width,gap=14,boundsFor=(_row,x)=>[x,x]}={}){
   if(!Number.isFinite(extent)||extent<=0||!Number.isFinite(width)||width<=0||!Number.isFinite(gap)||gap<=0)throw new Error('Invalid ranking layout.');
   const lanes=[],points=[];
   for(const row of rows.slice().sort((a,b)=>a.sigma_distance-b.sigma_distance||a.entry.language.key.localeCompare(b.entry.language.key))){
     const x=(row.sigma_distance+extent)/(2*extent)*width;
-    let lane=lanes.findIndex(last=>x-last>=gap);
-    if(lane<0){lane=lanes.length;lanes.push(x);}else lanes[lane]=x;
+    const [start,end]=boundsFor(row,x);
+    if(!Number.isFinite(start)||!Number.isFinite(end)||start>x||end<x)throw new Error('Invalid ranking label bounds.');
+    let lane=lanes.findIndex(last=>start-last>=gap);
+    if(lane<0){lane=lanes.length;lanes.push(end);}else lanes[lane]=end;
     points.push({row,x,lane});
   }
   return {points,lanes:lanes.length};
