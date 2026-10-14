@@ -2,7 +2,7 @@
 
 The current dataset contains **55 execution variants across 49 language families**, **10 workloads**, and **884 selected timed program profiles**. The source inventory retains **927 profiles**, including forty-three measured candidates that are not selected endpoints. Fifty-two execution variants cover the complete suite.
 
-The live explorer has stacked, full-width ranking charts with persistent language labels. Its [current deployment](../site/publications/catalog-metadata-v1/deployment.json), build `8648eab65993f45c`, passed verification of all 33 live assets on October 14, 2026 at 19:45 UTC.
+The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Reset stays within the active view. Its [current deployment](../site/publications/language-hero-v1/deployment.json), build `f8fd1024ae7b55d9`, passed verification of all 33 live assets on October 14, 2026 at 20:51 UTC. [Mobile, desktop and interaction checks](../site/publications/language-hero-v1/validation.json) also passed.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -32,8 +32,7 @@ records static dependency evidence without claiming a per-process loaded-library
 observations across four source forms and six matched Mech controls. Its
 [candidate export](../experiments/lua/retained-pidigits-v1/publication/export-v1/candidate.json)
 and complete application-plus-GMP-helper source counts are verified. Catalog
-admission still needs support for the existing nine-workload Lua series, which
-has no stored aggregate row. No timing rerun is required.
+admission remains pending. A [reviewed additive publication adapter](../experiments/lua/retained-pidigits-v1/PUBLICATION-TARGET.md) supports the existing nine-workload series with no stored aggregate row; its publication, history and transaction checks passed. No timing rerun is required.
 
 GNU APL binary trees remains a separate failed workload without valid full-size
 samples. A [bounded workspace-configuration packet](../experiments/apl/binarytrees-workspace-v1/)
@@ -81,6 +80,6 @@ includes [41 Scala owner fixtures and 29 capture fixtures](../experiments/scala/
 [a TypeScript reader draft with 30 fixtures](../experiments/typescript/source-counts-v1/).
 Reader diagnostics and prepared correctness cases do not grant benchmark qualification or timings.
 
-Compiler improvements are tracked separately in [Mech PR #897](https://github.com/mech-lang/mech/pull/897). As of October 14, 2026 at 19:47 UTC, its current head is `4c420233` and [CI run 38624354538](https://github.com/mech-lang/mech/actions/runs/38624354538) is pending. The retained [earlier CI snapshot](../migration/compiler-ci-status.json) describes head `3445f901` and its completed checks.
+Compiler improvements are tracked separately in [Mech PR #897](https://github.com/mech-lang/mech/pull/897). At head `4c420233`, [CI run 38624354538](https://github.com/mech-lang/mech/actions/runs/38624354538) passed 153 tests in the Linux native-regression step before its 25-minute limit interrupted compilation for the final CLI test. The CLI regression remains unverified; the workflow budget correction and macOS checks are pending. The retained [earlier CI snapshot](../migration/compiler-ci-status.json) describes head `3445f901` and its completed checks.
 
 See [methodology](methodology.md) for admission rules, timing boundaries, and reproduction limits; [language classifications](languages.md) for runtime and language metadata; and [results/current/](../results/current/) for program and sample tables.
