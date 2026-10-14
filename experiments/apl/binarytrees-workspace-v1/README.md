@@ -133,3 +133,56 @@ N=21 subject processes and three matched Mech controls. Keep the existing
 14,400-second ceiling and 10 GiB external RSS limit. One distinct APL source
 must not become two native observations through its old compact/optimized
 alias. Preserve attempt 075 and all valid earlier measurements unchanged.
+
+## Owned bounded controller
+
+[apl_workspace_bounded.py](../../../tools/qualification/apl_workspace_bounded.py)
+implements the five-command stage. Its source and
+[small fault tests](../../../tools/qualification/test_apl_workspace_bounded.py)
+are prepared; no native plan or APL result exists. It reuses the frozen
+`kotlin_bounded_v2` kernel identity, group/RSS monitor, bounded failure drain and
+signal masking, plus the reviewed Julia static Mach-O dependency reader. Its
+local observer separates the exact command working directory from fresh capture
+directories and uses actual `DEVNULL` stdin. The controller monitors each native
+group directly; it creates no sampler child.
+
+The timing mutex is duplicated to a descriptor of at least 64 before locking.
+That exact descriptor is included in `pass_fds`, checked in child setup, and
+held until all groups are empty, every direct child is reaped and the terminal
+receipt is written. Each process receives the specified 30- or 60-second
+deadline, a five-second cleanup deadline, a 10 GiB group-RSS ceiling and 1 MiB
+stream limits. A failed stream may retain at most one extra 64 KiB read chunk
+for diagnosis; such a capture cannot pass. The first failure stops the stage.
+An already exited child may reach the first kernel observation before any live
+RSS reading. Its observed peak is recorded as `null`, with
+`live_rss_observation_obtained=false`; zero is not reported as measured memory.
+All RSS observations are samples: `rss_observation_complete` and
+`memory_usage_qualified` remain false, and unobserved peaks are not proven below
+the external guard. Exact outputs, normal exit, owned reaping and empty groups
+remain mandatory even for these short commands.
+
+Configuration output is matched against the complete retained
+`UserPreferences::show_configure_options` grammar and recorded build version.
+Actual Value, Cell and header sizes must be positive and mutually consistent.
+Every other stderr stream must be empty; no warning filter is installed. All
+five stdout contracts remain those in the source specification.
+
+Preparation pins the runtime, launcher, shell/`dirname`, declared non-OS Mach-O
+dependencies, exact source inputs and controller dependencies. Existing system
+preferences are pinned; absent system/private-home preference paths and loader
+candidates must remain absent. This is static dependency evidence, not an actual
+loaded-image inventory. Finalization replays input pins and exact per-command
+artifact snapshots, binds the serialized result ledger, and rechecks the mutex
+before writing a terminal receipt. Required-work, source-count, full-timing and
+chart gates stay false pending independent review.
+
+Once the common mutex is free, prepare with the retained Python and physical
+absolute paths:
+
+```sh
+/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B /private/tmp/mech-benchmark-completion/tools/qualification/apl_workspace_bounded.py prepare --plan /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/plan-v1.json --output /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/bounded-run-v1
+```
+
+Independent review of that saved plan must precede `run --plan` with the same
+path and `--plan-sha256` set to its actual digest. No automatic retry, full N=21
+command or later measurement is authorized by this bounded plan.

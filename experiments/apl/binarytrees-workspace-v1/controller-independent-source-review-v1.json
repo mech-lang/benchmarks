@@ -1,0 +1,176 @@
+{
+  "schema": "apl-workspace-bounded-independent-source-review-v1",
+  "status": "source-approved-native-plan-and-execution-unrun",
+  "sources": [
+    {
+      "path": "tools/qualification/apl_workspace_bounded.py",
+      "sha256": "21a134b4c6076c0ce3418b773cd40ad246998c6928972d8e6f9c066c04a07be0",
+      "bytes": 35850
+    },
+    {
+      "path": "tools/qualification/test_apl_workspace_bounded.py",
+      "sha256": "8f57c2536662349d3596c8a92ecb9a57eca1861088e8ffc1e9a9233aaf7b7134",
+      "bytes": 16655
+    },
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/bounded-next-run.json",
+      "sha256": "4986eef6eabbdb0db171910fe6143b7eb3141d6174e62567dc98d5049223fbd8",
+      "bytes": 18308
+    },
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/README.md",
+      "sha256": "3c04bf2cb30fc85cf23ea15ee93d61006fda693e75c261662c4bc4cd2046d725",
+      "bytes": 12391
+    },
+    {
+      "path": "tools/qualification/julia_native_inspection.py",
+      "sha256": "877bda82e014e16a5380cc46b283ba90dca71f02c4a285994df5c54ab883489a",
+      "bytes": 30390
+    },
+    {
+      "path": "tools/qualification/kotlin_bounded_v2.py",
+      "sha256": "c525b0dd6784a52a4cfa583e687abf3b12454a9304d222f18cf4e9005693d0bc",
+      "bytes": 46934
+    }
+  ],
+  "authored_apl_inputs": [
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/setup.apl",
+      "sha256": "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c",
+      "bytes": 35
+    },
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/readback.apl",
+      "sha256": "b2b146589216efe26b5a026075a63b02149132eb65b50cdfb16d83b0af5912b6",
+      "bytes": 197
+    },
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/allocation-witness.apl",
+      "sha256": "405fd9b3f7274c2a7e2f801f13b45b7ee3d259d4db23b03cce24323347798445",
+      "bytes": 979
+    }
+  ],
+  "protocol": {
+    "commands": [
+      "configuration",
+      "workspace-readback",
+      "allocation-ownership",
+      "whole-subject-n4",
+      "whole-subject-n10"
+    ],
+    "native_command_count": 5,
+    "timeout_seconds": [
+      30,
+      30,
+      30,
+      30,
+      60
+    ],
+    "cleanup_seconds": 5,
+    "maximum_live_native_groups": 1,
+    "external_process_group_rss_limit_bytes": 10737418240,
+    "stdout_limit_bytes": 1048576,
+    "stderr_limit_bytes": 1048576,
+    "failed_stdout_capture_hard_limit_bytes": 1114112,
+    "stdin_transport": "DEVNULL",
+    "sampler_processes": 0,
+    "common_mutex_path": "/tmp/mech-clbg-timing.lock",
+    "common_mutex_inode": 79859134,
+    "minimum_inherited_mutex_fd": 64,
+    "no_automatic_retries": true,
+    "expected_complete_terminal_artifact_entries": 26
+  },
+  "checks": [
+    "The exact five commands retain original launcher and working directory, unchanged subject, declared setup/readback/witness files and saved complete small-output oracles.",
+    "Preparation and execution hold the original common mutex; heavy input and static runtime closure verification occur only inside that ownership.",
+    "The lock is duplicated to FD>=64 before flock. pass_fds preserves it and child setup checks descriptor device/inode and inheritability before exec, avoiding the launcher FD3 redirection.",
+    "The local observer is an explicit derivative of the pinned observer. Kernel identity/RSS/group observation, atomic Popen registration, kill/drain/reap cleanup and signal masks remain reused; exact cwd and artifact directory are distinct.",
+    "The complete configuration stderr grammar matches retained UserPreferences source and build-version text. Other cases require empty stderr and exact stdout; workspace failure or unknown diagnostics cannot qualify.",
+    "Per-attempt receipts bind command/environment/cwd/FD/parent/birth/PGID, complete stream hashes, normal exit, reaping and empty groups. The first failure stops the serial stage.",
+    "Finalization replays exact receipt snapshots, binds the serialized in-memory report, rechecks artifacts after input pins, and checks the named mutex immediately before terminal construction.",
+    "Very short native commands may have no live RSS observation. Such captures record null peak and explicit unavailable state; zero cannot masquerade as measured memory. RSS completeness and memory qualification remain false.",
+    "No full input N=21, repeated valid timing sample, source-count admission, required-work admission or chart publication is performed by this five-command stage."
+  ],
+  "preference_search_review": {
+    "source_root": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0",
+    "locations": [
+      {
+        "path": "src/UserPreferences.cc",
+        "lines": [
+          127,
+          128,
+          130,
+          131,
+          133,
+          134,
+          136,
+          137
+        ],
+        "finding": "The only startup preference file names are preferences and parallel_thresholds; system and user forms are read."
+      },
+      {
+        "path": "src/UserPreferences.cc",
+        "lines": [
+          1247,
+          1253,
+          1257,
+          1265,
+          1268,
+          1274
+        ],
+        "finding": "System path uses apl_DIR__sysconf/gnu-apl.d. User paths are HOME/.gnu-apl and fallback HOME/.config/gnu-apl; both alternatives are bound."
+      },
+      {
+        "path": "config.h",
+        "lines": [
+          511
+        ],
+        "finding": "Configured sysconf is the retained GNU APL runtime prefix/etc, matching preference_paths."
+      },
+      {
+        "path": "src/UserPreferences.cc",
+        "lines": [
+          1300,
+          1756
+        ],
+        "finding": "Both preference readers use open_user_file; no additional XDG override appears in the retained source."
+      }
+    ],
+    "existing_files": "Pinned by bytes and named resolution",
+    "missing_candidates": "Recorded absent and rechecked before every command and during final closure",
+    "child_environment": "Explicit environment with fresh HOME/TMPDIR; no inherited XDG variables"
+  },
+  "configuration_source_review": {
+    "source_root": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0",
+    "grammar": "src/UserPreferences.cc:1140-1243",
+    "version_footer": "src/UserPreferences.cc:1116-1134",
+    "result": "Exact source grammar reviewed; actual native size values remain unobserved"
+  },
+  "corrected_finding": {
+    "problem": "Initial inventory could adopt a changed report before a report snapshot was bound.",
+    "fix": "Finalizer binds exact json.dumps(indent=2) plus newline bytes from the validated in-memory ledger before saving, then matches inventory length and SHA-256.",
+    "regression": "test_initial_report_snapshot_cannot_adopt_external_edit"
+  },
+  "tests": {
+    "path": "tools/qualification/test_apl_workspace_bounded.py",
+    "passed": 17,
+    "author_seconds": 0.113,
+    "independent_seconds": 0.111,
+    "command": "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B tools/qualification/test_apl_workspace_bounded.py",
+    "scope": "Fake child/kernel objects, small saved-source reads and actual temporary-file flock/FD duplication only; no shell child or runtime launched"
+  },
+  "independent_source_review_passed": true,
+  "remaining_source_blockers": [],
+  "native_processes_started": 0,
+  "actual_plan_prepared": false,
+  "full_runtime_pin_replay_performed": false,
+  "native_syntax_qualified": false,
+  "workspace_readback_qualified": false,
+  "per_node_allocation_qualified": false,
+  "required_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "rss_observation_complete": false,
+  "memory_usage_qualified": false,
+  "chart_admission": false
+}
