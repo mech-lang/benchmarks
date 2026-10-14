@@ -1,0 +1,181 @@
+{
+  "schema": "typescript-node-diagnostic-api-review-v1",
+  "status": "source-supported-capture-awaiting-retained-binary-capability-and-native-review",
+  "node_release": "v24.19.0",
+  "upstream_commit": "cdc1b38d40cb567b7ad0b39c86addf830a0af0ae",
+  "commit_url": "https://github.com/nodejs/node/commit/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae",
+  "native_version_receipt": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/started.json",
+  "native_node": "24.19.0",
+  "native_v8": "13.6.233.17-node.51",
+  "sources": [
+    {
+      "path": "deps/v8/src/flags/flag-definitions.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/flags/flag-definitions.h#L1048",
+      "first": 1048,
+      "last": 1056,
+      "finding": "Ignition printing has an exact function-name filter."
+    },
+    {
+      "path": "deps/v8/src/flags/flag-definitions.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/flags/flag-definitions.h#L3208",
+      "first": 3208,
+      "last": 3237,
+      "finding": "Code-event and function-event logging preserve source identities; logfile_per_isolate defaults true. log_code_disassemble is intentionally excluded because it has no subject filter."
+    },
+    {
+      "path": "deps/v8/src/flags/flag-definitions.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/flags/flag-definitions.h#L3325",
+      "first": 3325,
+      "last": 3398,
+      "finding": "CodeTracer redirection and optimized/builtin printing are declared here; disassembler-dependent flags require actual retained-binary confirmation."
+    },
+    {
+      "path": "deps/v8/src/interpreter/interpreter.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/interpreter/interpreter.cc#L285",
+      "first": 285,
+      "last": 293,
+      "finding": "Filtered bytecode is written to StdoutStream, with a generated-function header and bytecode length, rather than CodeTracer."
+    },
+    {
+      "path": "deps/v8/src/compiler/pipeline.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/compiler/pipeline.cc#L583",
+      "first": 583,
+      "last": 630,
+      "finding": "Optimized source and native instructions are written through CodeTracer; print_opt_code_filter applies to optimizing functions."
+    },
+    {
+      "path": "deps/v8/src/maglev/maglev-compiler.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/maglev/maglev-compiler.cc#L311",
+      "first": 311,
+      "last": 323,
+      "finding": "Maglev CodePrint uses CodeTracer when OBJECT_PRINT is enabled; the fallback Print path is an explicit native-capture limitation, not assumed equivalent."
+    },
+    {
+      "path": "deps/v8/src/baseline/baseline.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/baseline/baseline.cc#L61",
+      "first": 61,
+      "last": 65,
+      "finding": "print_code uses an unredirected Print for baseline code, so the capture excludes that flag; baseline identities remain in the code-event log."
+    },
+    {
+      "path": "deps/v8/src/diagnostics/code-tracer.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/diagnostics/code-tracer.h#L24",
+      "first": 24,
+      "last": 40,
+      "finding": "Default redirected names include process ID and isolate ID. A caller-specified filename overrides uniqueness and is not used."
+    },
+    {
+      "path": "deps/v8/src/diagnostics/code-tracer.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/diagnostics/code-tracer.h#L76",
+      "first": 76,
+      "last": 108,
+      "finding": "CodeTracer opens append per scope and closes at zero depth; its filename buffer has128 bytes. Default short relative names avoid truncating deep artifact paths."
+    },
+    {
+      "path": "deps/v8/src/logging/log.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/logging/log.cc#L2249",
+      "first": 2249,
+      "last": 2265,
+      "finding": "Default log names prefix isolate pointer and process ID; the capture preserves per-isolate naming."
+    },
+    {
+      "path": "deps/v8/src/logging/log.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/logging/log.cc#L1477",
+      "first": 1477,
+      "last": 1498,
+      "finding": "log_code_disassemble would disassemble every logged Code/BytecodeArray, including builtin events. The bounded design does not enable it."
+    },
+    {
+      "path": "deps/v8/src/builtins/builtins.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/builtins/builtins.cc#L319",
+      "first": 319,
+      "last": 333,
+      "finding": "Builtin disassembly applies the native name filter and writes through CodeTracer. Only BigIntDivide* is requested for pi."
+    },
+    {
+      "path": "deps/v8/src/objects/code.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/objects/code.cc#L206",
+      "first": 206,
+      "last": 310,
+      "finding": "Native disassembly includes code kind/compiler, instruction bytes, source positions, deoptimization data, Maglev/TurboFan safepoint tables, handlers and relocations."
+    },
+    {
+      "path": "deps/v8/src/codegen/compiler.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/codegen/compiler.cc#L85",
+      "first": 85,
+      "last": 123,
+      "finding": "Optimization and OSR compilation traces use CodeTracer."
+    },
+    {
+      "path": "deps/v8/src/runtime/runtime-compiler.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/runtime/runtime-compiler.cc#L790",
+      "first": 790,
+      "last": 809,
+      "finding": "Actual optimized OSR entry uses CodeTracer and, where enabled, logs a function-execution event."
+    },
+    {
+      "path": "deps/v8/src/deoptimizer/deoptimizer.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/deoptimizer/deoptimizer.cc#L855",
+      "first": 855,
+      "last": 911,
+      "finding": "Deoptimization trace paths use CodeTracer."
+    },
+    {
+      "path": "deps/v8/src/heap/gc-tracer.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/heap/gc-tracer.cc#L747",
+      "first": 747,
+      "last": 752,
+      "finding": "GC tracing writes to the process output stream and must be retained separately from the derived benchmark output."
+    },
+    {
+      "path": "deps/v8/src/heap/gc-tracer.cc",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/heap/gc-tracer.cc#L794",
+      "first": 794,
+      "last": 805,
+      "finding": "GC lines contain the process/isolate prefix, elapsed milliseconds, collector, before/after heap sizes, pooled size, durations and utilization envelope used by the strict splitter."
+    },
+    {
+      "path": "deps/v8/src/builtins/builtins-bigint.tq",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/src/builtins/builtins-bigint.tq#L304",
+      "first": 304,
+      "last": 367,
+      "finding": "The division builtins handle zero, numerator-smaller-than-denominator and unit-divisor cases, then call general CppAbsoluteDivAndCanonicalize. Native caller/builtin evidence must distinguish these paths."
+    },
+    {
+      "path": "deps/v8/include/v8-version.h",
+      "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/deps/v8/include/v8-version.h#L11",
+      "first": 11,
+      "last": 14,
+      "finding": "The official release source declares V8 13.6.233.17, matching the base version of the saved native13.6.233.17-node.51 observation."
+    }
+  ],
+  "capture_policy": {
+    "application_processes": 2,
+    "capability_processes": 1,
+    "arguments": {
+      "binarytrees": 21,
+      "pidigits": 10000
+    },
+    "source_changes": 0,
+    "forced_optimization": false,
+    "changed_gc_or_heap_policy": false,
+    "whole_runtime_disassembly": false,
+    "retained_bytecode_functions": [
+      "mainThread",
+      "calculatePi"
+    ],
+    "optimized_code_filter": "*",
+    "pi_builtin_filter": "BigIntDivide*",
+    "per_isolate_code_and_event_logs": true,
+    "baseline_machine_code_requested": false
+  },
+  "limits": [
+    "The official release source establishes diagnostic API behavior; it is not a reproducible-build proof for the retained Node executable.",
+    "Actual --v8-options, bytecode/code/event content, OSR/deoptimization history and normal output are still unexecuted. The controller cannot promote work semantics automatically.",
+    "Ignition/Sparkplug execution must be distinguished from optimized code by the actual event history; absent optimized bodies cannot be invented or replaced with warmup runs.",
+    "Complete loaded-runtime dependency qualification is separate from this targeted work capture."
+  ],
+  "native_executions_by_review": 0,
+  "required_work_qualified": false,
+  "chart_admission": false
+}

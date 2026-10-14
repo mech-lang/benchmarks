@@ -1,0 +1,172 @@
+{
+  "schema": "typescript-two-single-entry-plan-review-v1",
+  "status": "prepared-plan-reviewed-ready-for-owned-serial-execution",
+  "reviewed_at": "2026-10-14T14:41:41.554502+00:00",
+  "plan": {
+    "path": "experiments/typescript/single-entry-work-v1/plan-v1.json",
+    "sha256": "6e5d6b72f86dcb46e2e759b70b9dd0e3a11f898472686bd9e33dccbd7e10f4ca",
+    "bytes": 656060
+  },
+  "controller": {
+    "path": "tools/qualification/typescript_single_entry.py",
+    "sha256": "5d0e03c560fa0c55a3fcf31419a9748af5a27b1cb513e8115f8d9b1816c064b3",
+    "bytes": 24523
+  },
+  "tests": {
+    "path": "tools/qualification/test_typescript_single_entry.py",
+    "sha256": "6eef95aca222e0f4bf6716d9301180392e48d99a9dd7b1541a381caa2cb3ff17",
+    "bytes": 9736
+  },
+  "native_api_review": {
+    "path": "experiments/typescript/single-entry-work-v1/native-api-review.json",
+    "sha256": "9489a6bb4c860d21903911ca7f5f2d459d65d0cce3a1b16d4649e78fb39e9cb7",
+    "bytes": 9473
+  },
+  "static_work_review": {
+    "path": "experiments/typescript/required-work-v1/static-review-v1.json",
+    "sha256": "454b93f894b4dba6edae697efa69fbe7b7e966c02a8e68e5d3a750da5d1fa71c",
+    "bytes": 34936
+  },
+  "commands": [
+    {
+      "slot": {
+        "kind": "capabilities",
+        "directory": "00-capabilities"
+      },
+      "command": [
+        "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--v8-options"
+      ],
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/00-capabilities/home",
+        "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/00-capabilities/tmp/",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "UV_THREADPOOL_SIZE": "8"
+      }
+    },
+    {
+      "slot": {
+        "kind": "subject",
+        "benchmark": "binarytrees",
+        "directory": "01-binarytrees"
+      },
+      "command": [
+        "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--log-code",
+        "--log-function-events",
+        "--log-deopt",
+        "--logfile=v8.log",
+        "--print-opt-code",
+        "--print-opt-code-filter=*",
+        "--print-maglev-code",
+        "--trace-opt",
+        "--trace-deopt",
+        "--trace-osr",
+        "--redirect-code-traces",
+        "--print-bytecode",
+        "--print-bytecode-filter=mainThread",
+        "--trace-gc",
+        "/private/tmp/mech-benchmark-completion/experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+        "21"
+      ],
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/home",
+        "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/01-binarytrees/tmp/",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "UV_THREADPOOL_SIZE": "8"
+      }
+    },
+    {
+      "slot": {
+        "kind": "subject",
+        "benchmark": "pidigits",
+        "directory": "02-pidigits"
+      },
+      "command": [
+        "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "--log-code",
+        "--log-function-events",
+        "--log-deopt",
+        "--logfile=v8.log",
+        "--print-opt-code",
+        "--print-opt-code-filter=*",
+        "--print-maglev-code",
+        "--trace-opt",
+        "--trace-deopt",
+        "--trace-osr",
+        "--redirect-code-traces",
+        "--print-bytecode",
+        "--print-bytecode-filter=calculatePi",
+        "--trace-gc",
+        "--print-builtin-code",
+        "--print-builtin-code-filter=BigIntDivide*",
+        "/private/tmp/mech-benchmark-completion/experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/pidigits.js",
+        "10000"
+      ],
+      "environment": {
+        "PATH": "/usr/bin:/bin",
+        "HOME": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/02-pidigits/home",
+        "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/typescript/single-entry-work-v1/run-v1/02-pidigits/tmp/",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "UV_THREADPOOL_SIZE": "8"
+      }
+    }
+  ],
+  "checks": {
+    "exact_rebuilt_plan_matches": true,
+    "all2287_prepared_pin_entries_reconstructed": true,
+    "prepared_runtime_pin_values_preserved": true,
+    "runtime_installation_rehashed_by_this_review": false,
+    "original_compile_and149_bounded_receipts_replayed_as_saved_metadata": true,
+    "fresh_output_absent": true,
+    "unchanged_emitted_sources_and_two_arguments": true,
+    "same_explicit_environment_as_correctness": true,
+    "per_isolate_logs_preserved": true,
+    "no_whole_runtime_disassembly": true,
+    "no_forced_optimization_or_heap_policy_change": true,
+    "observer_atomic_registration_reap_cleanup_unchanged": true,
+    "separate_observer_namespace_preserves_original_receipt_policy": true,
+    "exact_retained_python_and_common_mutex_required": true,
+    "closed_inventory_binds_validated_case_snapshots": true,
+    "no_automatic_retries": true
+  },
+  "resource_policy": {
+    "timeout_seconds": 180,
+    "cleanup_seconds": 5,
+    "maximum_process_group_rss_bytes": 10737418240,
+    "native_file_limit_bytes": 134217728,
+    "common_mutex_inode": 79859134
+  },
+  "stdio_source_addendum": {
+    "url": "https://github.com/nodejs/node/blob/cdc1b38d40cb567b7ad0b39c86addf830a0af0ae/src/node.cc#L526",
+    "lines": [
+      526,
+      541
+    ],
+    "finding": "Standalone POSIX Node initialization disables stdout/stderr C buffering specifically to avoid interference between application output and V8 printf logging. V8 GCTracer uses OS::VPrint; interpreted bytecode explicitly flushes its StdoutStream."
+  },
+  "pure_tests": {
+    "tests": 14,
+    "failures": 0,
+    "seconds": 0.31
+  },
+  "native_processes_started_by_review": 0,
+  "source_work_qualified": false,
+  "runtime_dependency_closure_qualified": false,
+  "full_timings_qualified": false,
+  "benchmark_samples": 0,
+  "chart_admission": false,
+  "remaining_native_reviews": [
+    "Confirm the actual retained binary exposes every requested diagnostic option.",
+    "Check complete outputs and capture coverage before reviewing actual allocations, retained roots and executed divisions across the recorded invocation/tier history.",
+    "The successful producer status retains evidence only; it does not admit required-work semantics or timings."
+  ]
+}

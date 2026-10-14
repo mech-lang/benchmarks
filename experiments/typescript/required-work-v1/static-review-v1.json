@@ -1,0 +1,915 @@
+{
+  "schema": "typescript-static-required-work-review-v1",
+  "status": "ten-static-contracts-passed-two-targeted-runtime-questions-open",
+  "reviewed_at": "2026-10-14T14:25:29.181119+00:00",
+  "prerequisites": [
+    {
+      "path": "experiments/typescript/native-stage-v1/plan-v1.json",
+      "sha256": "520b14aea813379f036053ce7bc6e7b21ad016775407536ee3195703444412c4",
+      "bytes": 315514
+    },
+    {
+      "path": "experiments/typescript/native-stage-v1/run-v1/report.json",
+      "sha256": "ec6fb9979e5de31cd8496f01e338fef80f322f118def9923d61b8c3b5ca9e83b",
+      "bytes": 246939
+    },
+    {
+      "path": "experiments/typescript/native-stage-v1/run-v1/terminal.json",
+      "sha256": "2abf7814b6063b15561af165bed377d77f6616597d555ec7f4d967c421372038",
+      "bytes": 26969
+    },
+    {
+      "path": "experiments/typescript/native-stage-v1/independent-native-review-v1.json",
+      "sha256": "f5c253d1abe24c3c0f409a3ca1668b1662f9377742976160c7e26392c6dcffd5",
+      "bytes": 42883
+    },
+    {
+      "path": "experiments/typescript/bounded-v1/run-v1/report.json",
+      "sha256": "d11f66e11071934d4bc7b27312c9d2b38adca7b045a9b490db6d16775c05ce29",
+      "bytes": 777918
+    },
+    {
+      "path": "experiments/typescript/bounded-v1/independent-results-review-v1.json",
+      "sha256": "7aa31fae40150228f1023b1cf8932feca3c8599d708f82189b8bdaf55c98609c",
+      "bytes": 279436
+    },
+    {
+      "path": "experiments/typescript/source-v1/source-manifest.json",
+      "sha256": "eedaf4ddfe7a89e7833f9fb0d124786cb83aed700d67a83dfb4720ef6a29ffde",
+      "bytes": 19992
+    }
+  ],
+  "scope": "Exact authored TypeScript, native source AST, retained emitted JavaScript and embedded source maps. No equivalent JavaScript predecessor timing or optimizer result is substituted.",
+  "static_contracts": 27,
+  "profiles": [
+    {
+      "id": "typescript-binarytrees-v1",
+      "workload": "binarytrees",
+      "source": {
+        "path": "experiments/typescript/source-v1/binarytrees.ts",
+        "sha256": "33f535c0880d29a584de91270238f49f5467a2de4265deff90e4239b1afbd052",
+        "bytes": 1631
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/binarytrees.ts",
+        "sha256": "33f535c0880d29a584de91270238f49f5467a2de4265deff90e4239b1afbd052",
+        "bytes": 1631
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js",
+        "sha256": "97ec5af3f4facaac8f9b0d5fd831bd59acfd404652be00174e31330ea6122a68",
+        "bytes": 1678
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/binarytrees.js.map",
+        "sha256": "7eb6eb9f1c969ea76ea608ae3a7d74a0b586448b9846684d00d9f7c20b9a1888",
+        "bytes": 3335
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-binarytrees-v1/ast.json",
+        "sha256": "d11d5942c1daacd490b4d78c16348516be619b615c5bff3d7d7378cf707fe5e2",
+        "bytes": 102426
+      },
+      "native_declarations": [
+        {
+          "native_node": 5,
+          "kind": "FunctionDeclaration",
+          "name": "mainThread",
+          "start_line": 12,
+          "end_line": 27
+        },
+        {
+          "native_node": 110,
+          "kind": "FunctionDeclaration",
+          "name": "work",
+          "start_line": 29,
+          "end_line": 35
+        },
+        {
+          "native_node": 162,
+          "kind": "ClassDeclaration",
+          "name": "TreeNode",
+          "start_line": 37,
+          "end_line": 39
+        },
+        {
+          "native_node": 182,
+          "kind": "FunctionDeclaration",
+          "name": "itemCheck",
+          "start_line": 41,
+          "end_line": 46
+        },
+        {
+          "native_node": 224,
+          "kind": "FunctionDeclaration",
+          "name": "bottomUpTree",
+          "start_line": 48,
+          "end_line": 52
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "recursive-node-construction",
+          "static_result": "passed",
+          "finding": "Both recursive branches create distinct TreeNode objects; both leaf and internal nodes execute new, and the constructor stores both children.",
+          "emitted_javascript_lines": {
+            "first": 31,
+            "last": 46
+          }
+        },
+        {
+          "contract": "recursive-checks",
+          "static_result": "passed",
+          "finding": "itemCheck returns one for a leaf and recursively visits both children for an internal node; no node-count formula substitutes for traversal.",
+          "emitted_javascript_lines": {
+            "first": 37,
+            "last": 42
+          }
+        },
+        {
+          "contract": "stretch-and-long-lived-trees",
+          "static_result": "passed",
+          "finding": "The stretch tree is built and checked first. A fresh long-lived root is built before the temporary loops and passed to the final recursive check afterward.",
+          "emitted_javascript_lines": {
+            "first": 12,
+            "last": 23
+          }
+        },
+        {
+          "contract": "temporary-allocation-loop",
+          "static_result": "passed",
+          "finding": "Depths start at four and advance by two. Each of 2^(maxDepth-depth+4) iterations builds and checks a new tree before the next iteration.",
+          "emitted_javascript_lines": {
+            "first": 18,
+            "last": 29
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [
+        "Prove allocations in the actually installed optimized constructor/build/check/loop paths, including leaves; retain the original long-lived root through temporary work and observe its final recursive use. Emitted new expressions and bounded stdout alone do not establish optimizer survival or GC-root reachability."
+      ],
+      "additional_targeted_runtime_capture_identified": true
+    },
+    {
+      "id": "typescript-fannkuchredux-v1",
+      "workload": "fannkuchredux",
+      "source": {
+        "path": "experiments/typescript/source-v1/fannkuchredux.ts",
+        "sha256": "8513ece192d5008a70a0f46a5382c630cce039660b90e15fa26d4e893f556c2d",
+        "bytes": 1780
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/fannkuchredux.ts",
+        "sha256": "8513ece192d5008a70a0f46a5382c630cce039660b90e15fa26d4e893f556c2d",
+        "bytes": 1780
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/fannkuchredux.js",
+        "sha256": "f91bcf46aeb3c057abd0afd2534bc10d88ede5a40d1671f4cdc99a950cd36de2",
+        "bytes": 2168
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/fannkuchredux.js.map",
+        "sha256": "b44d711099ace457b29686cfb672c089cee9f297b4abddf925bc58d3b6dc34d4",
+        "bytes": 4359
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-fannkuchredux-v1/ast.json",
+        "sha256": "15abdc64d97c0bd896ff37b50bf862c38ef75f98f9f077dba883157b2e24320d",
+        "bytes": 154211
+      },
+      "native_declarations": [
+        {
+          "native_node": 5,
+          "kind": "FunctionDeclaration",
+          "name": "fannkuch",
+          "start_line": 11,
+          "end_line": 66
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "sequential-permutation-enumeration",
+          "static_result": "passed",
+          "finding": "perm1 begins as 0..n-1. A decrementing count array and prefix rotation enumerate permutations until r reaches n; the source contains no skipped permutation ranges.",
+          "emitted_javascript_lines": {
+            "first": 16,
+            "last": 33
+          }
+        },
+        {
+          "contract": "copied-prefix-reversal-workspace",
+          "static_result": "passed",
+          "finding": "Every permutation is copied to perm. The inner swap loop reverses actual prefixes until perm[0] is zero and increments the flip count.",
+          "emitted_javascript_lines": {
+            "first": 30,
+            "last": 47
+          }
+        },
+        {
+          "contract": "complete-checksum-and-maximum",
+          "static_result": "passed",
+          "finding": "Every enumerated permutation updates the maximum and alternating checksum using nperm parity; the next-permutation loop rotates and decrements its mixed-radix counters.",
+          "emitted_javascript_lines": {
+            "first": 48,
+            "last": 75
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-fasta-v1",
+      "workload": "fasta",
+      "source": {
+        "path": "experiments/typescript/source-v1/fasta.ts",
+        "sha256": "78007554fd2d3ee914ddabfc9bd7346f3475c5a0050a5bfd9bbc28c692490d50",
+        "bytes": 2297
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/fasta.ts",
+        "sha256": "78007554fd2d3ee914ddabfc9bd7346f3475c5a0050a5bfd9bbc28c692490d50",
+        "bytes": 2297
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/fasta.js",
+        "sha256": "1a26d0aaa2218a29afc4bc3049df3fea75b9f32f0e466c98de91e009b58c5e5b",
+        "bytes": 2471
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/fasta.js.map",
+        "sha256": "ff4c38a56ed0b2ab47f634c0525c9cfbe6b90c9dfc529a71bad6b3d712a5fbf9",
+        "bytes": 5240
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-fasta-v1/ast.json",
+        "sha256": "c41c23e4bce070b6b3671d5d004c5a66b84f63426e57cac2b0c6b44a806b8a6d",
+        "bytes": 174976
+      },
+      "native_declarations": [
+        {
+          "native_node": 19,
+          "kind": "FunctionDeclaration",
+          "name": "rand",
+          "start_line": 11,
+          "end_line": 14
+        },
+        {
+          "native_node": 147,
+          "kind": "FunctionDeclaration",
+          "name": "makeCumulative",
+          "start_line": 39,
+          "end_line": 45
+        },
+        {
+          "native_node": 188,
+          "kind": "FunctionDeclaration",
+          "name": "fastaRepeat",
+          "start_line": 47,
+          "end_line": 61
+        },
+        {
+          "native_node": 291,
+          "kind": "FunctionDeclaration",
+          "name": "fastaRandom",
+          "start_line": 63,
+          "end_line": 80
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "repeat-and-random-records",
+          "static_result": "passed",
+          "finding": "The retained ALU literal is cycled for 2n bases. Random records have 3n and 5n bases; every header and each at-most-60-character line is emitted.",
+          "emitted_javascript_lines": {
+            "first": 14,
+            "last": 83
+          }
+        },
+        {
+          "contract": "continuous-weighted-rng",
+          "static_result": "passed",
+          "finding": "One shared last state starts at42 and uses (last*3877+29573)%139968. Each random base consumes the next state and cumulative probability selection; the seed is not reset between records.",
+          "emitted_javascript_lines": {
+            "first": 9,
+            "last": 75
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-knucleotide-v1",
+      "workload": "knucleotide",
+      "source": {
+        "path": "experiments/typescript/source-v1/knucleotide.ts",
+        "sha256": "975ef7d9ed4a80497b7526b701e7c3373edd687cff3bf13e1e3a3d81547f5f3b",
+        "bytes": 2461
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/knucleotide.ts",
+        "sha256": "975ef7d9ed4a80497b7526b701e7c3373edd687cff3bf13e1e3a3d81547f5f3b",
+        "bytes": 2461
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/knucleotide.js",
+        "sha256": "1200d35c27c5f55a010c32215119256a847e4809ab7f0fbc285b4c8392da0998",
+        "bytes": 2420
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/knucleotide.js.map",
+        "sha256": "27e56e0576a6704789c3165476767d383142a7109deaf898ff850a003967439d",
+        "bytes": 5466
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-knucleotide-v1/ast.json",
+        "sha256": "27b022748d6dbb3d91ea83dc9ec9f06d34389d17386672432a77c9202160da07",
+        "bytes": 180887
+      },
+      "native_declarations": [
+        {
+          "native_node": 16,
+          "kind": "FunctionDeclaration",
+          "name": "seq_lines",
+          "start_line": 13,
+          "end_line": 31
+        },
+        {
+          "native_node": 106,
+          "kind": "FunctionDeclaration",
+          "name": "base_counts",
+          "start_line": 33,
+          "end_line": 44
+        },
+        {
+          "native_node": 198,
+          "kind": "FunctionDeclaration",
+          "name": "sorted_freq",
+          "start_line": 46,
+          "end_line": 53
+        },
+        {
+          "native_node": 305,
+          "kind": "FunctionDeclaration",
+          "name": "specific_count",
+          "start_line": 55,
+          "end_line": 58
+        },
+        {
+          "native_node": 334,
+          "kind": "FunctionDeclaration",
+          "name": "write_freq",
+          "start_line": 60,
+          "end_line": 62
+        },
+        {
+          "native_node": 363,
+          "kind": "FunctionDeclaration",
+          "name": "main",
+          "start_line": 64,
+          "end_line": 80
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "seven-map-sizes",
+          "static_result": "passed",
+          "finding": "The two frequency calls use k1 and k2; the five query strings have lengths3,4,6,12,18 and each calls base_counts independently.",
+          "emitted_javascript_lines": {
+            "first": 54,
+            "last": 73
+          }
+        },
+        {
+          "contract": "complete-fresh-maps",
+          "static_result": "passed",
+          "finding": "Each base_counts call constructs a fresh Map, visits every overlapping substring from0 to sequence.length-k inclusive, and updates every key without query-specific pruning.",
+          "emitted_javascript_lines": {
+            "first": 33,
+            "last": 45
+          }
+        },
+        {
+          "contract": "map-consumption-and-record-selection",
+          "static_result": "passed",
+          "finding": "Only the exact THREE identifier is selected, comments are skipped, selected data is uppercased and validated. Frequency tables consume all map entries; specific queries consume their complete newly built maps.",
+          "emitted_javascript_lines": {
+            "first": 11,
+            "last": 76
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-mandelbrot-v1",
+      "workload": "mandelbrot",
+      "source": {
+        "path": "experiments/typescript/source-v1/mandelbrot.ts",
+        "sha256": "e691deb96787f3b5c1eff6f3fc46e62ccd839525c39ede69320a9f4704475e6a",
+        "bytes": 1811
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/mandelbrot.ts",
+        "sha256": "e691deb96787f3b5c1eff6f3fc46e62ccd839525c39ede69320a9f4704475e6a",
+        "bytes": 1811
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/mandelbrot.js",
+        "sha256": "f02e689581ac18e88ab6379ce69f4a9d679f9b1fb1e3915fb62a95bf6e4f0d1d",
+        "bytes": 2033
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/mandelbrot.js.map",
+        "sha256": "2c4f6208484598bd021337664cfe9b51d266f4d04eede614b4a28aab47954a86",
+        "bytes": 4275
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-mandelbrot-v1/ast.json",
+        "sha256": "9121f595a4976975688da2056efb75590edf0a0aa242efdfe028222da4f4fb8b",
+        "bytes": 159143
+      },
+      "native_declarations": [
+        {
+          "native_node": 11,
+          "kind": "FunctionDeclaration",
+          "name": "writeAll",
+          "start_line": 12,
+          "end_line": 19
+        },
+        {
+          "native_node": 73,
+          "kind": "FunctionDeclaration",
+          "name": "emitByte",
+          "start_line": 23,
+          "end_line": 29
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "binary64-recurrence",
+          "static_result": "passed",
+          "finding": "Every pixel computes cr/ci and up to50 Number recurrence iterations while tr+ti<=4; no sample/image shortcut is present.",
+          "emitted_javascript_lines": {
+            "first": 30,
+            "last": 46
+          }
+        },
+        {
+          "contract": "pbm-packing-and-padding",
+          "static_result": "passed",
+          "finding": "The output starts with the complete P4 header. Pixels pack in row order; partial final bytes shift unused bits to zero. A bounded Uint8Array and partial-write loop emit all bytes.",
+          "emitted_javascript_lines": {
+            "first": 12,
+            "last": 65
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-nbody-v1",
+      "workload": "nbody",
+      "source": {
+        "path": "experiments/typescript/source-v1/nbody.ts",
+        "sha256": "e7a4ecb4b50fe0c8450dd279fd9791935cc84a82e101e6470d74c0ff506bc03b",
+        "bytes": 4408
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/nbody.ts",
+        "sha256": "e7a4ecb4b50fe0c8450dd279fd9791935cc84a82e101e6470d74c0ff506bc03b",
+        "bytes": 4408
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/nbody.js",
+        "sha256": "ab65fb5b585788ef27ad7f6237058ba8ec156755fbe73c0938321fe2a203776f",
+        "bytes": 3895
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/nbody.js.map",
+        "sha256": "906e125558a5f4e2f565e4ae59d2622e332c74c809f52190b2f49a811fd05e37",
+        "bytes": 9391
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-nbody-v1/ast.json",
+        "sha256": "84398a202d4e75ce491ba996ae75d3bd3e8385dd63f8ec5831789ae931387c13",
+        "bytes": 331422
+      },
+      "native_declarations": [
+        {
+          "native_node": 28,
+          "kind": "ClassDeclaration",
+          "name": "Body",
+          "start_line": 15,
+          "end_line": 32
+        },
+        {
+          "native_node": 123,
+          "kind": "FunctionDeclaration",
+          "name": "offsetMomentum",
+          "start_line": 34,
+          "end_line": 45
+        },
+        {
+          "native_node": 225,
+          "kind": "FunctionDeclaration",
+          "name": "energy",
+          "start_line": 47,
+          "end_line": 63
+        },
+        {
+          "native_node": 413,
+          "kind": "FunctionDeclaration",
+          "name": "advance",
+          "start_line": 65,
+          "end_line": 91
+        },
+        {
+          "native_node": 681,
+          "kind": "FunctionDeclaration",
+          "name": "main",
+          "start_line": 93,
+          "end_line": 149
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "fresh-state-and-step-loop",
+          "static_result": "passed",
+          "finding": "Main constructs all five bodies with retained constants, offsets momentum, computes initial energy, invokes advance n times with0.01, and computes final energy.",
+          "emitted_javascript_lines": {
+            "first": 79,
+            "last": 99
+          }
+        },
+        {
+          "contract": "pairwise-updates",
+          "static_result": "passed",
+          "finding": "All unordered pairs update both bodies velocities from distance and both masses; a subsequent loop updates every position.",
+          "emitted_javascript_lines": {
+            "first": 54,
+            "last": 78
+          }
+        },
+        {
+          "contract": "energy-reduction",
+          "static_result": "passed",
+          "finding": "Momentum sums all five bodies. Energy independently sums each kinetic term and each unordered-pair potential term before each displayed value.",
+          "emitted_javascript_lines": {
+            "first": 25,
+            "last": 53
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-pidigits-v1",
+      "workload": "pidigits",
+      "source": {
+        "path": "experiments/typescript/source-v1/pidigits.ts",
+        "sha256": "e8ed3a16a8d53c8119af7caccf9e788b0c598ea07f014ac2b1b21578232dda49",
+        "bytes": 1170
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/pidigits.ts",
+        "sha256": "e8ed3a16a8d53c8119af7caccf9e788b0c598ea07f014ac2b1b21578232dda49",
+        "bytes": 1170
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/pidigits.js",
+        "sha256": "585266671db71e541c8730fa4d4e9d067c497f17360784b389cf2d801aaaf1e7",
+        "bytes": 1396
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/pidigits.js.map",
+        "sha256": "5e354dd7b2f1d8711961f956357c2bf824323d372711262af5f6015c0130f0c9",
+        "bytes": 2818
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-pidigits-v1/ast.json",
+        "sha256": "70ea591e19857822f1f7577037f775dcc005c285fa5de2d49ec5ab118baed488",
+        "bytes": 102161
+      },
+      "native_declarations": [
+        {
+          "native_node": 5,
+          "kind": "FunctionDeclaration",
+          "name": "calculatePi",
+          "start_line": 10,
+          "end_line": 56
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "two-independent-divisions",
+          "static_result": "passed",
+          "finding": "The actual emitted source computes t=m/d and u=(m+n)/d separately before comparing t===u; neither quotient is replaced by a remainder or difference shortcut.",
+          "emitted_javascript_lines": {
+            "first": 31,
+            "last": 46
+          }
+        },
+        {
+          "contract": "unbounded-spigot-and-output",
+          "static_result": "passed",
+          "finding": "All spigot state is native bigint, updated sequentially without a digit table. Digits count to the requested argument, output groups are padded to ten, and each label records the emitted count.",
+          "emitted_javascript_lines": {
+            "first": 10,
+            "last": 51
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [
+        "Prove that both general BigInt divisions execute before the candidate comparison in the actual fresh-process path, including any OSR/tier transitions. Static slash operators and bounded stdout alone do not prove this."
+      ],
+      "additional_targeted_runtime_capture_identified": true
+    },
+    {
+      "id": "typescript-regexredux-v1",
+      "workload": "regexredux",
+      "source": {
+        "path": "experiments/typescript/source-v1/regexredux.ts",
+        "sha256": "83c96161b3420c81f4d7604b02b4c692e594e894d6dd3bd32ce6d140849a682f",
+        "bytes": 1582
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/regexredux.ts",
+        "sha256": "83c96161b3420c81f4d7604b02b4c692e594e894d6dd3bd32ce6d140849a682f",
+        "bytes": 1582
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/regexredux.js",
+        "sha256": "caae7856d38489433a15804d01adff8d8d428bc9b8a49b3cd87700252a74ebc7",
+        "bytes": 1686
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/regexredux.js.map",
+        "sha256": "53e47676e9a612a08ed61102e8f4539f9a774696901af491bbfd8bcd1ce9128f",
+        "bytes": 2822
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-regexredux-v1/ast.json",
+        "sha256": "fd2d79a193e6cd2bb5b7ee222e6fbc405bd2ec2ead762bbe91fd0ec4284e5142",
+        "bytes": 62882
+      },
+      "native_declarations": [
+        {
+          "native_node": 7,
+          "kind": "FunctionDeclaration",
+          "name": "mainThread",
+          "start_line": 17,
+          "end_line": 51
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "all-nine-count-patterns",
+          "static_result": "passed",
+          "finding": "The exact nine prescribed global regular expressions are retained as data.",
+          "emitted_javascript_lines": {
+            "first": 18,
+            "last": 28
+          }
+        },
+        {
+          "contract": "complete-count-dispatch",
+          "static_result": "passed",
+          "finding": "The full byte-valued input is read as latin1, headers/LFs are removed, and each global match is evaluated on the complete cleaned string.",
+          "emitted_javascript_lines": {
+            "first": 29,
+            "last": 37
+          }
+        },
+        {
+          "contract": "five-ordered-replacements",
+          "static_result": "passed",
+          "finding": "Five specified global replacements are chained in order, each consuming the preceding result.",
+          "emitted_javascript_lines": {
+            "first": 38,
+            "last": 44
+          }
+        },
+        {
+          "contract": "library-and-result-consumption",
+          "static_result": "passed",
+          "finding": "Only Node fs and V8 standard RegExp/String operations implement library primitives; all patterns, sequence and length accounting remain in the authored application. The three final lengths and nine counts are printed.",
+          "emitted_javascript_lines": {
+            "first": 16,
+            "last": 47
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-revcomp-v1",
+      "workload": "revcomp",
+      "source": {
+        "path": "experiments/typescript/source-v1/revcomp.ts",
+        "sha256": "a9375f462d746f1cdae006c8e6f07a1d9291c0c1f0184ec288704c2cb259197c",
+        "bytes": 3060
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/revcomp.ts",
+        "sha256": "a9375f462d746f1cdae006c8e6f07a1d9291c0c1f0184ec288704c2cb259197c",
+        "bytes": 3060
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/revcomp.js",
+        "sha256": "1fe89ae2f72bad22b94cf39d13a7c0779ec816d61643d8ba741dca5f3f2c0442",
+        "bytes": 3180
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/revcomp.js.map",
+        "sha256": "6a2489fdb43aeb3ed5419abb59a6fc53ae9c4f195485d2339ce54a9ff23ddd5a",
+        "bytes": 6356
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-revcomp-v1/ast.json",
+        "sha256": "602ced6aa7b2804afb04441b8ab6ff0444eb6ad94ea625813806510ffaea276e",
+        "bytes": 190244
+      },
+      "native_declarations": [
+        {
+          "native_node": 59,
+          "kind": "FunctionDeclaration",
+          "name": "writeAll",
+          "start_line": 16,
+          "end_line": 23
+        },
+        {
+          "native_node": 112,
+          "kind": "FunctionDeclaration",
+          "name": "main",
+          "start_line": 25,
+          "end_line": 78
+        },
+        {
+          "native_node": 171,
+          "kind": "FunctionDeclaration",
+          "name": "emitRecord",
+          "start_line": 33,
+          "end_line": 58
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "record-parser-and-mapping",
+          "static_result": "passed",
+          "finding": "A256-entry map contains both-case IUPAC complements. Input is read in binary; a separate sequence buffer retains record data, and headers remain raw input slices.",
+          "emitted_javascript_lines": {
+            "first": 10,
+            "last": 31
+          }
+        },
+        {
+          "contract": "full-record-reverse-output",
+          "static_result": "passed",
+          "finding": "The parser recognizes LF/CR/CRLF, skips comment lines, flushes each completed record and EOF. emitRecord walks the entire sequence backward, maps each byte, rejects unmapped bytes, and emits60-column lines with complete synchronous partial-write handling.",
+          "emitted_javascript_lines": {
+            "first": 32,
+            "last": 88
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    },
+    {
+      "id": "typescript-spectralnorm-v1",
+      "workload": "spectralnorm",
+      "source": {
+        "path": "experiments/typescript/source-v1/spectralnorm.ts",
+        "sha256": "d08f3300b0219e75c873bf49e03f194a245958d88011a5f755165cee98ae3e2e",
+        "bytes": 1390
+      },
+      "staged_source": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/spectralnorm.ts",
+        "sha256": "d08f3300b0219e75c873bf49e03f194a245958d88011a5f755165cee98ae3e2e",
+        "bytes": 1390
+      },
+      "emitted_javascript": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/spectralnorm.js",
+        "sha256": "ccf5b1ad7a0db1ae6c035dbaf3a764d259aa5e50d30dc44d9c87361078e2c6af",
+        "bytes": 1481
+      },
+      "source_map": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/compile/project/emitted/spectralnorm.js.map",
+        "sha256": "95ce974c6588243fc0a162dda0a1fb14646e142070596ff3d97d66b9b381adee",
+        "bytes": 3824
+      },
+      "native_ast": {
+        "path": "experiments/typescript/native-stage-v1/run-v1/reader/evidence/typescript-spectralnorm-v1/ast.json",
+        "sha256": "56d38fa5de94fca8ecb2b8bed1d300751ca5a0b0b3fe1d2117eba99f153a562d",
+        "bytes": 147496
+      },
+      "native_declarations": [
+        {
+          "native_node": 5,
+          "kind": "FunctionDeclaration",
+          "name": "eval_A",
+          "start_line": 11,
+          "end_line": 11
+        },
+        {
+          "native_node": 44,
+          "kind": "FunctionDeclaration",
+          "name": "eval_A_times_u",
+          "start_line": 13,
+          "end_line": 21
+        },
+        {
+          "native_node": 112,
+          "kind": "FunctionDeclaration",
+          "name": "eval_At_times_u",
+          "start_line": 23,
+          "end_line": 31
+        },
+        {
+          "native_node": 180,
+          "kind": "FunctionDeclaration",
+          "name": "eval_AtA_times_u",
+          "start_line": 33,
+          "end_line": 34
+        },
+        {
+          "native_node": 215,
+          "kind": "FunctionDeclaration",
+          "name": "main",
+          "start_line": 36,
+          "end_line": 48
+        }
+      ],
+      "contracts": [
+        {
+          "contract": "both-matrix-orientations",
+          "static_result": "passed",
+          "finding": "Both matrix products explicitly visit all N squared entries and use eval_A(i,j) or eval_A(j,i); each A-transpose-A operation calls both.",
+          "emitted_javascript_lines": {
+            "first": 11,
+            "last": 28
+          }
+        },
+        {
+          "contract": "ten-power-iterations",
+          "static_result": "passed",
+          "finding": "u is initialized to ones and v to zeros. Ten iterations each perform two A-transpose-A products, then reduce u*v and v*v and print their square-root ratio.",
+          "emitted_javascript_lines": {
+            "first": 29,
+            "last": 50
+          }
+        }
+      ],
+      "source_staged_reader_and_map_content_equal": true,
+      "static_workload_contracts_passed": true,
+      "runtime_capture_gap": [],
+      "additional_targeted_runtime_capture_identified": false
+    }
+  ],
+  "bounded_native_cases_already_passed": 149,
+  "minimal_remaining_runtime_scope": [
+    {
+      "workload": "binarytrees",
+      "argument": "21",
+      "processes": 1
+    },
+    {
+      "workload": "pidigits",
+      "argument": "10000",
+      "processes": 1
+    }
+  ],
+  "other_eight_workloads": "No additional targeted runtime-work capture identified by this review. Their actual full-size outputs and timings still require the subsequent measurement cohort.",
+  "runtime_scope": "One authored computation thread per profile, using Node standard-library/V8 primitives. No application algorithm is delegated to a hidden native kernel. Complete actual runtime dependency admission remains separate.",
+  "source_work_qualified": false,
+  "full_timings_qualified": false,
+  "native_executions_by_review": 0,
+  "compiler_invocations_by_review": 0,
+  "benchmark_samples": 0,
+  "chart_admission": false
+}
