@@ -57,10 +57,11 @@
       <div class="stage">
         <div class="chart-toolbar">
           <div class="view-tabs" role="group" aria-label="Chart view">
-            <button data-view="summary" aria-pressed="true">Geometric means</button>
+            <button data-view="summary" aria-pressed="true">All benchmarks</button>
             <button data-view="benchmark" aria-pressed="false">Benchmark</button>
             <button data-view="mech" aria-pressed="false">Mech</button>
             <button data-view="rankings" aria-pressed="false">Rankings</button>
+            <button id="language-view-tab" data-view="language" aria-pressed="false" hidden>Language overview</button>
           </div>
           <label class="loc-metric-control">Source metric <select id="loc-metric" aria-label="Source line metric" aria-describedby="formatted-loc-note"><option value="canonical">Canonical LOC</option><option value="formatted">Formatted LOC</option></select></label>
           <select id="focused-benchmark" aria-label="Benchmark to inspect" hidden></select>
@@ -69,18 +70,12 @@
         </div>
         <p id="formatted-loc-note" class="profile-note" hidden>Formatted LOC counts nonblank, noncomment source lines after the language project's formatter. A total is blank until every authored source and helper has qualified output. Chart positions and median rankings require qualified formatted coordinates; incomplete counts are omitted. Original timing measurements, sources and the fixed best-time baseline are preserved.</p>
         <section id="language-overview" class="language-overview" aria-labelledby="language-overview-title" hidden>
-          <div class="language-overview-heading"><div><p class="eyebrow">Language explorer</p><h2 id="language-overview-title" tabindex="-1"></h2><p id="language-overview-summary"></p></div><div class="overview-actions"><button id="return-language-overview" class="quiet-button" hidden>Back to language overview</button><button id="leave-language-overview" class="quiet-button">Back to previous chart</button></div></div>
+          <div class="language-overview-heading"><div><p class="eyebrow">Language explorer</p><h2 id="language-overview-title" tabindex="-1"></h2><p id="language-overview-summary"></p></div><div class="overview-actions"><button id="return-language-overview" class="quiet-button" hidden>Back to language overview</button></div></div>
           <p class="overview-statistics-note">The language chart highlights every published program and recorded run. Overlapping runs share their measured coordinates. Diamonds show coordinate medians across benchmark endpoints; 1σ / 2σ covariance contours describe variation across benchmarks. The table’s SD measures variation between repeated runs of one program. A run can fall below the 1× median baseline.</p>
           <div class="overview-comparison-controls"><label>Execution variant<select id="overview-variant"></select></label><label>Benchmark<select id="overview-benchmark"></select></label><label>Compare with<select id="overview-comparison-language"></select></label><button id="overview-compare" class="quiet-button">Compare benchmark</button><button id="overview-inspect" class="quiet-button">Browse programs</button></div>
-          <details class="language-timings" open><summary>All published programs and timings</summary><div class="language-timings-wrap"><table id="language-timings"><thead><tr><th scope="col">Benchmark</th><th scope="col">Execution variant</th><th scope="col">Program / source</th><th scope="col">Canonical LOC</th><th scope="col">Formatted LOC</th><th scope="col">Median</th><th scope="col" title="Measured time relative to this benchmark’s fixed best-time baseline; matches the graph">Time × best</th><th scope="col">Run-to-run SD</th><th scope="col">Recorded seconds / comparison</th></tr></thead><tbody></tbody></table></div></details>
+
         </section>
-        <section id="median-rankings" class="median-rankings" aria-labelledby="median-rankings-title" hidden>
-          <div class="ranking-heading"><div><h2 id="median-rankings-title">Rankings</h2><p id="median-rankings-summary" aria-live="polite"></p></div><button id="reset-rankings" class="quiet-button">Reset selections</button></div>
-          <p class="ranking-note">Faster and smaller left; slower and larger right. Hover or focus a language for details. Click its name or point to explore.</p>
-          <details class="ranking-method"><summary>How these rankings work</summary><p>Speed uses each variant’s fastest-time coordinate; LOC uses its fewest-LOC coordinate across selected benchmarks. Zero is the ratio-coordinate median. Signed distance uses sample SD of log₂ values around their log mean. Both charts share a symmetric σ range; vertical lanes separate overlapping dots. Each execution variant appears once per chart. Coverage is shown only when incomplete.</p></details>
-          <p id="median-rankings-empty" class="ranking-empty" hidden>No eligible measured comparisons in this selection. Adjust the year window, benchmarks, language filters or disabled programs.</p>
-          <div id="median-ranking-cards" class="ranking-cards"></div>
-        </section>
+
         <div class="chart-card">
           <div id="chart-detail-layout" class="chart-detail-layout">
           <div class="chart-plot">
@@ -107,6 +102,21 @@
           <p id="table-metric-note" class="table-metric-note">LOC × uses the fewest-LOC endpoint; Fastest × uses the fastest-time endpoint. 1× is the full cohort baseline. Slope and length describe their connecting line in log₂ coordinates; a point has length 0 and no slope. The 2σ area columns measure the full covariance ellipse for each profile in squared doublings, across the selected benchmarks. At least two benchmarks are required.</p>
           <div id="mean-table-wrap"><table id="mean-table" aria-describedby="table-metric-note"><thead></thead><tbody></tbody></table></div>
         </div>
+        <section id="median-rankings" class="median-rankings" aria-labelledby="median-rankings-title" hidden>
+          <div class="ranking-heading"><div><h2 id="median-rankings-title">Rankings</h2><p id="median-rankings-summary" aria-live="polite"></p></div><button id="reset-rankings" class="quiet-button">Reset selections</button></div>
+          <p class="ranking-note">Faster and smaller left; slower and larger right. Hover or focus a language for details. Click its name or point to explore.</p>
+          <details class="ranking-method"><summary>How these rankings work</summary><p>Speed uses each variant’s fastest-time coordinate; LOC uses its fewest-LOC coordinate across selected benchmarks. Zero is the ratio-coordinate median. Signed distance uses sample SD of log₂ values around their log mean. Both charts share a symmetric σ range; vertical lanes separate overlapping dots. Each execution variant appears once per chart. Coverage is shown only when incomplete.</p></details>
+          <p id="median-rankings-empty" class="ranking-empty" hidden>No eligible measured comparisons in this selection. Adjust the year window, benchmarks, language filters or disabled programs.</p>
+          <div id="median-ranking-cards" class="ranking-cards"></div>
+        </section>
+        <section id="language-results" class="language-results" aria-label="Language benchmark results" hidden>
+          <details class="language-timings" open><summary>Per-benchmark programs and timings</summary><div class="language-timings-wrap"><table id="language-timings"><thead><tr><th scope="col">Benchmark</th><th scope="col">Execution variant</th><th scope="col">Program / source</th><th scope="col">Canonical LOC</th><th scope="col">Formatted LOC</th><th scope="col">Median</th><th scope="col" title="Measured time relative to this benchmark’s fixed best-time baseline; matches the graph">Time × best</th><th scope="col">Run-to-run SD</th><th scope="col">Recorded seconds / comparison</th></tr></thead><tbody></tbody></table></div></details>
+        </section>
+        <section id="language-comparisons" class="language-comparisons" aria-labelledby="language-comparisons-title" hidden>
+          <h2 id="language-comparisons-title"></h2>
+          <p id="language-comparisons-note" class="control-note"></p>
+          <div class="language-comparison-wrap"><table id="language-comparison-table" aria-describedby="language-comparisons-note"><thead></thead><tbody></tbody></table></div>
+        </section>
         <details class="method"><summary>Measurements and how to read the chart</summary>
           <div class="method-copy"><p>Each benchmark uses its full measured cohort's fixed fewest-lines and fastest-median baselines. Data filters change eligible languages, benchmarks and programs without moving those baselines. Samples, Medians and Density are independent visual layers with Off, Dim and Highlight modes. Dim has 15% opacity; Highlight has full contrast. Modes remain selected during source navigation and Back.</p>
           <p>Samples shows actual recorded runs at source LOC divided by the source baseline and elapsed seconds divided by the time baseline. Coincident recorded values remain separate observations. Medians controls profile points, benchmark medians, links, labels and covariance. Circles select fastest programs; squares select fewest LOC. Global median &amp; SD independently shows coordinate medians and covariance at full contrast. It remains visible when Medians is Off or Dim, so the chart can show only the global summary.</p>

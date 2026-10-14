@@ -47,6 +47,12 @@ vm.runInContext(executable+`\nglobalThis.harness={
   compare(key){state.languageFocus={keys:[catalogProgram(key).language],comparison:true,comparisonProgram:key};return comparisonData();},
   inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview;renderLanguageOverview=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;}},
   selection(){return state;},
+  relativeTable(){renderLanguageComparisons();},
+  overview(){renderLanguageOverview();},
+  resetLanguage(){const original=update;update=()=>{};try{reset();}finally{update=original;}},
+  compareLanguage(key){const original=update;update=()=>{};try{compareOverviewLanguage(key);}finally{update=original;}},
+  selectBenchmarks(keys){const original=update;update=()=>{};try{selectBenchmarks(keys);}finally{update=original;}},
+  switchView(view){const original=update;update=()=>{};try{selectView(view);}finally{update=original;}},
   play(){const original=update;update=()=>{};try{playYears();}finally{update=original;pauseYears();}}
 };`,context);
 const fixture={languages:[{key:'mech',label:'Zeta',family:'mech',release_year:2026},{key:'alpha',label:'Alpha',release_year:1970},{key:'beta',label:'beta',release_year:1990}],benchmarks:[],programs:{}};
@@ -62,6 +68,62 @@ for(let bi=0;bi<2;bi++){
   }
   fixture.benchmarks.push(benchmark);
 }
+context.harness.initialize(fixture);
+// Language hero order follows the reading order, including narrow screens.
+const sections=['id="language-overview"','class="chart-card"','id="median-rankings"','id="language-results"','id="language-comparisons"'];
+for(let index=1;index<sections.length;index++)assert.ok(html.indexOf(sections[index-1])<html.indexOf(sections[index]));
+assert.match(html,/data-view="summary"[^>]*>All benchmarks/);
+assert.doesNotMatch(html,/id="leave-language-overview"/);
+const hero=context.harness.selection();
+hero.languageFocus={keys:['alpha'],selectionKey:'alpha',family:false,label:'Alpha',variant:'alpha',benchmark:'b1'};
+hero.view='language';hero.languages=new Set(['alpha']);
+context.harness.relativeTable();
+const comparisonTable=element('#language-comparison-table tbody').innerHTML;
+assert.match(comparisonTable,/Alpha · reference/);assert.match(comparisonTable,/1\.0×/);
+assert.match(comparisonTable,/data-compare-language="mech"/,'Other variants remain listed even when filtered off.');
+assert.ok(comparisonTable.indexOf('data-compare-language="beta"')<comparisonTable.indexOf('data-compare-language="mech"'));
+context.harness.compareLanguage('beta');
+assert.equal(hero.languageFocus.variant,'alpha');assert.equal(hero.languageFocus.label,'Alpha');
+assert.equal(hero.languageFocus.comparisonLanguage,'beta');assert.deepEqual([...hero.languages],['alpha','beta']);
+assert.deepEqual([...hero.benchmarks],['b1','b2']);
+context.harness.resetLanguage();
+assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
+assert.equal(hero.languageFocus.selectionKey,'alpha');assert.equal(hero.languageFocus.comparison,false);
+context.harness.selectBenchmarks(['b2']);
+assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
+context.harness.relativeTable();
+assert.match(element('#language-comparisons-note').textContent,/Scope: Benchmark 2\./);
+assert.doesNotMatch(element('#language-comparisons-note').textContent,/Benchmark 1/);
+assert.match(element('#language-comparison-table tbody').innerHTML,/>1\/1<\/span>/);
+context.harness.selectBenchmarks([]);context.harness.relativeTable();
+assert.match(element('#language-comparison-table tbody').innerHTML,/data-compare-language="beta" disabled/);
+assert.match(element('#language-comparison-table tbody').innerHTML,/<td class="ratio">—<\/td>/);
+assert.equal(hero.view,'language');
+hero.view='benchmark';hero.languageFocus.comparison=true;hero.languageFocus.comparisonProgram='alpha-b1-fast';
+context.harness.selectBenchmarks(['b1','b2']);
+assert.equal(hero.view,'language');assert.equal(hero.languageFocus.comparison,false);
+assert.equal(hero.languageFocus.comparisonProgram,null);
+context.harness.switchView('summary');
+assert.equal(hero.view,'summary');assert.equal(hero.languageFocus,null);
+assert.deepEqual([...hero.languages],fixture.languages.map(language=>language.key));
+assert.deepEqual([...hero.benchmarks],['b1','b2']);
+context.harness.overview();
+assert.equal(element('#language-view-tab').hidden,false);
+assert.equal(element('#language-view-tab').textContent,'Alpha');
+context.harness.resetLanguage();assert.equal(hero.view,'summary');assert.equal(hero.languageFocus,null);
+context.harness.switchView('language');
+assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
+context.harness.selectBenchmarks(['b2']);context.harness.switchView('rankings');
+assert.equal(hero.view,'rankings');assert.equal(hero.languageFocus,null);
+context.harness.resetLanguage();assert.equal(hero.languageFocus,null);
+context.harness.switchView('language');
+assert.equal(hero.view,'language');assert.equal(hero.languageFocus.variant,'alpha');
+assert.deepEqual([...hero.benchmarks],['b2'],'The remembered hero retains its benchmark scope across global Reset.');
+context.harness.switchView('summary');
+console.log('Language hero: chart/results/table order, all-variant ratios, preserved target, local reset and separate All benchmarks tab passed.');
+if(process.argv.includes('--language-view-only'))process.exit(0);
+// The navigation tests exercise the real Reset default (nbody). Restore the
+// synthetic fixture's benchmark identity before the exhaustive render matrix.
 context.harness.initialize(fixture);
 const modes=['off','dim','highlight'];
 let mathCases=0,renderCases=0;

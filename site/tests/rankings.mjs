@@ -1,5 +1,44 @@
 import assert from 'node:assert/strict';
 import {renderRankingCharts} from '../src/rankings.mjs';
+import {languageRelativeComparisons} from '../src/math.mjs';
+import {axisData} from '../src/formatted_axis.mjs';
+
+// Target-relative means use the same benchmark on both sides, including
+// incomplete suites; existing chart coordinates and sources remain untouched.
+const relativeFixture={languages:['target','full','partial','missing'].map(key=>({key})),benchmarks:[],programs:{}};
+for(const [index,key] of ['a','b','c'].entries()){
+  const benchmark={key,baseline_seconds:100,baseline_loc:100,groups:[]};
+  for(const language of ['target','full','partial']){
+    if(language==='partial'&&key!=='b')continue;
+    const id=`${language}-${key}`;
+    const seconds=language==='target'?[2,20,200][index]:language==='full'?[4,10,400][index]:80;
+    const loc=language==='target'?[10,100,1000][index]:language==='full'?[20,50,2000][index]:25;
+    relativeFixture.programs[id]={key:id,language,benchmark:key,seconds,loc,x:loc/100,y:seconds/100,
+      formatted_loc_status:'qualified',formatted_loc_complete:true,formatted_loc:loc*2,formatted_x:loc/50};
+    benchmark.groups.push({language,programs:[id]});
+  }
+  relativeFixture.benchmarks.push(benchmark);
+}
+const savedFixture=JSON.stringify(relativeFixture);
+const relative=languageRelativeComparisons(relativeFixture,'target');
+assert.equal(relative.length,4,'Every published variant must remain listed.');
+assert.equal(relative[0].time.ratio,1);assert.equal(relative[0].loc.ratio,1);
+assert.ok(Math.abs(relative[1].time.ratio-Math.cbrt(2))<1e-12);
+assert.equal(relative[2].time.ratio,4,'Partial suite denominator must use target b=20, not its full-suite mean.');
+assert.equal(relative[2].loc.ratio,.25);assert.deepEqual(relative[2].time.benchmarks,['b']);
+assert.equal(relative[2].time.selected,3);assert.equal(relative[3].time.ratio,null);
+const subset=languageRelativeComparisons(relativeFixture,'target',{benchmarks:new Set(['a','c'])});
+assert.equal(subset[1].time.ratio,2);assert.equal(subset[2].time.ratio,null);assert.equal(subset[2].time.selected,2);
+relativeFixture.programs['partial-b'].formatted_loc_complete=false;
+const formatted=languageRelativeComparisons(relativeFixture,'target',{locData:axisData(relativeFixture,'formatted')});
+assert.equal(formatted[2].time.ratio,4,'Missing formatted LOC must not erase a qualified time comparison.');
+assert.equal(formatted[2].loc.ratio,null);
+relativeFixture.programs['partial-b'].formatted_loc_complete=true;
+assert.equal(JSON.stringify(relativeFixture),savedFixture,'Pairwise views must not rewrite catalog values.');
+relativeFixture.programs['partial-b'].eligible_for_chart=false;
+assert.equal(languageRelativeComparisons(relativeFixture,'target')[2].time.ratio,null);
+assert.ok(languageRelativeComparisons(relativeFixture,'missing').every(row=>row.time.ratio===null));
+console.log('Language-relative comparisons: same-workload ratios, partial/missing coverage, formatted independence and source preservation passed.');
 
 // Exercise label packing at phone and desktop widths without a browser process.
 let viewportWidth;

@@ -214,6 +214,22 @@ export function comparison(data,selection){
   return {benchmarks,entries};
 }
 
+// Pairwise ratios need the same workloads in numerator and denominator.
+// Keep every published variant, independently of the chart's language filters.
+export function languageRelativeComparisons(data,target,{benchmarks,locData=data}={}){
+  const selected=benchmarks??new Set(data.benchmarks.map(b=>b.key));
+  const selection={benchmarks:selected,languages:new Set(data.languages.map(l=>l.key)),disabled:new Set()};
+  const times=comparison(data,selection),lines=locData===data?times:comparison(locData,selection);
+  const metric=(model,key,kind,field)=>{
+    const reference=new Map((model.entries.find(e=>e.language.key===target)?.inputs??[]).map(i=>[i.benchmark.key,i]));
+    const shared=(model.entries.find(e=>e.language.key===key)?.inputs??[]).filter(i=>reference.has(i.benchmark.key));
+    return {ratio:shared.length?gm(shared.map(i=>i[kind][field]/reference.get(i.benchmark.key)[kind][field])):null,
+      benchmarks:shared.map(i=>i.benchmark.key),selected:model.benchmarks.length};
+  };
+  return data.languages.map(language=>({language,target:language.key===target,
+    time:metric(times,language.key,'fast','seconds'),loc:metric(lines,language.key,'small','loc')}));
+}
+
 // Axis limits use the admitted cohort, independently of display filters. Include
 // incomplete-coverage cohorts and shared subsets in the same reference frame.
 export function chartDomain(data,{benchmarks,view='summary',focus='nbody',focusMeans=true}){

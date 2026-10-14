@@ -1,4 +1,4 @@
-import {comparison,same,chartDomain,comparisonMetrics,languagesByYear,globalStatistics,languageFamilies,median,releaseYearsInWindow,clampReleaseWindow,decadeWindow,medianRankings,recordedSamplePoints,sampleDensityPoints,densityGrid,layerPresentation,chartLayerState,summaryNumber,eligibleForChart} from './math.mjs?v=20261013-combined2';
+import {comparison,languageRelativeComparisons,same,chartDomain,comparisonMetrics,languagesByYear,globalStatistics,languageFamilies,median,releaseYearsInWindow,clampReleaseWindow,decadeWindow,medianRankings,recordedSamplePoints,sampleDensityPoints,densityGrid,layerPresentation,chartLayerState,summaryNumber,eligibleForChart} from './math.mjs?v=20261013-combined2';
 import {traitDimensions,languageTraits,emptyTraitFilters,matchesTraits,filterLanguageKeys} from './traits.mjs?v=20261013-combined2';
 import {renderRankingCharts} from './rankings.mjs?v=20261013-combined2';
 import {axisData,projectProgram,hasFormattedLOC,formattedText,formattedValue} from './formatted_axis.mjs?v=20261013-combined2';
@@ -59,7 +59,7 @@ mobileFilters.addEventListener('change',syncFilterPlacement);
 syncFilterPlacement();
 
 const svgNS='http://www.w3.org/2000/svg';
-let data,model,traits,programCatalog;
+let data,model,traits,programCatalog,rememberedLanguageView=null;
 const state={benchmarks:new Set(),languages:new Set(),disabled:new Set(),ellipses:new Set(['mech']),
   view:'summary',focus:'nbody',locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false,playing:false,collapsedFamilies:new Set(),releaseYearStart:null,releaseYear:null,playbackYear:null,traits:emptyTraitFilters(),languageFocus:null,
   detail:{language:'mech',benchmark:'nbody',kind:'fast',program:null,aggregate:false,file:0}};
@@ -93,6 +93,7 @@ const isMechLanguage=key=>language(key)?.family==='mech'||key==='mech';
 const mechKeys=()=>data.languages.filter(l=>isMechLanguage(l.key)).map(l=>l.key);
 const displayColor=key=>state.view==='mech'?(mechViewColors[key]??colors[key]):colors[key];
 const inLanguageView=()=>state.view==='language'&&!!state.languageFocus;
+const languageOverviewVisible=()=>!!state.languageFocus&&(inLanguageView()||state.languageFocus.comparison);
 const samplesVisible=()=>layerPresentation(state.sampleMode).visible;
 const densityVisible=()=>layerPresentation(state.densityMode).visible;
 const focusKeys=()=>new Set(state.languageFocus?.keys??[]);
@@ -150,16 +151,38 @@ function showLanguageOverview(key,{family=false,restoreProgram=false}={}){
   $('#language-overview-title').focus({preventScroll:true});
   $('#language-overview').scrollIntoView({block:'start',behavior:'auto'});
 }
-function leaveLanguageOverview(){
-  const origin=state.languageFocus?.origin;if(!origin)return;
-  const {inspectorOpen,...selection}=origin;Object.assign(state,selection);
-  if(!inspectorOpen&&$('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
-  if(inspectorOpen&&!$('#inspector').open){$('#inspector').show();$('#chart-detail-layout').classList.add('inspector-open');}
-  update();
-}
 function leaveLanguageFocusForSelection(){
   if(!state.languageFocus)return;
+  rememberedLanguageView={...savedChartSelection(),languageFocus:{...state.languageFocus}};
   state.languageFocus=null;if(state.view==='language')state.view='summary';state.global=false;
+}
+function selectBenchmarks(keys){
+  state.benchmarks=new Set(keys);
+  // A new scope leaves a single-source comparison inside the same language view.
+  if(state.languageFocus?.comparison&&state.view==='benchmark'){
+    Object.assign(state.languageFocus,{comparison:false,comparisonProgram:null,comparisonLanguage:null});
+    state.view='language';
+  }
+  update();
+}
+function selectView(view){
+  if(view==='language'){
+    const focus=state.languageFocus;
+    if(focus){if(focus.comparison)showLanguageOverview(focus.selectionKey,{family:focus.family});return;}
+    if(rememberedLanguageView){
+      closeFilterDrawer();pauseYears();
+      const {inspectorOpen,...selection}=rememberedLanguageView;
+      Object.assign(state,selection);
+      if(inspectorOpen&&!$('#inspector').open){$('#inspector').show();$('#chart-detail-layout').classList.add('inspector-open');}
+      if(!inspectorOpen&&$('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
+      update();$('#language-overview-title').focus({preventScroll:true});
+    }
+    return;
+  }
+  const wasLanguage=languageOverviewVisible();leaveLanguageFocusForSelection();
+  if(view==='summary'&&wasLanguage){reset();return;}
+  if(view==='mech')enterMechView();else state.view=view;
+  update();
 }
 function languageMedianStatistics(entry){
   return Object.fromEntries(['fast','small'].map(kind=>{
@@ -172,14 +195,19 @@ function languageMedianStatistics(entry){
 }
 function renderLanguageOverview(){
   const focus=state.languageFocus,panel=$('#language-overview');
-  panel.hidden=!focus||!(inLanguageView()||focus.comparison&&state.view==='benchmark');
+  panel.hidden=!languageOverviewVisible();
+  $('#language-results').hidden=$('#language-comparisons').hidden=panel.hidden;
+  $('#mean-table-wrap').hidden=$('#table-metric-note').hidden=!panel.hidden;
+  const tabFocus=focus??rememberedLanguageView?.languageFocus;
+  $('#language-view-tab').hidden=!tabFocus;
+  if(tabFocus)$('#language-view-tab').textContent=tabFocus.label;
   if(panel.hidden)return;
-  const programs=focusPrograms(),measured=programs.filter(measuredTiming);
+  const programs=focusPrograms().filter(p=>state.benchmarks.has(p.benchmark)),measured=programs.filter(measuredTiming);
   const covered=data.benchmarks.filter(b=>measured.some(p=>p.benchmark===b.key));
   $('#language-overview-title').textContent=`${focus.label} · ${focus.comparison?'comparison':'language overview'}`;
-  $('#language-overview-summary').textContent=`${covered.length}/${data.benchmarks.length} benchmarks · ${measured.length} timed published programs · ${measured.reduce((n,p)=>n+p.samples.length,0)} recorded runs. ${data.program_inventory?'Every qualified program retained in this publication is listed below.':'This publication retains its fastest and fewest-LOC program pool.'} Unavailable timings stay blank.`;
+  $('#language-overview-summary').textContent=`${covered.length}/${state.benchmarks.size} selected benchmarks · ${measured.length} timed published programs · ${measured.reduce((n,p)=>n+p.samples.length,0)} recorded runs. ${data.program_inventory?'Every qualified program retained in this publication is listed below.':'This publication retains its fastest and fewest-LOC program pool.'} Unavailable timings stay blank.`;
   if(state.locMetric==='formatted')$('#language-overview-summary').textContent+=` ${measured.filter(p=>plottable(plotProgram(p))).length} timed programs have qualified formatted coordinates; the chart omits the others. Their original timings and sources remain listed.`;
-  if(focus.comparison){
+  if(focus.comparison&&state.view==='benchmark'){
     const viewData=plotData(),active=viewData.benchmarks.find(b=>b.key===state.focus);
     const missing=[...state.languages].filter(key=>!active?.groups.some(g=>g.language===key&&g.programs.some(id=>plottable(viewData.programs[id]))));
     if(missing.length)$('#language-overview-summary').textContent+=` ${missing.map(shortName).join(', ')}: no eligible ${metricName()} comparison for ${benchmark(state.focus).title}.`;
@@ -191,17 +219,39 @@ function renderLanguageOverview(){
   if(!benchmark(focus.benchmark))focus.benchmark=data.benchmarks[0].key;
   $('#overview-variant').value=focus.variant;
   $('#overview-benchmark').innerHTML=data.benchmarks.map(b=>`<option value="${b.key}" ${b.key===focus.benchmark?'selected':''}>${esc(b.title)}</option>`).join('');
-  const others=data.languages.filter(l=>!focusKeys().has(l.key));
-  const previous=$('#overview-comparison-language').value;
+  const others=data.languages.filter(l=>l.key!==focus.variant);
+  const previous=focus.comparisonLanguage??$('#overview-comparison-language').value;
   $('#overview-comparison-language').innerHTML=others.map(l=>`<option value="${l.key}">${esc(shortName(l.key))}</option>`).join('');
   $('#overview-comparison-language').value=others.some(l=>l.key===previous)?previous:others.some(l=>l.key==='mech')?'mech':others[0]?.key??'';
   $('#overview-compare').disabled=!others.length;
   $('#overview-inspect').disabled=!programs.some(p=>p.language===focus.variant&&p.benchmark===focus.benchmark);
-  $('#language-timings tbody').innerHTML=data.benchmarks.map(b=>{
+  $('#language-timings tbody').innerHTML=data.benchmarks.filter(b=>state.benchmarks.has(b.key)).map(b=>{
     const rows=programs.filter(p=>p.benchmark===b.key);
     if(!rows.length)return `<tr><th scope="row">${esc(b.title)}</th><td colspan="8" class="missing-timing">No published program or timing.</td></tr>`;
     return rows.map((p,i)=>`<tr class="${p.key===focus.program?'chosen':''}">${i===0?`<th scope="rowgroup" rowspan="${rows.length}">${esc(b.title)}</th>`:''}<td>${esc(shortName(p.language))}</td><td><button data-inspect-program="${p.key}">${esc(p.id)}</button></td><td class="ratio">${p.loc}</td><td class="ratio" title="${esc(formattedText(p))}">${formattedValue(p)}</td><td class="ratio">${measuredTiming(p)?seconds(p.seconds):'—'}</td><td class="ratio">${measuredTiming(p)&&eligibleForChart(p)?`${(p.seconds/b.baseline_seconds).toFixed(3)}×`:'—'}</td><td class="ratio">${measuredTiming(p)&&Number.isFinite(p.timing_sd)&&p.timing_sd>=0?seconds(p.timing_sd):'—'}</td><td class="sample-values">${p.samples.length?p.samples.map(value=>Number(value).toFixed(6)).join(' · '):'—'}${!eligibleForChart(p)?' · excluded from charts':''}<button class="row-comparison" data-compare-program="${p.key}">Compare</button></td></tr>`).join('');
   }).join('');
+  renderLanguageComparisons();
+}
+function renderLanguageComparisons(){
+  const focus=state.languageFocus,target=focus.variant,label=shortName(target);
+  const rows=languageRelativeComparisons(data,target,{benchmarks:state.benchmarks,locData:axisData(data,state.locMetric)});
+  rows.sort((a,b)=>Number(b.target)-Number(a.target)||shortName(a.language.key).localeCompare(shortName(b.language.key),'en',{sensitivity:'base'}));
+  const scope=data.benchmarks.filter(b=>state.benchmarks.has(b.key)).map(b=>b.title);
+  $('#language-comparisons-title').textContent=`Every language relative to ${label}`;
+  $('#language-comparisons-note').textContent=`${label} = 1.0×. Lower time is faster; lower LOC is smaller. Equal-weight geometric means of other / ${label} on shared workloads only: fastest published medians for time, fewest ${metricName()} for LOC. Each row can use a different shared subset; missing results are not estimated. All published variants are listed, independently of language filters. Scope: ${scope.join(', ')||'no benchmarks selected'}.`;
+  $('#language-comparison-table thead').innerHTML=`<tr><th scope="col">Language / execution variant</th><th scope="col">Time × ${esc(label)}</th><th scope="col">Shared time workloads</th><th scope="col">${esc(metricName())} × ${esc(label)}</th><th scope="col">Shared LOC workloads</th></tr>`;
+  const coverage=metric=>`<span title="${esc(metric.benchmarks.map(key=>benchmark(key).title).join(', ')||'No shared qualified workloads')}" aria-label="${esc(metric.benchmarks.map(key=>benchmark(key).title).join(', ')||'No shared qualified workloads')}">${metric.benchmarks.length}/${metric.selected}</span>`;
+  $('#language-comparison-table tbody').innerHTML=rows.map(row=>`<tr class="${row.target?'comparison-reference':''}"><th scope="row">${row.target?`${esc(shortName(row.language.key))} · reference`:`<button data-compare-language="${row.language.key}" ${row.loc.benchmarks.length?'':'disabled'} title="Compare ${esc(label)} with ${esc(shortName(row.language.key))} on their shared ${metricName()} workloads">${esc(shortName(row.language.key))}</button>`}</th><td class="ratio">${row.time.ratio==null?'—':ratio(row.time.ratio)}</td><td>${coverage(row.time)}</td><td class="ratio">${row.loc.ratio==null?'—':ratio(row.loc.ratio)}</td><td>${coverage(row.loc)}</td></tr>`).join('');
+}
+function compareOverviewLanguage(key){
+  const focus=state.languageFocus;if(!focus||key===focus.variant)return;
+  const row=languageRelativeComparisons(data,focus.variant,{benchmarks:state.benchmarks,locData:axisData(data,state.locMetric)}).find(row=>row.language.key===key);
+  if(!row?.loc.benchmarks.length)return;
+  focus.comparison=true;focus.comparisonProgram=null;focus.comparisonLanguage=key;
+  state.view='summary';state.benchmarks=new Set(row.loc.benchmarks);state.languages=new Set([focus.variant,key]);
+  state.traits=emptyTraitFilters();fullReleaseWindow();state.disabled.clear();state.global=false;
+  if($('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
+  update();$('#chart-title').scrollIntoView({block:'start',behavior:'auto'});
 }
 function compareOverviewProgram(key=null){
   const focus=state.languageFocus;if(!focus)return;
@@ -212,7 +262,7 @@ function compareOverviewProgram(key=null){
   focus.savedDetail=p&&current?.key!==p.key?{language:p.language,benchmark:p.benchmark,kind:'fast',program:p.key,aggregate:false,file:0}:
     {...state.detail,program:current?.key??state.detail.program};
   if(p)focus.program=p.key;
-  focus.variant=from;focus.benchmark=b;focus.comparisonProgram=p?.key??null;
+  focus.variant=from;focus.benchmark=b;focus.comparisonProgram=p?.key??null;focus.comparisonLanguage=to;
   state.detail=p?{...focus.savedDetail}:{language:from,benchmark:b,kind:'fast',program:null,aggregate:false,file:0};
   focus.comparison=true;state.view='benchmark';state.focus=b;state.benchmarks=new Set([b]);state.languages=new Set([from,to]);
   state.traits=emptyTraitFilters();fullReleaseWindow();state.disabled.clear();
@@ -230,12 +280,12 @@ function languageViewDomain(metric=state.locMetric){
     domain.xMin=Math.min(domain.xMin,Math.log2(point.x)-.15);domain.xMax=Math.max(domain.xMax,Math.log2(point.x)+.25);
     domain.yMin=Math.min(domain.yMin,Math.log2(point.y)-.18);domain.yMax=Math.max(domain.yMax,Math.log2(point.y)+.25);
   };
-  for(const p of focusPrograms().map(p=>plotProgram(p,metric)).filter(plottable)){
+  for(const p of focusPrograms().filter(p=>state.benchmarks.has(p.benchmark)).map(p=>plotProgram(p,metric)).filter(plottable)){
     include(p);
     const b=benchmark(p.benchmark);
     if(!state.focusMeans)for(const elapsed of p.samples)if(Number.isFinite(elapsed)&&elapsed>0)include({x:p.x,y:elapsed/b.baseline_seconds});
   }
-  const entries=comparison(axisData(data,metric),{benchmarks:new Set(data.benchmarks.map(b=>b.key)),languages:keys,disabled:new Set()}).entries;
+  const entries=comparison(axisData(data,metric),{benchmarks:state.benchmarks,languages:keys,disabled:new Set()}).entries;
   for(const entry of entries){
     const statistics=languageMedianStatistics(entry);
     for(const kind of ['fast','small']){
@@ -385,7 +435,7 @@ function darkColor(hex){
 }
 function allSelection(){const enabled=effectiveLanguages();return {benchmarks:state.benchmarks,languages:state.view==='mech'?new Set(mechKeys().filter(key=>enabled.has(key))):enabled,disabled:state.disabled};}
 function renderMedianRankings(){
-  const active=state.view==='rankings',panel=$('#median-rankings');panel.hidden=!active;$('.chart-card').hidden=active;
+  const active=state.view==='rankings'||languageOverviewVisible(),panel=$('#median-rankings');panel.hidden=!active;$('.chart-card').hidden=state.view==='rankings';
   if(!active)return;
   const rankings=medianRankings(currentEntries()),count=rankings.speed.n;
   $('#median-rankings-summary').textContent=`${count} variant${count===1?'':'s'} · ${state.benchmarks.size} benchmarks · ${state.releaseYearStart}–${shownReleaseYear()}`;
@@ -404,7 +454,7 @@ function update(){
   $('#coverage-message').textContent=partial.length?`${partial.map(e=>`${shortName(e.language.key)} uses ${coverageLabel(e)} selected benchmarks; missing ${missingNames(e)}.`).join(' ')} Each mean uses that language's measured tests from your selection. Failed tests contribute no timing or LOC ratio.`:'Enabled languages cover the compared benchmarks. The means give each benchmark equal weight.';
   $('#benchmark-filter-count').textContent=state.benchmarks.size;
   $('#language-filter-count').textContent=familyCount(state.view==='mech'?mechKeys().filter(key=>enabled.has(key)):enabled);
-  for(const button of document.querySelectorAll('[data-view]'))button.setAttribute('aria-pressed',button.dataset.view===state.view);
+  for(const button of document.querySelectorAll('[data-view]'))button.setAttribute('aria-pressed',button.dataset.view===(languageOverviewVisible()?'language':state.view));
   $('#focused-benchmark').hidden=state.view!=='benchmark';
   $('#focused-benchmark').value=state.focus;
   renderPlotOptions();
@@ -515,10 +565,11 @@ function renderChart(){
   delete svg.dataset.highlightLanguage;svg.onpointerleave=null;clearHoverDetails();
   const entries=currentEntries(),isMech=state.view==='mech',single=state.view==='benchmark',density=densityVisible();
   const selectedComparison=state.languageFocus?.comparison?catalogProgram(state.languageFocus.comparisonProgram):null;
+  const pairComparison=state.languageFocus?.comparisonLanguage&&state.languageFocus.comparison&&!single;
   const sampleInputs=currentSampleInputs(entries);
   const layers=chartLayerState({samples:state.sampleMode,medians:state.medianMode,density:state.densityMode,fast:state.fast,small:state.small,global:state.global,sampleCount:sampleInputs.length,entryCount:entries.length});
   const rawSamples=layers.showSamples?sampleInputs:[];
-  $('#chart-title').textContent=languageView?`${state.languageFocus.label} across all ten benchmarks`:single?benchmark(state.focus).title:isMech?'Mech across selected benchmarks':`${state.benchmarks.size} selected benchmark${state.benchmarks.size===1?'':'s'}`;
+  $('#chart-title').textContent=pairComparison?`${shortName(state.languageFocus.variant)} and ${shortName(state.languageFocus.comparisonLanguage)} · ${state.benchmarks.size} shared benchmarks`:languageView?`${state.languageFocus.label} across selected benchmarks`:single?benchmark(state.focus).title:isMech?'Mech across selected benchmarks':`${state.benchmarks.size} selected benchmark${state.benchmarks.size===1?'':'s'}`;
   if(isMech){
     $('#chart-subtitle').innerHTML=mechKeys().map(key=>`<span class="mech-mode-key" data-mode-key="${key}" style="color:${displayColor(key)}"><svg width="22" height="8" viewBox="0 0 22 8" aria-hidden="true"><line x1="0" y1="4" x2="22" y2="4" stroke="currentColor" stroke-width="2.5" ${lineDash(key)?`stroke-dasharray="${lineDash(key)}"`:''}/></svg>${esc(language(key).variant_label)}</span>`).join('')+'<span>Benchmark endpoints</span>';
   }else{
@@ -905,12 +956,15 @@ function renderInspector(){
   $('#download-source').onclick=event=>{event.preventDefault();const url=URL.createObjectURL(new Blob([file.code],{type:'text/plain'}));const link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 }
 function reset(){
+  const focus=state.languageFocus;
   pauseYears();
   state.benchmarks=new Set(data.benchmarks.map(b=>b.key));state.languages=new Set(data.languages.map(l=>l.key));
   state.disabled.clear();state.ellipses=new Set(['mech']);state.view='summary';state.focus='nbody';state.languageFocus=null;
   state.collapsedFamilies.clear();
   state.traits=emptyTraitFilters();
-  Object.assign(state,{locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false});fullReleaseWindow();update();
+  Object.assign(state,{locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false});fullReleaseWindow();
+  if(focus){state.languageFocus={...focus,program:null,savedDetail:null,savedInspectorOpen:false};showLanguageOverview(focus.selectionKey,{family:focus.family});}
+  else update();
 }
 function setLOCMetric(metric){
   if(!['canonical','formatted'].includes(metric))throw new Error('Unknown LOC metric.');
@@ -970,8 +1024,8 @@ async function start(){
     setExpanded(true);
     toggle.onclick=()=>setExpanded(body.hidden);
   }
-  $('#all-benchmarks').onclick=()=>{leaveLanguageFocusForSelection();state.benchmarks=new Set(data.benchmarks.map(b=>b.key));update();};
-  $('#no-benchmarks').onclick=()=>{leaveLanguageFocusForSelection();state.benchmarks.clear();update();};
+  $('#all-benchmarks').onclick=()=>selectBenchmarks(data.benchmarks.map(b=>b.key));
+  $('#no-benchmarks').onclick=()=>selectBenchmarks([]);
   $('#all-languages').onclick=()=>{leaveLanguageFocusForSelection();state.traits=emptyTraitFilters();state.languages=new Set(data.languages.map(l=>l.key));if(state.view==='mech')state.view='summary';update();};
   $('#no-languages').onclick=()=>{leaveLanguageFocusForSelection();state.traits=emptyTraitFilters();state.languages.clear();update();};
   $('#only-mech').onclick=()=>{leaveLanguageFocusForSelection();state.traits=emptyTraitFilters();state.languages=new Set(mechKeys());update();};
@@ -984,9 +1038,8 @@ async function start(){
   $('#play-years').onclick=()=>{leaveLanguageFocusForSelection();playYears();};
   addEventListener('pagehide',pauseYears,{once:true});
   $('#reset').onclick=reset;
-  $('#reset-rankings').onclick=()=>{reset();state.view='rankings';update();};
+  $('#reset-rankings').onclick=()=>{const focused=!!state.languageFocus;reset();if(!focused){state.view='rankings';update();}};
   $('#close-inspector').onclick=closeInspector;
-  $('#leave-language-overview').onclick=leaveLanguageOverview;
   $('#return-language-overview').onclick=()=>{const focus=state.languageFocus;showLanguageOverview(focus.selectionKey,{family:focus.family,restoreProgram:true});};
   $('#overview-compare').onclick=()=>compareOverviewProgram();
   $('#overview-inspect').onclick=()=>{
@@ -1005,6 +1058,7 @@ async function start(){
     }
     const openLanguage=event.target.closest('[data-open-language]');if(openLanguage){showLanguageOverview(openLanguage.dataset.openLanguage);return;}
     const openFamily=event.target.closest('[data-open-family]');if(openFamily){showLanguageOverview(openFamily.dataset.openFamily,{family:true});return;}
+    const compareLanguage=event.target.closest('[data-compare-language]');if(compareLanguage&&!compareLanguage.disabled){compareOverviewLanguage(compareLanguage.dataset.compareLanguage);return;}
     const compareProgram=event.target.closest('[data-compare-program]');if(compareProgram){compareOverviewProgram(compareProgram.dataset.compareProgram);return;}
     const stepProgram=event.target.closest('[data-step-program]');if(stepProgram&&!stepProgram.disabled){
       const current=selectedProgram(),browsing=state.languageFocus&&focusKeys().has(current.language)?focusPrograms():benchmarkPrograms(current.benchmark,current.language);
@@ -1016,7 +1070,7 @@ async function start(){
       renderControls();$(`[data-toggle-family="${key}"]`).focus({preventScroll:true});return;
     }
     const sort=event.target.closest('[data-sort-table]');if(sort){sortTable(sort);return;}
-    const view=event.target.closest('[data-view]');if(view){leaveLanguageFocusForSelection();if(view.dataset.view==='mech')enterMechView();else state.view=view.dataset.view;update();}
+    const view=event.target.closest('[data-view]');if(view){selectView(view.dataset.view);return;}
     const inspect=event.target.closest('[data-inspect-benchmark]');if(inspect){leaveLanguageFocusForSelection();state.focus=inspect.dataset.inspectBenchmark;state.view='benchmark';update();openPoint({language:'mech',benchmark:state.focus});}
     const spread=event.target.closest('[data-spread]');if(spread){const key=spread.dataset.spread;state.ellipses.has(key)?state.ellipses.delete(key):state.ellipses.add(key);update();}
     const table=event.target.closest('[data-table-language]');if(table){showLanguageOverview(table.dataset.tableLanguage);return;}
@@ -1027,7 +1081,7 @@ async function start(){
     if(element.disabled)return;
     if(element.id==='overview-variant'||element.id==='overview-benchmark'){
       const focus=state.languageFocus;if(!focus)return;
-      focus[element.id==='overview-variant'?'variant':'benchmark']=element.value;focus.program=null;renderLanguageOverview();return;
+      focus[element.id==='overview-variant'?'variant':'benchmark']=element.value;focus.program=null;if(focus.comparison&&element.id==='overview-variant')showLanguageOverview(focus.selectionKey,{family:focus.family});else update();return;
     }
     if(element.dataset.family){
       leaveLanguageFocusForSelection();
@@ -1041,7 +1095,7 @@ async function start(){
       element.checked?state.traits[dimension].add(option):state.traits[dimension].delete(option);
       update();return;
     }
-    if(element.dataset.benchmark){leaveLanguageFocusForSelection();element.checked?state.benchmarks.add(element.dataset.benchmark):state.benchmarks.delete(element.dataset.benchmark);update();}
+    if(element.dataset.benchmark){const selected=new Set(state.benchmarks);element.checked?selected.add(element.dataset.benchmark):selected.delete(element.dataset.benchmark);selectBenchmarks(selected);}
     if(element.dataset.language){leaveLanguageFocusForSelection();element.checked?state.languages.add(element.dataset.language):state.languages.delete(element.dataset.language);update();}
     const key=element.dataset.toggleProgram??(element.id==='include-program'?selectedProgram().key:null);
     if(key){state.detail.program=selectedProgram().key;element.checked?state.disabled.delete(key):state.disabled.add(key);update();}
