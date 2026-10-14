@@ -3,15 +3,15 @@ import assert from 'node:assert/strict';
 import {languageTraits,traitDimensions,emptyTraitFilters,filterLanguageKeys} from '../src/traits.mjs';
 import {languageMetadata} from '../src/languages.mjs';
 const data=process.argv[2]?JSON.parse(fs.readFileSync(process.argv[2])):{languages:Object.keys(languageMetadata).map(key=>({key}))};
-if(!data.languages.some(language=>language.key==='v'))data.languages.push({key:'v',label:'V'});
 const traits=languageTraits(data);
+assert.deepEqual(data.languages.map(language=>language.key).sort(),Object.keys(languageMetadata).sort());
 if(process.argv[2])for(const language of data.languages){
  const record=languageMetadata[language.key];
  assert.ok(record,`missing metadata: ${language.key}`);
  for(const [dataField,moduleField] of Object.entries({runtime_family:'platform',runtime:'runtime',execution_modes:'execution',typing:'typing',paradigms:'style',memory_models:'memory'}))
   assert.deepEqual(language[dataField],record[moduleField],`${language.key}: dataset / filter ${dataField} mismatch`);
 }
-assert.equal(traits.size,52);
+assert.equal(traits.size,data.languages.length);
 for (const [key,row] of traits) for(const dim of traitDimensions) {
  const valid=new Set(dim.options.map(x=>x.key));
  assert.ok(row[dim.key].size>0,`${key}:empty ${dim.key}`);
@@ -32,5 +32,5 @@ assert.ok(!traits.get('nim').memory.has('gc'));
 assert.ok(traits.get('php').execution.has('jit')&&traits.get('php').execution.has('interpreted'));
 const filters=emptyTraitFilters(); filters.platform.add('dotnet'); filters.execution.add('aot');
 assert.deepEqual([...filterLanguageKeys(new Set(traits.keys()),traits,filters)].sort(),['csharp-aot','fsharp-aot']);
-console.log('Passed: all 52 variants classified; JVM/.NET/V8, execution, memory distinctions, and combined filters.');
+console.log(`Passed: all ${traits.size} variants classified; JVM/.NET/V8, execution, memory distinctions, and combined filters.`);
 console.log(JSON.stringify(Object.fromEntries(traitDimensions.map(d=>[d.key,Object.fromEntries(d.options.map(o=>[o.label,[...traits.values()].filter(t=>t[d.key].has(o.key)).length]))])),null,2));

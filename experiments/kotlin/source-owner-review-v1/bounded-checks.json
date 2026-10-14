@@ -1,0 +1,89 @@
+{
+  "schema": "kotlin-bounded-qualification-specification-v1",
+  "status": "source-reviewed-not-executed",
+  "chart_admission": false,
+  "common_mutex": "/tmp/mech-clbg-timing.lock",
+  "common_mutex_inode": 79859134,
+  "native_execution_requires_free_timing_lane": true,
+  "limits": {
+    "process_timeout_seconds": 30,
+    "group_cleanup_timeout_seconds": 5,
+    "maximum_live_subject_processes": 1,
+    "automatic_retries": 0
+  },
+  "preconditions": [
+    "Resolve historical repository paths with the migration TSV, retaining actual execution paths for compiler inputs, runtime, and generated classes.",
+    "Verify the complete successful twenty-profile compile/owner closure and the closed generic JVM receipt; do not execute the old compiler or generic probe again.",
+    "Rehash all source, class, runtime, receipts, probes, independent expectations, and controller inputs before and after the batch under the common mutex.",
+    "Retain original artifact paths in receipts. A relocated class copy must match the retained hash and be explicitly identified as the runtime class source.",
+    "Keep ActiveProcessorCount=8, Xms64m, Xmx8g, UseG1GC, the retained native ARM64 JDK and kotlin-stdlib jar, and the sanitized environment. Keep ambient JVM-option injection variables absent.",
+    "Compile only new diagnostic probe source once with the retained javac, in a fresh output directory; retain its exact source, class set, compiler command, streams, and exit receipt. Never rebuild the scored Kotlin classes.",
+    "Start each native command in an owned process group with the inherited common mutex descriptor, direct exclusive output files, and bounded group cleanup. Preserve partial streams and both start and final receipts even on failure."
+  ],
+  "helper_stage": {
+    "profiles": "all twenty independently retained Support classes",
+    "benchmark_main_executions": 0,
+    "method": "Fresh JVM per profile; reflection against only that retained class directory and pinned kotlin-stdlib. The probe classloader must reject every clbg owner except clbg.Support, so helper qualification cannot initialize a benchmark main.",
+    "classpath_proof": "Record exact Support CodeSource and class-resource URL. Retain class-load source logs and runtime/GC/flag identity in separate diagnostic files. Reject unexpected non-platform class origins.",
+    "rounding_vectors": {
+      "file": "experiments/elixir/helper-semantics/format-vectors.tsv",
+      "generator": "experiments/elixir/helper-semantics/generate_vectors.py",
+      "count": 1536,
+      "independent_oracle": "Pinned Python binary64 fixed formatter; reconstruct values from sixteen-digit raw-bit hex. Pin and regenerate exact vector bytes before use; compare exact strings, including negative zero, ties, adjacent values, subnormals and largest finite magnitudes.",
+      "additional_rejections": ["NaN", "+infinity", "-infinity", "precision -1", "precision 19"]
+    },
+    "integer_cases": {
+      "accepted": ["no argument with fallback 42", "0", "1", "+7", "0007", "2147483647"],
+      "rejected": ["negative fallback", "-1", "2147483648", "empty string", "leading whitespace", "trailing whitespace", "two arguments"],
+      "note": "Do not tighten Integer.parseInt semantics into an unsupported ASCII-only contract. Retain native exception types for rejected inputs."
+    },
+    "byte_cases": [
+      "Nonempty real-pipe stdin contains all 256 byte values repeated beyond two 65536-byte blocks, NUL, CRLF and a suffix without newline. Support.input must consume the complete input once and return empty on repeated EOF reads.",
+      "Support.text then Support.bytes must preserve every byte. Check returned String char values 0 through 255 independently.",
+      "Exercise both Support.write overloads through the actual stdout pipe; compare the expected concatenation byte for byte outside the JVM. Keep all diagnostics off stdout.",
+      "Assert exact lists for empty input, LF, CRLF, standalone CR, consecutive separators, trailing separator, high bytes and NUL. Do not trim either actual or expected lines."
+    ]
+  },
+  "work_stage": {
+    "profiles": "compact and optimized independently",
+    "tree_identity_and_gc": [
+      "Call the unchanged scored tree(0) twice; require distinct root identities and null children.",
+      "Call tree at depths 1, 4, 6 and 8; use IdentityHashMap to prove exactly 2^(d+1)-1 distinct nodes per graph, no aliasing within or across calls, correct leaf/internal shape, and check(root) equal to that node count.",
+      "Retain one scored tree across bounded allocation pressure and observed normal G1 collection; inspect the same root and complete descendant identity graph afterward and call check again. Keep only the root as a strong tree reference: discard the traversal IdentityHashMap and any strong descendant arrays before pressure, retaining only WeakReferences for the pre/post identity comparison. Keep the root strongly reachable through the final check; use reachabilityFence in the diagnostic only.",
+      "Retain GC logs and collector count changes. Allocate at most 256 MiB total pressure, retain at most 32 MiB of that pressure at once, and stop within five seconds. Do not call System.gc or change collector/heap options. If no collection is observed within the bound, classify the GC gate incomplete rather than claiming success or retrying silently.",
+      "This probe demonstrates scored tree-constructor identity and collector survival. It does not prove allocation counts or lifetime in an optimized benchmark main; keep method-specific JIT/allocation evidence separate."
+    ],
+    "seven_maps": [
+      "Call the unchanged table method with k=1,2,3,4,6,12,18 on independently specified strings of lengths 0,1,2,17,18,19 and a longer mixed sequence.",
+      "Retain every returned map simultaneously; require seven distinct map identities, exact complete entries against an independently generated enumeration, and sum(counts)=max(0,L-k+1). Repeat one k to prove a fresh returned map and verify the earlier map remains unchanged.",
+      "Exercise the actual main on an input containing a THREE-like decoy name, exact THREE with space/tab description, comments, mixed case, wrapped sequence and a following record. Check all frequency rows, deterministic count/key tie ordering, and all five query lines."
+    ],
+    "pi_divisions": [
+      "Preserve static evidence that both general BigInteger.divide invocations dominate the candidate comparison on every loop trip.",
+      "Run unchanged mains at 0,1,9,10,11,27,100 digits and compare complete bytes to an independent integer-arithmetic pi oracle, including final padding and count labels.",
+      "Correct digits alone cannot prove the second division occurred. Do not set runtime arithmetic-work or JIT gates solely from output equivalence."
+    ],
+    "other_bounded_workloads": {
+      "fannkuchredux": {"sizes": [1,2,3,4,5,7], "checks": "Independent complete permutation/checksum/max oracle; copied work must leave the source permutation unchanged."},
+      "fasta": {"sizes": [0,1,19,20,21,59,60,61,1000], "checks": "Exact headers, all bases, repeat and RNG continuity, 60-column wrapping and final newline; use an independent generator."},
+      "mandelbrot": {"sizes": [1,2,7,8,9,15,16,17,64], "checks": "Independent recurrence oracle and exact PBM bytes, dimensions, row stride and zero unused low bits."},
+      "nbody": {"sizes": [0,1,10,1000], "checks": "Independent reference initial/final energy strings and unmodified binary64 operations; preserve both output lines."},
+      "spectralnorm": {"sizes": [1,2,3,10,100], "checks": "Independent matrix/power-iteration result with the prescribed nine-decimal formatting; inspect transpose and ten-pair work separately."},
+      "regexredux": {"checks": "Independent raw-byte fixtures for all nine count alternatives, case sensitivity, overlaps, header cleanup, and all five ordered substitutions; compare all counts and three byte-equivalent lengths."},
+      "revcomp": {"checks": "Independent byte fixtures covering every ambiguity symbol in both cases, U, multiple/empty records, comments, CRLF/CR/LF, final record without newline, and sequence lengths 0,1,59,60,61,121."}
+    }
+  },
+  "jit_and_dependency_stage": [
+    "Run only after bounded output/helper gates pass, as separate unscored diagnostics of each exact scored classpath.",
+    "Capture workload-specific compilation and class-load evidence with diagnostic flags pinned separately from measured flags. Require actual compilation records for the relevant Kotlin workload methods; native JDK architecture or library compilation is insufficient.",
+    "Resolve and pin all observed application, Kotlin library, JVM image and native library origins. A candidate classpath or generic RuntimeProbe does not establish actual subject dependency closure.",
+    "Absence of a relevant JIT record within the bounded run leaves the gate open. Any larger diagnostic must have a reviewed explicit bound; do not lower compilation thresholds or change measured VM policy silently.",
+    "Tree allocation counts/lifetime after JIT require a reviewed allocation proof appropriate to the exact class and VM. Sampled allocation events alone cannot certify every node allocation."
+  ],
+  "terminal_evidence": [
+    "Per-command argv, complete explicit environment, executable/classpath identities, exact stdin bytes/hash, stdout/stderr bytes/hash, diagnostic file bytes/hash, start/final native exit, timeout and cleanup signals, and remaining-group observation.",
+    "A failed prerequisite or native command stops the batch. Never replace prior evidence or silently resume past an incomplete command.",
+    "Final report records the precise number and scope of subject/helper executions, all completed cases and failures, unchanged-input results and artifact inventory. Write a terminal receipt even when post-run integrity validation fails.",
+    "Keep runtime dependency, helper semantics, bounded output, required work, JIT, canonical LOC, formatted LOC, full timings and chart admission as separate gates. This specification sets none of them true."
+  ]
+}
