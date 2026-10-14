@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **56 measured execution variants in 50 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **57 measured execution variants in 51 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
@@ -16,7 +16,7 @@ Key distinctions:
 
 - **Java, Clojure, Kotlin and Scala are JVM/JIT.** All 17 selected Java commands invoke OpenJDK `java` and record JIT execution. GraalVM NativeAOT identifies their upstream source submissions. Kotlin and Scala run retained JVM classes on HotSpot with G1; JVM startup, class loading and runtime compilation are included in every sample.
 - **C# and F# include .NET JIT and NativeAOT.** NativeAOT remains part of .NET and retains runtime/GC support.
-- **Elm and JavaScript run on Node.js/V8.** Elm remains statically typed and functional. Compiling Elm to JavaScript does not make the measured execution native AOT.
+- **Elm, JavaScript and TypeScript run on Node.js/V8.** Elm and TypeScript remain statically typed. Their JavaScript output executes under V8's JIT; compilation to JavaScript does not make measured execution native AOT. TypeScript samples include fresh Node startup, script loading, runtime compilation and shutdown; offline TypeScript compilation is excluded.
 - **Ruby uses YJIT. PHP has both modes:** fourteen selected profiles request tracing JIT and one explicitly disables it. **R's JIT produces interpreted bytecode.** SBCL saved cores and Racket CS native modules were precompiled before timing.
 - **Manual allocation and ownership/RAII are independent.** C/C3/Zig/Odin use explicit allocation; Rust uses ownership and standard RC types; Chapel has separate owned/shared/unmanaged strategies.
 - **RC, tracing GC, and cycle collection are independent.** CPython/PHP combine RC and cycle collection. Nim's measured ORC uses RC plus trial-deletion cycle collection, not a global tracing collector. BEAM tracing heaps coexist with reference-counted large binaries.
@@ -78,6 +78,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | Scala (JVM) | Scala 3.10.0 / Eclipse Temurin HotSpot 25.0.4.1+1 | JIT | Static | Tracing GC |
 | Smalltalk (Pharo) | Pharo Cog/Spur VM | JIT | Dynamic | Tracing GC |
 | Swift | Swift / LLVM | AOT | Static | RC |
+| TypeScript | TypeScript 7.0.2 emitted JavaScript / Node.js 24.19.0 / V8 | JIT | Static | Tracing GC |
 | Uiua | Uiua interpreter | Interpreted | Dynamic | RC |
 | V | V C backend / Clang / Boehm GC | AOT | Static | Tracing GC |
 | Zig | Zig / LLVM | AOT | Static | Manual |

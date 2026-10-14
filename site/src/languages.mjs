@@ -1137,5 +1137,25 @@ export const languageMetadata = {
       "https://docs.scala-lang.org/scala3/book/scala-features.html",
       "https://docs.scala-lang.org/scala3/book/why-scala-3.html"
     ]
+  },
+  "typescript": {
+    "platform": "javascript",
+    "runtime": "TypeScript 7.0.2 / Node 24.19.0 / V8 13.6.233.17-node.51",
+    "execution": [
+      "jit"
+    ],
+    "typing": "static",
+    "style": [
+      "imperative",
+      "object",
+      "functional"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Strictly compiled TypeScript applications run as retained JavaScript on Node/V8 with tiered compilation and tracing GC. Samples include process startup, JavaScript loading, JIT, input/output and shutdown. Authored TypeScript is counted; emitted JavaScript is retained execution evidence.",
+    "sources": [
+      "https://devblogs.microsoft.com/typescript/ten-years-of-typescript/"
+    ]
   }
 };

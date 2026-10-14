@@ -1,10 +1,10 @@
 # TypeScript publication from a closed full60 cohort
 
-This packet contains publication tooling for ten real typed TypeScript applications, one per workload. It contains no completed full60 timing cohort, candidate, preview or catalog admission. The existing strict compile/AST capture, 149 bounded cases, canonical source-owner decision, 27 required-work contracts, direct tree/pi captures and static runtime review are reused.
+All ten typed TypeScript applications are admitted, one per workload, from thirty TypeScript samples and thirty matched Mech controls. The [actual reconciliation](../reconciliation/actual-v1.json), [candidate](candidate-v1.json), [preview](preview-receipt-v1.json) and [applied import](apply-receipt-v1.json) retain the closed evidence and publication decisions. Existing measurements, samples and baselines are preserved; no older measurement was rerun. The strict compile/AST capture, 149 bounded cases, canonical source-owner decision, 27 required-work contracts, direct tree/pi captures and static runtime review were reused.
 
 The [exporter](../../../../tools/qualification/typescript_export.py) reproduces the [independent reconciliation](../reconciliation/README.md) while the completed durable-job, TypeScript-cohort and common timing leases remain held. Each row binds its authored `.ts` source, exact staged source copy, emitted CommonJS `.js`, source map and native AST. Canonical LOC counts the typed application only; formatted LOC is unavailable. The emitted artifacts remain execution evidence rather than an alternative source count.
 
-The proposed cohort has 30 fresh direct Node subject processes and 30 matched Mech controls. It adds no diagnostic flags, forced optimization, warmup or compiler invocation to timed subjects. Node startup, JavaScript loading, runtime JIT, input, computation, complete output and shutdown are inside the full-process interval. TypeScript compilation is outside it. The recorded `UV_THREADPOOL_SIZE=8` policy is retained; it is not a claim that every workload uses eight workers or that V8 has at most eight threads.
+The completed cohort has 30 fresh direct Node subject processes and 30 matched Mech controls. It adds no diagnostic flags, forced optimization, warmup or compiler invocation to timed subjects. Node startup, JavaScript loading, runtime JIT, input, computation, complete output and shutdown are inside the full-process interval. TypeScript compilation is outside it. The recorded `UV_THREADPOOL_SIZE=8` policy is retained; it is not a claim that every workload uses eight workers or that V8 has at most eight threads.
 
 [Runtime metadata](../runtime-metadata-v1.json) records TypeScript 7.0.2, Node 24.19.0 and V8 13.6.233.17-node.51. It binds the exact retained Node/application identity, recorded embedded versions, static declared system dependencies and host OS build. It claims neither a per-timed-process loaded-image inventory nor numeric GC defaults. V8's JIT classification does not imply that every function is optimized. [Release metadata](../release-metadata-v1.json) uses TypeScript's first public release, October 1, 2012, supported by Microsoft's official retrospective.
 
@@ -32,13 +32,13 @@ both checkouts; its receipt records both roots and the copied-link digests.
 
 ## Closed-evidence commands
 
-Run these file phases only after the actual full60 cohort closes and the common timing lane is free. They verify the retained physical closure and do not launch native code. Use actual saved paths and digests from the completed cohort; none is supplied by this source-only packet.
+The linked reconciliation, export, preview and apply receipts record the completed file phases. The commands below reproduce their interfaces; any separate execution requires a free common timing lane and fresh output paths. They verify the retained physical closure and do not launch native code. Use the actual saved paths and digests from the completed cohort.
 
 ```sh
 ts_python=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
 ts_plan=experiments/typescript/full60-v1/plan-v1.json
 ts_job=experiments/shared/owned-jobs-v1/owned-jobs/typescript-full60-v1
-ts_review=experiments/typescript/full60-v1/reconciliation/review-v1.json
+ts_review=experiments/typescript/full60-v1/reconciliation/actual-v1.json
 ts_candidate=experiments/typescript/full60-v1/publication/candidate-v1.json
 ts_publication='/absolute/physical/clean-publication-checkout'
 ```

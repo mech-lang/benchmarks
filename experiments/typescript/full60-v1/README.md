@@ -1,9 +1,14 @@
 # First full TypeScript timing cohort
 
-This packet defines sixty serial fresh-process samples: one retained TypeScript
-implementation and one matched Mech AOT control for each of ten workloads,
-with three observations per profile. It adds no source aliases or optimization
-variants. This source packet has not prepared an executable plan or run timings.
+All sixty serial fresh-process samples completed and passed independent
+reconciliation: thirty TypeScript observations and thirty matched Mech AOT
+controls, three per profile across ten workloads. [All ten TypeScript
+implementations are admitted](publication/apply-receipt-v1.json), with one real
+typed source per workload and no duplicate aliases. The [closed run](run-v1/terminal.json),
+[independent reconciliation](reconciliation/actual-v1.json) and
+[publication candidate](publication/candidate-v1.json) retain their separate
+evidence boundaries. Existing measurements and baselines are preserved;
+no older measurement was rerun.
 
 The controller binds the actual strict compilation and native AST captures,
 149 bounded correctness cases, ten canonical source-count admissions, and the
@@ -42,8 +47,9 @@ with each language. Full inputs are regex 5,000,000; reverse complement, FASTA
 and k-nucleotide 25,000,000; pi 10,000; spectral norm 5,500; Mandelbrot 16,000;
 trees 21; n-body 50,000,000; fannkuch 12. Each attempt uses the established
 six-hour native deadline, separate supervision/cleanup bound and 10 GiB sampled
-group-RSS limit. Bounded correctness does not guarantee these resource limits
-will suffice. An isolated workload failure retains the receipt and skips only
+group-RSS limit. All full-size samples passed output validation and the configured
+resource guards; sampled RSS does not establish an unsampled maximum.
+An isolated workload failure retains the receipt and skips only
 that profile's remaining slots. Integrity, environment or ownership failures
 stop the cohort without retry.
 
@@ -61,9 +67,9 @@ Successful producer completion does not itself admit timings to the chart.
 
 ## Preparation and execution
 
-Use fresh paths on the retained host and independently review the prepared plan
-before launch. Preparation hashes the full closure and belongs in the serial
-lane. These are command templates, not evidence of execution.
+The recorded plan and run paths below already contain the completed cohort.
+Any separate reproduction requires fresh paths and independent plan review.
+Preparation hashes the full closure and belongs in the serial lane.
 
 ```sh
 TYPESCRIPT_FULL_PYTHON=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
@@ -77,8 +83,8 @@ TYPESCRIPT_FULL_PYTHON=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime
 ```
 
 Set `TYPESCRIPT_DRAFT_SHA` from the draft output. The reusable durable launcher
-is `experiments/shared/owned-jobs-v1/launch_durable.py`, with a fresh job name such
-as `typescript-full60-v1`. Its command contains absolute physical paths:
+is `experiments/shared/owned-jobs-v1/launch_durable.py`; the recorded job is
+`typescript-full60-v1`. Its command contains absolute physical paths:
 
 ```text
 ["<retained-python>", "-I", "-S", "-B", "-u",

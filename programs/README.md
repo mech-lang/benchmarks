@@ -55,6 +55,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Scala (JVM)](scala/)
 - [Smalltalk (Pharo)](smalltalk/)
 - [Swift](swift/)
+- [TypeScript (Node)](typescript/)
 - [Uiua](uiua/)
 - [V](v/)
 - [Zig](zig/)

@@ -1,8 +1,8 @@
 # Benchmark coverage
 
-The current dataset contains **56 execution variants across 50 language families**, **10 workloads**, and **896 selected timed program profiles**. The source inventory retains **941 profiles**, including forty-five measured candidates that are not selected endpoints. Fifty-four execution variants cover the complete suite. The catalog retains **2,907 samples**, of which **2,772 belong to selected profiles**.
+The current dataset contains **57 execution variants across 51 language families**, **10 workloads**, and **906 selected timed program profiles**. The source inventory retains **951 profiles** across **888 source files**, including forty-five measured candidates that are not selected endpoints. Fifty-five execution variants cover the complete suite. The catalog retains **2,937 samples**, of which **2,802 belong to selected profiles**.
 
-The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Reset stays within the active view. Its [current deployment](../site/publications/lua-pidigits-v1/deployment.json), build `3e09bcab020b937f`, passed verification of all 33 live assets on October 14, 2026 at 21:17 UTC. [Mobile, desktop and interaction checks](../site/publications/language-hero-v1/validation.json) also passed.
+The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Reset stays within the active view. Its [current verified deployment](../site/publications/scala-full60-v1/deployment.json), build `9d9856149ca98aac`, passed verification of all 33 live assets and the final manifest on October 14, 2026 at 21:54 UTC. TypeScript is admitted in the repository dataset; its deployment is pending. [Mobile, desktop and interaction checks](../site/publications/language-hero-v1/validation.json) also passed.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -48,6 +48,7 @@ Prolog, Julia AOT, and Rebol are not selectable series in this dataset. Their ex
 | Elixir | Twenty compiled source forms; required work, canonical and formatted source counts, runtime metadata, and independent reconciliation of sixty Elixir samples and thirty matched Mech controls | Published in the dataset; identical source aliases retain separate measurements without a distinct optimization claim |
 | Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and independent reviews of all four fresh single-main tree/pi captures | [Published in the dataset](../experiments/kotlin/full90-v2/publication/) after all sixty Kotlin samples and thirty matched Mech controls passed independent reconciliation. All ten workloads have qualified canonical LOC and timings; formatted LOC remains unavailable. [Live Pages publication verified](../experiments/kotlin/full90-v2/publication/deployment.json) on October 14 at 15:21 UTC, including all 33 assets. Existing published timings remain unchanged |
 | Scala | Ten distinct compiled implementations; all 149 correctness cases, required work, canonical source counts and runtime metadata qualified | [Admitted for all ten workloads](../experiments/scala/full60-v1/publication/apply-receipt-v1.json) after independent reconciliation of thirty Scala samples and thirty matched Mech controls. Every sample covers fresh-process startup, class loading, JIT, complete work/output and shutdown. Existing measurements and baselines are preserved; no older measurement was rerun |
+| TypeScript | Ten typed implementations; strict compilation, native AST capture, all 149 correctness cases, canonical source counts, required work and static runtime metadata qualified | [Admitted for all ten workloads](../experiments/typescript/full60-v1/publication/apply-receipt-v1.json) after independent reconciliation of thirty TypeScript samples and thirty matched Mech controls. Fresh Node processes include startup, emitted JavaScript loading, JIT, complete work/output and shutdown. Typed sources determine canonical counts; emitted JavaScript, source maps and native ASTs retain their execution/provenance roles. Existing JavaScript and other measurements are preserved; no older measurement was rerun |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | [Nine offline LLVM commands](../experiments/julia-aot/trimmed-native-inspection-v1/nine-capture-closure-review-v1.json) exited normally and retained complete output. The original stage stopped when the short metadata decoder had no live RSS observation; its failed status is preserved. The two unstarted object/image disassemblies, execution-path/fallback qualification and the remaining suite remain |
 | Rebol | Retained toolchain sources, resolved build specification, ten authored benchmark mains, and [eighteen source-reviewed primitive fixture cases](../experiments/rebol/primitive-fixtures-v1/) | SDK generation, extension ABI/build/load, native primitive and benchmark qualification, source counts, and measurements |
 
@@ -55,23 +56,22 @@ Current qualification tools and results are organized by implementation under
 [`experiments/`](../experiments/); earlier evidence remains under
 [`archive/languages/`](../archive/languages/).
 
-## Planned additions
+## Scala and TypeScript evidence
 
-| Language | Planned runtime | Workloads | Status |
-| --- | --- | --- | --- |
-| TypeScript | Node.js / V8, using emitted JavaScript | All ten | [Strict compilation and native AST capture passed](../experiments/typescript/native-stage-v1/run-v1/terminal.json): ten emitted programs and source maps, forty AST inputs. [All 149 correctness cases passed independent review](../experiments/typescript/bounded-v1/independent-results-review-v1.json); [canonical source counts qualified](../experiments/typescript/source-units-v1/qualified-source-counts-v1.json) for all ten typed programs. [Required work is qualified for all ten implementations](../experiments/typescript/required-work-v1/qualified-work-v1.json), including actual tree allocation/lifetime and both pi extractions. [Runtime metadata](../experiments/typescript/runtime-metadata-v1/qualified-runtime-metadata-v1.json) binds the retained Node binary, embedded versions and declared system dependencies. The tree capture was reused after a diagnostic-parser failure; only the missing pi invocation was launched. The [first full cohort plan](../experiments/typescript/full60-v1/plan-v1.json) is prepared and awaits launch; thirty TypeScript samples and thirty matched Mech controls remain |
-
-Each addition requires its own source bundles, compiler/runtime provenance,
+Both additions retain their own source bundles, compiler/runtime provenance,
 correctness and required-work checks, source counts, and sequential fresh-process
-measurements with matched Mech controls. TypeScript source and emitted JavaScript
-will both be retained; existing JavaScript timings will not be reused as
+measurements with matched Mech controls. TypeScript sources and emitted JavaScript
+are retained separately; existing JavaScript timings were not reused as
 TypeScript measurements.
 
 The [shared correctness corpus](../experiments/shared/bounded-corpus-v1/)
 contains 149 prepared cases for each addition. Scala 3.10.0 is retained and its
 compiler/JDK versions have been observed locally. TypeScript 7.0.2 and its
 declaration dependencies are retained; native version checks also verify
-Node 24.19.0. Both implementations have passed all 149 bounded correctness cases. Scala’s first full cohort is admitted; TypeScript has no full-size timings yet.
+Node 24.19.0. Both implementations have passed all 149 bounded correctness cases
+and their first full cohorts are admitted. TypeScript's [required-work review](../experiments/typescript/required-work-v1/qualified-work-v1.json)
+retains the original failed diagnostic producer, its independently reviewed tree
+capture, and the separate missing-pi capture; these are not timing samples.
 The output checker has pure regression coverage for complete output, exact
 numeric tolerances and language-specific rejections. Source-count preparation
 includes [41 Scala owner fixtures and 29 capture fixtures](../experiments/scala/source-counts-v1/) and
