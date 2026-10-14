@@ -45,7 +45,7 @@ vm.runInContext(executable+`\nglobalThis.harness={
   locAudit:renderLocAudit,
   programSource,
   compare(key){state.languageFocus={keys:[catalogProgram(key).language],comparison:true,comparisonProgram:key};return comparisonData();},
-  inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview;renderLanguageOverview=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;}},
+  inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview,originalRankings=renderMedianRankings;renderLanguageOverview=renderMedianRankings=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;renderMedianRankings=originalRankings;}},
   selection(){return state;},
   relativeTable(){renderLanguageComparisons();},
   rankings(){model=comparison(data,allSelection());return currentRankings();},

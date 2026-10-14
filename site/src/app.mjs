@@ -961,6 +961,7 @@ function renderInspector(){
     <section class="detail-section"><h3>Benchmark programs</h3><div class="variant-list"><table><thead><tr>${sortHeader('implementations','show','Show')}${sortHeader('implementations','program','Program')}${sortHeader('implementations','loc','LOC')}${sortHeader('implementations','median','Median')}</tr></thead><tbody>${implementations.map(item=>`<tr class="${item.key===program.key?'chosen':''}"><td><label><input data-toggle-program="${item.key}" type="checkbox" aria-label="Include ${esc(item.id)}" ${item.seconds==null||!eligibleForChart(item)||inLanguageView()||!group?.programs.includes(item.key)?'disabled':''} ${item.seconds==null||!eligibleForChart(item)||state.disabled.has(item.key)?'':'checked'}></label></td><td><button data-inspect-program="${item.key}">${esc(item.id)}</button></td><td>${item.loc}</td><td>${seconds(item.seconds)}</td></tr>`).join('')}</tbody></table></div></section>`;
   $('#source-code').textContent=file.code;
   renderLanguageOverview();
+  if(languageOverviewVisible())renderMedianRankings();
   $('#download-source').onclick=event=>{event.preventDefault();const url=URL.createObjectURL(new Blob([file.code],{type:'text/plain'}));const link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 }
 function reset(){
@@ -1089,7 +1090,9 @@ async function start(){
     if(element.disabled)return;
     if(element.id==='overview-variant'||element.id==='overview-benchmark'){
       const focus=state.languageFocus;if(!focus)return;
-      focus[element.id==='overview-variant'?'variant':'benchmark']=element.value;focus.program=null;if(focus.comparison&&element.id==='overview-variant')showLanguageOverview(focus.selectionKey,{family:focus.family});else update();return;
+      focus[element.id==='overview-variant'?'variant':'benchmark']=element.value;focus.program=null;
+      if(inLanguageView()&&$('#inspector').open)state.detail={...state.detail,language:focus.variant,benchmark:focus.benchmark,program:null,file:0};
+      if(focus.comparison&&element.id==='overview-variant')showLanguageOverview(focus.selectionKey,{family:focus.family});else update();return;
     }
     if(element.dataset.family){
       leaveLanguageFocusForSelection();
