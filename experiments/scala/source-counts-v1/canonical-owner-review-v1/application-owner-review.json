@@ -1,0 +1,5883 @@
+{
+  "schema": "scala-application-manual-owner-review-v1",
+  "status": "all-ten-source-owner-maps-manually-reviewed-awaiting-independent-admission",
+  "rule": "canonical-source-units-20261012-approved-rule-v2",
+  "projection_review_sha256": "25fde663cc9a774fd0d6668434919c1014a8984478c180b3a9bed00f42c69869",
+  "adapter_sha256": "6b5293e8aaae5084ebd075df4f16d5ca57e97583b6312078d407a01e418b1fa6",
+  "tests_sha256": "500c90618cd9f92e87be07254261f3415521b0cf76ec4eb0db8134a8f8daba4c",
+  "audit_source_sha256": "9ebee080cf8777fd26d230c25645413383ad9d8af6370bdbe71d5c4ca313233c",
+  "applications": [
+    {
+      "benchmark": "binarytrees",
+      "source_sha256": "bdcebd103b9da8de792d8f59da68125aad57d1bb286f10a4074506cb8d5a518b",
+      "canonical_loc": 42,
+      "physical_loc": 41,
+      "reviewed_owner_events": 43,
+      "unique_tokens_checked": 341,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.util.concurrent.{Callable, Executors, Future}",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "import scala.collection.mutable.ArrayBuffer",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "  final class Node(val left: Node, val right: Node) {",
+          "units": 3,
+          "owner_events": [
+            3,
+            4,
+            5
+          ],
+          "rationale": "Class header and two explicit constructor val fields"
+        },
+        {
+          "line": 11,
+          "source": "    def check(): Int =",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "      if (left == null) 1 else 1 + left.check() + right.check()",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Scalar conditional belongs to expression-method declaration on line 11"
+        },
+        {
+          "line": 13,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "  def tree(depth: Int): Node =",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "    if (depth == 0) new Node(null, null)",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Scalar conditional belongs to expression-method declaration on line 15"
+        },
+        {
+          "line": 17,
+          "source": "    else new Node(tree(depth - 1), tree(depth - 1))",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Alternate scalar value remains in the same expression method"
+        },
+        {
+          "line": 19,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "    val maxDepth = math.max(6, args(0).toInt)",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "    val stretchDepth = maxDepth + 1",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "    println(s\"stretch tree of depth $stretchDepth\\t check: ${tree(stretchDepth).check()}\")",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "    val longLived = tree(maxDepth)",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "    val workers = math.min(8, Runtime.getRuntime.availableProcessors())",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "    val pool = Executors.newFixedThreadPool(workers)",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "    val results = ArrayBuffer.empty[Future[String]]",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "    try {",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "      var depth = 4",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "      while (depth <= maxDepth) {",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "        val d = depth",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "        results += pool.submit(new Callable[String] {",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "          def call(): String = {",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "            val iterations = 1 << (maxDepth - d + 4)",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "            var check = 0",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "            var i = 0",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "            while (i < iterations) {",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "              check += tree(d).check()",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "              i += 1",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "            }",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "            s\"$iterations\\t trees of depth $d\\t check: $check\"",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "        })",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "        depth += 2",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "      results.foreach(result => println(result.get()))",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "      println(s\"long lived tree of depth $maxDepth\\t check: ${longLived.check()}\")",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "    } finally pool.shutdown()",
+          "units": 3,
+          "owner_events": [
+            38,
+            39,
+            40
+          ],
+          "rationale": "Written try close, finally header, and unbraced shutdown call"
+        },
+        {
+          "line": 48,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-binarytrees-jvm-v1.json",
+      "projection_sha256": "201f8db559a8387fe1a9fb96d69c6e3518c6aec7e73a4b3d8187af22f38bb454"
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "source_sha256": "ba8c9dd5dafea3ecca8e9033e3f608120f6b922c58d3a702933adf7819812762",
+      "canonical_loc": 123,
+      "physical_loc": 122,
+      "reviewed_owner_events": 123,
+      "unique_tokens_checked": 842,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.util.concurrent.{Callable, Executors}",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "import java.util.concurrent.atomic.AtomicInteger",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "  final class Worker(n: Int, factorial: Array[Int], chunkSize: Int, taskCount: Int,",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "                     nextTask: AtomicInteger, maxima: Array[Int], checksums: Array[Int])",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Plain constructor formals continue the class header"
+        },
+        {
+          "line": 12,
+          "source": "      extends Callable[Unit] {",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Parent type and opening brace continue the class header"
+        },
+        {
+          "line": 13,
+          "source": "    private val permutation = new Array[Int](n)",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    private val temporary = new Array[Int](n)",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "    private val count = new Array[Int](n)",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "    def firstPermutation(index: Int): Unit = {",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "      var i = 0",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "      while (i < n) {",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "        permutation(i) = i",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "        i += 1",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "      var remaining = index",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "      i = n - 1",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "      while (i > 0) {",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "        val digit = remaining / factorial(i)",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "        count(i) = digit",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "        remaining %= factorial(i)",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "        System.arraycopy(permutation, 0, temporary, 0, i + 1)",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "        var j = 0",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "        while (j <= i) {",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "          val shifted = j + digit",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "          permutation(j) = temporary(if (shifted <= i) shifted else shifted - i - 1)",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "          j += 1",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "        i -= 1",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "    def nextPermutation(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "      var first = permutation(1)",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "      permutation(1) = permutation(0)",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "      permutation(0) = first",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "      var i = 1",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "      count(i) += 1",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "      while (count(i) > i) {",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "        count(i) = 0",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "        i += 1",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "        val next = permutation(1)",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "        permutation(0) = next",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "        var j = 1",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "        while (j < i) {",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "          permutation(j) = permutation(j + 1)",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "          j += 1",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 56,
+          "source": "        permutation(i) = first",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "        first = next",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "        count(i) += 1",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 59,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            48
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            49
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 62,
+          "source": "    def flips(): Int = {",
+          "units": 1,
+          "owner_events": [
+            50
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 63,
+          "source": "      System.arraycopy(permutation, 0, temporary, 0, n)",
+          "units": 1,
+          "owner_events": [
+            51
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 64,
+          "source": "      var result = 0",
+          "units": 1,
+          "owner_events": [
+            52
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 65,
+          "source": "      while (temporary(0) != 0) {",
+          "units": 1,
+          "owner_events": [
+            53
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 66,
+          "source": "        var left = 0",
+          "units": 1,
+          "owner_events": [
+            54
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 67,
+          "source": "        var right = temporary(0)",
+          "units": 1,
+          "owner_events": [
+            55
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 68,
+          "source": "        while (left < right) {",
+          "units": 1,
+          "owner_events": [
+            56
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 69,
+          "source": "          val value = temporary(left)",
+          "units": 1,
+          "owner_events": [
+            57
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 70,
+          "source": "          temporary(left) = temporary(right)",
+          "units": 1,
+          "owner_events": [
+            58
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 71,
+          "source": "          temporary(right) = value",
+          "units": 1,
+          "owner_events": [
+            59
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 72,
+          "source": "          left += 1",
+          "units": 1,
+          "owner_events": [
+            60
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 73,
+          "source": "          right -= 1",
+          "units": 1,
+          "owner_events": [
+            61
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 74,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            62
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 75,
+          "source": "        result += 1",
+          "units": 1,
+          "owner_events": [
+            63
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 76,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            64
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 77,
+          "source": "      result",
+          "units": 1,
+          "owner_events": [
+            65
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 78,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            66
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 80,
+          "source": "    def call(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            67
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 81,
+          "source": "      var task = nextTask.getAndIncrement()",
+          "units": 1,
+          "owner_events": [
+            68
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 82,
+          "source": "      while (task < taskCount) {",
+          "units": 1,
+          "owner_events": [
+            69
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 83,
+          "source": "        var index = task * chunkSize",
+          "units": 1,
+          "owner_events": [
+            70
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 84,
+          "source": "        val end = math.min(factorial(n), index + chunkSize)",
+          "units": 1,
+          "owner_events": [
+            71
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 85,
+          "source": "        firstPermutation(index)",
+          "units": 1,
+          "owner_events": [
+            72
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 86,
+          "source": "        var maximum = 0",
+          "units": 1,
+          "owner_events": [
+            73
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 87,
+          "source": "        var checksum = 0",
+          "units": 1,
+          "owner_events": [
+            74
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 88,
+          "source": "        while (index < end) {",
+          "units": 1,
+          "owner_events": [
+            75
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 89,
+          "source": "          if (permutation(0) != 0) {",
+          "units": 1,
+          "owner_events": [
+            76
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 90,
+          "source": "            val value = flips()",
+          "units": 1,
+          "owner_events": [
+            77
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 91,
+          "source": "            maximum = math.max(maximum, value)",
+          "units": 1,
+          "owner_events": [
+            78
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 92,
+          "source": "            checksum += (if (index % 2 == 0) value else -value)",
+          "units": 1,
+          "owner_events": [
+            79
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 93,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            80
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 94,
+          "source": "          index += 1",
+          "units": 1,
+          "owner_events": [
+            81
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 95,
+          "source": "          if (index < end) nextPermutation()",
+          "units": 2,
+          "owner_events": [
+            82,
+            83
+          ],
+          "rationale": "If header and unbraced nextPermutation call"
+        },
+        {
+          "line": 96,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            84
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 97,
+          "source": "        maxima(task) = maximum",
+          "units": 1,
+          "owner_events": [
+            85
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 98,
+          "source": "        checksums(task) = checksum",
+          "units": 1,
+          "owner_events": [
+            86
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 99,
+          "source": "        task = nextTask.getAndIncrement()",
+          "units": 1,
+          "owner_events": [
+            87
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 100,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            88
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 101,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            89
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 102,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            90
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 104,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            91
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 105,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            92
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 106,
+          "source": "    require(n >= 0 && n <= 12)",
+          "units": 1,
+          "owner_events": [
+            93
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 107,
+          "source": "    if (n <= 1) {",
+          "units": 1,
+          "owner_events": [
+            94
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 108,
+          "source": "      println(s\"0\\nPfannkuchen($n) = 0\")",
+          "units": 1,
+          "owner_events": [
+            95
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 109,
+          "source": "      return",
+          "units": 1,
+          "owner_events": [
+            96
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 110,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            97
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 111,
+          "source": "    val factorial = new Array[Int](n + 1)",
+          "units": 1,
+          "owner_events": [
+            98
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 112,
+          "source": "    factorial(0) = 1",
+          "units": 1,
+          "owner_events": [
+            99
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 113,
+          "source": "    var i = 1",
+          "units": 1,
+          "owner_events": [
+            100
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 114,
+          "source": "    while (i <= n) {",
+          "units": 1,
+          "owner_events": [
+            101
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 115,
+          "source": "      factorial(i) = factorial(i - 1) * i",
+          "units": 1,
+          "owner_events": [
+            102
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 116,
+          "source": "      i += 1",
+          "units": 1,
+          "owner_events": [
+            103
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 117,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            104
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 118,
+          "source": "    val chunkSize = (factorial(n) + 149) / 150",
+          "units": 1,
+          "owner_events": [
+            105
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 119,
+          "source": "    val taskCount = (factorial(n) + chunkSize - 1) / chunkSize",
+          "units": 1,
+          "owner_events": [
+            106
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 120,
+          "source": "    val maxima = new Array[Int](taskCount)",
+          "units": 1,
+          "owner_events": [
+            107
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 121,
+          "source": "    val checksums = new Array[Int](taskCount)",
+          "units": 1,
+          "owner_events": [
+            108
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 122,
+          "source": "    val nextTask = new AtomicInteger(0)",
+          "units": 1,
+          "owner_events": [
+            109
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 123,
+          "source": "    val workers = math.min(8, Runtime.getRuntime.availableProcessors())",
+          "units": 1,
+          "owner_events": [
+            110
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 124,
+          "source": "    val pool = Executors.newFixedThreadPool(workers)",
+          "units": 1,
+          "owner_events": [
+            111
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 125,
+          "source": "    try {",
+          "units": 1,
+          "owner_events": [
+            112
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 126,
+          "source": "      val tasks = (0 until workers).map { _ =>",
+          "units": 1,
+          "owner_events": [
+            113
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 127,
+          "source": "        pool.submit(new Worker(n, factorial, chunkSize, taskCount, nextTask, maxima, checksums))",
+          "units": 1,
+          "owner_events": [
+            114
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 128,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            115
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 129,
+          "source": "      tasks.foreach(_.get())",
+          "units": 1,
+          "owner_events": [
+            116
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 130,
+          "source": "      println(s\"${checksums.sum}\\nPfannkuchen($n) = ${maxima.max}\")",
+          "units": 1,
+          "owner_events": [
+            117
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 131,
+          "source": "    } finally pool.shutdown()",
+          "units": 3,
+          "owner_events": [
+            118,
+            119,
+            120
+          ],
+          "rationale": "Written try close, finally header, and unbraced shutdown call"
+        },
+        {
+          "line": 132,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            121
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 133,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            122
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-fannkuchredux-jvm-v1.json",
+      "projection_sha256": "f9cb1bd445f2397c36f7bca331f8536b24e25dfe67b704a7449176f2072f6489"
+    },
+    {
+      "benchmark": "fasta",
+      "source_sha256": "a3e2f78453acff46081258324f49040b8a9a93ce48377eae1a5a3d5c30ae37f1",
+      "canonical_loc": 54,
+      "physical_loc": 52,
+      "reviewed_owner_events": 45,
+      "unique_tokens_checked": 393,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.io.BufferedOutputStream",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "import java.nio.charset.StandardCharsets",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "    require(n >= 0 && n <= Int.MaxValue / 5)",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "    val output = new BufferedOutputStream(System.out, 65536)",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    val alu = \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGG\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "      \"GAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGA\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "      \"CCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAAT\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "      \"ACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCA\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "      \"GCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGG\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "      \"AGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCC\" +",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "      \"AGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\"",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "    var randomState = 42",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "    def header(text: String): Unit =",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "      output.write((text + \"\\n\").getBytes(StandardCharsets.US_ASCII))",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Expression method body remains composed with line 23 header"
+        },
+        {
+          "line": 26,
+          "source": "    def randomRecord(symbols: String, probabilities: Array[Double], length: Int): Unit = {",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "      val cumulative = probabilities.clone()",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "      var i = 1",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "      while (i < cumulative.length) {",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "        cumulative(i) += cumulative(i - 1)",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "        i += 1",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "      i = 0",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "      while (i < length) {",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "        randomState = (randomState * 3877 + 29573) % 139968",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "        val random = randomState.toDouble / 139968",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "        var index = 0",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "        while (index < cumulative.length - 1 && random >= cumulative(index)) index += 1",
+          "units": 2,
+          "owner_events": [
+            22,
+            23
+          ],
+          "rationale": "While header and independent compound update"
+        },
+        {
+          "line": 39,
+          "source": "        output.write(symbols.charAt(index).toInt)",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "        i += 1",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "        if (i % 60 == 0 || i == length) output.write(10)",
+          "units": 2,
+          "owner_events": [
+            26,
+            27
+          ],
+          "rationale": "If header and unbraced output call"
+        },
+        {
+          "line": 42,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "    header(\">ONE Homo sapiens alu\")",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "    var i = 0",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "    while (i < 2 * n) {",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "      output.write(alu.charAt(i % alu.length).toInt)",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "      i += 1",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "      if (i % 60 == 0 || i == 2 * n) output.write(10)",
+          "units": 2,
+          "owner_events": [
+            35,
+            36
+          ],
+          "rationale": "If header and unbraced output call"
+        },
+        {
+          "line": 51,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "    header(\">TWO IUB ambiguity codes\")",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "    randomRecord(\"acgtBDHKMNRSVWY\",",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "      Array(0.27, 0.12, 0.12, 0.27, 0.02, 0.02, 0.02, 0.02, 0.02,",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "            0.02, 0.02, 0.02, 0.02, 0.02, 0.02), 3 * n)",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 56,
+          "source": "    header(\">THREE Homo sapiens frequency\")",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "    randomRecord(\"acgt\", Array(0.3029549426680, 0.1979883004921,",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "                              0.1975473066391, 0.3015094502008), 5 * n)",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 59,
+          "source": "    output.flush()",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 61,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-fasta-jvm-v1.json",
+      "projection_sha256": "860811fbf1a0790c67d099a29b01f995daa8ec9f240fcd7f0cc6d2a61fe89302"
+    },
+    {
+      "benchmark": "knucleotide",
+      "source_sha256": "8ab9a123c499bbad40b3c09aebf0910dc6977ec564bb3d025941206fc6a2d269",
+      "canonical_loc": 97,
+      "physical_loc": 84,
+      "reviewed_owner_events": 97,
+      "unique_tokens_checked": 694,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 7,
+          "source": "import java.io.{BufferedReader, ByteArrayOutputStream, InputStreamReader}",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "import java.nio.charset.StandardCharsets",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "import java.util.Locale",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "import scala.collection.mutable.LongMap",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "  def code(symbol: Char): Int = symbol.toUpper match {",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    case 'A' => 0",
+          "units": 2,
+          "owner_events": [
+            6,
+            7
+          ],
+          "rationale": "Case header and scalar result"
+        },
+        {
+          "line": 15,
+          "source": "    case 'C' => 1",
+          "units": 2,
+          "owner_events": [
+            8,
+            9
+          ],
+          "rationale": "Case header and scalar result"
+        },
+        {
+          "line": 16,
+          "source": "    case 'G' => 2",
+          "units": 2,
+          "owner_events": [
+            10,
+            11
+          ],
+          "rationale": "Case header and scalar result"
+        },
+        {
+          "line": 17,
+          "source": "    case 'T' => 3",
+          "units": 2,
+          "owner_events": [
+            12,
+            13
+          ],
+          "rationale": "Case header and scalar result"
+        },
+        {
+          "line": 18,
+          "source": "    case _ => throw new IllegalArgumentException(s\"Invalid THREE nucleotide: $symbol\")",
+          "units": 2,
+          "owner_events": [
+            14,
+            15
+          ],
+          "rationale": "Case header and explicit throw expression"
+        },
+        {
+          "line": 19,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "  def readSequence(): Array[Byte] = {",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "    val reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.ISO_8859_1), 65536)",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "    val sequence = new ByteArrayOutputStream",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "    var selected = false",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "    var found = false",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "    var line = reader.readLine()",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "    while (line != null) {",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "      if (line.startsWith(\">\")) {",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "        val identifier = line.substring(1).takeWhile(c => c != ' ' && c != '\\t')",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "        selected = !found && identifier == \"THREE\"",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "        if (selected) found = true",
+          "units": 2,
+          "owner_events": [
+            27,
+            28
+          ],
+          "rationale": "If header and independent assignment"
+        },
+        {
+          "line": 32,
+          "source": "      } else if (selected && !line.startsWith(\";\")) {",
+          "units": 2,
+          "owner_events": [
+            29,
+            30
+          ],
+          "rationale": "Written previous branch close and one joined else-if header"
+        },
+        {
+          "line": 33,
+          "source": "        var i = 0",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "        while (i < line.length) {",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "          sequence.write(code(line.charAt(i)))",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "          i += 1",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "      line = reader.readLine()",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "    sequence.toByteArray",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "  def table(sequence: Array[Byte], length: Int): LongMap[Int] = {",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "    val counts = LongMap.empty[Int]",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "    val mask = (1L << (2 * length)) - 1",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "    var key = 0L",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "    var i = 0",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "    while (i < sequence.length) {",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "      key = ((key << 2) | sequence(i).toLong) & mask",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "      if (i >= length - 1) counts.update(key, counts.getOrElse(key, 0) + 1)",
+          "units": 2,
+          "owner_events": [
+            48,
+            49
+          ],
+          "rationale": "If header and unbraced counts.update call"
+        },
+        {
+          "line": 52,
+          "source": "      i += 1",
+          "units": 1,
+          "owner_events": [
+            50
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            51
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "    counts",
+          "units": 1,
+          "owner_events": [
+            52
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            53
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "  def decode(key: Long, length: Int): String = {",
+          "units": 1,
+          "owner_events": [
+            54
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "    val text = new Array[Char](length)",
+          "units": 1,
+          "owner_events": [
+            55
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 59,
+          "source": "    var remaining = key",
+          "units": 1,
+          "owner_events": [
+            56
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "    var i = length - 1",
+          "units": 1,
+          "owner_events": [
+            57
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 61,
+          "source": "    while (i >= 0) {",
+          "units": 1,
+          "owner_events": [
+            58
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 62,
+          "source": "      text(i) = \"ACGT\".charAt((remaining & 3).toInt)",
+          "units": 1,
+          "owner_events": [
+            59
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 63,
+          "source": "      remaining = remaining >>> 2",
+          "units": 1,
+          "owner_events": [
+            60
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 64,
+          "source": "      i -= 1",
+          "units": 1,
+          "owner_events": [
+            61
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 65,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            62
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 66,
+          "source": "    new String(text)",
+          "units": 1,
+          "owner_events": [
+            63
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 67,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            64
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 69,
+          "source": "  def encode(text: String): Long = {",
+          "units": 1,
+          "owner_events": [
+            65
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 70,
+          "source": "    var key = 0L",
+          "units": 1,
+          "owner_events": [
+            66
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 71,
+          "source": "    text.foreach(c => key = (key << 2) | code(c).toLong)",
+          "units": 1,
+          "owner_events": [
+            67
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 72,
+          "source": "    key",
+          "units": 1,
+          "owner_events": [
+            68
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 73,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            69
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 75,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            70
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 76,
+          "source": "    val sequence = readSequence()",
+          "units": 1,
+          "owner_events": [
+            71
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 77,
+          "source": "    val lengths = Array(1, 2, 3, 4, 6, 12, 18)",
+          "units": 1,
+          "owner_events": [
+            72
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 78,
+          "source": "    val queries = Array(\"GGT\", \"GGTA\", \"GGTATT\", \"GGTATTTTAATT\", \"GGTATTTTAATTTATAGT\")",
+          "units": 1,
+          "owner_events": [
+            73
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 79,
+          "source": "    lengths.indices.foreach { index =>",
+          "units": 1,
+          "owner_events": [
+            74
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 80,
+          "source": "      val length = lengths(index)",
+          "units": 1,
+          "owner_events": [
+            75
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 81,
+          "source": "      val counts = table(sequence, length)",
+          "units": 1,
+          "owner_events": [
+            76
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 82,
+          "source": "      if (length <= 2) {",
+          "units": 1,
+          "owner_events": [
+            77
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 83,
+          "source": "        val rows = counts.iterator.map { case (key, count) => (decode(key, length), count) }",
+          "units": 3,
+          "owner_events": [
+            78,
+            79,
+            80
+          ],
+          "rationale": "First tuple callback header, body and written close"
+        },
+        {
+          "line": 84,
+          "source": "          .toArray.sortBy { case (text, count) => (-count, text) }",
+          "units": 3,
+          "owner_events": [
+            81,
+            82,
+            83
+          ],
+          "rationale": "Second chained tuple callback header, body and written close"
+        },
+        {
+          "line": 85,
+          "source": "        val total = math.max(0, sequence.length - length + 1)",
+          "units": 1,
+          "owner_events": [
+            84
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 86,
+          "source": "        rows.foreach { case (text, count) =>",
+          "units": 1,
+          "owner_events": [
+            85
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 87,
+          "source": "          System.out.printf(Locale.ROOT, \"%s %.3f\\n\", text, Double.box(count * 100.0 / total))",
+          "units": 1,
+          "owner_events": [
+            86
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 88,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            87
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 89,
+          "source": "        println()",
+          "units": 1,
+          "owner_events": [
+            88
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 90,
+          "source": "      } else {",
+          "units": 2,
+          "owner_events": [
+            89,
+            90
+          ],
+          "rationale": "Written previous branch close and else header"
+        },
+        {
+          "line": 91,
+          "source": "        val query = queries(index - 2)",
+          "units": 1,
+          "owner_events": [
+            91
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 92,
+          "source": "        println(s\"${counts.getOrElse(encode(query), 0)}\\t$query\")",
+          "units": 1,
+          "owner_events": [
+            92
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 93,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            93
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 94,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            94
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 95,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            95
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 96,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            96
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-knucleotide-jvm-v1.json",
+      "projection_sha256": "5211cc0af21728b4272e2665bfe146ecdd47bdcea1bbe1ed5775b9c8c10f0227"
+    },
+    {
+      "benchmark": "mandelbrot",
+      "source_sha256": "de29618bbbfb47d11770eb62e771e5e659a8707a2781fbc5df7eb324e71471b7",
+      "canonical_loc": 55,
+      "physical_loc": 53,
+      "reviewed_owner_events": 56,
+      "unique_tokens_checked": 398,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 7,
+          "source": "import java.io.BufferedOutputStream",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "import java.nio.charset.StandardCharsets",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "import java.util.concurrent.{Callable, Executors}",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "import java.util.concurrent.atomic.AtomicInteger",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "    require(n >= 0)",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "    val rows = Array.ofDim[Byte](n, (n + 7) / 8)",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "    val nextRow = new AtomicInteger(0)",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "    val workers = math.min(8, Runtime.getRuntime.availableProcessors())",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "    val pool = Executors.newFixedThreadPool(workers)",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "    try {",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "      val tasks = (0 until workers).map { _ =>",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "        pool.submit(new Callable[Unit] {",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "          def call(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "            var y = nextRow.getAndIncrement()",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "            while (y < n) {",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "              val imaginary = y * (2.0 / n) - 1.0",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "              var x = 0",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "              while (x < n) {",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "                val real = x * (2.0 / n) - 1.5",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "                var zr = 0.0",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "                var zi = 0.0",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "                var zr2 = 0.0",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "                var zi2 = 0.0",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "                var iteration = 0",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "                while (iteration < 50 && zr2 + zi2 <= 4.0) {",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "                  zi = 2.0 * zr * zi + imaginary",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "                  zr = zr2 - zi2 + real",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "                  zr2 = zr * zr",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "                  zi2 = zi * zi",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "                  iteration += 1",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "                }",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "                if (zr2 + zi2 <= 4.0) {",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "                  val byteIndex = x / 8",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "                  rows(y)(byteIndex) = (rows(y)(byteIndex) | (1 << (7 - x % 8))).toByte",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "                }",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "                x += 1",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "              }",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "              y = nextRow.getAndIncrement()",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "            }",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "        })",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "      tasks.foreach(_.get())",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "      val output = new BufferedOutputStream(System.out, 65536)",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "      output.write(s\"P4\\n$n $n\\n\".getBytes(StandardCharsets.US_ASCII))",
+          "units": 1,
+          "owner_events": [
+            48
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 56,
+          "source": "      rows.foreach(row => output.write(row))",
+          "units": 1,
+          "owner_events": [
+            49
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "      output.flush()",
+          "units": 1,
+          "owner_events": [
+            50
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "    } finally pool.shutdown()",
+          "units": 3,
+          "owner_events": [
+            51,
+            52,
+            53
+          ],
+          "rationale": "Written try close, finally header, and unbraced shutdown call"
+        },
+        {
+          "line": 59,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            54
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            55
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-mandelbrot-jvm-v1.json",
+      "projection_sha256": "a6b3ba7a97a1fa36f8c10965f466d45e79b868cb336abdefe77396a78e6e180d"
+    },
+    {
+      "benchmark": "nbody",
+      "source_sha256": "74b6a0eb04fa87240d47b903969898314c400e8715c436515d503f6f4112957b",
+      "canonical_loc": 100,
+      "physical_loc": 100,
+      "reviewed_owner_events": 87,
+      "unique_tokens_checked": 815,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.util.Locale",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "  final class SystemState {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "    private val solarMass = 4.0 * math.Pi * math.Pi",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "    private val daysPerYear = 365.24",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "    private val bodies = Array[Double](",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "      0, 0, 0, 0, 0, 0, solarMass, 0,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "      4.84143144246472090, -1.16032004402742839, -1.03622044471123109e-1,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "      1.66007664274403694e-3 * daysPerYear, 7.69901118419740425e-3 * daysPerYear,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "      -6.90460016972063023e-5 * daysPerYear, 9.54791938424326609e-4 * solarMass, 0,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "      8.34336671824457987, 4.12479856412430479, -4.03523417114321381e-1,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "      -2.76742510726862411e-3 * daysPerYear, 4.99852801234917238e-3 * daysPerYear,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "      2.30417297573763929e-5 * daysPerYear, 2.85885980666130812e-4 * solarMass, 0,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "      1.28943695621391310e1, -1.51111514016986312e1, -2.23307578892655734e-1,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "      2.96460137564761618e-3 * daysPerYear, 2.37847173959480950e-3 * daysPerYear,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "      -2.96589568540237556e-5 * daysPerYear, 4.36624404335156298e-5 * solarMass, 0,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "      1.53796971148509165e1, -2.59193146099879641e1, 1.79258772950371181e-1,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "      2.68067772490389322e-3 * daysPerYear, 1.62824170038242295e-3 * daysPerYear,",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "      -9.51592254519715870e-5 * daysPerYear, 5.15138902046611451e-5 * solarMass, 0)",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "    def offsetMomentum(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "      var px = 0.0",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "      var py = 0.0",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "      var pz = 0.0",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "      var i = 0",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "      while (i < 40) {",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "        px += bodies(i + 3) * bodies(i + 6)",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "        py += bodies(i + 4) * bodies(i + 6)",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "        pz += bodies(i + 5) * bodies(i + 6)",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "        i += 8",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "      bodies(3) = -px / solarMass",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "      bodies(4) = -py / solarMass",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "      bodies(5) = -pz / solarMass",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "    def advance(dt: Double): Unit = {",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "      var i = 0",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "      while (i < 40) {",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "        var j = i + 8",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "        while (j < 40) {",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "          val dx = bodies(i) - bodies(j)",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "          val dy = bodies(i + 1) - bodies(j + 1)",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "          val dz = bodies(i + 2) - bodies(j + 2)",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "          val squared = dx * dx + dy * dy + dz * dz",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "          val magnitude = dt / (squared * math.sqrt(squared))",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "          val otherMass = bodies(j + 6)",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "          bodies(i + 3) -= dx * otherMass * magnitude",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "          bodies(i + 4) -= dy * otherMass * magnitude",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 56,
+          "source": "          bodies(i + 5) -= dz * otherMass * magnitude",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "          val mass = bodies(i + 6)",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "          bodies(j + 3) += dx * mass * magnitude",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 59,
+          "source": "          bodies(j + 4) += dy * mass * magnitude",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "          bodies(j + 5) += dz * mass * magnitude",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 61,
+          "source": "          j += 8",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 62,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 63,
+          "source": "        i += 8",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 64,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 65,
+          "source": "      i = 0",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 66,
+          "source": "      while (i < 40) {",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 67,
+          "source": "        bodies(i) += dt * bodies(i + 3)",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 68,
+          "source": "        bodies(i + 1) += dt * bodies(i + 4)",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 69,
+          "source": "        bodies(i + 2) += dt * bodies(i + 5)",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 70,
+          "source": "        i += 8",
+          "units": 1,
+          "owner_events": [
+            48
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 71,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            49
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 72,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            50
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 74,
+          "source": "    def energy(): Double = {",
+          "units": 1,
+          "owner_events": [
+            51
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 75,
+          "source": "      var result = 0.0",
+          "units": 1,
+          "owner_events": [
+            52
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 76,
+          "source": "      var i = 0",
+          "units": 1,
+          "owner_events": [
+            53
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 77,
+          "source": "      while (i < 40) {",
+          "units": 1,
+          "owner_events": [
+            54
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 78,
+          "source": "        val vx = bodies(i + 3)",
+          "units": 1,
+          "owner_events": [
+            55
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 79,
+          "source": "        val vy = bodies(i + 4)",
+          "units": 1,
+          "owner_events": [
+            56
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 80,
+          "source": "        val vz = bodies(i + 5)",
+          "units": 1,
+          "owner_events": [
+            57
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 81,
+          "source": "        val mass = bodies(i + 6)",
+          "units": 1,
+          "owner_events": [
+            58
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 82,
+          "source": "        result += 0.5 * mass * (vx * vx + vy * vy + vz * vz)",
+          "units": 1,
+          "owner_events": [
+            59
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 83,
+          "source": "        var j = i + 8",
+          "units": 1,
+          "owner_events": [
+            60
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 84,
+          "source": "        while (j < 40) {",
+          "units": 1,
+          "owner_events": [
+            61
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 85,
+          "source": "          val dx = bodies(i) - bodies(j)",
+          "units": 1,
+          "owner_events": [
+            62
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 86,
+          "source": "          val dy = bodies(i + 1) - bodies(j + 1)",
+          "units": 1,
+          "owner_events": [
+            63
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 87,
+          "source": "          val dz = bodies(i + 2) - bodies(j + 2)",
+          "units": 1,
+          "owner_events": [
+            64
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 88,
+          "source": "          result -= mass * bodies(j + 6) / math.sqrt(dx * dx + dy * dy + dz * dz)",
+          "units": 1,
+          "owner_events": [
+            65
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 89,
+          "source": "          j += 8",
+          "units": 1,
+          "owner_events": [
+            66
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 90,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            67
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 91,
+          "source": "        i += 8",
+          "units": 1,
+          "owner_events": [
+            68
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 92,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            69
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 93,
+          "source": "      result",
+          "units": 1,
+          "owner_events": [
+            70
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 94,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            71
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 95,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            72
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 97,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            73
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 98,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            74
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 99,
+          "source": "    require(n >= 0)",
+          "units": 1,
+          "owner_events": [
+            75
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 100,
+          "source": "    val state = new SystemState",
+          "units": 1,
+          "owner_events": [
+            76
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 101,
+          "source": "    state.offsetMomentum()",
+          "units": 1,
+          "owner_events": [
+            77
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 102,
+          "source": "    System.out.printf(Locale.ROOT, \"%.9f\\n\", Double.box(state.energy()))",
+          "units": 1,
+          "owner_events": [
+            78
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 103,
+          "source": "    var step = 0",
+          "units": 1,
+          "owner_events": [
+            79
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 104,
+          "source": "    while (step < n) {",
+          "units": 1,
+          "owner_events": [
+            80
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 105,
+          "source": "      state.advance(0.01)",
+          "units": 1,
+          "owner_events": [
+            81
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 106,
+          "source": "      step += 1",
+          "units": 1,
+          "owner_events": [
+            82
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 107,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            83
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 108,
+          "source": "    System.out.printf(Locale.ROOT, \"%.9f\\n\", Double.box(state.energy()))",
+          "units": 1,
+          "owner_events": [
+            84
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 109,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            85
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 110,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            86
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-nbody-jvm-v1.json",
+      "projection_sha256": "dc30fa4a318aa17dee61cdea5a80ee0dbc9442a78aed8bd51885cff9316b9774"
+    },
+    {
+      "benchmark": "pidigits",
+      "source_sha256": "5dca3a4127f2283792a2dfa0fc1fff47366d70405b28d14d156c8b0609408ad5",
+      "canonical_loc": 34,
+      "physical_loc": 32,
+      "reviewed_owner_events": 34,
+      "unique_tokens_checked": 215,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "    require(n >= 0)",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "    var q = BigInt(1)",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "    var r = BigInt(0)",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "    var t = BigInt(1)",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "    var k = BigInt(0)",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    var emitted = 0",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "    val line = new StringBuilder",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "    while (emitted < n) {",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "      val first = (3 * q + r) / t",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "      val second = (4 * q + r) / t",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "      if (first == second) {",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "        line.append(first.toInt)",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "        emitted += 1",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "        q *= 10",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "        r = 10 * (r - first * t)",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "        if (emitted % 10 == 0 || emitted == n) {",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "          while (line.length < 10) line.append(' ')",
+          "units": 2,
+          "owner_events": [
+            19,
+            20
+          ],
+          "rationale": "While header and unbraced padding call"
+        },
+        {
+          "line": 26,
+          "source": "          println(s\"$line\\t:$emitted\")",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "          line.clear()",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "      } else {",
+          "units": 2,
+          "owner_events": [
+            24,
+            25
+          ],
+          "rationale": "Written previous branch close and else header"
+        },
+        {
+          "line": 30,
+          "source": "        k += 1",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "        r = q * (4 * k + 2) + r * (2 * k + 1)",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "        q *= k",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "        t *= 2 * k + 1",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-pidigits-jvm-v1.json",
+      "projection_sha256": "dbe0b965425406bd79eaa295c32d60d507bcf739884f2727f2d0958faa923bdf"
+    },
+    {
+      "benchmark": "regexredux",
+      "source_sha256": "3e4db60819b528f72b39d7d2571a9c8493b054c13cee95f6b56a831e0cbbc362",
+      "canonical_loc": 48,
+      "physical_loc": 45,
+      "reviewed_owner_events": 43,
+      "unique_tokens_checked": 350,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.nio.charset.StandardCharsets",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "import java.util.concurrent.{Callable, Executors}",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "import java.util.regex.Pattern",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "    val input = new String(System.in.readAllBytes(), StandardCharsets.ISO_8859_1)",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "    val sequence = Pattern.compile(\">[^\\\\n]*\\\\n|\\\\n\").matcher(input).replaceAll(\"\")",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    val variants = Array(",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "      \"agggtaaa|tttaccct\", \"[cgt]gggtaaa|tttaccc[acg]\",",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "      \"a[act]ggtaaa|tttacc[agt]t\", \"ag[act]gtaaa|tttac[agt]ct\",",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "      \"agg[act]taaa|ttta[agt]cct\", \"aggg[acg]aaa|ttt[cgt]ccct\",",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "      \"agggt[cgt]aa|tt[acg]accct\", \"agggta[cgt]a|t[acg]taccct\",",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "      \"agggtaa[cgt]|[acg]ttaccct\")",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "    val pool = Executors.newFixedThreadPool(math.min(8, Runtime.getRuntime.availableProcessors()))",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "    try {",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "      val counts = variants.map { pattern =>",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "        pool.submit(new Callable[Long] {",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "          def call(): Long = {",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "            val matches = Pattern.compile(pattern).matcher(sequence)",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "            var count = 0L",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "            while (matches.find()) count += 1",
+          "units": 2,
+          "owner_events": [
+            15,
+            16
+          ],
+          "rationale": "While header and compound count update"
+        },
+        {
+          "line": 28,
+          "source": "            count",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "        })",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "      val replacements = pool.submit(new Callable[Int] {",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "        def call(): Int = {",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "          val rules = Array(",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "            (\"tHa[Nt]\", \"<4>\"), (\"aND|caN|Ha[DS]|WaS\", \"<3>\"),",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "            (\"a[NSt]|BY\", \"<2>\"), (\"<[^>]*>\", \"|\"), (\"\\\\|[^|][^|]*\\\\|\", \"-\"))",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "          var result = sequence",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "          rules.foreach { case (pattern, replacement) =>",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "            result = Pattern.compile(pattern).matcher(result).replaceAll(replacement)",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "          result.length",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "      })",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "      variants.indices.foreach(i => println(s\"${variants(i)} ${counts(i).get()}\"))",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "      println()",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "      println(input.length)",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "      println(sequence.length)",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "      println(replacements.get())",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "    } finally pool.shutdown()",
+          "units": 3,
+          "owner_events": [
+            38,
+            39,
+            40
+          ],
+          "rationale": "Written try close, finally header, and unbraced shutdown call"
+        },
+        {
+          "line": 50,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-regexredux-jvm-v1.json",
+      "projection_sha256": "cde9bace15a2a4eeda700f92ff58b7e96614089b411f33b3e5a54ac4366e4dd7"
+    },
+    {
+      "benchmark": "revcomp",
+      "source_sha256": "bd54d135034e035e77594fc22cec60b943356452ec5f5cb0fa50c27bfa381b6f",
+      "canonical_loc": 49,
+      "physical_loc": 46,
+      "reviewed_owner_events": 49,
+      "unique_tokens_checked": 337,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 7,
+          "source": "import java.io.{BufferedOutputStream, BufferedReader, InputStreamReader}",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 8,
+          "source": "import java.nio.charset.StandardCharsets",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 12,
+          "source": "    val symbols = \"ACBDGHKMNSRUTWVYacbdghkmnsrutwvy\"",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "    val complements = \"TGVHCDMKNSYAAWBRTGVHCDMKNSYAAWBR\"",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "    val mapping = Array.fill(256)(-1)",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "    symbols.indices.foreach(i => mapping(symbols.charAt(i).toInt) = complements.charAt(i).toInt)",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "    val reader = new BufferedReader(new InputStreamReader(System.in, StandardCharsets.ISO_8859_1), 65536)",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "    val output = new BufferedOutputStream(System.out, 65536)",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "    val sequence = new java.lang.StringBuilder",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "    var header: String = null",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "    def emit(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "      if (header != null) {",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "        output.write(header.getBytes(StandardCharsets.ISO_8859_1))",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "        output.write(10)",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "        var i = sequence.length - 1",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "        var column = 0",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "        while (i >= 0) {",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "          val code = sequence.charAt(i).toInt",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "          val complement = mapping(code)",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "          require(complement >= 0, s\"Invalid IUPAC byte: $code\")",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "          output.write(complement)",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "          column += 1",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "          if (column == 60) {",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "            output.write(10)",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "            column = 0",
+          "units": 1,
+          "owner_events": [
+            26
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 37,
+          "source": "          i -= 1",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "        if (column != 0) output.write(10)",
+          "units": 2,
+          "owner_events": [
+            30,
+            31
+          ],
+          "rationale": "If header and unbraced output call"
+        },
+        {
+          "line": 40,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "      sequence.setLength(0)",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "    var line = reader.readLine()",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "    while (line != null) {",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "      if (line.startsWith(\">\")) {",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "        emit()",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "        header = line",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "      } else if (header != null && !line.startsWith(\";\")) sequence.append(line)",
+          "units": 3,
+          "owner_events": [
+            40,
+            41,
+            42
+          ],
+          "rationale": "Written branch close, one joined else-if header, and unbraced append call"
+        },
+        {
+          "line": 50,
+          "source": "      line = reader.readLine()",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "    emit()",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "    output.flush()",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            48
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-revcomp-jvm-v1.json",
+      "projection_sha256": "cea352614ca070be2f5d7ac23ea8a545a02dce7e350ace2c1205f161339d147e"
+    },
+    {
+      "benchmark": "spectralnorm",
+      "source_sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+      "canonical_loc": 60,
+      "physical_loc": 59,
+      "reviewed_owner_events": 61,
+      "unique_tokens_checked": 448,
+      "all_owner_slices_verified": true,
+      "all_application_owners_manually_reviewed": true,
+      "line_accounting": [
+        {
+          "line": 6,
+          "source": "import java.util.Locale",
+          "units": 1,
+          "owner_events": [
+            0
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 7,
+          "source": "import java.util.concurrent.{Callable, ExecutorService, Executors}",
+          "units": 1,
+          "owner_events": [
+            1
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 9,
+          "source": "object Main {",
+          "units": 1,
+          "owner_events": [
+            2
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 10,
+          "source": "  def multiply(input: Array[Double], output: Array[Double], transpose: Boolean,",
+          "units": 1,
+          "owner_events": [
+            3
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 11,
+          "source": "               pool: ExecutorService, workers: Int): Unit = {",
+          "units": 0,
+          "owner_events": [],
+          "rationale": "Formal parameters and opening brace continue the method header"
+        },
+        {
+          "line": 12,
+          "source": "    val n = input.length",
+          "units": 1,
+          "owner_events": [
+            4
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 13,
+          "source": "    val tasks = (0 until workers).map { worker =>",
+          "units": 1,
+          "owner_events": [
+            5
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 14,
+          "source": "      pool.submit(new Callable[Unit] {",
+          "units": 1,
+          "owner_events": [
+            6
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 15,
+          "source": "        def call(): Unit = {",
+          "units": 1,
+          "owner_events": [
+            7
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 16,
+          "source": "          var i = worker * n / workers",
+          "units": 1,
+          "owner_events": [
+            8
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 17,
+          "source": "          val end = (worker + 1) * n / workers",
+          "units": 1,
+          "owner_events": [
+            9
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 18,
+          "source": "          while (i < end) {",
+          "units": 1,
+          "owner_events": [
+            10
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 19,
+          "source": "            var sum = 0.0",
+          "units": 1,
+          "owner_events": [
+            11
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 20,
+          "source": "            var j = 0",
+          "units": 1,
+          "owner_events": [
+            12
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 21,
+          "source": "            while (j < n) {",
+          "units": 1,
+          "owner_events": [
+            13
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 22,
+          "source": "              val row = if (transpose) j else i",
+          "units": 1,
+          "owner_events": [
+            14
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 23,
+          "source": "              val column = if (transpose) i else j",
+          "units": 1,
+          "owner_events": [
+            15
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 24,
+          "source": "              val index = row + column",
+          "units": 1,
+          "owner_events": [
+            16
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 25,
+          "source": "              val denominator = index * (index + 1) / 2 + row + 1",
+          "units": 1,
+          "owner_events": [
+            17
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 26,
+          "source": "              sum += input(j) / denominator",
+          "units": 1,
+          "owner_events": [
+            18
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 27,
+          "source": "              j += 1",
+          "units": 1,
+          "owner_events": [
+            19
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 28,
+          "source": "            }",
+          "units": 1,
+          "owner_events": [
+            20
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 29,
+          "source": "            output(i) = sum",
+          "units": 1,
+          "owner_events": [
+            21
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 30,
+          "source": "            i += 1",
+          "units": 1,
+          "owner_events": [
+            22
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 31,
+          "source": "          }",
+          "units": 1,
+          "owner_events": [
+            23
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 32,
+          "source": "        }",
+          "units": 1,
+          "owner_events": [
+            24
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 33,
+          "source": "      })",
+          "units": 1,
+          "owner_events": [
+            25
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 34,
+          "source": "    }",
+          "units": 1,
+          "owner_events": [
+            27
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 35,
+          "source": "    tasks.foreach(_.get())",
+          "units": 1,
+          "owner_events": [
+            28
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 36,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            29
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 38,
+          "source": "  def main(args: Array[String]): Unit = {",
+          "units": 1,
+          "owner_events": [
+            30
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 39,
+          "source": "    val n = args(0).toInt",
+          "units": 1,
+          "owner_events": [
+            31
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 40,
+          "source": "    require(n > 0)",
+          "units": 1,
+          "owner_events": [
+            32
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 41,
+          "source": "    val u = Array.fill(n)(1.0)",
+          "units": 1,
+          "owner_events": [
+            33
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 42,
+          "source": "    val v = new Array[Double](n)",
+          "units": 1,
+          "owner_events": [
+            34
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 43,
+          "source": "    val temporary = new Array[Double](n)",
+          "units": 1,
+          "owner_events": [
+            35
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 44,
+          "source": "    val workers = math.min(8, Runtime.getRuntime.availableProcessors())",
+          "units": 1,
+          "owner_events": [
+            36
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 45,
+          "source": "    val pool = Executors.newFixedThreadPool(workers)",
+          "units": 1,
+          "owner_events": [
+            37
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 46,
+          "source": "    try {",
+          "units": 1,
+          "owner_events": [
+            38
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 47,
+          "source": "      var iteration = 0",
+          "units": 1,
+          "owner_events": [
+            39
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 48,
+          "source": "      while (iteration < 10) {",
+          "units": 1,
+          "owner_events": [
+            40
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 49,
+          "source": "        multiply(u, temporary, false, pool, workers)",
+          "units": 1,
+          "owner_events": [
+            41
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 50,
+          "source": "        multiply(temporary, v, true, pool, workers)",
+          "units": 1,
+          "owner_events": [
+            42
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 51,
+          "source": "        multiply(v, temporary, false, pool, workers)",
+          "units": 1,
+          "owner_events": [
+            43
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 52,
+          "source": "        multiply(temporary, u, true, pool, workers)",
+          "units": 1,
+          "owner_events": [
+            44
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 53,
+          "source": "        iteration += 1",
+          "units": 1,
+          "owner_events": [
+            45
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 54,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            46
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 55,
+          "source": "      var numerator = 0.0",
+          "units": 1,
+          "owner_events": [
+            47
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 56,
+          "source": "      var denominator = 0.0",
+          "units": 1,
+          "owner_events": [
+            48
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 57,
+          "source": "      var i = 0",
+          "units": 1,
+          "owner_events": [
+            49
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 58,
+          "source": "      while (i < n) {",
+          "units": 1,
+          "owner_events": [
+            50
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 59,
+          "source": "        numerator += u(i) * v(i)",
+          "units": 1,
+          "owner_events": [
+            51
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 60,
+          "source": "        denominator += v(i) * v(i)",
+          "units": 1,
+          "owner_events": [
+            52
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 61,
+          "source": "        i += 1",
+          "units": 1,
+          "owner_events": [
+            53
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 62,
+          "source": "      }",
+          "units": 1,
+          "owner_events": [
+            54
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 63,
+          "source": "      System.out.printf(Locale.ROOT, \"%.9f\\n\", Double.box(math.sqrt(numerator / denominator)))",
+          "units": 1,
+          "owner_events": [
+            55
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 64,
+          "source": "    } finally pool.shutdown()",
+          "units": 3,
+          "owner_events": [
+            56,
+            57,
+            58
+          ],
+          "rationale": "Written try close, finally header, and unbraced shutdown call"
+        },
+        {
+          "line": 65,
+          "source": "  }",
+          "units": 1,
+          "owner_events": [
+            59
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        },
+        {
+          "line": 66,
+          "source": "}",
+          "units": 1,
+          "owner_events": [
+            60
+          ],
+          "rationale": "One authored unit or one retained physical data row"
+        }
+      ],
+      "projection": "scala-spectralnorm-jvm-v1.json",
+      "projection_sha256": "b77a1020b8683c441be8995ec51a83aef56601318093648046363ad90ea5aa13"
+    }
+  ],
+  "native_executions": 0,
+  "source_work_qualified": false,
+  "canonical_LOC_admitted": false,
+  "full_timings_qualified": false,
+  "chart_admission": false
+}

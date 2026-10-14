@@ -1,0 +1,7394 @@
+{
+  "schema": "scala-native-owner-reviewed-projection-v1",
+  "rule": "canonical-source-units-20261012-approved-rule-v2",
+  "source_sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+  "source_bytes": 2161,
+  "physical_loc": 59,
+  "candidate_normalized_loc": 60,
+  "normalized_loc": null,
+  "formatted_loc": null,
+  "application_manual_owner_review_required": true,
+  "canonical_LOC_admitted": false,
+  "chart_admission": false,
+  "diagnostics": [],
+  "canonical_events": [
+    {
+      "id": 0,
+      "kind": "import",
+      "node": 2,
+      "units": 1,
+      "utf16_span": [
+        244,
+        267
+      ],
+      "utf8_span": [
+        244,
+        267
+      ],
+      "source_text": "import java.util.Locale",
+      "token_ids": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "reason": null
+    },
+    {
+      "id": 1,
+      "kind": "import",
+      "node": 8,
+      "units": 1,
+      "utf16_span": [
+        268,
+        334
+      ],
+      "utf8_span": [
+        268,
+        334
+      ],
+      "source_text": "import java.util.concurrent.{Callable, ExecutorService, Executors}",
+      "token_ids": [
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "reason": null
+    },
+    {
+      "id": 2,
+      "kind": "type-or-object-header",
+      "node": 18,
+      "units": 1,
+      "utf16_span": [
+        336,
+        349
+      ],
+      "utf8_span": [
+        336,
+        349
+      ],
+      "source_text": "object Main {",
+      "token_ids": [
+        20,
+        21,
+        22
+      ],
+      "reason": null
+    },
+    {
+      "id": 3,
+      "kind": "method-header",
+      "node": 23,
+      "units": 1,
+      "utf16_span": [
+        352,
+        491
+      ],
+      "utf8_span": [
+        352,
+        491
+      ],
+      "source_text": "def multiply(input: Array[Double], output: Array[Double], transpose: Boolean,\n               pool: ExecutorService, workers: Int): Unit = {",
+      "token_ids": [
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        49,
+        50,
+        51,
+        52,
+        53,
+        54,
+        55
+      ],
+      "reason": null
+    },
+    {
+      "id": 4,
+      "kind": "binding",
+      "node": 40,
+      "units": 1,
+      "utf16_span": [
+        496,
+        516
+      ],
+      "utf8_span": [
+        496,
+        516
+      ],
+      "source_text": "val n = input.length",
+      "token_ids": [
+        56,
+        57,
+        58,
+        59,
+        60,
+        61
+      ],
+      "reason": null
+    },
+    {
+      "id": 5,
+      "kind": "braced-callback-header",
+      "node": 44,
+      "units": 1,
+      "utf16_span": [
+        521,
+        573
+      ],
+      "utf8_span": [
+        521,
+        573
+      ],
+      "source_text": "val tasks = (0 until workers).map { worker =>\n      ",
+      "token_ids": [
+        62,
+        63,
+        64,
+        65,
+        66,
+        67,
+        68,
+        69,
+        70,
+        71,
+        72,
+        73,
+        74
+      ],
+      "reason": null
+    },
+    {
+      "id": 6,
+      "kind": "type-or-object-header",
+      "node": 58,
+      "units": 1,
+      "utf16_span": [
+        573,
+        605
+      ],
+      "utf8_span": [
+        573,
+        605
+      ],
+      "source_text": "pool.submit(new Callable[Unit] {",
+      "token_ids": [
+        75,
+        76,
+        77,
+        78,
+        79,
+        80,
+        81,
+        82,
+        83,
+        84
+      ],
+      "reason": null
+    },
+    {
+      "id": 7,
+      "kind": "method-header",
+      "node": 68,
+      "units": 1,
+      "utf16_span": [
+        614,
+        634
+      ],
+      "utf8_span": [
+        614,
+        634
+      ],
+      "source_text": "def call(): Unit = {",
+      "token_ids": [
+        85,
+        86,
+        87,
+        88,
+        89,
+        90,
+        91,
+        92
+      ],
+      "reason": null
+    },
+    {
+      "id": 8,
+      "kind": "binding",
+      "node": 71,
+      "units": 1,
+      "utf16_span": [
+        645,
+        673
+      ],
+      "utf8_span": [
+        645,
+        673
+      ],
+      "source_text": "var i = worker * n / workers",
+      "token_ids": [
+        93,
+        94,
+        95,
+        96,
+        97,
+        98,
+        99,
+        100
+      ],
+      "reason": null
+    },
+    {
+      "id": 9,
+      "kind": "binding",
+      "node": 81,
+      "units": 1,
+      "utf16_span": [
+        684,
+        720
+      ],
+      "utf8_span": [
+        684,
+        720
+      ],
+      "source_text": "val end = (worker + 1) * n / workers",
+      "token_ids": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        107,
+        108,
+        109,
+        110,
+        111,
+        112
+      ],
+      "reason": null
+    },
+    {
+      "id": 10,
+      "kind": "while-header",
+      "node": 94,
+      "units": 1,
+      "utf16_span": [
+        731,
+        748
+      ],
+      "utf8_span": [
+        731,
+        748
+      ],
+      "source_text": "while (i < end) {",
+      "token_ids": [
+        113,
+        114,
+        115,
+        116,
+        117,
+        118,
+        119
+      ],
+      "reason": null
+    },
+    {
+      "id": 11,
+      "kind": "binding",
+      "node": 101,
+      "units": 1,
+      "utf16_span": [
+        761,
+        774
+      ],
+      "utf8_span": [
+        761,
+        774
+      ],
+      "source_text": "var sum = 0.0",
+      "token_ids": [
+        120,
+        121,
+        122,
+        123
+      ],
+      "reason": null
+    },
+    {
+      "id": 12,
+      "kind": "binding",
+      "node": 105,
+      "units": 1,
+      "utf16_span": [
+        787,
+        796
+      ],
+      "utf8_span": [
+        787,
+        796
+      ],
+      "source_text": "var j = 0",
+      "token_ids": [
+        124,
+        125,
+        126,
+        127
+      ],
+      "reason": null
+    },
+    {
+      "id": 13,
+      "kind": "while-header",
+      "node": 109,
+      "units": 1,
+      "utf16_span": [
+        809,
+        824
+      ],
+      "utf8_span": [
+        809,
+        824
+      ],
+      "source_text": "while (j < n) {",
+      "token_ids": [
+        128,
+        129,
+        130,
+        131,
+        132,
+        133,
+        134
+      ],
+      "reason": null
+    },
+    {
+      "id": 14,
+      "kind": "binding",
+      "node": 116,
+      "units": 1,
+      "utf16_span": [
+        839,
+        872
+      ],
+      "utf8_span": [
+        839,
+        872
+      ],
+      "source_text": "val row = if (transpose) j else i",
+      "token_ids": [
+        135,
+        136,
+        137,
+        138,
+        139,
+        140,
+        141,
+        142,
+        143,
+        144
+      ],
+      "reason": null
+    },
+    {
+      "id": 15,
+      "kind": "binding",
+      "node": 123,
+      "units": 1,
+      "utf16_span": [
+        887,
+        923
+      ],
+      "utf8_span": [
+        887,
+        923
+      ],
+      "source_text": "val column = if (transpose) i else j",
+      "token_ids": [
+        145,
+        146,
+        147,
+        148,
+        149,
+        150,
+        151,
+        152,
+        153,
+        154
+      ],
+      "reason": null
+    },
+    {
+      "id": 16,
+      "kind": "binding",
+      "node": 130,
+      "units": 1,
+      "utf16_span": [
+        938,
+        962
+      ],
+      "utf8_span": [
+        938,
+        962
+      ],
+      "source_text": "val index = row + column",
+      "token_ids": [
+        155,
+        156,
+        157,
+        158,
+        159,
+        160
+      ],
+      "reason": null
+    },
+    {
+      "id": 17,
+      "kind": "binding",
+      "node": 136,
+      "units": 1,
+      "utf16_span": [
+        977,
+        1028
+      ],
+      "utf8_span": [
+        977,
+        1028
+      ],
+      "source_text": "val denominator = index * (index + 1) / 2 + row + 1",
+      "token_ids": [
+        161,
+        162,
+        163,
+        164,
+        165,
+        166,
+        167,
+        168,
+        169,
+        170,
+        171,
+        172,
+        173,
+        174,
+        175,
+        176
+      ],
+      "reason": null
+    },
+    {
+      "id": 18,
+      "kind": "expression-statement",
+      "node": 155,
+      "units": 1,
+      "utf16_span": [
+        1043,
+        1072
+      ],
+      "utf8_span": [
+        1043,
+        1072
+      ],
+      "source_text": "sum += input(j) / denominator",
+      "token_ids": [
+        177,
+        178,
+        179,
+        180,
+        181,
+        182,
+        183,
+        184
+      ],
+      "reason": null
+    },
+    {
+      "id": 19,
+      "kind": "expression-statement",
+      "node": 164,
+      "units": 1,
+      "utf16_span": [
+        1087,
+        1093
+      ],
+      "utf8_span": [
+        1087,
+        1093
+      ],
+      "source_text": "j += 1",
+      "token_ids": [
+        185,
+        186,
+        187
+      ],
+      "reason": null
+    },
+    {
+      "id": 20,
+      "kind": "written-close",
+      "node": 109,
+      "units": 1,
+      "utf16_span": [
+        1106,
+        1107
+      ],
+      "utf8_span": [
+        1106,
+        1107
+      ],
+      "source_text": "}",
+      "token_ids": [
+        188
+      ],
+      "reason": null
+    },
+    {
+      "id": 21,
+      "kind": "statement",
+      "node": 168,
+      "units": 1,
+      "utf16_span": [
+        1120,
+        1135
+      ],
+      "utf8_span": [
+        1120,
+        1135
+      ],
+      "source_text": "output(i) = sum",
+      "token_ids": [
+        189,
+        190,
+        191,
+        192,
+        193,
+        194
+      ],
+      "reason": null
+    },
+    {
+      "id": 22,
+      "kind": "expression-statement",
+      "node": 173,
+      "units": 1,
+      "utf16_span": [
+        1148,
+        1154
+      ],
+      "utf8_span": [
+        1148,
+        1154
+      ],
+      "source_text": "i += 1",
+      "token_ids": [
+        195,
+        196,
+        197
+      ],
+      "reason": null
+    },
+    {
+      "id": 23,
+      "kind": "written-close",
+      "node": 94,
+      "units": 1,
+      "utf16_span": [
+        1165,
+        1166
+      ],
+      "utf8_span": [
+        1165,
+        1166
+      ],
+      "source_text": "}",
+      "token_ids": [
+        198
+      ],
+      "reason": null
+    },
+    {
+      "id": 24,
+      "kind": "written-close",
+      "node": 68,
+      "units": 1,
+      "utf16_span": [
+        1175,
+        1176
+      ],
+      "utf8_span": [
+        1175,
+        1176
+      ],
+      "source_text": "}",
+      "token_ids": [
+        199
+      ],
+      "reason": null
+    },
+    {
+      "id": 25,
+      "kind": "written-close",
+      "node": 58,
+      "units": 1,
+      "utf16_span": [
+        1183,
+        1184
+      ],
+      "utf8_span": [
+        1183,
+        1184
+      ],
+      "source_text": "}",
+      "token_ids": [
+        200
+      ],
+      "reason": null
+    },
+    {
+      "id": 26,
+      "kind": "structural-separator",
+      "node": 58,
+      "units": 0,
+      "utf16_span": [
+        1184,
+        1185
+      ],
+      "utf8_span": [
+        1184,
+        1185
+      ],
+      "source_text": ")",
+      "token_ids": [
+        201
+      ],
+      "reason": null
+    },
+    {
+      "id": 27,
+      "kind": "written-close",
+      "node": 53,
+      "units": 1,
+      "utf16_span": [
+        1190,
+        1191
+      ],
+      "utf8_span": [
+        1190,
+        1191
+      ],
+      "source_text": "}",
+      "token_ids": [
+        202
+      ],
+      "reason": null
+    },
+    {
+      "id": 28,
+      "kind": "expression-statement",
+      "node": 177,
+      "units": 1,
+      "utf16_span": [
+        1196,
+        1218
+      ],
+      "utf8_span": [
+        1196,
+        1218
+      ],
+      "source_text": "tasks.foreach(_.get())",
+      "token_ids": [
+        203,
+        204,
+        205,
+        206,
+        207,
+        208,
+        209,
+        210,
+        211,
+        212
+      ],
+      "reason": null
+    },
+    {
+      "id": 29,
+      "kind": "written-close",
+      "node": 23,
+      "units": 1,
+      "utf16_span": [
+        1221,
+        1222
+      ],
+      "utf8_span": [
+        1221,
+        1222
+      ],
+      "source_text": "}",
+      "token_ids": [
+        213
+      ],
+      "reason": null
+    },
+    {
+      "id": 30,
+      "kind": "method-header",
+      "node": 186,
+      "units": 1,
+      "utf16_span": [
+        1226,
+        1265
+      ],
+      "utf8_span": [
+        1226,
+        1265
+      ],
+      "source_text": "def main(args: Array[String]): Unit = {",
+      "token_ids": [
+        214,
+        215,
+        216,
+        217,
+        218,
+        219,
+        220,
+        221,
+        222,
+        223,
+        224,
+        225,
+        226,
+        227
+      ],
+      "reason": null
+    },
+    {
+      "id": 31,
+      "kind": "binding",
+      "node": 193,
+      "units": 1,
+      "utf16_span": [
+        1270,
+        1291
+      ],
+      "utf8_span": [
+        1270,
+        1291
+      ],
+      "source_text": "val n = args(0).toInt",
+      "token_ids": [
+        228,
+        229,
+        230,
+        231,
+        232,
+        233,
+        234,
+        235,
+        236
+      ],
+      "reason": null
+    },
+    {
+      "id": 32,
+      "kind": "expression-statement",
+      "node": 199,
+      "units": 1,
+      "utf16_span": [
+        1296,
+        1310
+      ],
+      "utf8_span": [
+        1296,
+        1310
+      ],
+      "source_text": "require(n > 0)",
+      "token_ids": [
+        237,
+        238,
+        239,
+        240,
+        241,
+        242
+      ],
+      "reason": null
+    },
+    {
+      "id": 33,
+      "kind": "binding",
+      "node": 205,
+      "units": 1,
+      "utf16_span": [
+        1315,
+        1341
+      ],
+      "utf8_span": [
+        1315,
+        1341
+      ],
+      "source_text": "val u = Array.fill(n)(1.0)",
+      "token_ids": [
+        243,
+        244,
+        245,
+        246,
+        247,
+        248,
+        249,
+        250,
+        251,
+        252,
+        253,
+        254
+      ],
+      "reason": null
+    },
+    {
+      "id": 34,
+      "kind": "binding",
+      "node": 213,
+      "units": 1,
+      "utf16_span": [
+        1346,
+        1374
+      ],
+      "utf8_span": [
+        1346,
+        1374
+      ],
+      "source_text": "val v = new Array[Double](n)",
+      "token_ids": [
+        255,
+        256,
+        257,
+        258,
+        259,
+        260,
+        261,
+        262,
+        263,
+        264,
+        265
+      ],
+      "reason": null
+    },
+    {
+      "id": 35,
+      "kind": "binding",
+      "node": 222,
+      "units": 1,
+      "utf16_span": [
+        1379,
+        1415
+      ],
+      "utf8_span": [
+        1379,
+        1415
+      ],
+      "source_text": "val temporary = new Array[Double](n)",
+      "token_ids": [
+        266,
+        267,
+        268,
+        269,
+        270,
+        271,
+        272,
+        273,
+        274,
+        275,
+        276
+      ],
+      "reason": null
+    },
+    {
+      "id": 36,
+      "kind": "binding",
+      "node": 231,
+      "units": 1,
+      "utf16_span": [
+        1420,
+        1487
+      ],
+      "utf8_span": [
+        1420,
+        1487
+      ],
+      "source_text": "val workers = math.min(8, Runtime.getRuntime.availableProcessors())",
+      "token_ids": [
+        277,
+        278,
+        279,
+        280,
+        281,
+        282,
+        283,
+        284,
+        285,
+        286,
+        287,
+        288,
+        289,
+        290,
+        291,
+        292,
+        293
+      ],
+      "reason": null
+    },
+    {
+      "id": 37,
+      "kind": "binding",
+      "node": 241,
+      "units": 1,
+      "utf16_span": [
+        1492,
+        1540
+      ],
+      "utf8_span": [
+        1492,
+        1540
+      ],
+      "source_text": "val pool = Executors.newFixedThreadPool(workers)",
+      "token_ids": [
+        294,
+        295,
+        296,
+        297,
+        298,
+        299,
+        300,
+        301,
+        302
+      ],
+      "reason": null
+    },
+    {
+      "id": 38,
+      "kind": "try-header",
+      "node": 247,
+      "units": 1,
+      "utf16_span": [
+        1545,
+        1550
+      ],
+      "utf8_span": [
+        1545,
+        1550
+      ],
+      "source_text": "try {",
+      "token_ids": [
+        303,
+        304
+      ],
+      "reason": null
+    },
+    {
+      "id": 39,
+      "kind": "binding",
+      "node": 249,
+      "units": 1,
+      "utf16_span": [
+        1557,
+        1574
+      ],
+      "utf8_span": [
+        1557,
+        1574
+      ],
+      "source_text": "var iteration = 0",
+      "token_ids": [
+        305,
+        306,
+        307,
+        308
+      ],
+      "reason": null
+    },
+    {
+      "id": 40,
+      "kind": "while-header",
+      "node": 253,
+      "units": 1,
+      "utf16_span": [
+        1581,
+        1605
+      ],
+      "utf8_span": [
+        1581,
+        1605
+      ],
+      "source_text": "while (iteration < 10) {",
+      "token_ids": [
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315
+      ],
+      "reason": null
+    },
+    {
+      "id": 41,
+      "kind": "expression-statement",
+      "node": 260,
+      "units": 1,
+      "utf16_span": [
+        1614,
+        1658
+      ],
+      "utf8_span": [
+        1614,
+        1658
+      ],
+      "source_text": "multiply(u, temporary, false, pool, workers)",
+      "token_ids": [
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323,
+        324,
+        325,
+        326,
+        327
+      ],
+      "reason": null
+    },
+    {
+      "id": 42,
+      "kind": "expression-statement",
+      "node": 267,
+      "units": 1,
+      "utf16_span": [
+        1667,
+        1710
+      ],
+      "utf8_span": [
+        1667,
+        1710
+      ],
+      "source_text": "multiply(temporary, v, true, pool, workers)",
+      "token_ids": [
+        328,
+        329,
+        330,
+        331,
+        332,
+        333,
+        334,
+        335,
+        336,
+        337,
+        338,
+        339
+      ],
+      "reason": null
+    },
+    {
+      "id": 43,
+      "kind": "expression-statement",
+      "node": 274,
+      "units": 1,
+      "utf16_span": [
+        1719,
+        1763
+      ],
+      "utf8_span": [
+        1719,
+        1763
+      ],
+      "source_text": "multiply(v, temporary, false, pool, workers)",
+      "token_ids": [
+        340,
+        341,
+        342,
+        343,
+        344,
+        345,
+        346,
+        347,
+        348,
+        349,
+        350,
+        351
+      ],
+      "reason": null
+    },
+    {
+      "id": 44,
+      "kind": "expression-statement",
+      "node": 281,
+      "units": 1,
+      "utf16_span": [
+        1772,
+        1815
+      ],
+      "utf8_span": [
+        1772,
+        1815
+      ],
+      "source_text": "multiply(temporary, u, true, pool, workers)",
+      "token_ids": [
+        352,
+        353,
+        354,
+        355,
+        356,
+        357,
+        358,
+        359,
+        360,
+        361,
+        362,
+        363
+      ],
+      "reason": null
+    },
+    {
+      "id": 45,
+      "kind": "expression-statement",
+      "node": 288,
+      "units": 1,
+      "utf16_span": [
+        1824,
+        1838
+      ],
+      "utf8_span": [
+        1824,
+        1838
+      ],
+      "source_text": "iteration += 1",
+      "token_ids": [
+        364,
+        365,
+        366
+      ],
+      "reason": null
+    },
+    {
+      "id": 46,
+      "kind": "written-close",
+      "node": 253,
+      "units": 1,
+      "utf16_span": [
+        1845,
+        1846
+      ],
+      "utf8_span": [
+        1845,
+        1846
+      ],
+      "source_text": "}",
+      "token_ids": [
+        367
+      ],
+      "reason": null
+    },
+    {
+      "id": 47,
+      "kind": "binding",
+      "node": 292,
+      "units": 1,
+      "utf16_span": [
+        1853,
+        1872
+      ],
+      "utf8_span": [
+        1853,
+        1872
+      ],
+      "source_text": "var numerator = 0.0",
+      "token_ids": [
+        368,
+        369,
+        370,
+        371
+      ],
+      "reason": null
+    },
+    {
+      "id": 48,
+      "kind": "binding",
+      "node": 296,
+      "units": 1,
+      "utf16_span": [
+        1879,
+        1900
+      ],
+      "utf8_span": [
+        1879,
+        1900
+      ],
+      "source_text": "var denominator = 0.0",
+      "token_ids": [
+        372,
+        373,
+        374,
+        375
+      ],
+      "reason": null
+    },
+    {
+      "id": 49,
+      "kind": "binding",
+      "node": 300,
+      "units": 1,
+      "utf16_span": [
+        1907,
+        1916
+      ],
+      "utf8_span": [
+        1907,
+        1916
+      ],
+      "source_text": "var i = 0",
+      "token_ids": [
+        376,
+        377,
+        378,
+        379
+      ],
+      "reason": null
+    },
+    {
+      "id": 50,
+      "kind": "while-header",
+      "node": 304,
+      "units": 1,
+      "utf16_span": [
+        1923,
+        1938
+      ],
+      "utf8_span": [
+        1923,
+        1938
+      ],
+      "source_text": "while (i < n) {",
+      "token_ids": [
+        380,
+        381,
+        382,
+        383,
+        384,
+        385,
+        386
+      ],
+      "reason": null
+    },
+    {
+      "id": 51,
+      "kind": "expression-statement",
+      "node": 311,
+      "units": 1,
+      "utf16_span": [
+        1947,
+        1971
+      ],
+      "utf8_span": [
+        1947,
+        1971
+      ],
+      "source_text": "numerator += u(i) * v(i)",
+      "token_ids": [
+        387,
+        388,
+        389,
+        390,
+        391,
+        392,
+        393,
+        394,
+        395,
+        396,
+        397
+      ],
+      "reason": null
+    },
+    {
+      "id": 52,
+      "kind": "expression-statement",
+      "node": 322,
+      "units": 1,
+      "utf16_span": [
+        1980,
+        2006
+      ],
+      "utf8_span": [
+        1980,
+        2006
+      ],
+      "source_text": "denominator += v(i) * v(i)",
+      "token_ids": [
+        398,
+        399,
+        400,
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408
+      ],
+      "reason": null
+    },
+    {
+      "id": 53,
+      "kind": "expression-statement",
+      "node": 333,
+      "units": 1,
+      "utf16_span": [
+        2015,
+        2021
+      ],
+      "utf8_span": [
+        2015,
+        2021
+      ],
+      "source_text": "i += 1",
+      "token_ids": [
+        409,
+        410,
+        411
+      ],
+      "reason": null
+    },
+    {
+      "id": 54,
+      "kind": "written-close",
+      "node": 304,
+      "units": 1,
+      "utf16_span": [
+        2028,
+        2029
+      ],
+      "utf8_span": [
+        2028,
+        2029
+      ],
+      "source_text": "}",
+      "token_ids": [
+        412
+      ],
+      "reason": null
+    },
+    {
+      "id": 55,
+      "kind": "expression-statement",
+      "node": 337,
+      "units": 1,
+      "utf16_span": [
+        2036,
+        2124
+      ],
+      "utf8_span": [
+        2036,
+        2124
+      ],
+      "source_text": "System.out.printf(Locale.ROOT, \"%.9f\\n\", Double.box(math.sqrt(numerator / denominator)))",
+      "token_ids": [
+        413,
+        414,
+        415,
+        416,
+        417,
+        418,
+        419,
+        420,
+        421,
+        422,
+        423,
+        424,
+        425,
+        426,
+        427,
+        428,
+        429,
+        430,
+        431,
+        432,
+        433,
+        434,
+        435,
+        436,
+        437,
+        438
+      ],
+      "reason": null
+    },
+    {
+      "id": 56,
+      "kind": "written-close",
+      "node": 247,
+      "units": 1,
+      "utf16_span": [
+        2129,
+        2130
+      ],
+      "utf8_span": [
+        2129,
+        2130
+      ],
+      "source_text": "}",
+      "token_ids": [
+        439
+      ],
+      "reason": null
+    },
+    {
+      "id": 57,
+      "kind": "finally-header",
+      "node": 247,
+      "units": 1,
+      "utf16_span": [
+        2131,
+        2139
+      ],
+      "utf8_span": [
+        2131,
+        2139
+      ],
+      "source_text": "finally ",
+      "token_ids": [
+        440
+      ],
+      "reason": null
+    },
+    {
+      "id": 58,
+      "kind": "expression-statement",
+      "node": 354,
+      "units": 1,
+      "utf16_span": [
+        2139,
+        2154
+      ],
+      "utf8_span": [
+        2139,
+        2154
+      ],
+      "source_text": "pool.shutdown()",
+      "token_ids": [
+        441,
+        442,
+        443,
+        444,
+        445
+      ],
+      "reason": null
+    },
+    {
+      "id": 59,
+      "kind": "written-close",
+      "node": 186,
+      "units": 1,
+      "utf16_span": [
+        2157,
+        2158
+      ],
+      "utf8_span": [
+        2157,
+        2158
+      ],
+      "source_text": "}",
+      "token_ids": [
+        446
+      ],
+      "reason": null
+    },
+    {
+      "id": 60,
+      "kind": "written-close",
+      "node": 18,
+      "units": 1,
+      "utf16_span": [
+        2159,
+        2160
+      ],
+      "utf8_span": [
+        2159,
+        2160
+      ],
+      "source_text": "}",
+      "token_ids": [
+        447
+      ],
+      "reason": null
+    }
+  ],
+  "token_ownership": [
+    {
+      "token_id": 0,
+      "owner_event": 0,
+      "utf16_span": [
+        244,
+        250
+      ],
+      "utf8_span": [
+        244,
+        250
+      ],
+      "source_text": "import"
+    },
+    {
+      "token_id": 1,
+      "owner_event": 0,
+      "utf16_span": [
+        251,
+        255
+      ],
+      "utf8_span": [
+        251,
+        255
+      ],
+      "source_text": "java"
+    },
+    {
+      "token_id": 2,
+      "owner_event": 0,
+      "utf16_span": [
+        255,
+        256
+      ],
+      "utf8_span": [
+        255,
+        256
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 3,
+      "owner_event": 0,
+      "utf16_span": [
+        256,
+        260
+      ],
+      "utf8_span": [
+        256,
+        260
+      ],
+      "source_text": "util"
+    },
+    {
+      "token_id": 4,
+      "owner_event": 0,
+      "utf16_span": [
+        260,
+        261
+      ],
+      "utf8_span": [
+        260,
+        261
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 5,
+      "owner_event": 0,
+      "utf16_span": [
+        261,
+        267
+      ],
+      "utf8_span": [
+        261,
+        267
+      ],
+      "source_text": "Locale"
+    },
+    {
+      "token_id": 6,
+      "owner_event": 1,
+      "utf16_span": [
+        268,
+        274
+      ],
+      "utf8_span": [
+        268,
+        274
+      ],
+      "source_text": "import"
+    },
+    {
+      "token_id": 7,
+      "owner_event": 1,
+      "utf16_span": [
+        275,
+        279
+      ],
+      "utf8_span": [
+        275,
+        279
+      ],
+      "source_text": "java"
+    },
+    {
+      "token_id": 8,
+      "owner_event": 1,
+      "utf16_span": [
+        279,
+        280
+      ],
+      "utf8_span": [
+        279,
+        280
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 9,
+      "owner_event": 1,
+      "utf16_span": [
+        280,
+        284
+      ],
+      "utf8_span": [
+        280,
+        284
+      ],
+      "source_text": "util"
+    },
+    {
+      "token_id": 10,
+      "owner_event": 1,
+      "utf16_span": [
+        284,
+        285
+      ],
+      "utf8_span": [
+        284,
+        285
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 11,
+      "owner_event": 1,
+      "utf16_span": [
+        285,
+        295
+      ],
+      "utf8_span": [
+        285,
+        295
+      ],
+      "source_text": "concurrent"
+    },
+    {
+      "token_id": 12,
+      "owner_event": 1,
+      "utf16_span": [
+        295,
+        296
+      ],
+      "utf8_span": [
+        295,
+        296
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 13,
+      "owner_event": 1,
+      "utf16_span": [
+        296,
+        297
+      ],
+      "utf8_span": [
+        296,
+        297
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 14,
+      "owner_event": 1,
+      "utf16_span": [
+        297,
+        305
+      ],
+      "utf8_span": [
+        297,
+        305
+      ],
+      "source_text": "Callable"
+    },
+    {
+      "token_id": 15,
+      "owner_event": 1,
+      "utf16_span": [
+        305,
+        306
+      ],
+      "utf8_span": [
+        305,
+        306
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 16,
+      "owner_event": 1,
+      "utf16_span": [
+        307,
+        322
+      ],
+      "utf8_span": [
+        307,
+        322
+      ],
+      "source_text": "ExecutorService"
+    },
+    {
+      "token_id": 17,
+      "owner_event": 1,
+      "utf16_span": [
+        322,
+        323
+      ],
+      "utf8_span": [
+        322,
+        323
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 18,
+      "owner_event": 1,
+      "utf16_span": [
+        324,
+        333
+      ],
+      "utf8_span": [
+        324,
+        333
+      ],
+      "source_text": "Executors"
+    },
+    {
+      "token_id": 19,
+      "owner_event": 1,
+      "utf16_span": [
+        333,
+        334
+      ],
+      "utf8_span": [
+        333,
+        334
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 20,
+      "owner_event": 2,
+      "utf16_span": [
+        336,
+        342
+      ],
+      "utf8_span": [
+        336,
+        342
+      ],
+      "source_text": "object"
+    },
+    {
+      "token_id": 21,
+      "owner_event": 2,
+      "utf16_span": [
+        343,
+        347
+      ],
+      "utf8_span": [
+        343,
+        347
+      ],
+      "source_text": "Main"
+    },
+    {
+      "token_id": 22,
+      "owner_event": 2,
+      "utf16_span": [
+        348,
+        349
+      ],
+      "utf8_span": [
+        348,
+        349
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 23,
+      "owner_event": 3,
+      "utf16_span": [
+        352,
+        355
+      ],
+      "utf8_span": [
+        352,
+        355
+      ],
+      "source_text": "def"
+    },
+    {
+      "token_id": 24,
+      "owner_event": 3,
+      "utf16_span": [
+        356,
+        364
+      ],
+      "utf8_span": [
+        356,
+        364
+      ],
+      "source_text": "multiply"
+    },
+    {
+      "token_id": 25,
+      "owner_event": 3,
+      "utf16_span": [
+        364,
+        365
+      ],
+      "utf8_span": [
+        364,
+        365
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 26,
+      "owner_event": 3,
+      "utf16_span": [
+        365,
+        370
+      ],
+      "utf8_span": [
+        365,
+        370
+      ],
+      "source_text": "input"
+    },
+    {
+      "token_id": 27,
+      "owner_event": 3,
+      "utf16_span": [
+        370,
+        371
+      ],
+      "utf8_span": [
+        370,
+        371
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 28,
+      "owner_event": 3,
+      "utf16_span": [
+        372,
+        377
+      ],
+      "utf8_span": [
+        372,
+        377
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 29,
+      "owner_event": 3,
+      "utf16_span": [
+        377,
+        378
+      ],
+      "utf8_span": [
+        377,
+        378
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 30,
+      "owner_event": 3,
+      "utf16_span": [
+        378,
+        384
+      ],
+      "utf8_span": [
+        378,
+        384
+      ],
+      "source_text": "Double"
+    },
+    {
+      "token_id": 31,
+      "owner_event": 3,
+      "utf16_span": [
+        384,
+        385
+      ],
+      "utf8_span": [
+        384,
+        385
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 32,
+      "owner_event": 3,
+      "utf16_span": [
+        385,
+        386
+      ],
+      "utf8_span": [
+        385,
+        386
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 33,
+      "owner_event": 3,
+      "utf16_span": [
+        387,
+        393
+      ],
+      "utf8_span": [
+        387,
+        393
+      ],
+      "source_text": "output"
+    },
+    {
+      "token_id": 34,
+      "owner_event": 3,
+      "utf16_span": [
+        393,
+        394
+      ],
+      "utf8_span": [
+        393,
+        394
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 35,
+      "owner_event": 3,
+      "utf16_span": [
+        395,
+        400
+      ],
+      "utf8_span": [
+        395,
+        400
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 36,
+      "owner_event": 3,
+      "utf16_span": [
+        400,
+        401
+      ],
+      "utf8_span": [
+        400,
+        401
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 37,
+      "owner_event": 3,
+      "utf16_span": [
+        401,
+        407
+      ],
+      "utf8_span": [
+        401,
+        407
+      ],
+      "source_text": "Double"
+    },
+    {
+      "token_id": 38,
+      "owner_event": 3,
+      "utf16_span": [
+        407,
+        408
+      ],
+      "utf8_span": [
+        407,
+        408
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 39,
+      "owner_event": 3,
+      "utf16_span": [
+        408,
+        409
+      ],
+      "utf8_span": [
+        408,
+        409
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 40,
+      "owner_event": 3,
+      "utf16_span": [
+        410,
+        419
+      ],
+      "utf8_span": [
+        410,
+        419
+      ],
+      "source_text": "transpose"
+    },
+    {
+      "token_id": 41,
+      "owner_event": 3,
+      "utf16_span": [
+        419,
+        420
+      ],
+      "utf8_span": [
+        419,
+        420
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 42,
+      "owner_event": 3,
+      "utf16_span": [
+        421,
+        428
+      ],
+      "utf8_span": [
+        421,
+        428
+      ],
+      "source_text": "Boolean"
+    },
+    {
+      "token_id": 43,
+      "owner_event": 3,
+      "utf16_span": [
+        428,
+        429
+      ],
+      "utf8_span": [
+        428,
+        429
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 44,
+      "owner_event": 3,
+      "utf16_span": [
+        445,
+        449
+      ],
+      "utf8_span": [
+        445,
+        449
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 45,
+      "owner_event": 3,
+      "utf16_span": [
+        449,
+        450
+      ],
+      "utf8_span": [
+        449,
+        450
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 46,
+      "owner_event": 3,
+      "utf16_span": [
+        451,
+        466
+      ],
+      "utf8_span": [
+        451,
+        466
+      ],
+      "source_text": "ExecutorService"
+    },
+    {
+      "token_id": 47,
+      "owner_event": 3,
+      "utf16_span": [
+        466,
+        467
+      ],
+      "utf8_span": [
+        466,
+        467
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 48,
+      "owner_event": 3,
+      "utf16_span": [
+        468,
+        475
+      ],
+      "utf8_span": [
+        468,
+        475
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 49,
+      "owner_event": 3,
+      "utf16_span": [
+        475,
+        476
+      ],
+      "utf8_span": [
+        475,
+        476
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 50,
+      "owner_event": 3,
+      "utf16_span": [
+        477,
+        480
+      ],
+      "utf8_span": [
+        477,
+        480
+      ],
+      "source_text": "Int"
+    },
+    {
+      "token_id": 51,
+      "owner_event": 3,
+      "utf16_span": [
+        480,
+        481
+      ],
+      "utf8_span": [
+        480,
+        481
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 52,
+      "owner_event": 3,
+      "utf16_span": [
+        481,
+        482
+      ],
+      "utf8_span": [
+        481,
+        482
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 53,
+      "owner_event": 3,
+      "utf16_span": [
+        483,
+        487
+      ],
+      "utf8_span": [
+        483,
+        487
+      ],
+      "source_text": "Unit"
+    },
+    {
+      "token_id": 54,
+      "owner_event": 3,
+      "utf16_span": [
+        488,
+        489
+      ],
+      "utf8_span": [
+        488,
+        489
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 55,
+      "owner_event": 3,
+      "utf16_span": [
+        490,
+        491
+      ],
+      "utf8_span": [
+        490,
+        491
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 56,
+      "owner_event": 4,
+      "utf16_span": [
+        496,
+        499
+      ],
+      "utf8_span": [
+        496,
+        499
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 57,
+      "owner_event": 4,
+      "utf16_span": [
+        500,
+        501
+      ],
+      "utf8_span": [
+        500,
+        501
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 58,
+      "owner_event": 4,
+      "utf16_span": [
+        502,
+        503
+      ],
+      "utf8_span": [
+        502,
+        503
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 59,
+      "owner_event": 4,
+      "utf16_span": [
+        504,
+        509
+      ],
+      "utf8_span": [
+        504,
+        509
+      ],
+      "source_text": "input"
+    },
+    {
+      "token_id": 60,
+      "owner_event": 4,
+      "utf16_span": [
+        509,
+        510
+      ],
+      "utf8_span": [
+        509,
+        510
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 61,
+      "owner_event": 4,
+      "utf16_span": [
+        510,
+        516
+      ],
+      "utf8_span": [
+        510,
+        516
+      ],
+      "source_text": "length"
+    },
+    {
+      "token_id": 62,
+      "owner_event": 5,
+      "utf16_span": [
+        521,
+        524
+      ],
+      "utf8_span": [
+        521,
+        524
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 63,
+      "owner_event": 5,
+      "utf16_span": [
+        525,
+        530
+      ],
+      "utf8_span": [
+        525,
+        530
+      ],
+      "source_text": "tasks"
+    },
+    {
+      "token_id": 64,
+      "owner_event": 5,
+      "utf16_span": [
+        531,
+        532
+      ],
+      "utf8_span": [
+        531,
+        532
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 65,
+      "owner_event": 5,
+      "utf16_span": [
+        533,
+        534
+      ],
+      "utf8_span": [
+        533,
+        534
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 66,
+      "owner_event": 5,
+      "utf16_span": [
+        534,
+        535
+      ],
+      "utf8_span": [
+        534,
+        535
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 67,
+      "owner_event": 5,
+      "utf16_span": [
+        536,
+        541
+      ],
+      "utf8_span": [
+        536,
+        541
+      ],
+      "source_text": "until"
+    },
+    {
+      "token_id": 68,
+      "owner_event": 5,
+      "utf16_span": [
+        542,
+        549
+      ],
+      "utf8_span": [
+        542,
+        549
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 69,
+      "owner_event": 5,
+      "utf16_span": [
+        549,
+        550
+      ],
+      "utf8_span": [
+        549,
+        550
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 70,
+      "owner_event": 5,
+      "utf16_span": [
+        550,
+        551
+      ],
+      "utf8_span": [
+        550,
+        551
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 71,
+      "owner_event": 5,
+      "utf16_span": [
+        551,
+        554
+      ],
+      "utf8_span": [
+        551,
+        554
+      ],
+      "source_text": "map"
+    },
+    {
+      "token_id": 72,
+      "owner_event": 5,
+      "utf16_span": [
+        555,
+        556
+      ],
+      "utf8_span": [
+        555,
+        556
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 73,
+      "owner_event": 5,
+      "utf16_span": [
+        557,
+        563
+      ],
+      "utf8_span": [
+        557,
+        563
+      ],
+      "source_text": "worker"
+    },
+    {
+      "token_id": 74,
+      "owner_event": 5,
+      "utf16_span": [
+        564,
+        566
+      ],
+      "utf8_span": [
+        564,
+        566
+      ],
+      "source_text": "=>"
+    },
+    {
+      "token_id": 75,
+      "owner_event": 6,
+      "utf16_span": [
+        573,
+        577
+      ],
+      "utf8_span": [
+        573,
+        577
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 76,
+      "owner_event": 6,
+      "utf16_span": [
+        577,
+        578
+      ],
+      "utf8_span": [
+        577,
+        578
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 77,
+      "owner_event": 6,
+      "utf16_span": [
+        578,
+        584
+      ],
+      "utf8_span": [
+        578,
+        584
+      ],
+      "source_text": "submit"
+    },
+    {
+      "token_id": 78,
+      "owner_event": 6,
+      "utf16_span": [
+        584,
+        585
+      ],
+      "utf8_span": [
+        584,
+        585
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 79,
+      "owner_event": 6,
+      "utf16_span": [
+        585,
+        588
+      ],
+      "utf8_span": [
+        585,
+        588
+      ],
+      "source_text": "new"
+    },
+    {
+      "token_id": 80,
+      "owner_event": 6,
+      "utf16_span": [
+        589,
+        597
+      ],
+      "utf8_span": [
+        589,
+        597
+      ],
+      "source_text": "Callable"
+    },
+    {
+      "token_id": 81,
+      "owner_event": 6,
+      "utf16_span": [
+        597,
+        598
+      ],
+      "utf8_span": [
+        597,
+        598
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 82,
+      "owner_event": 6,
+      "utf16_span": [
+        598,
+        602
+      ],
+      "utf8_span": [
+        598,
+        602
+      ],
+      "source_text": "Unit"
+    },
+    {
+      "token_id": 83,
+      "owner_event": 6,
+      "utf16_span": [
+        602,
+        603
+      ],
+      "utf8_span": [
+        602,
+        603
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 84,
+      "owner_event": 6,
+      "utf16_span": [
+        604,
+        605
+      ],
+      "utf8_span": [
+        604,
+        605
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 85,
+      "owner_event": 7,
+      "utf16_span": [
+        614,
+        617
+      ],
+      "utf8_span": [
+        614,
+        617
+      ],
+      "source_text": "def"
+    },
+    {
+      "token_id": 86,
+      "owner_event": 7,
+      "utf16_span": [
+        618,
+        622
+      ],
+      "utf8_span": [
+        618,
+        622
+      ],
+      "source_text": "call"
+    },
+    {
+      "token_id": 87,
+      "owner_event": 7,
+      "utf16_span": [
+        622,
+        623
+      ],
+      "utf8_span": [
+        622,
+        623
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 88,
+      "owner_event": 7,
+      "utf16_span": [
+        623,
+        624
+      ],
+      "utf8_span": [
+        623,
+        624
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 89,
+      "owner_event": 7,
+      "utf16_span": [
+        624,
+        625
+      ],
+      "utf8_span": [
+        624,
+        625
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 90,
+      "owner_event": 7,
+      "utf16_span": [
+        626,
+        630
+      ],
+      "utf8_span": [
+        626,
+        630
+      ],
+      "source_text": "Unit"
+    },
+    {
+      "token_id": 91,
+      "owner_event": 7,
+      "utf16_span": [
+        631,
+        632
+      ],
+      "utf8_span": [
+        631,
+        632
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 92,
+      "owner_event": 7,
+      "utf16_span": [
+        633,
+        634
+      ],
+      "utf8_span": [
+        633,
+        634
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 93,
+      "owner_event": 8,
+      "utf16_span": [
+        645,
+        648
+      ],
+      "utf8_span": [
+        645,
+        648
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 94,
+      "owner_event": 8,
+      "utf16_span": [
+        649,
+        650
+      ],
+      "utf8_span": [
+        649,
+        650
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 95,
+      "owner_event": 8,
+      "utf16_span": [
+        651,
+        652
+      ],
+      "utf8_span": [
+        651,
+        652
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 96,
+      "owner_event": 8,
+      "utf16_span": [
+        653,
+        659
+      ],
+      "utf8_span": [
+        653,
+        659
+      ],
+      "source_text": "worker"
+    },
+    {
+      "token_id": 97,
+      "owner_event": 8,
+      "utf16_span": [
+        660,
+        661
+      ],
+      "utf8_span": [
+        660,
+        661
+      ],
+      "source_text": "*"
+    },
+    {
+      "token_id": 98,
+      "owner_event": 8,
+      "utf16_span": [
+        662,
+        663
+      ],
+      "utf8_span": [
+        662,
+        663
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 99,
+      "owner_event": 8,
+      "utf16_span": [
+        664,
+        665
+      ],
+      "utf8_span": [
+        664,
+        665
+      ],
+      "source_text": "/"
+    },
+    {
+      "token_id": 100,
+      "owner_event": 8,
+      "utf16_span": [
+        666,
+        673
+      ],
+      "utf8_span": [
+        666,
+        673
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 101,
+      "owner_event": 9,
+      "utf16_span": [
+        684,
+        687
+      ],
+      "utf8_span": [
+        684,
+        687
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 102,
+      "owner_event": 9,
+      "utf16_span": [
+        688,
+        691
+      ],
+      "utf8_span": [
+        688,
+        691
+      ],
+      "source_text": "end"
+    },
+    {
+      "token_id": 103,
+      "owner_event": 9,
+      "utf16_span": [
+        692,
+        693
+      ],
+      "utf8_span": [
+        692,
+        693
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 104,
+      "owner_event": 9,
+      "utf16_span": [
+        694,
+        695
+      ],
+      "utf8_span": [
+        694,
+        695
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 105,
+      "owner_event": 9,
+      "utf16_span": [
+        695,
+        701
+      ],
+      "utf8_span": [
+        695,
+        701
+      ],
+      "source_text": "worker"
+    },
+    {
+      "token_id": 106,
+      "owner_event": 9,
+      "utf16_span": [
+        702,
+        703
+      ],
+      "utf8_span": [
+        702,
+        703
+      ],
+      "source_text": "+"
+    },
+    {
+      "token_id": 107,
+      "owner_event": 9,
+      "utf16_span": [
+        704,
+        705
+      ],
+      "utf8_span": [
+        704,
+        705
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 108,
+      "owner_event": 9,
+      "utf16_span": [
+        705,
+        706
+      ],
+      "utf8_span": [
+        705,
+        706
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 109,
+      "owner_event": 9,
+      "utf16_span": [
+        707,
+        708
+      ],
+      "utf8_span": [
+        707,
+        708
+      ],
+      "source_text": "*"
+    },
+    {
+      "token_id": 110,
+      "owner_event": 9,
+      "utf16_span": [
+        709,
+        710
+      ],
+      "utf8_span": [
+        709,
+        710
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 111,
+      "owner_event": 9,
+      "utf16_span": [
+        711,
+        712
+      ],
+      "utf8_span": [
+        711,
+        712
+      ],
+      "source_text": "/"
+    },
+    {
+      "token_id": 112,
+      "owner_event": 9,
+      "utf16_span": [
+        713,
+        720
+      ],
+      "utf8_span": [
+        713,
+        720
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 113,
+      "owner_event": 10,
+      "utf16_span": [
+        731,
+        736
+      ],
+      "utf8_span": [
+        731,
+        736
+      ],
+      "source_text": "while"
+    },
+    {
+      "token_id": 114,
+      "owner_event": 10,
+      "utf16_span": [
+        737,
+        738
+      ],
+      "utf8_span": [
+        737,
+        738
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 115,
+      "owner_event": 10,
+      "utf16_span": [
+        738,
+        739
+      ],
+      "utf8_span": [
+        738,
+        739
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 116,
+      "owner_event": 10,
+      "utf16_span": [
+        740,
+        741
+      ],
+      "utf8_span": [
+        740,
+        741
+      ],
+      "source_text": "<"
+    },
+    {
+      "token_id": 117,
+      "owner_event": 10,
+      "utf16_span": [
+        742,
+        745
+      ],
+      "utf8_span": [
+        742,
+        745
+      ],
+      "source_text": "end"
+    },
+    {
+      "token_id": 118,
+      "owner_event": 10,
+      "utf16_span": [
+        745,
+        746
+      ],
+      "utf8_span": [
+        745,
+        746
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 119,
+      "owner_event": 10,
+      "utf16_span": [
+        747,
+        748
+      ],
+      "utf8_span": [
+        747,
+        748
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 120,
+      "owner_event": 11,
+      "utf16_span": [
+        761,
+        764
+      ],
+      "utf8_span": [
+        761,
+        764
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 121,
+      "owner_event": 11,
+      "utf16_span": [
+        765,
+        768
+      ],
+      "utf8_span": [
+        765,
+        768
+      ],
+      "source_text": "sum"
+    },
+    {
+      "token_id": 122,
+      "owner_event": 11,
+      "utf16_span": [
+        769,
+        770
+      ],
+      "utf8_span": [
+        769,
+        770
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 123,
+      "owner_event": 11,
+      "utf16_span": [
+        771,
+        774
+      ],
+      "utf8_span": [
+        771,
+        774
+      ],
+      "source_text": "0.0"
+    },
+    {
+      "token_id": 124,
+      "owner_event": 12,
+      "utf16_span": [
+        787,
+        790
+      ],
+      "utf8_span": [
+        787,
+        790
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 125,
+      "owner_event": 12,
+      "utf16_span": [
+        791,
+        792
+      ],
+      "utf8_span": [
+        791,
+        792
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 126,
+      "owner_event": 12,
+      "utf16_span": [
+        793,
+        794
+      ],
+      "utf8_span": [
+        793,
+        794
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 127,
+      "owner_event": 12,
+      "utf16_span": [
+        795,
+        796
+      ],
+      "utf8_span": [
+        795,
+        796
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 128,
+      "owner_event": 13,
+      "utf16_span": [
+        809,
+        814
+      ],
+      "utf8_span": [
+        809,
+        814
+      ],
+      "source_text": "while"
+    },
+    {
+      "token_id": 129,
+      "owner_event": 13,
+      "utf16_span": [
+        815,
+        816
+      ],
+      "utf8_span": [
+        815,
+        816
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 130,
+      "owner_event": 13,
+      "utf16_span": [
+        816,
+        817
+      ],
+      "utf8_span": [
+        816,
+        817
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 131,
+      "owner_event": 13,
+      "utf16_span": [
+        818,
+        819
+      ],
+      "utf8_span": [
+        818,
+        819
+      ],
+      "source_text": "<"
+    },
+    {
+      "token_id": 132,
+      "owner_event": 13,
+      "utf16_span": [
+        820,
+        821
+      ],
+      "utf8_span": [
+        820,
+        821
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 133,
+      "owner_event": 13,
+      "utf16_span": [
+        821,
+        822
+      ],
+      "utf8_span": [
+        821,
+        822
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 134,
+      "owner_event": 13,
+      "utf16_span": [
+        823,
+        824
+      ],
+      "utf8_span": [
+        823,
+        824
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 135,
+      "owner_event": 14,
+      "utf16_span": [
+        839,
+        842
+      ],
+      "utf8_span": [
+        839,
+        842
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 136,
+      "owner_event": 14,
+      "utf16_span": [
+        843,
+        846
+      ],
+      "utf8_span": [
+        843,
+        846
+      ],
+      "source_text": "row"
+    },
+    {
+      "token_id": 137,
+      "owner_event": 14,
+      "utf16_span": [
+        847,
+        848
+      ],
+      "utf8_span": [
+        847,
+        848
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 138,
+      "owner_event": 14,
+      "utf16_span": [
+        849,
+        851
+      ],
+      "utf8_span": [
+        849,
+        851
+      ],
+      "source_text": "if"
+    },
+    {
+      "token_id": 139,
+      "owner_event": 14,
+      "utf16_span": [
+        852,
+        853
+      ],
+      "utf8_span": [
+        852,
+        853
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 140,
+      "owner_event": 14,
+      "utf16_span": [
+        853,
+        862
+      ],
+      "utf8_span": [
+        853,
+        862
+      ],
+      "source_text": "transpose"
+    },
+    {
+      "token_id": 141,
+      "owner_event": 14,
+      "utf16_span": [
+        862,
+        863
+      ],
+      "utf8_span": [
+        862,
+        863
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 142,
+      "owner_event": 14,
+      "utf16_span": [
+        864,
+        865
+      ],
+      "utf8_span": [
+        864,
+        865
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 143,
+      "owner_event": 14,
+      "utf16_span": [
+        866,
+        870
+      ],
+      "utf8_span": [
+        866,
+        870
+      ],
+      "source_text": "else"
+    },
+    {
+      "token_id": 144,
+      "owner_event": 14,
+      "utf16_span": [
+        871,
+        872
+      ],
+      "utf8_span": [
+        871,
+        872
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 145,
+      "owner_event": 15,
+      "utf16_span": [
+        887,
+        890
+      ],
+      "utf8_span": [
+        887,
+        890
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 146,
+      "owner_event": 15,
+      "utf16_span": [
+        891,
+        897
+      ],
+      "utf8_span": [
+        891,
+        897
+      ],
+      "source_text": "column"
+    },
+    {
+      "token_id": 147,
+      "owner_event": 15,
+      "utf16_span": [
+        898,
+        899
+      ],
+      "utf8_span": [
+        898,
+        899
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 148,
+      "owner_event": 15,
+      "utf16_span": [
+        900,
+        902
+      ],
+      "utf8_span": [
+        900,
+        902
+      ],
+      "source_text": "if"
+    },
+    {
+      "token_id": 149,
+      "owner_event": 15,
+      "utf16_span": [
+        903,
+        904
+      ],
+      "utf8_span": [
+        903,
+        904
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 150,
+      "owner_event": 15,
+      "utf16_span": [
+        904,
+        913
+      ],
+      "utf8_span": [
+        904,
+        913
+      ],
+      "source_text": "transpose"
+    },
+    {
+      "token_id": 151,
+      "owner_event": 15,
+      "utf16_span": [
+        913,
+        914
+      ],
+      "utf8_span": [
+        913,
+        914
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 152,
+      "owner_event": 15,
+      "utf16_span": [
+        915,
+        916
+      ],
+      "utf8_span": [
+        915,
+        916
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 153,
+      "owner_event": 15,
+      "utf16_span": [
+        917,
+        921
+      ],
+      "utf8_span": [
+        917,
+        921
+      ],
+      "source_text": "else"
+    },
+    {
+      "token_id": 154,
+      "owner_event": 15,
+      "utf16_span": [
+        922,
+        923
+      ],
+      "utf8_span": [
+        922,
+        923
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 155,
+      "owner_event": 16,
+      "utf16_span": [
+        938,
+        941
+      ],
+      "utf8_span": [
+        938,
+        941
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 156,
+      "owner_event": 16,
+      "utf16_span": [
+        942,
+        947
+      ],
+      "utf8_span": [
+        942,
+        947
+      ],
+      "source_text": "index"
+    },
+    {
+      "token_id": 157,
+      "owner_event": 16,
+      "utf16_span": [
+        948,
+        949
+      ],
+      "utf8_span": [
+        948,
+        949
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 158,
+      "owner_event": 16,
+      "utf16_span": [
+        950,
+        953
+      ],
+      "utf8_span": [
+        950,
+        953
+      ],
+      "source_text": "row"
+    },
+    {
+      "token_id": 159,
+      "owner_event": 16,
+      "utf16_span": [
+        954,
+        955
+      ],
+      "utf8_span": [
+        954,
+        955
+      ],
+      "source_text": "+"
+    },
+    {
+      "token_id": 160,
+      "owner_event": 16,
+      "utf16_span": [
+        956,
+        962
+      ],
+      "utf8_span": [
+        956,
+        962
+      ],
+      "source_text": "column"
+    },
+    {
+      "token_id": 161,
+      "owner_event": 17,
+      "utf16_span": [
+        977,
+        980
+      ],
+      "utf8_span": [
+        977,
+        980
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 162,
+      "owner_event": 17,
+      "utf16_span": [
+        981,
+        992
+      ],
+      "utf8_span": [
+        981,
+        992
+      ],
+      "source_text": "denominator"
+    },
+    {
+      "token_id": 163,
+      "owner_event": 17,
+      "utf16_span": [
+        993,
+        994
+      ],
+      "utf8_span": [
+        993,
+        994
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 164,
+      "owner_event": 17,
+      "utf16_span": [
+        995,
+        1000
+      ],
+      "utf8_span": [
+        995,
+        1000
+      ],
+      "source_text": "index"
+    },
+    {
+      "token_id": 165,
+      "owner_event": 17,
+      "utf16_span": [
+        1001,
+        1002
+      ],
+      "utf8_span": [
+        1001,
+        1002
+      ],
+      "source_text": "*"
+    },
+    {
+      "token_id": 166,
+      "owner_event": 17,
+      "utf16_span": [
+        1003,
+        1004
+      ],
+      "utf8_span": [
+        1003,
+        1004
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 167,
+      "owner_event": 17,
+      "utf16_span": [
+        1004,
+        1009
+      ],
+      "utf8_span": [
+        1004,
+        1009
+      ],
+      "source_text": "index"
+    },
+    {
+      "token_id": 168,
+      "owner_event": 17,
+      "utf16_span": [
+        1010,
+        1011
+      ],
+      "utf8_span": [
+        1010,
+        1011
+      ],
+      "source_text": "+"
+    },
+    {
+      "token_id": 169,
+      "owner_event": 17,
+      "utf16_span": [
+        1012,
+        1013
+      ],
+      "utf8_span": [
+        1012,
+        1013
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 170,
+      "owner_event": 17,
+      "utf16_span": [
+        1013,
+        1014
+      ],
+      "utf8_span": [
+        1013,
+        1014
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 171,
+      "owner_event": 17,
+      "utf16_span": [
+        1015,
+        1016
+      ],
+      "utf8_span": [
+        1015,
+        1016
+      ],
+      "source_text": "/"
+    },
+    {
+      "token_id": 172,
+      "owner_event": 17,
+      "utf16_span": [
+        1017,
+        1018
+      ],
+      "utf8_span": [
+        1017,
+        1018
+      ],
+      "source_text": "2"
+    },
+    {
+      "token_id": 173,
+      "owner_event": 17,
+      "utf16_span": [
+        1019,
+        1020
+      ],
+      "utf8_span": [
+        1019,
+        1020
+      ],
+      "source_text": "+"
+    },
+    {
+      "token_id": 174,
+      "owner_event": 17,
+      "utf16_span": [
+        1021,
+        1024
+      ],
+      "utf8_span": [
+        1021,
+        1024
+      ],
+      "source_text": "row"
+    },
+    {
+      "token_id": 175,
+      "owner_event": 17,
+      "utf16_span": [
+        1025,
+        1026
+      ],
+      "utf8_span": [
+        1025,
+        1026
+      ],
+      "source_text": "+"
+    },
+    {
+      "token_id": 176,
+      "owner_event": 17,
+      "utf16_span": [
+        1027,
+        1028
+      ],
+      "utf8_span": [
+        1027,
+        1028
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 177,
+      "owner_event": 18,
+      "utf16_span": [
+        1043,
+        1046
+      ],
+      "utf8_span": [
+        1043,
+        1046
+      ],
+      "source_text": "sum"
+    },
+    {
+      "token_id": 178,
+      "owner_event": 18,
+      "utf16_span": [
+        1047,
+        1049
+      ],
+      "utf8_span": [
+        1047,
+        1049
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 179,
+      "owner_event": 18,
+      "utf16_span": [
+        1050,
+        1055
+      ],
+      "utf8_span": [
+        1050,
+        1055
+      ],
+      "source_text": "input"
+    },
+    {
+      "token_id": 180,
+      "owner_event": 18,
+      "utf16_span": [
+        1055,
+        1056
+      ],
+      "utf8_span": [
+        1055,
+        1056
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 181,
+      "owner_event": 18,
+      "utf16_span": [
+        1056,
+        1057
+      ],
+      "utf8_span": [
+        1056,
+        1057
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 182,
+      "owner_event": 18,
+      "utf16_span": [
+        1057,
+        1058
+      ],
+      "utf8_span": [
+        1057,
+        1058
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 183,
+      "owner_event": 18,
+      "utf16_span": [
+        1059,
+        1060
+      ],
+      "utf8_span": [
+        1059,
+        1060
+      ],
+      "source_text": "/"
+    },
+    {
+      "token_id": 184,
+      "owner_event": 18,
+      "utf16_span": [
+        1061,
+        1072
+      ],
+      "utf8_span": [
+        1061,
+        1072
+      ],
+      "source_text": "denominator"
+    },
+    {
+      "token_id": 185,
+      "owner_event": 19,
+      "utf16_span": [
+        1087,
+        1088
+      ],
+      "utf8_span": [
+        1087,
+        1088
+      ],
+      "source_text": "j"
+    },
+    {
+      "token_id": 186,
+      "owner_event": 19,
+      "utf16_span": [
+        1089,
+        1091
+      ],
+      "utf8_span": [
+        1089,
+        1091
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 187,
+      "owner_event": 19,
+      "utf16_span": [
+        1092,
+        1093
+      ],
+      "utf8_span": [
+        1092,
+        1093
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 188,
+      "owner_event": 20,
+      "utf16_span": [
+        1106,
+        1107
+      ],
+      "utf8_span": [
+        1106,
+        1107
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 189,
+      "owner_event": 21,
+      "utf16_span": [
+        1120,
+        1126
+      ],
+      "utf8_span": [
+        1120,
+        1126
+      ],
+      "source_text": "output"
+    },
+    {
+      "token_id": 190,
+      "owner_event": 21,
+      "utf16_span": [
+        1126,
+        1127
+      ],
+      "utf8_span": [
+        1126,
+        1127
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 191,
+      "owner_event": 21,
+      "utf16_span": [
+        1127,
+        1128
+      ],
+      "utf8_span": [
+        1127,
+        1128
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 192,
+      "owner_event": 21,
+      "utf16_span": [
+        1128,
+        1129
+      ],
+      "utf8_span": [
+        1128,
+        1129
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 193,
+      "owner_event": 21,
+      "utf16_span": [
+        1130,
+        1131
+      ],
+      "utf8_span": [
+        1130,
+        1131
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 194,
+      "owner_event": 21,
+      "utf16_span": [
+        1132,
+        1135
+      ],
+      "utf8_span": [
+        1132,
+        1135
+      ],
+      "source_text": "sum"
+    },
+    {
+      "token_id": 195,
+      "owner_event": 22,
+      "utf16_span": [
+        1148,
+        1149
+      ],
+      "utf8_span": [
+        1148,
+        1149
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 196,
+      "owner_event": 22,
+      "utf16_span": [
+        1150,
+        1152
+      ],
+      "utf8_span": [
+        1150,
+        1152
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 197,
+      "owner_event": 22,
+      "utf16_span": [
+        1153,
+        1154
+      ],
+      "utf8_span": [
+        1153,
+        1154
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 198,
+      "owner_event": 23,
+      "utf16_span": [
+        1165,
+        1166
+      ],
+      "utf8_span": [
+        1165,
+        1166
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 199,
+      "owner_event": 24,
+      "utf16_span": [
+        1175,
+        1176
+      ],
+      "utf8_span": [
+        1175,
+        1176
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 200,
+      "owner_event": 25,
+      "utf16_span": [
+        1183,
+        1184
+      ],
+      "utf8_span": [
+        1183,
+        1184
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 201,
+      "owner_event": 26,
+      "utf16_span": [
+        1184,
+        1185
+      ],
+      "utf8_span": [
+        1184,
+        1185
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 202,
+      "owner_event": 27,
+      "utf16_span": [
+        1190,
+        1191
+      ],
+      "utf8_span": [
+        1190,
+        1191
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 203,
+      "owner_event": 28,
+      "utf16_span": [
+        1196,
+        1201
+      ],
+      "utf8_span": [
+        1196,
+        1201
+      ],
+      "source_text": "tasks"
+    },
+    {
+      "token_id": 204,
+      "owner_event": 28,
+      "utf16_span": [
+        1201,
+        1202
+      ],
+      "utf8_span": [
+        1201,
+        1202
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 205,
+      "owner_event": 28,
+      "utf16_span": [
+        1202,
+        1209
+      ],
+      "utf8_span": [
+        1202,
+        1209
+      ],
+      "source_text": "foreach"
+    },
+    {
+      "token_id": 206,
+      "owner_event": 28,
+      "utf16_span": [
+        1209,
+        1210
+      ],
+      "utf8_span": [
+        1209,
+        1210
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 207,
+      "owner_event": 28,
+      "utf16_span": [
+        1210,
+        1211
+      ],
+      "utf8_span": [
+        1210,
+        1211
+      ],
+      "source_text": "_"
+    },
+    {
+      "token_id": 208,
+      "owner_event": 28,
+      "utf16_span": [
+        1211,
+        1212
+      ],
+      "utf8_span": [
+        1211,
+        1212
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 209,
+      "owner_event": 28,
+      "utf16_span": [
+        1212,
+        1215
+      ],
+      "utf8_span": [
+        1212,
+        1215
+      ],
+      "source_text": "get"
+    },
+    {
+      "token_id": 210,
+      "owner_event": 28,
+      "utf16_span": [
+        1215,
+        1216
+      ],
+      "utf8_span": [
+        1215,
+        1216
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 211,
+      "owner_event": 28,
+      "utf16_span": [
+        1216,
+        1217
+      ],
+      "utf8_span": [
+        1216,
+        1217
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 212,
+      "owner_event": 28,
+      "utf16_span": [
+        1217,
+        1218
+      ],
+      "utf8_span": [
+        1217,
+        1218
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 213,
+      "owner_event": 29,
+      "utf16_span": [
+        1221,
+        1222
+      ],
+      "utf8_span": [
+        1221,
+        1222
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 214,
+      "owner_event": 30,
+      "utf16_span": [
+        1226,
+        1229
+      ],
+      "utf8_span": [
+        1226,
+        1229
+      ],
+      "source_text": "def"
+    },
+    {
+      "token_id": 215,
+      "owner_event": 30,
+      "utf16_span": [
+        1230,
+        1234
+      ],
+      "utf8_span": [
+        1230,
+        1234
+      ],
+      "source_text": "main"
+    },
+    {
+      "token_id": 216,
+      "owner_event": 30,
+      "utf16_span": [
+        1234,
+        1235
+      ],
+      "utf8_span": [
+        1234,
+        1235
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 217,
+      "owner_event": 30,
+      "utf16_span": [
+        1235,
+        1239
+      ],
+      "utf8_span": [
+        1235,
+        1239
+      ],
+      "source_text": "args"
+    },
+    {
+      "token_id": 218,
+      "owner_event": 30,
+      "utf16_span": [
+        1239,
+        1240
+      ],
+      "utf8_span": [
+        1239,
+        1240
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 219,
+      "owner_event": 30,
+      "utf16_span": [
+        1241,
+        1246
+      ],
+      "utf8_span": [
+        1241,
+        1246
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 220,
+      "owner_event": 30,
+      "utf16_span": [
+        1246,
+        1247
+      ],
+      "utf8_span": [
+        1246,
+        1247
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 221,
+      "owner_event": 30,
+      "utf16_span": [
+        1247,
+        1253
+      ],
+      "utf8_span": [
+        1247,
+        1253
+      ],
+      "source_text": "String"
+    },
+    {
+      "token_id": 222,
+      "owner_event": 30,
+      "utf16_span": [
+        1253,
+        1254
+      ],
+      "utf8_span": [
+        1253,
+        1254
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 223,
+      "owner_event": 30,
+      "utf16_span": [
+        1254,
+        1255
+      ],
+      "utf8_span": [
+        1254,
+        1255
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 224,
+      "owner_event": 30,
+      "utf16_span": [
+        1255,
+        1256
+      ],
+      "utf8_span": [
+        1255,
+        1256
+      ],
+      "source_text": ":"
+    },
+    {
+      "token_id": 225,
+      "owner_event": 30,
+      "utf16_span": [
+        1257,
+        1261
+      ],
+      "utf8_span": [
+        1257,
+        1261
+      ],
+      "source_text": "Unit"
+    },
+    {
+      "token_id": 226,
+      "owner_event": 30,
+      "utf16_span": [
+        1262,
+        1263
+      ],
+      "utf8_span": [
+        1262,
+        1263
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 227,
+      "owner_event": 30,
+      "utf16_span": [
+        1264,
+        1265
+      ],
+      "utf8_span": [
+        1264,
+        1265
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 228,
+      "owner_event": 31,
+      "utf16_span": [
+        1270,
+        1273
+      ],
+      "utf8_span": [
+        1270,
+        1273
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 229,
+      "owner_event": 31,
+      "utf16_span": [
+        1274,
+        1275
+      ],
+      "utf8_span": [
+        1274,
+        1275
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 230,
+      "owner_event": 31,
+      "utf16_span": [
+        1276,
+        1277
+      ],
+      "utf8_span": [
+        1276,
+        1277
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 231,
+      "owner_event": 31,
+      "utf16_span": [
+        1278,
+        1282
+      ],
+      "utf8_span": [
+        1278,
+        1282
+      ],
+      "source_text": "args"
+    },
+    {
+      "token_id": 232,
+      "owner_event": 31,
+      "utf16_span": [
+        1282,
+        1283
+      ],
+      "utf8_span": [
+        1282,
+        1283
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 233,
+      "owner_event": 31,
+      "utf16_span": [
+        1283,
+        1284
+      ],
+      "utf8_span": [
+        1283,
+        1284
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 234,
+      "owner_event": 31,
+      "utf16_span": [
+        1284,
+        1285
+      ],
+      "utf8_span": [
+        1284,
+        1285
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 235,
+      "owner_event": 31,
+      "utf16_span": [
+        1285,
+        1286
+      ],
+      "utf8_span": [
+        1285,
+        1286
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 236,
+      "owner_event": 31,
+      "utf16_span": [
+        1286,
+        1291
+      ],
+      "utf8_span": [
+        1286,
+        1291
+      ],
+      "source_text": "toInt"
+    },
+    {
+      "token_id": 237,
+      "owner_event": 32,
+      "utf16_span": [
+        1296,
+        1303
+      ],
+      "utf8_span": [
+        1296,
+        1303
+      ],
+      "source_text": "require"
+    },
+    {
+      "token_id": 238,
+      "owner_event": 32,
+      "utf16_span": [
+        1303,
+        1304
+      ],
+      "utf8_span": [
+        1303,
+        1304
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 239,
+      "owner_event": 32,
+      "utf16_span": [
+        1304,
+        1305
+      ],
+      "utf8_span": [
+        1304,
+        1305
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 240,
+      "owner_event": 32,
+      "utf16_span": [
+        1306,
+        1307
+      ],
+      "utf8_span": [
+        1306,
+        1307
+      ],
+      "source_text": ">"
+    },
+    {
+      "token_id": 241,
+      "owner_event": 32,
+      "utf16_span": [
+        1308,
+        1309
+      ],
+      "utf8_span": [
+        1308,
+        1309
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 242,
+      "owner_event": 32,
+      "utf16_span": [
+        1309,
+        1310
+      ],
+      "utf8_span": [
+        1309,
+        1310
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 243,
+      "owner_event": 33,
+      "utf16_span": [
+        1315,
+        1318
+      ],
+      "utf8_span": [
+        1315,
+        1318
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 244,
+      "owner_event": 33,
+      "utf16_span": [
+        1319,
+        1320
+      ],
+      "utf8_span": [
+        1319,
+        1320
+      ],
+      "source_text": "u"
+    },
+    {
+      "token_id": 245,
+      "owner_event": 33,
+      "utf16_span": [
+        1321,
+        1322
+      ],
+      "utf8_span": [
+        1321,
+        1322
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 246,
+      "owner_event": 33,
+      "utf16_span": [
+        1323,
+        1328
+      ],
+      "utf8_span": [
+        1323,
+        1328
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 247,
+      "owner_event": 33,
+      "utf16_span": [
+        1328,
+        1329
+      ],
+      "utf8_span": [
+        1328,
+        1329
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 248,
+      "owner_event": 33,
+      "utf16_span": [
+        1329,
+        1333
+      ],
+      "utf8_span": [
+        1329,
+        1333
+      ],
+      "source_text": "fill"
+    },
+    {
+      "token_id": 249,
+      "owner_event": 33,
+      "utf16_span": [
+        1333,
+        1334
+      ],
+      "utf8_span": [
+        1333,
+        1334
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 250,
+      "owner_event": 33,
+      "utf16_span": [
+        1334,
+        1335
+      ],
+      "utf8_span": [
+        1334,
+        1335
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 251,
+      "owner_event": 33,
+      "utf16_span": [
+        1335,
+        1336
+      ],
+      "utf8_span": [
+        1335,
+        1336
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 252,
+      "owner_event": 33,
+      "utf16_span": [
+        1336,
+        1337
+      ],
+      "utf8_span": [
+        1336,
+        1337
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 253,
+      "owner_event": 33,
+      "utf16_span": [
+        1337,
+        1340
+      ],
+      "utf8_span": [
+        1337,
+        1340
+      ],
+      "source_text": "1.0"
+    },
+    {
+      "token_id": 254,
+      "owner_event": 33,
+      "utf16_span": [
+        1340,
+        1341
+      ],
+      "utf8_span": [
+        1340,
+        1341
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 255,
+      "owner_event": 34,
+      "utf16_span": [
+        1346,
+        1349
+      ],
+      "utf8_span": [
+        1346,
+        1349
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 256,
+      "owner_event": 34,
+      "utf16_span": [
+        1350,
+        1351
+      ],
+      "utf8_span": [
+        1350,
+        1351
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 257,
+      "owner_event": 34,
+      "utf16_span": [
+        1352,
+        1353
+      ],
+      "utf8_span": [
+        1352,
+        1353
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 258,
+      "owner_event": 34,
+      "utf16_span": [
+        1354,
+        1357
+      ],
+      "utf8_span": [
+        1354,
+        1357
+      ],
+      "source_text": "new"
+    },
+    {
+      "token_id": 259,
+      "owner_event": 34,
+      "utf16_span": [
+        1358,
+        1363
+      ],
+      "utf8_span": [
+        1358,
+        1363
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 260,
+      "owner_event": 34,
+      "utf16_span": [
+        1363,
+        1364
+      ],
+      "utf8_span": [
+        1363,
+        1364
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 261,
+      "owner_event": 34,
+      "utf16_span": [
+        1364,
+        1370
+      ],
+      "utf8_span": [
+        1364,
+        1370
+      ],
+      "source_text": "Double"
+    },
+    {
+      "token_id": 262,
+      "owner_event": 34,
+      "utf16_span": [
+        1370,
+        1371
+      ],
+      "utf8_span": [
+        1370,
+        1371
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 263,
+      "owner_event": 34,
+      "utf16_span": [
+        1371,
+        1372
+      ],
+      "utf8_span": [
+        1371,
+        1372
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 264,
+      "owner_event": 34,
+      "utf16_span": [
+        1372,
+        1373
+      ],
+      "utf8_span": [
+        1372,
+        1373
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 265,
+      "owner_event": 34,
+      "utf16_span": [
+        1373,
+        1374
+      ],
+      "utf8_span": [
+        1373,
+        1374
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 266,
+      "owner_event": 35,
+      "utf16_span": [
+        1379,
+        1382
+      ],
+      "utf8_span": [
+        1379,
+        1382
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 267,
+      "owner_event": 35,
+      "utf16_span": [
+        1383,
+        1392
+      ],
+      "utf8_span": [
+        1383,
+        1392
+      ],
+      "source_text": "temporary"
+    },
+    {
+      "token_id": 268,
+      "owner_event": 35,
+      "utf16_span": [
+        1393,
+        1394
+      ],
+      "utf8_span": [
+        1393,
+        1394
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 269,
+      "owner_event": 35,
+      "utf16_span": [
+        1395,
+        1398
+      ],
+      "utf8_span": [
+        1395,
+        1398
+      ],
+      "source_text": "new"
+    },
+    {
+      "token_id": 270,
+      "owner_event": 35,
+      "utf16_span": [
+        1399,
+        1404
+      ],
+      "utf8_span": [
+        1399,
+        1404
+      ],
+      "source_text": "Array"
+    },
+    {
+      "token_id": 271,
+      "owner_event": 35,
+      "utf16_span": [
+        1404,
+        1405
+      ],
+      "utf8_span": [
+        1404,
+        1405
+      ],
+      "source_text": "["
+    },
+    {
+      "token_id": 272,
+      "owner_event": 35,
+      "utf16_span": [
+        1405,
+        1411
+      ],
+      "utf8_span": [
+        1405,
+        1411
+      ],
+      "source_text": "Double"
+    },
+    {
+      "token_id": 273,
+      "owner_event": 35,
+      "utf16_span": [
+        1411,
+        1412
+      ],
+      "utf8_span": [
+        1411,
+        1412
+      ],
+      "source_text": "]"
+    },
+    {
+      "token_id": 274,
+      "owner_event": 35,
+      "utf16_span": [
+        1412,
+        1413
+      ],
+      "utf8_span": [
+        1412,
+        1413
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 275,
+      "owner_event": 35,
+      "utf16_span": [
+        1413,
+        1414
+      ],
+      "utf8_span": [
+        1413,
+        1414
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 276,
+      "owner_event": 35,
+      "utf16_span": [
+        1414,
+        1415
+      ],
+      "utf8_span": [
+        1414,
+        1415
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 277,
+      "owner_event": 36,
+      "utf16_span": [
+        1420,
+        1423
+      ],
+      "utf8_span": [
+        1420,
+        1423
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 278,
+      "owner_event": 36,
+      "utf16_span": [
+        1424,
+        1431
+      ],
+      "utf8_span": [
+        1424,
+        1431
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 279,
+      "owner_event": 36,
+      "utf16_span": [
+        1432,
+        1433
+      ],
+      "utf8_span": [
+        1432,
+        1433
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 280,
+      "owner_event": 36,
+      "utf16_span": [
+        1434,
+        1438
+      ],
+      "utf8_span": [
+        1434,
+        1438
+      ],
+      "source_text": "math"
+    },
+    {
+      "token_id": 281,
+      "owner_event": 36,
+      "utf16_span": [
+        1438,
+        1439
+      ],
+      "utf8_span": [
+        1438,
+        1439
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 282,
+      "owner_event": 36,
+      "utf16_span": [
+        1439,
+        1442
+      ],
+      "utf8_span": [
+        1439,
+        1442
+      ],
+      "source_text": "min"
+    },
+    {
+      "token_id": 283,
+      "owner_event": 36,
+      "utf16_span": [
+        1442,
+        1443
+      ],
+      "utf8_span": [
+        1442,
+        1443
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 284,
+      "owner_event": 36,
+      "utf16_span": [
+        1443,
+        1444
+      ],
+      "utf8_span": [
+        1443,
+        1444
+      ],
+      "source_text": "8"
+    },
+    {
+      "token_id": 285,
+      "owner_event": 36,
+      "utf16_span": [
+        1444,
+        1445
+      ],
+      "utf8_span": [
+        1444,
+        1445
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 286,
+      "owner_event": 36,
+      "utf16_span": [
+        1446,
+        1453
+      ],
+      "utf8_span": [
+        1446,
+        1453
+      ],
+      "source_text": "Runtime"
+    },
+    {
+      "token_id": 287,
+      "owner_event": 36,
+      "utf16_span": [
+        1453,
+        1454
+      ],
+      "utf8_span": [
+        1453,
+        1454
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 288,
+      "owner_event": 36,
+      "utf16_span": [
+        1454,
+        1464
+      ],
+      "utf8_span": [
+        1454,
+        1464
+      ],
+      "source_text": "getRuntime"
+    },
+    {
+      "token_id": 289,
+      "owner_event": 36,
+      "utf16_span": [
+        1464,
+        1465
+      ],
+      "utf8_span": [
+        1464,
+        1465
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 290,
+      "owner_event": 36,
+      "utf16_span": [
+        1465,
+        1484
+      ],
+      "utf8_span": [
+        1465,
+        1484
+      ],
+      "source_text": "availableProcessors"
+    },
+    {
+      "token_id": 291,
+      "owner_event": 36,
+      "utf16_span": [
+        1484,
+        1485
+      ],
+      "utf8_span": [
+        1484,
+        1485
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 292,
+      "owner_event": 36,
+      "utf16_span": [
+        1485,
+        1486
+      ],
+      "utf8_span": [
+        1485,
+        1486
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 293,
+      "owner_event": 36,
+      "utf16_span": [
+        1486,
+        1487
+      ],
+      "utf8_span": [
+        1486,
+        1487
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 294,
+      "owner_event": 37,
+      "utf16_span": [
+        1492,
+        1495
+      ],
+      "utf8_span": [
+        1492,
+        1495
+      ],
+      "source_text": "val"
+    },
+    {
+      "token_id": 295,
+      "owner_event": 37,
+      "utf16_span": [
+        1496,
+        1500
+      ],
+      "utf8_span": [
+        1496,
+        1500
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 296,
+      "owner_event": 37,
+      "utf16_span": [
+        1501,
+        1502
+      ],
+      "utf8_span": [
+        1501,
+        1502
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 297,
+      "owner_event": 37,
+      "utf16_span": [
+        1503,
+        1512
+      ],
+      "utf8_span": [
+        1503,
+        1512
+      ],
+      "source_text": "Executors"
+    },
+    {
+      "token_id": 298,
+      "owner_event": 37,
+      "utf16_span": [
+        1512,
+        1513
+      ],
+      "utf8_span": [
+        1512,
+        1513
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 299,
+      "owner_event": 37,
+      "utf16_span": [
+        1513,
+        1531
+      ],
+      "utf8_span": [
+        1513,
+        1531
+      ],
+      "source_text": "newFixedThreadPool"
+    },
+    {
+      "token_id": 300,
+      "owner_event": 37,
+      "utf16_span": [
+        1531,
+        1532
+      ],
+      "utf8_span": [
+        1531,
+        1532
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 301,
+      "owner_event": 37,
+      "utf16_span": [
+        1532,
+        1539
+      ],
+      "utf8_span": [
+        1532,
+        1539
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 302,
+      "owner_event": 37,
+      "utf16_span": [
+        1539,
+        1540
+      ],
+      "utf8_span": [
+        1539,
+        1540
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 303,
+      "owner_event": 38,
+      "utf16_span": [
+        1545,
+        1548
+      ],
+      "utf8_span": [
+        1545,
+        1548
+      ],
+      "source_text": "try"
+    },
+    {
+      "token_id": 304,
+      "owner_event": 38,
+      "utf16_span": [
+        1549,
+        1550
+      ],
+      "utf8_span": [
+        1549,
+        1550
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 305,
+      "owner_event": 39,
+      "utf16_span": [
+        1557,
+        1560
+      ],
+      "utf8_span": [
+        1557,
+        1560
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 306,
+      "owner_event": 39,
+      "utf16_span": [
+        1561,
+        1570
+      ],
+      "utf8_span": [
+        1561,
+        1570
+      ],
+      "source_text": "iteration"
+    },
+    {
+      "token_id": 307,
+      "owner_event": 39,
+      "utf16_span": [
+        1571,
+        1572
+      ],
+      "utf8_span": [
+        1571,
+        1572
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 308,
+      "owner_event": 39,
+      "utf16_span": [
+        1573,
+        1574
+      ],
+      "utf8_span": [
+        1573,
+        1574
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 309,
+      "owner_event": 40,
+      "utf16_span": [
+        1581,
+        1586
+      ],
+      "utf8_span": [
+        1581,
+        1586
+      ],
+      "source_text": "while"
+    },
+    {
+      "token_id": 310,
+      "owner_event": 40,
+      "utf16_span": [
+        1587,
+        1588
+      ],
+      "utf8_span": [
+        1587,
+        1588
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 311,
+      "owner_event": 40,
+      "utf16_span": [
+        1588,
+        1597
+      ],
+      "utf8_span": [
+        1588,
+        1597
+      ],
+      "source_text": "iteration"
+    },
+    {
+      "token_id": 312,
+      "owner_event": 40,
+      "utf16_span": [
+        1598,
+        1599
+      ],
+      "utf8_span": [
+        1598,
+        1599
+      ],
+      "source_text": "<"
+    },
+    {
+      "token_id": 313,
+      "owner_event": 40,
+      "utf16_span": [
+        1600,
+        1602
+      ],
+      "utf8_span": [
+        1600,
+        1602
+      ],
+      "source_text": "10"
+    },
+    {
+      "token_id": 314,
+      "owner_event": 40,
+      "utf16_span": [
+        1602,
+        1603
+      ],
+      "utf8_span": [
+        1602,
+        1603
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 315,
+      "owner_event": 40,
+      "utf16_span": [
+        1604,
+        1605
+      ],
+      "utf8_span": [
+        1604,
+        1605
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 316,
+      "owner_event": 41,
+      "utf16_span": [
+        1614,
+        1622
+      ],
+      "utf8_span": [
+        1614,
+        1622
+      ],
+      "source_text": "multiply"
+    },
+    {
+      "token_id": 317,
+      "owner_event": 41,
+      "utf16_span": [
+        1622,
+        1623
+      ],
+      "utf8_span": [
+        1622,
+        1623
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 318,
+      "owner_event": 41,
+      "utf16_span": [
+        1623,
+        1624
+      ],
+      "utf8_span": [
+        1623,
+        1624
+      ],
+      "source_text": "u"
+    },
+    {
+      "token_id": 319,
+      "owner_event": 41,
+      "utf16_span": [
+        1624,
+        1625
+      ],
+      "utf8_span": [
+        1624,
+        1625
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 320,
+      "owner_event": 41,
+      "utf16_span": [
+        1626,
+        1635
+      ],
+      "utf8_span": [
+        1626,
+        1635
+      ],
+      "source_text": "temporary"
+    },
+    {
+      "token_id": 321,
+      "owner_event": 41,
+      "utf16_span": [
+        1635,
+        1636
+      ],
+      "utf8_span": [
+        1635,
+        1636
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 322,
+      "owner_event": 41,
+      "utf16_span": [
+        1637,
+        1642
+      ],
+      "utf8_span": [
+        1637,
+        1642
+      ],
+      "source_text": "false"
+    },
+    {
+      "token_id": 323,
+      "owner_event": 41,
+      "utf16_span": [
+        1642,
+        1643
+      ],
+      "utf8_span": [
+        1642,
+        1643
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 324,
+      "owner_event": 41,
+      "utf16_span": [
+        1644,
+        1648
+      ],
+      "utf8_span": [
+        1644,
+        1648
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 325,
+      "owner_event": 41,
+      "utf16_span": [
+        1648,
+        1649
+      ],
+      "utf8_span": [
+        1648,
+        1649
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 326,
+      "owner_event": 41,
+      "utf16_span": [
+        1650,
+        1657
+      ],
+      "utf8_span": [
+        1650,
+        1657
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 327,
+      "owner_event": 41,
+      "utf16_span": [
+        1657,
+        1658
+      ],
+      "utf8_span": [
+        1657,
+        1658
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 328,
+      "owner_event": 42,
+      "utf16_span": [
+        1667,
+        1675
+      ],
+      "utf8_span": [
+        1667,
+        1675
+      ],
+      "source_text": "multiply"
+    },
+    {
+      "token_id": 329,
+      "owner_event": 42,
+      "utf16_span": [
+        1675,
+        1676
+      ],
+      "utf8_span": [
+        1675,
+        1676
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 330,
+      "owner_event": 42,
+      "utf16_span": [
+        1676,
+        1685
+      ],
+      "utf8_span": [
+        1676,
+        1685
+      ],
+      "source_text": "temporary"
+    },
+    {
+      "token_id": 331,
+      "owner_event": 42,
+      "utf16_span": [
+        1685,
+        1686
+      ],
+      "utf8_span": [
+        1685,
+        1686
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 332,
+      "owner_event": 42,
+      "utf16_span": [
+        1687,
+        1688
+      ],
+      "utf8_span": [
+        1687,
+        1688
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 333,
+      "owner_event": 42,
+      "utf16_span": [
+        1688,
+        1689
+      ],
+      "utf8_span": [
+        1688,
+        1689
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 334,
+      "owner_event": 42,
+      "utf16_span": [
+        1690,
+        1694
+      ],
+      "utf8_span": [
+        1690,
+        1694
+      ],
+      "source_text": "true"
+    },
+    {
+      "token_id": 335,
+      "owner_event": 42,
+      "utf16_span": [
+        1694,
+        1695
+      ],
+      "utf8_span": [
+        1694,
+        1695
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 336,
+      "owner_event": 42,
+      "utf16_span": [
+        1696,
+        1700
+      ],
+      "utf8_span": [
+        1696,
+        1700
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 337,
+      "owner_event": 42,
+      "utf16_span": [
+        1700,
+        1701
+      ],
+      "utf8_span": [
+        1700,
+        1701
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 338,
+      "owner_event": 42,
+      "utf16_span": [
+        1702,
+        1709
+      ],
+      "utf8_span": [
+        1702,
+        1709
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 339,
+      "owner_event": 42,
+      "utf16_span": [
+        1709,
+        1710
+      ],
+      "utf8_span": [
+        1709,
+        1710
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 340,
+      "owner_event": 43,
+      "utf16_span": [
+        1719,
+        1727
+      ],
+      "utf8_span": [
+        1719,
+        1727
+      ],
+      "source_text": "multiply"
+    },
+    {
+      "token_id": 341,
+      "owner_event": 43,
+      "utf16_span": [
+        1727,
+        1728
+      ],
+      "utf8_span": [
+        1727,
+        1728
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 342,
+      "owner_event": 43,
+      "utf16_span": [
+        1728,
+        1729
+      ],
+      "utf8_span": [
+        1728,
+        1729
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 343,
+      "owner_event": 43,
+      "utf16_span": [
+        1729,
+        1730
+      ],
+      "utf8_span": [
+        1729,
+        1730
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 344,
+      "owner_event": 43,
+      "utf16_span": [
+        1731,
+        1740
+      ],
+      "utf8_span": [
+        1731,
+        1740
+      ],
+      "source_text": "temporary"
+    },
+    {
+      "token_id": 345,
+      "owner_event": 43,
+      "utf16_span": [
+        1740,
+        1741
+      ],
+      "utf8_span": [
+        1740,
+        1741
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 346,
+      "owner_event": 43,
+      "utf16_span": [
+        1742,
+        1747
+      ],
+      "utf8_span": [
+        1742,
+        1747
+      ],
+      "source_text": "false"
+    },
+    {
+      "token_id": 347,
+      "owner_event": 43,
+      "utf16_span": [
+        1747,
+        1748
+      ],
+      "utf8_span": [
+        1747,
+        1748
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 348,
+      "owner_event": 43,
+      "utf16_span": [
+        1749,
+        1753
+      ],
+      "utf8_span": [
+        1749,
+        1753
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 349,
+      "owner_event": 43,
+      "utf16_span": [
+        1753,
+        1754
+      ],
+      "utf8_span": [
+        1753,
+        1754
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 350,
+      "owner_event": 43,
+      "utf16_span": [
+        1755,
+        1762
+      ],
+      "utf8_span": [
+        1755,
+        1762
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 351,
+      "owner_event": 43,
+      "utf16_span": [
+        1762,
+        1763
+      ],
+      "utf8_span": [
+        1762,
+        1763
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 352,
+      "owner_event": 44,
+      "utf16_span": [
+        1772,
+        1780
+      ],
+      "utf8_span": [
+        1772,
+        1780
+      ],
+      "source_text": "multiply"
+    },
+    {
+      "token_id": 353,
+      "owner_event": 44,
+      "utf16_span": [
+        1780,
+        1781
+      ],
+      "utf8_span": [
+        1780,
+        1781
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 354,
+      "owner_event": 44,
+      "utf16_span": [
+        1781,
+        1790
+      ],
+      "utf8_span": [
+        1781,
+        1790
+      ],
+      "source_text": "temporary"
+    },
+    {
+      "token_id": 355,
+      "owner_event": 44,
+      "utf16_span": [
+        1790,
+        1791
+      ],
+      "utf8_span": [
+        1790,
+        1791
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 356,
+      "owner_event": 44,
+      "utf16_span": [
+        1792,
+        1793
+      ],
+      "utf8_span": [
+        1792,
+        1793
+      ],
+      "source_text": "u"
+    },
+    {
+      "token_id": 357,
+      "owner_event": 44,
+      "utf16_span": [
+        1793,
+        1794
+      ],
+      "utf8_span": [
+        1793,
+        1794
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 358,
+      "owner_event": 44,
+      "utf16_span": [
+        1795,
+        1799
+      ],
+      "utf8_span": [
+        1795,
+        1799
+      ],
+      "source_text": "true"
+    },
+    {
+      "token_id": 359,
+      "owner_event": 44,
+      "utf16_span": [
+        1799,
+        1800
+      ],
+      "utf8_span": [
+        1799,
+        1800
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 360,
+      "owner_event": 44,
+      "utf16_span": [
+        1801,
+        1805
+      ],
+      "utf8_span": [
+        1801,
+        1805
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 361,
+      "owner_event": 44,
+      "utf16_span": [
+        1805,
+        1806
+      ],
+      "utf8_span": [
+        1805,
+        1806
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 362,
+      "owner_event": 44,
+      "utf16_span": [
+        1807,
+        1814
+      ],
+      "utf8_span": [
+        1807,
+        1814
+      ],
+      "source_text": "workers"
+    },
+    {
+      "token_id": 363,
+      "owner_event": 44,
+      "utf16_span": [
+        1814,
+        1815
+      ],
+      "utf8_span": [
+        1814,
+        1815
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 364,
+      "owner_event": 45,
+      "utf16_span": [
+        1824,
+        1833
+      ],
+      "utf8_span": [
+        1824,
+        1833
+      ],
+      "source_text": "iteration"
+    },
+    {
+      "token_id": 365,
+      "owner_event": 45,
+      "utf16_span": [
+        1834,
+        1836
+      ],
+      "utf8_span": [
+        1834,
+        1836
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 366,
+      "owner_event": 45,
+      "utf16_span": [
+        1837,
+        1838
+      ],
+      "utf8_span": [
+        1837,
+        1838
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 367,
+      "owner_event": 46,
+      "utf16_span": [
+        1845,
+        1846
+      ],
+      "utf8_span": [
+        1845,
+        1846
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 368,
+      "owner_event": 47,
+      "utf16_span": [
+        1853,
+        1856
+      ],
+      "utf8_span": [
+        1853,
+        1856
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 369,
+      "owner_event": 47,
+      "utf16_span": [
+        1857,
+        1866
+      ],
+      "utf8_span": [
+        1857,
+        1866
+      ],
+      "source_text": "numerator"
+    },
+    {
+      "token_id": 370,
+      "owner_event": 47,
+      "utf16_span": [
+        1867,
+        1868
+      ],
+      "utf8_span": [
+        1867,
+        1868
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 371,
+      "owner_event": 47,
+      "utf16_span": [
+        1869,
+        1872
+      ],
+      "utf8_span": [
+        1869,
+        1872
+      ],
+      "source_text": "0.0"
+    },
+    {
+      "token_id": 372,
+      "owner_event": 48,
+      "utf16_span": [
+        1879,
+        1882
+      ],
+      "utf8_span": [
+        1879,
+        1882
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 373,
+      "owner_event": 48,
+      "utf16_span": [
+        1883,
+        1894
+      ],
+      "utf8_span": [
+        1883,
+        1894
+      ],
+      "source_text": "denominator"
+    },
+    {
+      "token_id": 374,
+      "owner_event": 48,
+      "utf16_span": [
+        1895,
+        1896
+      ],
+      "utf8_span": [
+        1895,
+        1896
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 375,
+      "owner_event": 48,
+      "utf16_span": [
+        1897,
+        1900
+      ],
+      "utf8_span": [
+        1897,
+        1900
+      ],
+      "source_text": "0.0"
+    },
+    {
+      "token_id": 376,
+      "owner_event": 49,
+      "utf16_span": [
+        1907,
+        1910
+      ],
+      "utf8_span": [
+        1907,
+        1910
+      ],
+      "source_text": "var"
+    },
+    {
+      "token_id": 377,
+      "owner_event": 49,
+      "utf16_span": [
+        1911,
+        1912
+      ],
+      "utf8_span": [
+        1911,
+        1912
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 378,
+      "owner_event": 49,
+      "utf16_span": [
+        1913,
+        1914
+      ],
+      "utf8_span": [
+        1913,
+        1914
+      ],
+      "source_text": "="
+    },
+    {
+      "token_id": 379,
+      "owner_event": 49,
+      "utf16_span": [
+        1915,
+        1916
+      ],
+      "utf8_span": [
+        1915,
+        1916
+      ],
+      "source_text": "0"
+    },
+    {
+      "token_id": 380,
+      "owner_event": 50,
+      "utf16_span": [
+        1923,
+        1928
+      ],
+      "utf8_span": [
+        1923,
+        1928
+      ],
+      "source_text": "while"
+    },
+    {
+      "token_id": 381,
+      "owner_event": 50,
+      "utf16_span": [
+        1929,
+        1930
+      ],
+      "utf8_span": [
+        1929,
+        1930
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 382,
+      "owner_event": 50,
+      "utf16_span": [
+        1930,
+        1931
+      ],
+      "utf8_span": [
+        1930,
+        1931
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 383,
+      "owner_event": 50,
+      "utf16_span": [
+        1932,
+        1933
+      ],
+      "utf8_span": [
+        1932,
+        1933
+      ],
+      "source_text": "<"
+    },
+    {
+      "token_id": 384,
+      "owner_event": 50,
+      "utf16_span": [
+        1934,
+        1935
+      ],
+      "utf8_span": [
+        1934,
+        1935
+      ],
+      "source_text": "n"
+    },
+    {
+      "token_id": 385,
+      "owner_event": 50,
+      "utf16_span": [
+        1935,
+        1936
+      ],
+      "utf8_span": [
+        1935,
+        1936
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 386,
+      "owner_event": 50,
+      "utf16_span": [
+        1937,
+        1938
+      ],
+      "utf8_span": [
+        1937,
+        1938
+      ],
+      "source_text": "{"
+    },
+    {
+      "token_id": 387,
+      "owner_event": 51,
+      "utf16_span": [
+        1947,
+        1956
+      ],
+      "utf8_span": [
+        1947,
+        1956
+      ],
+      "source_text": "numerator"
+    },
+    {
+      "token_id": 388,
+      "owner_event": 51,
+      "utf16_span": [
+        1957,
+        1959
+      ],
+      "utf8_span": [
+        1957,
+        1959
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 389,
+      "owner_event": 51,
+      "utf16_span": [
+        1960,
+        1961
+      ],
+      "utf8_span": [
+        1960,
+        1961
+      ],
+      "source_text": "u"
+    },
+    {
+      "token_id": 390,
+      "owner_event": 51,
+      "utf16_span": [
+        1961,
+        1962
+      ],
+      "utf8_span": [
+        1961,
+        1962
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 391,
+      "owner_event": 51,
+      "utf16_span": [
+        1962,
+        1963
+      ],
+      "utf8_span": [
+        1962,
+        1963
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 392,
+      "owner_event": 51,
+      "utf16_span": [
+        1963,
+        1964
+      ],
+      "utf8_span": [
+        1963,
+        1964
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 393,
+      "owner_event": 51,
+      "utf16_span": [
+        1965,
+        1966
+      ],
+      "utf8_span": [
+        1965,
+        1966
+      ],
+      "source_text": "*"
+    },
+    {
+      "token_id": 394,
+      "owner_event": 51,
+      "utf16_span": [
+        1967,
+        1968
+      ],
+      "utf8_span": [
+        1967,
+        1968
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 395,
+      "owner_event": 51,
+      "utf16_span": [
+        1968,
+        1969
+      ],
+      "utf8_span": [
+        1968,
+        1969
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 396,
+      "owner_event": 51,
+      "utf16_span": [
+        1969,
+        1970
+      ],
+      "utf8_span": [
+        1969,
+        1970
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 397,
+      "owner_event": 51,
+      "utf16_span": [
+        1970,
+        1971
+      ],
+      "utf8_span": [
+        1970,
+        1971
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 398,
+      "owner_event": 52,
+      "utf16_span": [
+        1980,
+        1991
+      ],
+      "utf8_span": [
+        1980,
+        1991
+      ],
+      "source_text": "denominator"
+    },
+    {
+      "token_id": 399,
+      "owner_event": 52,
+      "utf16_span": [
+        1992,
+        1994
+      ],
+      "utf8_span": [
+        1992,
+        1994
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 400,
+      "owner_event": 52,
+      "utf16_span": [
+        1995,
+        1996
+      ],
+      "utf8_span": [
+        1995,
+        1996
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 401,
+      "owner_event": 52,
+      "utf16_span": [
+        1996,
+        1997
+      ],
+      "utf8_span": [
+        1996,
+        1997
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 402,
+      "owner_event": 52,
+      "utf16_span": [
+        1997,
+        1998
+      ],
+      "utf8_span": [
+        1997,
+        1998
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 403,
+      "owner_event": 52,
+      "utf16_span": [
+        1998,
+        1999
+      ],
+      "utf8_span": [
+        1998,
+        1999
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 404,
+      "owner_event": 52,
+      "utf16_span": [
+        2000,
+        2001
+      ],
+      "utf8_span": [
+        2000,
+        2001
+      ],
+      "source_text": "*"
+    },
+    {
+      "token_id": 405,
+      "owner_event": 52,
+      "utf16_span": [
+        2002,
+        2003
+      ],
+      "utf8_span": [
+        2002,
+        2003
+      ],
+      "source_text": "v"
+    },
+    {
+      "token_id": 406,
+      "owner_event": 52,
+      "utf16_span": [
+        2003,
+        2004
+      ],
+      "utf8_span": [
+        2003,
+        2004
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 407,
+      "owner_event": 52,
+      "utf16_span": [
+        2004,
+        2005
+      ],
+      "utf8_span": [
+        2004,
+        2005
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 408,
+      "owner_event": 52,
+      "utf16_span": [
+        2005,
+        2006
+      ],
+      "utf8_span": [
+        2005,
+        2006
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 409,
+      "owner_event": 53,
+      "utf16_span": [
+        2015,
+        2016
+      ],
+      "utf8_span": [
+        2015,
+        2016
+      ],
+      "source_text": "i"
+    },
+    {
+      "token_id": 410,
+      "owner_event": 53,
+      "utf16_span": [
+        2017,
+        2019
+      ],
+      "utf8_span": [
+        2017,
+        2019
+      ],
+      "source_text": "+="
+    },
+    {
+      "token_id": 411,
+      "owner_event": 53,
+      "utf16_span": [
+        2020,
+        2021
+      ],
+      "utf8_span": [
+        2020,
+        2021
+      ],
+      "source_text": "1"
+    },
+    {
+      "token_id": 412,
+      "owner_event": 54,
+      "utf16_span": [
+        2028,
+        2029
+      ],
+      "utf8_span": [
+        2028,
+        2029
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 413,
+      "owner_event": 55,
+      "utf16_span": [
+        2036,
+        2042
+      ],
+      "utf8_span": [
+        2036,
+        2042
+      ],
+      "source_text": "System"
+    },
+    {
+      "token_id": 414,
+      "owner_event": 55,
+      "utf16_span": [
+        2042,
+        2043
+      ],
+      "utf8_span": [
+        2042,
+        2043
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 415,
+      "owner_event": 55,
+      "utf16_span": [
+        2043,
+        2046
+      ],
+      "utf8_span": [
+        2043,
+        2046
+      ],
+      "source_text": "out"
+    },
+    {
+      "token_id": 416,
+      "owner_event": 55,
+      "utf16_span": [
+        2046,
+        2047
+      ],
+      "utf8_span": [
+        2046,
+        2047
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 417,
+      "owner_event": 55,
+      "utf16_span": [
+        2047,
+        2053
+      ],
+      "utf8_span": [
+        2047,
+        2053
+      ],
+      "source_text": "printf"
+    },
+    {
+      "token_id": 418,
+      "owner_event": 55,
+      "utf16_span": [
+        2053,
+        2054
+      ],
+      "utf8_span": [
+        2053,
+        2054
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 419,
+      "owner_event": 55,
+      "utf16_span": [
+        2054,
+        2060
+      ],
+      "utf8_span": [
+        2054,
+        2060
+      ],
+      "source_text": "Locale"
+    },
+    {
+      "token_id": 420,
+      "owner_event": 55,
+      "utf16_span": [
+        2060,
+        2061
+      ],
+      "utf8_span": [
+        2060,
+        2061
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 421,
+      "owner_event": 55,
+      "utf16_span": [
+        2061,
+        2065
+      ],
+      "utf8_span": [
+        2061,
+        2065
+      ],
+      "source_text": "ROOT"
+    },
+    {
+      "token_id": 422,
+      "owner_event": 55,
+      "utf16_span": [
+        2065,
+        2066
+      ],
+      "utf8_span": [
+        2065,
+        2066
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 423,
+      "owner_event": 55,
+      "utf16_span": [
+        2067,
+        2075
+      ],
+      "utf8_span": [
+        2067,
+        2075
+      ],
+      "source_text": "\"%.9f\\n\""
+    },
+    {
+      "token_id": 424,
+      "owner_event": 55,
+      "utf16_span": [
+        2075,
+        2076
+      ],
+      "utf8_span": [
+        2075,
+        2076
+      ],
+      "source_text": ","
+    },
+    {
+      "token_id": 425,
+      "owner_event": 55,
+      "utf16_span": [
+        2077,
+        2083
+      ],
+      "utf8_span": [
+        2077,
+        2083
+      ],
+      "source_text": "Double"
+    },
+    {
+      "token_id": 426,
+      "owner_event": 55,
+      "utf16_span": [
+        2083,
+        2084
+      ],
+      "utf8_span": [
+        2083,
+        2084
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 427,
+      "owner_event": 55,
+      "utf16_span": [
+        2084,
+        2087
+      ],
+      "utf8_span": [
+        2084,
+        2087
+      ],
+      "source_text": "box"
+    },
+    {
+      "token_id": 428,
+      "owner_event": 55,
+      "utf16_span": [
+        2087,
+        2088
+      ],
+      "utf8_span": [
+        2087,
+        2088
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 429,
+      "owner_event": 55,
+      "utf16_span": [
+        2088,
+        2092
+      ],
+      "utf8_span": [
+        2088,
+        2092
+      ],
+      "source_text": "math"
+    },
+    {
+      "token_id": 430,
+      "owner_event": 55,
+      "utf16_span": [
+        2092,
+        2093
+      ],
+      "utf8_span": [
+        2092,
+        2093
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 431,
+      "owner_event": 55,
+      "utf16_span": [
+        2093,
+        2097
+      ],
+      "utf8_span": [
+        2093,
+        2097
+      ],
+      "source_text": "sqrt"
+    },
+    {
+      "token_id": 432,
+      "owner_event": 55,
+      "utf16_span": [
+        2097,
+        2098
+      ],
+      "utf8_span": [
+        2097,
+        2098
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 433,
+      "owner_event": 55,
+      "utf16_span": [
+        2098,
+        2107
+      ],
+      "utf8_span": [
+        2098,
+        2107
+      ],
+      "source_text": "numerator"
+    },
+    {
+      "token_id": 434,
+      "owner_event": 55,
+      "utf16_span": [
+        2108,
+        2109
+      ],
+      "utf8_span": [
+        2108,
+        2109
+      ],
+      "source_text": "/"
+    },
+    {
+      "token_id": 435,
+      "owner_event": 55,
+      "utf16_span": [
+        2110,
+        2121
+      ],
+      "utf8_span": [
+        2110,
+        2121
+      ],
+      "source_text": "denominator"
+    },
+    {
+      "token_id": 436,
+      "owner_event": 55,
+      "utf16_span": [
+        2121,
+        2122
+      ],
+      "utf8_span": [
+        2121,
+        2122
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 437,
+      "owner_event": 55,
+      "utf16_span": [
+        2122,
+        2123
+      ],
+      "utf8_span": [
+        2122,
+        2123
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 438,
+      "owner_event": 55,
+      "utf16_span": [
+        2123,
+        2124
+      ],
+      "utf8_span": [
+        2123,
+        2124
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 439,
+      "owner_event": 56,
+      "utf16_span": [
+        2129,
+        2130
+      ],
+      "utf8_span": [
+        2129,
+        2130
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 440,
+      "owner_event": 57,
+      "utf16_span": [
+        2131,
+        2138
+      ],
+      "utf8_span": [
+        2131,
+        2138
+      ],
+      "source_text": "finally"
+    },
+    {
+      "token_id": 441,
+      "owner_event": 58,
+      "utf16_span": [
+        2139,
+        2143
+      ],
+      "utf8_span": [
+        2139,
+        2143
+      ],
+      "source_text": "pool"
+    },
+    {
+      "token_id": 442,
+      "owner_event": 58,
+      "utf16_span": [
+        2143,
+        2144
+      ],
+      "utf8_span": [
+        2143,
+        2144
+      ],
+      "source_text": "."
+    },
+    {
+      "token_id": 443,
+      "owner_event": 58,
+      "utf16_span": [
+        2144,
+        2152
+      ],
+      "utf8_span": [
+        2144,
+        2152
+      ],
+      "source_text": "shutdown"
+    },
+    {
+      "token_id": 444,
+      "owner_event": 58,
+      "utf16_span": [
+        2152,
+        2153
+      ],
+      "utf8_span": [
+        2152,
+        2153
+      ],
+      "source_text": "("
+    },
+    {
+      "token_id": 445,
+      "owner_event": 58,
+      "utf16_span": [
+        2153,
+        2154
+      ],
+      "utf8_span": [
+        2153,
+        2154
+      ],
+      "source_text": ")"
+    },
+    {
+      "token_id": 446,
+      "owner_event": 59,
+      "utf16_span": [
+        2157,
+        2158
+      ],
+      "utf8_span": [
+        2157,
+        2158
+      ],
+      "source_text": "}"
+    },
+    {
+      "token_id": 447,
+      "owner_event": 60,
+      "utf16_span": [
+        2159,
+        2160
+      ],
+      "utf8_span": [
+        2159,
+        2160
+      ],
+      "source_text": "}"
+    }
+  ],
+  "all_meaningful_tokens_owned": true,
+  "native_nodes_preserved": 357,
+  "literal_and_comment_evidence_preserved": true,
+  "frozen_base_sha256": "66f13f502bf494a84b7c11c3805114eacd5349db5d6562441bd1e15f8b4e0bd1",
+  "id": "scala-spectralnorm-jvm-v1",
+  "native_capture_sha256": "2f73c9bb154091a01c7047443d74ee115cbbdcb0fa6f940c43141865ffe9f706"
+}
