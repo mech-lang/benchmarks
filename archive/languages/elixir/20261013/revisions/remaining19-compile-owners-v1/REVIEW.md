@@ -7,13 +7,13 @@ exclusive outputs belong to the standalone benchmark repository.
 
 The worker requires the actual successful saved-first-compile owner/writer result,
 its normal durable terminal/request/start/worker closure, and the independent
-closed review. The actual first probe closed normally: worker13072, target13076,
-native13085, zero compiler/main calls and one successful owner/writer command.
-The maintainer verified7,793 pins at the new repository's
+closed review. The actual first probe closed normally: worker 13072, target 13076,
+native process 13085, zero compiler/main calls and one successful owner/writer command.
+The maintainer verified 7,793 pins at the new repository's
 `continuation/jobs/elixir-saved-first-probe-closed-review-v1/receipt.json`,
 SHA497204e26b73b1c9125dcb99ba5d28d19d9824d24afa864c917a25be4890db50.
-The worker binds the literal actual result a5eec9db, outcome963e87a4,
-durableec770c42, request4c4965ff and native2a44f16b, plus all ten unchanged
+The worker binds the literal actual result a5eec9db, outcome 963e87a4,
+durable terminal ec770c42, request 4c4965ff and native receipt 2a44f16b, plus all ten unchanged
 new-repository copies recorded by that maintainer review. Missing or non-successful
 evidence fails before any compiler call. The literal frozen resume is fc350e965282314456d858bb358faac720a6b7739ac30816385ad800b8076c50;
 its note is 8f68d56b28021db2f2681d2dd3868d824a8cd5daf5198c5eb443c4f3a87e318f.
@@ -52,7 +52,7 @@ The original bounded owned service enforces direct PID/process-group ownership,
 normal exit, output drain and cleanup. Compiler calls have 180-second bounds and
 probes 90 seconds; the outer 6,000-second deadline begins after common acquisition.
 Five completed dependency private leases, this proposal's exclusive private lease
-and the common inode79859134 remain held through terminal pin reconciliation.
+and the common inode 79859134 remain held through terminal pin reconciliation.
 Fresh paths reject retry/overwrite; earlier completed cases survive any later
 failure. Private cookies/HOME/config/tmp are not evidence artifacts.
 
@@ -63,7 +63,7 @@ from writer bytes. Next gates remain the already declared raw-byte/rounding,
 arbitrary-integer and regex/helper cases; bounded algorithm outputs and scored
 BEAM work/allocation/retention review; complete Elixir source-owner grammar and
 canonical count fixtures/replay; independently pinned native formatter if available;
-and sixty fresh subject plus thirty matched-control full timings. Existing31/6 or
+and sixty fresh subject plus thirty matched-control full timings. Existing Prolog 31/6 or
 other-language fixtures cannot qualify these Elixir semantics. Canonical/formatted
 LOC, source-work, subject execution mode, full stdio and chart admission stay
 null/false. The result includes all twenty identities, with nineteen actual new

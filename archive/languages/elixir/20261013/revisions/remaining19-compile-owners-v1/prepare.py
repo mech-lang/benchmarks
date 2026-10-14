@@ -154,6 +154,7 @@ def inventory(base, saved, resume, pins):
             assert not path.is_symlink() and not path.stat().st_mode & 0o222
             base.bind(path, item['sha256'], pins); base.bind(item['origin'], item['sha256'], pins)
         assert files[1]['sha256'] == SUPPORT_SHA and files[2]['sha256'] == RUNNER_SHA
+        assert row['alias_of'] == 'elixir-'+row['benchmark']+'-baseline-v1'
         assert row['compile_command_proposed'] == [str(Path(saved['compiler'])), '-o', str(folder/'ebin'), str(folder/'support.ex'), str(folder/'main.ex')]
         assert row['runtime_command_proposed'] == [str(Path(saved['compiler']).with_name('elixir')), '-pa', str(folder/'ebin'), str(folder/'runner.exs'), '{n}']
         assert (folder/'ebin').is_dir() and not any((folder/'ebin').iterdir())
@@ -177,6 +178,7 @@ def run(args, output, build, pins, common_fd, base, resume, progress):
         assert not (P/name).stat().st_mode & 0o222; base.bind(P/name, digest, pins)
     previous, compiler, saved, first, first_beams, first_support = first_closure(base, resume, pins)
     rows = inventory(base, saved, resume, pins)
+    base.verify(pins); progress['prerequisites_verified'] = True
     remaining = [row for row in rows if row['id'] != FIRST_ID]
     assert len(remaining) == 19
     warning = base.bind(resume.OLD_OUT/'compile/first-nbody-compact-compile.stderr', resume.STDERR_SHA, pins).read_bytes()
@@ -280,7 +282,8 @@ def main():
             pins, failures, base = {}, [], None
             progress = dict(status='failed-Elixir-remaining19-compile-owners', subject_compiler_commands=0,
                 owner_stdio_commands=0, completed_profile_ids=[], first_compile_or_probe_reexecutions=0,
-                subject_main_executions=0, fixture_reexecutions=0, actual_benchmark_runs=0, chart_admission=False)
+                subject_main_executions=0, fixture_reexecutions=0, actual_benchmark_runs=0,
+                prerequisites_verified=False, chart_admission=False)
             signal.alarm(6000)
             try:
                 for path, expected in ((P/'prepare.py', args.worker_sha256), (P/'REVIEW.md', args.review_sha256),
@@ -321,7 +324,8 @@ def main():
                     except BaseException as error: failures.append(dict(path=str(path), error=str(error) or type(error).__name__))
                 if failures: progress.update(status='failed-terminal-integrity', integrity_errors=failures)
                 progress.update(finished_at=datetime.now(timezone.utc).isoformat(), prerequisite_pins=pins, available_evidence_pins=available,
-                    exclusive_common_mutex_held=True, common_mutex_inode=79859134, original_sources_and_first_beams_preserved=True,
+                    exclusive_common_mutex_held=True, common_mutex_inode=79859134,
+                    original_sources_and_first_beams_preserved=progress['prerequisites_verified'] and not failures,
                     private_startup_directories_not_evidence_artifacts=True)
                 with (output/'outcome.json').open('x') as stream: json.dump(progress, stream, indent=2); stream.write('\n')
                 if failures: raise RuntimeError('Elixir remaining19 terminal integrity failed; partial records retained')

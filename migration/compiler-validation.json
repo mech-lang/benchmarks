@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "recorded_at": "2026-10-14T01:23:14.717144+00:00",
+  "recorded_at": "2026-10-14T01:46:16.845988+00:00",
   "compiler_repository": "https://github.com/mech-lang/mech",
   "branch": "codex/native-execution-improvements",
   "base": "c4777b7015fe8ff47fdfa48d18606c49aace7d97",
-  "head": "dd1e2afbe6d20fc46949001b45183afd430e5918",
+  "head": "09388a615499c0fd23a49786043973d190714e47",
   "pull_request": "https://github.com/mech-lang/mech/pull/897",
   "toolchain": "nightly-2026-03-03",
   "platform": "aarch64-apple-darwin",
@@ -135,12 +135,24 @@
       "check": "GitHub CI helpers",
       "initial_run": "https://github.com/mech-lang/mech/actions/runs/38494439517",
       "reason": "Two jobs installed but did not select the pinned toolchain for helper-spawned plain Cargo. Job-scoped RUSTUP_TOOLCHAIN now selects the declared pinned toolchain; a regression assertion covers this."
+    },
+    {
+      "check": "GitHub static distribution module layout",
+      "initial_job": "https://github.com/mech-lang/mech/actions/runs/38495218966/job/115629881100",
+      "reason": "The repository forbids a sibling control.rs file and control directory. The file moved byte-for-byte to control/mod.rs; no Rust contents changed.",
+      "commit": "09388a615499c0fd23a49786043973d190714e47",
+      "validation": [
+        "python3 scripts/check-rust-module-layout.py: passed",
+        "cargo +nightly-2026-03-03 check -p mech-engine --locked: passed",
+        "RUSTUP_TOOLCHAIN=nightly-2026-03-03 bash scripts/check-static-distribution-profiles.sh static: passed"
+      ],
+      "log": "compiler-module-layout-validation.log"
     }
   ],
   "notes": [
     "No benchmarks were timed during extraction or integration.",
     "Native test/build processes ran sequentially under the shared host timing lock.",
-    "The 200 native tests ran on a44e1b7f1b9f1c491e600b2f410403d86a7c01c8; production Rust and Cargo files are identical at the final head.",
+    "The 200 native tests ran on a44e1b7f1b9f1c491e600b2f410403d86a7c01c8; production Rust and Cargo contents are unchanged at the final head, with control.rs moved byte-for-byte to control/mod.rs.",
     "GitHub CI is rerunning at the final head; this record does not claim its completion.",
     "Example verifier Python was syntax checked; full example AOT verification scripts were not rerun for the repository extraction."
   ]
