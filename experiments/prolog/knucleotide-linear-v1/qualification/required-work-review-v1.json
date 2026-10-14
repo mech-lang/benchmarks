@@ -1,0 +1,966 @@
+{
+  "schema": "prolog-knucleotide-linear-required-work-review-v1",
+  "status": "qualified-required-source-work",
+  "language": "prolog",
+  "benchmark": "knucleotide",
+  "reviewed_at": "2026-10-14T21:11:59.180845+00:00",
+  "report": {
+    "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/report.json",
+    "sha256": "fb50a9469b5f666d1aafe63b7ac82cdc287ad2871e1a86753ebe704a492e9b28",
+    "bytes": 4787562
+  },
+  "terminal": {
+    "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/terminal.json",
+    "sha256": "497c6caee3a02ece8e83a26ac2f98a634412a2e4f4dce3f20251caf912657b18",
+    "bytes": 72520
+  },
+  "plan": {
+    "path": "experiments/prolog/knucleotide-linear-v1/qualification/plan-v1.json",
+    "sha256": "5dadedd5d41047a9bf7941e88b390722fada5ebd8720f2b274512d092bf10b38",
+    "bytes": 4688550
+  },
+  "scope": "Actual retained QLF/WAM, direct indexed-text runtime source and all eight complete-map captures; no native execution by this review.",
+  "compile_inspect_warning_envelope": {
+    "captures": 4,
+    "raw_observer_status": "failed",
+    "exit_status": 0,
+    "error": "Unexpected stderr; raw bytes retained",
+    "accepted_stderr": "Warning: [Thread main] Local definition of clbg_prepare:main/0 overrides weak import from clbg_knucleotide\n",
+    "classification": "Exact source-reviewed weak-import warning only; raw failed observer labels remain preserved. No general stderr suppression.",
+    "controller_report_status": "validated"
+  },
+  "profiles": [
+    {
+      "profile": "prolog-knucleotide-compact",
+      "source": {
+        "path": "experiments/prolog/knucleotide-linear-v1/sources/knucleotide/compact.pl",
+        "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+        "bytes": 3645
+      },
+      "compiled_qlf": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/compact.qlf",
+        "sha256": "1108784c4ab256f828b532ec4e68c408ca749097f833517f42e0083425c03c68",
+        "bytes": 2632
+      },
+      "loaded_inputs": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/loaded-inputs.json",
+        "sha256": "3c5e9548e67fbabaaddbd57995dcc6944929ca27324cd427fd5c14ac01f61099",
+        "bytes": 4947
+      },
+      "wam": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/candidate.wam",
+        "sha256": "fa7b5742389ea3957d3c4f770e42900ffeb3a0927eb853305dee5f7ce1579f72",
+        "bytes": 24923
+      },
+      "compile_and_loaded_wam_instruction_sequences_equal": true,
+      "main_atom_string_calls": 1,
+      "required_source_work_qualified": true
+    },
+    {
+      "profile": "prolog-knucleotide-optimized",
+      "source": {
+        "path": "experiments/prolog/knucleotide-linear-v1/sources/knucleotide/optimized.pl",
+        "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+        "bytes": 3645
+      },
+      "compiled_qlf": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/optimized.qlf",
+        "sha256": "fe020a08d69c4b7485679f680e6ade12946bfbaacc2c5a7735ed2b5d40ede1a7",
+        "bytes": 2638
+      },
+      "loaded_inputs": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/loaded-inputs.json",
+        "sha256": "8e86f5825499ddbe3fae6355ec0d29cb952d5214131aafb8c97f849c9e9093fd",
+        "bytes": 4953
+      },
+      "wam": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/candidate.wam",
+        "sha256": "4680ba5de04d80f1f032960b1ac876719274555627b7252c54a03fe10b14d721",
+        "bytes": 24947
+      },
+      "compile_and_loaded_wam_instruction_sequences_equal": true,
+      "main_atom_string_calls": 1,
+      "required_source_work_qualified": true
+    }
+  ],
+  "alias_policy": {
+    "same_authored_main_bytes": true,
+    "same_loaded_wam_instruction_sequences": true,
+    "distinct_optimization_claimed": false
+  },
+  "work_findings": [
+    {
+      "contract": "one conversion before seven full scans",
+      "source": "sources/knucleotide/compact.pl:113-122",
+      "wam": "qualification/run-v1/inspect-compact/candidate.wam:11-67",
+      "finding": "main reads the selected record and length, calls atom_string/2 once at instruction 13, passes that atom as all_maps/4 argument 2 at instruction 42, constructs widths 1,2,3,4,6,12,18, then consumes all returned tables."
+    },
+    {
+      "contract": "all windows and complete maps",
+      "source": "sources/knucleotide/compact.pl:39-60",
+      "wam": "qualification/run-v1/inspect-compact/candidate.wam:79-143,433-465",
+      "finding": "Each width allocates an ordinary hash table. Index runs from 1 through Length; each base updates the rolling 2-bit key under the width mask. Every Index>=Width performs ht_get/default zero, Count=Old+1 and ht_put; recursive calls preserve Sequence and table. There is no query-only filter or early successful-loop exit."
+    },
+    {
+      "contract": "all tables retained through final output",
+      "source": "sources/knucleotide/compact.pl:55-60,113-122",
+      "wam": "qualification/run-v1/inspect-compact/candidate.wam:40-67,433-465",
+      "finding": "The recursive table list binds every constructed table before returning to main. Singles and doubles feed full frequencies; the other five tables feed the five corresponding queries. The ordinary table retains arbitrary keys and resizes; no fixed observed-key capacity is substituted."
+    },
+    {
+      "contract": "frequencies and queries",
+      "source": "sources/knucleotide/compact.pl:62-111",
+      "wam": "qualification/run-v1/inspect-compact/candidate.wam:147-206,469-510,565-614",
+      "finding": "ht_pairs enumerates every singleton/doubleton; negative count and numeric base-4 key implement decreasing count then A<C<G<T ordering, denominator is max(0,L-K+1), output uses three decimals and blank separators. Query keys use the unchanged five words and query counts use their complete width-specific maps."
+    },
+    {
+      "contract": "binary FASTA record and invalid-input behavior",
+      "source": "sources/knucleotide/compact.pl:7-37; support/clbg_records.pl:2-23; support/clbg_io.pl:4-18",
+      "finding": "Octet input, exact >THREE token, CR/LF separators, column-zero comments, stop at next header or EOF, case-folded A/C/G/T and exact invalid-base error are unchanged. No source change outside the one conversion and its argument substitution."
+    }
+  ],
+  "runtime_findings": [
+    {
+      "file": "src/pl-string.c",
+      "lines": [
+        110,
+        132,
+        342,
+        361
+      ],
+      "finding": "atom_string/2 obtains the input text and unifies an atom once. get_string_code/3 converts its text argument then performs one indexed character read."
+    },
+    {
+      "file": "src/os/pl-text.c",
+      "lines": [
+        129,
+        148,
+        210,
+        224
+      ],
+      "finding": "An atom takes get_atom_text; only the Prolog-string branch calls PL_from_stack_text. The repeated length+1 copying branch is not reached for SequenceAtom."
+    },
+    {
+      "file": "src/pl-fli.c",
+      "lines": [
+        878,
+        918
+      ],
+      "finding": "Text atoms expose their existing name pointer and stored length with PL_CHARS_HEAP; Prolog strings have PL_CHARS_PROLOG_STACK."
+    },
+    {
+      "file": "src/os/pl-text.h",
+      "lines": [
+        126,
+        130
+      ],
+      "finding": "Canonical Latin-1 access is t->text.t[i]&0xff, with no length scan or whole-record copy."
+    },
+    {
+      "file": "library/hashtable.pl",
+      "lines": [
+        80,
+        104,
+        106,
+        148,
+        185,
+        261,
+        295,
+        316,
+        333
+      ],
+      "finding": "Ordinary general hash tables insert/update every numeric key, grow storage and enumerate all entries. Collision probing and resizing remain runtime work."
+    }
+  ],
+  "source_complexity": {
+    "sequence_scans": 7,
+    "indexed_base_reads_for_valid_length_L": "7*L",
+    "count_updates": "sum(max(0,L-K+1) for K in [1,2,3,4,6,12,18])",
+    "one_time_sequence_conversion": true,
+    "whole_record_copy_per_base_removed": true,
+    "measured_linear_scaling": false,
+    "whole_algorithm_worst_case_linear_claim": false,
+    "qualification_limit": "The result establishes linear count of constant-time indexed atom accesses. Hash probing/resizing, parsing, allocation, GC and full-size resources are not a measured linear-scaling claim."
+  },
+  "complete_map_witnesses": [
+    {
+      "variant": "compact",
+      "case": "empty",
+      "sequence_length": 0,
+      "unique_keys_by_width": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "window_totals_by_width": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-empty/stdout.bin",
+        "sha256": "0fb729873ed02cb52c99c570f8376abf1f878f00ee5f60308bdb1cc6692ac925",
+        "bytes": 387
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-empty/process.json",
+        "sha256": "8a18ce178d002164035f54645161e7a54fe87e7a594ce95603d7b69e18b9b402",
+        "bytes": 2808
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/empty/stdin.bin",
+        "sha256": "6281898d12896f3ad34c6c8eec292a7955b78615d9d66ed5a34bb7d08382a6b7",
+        "bytes": 17
+      }
+    },
+    {
+      "variant": "compact",
+      "case": "all-four-base-words",
+      "sequence_length": 1024,
+      "unique_keys_by_width": [
+        4,
+        16,
+        64,
+        256,
+        749,
+        1013,
+        1007
+      ],
+      "window_totals_by_width": [
+        1024,
+        1023,
+        1022,
+        1021,
+        1019,
+        1013,
+        1007
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-all-four-base-words/stdout.bin",
+        "sha256": "7263b332044bc7a2efacdeb58ec43111c70eae3f1af8176e0c80d21e76b2f01d",
+        "bytes": 50612
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-all-four-base-words/process.json",
+        "sha256": "d024e4bbdfdc1e11967653d59f3a8b85c6f3f6ad9f2b231568877c5c33387971",
+        "bytes": 2828
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/all-four-base-words/stdin.bin",
+        "sha256": "deb17aed22a35eaecafcb9ec9fd8a2dbab1417b3fca6e9504bbb7a1142143f57",
+        "bytes": 1032
+      }
+    },
+    {
+      "variant": "compact",
+      "case": "query-overlaps",
+      "sequence_length": 144,
+      "unique_keys_by_width": [
+        3,
+        8,
+        13,
+        16,
+        18,
+        18,
+        18
+      ],
+      "window_totals_by_width": [
+        144,
+        143,
+        142,
+        141,
+        139,
+        133,
+        127
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-query-overlaps/stdout.bin",
+        "sha256": "4923d08f2fb37d23ceddeb147da46f4cb806eab40e5a485d1d36ee11a10af280",
+        "bytes": 1943
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-query-overlaps/process.json",
+        "sha256": "005a002cb6b0ca425f2d2bab1d78464166c907faca946f3d2261486114cc81b1",
+        "bytes": 2820
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/query-overlaps/stdin.bin",
+        "sha256": "aec8ead1082b9e2a259179918b008d83d14bb41a5697806c6e2bb414ee5910c7",
+        "bytes": 152
+      }
+    },
+    {
+      "variant": "compact",
+      "case": "lowercase-long-line",
+      "sequence_length": 4100,
+      "unique_keys_by_width": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "window_totals_by_width": [
+        4100,
+        4099,
+        4098,
+        4097,
+        4095,
+        4089,
+        4083
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-lowercase-long-line/stdout.bin",
+        "sha256": "ab4d6d9f4cc86ba5fd3f1102a5bcf3dcaff3d209d14d9436b708dbf99a651b5d",
+        "bytes": 1053
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-lowercase-long-line/process.json",
+        "sha256": "7e122f62eb899a597fc67564609d8aaafa740439c439849315e7ff36e99a5265",
+        "bytes": 2825
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/lowercase-long-line/stdin.bin",
+        "sha256": "d0c585d0b30a8480bb56427d9064dbae112b68d5ef35d1415d53314860068f3c",
+        "bytes": 4114
+      }
+    },
+    {
+      "variant": "optimized",
+      "case": "empty",
+      "sequence_length": 0,
+      "unique_keys_by_width": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "window_totals_by_width": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-empty/stdout.bin",
+        "sha256": "0fb729873ed02cb52c99c570f8376abf1f878f00ee5f60308bdb1cc6692ac925",
+        "bytes": 387
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-empty/process.json",
+        "sha256": "2a211bce3b80de775aa2c1eef55e3e7cc4decb22b5eab8d51607018ff46aa58f",
+        "bytes": 2812
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/empty/stdin.bin",
+        "sha256": "6281898d12896f3ad34c6c8eec292a7955b78615d9d66ed5a34bb7d08382a6b7",
+        "bytes": 17
+      }
+    },
+    {
+      "variant": "optimized",
+      "case": "all-four-base-words",
+      "sequence_length": 1024,
+      "unique_keys_by_width": [
+        4,
+        16,
+        64,
+        256,
+        749,
+        1013,
+        1007
+      ],
+      "window_totals_by_width": [
+        1024,
+        1023,
+        1022,
+        1021,
+        1019,
+        1013,
+        1007
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-all-four-base-words/stdout.bin",
+        "sha256": "7263b332044bc7a2efacdeb58ec43111c70eae3f1af8176e0c80d21e76b2f01d",
+        "bytes": 50612
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-all-four-base-words/process.json",
+        "sha256": "b775d28ca12514b30020024a22b52e15bfb0685939306e2a3b60b24e3e7cb350",
+        "bytes": 2830
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/all-four-base-words/stdin.bin",
+        "sha256": "deb17aed22a35eaecafcb9ec9fd8a2dbab1417b3fca6e9504bbb7a1142143f57",
+        "bytes": 1032
+      }
+    },
+    {
+      "variant": "optimized",
+      "case": "query-overlaps",
+      "sequence_length": 144,
+      "unique_keys_by_width": [
+        3,
+        8,
+        13,
+        16,
+        18,
+        18,
+        18
+      ],
+      "window_totals_by_width": [
+        144,
+        143,
+        142,
+        141,
+        139,
+        133,
+        127
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-query-overlaps/stdout.bin",
+        "sha256": "4923d08f2fb37d23ceddeb147da46f4cb806eab40e5a485d1d36ee11a10af280",
+        "bytes": 1943
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-query-overlaps/process.json",
+        "sha256": "a90d0fd520e2375826409549d36fb4583f939e47bbb935e17eccbd963a8c28ac",
+        "bytes": 2823
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/query-overlaps/stdin.bin",
+        "sha256": "aec8ead1082b9e2a259179918b008d83d14bb41a5697806c6e2bb414ee5910c7",
+        "bytes": 152
+      }
+    },
+    {
+      "variant": "optimized",
+      "case": "lowercase-long-line",
+      "sequence_length": 4100,
+      "unique_keys_by_width": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "window_totals_by_width": [
+        4100,
+        4099,
+        4098,
+        4097,
+        4095,
+        4089,
+        4083
+      ],
+      "all_keys_and_counts_equal": true,
+      "stdout": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-lowercase-long-line/stdout.bin",
+        "sha256": "ab4d6d9f4cc86ba5fd3f1102a5bcf3dcaff3d209d14d9436b708dbf99a651b5d",
+        "bytes": 1053
+      },
+      "process": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-lowercase-long-line/process.json",
+        "sha256": "458ad5fd2e430f38657aad33b203d980398b0e939a0e78b7c68c135a0e8254ab",
+        "bytes": 2829
+      },
+      "input": {
+        "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/lowercase-long-line/stdin.bin",
+        "sha256": "d0c585d0b30a8480bb56427d9064dbae112b68d5ef35d1415d53314860068f3c",
+        "bytes": 4114
+      }
+    }
+  ],
+  "complete_map_summary": {
+    "captures": 8,
+    "tables": 56,
+    "all_key_count_maps_equal_independent_byte_slice_counters": true,
+    "all_window_sums_equal": true,
+    "diagnostic_wrapper_absent_from_measured_commands": true,
+    "per_window_execution_trace_recorded": false
+  },
+  "builtin_metadata": {
+    "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/builtin-metadata/stdout.bin",
+    "sha256": "dac46f5624b2927bb04a8007ba13d806dc617b880c362cc4f17d8df0f3be6ef5",
+    "bytes": 522
+  },
+  "map_inspector": {
+    "path": "experiments/prolog/knucleotide-linear-v1/qualification/inspect_maps.pl",
+    "sha256": "79ec4724e24dbc150fe603306991e04c45275185d22d869694b5b0285030cbea",
+    "bytes": 1260
+  },
+  "runtime_source_files_physically_checked": [
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/pl-string.c",
+      "sha256": "53a0ca839f914964fc8c085401b3d85ff66da874d233837975ec25dd28c061a1",
+      "bytes": 14154
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/pl-fli.c",
+      "sha256": "888cf810185db5443e7967aa47367c6e4851f0b638a8b4a13ae7c5eabc812797",
+      "bytes": 115115
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/os/pl-text.c",
+      "sha256": "a22674a6ccebb278e765e9c68532004b39e14cb80e818e515e8d97d99af48d2e",
+      "bytes": 42563
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/os/pl-text.h",
+      "sha256": "f1cb0737e05ba084b736a181a128e5e8de942874845e5cd1a7f5bcc427452a1d",
+      "bytes": 5462
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/hashtable.pl",
+      "sha256": "9285d0cd59a23ee95a9f63bbcff10e714350b6de45d4223c9a7f8a802f8e25a9",
+      "bytes": 10324
+    }
+  ],
+  "checked_files": [
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/report.json",
+      "sha256": "fb50a9469b5f666d1aafe63b7ac82cdc287ad2871e1a86753ebe704a492e9b28",
+      "bytes": 4787562
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/terminal.json",
+      "sha256": "497c6caee3a02ece8e83a26ac2f98a634412a2e4f4dce3f20251caf912657b18",
+      "bytes": 72520
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/plan-v1.json",
+      "sha256": "5dadedd5d41047a9bf7941e88b390722fada5ebd8720f2b274512d092bf10b38",
+      "bytes": 4688550
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/manifest.json",
+      "sha256": "95876bf2308e5d876af83609167d36af303664cfaf0f84eb17a493974466f3c4",
+      "bytes": 11917
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-empty/process.json",
+      "sha256": "8a18ce178d002164035f54645161e7a54fe87e7a594ce95603d7b69e18b9b402",
+      "bytes": 2808
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-empty/stdout.bin",
+      "sha256": "0fb729873ed02cb52c99c570f8376abf1f878f00ee5f60308bdb1cc6692ac925",
+      "bytes": 387
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/empty/stdin.bin",
+      "sha256": "6281898d12896f3ad34c6c8eec292a7955b78615d9d66ed5a34bb7d08382a6b7",
+      "bytes": 17
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-all-four-base-words/process.json",
+      "sha256": "d024e4bbdfdc1e11967653d59f3a8b85c6f3f6ad9f2b231568877c5c33387971",
+      "bytes": 2828
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-all-four-base-words/stdout.bin",
+      "sha256": "7263b332044bc7a2efacdeb58ec43111c70eae3f1af8176e0c80d21e76b2f01d",
+      "bytes": 50612
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-all-four-base-words/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/all-four-base-words/stdin.bin",
+      "sha256": "deb17aed22a35eaecafcb9ec9fd8a2dbab1417b3fca6e9504bbb7a1142143f57",
+      "bytes": 1032
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-query-overlaps/process.json",
+      "sha256": "005a002cb6b0ca425f2d2bab1d78464166c907faca946f3d2261486114cc81b1",
+      "bytes": 2820
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-query-overlaps/stdout.bin",
+      "sha256": "4923d08f2fb37d23ceddeb147da46f4cb806eab40e5a485d1d36ee11a10af280",
+      "bytes": 1943
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-query-overlaps/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/query-overlaps/stdin.bin",
+      "sha256": "aec8ead1082b9e2a259179918b008d83d14bb41a5697806c6e2bb414ee5910c7",
+      "bytes": 152
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-lowercase-long-line/process.json",
+      "sha256": "7e122f62eb899a597fc67564609d8aaafa740439c439849315e7ff36e99a5265",
+      "bytes": 2825
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-lowercase-long-line/stdout.bin",
+      "sha256": "ab4d6d9f4cc86ba5fd3f1102a5bcf3dcaff3d209d14d9436b708dbf99a651b5d",
+      "bytes": 1053
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-compact-lowercase-long-line/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/fixtures-v1/lowercase-long-line/stdin.bin",
+      "sha256": "d0c585d0b30a8480bb56427d9064dbae112b68d5ef35d1415d53314860068f3c",
+      "bytes": 4114
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-empty/process.json",
+      "sha256": "2a211bce3b80de775aa2c1eef55e3e7cc4decb22b5eab8d51607018ff46aa58f",
+      "bytes": 2812
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-empty/stdout.bin",
+      "sha256": "0fb729873ed02cb52c99c570f8376abf1f878f00ee5f60308bdb1cc6692ac925",
+      "bytes": 387
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-all-four-base-words/process.json",
+      "sha256": "b775d28ca12514b30020024a22b52e15bfb0685939306e2a3b60b24e3e7cb350",
+      "bytes": 2830
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-all-four-base-words/stdout.bin",
+      "sha256": "7263b332044bc7a2efacdeb58ec43111c70eae3f1af8176e0c80d21e76b2f01d",
+      "bytes": 50612
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-all-four-base-words/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-query-overlaps/process.json",
+      "sha256": "a90d0fd520e2375826409549d36fb4583f939e47bbb935e17eccbd963a8c28ac",
+      "bytes": 2823
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-query-overlaps/stdout.bin",
+      "sha256": "4923d08f2fb37d23ceddeb147da46f4cb806eab40e5a485d1d36ee11a10af280",
+      "bytes": 1943
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-query-overlaps/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-lowercase-long-line/process.json",
+      "sha256": "458ad5fd2e430f38657aad33b203d980398b0e939a0e78b7c68c135a0e8254ab",
+      "bytes": 2829
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-lowercase-long-line/stdout.bin",
+      "sha256": "ab4d6d9f4cc86ba5fd3f1102a5bcf3dcaff3d209d14d9436b708dbf99a651b5d",
+      "bytes": 1053
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/maps-optimized-lowercase-long-line/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/source-review.json",
+      "sha256": "67676b881db6ac60df768d9f9ca8bbfcaaf24c2cc6d8f1c1b99c1b1096d3f3a0",
+      "bytes": 12615
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/sources/knucleotide/compact.pl",
+      "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+      "bytes": 3645
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/compact.pl",
+      "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+      "bytes": 3645
+    },
+    {
+      "path": "archive/languages/prolog/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-knucleotide-compact/input/sources/knucleotide/compact.pl",
+      "sha256": "ba1fdb0abf8ab0be068462bc58946ec0e2668c67db2664e4cf4dfe0412f386d5",
+      "bytes": 3600
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/sources/knucleotide/optimized.pl",
+      "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+      "bytes": 3645
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/optimized.pl",
+      "sha256": "b3f524485ccfc29204efecc2f0da47b91b7a63041f4591512ecb2af844ade1e6",
+      "bytes": 3645
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/support/clbg_io.pl",
+      "sha256": "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3",
+      "bytes": 729
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/support/clbg_io.pl",
+      "sha256": "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3",
+      "bytes": 729
+    },
+    {
+      "path": "archive/languages/prolog/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-knucleotide-compact/input/support/clbg_io.pl",
+      "sha256": "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3",
+      "bytes": 729
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/support/clbg_records.pl",
+      "sha256": "efb32920c4c8c42ff5c1d6d3a521b9c2a0fc93d06a6f1e994e00c80d39f61b19",
+      "bytes": 684
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/support/clbg_records.pl",
+      "sha256": "efb32920c4c8c42ff5c1d6d3a521b9c2a0fc93d06a6f1e994e00c80d39f61b19",
+      "bytes": 684
+    },
+    {
+      "path": "archive/languages/prolog/20261013/qualification/prepare-explicit-goal-rest-v1/builds/prolog-knucleotide-compact/input/support/clbg_records.pl",
+      "sha256": "efb32920c4c8c42ff5c1d6d3a521b9c2a0fc93d06a6f1e994e00c80d39f61b19",
+      "bytes": 684
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-compact/process.json",
+      "sha256": "687c06a9c9d61c198676d5a34968b2920ff1c7afdad38f57e37ccfb0f3ffa3b9",
+      "bytes": 3026
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-compact/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-compact/stderr.bin",
+      "sha256": "6d493d1f0528c2b219f139e1f4e306aa437f0c646ca07982676af442deb79d81",
+      "bytes": 107
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/process.json",
+      "sha256": "dd6581a34a66f462efa024cf98862325ea99f543e05ccc84e3aaae8647232be9",
+      "bytes": 3320
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/stderr.bin",
+      "sha256": "6d493d1f0528c2b219f139e1f4e306aa437f0c646ca07982676af442deb79d81",
+      "bytes": 107
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/candidate.wam",
+      "sha256": "fa7b5742389ea3957d3c4f770e42900ffeb3a0927eb853305dee5f7ce1579f72",
+      "bytes": 24923
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-compact/candidate.wam",
+      "sha256": "ad66eb5e144930484e9963ad2f0d18fbced708d06030b350c33c508a04c7a9f0",
+      "bytes": 24923
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-compact/loaded-inputs.json",
+      "sha256": "3c5e9548e67fbabaaddbd57995dcc6944929ca27324cd427fd5c14ac01f61099",
+      "bytes": 4947
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/compact.qlf",
+      "sha256": "1108784c4ab256f828b532ec4e68c408ca749097f833517f42e0083425c03c68",
+      "bytes": 2632
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-optimized/process.json",
+      "sha256": "2f9943735798f80f2b4bd49bdc89b8ca0aae14285514f11460654f4805751916",
+      "bytes": 3034
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-optimized/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-optimized/stderr.bin",
+      "sha256": "6d493d1f0528c2b219f139e1f4e306aa437f0c646ca07982676af442deb79d81",
+      "bytes": 107
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/process.json",
+      "sha256": "c50df8deb6939aff51816083327c9732aba55ad9ed7ef80d64e6c650404ed4b9",
+      "bytes": 3325
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/stderr.bin",
+      "sha256": "6d493d1f0528c2b219f139e1f4e306aa437f0c646ca07982676af442deb79d81",
+      "bytes": 107
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/candidate.wam",
+      "sha256": "4680ba5de04d80f1f032960b1ac876719274555627b7252c54a03fe10b14d721",
+      "bytes": 24947
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-optimized/candidate.wam",
+      "sha256": "631b83d4341fae6ba80de606ea32a5ebbcb992cebbdef762393b5b74af034230",
+      "bytes": 24947
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/inspect-optimized/loaded-inputs.json",
+      "sha256": "8e86f5825499ddbe3fae6355ec0d29cb952d5214131aafb8c97f849c9e9093fd",
+      "bytes": 4953
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/sources/knucleotide/optimized.qlf",
+      "sha256": "fe020a08d69c4b7485679f680e6ade12946bfbaacc2c5a7735ed2b5d40ede1a7",
+      "bytes": 2638
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_io/process.json",
+      "sha256": "3a2102ee63902f65879f8da366a91b3d2cbaa451b6ee9766d7b57cd78a64e676",
+      "bytes": 2910
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_io/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_io/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/support/clbg_io.qlf",
+      "sha256": "a42a76901cf377538739732cd23079fb0b538601dd23f003383f7c2eb70fb507",
+      "bytes": 1072
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_records/process.json",
+      "sha256": "ecee1fd40abaaed732f231d65859507ffd92120055c06b35d8f04c8ebc6eae5c",
+      "bytes": 2931
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_records/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/compile-clbg_records/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/input/support/clbg_records.qlf",
+      "sha256": "423d4f0d6152bc3a13fbda145cc499cf36303b5bb05f2c0a6506d1dc73370acc",
+      "bytes": 964
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/builtin-metadata/process.json",
+      "sha256": "7676e1855dd44c552b127ce5b2d6563c9981164664b074114c4a88dcaf36b999",
+      "bytes": 2333
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/builtin-metadata/stdout.bin",
+      "sha256": "dac46f5624b2927bb04a8007ba13d806dc617b880c362cc4f17d8df0f3be6ef5",
+      "bytes": 522
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/run-v1/builtin-metadata/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/pl-string.c",
+      "sha256": "53a0ca839f914964fc8c085401b3d85ff66da874d233837975ec25dd28c061a1",
+      "bytes": 14154
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/pl-fli.c",
+      "sha256": "888cf810185db5443e7967aa47367c6e4851f0b638a8b4a13ae7c5eabc812797",
+      "bytes": 115115
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/os/pl-text.c",
+      "sha256": "a22674a6ccebb278e765e9c68532004b39e14cb80e818e515e8d97d99af48d2e",
+      "bytes": 42563
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/official-source/swipl-10.0.2/src/os/pl-text.h",
+      "sha256": "f1cb0737e05ba084b736a181a128e5e8de942874845e5cd1a7f5bcc427452a1d",
+      "bytes": 5462
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/prolog-comparison/20261013/.build/swi-runtime-directory-v1/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/hashtable.pl",
+      "sha256": "9285d0cd59a23ee95a9f63bbcff10e714350b6de45d4223c9a7f8a802f8e25a9",
+      "bytes": 10324
+    },
+    {
+      "path": "experiments/prolog/knucleotide-linear-v1/qualification/inspect_maps.pl",
+      "sha256": "79ec4724e24dbc150fe603306991e04c45275185d22d869694b5b0285030cbea",
+      "bytes": 1260
+    }
+  ],
+  "limits": {
+    "native_processes_started_by_review": 0,
+    "benchmark_samples_created": 0,
+    "full_runtime_closure_rehashed": false,
+    "all_88_lifecycles_independently_replayed_here": false,
+    "focused_15_process_receipts_checked": true,
+    "entire_terminal_inventory_independently_replayed_here": false,
+    "native_machine_instruction_disassembly": false,
+    "full_input_performance_qualified": false,
+    "full_input_resource_sufficiency_qualified": false,
+    "canonical_source_counts_qualified_here": false
+  },
+  "source_work_qualified": true,
+  "full_timings_qualified": false,
+  "chart_admission": false
+}

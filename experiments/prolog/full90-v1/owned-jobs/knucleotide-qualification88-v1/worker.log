@@ -1,0 +1,21 @@
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/experiments/prolog/full90-v1/launch_durable.py", line 178, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/private/tmp/mech-benchmark-completion/experiments/prolog/full90-v1/launch_durable.py", line 172, in main
+    return worker(args.worker, args.lease_fd, args.go_fd)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/experiments/prolog/full90-v1/launch_durable.py", line 57, in worker
+    worker_identity=identity(os.getpid()), actual_command_started=False,
+                    ^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/experiments/prolog/full90-v1/launch_durable.py", line 37, in identity
+    result = subprocess.run(['ps', '-p', str(pid), '-o', 'pid=,ppid=,lstart=,command='],
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 548, in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1026, in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+  File "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/subprocess.py", line 1955, in _execute_child
+    raise child_exception_type(errno_num, err_msg, err_filename)
+PermissionError: [Errno 1] Operation not permitted: 'ps'
