@@ -1,0 +1,32 @@
+{
+  "schema": "kotlin-helper-supervisor-failure-review-v1",
+  "status": "diagnostic-compiler-exited-zero-supervisor-zombie-observation-failed",
+  "command_receipt": {
+    "path": "experiments/kotlin/helper-semantics/run-v1/diagnostic-compile/process.json",
+    "sha256": "40ad19f78989064148c40d10d3ec0f2c7ff4d26b239fb8d080401677f2ecaf47"
+  },
+  "attempted_controller": {
+    "path": "experiments/kotlin/helper-semantics/failed-run-v1-controller.py",
+    "sha256": "01d549c699be613b8de9cce84290c5ff4cab941cec81c8a350f98675721ca593"
+  },
+  "observed": {
+    "exit_status": 0,
+    "direct_child_reaped": true,
+    "remaining_after_cleanup": [],
+    "stdout_bytes": 0,
+    "stderr_bytes": 0,
+    "cleanup_errors": [
+      "[Errno 1] Operation not permitted"
+    ]
+  },
+  "diagnosis": "PROC_PIDTBSDINFO was requested with arg=0, excluding the normally exited unreaped child from identity lookup. The resulting failure path attempted to signal an empty group and received EPERM. The retained receipt then reaped the compiler with exit status zero.",
+  "correction": "Request zombie identities with arg=1; signal an owned group only if live members remain. Keep direct-child ownership until the group is empty and the leader is reaped.",
+  "reference": "https://github.com/apple-oss-distributions/xnu/blob/main/bsd/kern/proc_info.c",
+  "source_review_location": "proc_pidinfo: findzomb flag for PROC_PIDTBSDINFO with nonzero arg",
+  "new_native_commands": 0,
+  "subject_main_executions": 0,
+  "benchmark_samples": 0,
+  "helper_semantics_qualified": false,
+  "chart_admission": false,
+  "historical_receipts_modified": false
+}

@@ -1,0 +1,32 @@
+{
+  "schema": "kotlin-helper-class-log-failure-review-v1",
+  "status": "first-helper-probe-passed-class-log-validation-rejected-platform-nestmate",
+  "retained_evidence_sha256": {
+    "experiments/kotlin/helper-semantics/failed-run-v2-controller.py": "82a28af8577854d6d22813e7b5099e9eac7a8e8c0119de437284a232fcb6c867",
+    "experiments/kotlin/helper-semantics/run-v2/report.json": "8e7d0f4c32fbf34e4153aaacacce99a9d7a287db32ac19398b4598f4083e3ca9",
+    "experiments/kotlin/helper-semantics/run-v2/terminal.json": "17feb7df3d15ef24588e60995ff5fd236d218fb1b3f954fec0eb58e895062e71",
+    "experiments/kotlin/helper-semantics/run-v2/kotlin-binarytrees-compact/process.json": "3edd7ba1742efd3c3e7224f38f67ba81435cf29f3ac78392569efb578038b8b6",
+    "experiments/kotlin/helper-semantics/run-v2/kotlin-binarytrees-compact/summary.json": "78ea36b8d17f13c2f8cc9dc5de77df96a9acc1802f70ebf6a0c830d0762f9d1c",
+    "experiments/kotlin/helper-semantics/run-v2/kotlin-binarytrees-compact/classes.log": "40cb7926e6c65a05030bf81961d13847b0e0c84cd681e7b5aa9586d9be667478"
+  },
+  "process_status": "passed",
+  "native_exit_status": 0,
+  "probe_status": "passed",
+  "complete_output_matches": true,
+  "retained_class_load_lines": [
+    "[0.015s][class,load] java.lang.management.ManagementFactory source: jrt:/java.management",
+    "[0.015s][class,load] java.lang.management.ManagementFactory$PlatformMBeanFinder source: jrt:/java.management",
+    "[0.021s][class,load] java.lang.management.ManagementFactory$PlatformMBeanFinder$$Lambda/0x00007ff801008e90 source: java.lang.management.ManagementFactory",
+    "[0.022s][class,load] java.lang.management.ManagementFactory$PlatformMBeanFinder$$Lambda/0x00007ff8010090f0 source: java.lang.management.ManagementFactory",
+    "[0.024s][class,load] java.lang.management.ManagementFactory$PlatformMBeanFinder$$Lambda/0x00007ff80100b050 source: java.lang.management.ManagementFactory"
+  ],
+  "failure": "('Unknown class origin', 'java.lang.management.ManagementFactory$PlatformMBeanFinder$$Lambda/0x00007ff801008e90', 'java.lang.management.ManagementFactory')",
+  "diagnosis": "The loaded ManagementFactory$PlatformMBeanFinder class belongs to the java.management image, and its hidden lambda log records the outer ManagementFactory nest host as source. Both enclosing class and nest host were already logged from jrt:/java.management; the parser allowed only a lambda directly named under the nest host.",
+  "correction": "Require the exact hidden-lambda name shape, an already observed enclosing class equal to or nested under the named host, and matching verified platform-image origins for both classes.",
+  "historical_receipts_modified": false,
+  "new_native_commands": 0,
+  "subject_main_executions": 0,
+  "benchmark_samples": 0,
+  "all_twenty_helper_semantics_qualified": false,
+  "chart_admission": false
+}
