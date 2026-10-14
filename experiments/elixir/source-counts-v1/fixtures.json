@@ -1,0 +1,16 @@
+[
+  {"id":"packed-statements", "expected_parse":"ok", "text":"x = 1; y = 2; IO.puts(x + y)\n"},
+  {"id":"expanded-statements", "expected_parse":"ok", "text":"x = 1\ny = 2\nIO.puts(x + y)\n"},
+  {"id":"comment-literal-boundaries", "expected_parse":"ok", "text":"# whole comment\nx = \"# literal; end\" # trailing\ny = ~r/#do;end/\n{x, y}\n"},
+  {"id":"inline-and-block-functions", "expected_parse":"ok", "text":"defmodule Fixture do\n  def a(x), do: x + 1\n  def b(x) do y = x + 1; y end\nend\n"},
+  {"id":"callback-with-independent-bodies", "expected_parse":"ok", "text":"Enum.map([1, 2], fn x -> y = x + 1; IO.puts(y); y end)\n"},
+  {"id":"case-branches", "expected_parse":"ok", "text":"case input do\n  {:ok, x} -> y = x + 1; y\n  :error -> 0\nend\n"},
+  {"id":"keyword-expressions", "expected_parse":"ok", "text":"x = if ok, do: {1, 2}, else: {3, 4}\ny = case x do {a, b} -> a + b end\n{x, y}\n"},
+  {"id":"match-chains-and-patterns", "expected_parse":"ok", "text":"x = y = 1\n{a, b} = {x, y}\n<<sign::1, rest::7>> = <<128>>\n"},
+  {"id":"wrapped-data", "expected_parse":"ok", "text":"data = [\n  %{value: 1},\n  %{value: 2}\n]\nEnum.count(data)\n"},
+  {"id":"interpolation-work", "expected_parse":"ok", "text":"\"value: #{(x = 1; x + 1)}\"\n"},
+  {"id":"unicode-crlf", "expected_parse":"ok", "text":"value = \"λ\" # comment\r\nIO.puts(value)\r\n"},
+  {"id":"never-evaluate", "expected_parse":"ok", "text":"raise \"Source-count fixtures must never be evaluated\"\n"},
+  {"id":"unclosed-module", "expected_parse":"error", "text":"defmodule Fixture do\n  def x, do: 1\n"},
+  {"id":"mismatched-delimiter", "expected_parse":"error", "text":"value = [1, 2}\n"}
+]
