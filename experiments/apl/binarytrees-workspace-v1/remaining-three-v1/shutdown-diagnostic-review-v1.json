@@ -1,0 +1,107 @@
+{
+  "schema": "apl-exact-shutdown-diagnostic-source-review-v1",
+  "status": "exact-retained-diagnostic-explained-continuation-unexecuted",
+  "original_failure_preserved": true,
+  "original_readback_producer_status": "failed",
+  "original_error": "Unknown APL stderr; complete raw bytes retained",
+  "exact_stderr_utf8": "\nWARNING: File pipe-to_client still open - closing it\n",
+  "stderr": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/bounded-run-v1/01-workspace-readback/stderr.bin",
+    "sha256": "655309a962122bcdb65d5677af44fac7f041f0df5596e9baba5cbdfb62e146d5",
+    "bytes": 54
+  },
+  "stdout": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/bounded-run-v1/01-workspace-readback/stdout.bin",
+    "sha256": "5c1fd4dd8dcc01ee734fe02f210fb0b4d69899dbef66fd8444b7699e49d2e2dd",
+    "bytes": 25
+  },
+  "original_closure": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/actual-closure-v1.json",
+    "sha256": "de4992290f1eb11adadde7ad325a6f3f6e6b4d4ae912f714ef4b83b953bde33c",
+    "bytes": 1596
+  },
+  "runtime_binary_sha256": "ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836",
+  "launcher": {
+    "path": "/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/run-apl.sh",
+    "sha256": "50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4",
+    "bytes": 274
+  },
+  "retained_runtime_source_evidence": [
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Quad_FIO.cc",
+      "sha256": "4cbac3a786cd5d001c29ac72066f4ec76e4aa0154d3f7bba29b4adecd5e49ab1",
+      "lines": [
+        96,
+        126
+      ],
+      "finding": "Startup registers an existing FD3 as pipe-to_client; clear closes and reports remaining nonstandard handles."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Quad_FIO.cc",
+      "sha256": "4cbac3a786cd5d001c29ac72066f4ec76e4aa0154d3f7bba29b4adecd5e49ab1",
+      "lines": [
+        2427,
+        2457
+      ],
+      "finding": "Opening /dev/fd/3 with fopen registers a separate handle."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Quad_FIO.cc",
+      "sha256": "4cbac3a786cd5d001c29ac72066f4ec76e4aa0154d3f7bba29b4adecd5e49ab1",
+      "lines": [
+        1557,
+        1573
+      ],
+      "finding": "FIO[4] closes and removes the selected OUT handle; it does not remove the separate startup FD3."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/IO_Files.cc",
+      "sha256": "fdb2c604f1eabbd0cc8e5b07fcc6adb15e4144fa6e88d9619feec5bc91afdbc0",
+      "lines": [
+        349,
+        350
+      ],
+      "finding": "Automatic OFF follows the final input file."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Command.cc",
+      "sha256": "c9c705161af6befd99775ffa4c4b35ce1d060efb39b07f066b953499e35db0cf",
+      "lines": [
+        1616,
+        1631
+      ],
+      "finding": "OFF emits the leading newline and calls cleanup(true)."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Common.cc",
+      "sha256": "20f596e625ac6a8470e81644df44da8d690fd9f45738e0420694c8456605d40d",
+      "lines": [
+        144,
+        164
+      ],
+      "finding": "Normal cleanup calls Quad_FIO::clear."
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/UserPreferences.cc",
+      "sha256": "643b0be3d50373fd64755d1fe0414449deb4e6ac8159d33885b975b67d8860d8",
+      "lines": [
+        494,
+        498
+      ],
+      "finding": "Configuration exits directly after printing, without normal OFF cleanup."
+    }
+  ],
+  "source_binding_scope": "Exact retained GNU APL 2.0 source/build evidence and newly computed small-source digests; no fresh runtime build or loaded-image verification.",
+  "disposition": "The separately opened OUT was closed. The inherited application-output FD3 remains registered until interpreter shutdown. Accept only these exact 54 stderr bytes together with exact stdout, exit zero and verified normal owned-process closure; never strip diagnostics or accept additional text.",
+  "planned_native_commands": [
+    "allocation-ownership",
+    "whole-subject-n4",
+    "whole-subject-n10"
+  ],
+  "new_native_processes": 0,
+  "benchmark_samples": 0,
+  "required_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}
