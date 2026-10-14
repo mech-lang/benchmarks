@@ -40,6 +40,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | D | LDC / LLVM / D runtime | AOT | Static | Tracing GC, Manual, Ownership/RAII |
 | Dart (AOT) | Dart native AOT runtime | AOT | Static | Tracing GC |
 | Dart (JIT) | Dart VM JIT | JIT | Static | Tracing GC |
+| Elixir | Elixir on Erlang / BEAM JIT | JIT | Dynamic | Tracing GC, RC |
 | Elm | Elm generated JavaScript on Node.js / V8 | JIT | Static | Tracing GC |
 | Erlang | Erlang / BEAM JIT | JIT | Dynamic | Tracing GC, RC |
 | F# (AOT) | .NET NativeAOT runtime | AOT | Static | Tracing GC |
