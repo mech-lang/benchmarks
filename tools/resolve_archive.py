@@ -3,6 +3,7 @@
 from pathlib import Path
 import argparse
 import csv
+import json
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -20,6 +21,16 @@ def main():
             if row['original_path'] in candidates:
                 print(ROOT / row['current_path'])
                 return
+    for row in json.loads((ROOT / 'migration/recovered-v-sources.json').read_text(encoding='utf-8')):
+        if row['original_relative'] in candidates:
+            print(ROOT / row['current_path'])
+            return
+    data = json.loads((ROOT / 'data/benchmarks.json').read_text(encoding='utf-8'))
+    for candidate in candidates:
+        relative = candidate.removeprefix('benchmarks/clbg/')
+        if relative in data.get('archive_paths', {}):
+            print(ROOT / data['archive_paths'][relative])
+            return
     parser.error('path is not in the preserved archive map')
 
 

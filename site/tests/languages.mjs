@@ -5,6 +5,12 @@ import {languageMetadata} from '../src/languages.mjs';
 const data=process.argv[2]?JSON.parse(fs.readFileSync(process.argv[2])):{languages:Object.keys(languageMetadata).map(key=>({key}))};
 if(!data.languages.some(language=>language.key==='v'))data.languages.push({key:'v',label:'V'});
 const traits=languageTraits(data);
+if(process.argv[2])for(const language of data.languages){
+ const record=languageMetadata[language.key];
+ assert.ok(record,`missing metadata: ${language.key}`);
+ for(const [dataField,moduleField] of Object.entries({runtime_family:'platform',runtime:'runtime',execution_modes:'execution',typing:'typing',paradigms:'style',memory_models:'memory'}))
+  assert.deepEqual(language[dataField],record[moduleField],`${language.key}: dataset / filter ${dataField} mismatch`);
+}
 assert.equal(traits.size,52);
 for (const [key,row] of traits) for(const dim of traitDimensions) {
  const valid=new Set(dim.options.map(x=>x.key));
