@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Serve the saved benchmark explorer locally, without rebuilding its data."""
+"""Build and serve the recorded benchmark explorer locally."""
 
 import argparse
 from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from build_site import build
 from urllib.parse import urlsplit
 
 
@@ -50,7 +51,7 @@ def main():
     parser.add_argument("--port", type=port_number, default=8766)
     args = parser.parse_args()
     repo = Path(__file__).resolve().parents[1]
-    dist = repo / "benchmarks/clbg/overview/explorer/dist"
+    dist = build()
     if not all((dist / name).is_file() for name in ("index.html", "data.json")):
         parser.error(f"saved explorer is missing from {dist}")
     handler = partial(ExplorerHandler, directory=str(dist))

@@ -1,0 +1,30 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+import {languageTraits,traitDimensions,emptyTraitFilters,filterLanguageKeys} from '../src/traits.mjs';
+import {languageMetadata} from '../src/languages.mjs';
+const data=process.argv[2]?JSON.parse(fs.readFileSync(process.argv[2])):{languages:Object.keys(languageMetadata).map(key=>({key}))};
+if(!data.languages.some(language=>language.key==='v'))data.languages.push({key:'v',label:'V'});
+const traits=languageTraits(data);
+assert.equal(traits.size,52);
+for (const [key,row] of traits) for(const dim of traitDimensions) {
+ const valid=new Set(dim.options.map(x=>x.key));
+ assert.ok(row[dim.key].size>0,`${key}:empty ${dim.key}`);
+ for(const value of row[dim.key]) assert.ok(valid.has(value),`${key}:${dim.key}:${value}`);
+}
+for(const key of ['csharp','csharp-aot','fsharp','fsharp-aot']) assert.ok(traits.get(key).platform.has('dotnet'));
+assert.ok(traits.get('clojure').platform.has('jvm'));
+assert.ok(traits.get('java').platform.has('jvm'));
+assert.ok(traits.get('java').execution.has('jit'));
+assert.ok(!traits.get('java').execution.has('aot'));
+assert.ok(traits.get('elm').platform.has('javascript'));
+assert.ok(traits.get('c').memory.has('manual'));
+assert.ok(!traits.get('c').memory.has('owned'));
+assert.ok(traits.get('rust').memory.has('owned'));
+assert.ok(!traits.get('rust').memory.has('manual'));
+assert.ok(traits.get('nim').memory.has('cycles'));
+assert.ok(!traits.get('nim').memory.has('gc'));
+assert.ok(traits.get('php').execution.has('jit')&&traits.get('php').execution.has('interpreted'));
+const filters=emptyTraitFilters(); filters.platform.add('dotnet'); filters.execution.add('aot');
+assert.deepEqual([...filterLanguageKeys(new Set(traits.keys()),traits,filters)].sort(),['csharp-aot','fsharp-aot']);
+console.log('Passed: all 52 variants classified; JVM/.NET/V8, execution, memory distinctions, and combined filters.');
+console.log(JSON.stringify(Object.fromEntries(traitDimensions.map(d=>[d.key,Object.fromEntries(d.options.map(o=>[o.label,[...traits.values()].filter(t=>t[d.key].has(o.key)).length]))])),null,2));
