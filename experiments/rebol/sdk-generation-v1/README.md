@@ -63,7 +63,7 @@ before building the existing general extension.
 Remaining gates are generated SDK/API and extension ABI compatibility; exact
 Clang, macOS SDK, GMP, and PCRE2 source/header/image bindings; extension build
 and load; ordinary byte/pipe IO, rounding, signed arithmetic, regex, error,
-ownership and default-GC fixtures; twenty complete authored source bundles;
+ownership and default-GC fixtures; ten complete authored source bundles;
 bounded outputs and workload witnesses; native-reader canonical LOC; full90;
 runtime publication metadata and chart admission. Independent Git-tree and
 runtime/source build equivalence remain unproved. No command or generated

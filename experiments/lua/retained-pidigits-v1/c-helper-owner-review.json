@@ -1,0 +1,1070 @@
+{
+  "schema": "lua-pidigits-c-helper-owner-review-v1",
+  "status": "passed-independent-source-owner-review",
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "source": {
+    "path": "archive/comparisons/lua-pidigits-comparison/20261012/support/gmp.c",
+    "sha256": "ae50244bd96f7961201a40780c2dfeab4bb193fc0e2da2184c37753469ef4e6c",
+    "bytes": 6511
+  },
+  "canonical_loc": 218,
+  "physical_loc": 119,
+  "formatted_loc": null,
+  "qualified": true,
+  "method": "Complete exact-source row ownership reviewed independently against the approved canonical rule; no generic parser or native execution claimed.",
+  "rules": [
+    {
+      "path": "archive/validation/loc-normalization/20261012/canonical.py",
+      "sha256": "b3395da2cf7e3ae99c0c444e8b321414456f0579f6fb670d68258273d9bee732"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/normalizer.py",
+      "sha256": "1241817791f7a2b14569c440e462bc2a513128fcae3d34504cdb003c07cac0ff"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/c_type_environment.py",
+      "sha256": "789b2a2d60fbec9cb9ab5a12dd0a7f532e764bbabe7114cf208f0378c7e4ebec"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/record_fields.py",
+      "sha256": "3889a0e888ba965ac0dcbceb1ae625f5c9f107ca28a064574b308ebb71b5bc63"
+    }
+  ],
+  "decisions": {
+    "headers": "Each written function or control header is one unit; executable opening braces add zero and written closing braces add one.",
+    "typedef": "Row 15 has one aggregate header, two member declarations and one written closer. The primary Cell alias belongs to that declaration and adds no extra unit.",
+    "declarators": "Independent declarators are expanded, including a/b/out on rows 75, 80, 97 and 98; parameter and call argument commas are not statements.",
+    "controls": "Unbraced if/else headers and bodies are separate; no unwritten closing brace is invented. Row 89 has the preceding branch closer and one else-if header.",
+    "initializers": "Registration data is not executable code. Rows 110 and 117 each count once; rows 111 through 116 preserve all six written data/declaration rows.",
+    "preprocessor": "Seven include directives and the object-like MPZ_MT definition each count once. Library macro expansions are not counted as newly authored application source.",
+    "support_scope": "The complete authored GMP adapter is counted, including both API registration tables and every helper. It exposes general arithmetic, conversion and lifecycle operations; it contains no pi-digit algorithm."
+  },
+  "native_commands_started": 0,
+  "chart_admission": false,
+  "rows": [
+    {
+      "line": 1,
+      "start": 0,
+      "end": 75,
+      "source": "/* Ordinary mpz compatibility bindings for Lua. No application algorithms.",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 2,
+      "start": 75,
+      "end": 150,
+      "source": " * c-gmp preserves the published LGMP calling conventions: mpz_set and the",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 3,
+      "start": 150,
+      "end": 226,
+      "source": " * add/sub-multiple operations take destination first; ordinary add/mul/div",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 4,
+      "start": 226,
+      "end": 258,
+      "source": " * take operand(s),destination.",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 5,
+      "start": 258,
+      "end": 340,
+      "source": " * bn supplies the published immutable arithmetic API using the same GMP library.",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 6,
+      "start": 340,
+      "end": 344,
+      "source": " */",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 7,
+      "start": 344,
+      "end": 361,
+      "source": "#include <lua.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 8,
+      "start": 361,
+      "end": 382,
+      "source": "#include <lauxlib.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 9,
+      "start": 382,
+      "end": 399,
+      "source": "#include <gmp.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 10,
+      "start": 399,
+      "end": 419,
+      "source": "#include <limits.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 11,
+      "start": 419,
+      "end": 437,
+      "source": "#include <math.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 12,
+      "start": 437,
+      "end": 457,
+      "source": "#include <stdlib.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 13,
+      "start": 457,
+      "end": 477,
+      "source": "#include <string.h>",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 14,
+      "start": 477,
+      "end": 511,
+      "source": "#define MPZ_MT \"clbg.general.mpz\"",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 15,
+      "start": 511,
+      "end": 559,
+      "source": "typedef struct { mpz_t value; int live; } Cell;",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 16,
+      "start": 559,
+      "end": 604,
+      "source": "static Cell *cell(lua_State *L, int index) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 17,
+      "start": 604,
+      "end": 657,
+      "source": "    Cell *z=(Cell *)luaL_checkudata(L,index,MPZ_MT);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 18,
+      "start": 657,
+      "end": 711,
+      "source": "    luaL_argcheck(L,z->live,index,\"cleared integer\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 19,
+      "start": 711,
+      "end": 725,
+      "source": "    return z;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 20,
+      "start": 725,
+      "end": 727,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 21,
+      "start": 727,
+      "end": 765,
+      "source": "static Cell *new_cell(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 22,
+      "start": 765,
+      "end": 822,
+      "source": "    Cell *z=(Cell *)lua_newuserdatauv(L,sizeof(Cell),0);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 23,
+      "start": 822,
+      "end": 846,
+      "source": "    mpz_init(z->value);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 24,
+      "start": 846,
+      "end": 861,
+      "source": "    z->live=1;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 25,
+      "start": 861,
+      "end": 894,
+      "source": "    luaL_setmetatable(L,MPZ_MT);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 26,
+      "start": 894,
+      "end": 908,
+      "source": "    return z;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 27,
+      "start": 908,
+      "end": 910,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 28,
+      "start": 910,
+      "end": 960,
+      "source": "static long signed_word(lua_State *L,int index) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 29,
+      "start": 960,
+      "end": 1006,
+      "source": "    lua_Integer n=luaL_checkinteger(L,index);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 30,
+      "start": 1006,
+      "end": 1100,
+      "source": "    if (n<LONG_MIN || n>LONG_MAX) luaL_argerror(L,index,\"integer outside signed word range\");",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 31,
+      "start": 1100,
+      "end": 1120,
+      "source": "    return (long)n;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 32,
+      "start": 1120,
+      "end": 1122,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 33,
+      "start": 1122,
+      "end": 1183,
+      "source": "static unsigned long unsigned_word(lua_State *L,int index) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 34,
+      "start": 1183,
+      "end": 1229,
+      "source": "    lua_Integer n=luaL_checkinteger(L,index);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 35,
+      "start": 1229,
+      "end": 1339,
+      "source": "    if (n<0 || (unsigned long long)n>ULONG_MAX) luaL_argerror(L,index,\"integer outside unsigned word range\");",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 36,
+      "start": 1339,
+      "end": 1368,
+      "source": "    return (unsigned long)n;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 37,
+      "start": 1368,
+      "end": 1370,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 38,
+      "start": 1370,
+      "end": 1405,
+      "source": "static int collect(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 39,
+      "start": 1405,
+      "end": 1454,
+      "source": "    Cell *z=(Cell *)luaL_checkudata(L,1,MPZ_MT);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 40,
+      "start": 1454,
+      "end": 1505,
+      "source": "    if(z->live) { mpz_clear(z->value);z->live=0; }",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 41,
+      "start": 1505,
+      "end": 1519,
+      "source": "    return 0;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 42,
+      "start": 1519,
+      "end": 1521,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 43,
+      "start": 1521,
+      "end": 1631,
+      "source": "static int equal(lua_State *L) { lua_pushboolean(L,mpz_cmp(cell(L,1)->value,cell(L,2)->value)==0);return 1; }",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 44,
+      "start": 1631,
+      "end": 1739,
+      "source": "static int less(lua_State *L) { lua_pushboolean(L,mpz_cmp(cell(L,1)->value,cell(L,2)->value)<0);return 1; }",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 45,
+      "start": 1739,
+      "end": 1854,
+      "source": "static int less_equal(lua_State *L) { lua_pushboolean(L,mpz_cmp(cell(L,1)->value,cell(L,2)->value)<=0);return 1; }",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 46,
+      "start": 1854,
+      "end": 1912,
+      "source": "static void push_numeric(lua_State *L,mpz_srcptr value) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 47,
+      "start": 1912,
+      "end": 1989,
+      "source": "    /* Lua 5.1 had one numeric type. Canonical integral values now use Lua's",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 48,
+      "start": 1989,
+      "end": 2067,
+      "source": "       native integer representation; this preserves the old io.write output.",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 49,
+      "start": 2067,
+      "end": 2149,
+      "source": "       Values outside that exact range retain mpz_get_d's ordinary conversion. */",
+      "canonical_units": 0,
+      "role": "comment"
+    },
+    {
+      "line": 50,
+      "start": 2149,
+      "end": 2232,
+      "source": "    if(mpz_fits_slong_p(value)) lua_pushinteger(L,(lua_Integer)mpz_get_si(value));",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 51,
+      "start": 2232,
+      "end": 2289,
+      "source": "    else lua_pushnumber(L,(lua_Number)mpz_get_d(value));",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 52,
+      "start": 2289,
+      "end": 2291,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 53,
+      "start": 2291,
+      "end": 2374,
+      "source": "static int get_number(lua_State *L) { push_numeric(L,cell(L,1)->value);return 1; }",
+      "canonical_units": 4,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 54,
+      "start": 2374,
+      "end": 2406,
+      "source": "static int text(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 55,
+      "start": 2406,
+      "end": 2429,
+      "source": "    Cell *z=cell(L,1);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 56,
+      "start": 2429,
+      "end": 2478,
+      "source": "    size_t length=mpz_sizeinbase(z->value,10)+2;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 57,
+      "start": 2478,
+      "end": 2502,
+      "source": "    luaL_Buffer buffer;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 58,
+      "start": 2502,
+      "end": 2553,
+      "source": "    char *out=luaL_buffinitsize(L,&buffer,length);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 59,
+      "start": 2553,
+      "end": 2587,
+      "source": "    mpz_get_str(out,10,z->value);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 60,
+      "start": 2587,
+      "end": 2633,
+      "source": "    luaL_pushresultsize(&buffer,strlen(out));",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 61,
+      "start": 2633,
+      "end": 2647,
+      "source": "    return 1;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 62,
+      "start": 2647,
+      "end": 2649,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 63,
+      "start": 2649,
+      "end": 2687,
+      "source": "static int init_set_d(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 64,
+      "start": 2687,
+      "end": 2727,
+      "source": "    double input=luaL_checknumber(L,1);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 65,
+      "start": 2727,
+      "end": 2792,
+      "source": "    luaL_argcheck(L,isfinite(input),1,\"finite number required\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 66,
+      "start": 2792,
+      "end": 2852,
+      "source": "    Cell *z=new_cell(L);mpz_set_d(z->value,input);return 1;",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 67,
+      "start": 2852,
+      "end": 2854,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 68,
+      "start": 2854,
+      "end": 2962,
+      "source": "static int copy_into(lua_State *L) { mpz_set(cell(L,1)->value,cell(L,2)->value);lua_settop(L,1);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 69,
+      "start": 2962,
+      "end": 3086,
+      "source": "static int add_into(lua_State *L) { mpz_add(cell(L,3)->value,cell(L,1)->value,cell(L,2)->value);lua_settop(L,3);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 70,
+      "start": 3086,
+      "end": 3216,
+      "source": "static int mul_si_into(lua_State *L) { mpz_mul_si(cell(L,3)->value,cell(L,1)->value,signed_word(L,2));lua_settop(L,3);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 71,
+      "start": 3216,
+      "end": 3348,
+      "source": "static int mul_ui_into(lua_State *L) { mpz_mul_ui(cell(L,3)->value,cell(L,1)->value,unsigned_word(L,2));lua_settop(L,3);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 72,
+      "start": 3348,
+      "end": 3486,
+      "source": "static int addmul_ui_into(lua_State *L) { mpz_addmul_ui(cell(L,1)->value,cell(L,2)->value,unsigned_word(L,3));lua_settop(L,1);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 73,
+      "start": 3486,
+      "end": 3624,
+      "source": "static int submul_ui_into(lua_State *L) { mpz_submul_ui(cell(L,1)->value,cell(L,2)->value,unsigned_word(L,3));lua_settop(L,1);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 74,
+      "start": 3624,
+      "end": 3661,
+      "source": "static int tdiv_into(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 75,
+      "start": 3661,
+      "end": 3712,
+      "source": "    Cell *a=cell(L,1),*b=cell(L,2),*out=cell(L,3);",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 76,
+      "start": 3712,
+      "end": 3776,
+      "source": "    luaL_argcheck(L,mpz_sgn(b->value)!=0,2,\"zero denominator\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 77,
+      "start": 3776,
+      "end": 3847,
+      "source": "    mpz_tdiv_q(out->value,a->value,b->value);lua_settop(L,3);return 1;",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 78,
+      "start": 3847,
+      "end": 3849,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 79,
+      "start": 3849,
+      "end": 3886,
+      "source": "static int fdiv_into(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 80,
+      "start": 3886,
+      "end": 3937,
+      "source": "    Cell *a=cell(L,1),*b=cell(L,2),*out=cell(L,3);",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 81,
+      "start": 3937,
+      "end": 4001,
+      "source": "    luaL_argcheck(L,mpz_sgn(b->value)!=0,2,\"zero denominator\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 82,
+      "start": 4001,
+      "end": 4072,
+      "source": "    mpz_fdiv_q(out->value,a->value,b->value);lua_settop(L,3);return 1;",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 83,
+      "start": 4072,
+      "end": 4074,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 84,
+      "start": 4074,
+      "end": 4108,
+      "source": "static int number(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 85,
+      "start": 4108,
+      "end": 4136,
+      "source": "    int type=lua_type(L,1);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 86,
+      "start": 4136,
+      "end": 4164,
+      "source": "    if(type==LUA_TSTRING) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 87,
+      "start": 4164,
+      "end": 4233,
+      "source": "        const char *input=luaL_checkstring(L,1);Cell *z=new_cell(L);",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 88,
+      "start": 4233,
+      "end": 4321,
+      "source": "        luaL_argcheck(L,mpz_set_str(z->value,input,10)==0,1,\"invalid decimal integer\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 89,
+      "start": 4321,
+      "end": 4378,
+      "source": "    } else if(type==LUA_TNUMBER && lua_isinteger(L,1)) {",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 90,
+      "start": 4378,
+      "end": 4462,
+      "source": "        long input=signed_word(L,1);Cell *z=new_cell(L);mpz_set_si(z->value,input);",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 91,
+      "start": 4462,
+      "end": 4475,
+      "source": "    } else {",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 92,
+      "start": 4475,
+      "end": 4579,
+      "source": "        double input=luaL_checknumber(L,1);luaL_argcheck(L,isfinite(input),1,\"finite number required\");",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 93,
+      "start": 4579,
+      "end": 4634,
+      "source": "        Cell *z=new_cell(L);mpz_set_d(z->value,input);",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 94,
+      "start": 4634,
+      "end": 4640,
+      "source": "    }",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 95,
+      "start": 4640,
+      "end": 4654,
+      "source": "    return 1;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 96,
+      "start": 4654,
+      "end": 4656,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 97,
+      "start": 4656,
+      "end": 4785,
+      "source": "static int add(lua_State *L) { Cell *a=cell(L,1),*b=cell(L,2),*out=new_cell(L);mpz_add(out->value,a->value,b->value);return 1; }",
+      "canonical_units": 7,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 98,
+      "start": 4785,
+      "end": 4919,
+      "source": "static int subtract(lua_State *L) { Cell *a=cell(L,1),*b=cell(L,2),*out=new_cell(L);mpz_sub(out->value,a->value,b->value);return 1; }",
+      "canonical_units": 7,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 99,
+      "start": 4919,
+      "end": 4955,
+      "source": "static int multiply(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 100,
+      "start": 4955,
+      "end": 4978,
+      "source": "    Cell *a=cell(L,1);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 101,
+      "start": 4978,
+      "end": 5089,
+      "source": "    if(lua_isnumber(L,2)) { long b=signed_word(L,2);Cell *out=new_cell(L);mpz_mul_si(out->value,a->value,b); }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 102,
+      "start": 5089,
+      "end": 5176,
+      "source": "    else { Cell *b=cell(L,2),*out=new_cell(L);mpz_mul(out->value,a->value,b->value); }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 103,
+      "start": 5176,
+      "end": 5190,
+      "source": "    return 1;",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 104,
+      "start": 5190,
+      "end": 5192,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 105,
+      "start": 5192,
+      "end": 5226,
+      "source": "static int divide(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 106,
+      "start": 5226,
+      "end": 5262,
+      "source": "    Cell *a=cell(L,1),*b=cell(L,2);",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 107,
+      "start": 5262,
+      "end": 5326,
+      "source": "    luaL_argcheck(L,mpz_sgn(b->value)!=0,2,\"zero denominator\");",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 108,
+      "start": 5326,
+      "end": 5403,
+      "source": "    Cell *out=new_cell(L);mpz_tdiv_q(out->value,a->value,b->value);return 1;",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 109,
+      "start": 5403,
+      "end": 5405,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 110,
+      "start": 5405,
+      "end": 5537,
+      "source": "static const luaL_Reg meta[]={ {\"__gc\",collect},{\"__eq\",equal},{\"__lt\",less},{\"__le\",less_equal},{\"__tostring\",text},{NULL,NULL} };",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 111,
+      "start": 5537,
+      "end": 5575,
+      "source": "static const luaL_Reg mutable_api[]={",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 112,
+      "start": 5575,
+      "end": 5654,
+      "source": " {\"mpz_init_set_d\",init_set_d},{\"mpz_get_d\",get_number},{\"mpz_set\",copy_into},",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 113,
+      "start": 5654,
+      "end": 5731,
+      "source": " {\"mpz_add\",add_into},{\"mpz_mul_si\",mul_si_into},{\"mpz_mul_ui\",mul_ui_into},",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 114,
+      "start": 5731,
+      "end": 5799,
+      "source": " {\"mpz_addmul_ui\",addmul_ui_into},{\"mpz_submul_ui\",submul_ui_into},",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 115,
+      "start": 5799,
+      "end": 5862,
+      "source": " {\"mpz_tdiv_q\",tdiv_into},{\"mpz_fdiv_q\",fdiv_into},{NULL,NULL}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 116,
+      "start": 5862,
+      "end": 5865,
+      "source": "};",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 117,
+      "start": 5865,
+      "end": 6023,
+      "source": "static const luaL_Reg immutable_api[]={ {\"number\",number},{\"tonumber\",get_number},{\"add\",add},{\"sub\",subtract},{\"mul\",multiply},{\"div\",divide},{NULL,NULL} };",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 118,
+      "start": 6023,
+      "end": 6061,
+      "source": "static void metatable(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 119,
+      "start": 6061,
+      "end": 6122,
+      "source": "    if(luaL_newmetatable(L,MPZ_MT)) luaL_setfuncs(L,meta,0);",
+      "canonical_units": 2,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 120,
+      "start": 6122,
+      "end": 6140,
+      "source": "    lua_pop(L,1);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 121,
+      "start": 6140,
+      "end": 6142,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 122,
+      "start": 6142,
+      "end": 6178,
+      "source": "static int populate(lua_State *L) {",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 123,
+      "start": 6178,
+      "end": 6214,
+      "source": "    luaL_checktype(L,1,LUA_TTABLE);",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 124,
+      "start": 6214,
+      "end": 6278,
+      "source": "    lua_pushvalue(L,1);luaL_setfuncs(L,mutable_api,0);return 1;",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 125,
+      "start": 6278,
+      "end": 6280,
+      "source": "}",
+      "canonical_units": 1,
+      "role": "single-written-source-unit"
+    },
+    {
+      "line": 126,
+      "start": 6280,
+      "end": 6367,
+      "source": "int luaopen_gmp(lua_State *L) { metatable(L);lua_pushcfunction(L,populate);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 127,
+      "start": 6367,
+      "end": 6426,
+      "source": "int luaopen_c_gmp(lua_State *L) { return luaopen_gmp(L); }",
+      "canonical_units": 3,
+      "role": "expanded-independent-source-units"
+    },
+    {
+      "line": 128,
+      "start": 6426,
+      "end": 6511,
+      "source": "int luaopen_bn(lua_State *L) { metatable(L);luaL_newlib(L,immutable_api);return 1; }",
+      "canonical_units": 5,
+      "role": "expanded-independent-source-units"
+    }
+  ]
+}

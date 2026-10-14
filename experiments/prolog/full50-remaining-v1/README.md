@@ -3,7 +3,7 @@
 This continuation completes the original three-sample, ten-workload study by
 retaining forty validated samples and executing only its fifty unfinished
 slots. The retained measurements comprise nine regex-redux samples from the
-[original study](../full90-v1/README.md) and all 31 successful attempts from the
+[original study](../full90-v1/) and all 31 successful attempts from the
 [linear reverse-complement continuation](../full81-linear-v1/README.md).
 
 The latter producer stopped between attempts after its fourth Mandelbrot
@@ -19,7 +19,10 @@ compiled artifacts, runtimes, workload inputs, prior qualification evidence,
 original controller plans, and saved process receipts. Its SHA-256 is
 `fef4341ebee2d6cf8ef2d0fab618abe6be90d24ec180b8d7036f9e8f37fd4195`.
 Preparation completed without launching a benchmark, compiler, or runtime
-probe. The destination `run-v1/` does not yet exist.
+probe. The continuation started on October 14 at 14:58 UTC under its
+[durable supervisor](../full90-v1/launch_durable.py).
+The existing `run-v1/` contains its live report and completed receipts; do not
+launch a replacement while this owner or its registered native process is live.
 
 ## Exact remaining schedule
 
