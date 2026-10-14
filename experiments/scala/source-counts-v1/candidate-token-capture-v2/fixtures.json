@@ -1,0 +1,702 @@
+{
+  "schema": "scala310-parser-token-capture-fixture-contract-v2",
+  "status": "additive-native-v1-informed-contract-awaiting-v2-native-validation",
+  "compiler_version": "3.10.0",
+  "compiler_source_commit": "25c18aaa21b6be202945e024cd5180d9d62d650f",
+  "source_version": "3.10",
+  "native_token_constant_source": "https://github.com/scala/scala3/blob/25c18aaa21b6be202945e024cd5180d9d62d650f/compiler/src/dotty/tools/dotc/parsing/Tokens.scala",
+  "native_token_constants": {
+    "CHARLIT": 3,
+    "INTLIT": 4,
+    "STRINGLIT": 10,
+    "STRINGPART": 11,
+    "IDENTIFIER": 14,
+    "ELSE": 22,
+    "THIS": 23,
+    "CASE": 28,
+    "VAL": 31,
+    "OBJECT": 44,
+    "CLASS": 45,
+    "COMMA": 70,
+    "SEMI": 71,
+    "ARROW": 77,
+    "RPAREN": 92,
+    "LBRACE": 95
+  },
+  "inherits_fixture_contract": "../fixtures.json",
+  "inherits_all_cases": true,
+  "native_cases_run": 0,
+  "native_parity_verified": false,
+  "physical_coverage_verified": false,
+  "candidate_qualified": false,
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "chart_admission": false,
+  "expectation_basis": "Pinned parser/scanner obligations retained from v1. Only the XML parse expectation is corrected using the saved exact v1 native transports and the pinned future/future migration thresholds. These remain expectations for an unexecuted v2 reader, not admitted coverage or source counts.",
+  "parity_contract": {
+    "baseline": "Unmodified Parsers.Parser over the complete source, with the same pinned compiler, settings and dependency classpath.",
+    "candidate": "The separate observed-scanner candidate over identical source bytes; do not substitute a standalone scanner walk.",
+    "isolation": "Use a fresh CompilationUnit, reporter and per-input context for each side. Preserve initialization evidence and the exact comparison setup.",
+    "compare": [
+      "Exact source bytes, decoded text and UTF-16 to UTF-8 boundary mapping",
+      "Incoming diagnostics including class, message, level and complete position; compare constructor diagnostics too",
+      "Buffered diagnostics and unreported-warning summaries",
+      "Exact complete stock and observed transport JSON, including untyped graph structure, node/source IDs, values, native spans, sources, modifiers and end-marker fields; no normalization or structural-bijection allowance",
+      "Parser-owned comments including native raw text and unmodified native spans",
+      "Final scanner token and offsets"
+    ],
+    "forbid": [
+      "Dropping a differing diagnostic or graph node to make parity pass",
+      "Counting speculative LookaheadScanner scans as additional main-scanner physical events",
+      "Treating EOF, INDENT, OUTDENT or inferred separators as written source characters",
+      "Accepting coverage for a source with parser/scanner errors, XML handoff, unexplained overlap or unexplained non-whitespace gaps"
+    ]
+  },
+  "coverage_contract": {
+    "coordinates": "Native offsets are retained as UTF-16 coordinates; byte intervals use the separately checked boundary map. Never split a surrogate pair.",
+    "freshness": "Determine next.token == EMPTY before the corresponding nextToken or peekAhead call. Record one fresh result before layout insertion/fusion; buffered replays do not create another physical event.",
+    "interpolation": "For STRINGPART with native prefetched next, retain the literal fragment ending at next.offset and the prefetched token ending at lastCharOffset. Preserve next.token, including THIS. For ${...}, the brace starts at lastCharOffset and remains executable syntax.",
+    "comments": "Preserve native comment raw text and spans exactly. Native comment ends can include the CR immediately before LF; retain that discrepancy explicitly and permit only the reviewed CRLF relationship, without blanket trimming or silently changing native spans.",
+    "residuals": "Every source character must be covered by a retained physical event, a retained native comment interval, or an explicitly checked whitespace interval. Raw literal content is protected; executable interpolation is separately visible.",
+    "required_raw_lexemes": "The listed exact source fragments must be retained as physical events. A native_token_constant, when supplied, names a pinned Tokens.scala constant and must match the event numeric token through native_token_constants. Do not compare it to the reader token_name display label. occurrence is zero-based among exact substring matches and identifies the intended source fragment; these anchors do not replace full-source coverage.",
+    "rejection_evidence": "Retain diagnostics and partial events on rejected cases. Rejection never creates a count or a successful coverage claim."
+  },
+  "fixtures": [
+    {
+      "id": "empty-input",
+      "text": "",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "No positive-width physical token events",
+        "EOF is retained only as a zero-width sentinel",
+        "No constructor diagnostic or graph difference"
+      ],
+      "reason": "Exercise the empty discarded base scanner and the actual empty source independently."
+    },
+    {
+      "id": "whitespace-only-crlf",
+      "text": " \t\r\n\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "All bytes survive exactly",
+        "Entire source is checked whitespace",
+        "No inferred separator becomes a written token"
+      ],
+      "reason": "Coverage must work without an authored token and must preserve CRLF."
+    },
+    {
+      "id": "first-token-through-eof",
+      "text": "val x = 1",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        },
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "First token captured during actual scanner construction exactly once",
+        "Final integer ends at the source length",
+        "Repeated EOF observations add no physical source width"
+      ],
+      "reason": "A sink enabled only after construction would lose the first physical token."
+    },
+    {
+      "id": "terminal-native-su-source-character",
+      "text": "val x = 1\u001a",
+      "expected_parse": "ok",
+      "expected_capture": "reject-unexplained-gap",
+      "required_raw_lexemes": [
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Preserve the terminal physical U+001A code unit and its UTF-8 byte",
+        "Stock and observed parser transports must agree without a parse error",
+        "Record eof_before_source_end because lastCharOffset is source length minus one",
+        "Record unexplained_source_gap for U+001A; native EOF must not erase this physical character",
+        "Coverage remains false despite successful parser parity"
+      ],
+      "reason": "Native fetchToken treats SU as EOF when charOffset has reached endIdx, including an actual terminal U+001A read from source. The coverage gate must reject that unaccounted source character independently of parser errors."
+    },
+    {
+      "id": "first-token-case-class-fusion",
+      "text": "case class Item(value: Int)\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "case",
+          "occurrence": 0,
+          "native_token_constant": "CASE"
+        },
+        {
+          "text": "class",
+          "occurrence": 0,
+          "native_token_constant": "CLASS"
+        }
+      ],
+      "checks": [
+        "Both physical keywords survive constructor-time fusion to CASECLASS",
+        "The peekAhead CLASS event is not duplicated when consumed"
+      ],
+      "reason": "The first nextToken can call peekAhead before the observed scanner subclass finishes initialization."
+    },
+    {
+      "id": "case-object-fusion-with-comment",
+      "text": "case /* between */ object Empty\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "case",
+          "occurrence": 0,
+          "native_token_constant": "CASE"
+        },
+        {
+          "text": "object",
+          "occurrence": 0,
+          "native_token_constant": "OBJECT"
+        }
+      ],
+      "checks": [
+        "CASEOBJECT fusion preserves two keyword intervals and the intervening native comment",
+        "No duplicate leading scan/comment from the discarded base scanner"
+      ],
+      "reason": "Fusion and comment retention interact during construction."
+    },
+    {
+      "id": "first-character-error",
+      "text": "\u0000val x = 1\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "Retain the first-character scanner diagnostic",
+        "Diagnostic multiplicity equals the unmodified parser",
+        "Never mark recovered partial events complete"
+      ],
+      "reason": "An ordinary overridden Parser.in would scan the first source character twice and can duplicate this diagnostic."
+    },
+    {
+      "id": "unterminated-leading-comment",
+      "text": "/* unfinished",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "constructor_focus": true,
+      "required_raw_lexemes": [],
+      "checks": [
+        "Preserve constructor-time incomplete-input diagnostics without duplication",
+        "Retain partial evidence and reject coverage"
+      ],
+      "reason": "The first-token scan can consume an entire malformed source before construction returns."
+    },
+    {
+      "id": "leading-nested-comments",
+      "text": "/* outer /* inner */ tail */\n// lead\nval x = 1\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "constructor_focus": true,
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        }
+      ],
+      "checks": [
+        "Both native comments are preserved once",
+        "The nested block comment has its native outer interval",
+        "First code token remains captured"
+      ],
+      "reason": "A raw fetch skips whitespace and comments before returning its first code token."
+    },
+    {
+      "id": "semicolon-before-else",
+      "text": "def f(x: Boolean): Int = { if (x) 1; else 2 }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "else",
+          "occurrence": 0,
+          "native_token_constant": "ELSE"
+        }
+      ],
+      "checks": [
+        "The semicolon remains a physical event when postProcessToken consumes it before ELSE",
+        "ELSE remains a separate physical event"
+      ],
+      "reason": "An after-nextToken-only observer loses a written separator here."
+    },
+    {
+      "id": "trailing-comma-before-close",
+      "text": "val values = List(\n  1,\n  2,\n)\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ",",
+          "occurrence": 0,
+          "native_token_constant": "COMMA"
+        },
+        {
+          "text": ",",
+          "occurrence": 1,
+          "native_token_constant": "COMMA"
+        },
+        {
+          "text": ")",
+          "occurrence": 0,
+          "native_token_constant": "RPAREN"
+        }
+      ],
+      "checks": [
+        "The trailing comma survives postProcessToken removal",
+        "The close is retained once despite peekAhead and lastOffset adjustment"
+      ],
+      "reason": "Physical coverage must not rely on the parser-visible fused token or lastOffset."
+    },
+    {
+      "id": "explicit-and-inferred-separators",
+      "text": "def f(): Int = { val a = 1;\n  val b = 2\n\n  a + b }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        }
+      ],
+      "checks": [
+        "The written semicolon has its own source interval",
+        "NEWLINE/NEWLINES observations never become positive-width written separators",
+        "No buffered physical event is counted twice"
+      ],
+      "reason": "Separate scanner layout events from physical punctuation."
+    },
+    {
+      "id": "indentation-and-written-end",
+      "text": "object Box:\n  def f(): Int =\n    1\n  end f\nend Box\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "end",
+          "occurrence": 0
+        },
+        {
+          "text": "end",
+          "occurrence": 1
+        },
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Written end names and keywords remain visible independently of OUTDENT",
+        "Parser token reassignment during checkEndMarker does not erase physical events",
+        "End-marker graph fields equal the stock parser"
+      ],
+      "reason": "Parser-dependent regions and direct token mutation must not change physical coverage."
+    },
+    {
+      "id": "multiple-outdents-before-token",
+      "text": "object Box:\n  def f(): Int =\n    if true then\n      1\n    else\n      2\nval tail = 3\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        },
+        {
+          "text": "tail",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        }
+      ],
+      "checks": [
+        "A physical token buffered through multiple OUTDENTs is retained exactly once",
+        "Every synthetic layout event has zero authored width"
+      ],
+      "reason": "Repeated layout insertion reuses the same next token."
+    },
+    {
+      "id": "self-arrow-reclassification",
+      "text": "trait Box { self => val x = 1 }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "=>",
+          "occurrence": 0,
+          "native_token_constant": "ARROW"
+        }
+      ],
+      "checks": [
+        "The physical arrow survives the parser's SELFARROW reassignment",
+        "No invented INDENT width or token replaces the written arrow"
+      ],
+      "reason": "selfType changes the token directly to suppress indentation insertion."
+    },
+    {
+      "id": "colon-argument-region",
+      "text": "val result = values.map:\n  x =>\n    x + 1\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": ":",
+          "occurrence": 0
+        },
+        {
+          "text": "=>",
+          "occurrence": 0,
+          "native_token_constant": "ARROW"
+        }
+      ],
+      "checks": [
+        "Physical colon and arrow intervals survive observeColonEOL and region changes",
+        "Scalar lambda body remains visible in graph and physical coverage"
+      ],
+      "reason": "Use the actual parser's region decisions rather than a standalone scanner's layout."
+    },
+    {
+      "id": "interpolation-prefetched-identifiers",
+      "text": "val text = s\"left $value and $other right\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"left $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "value",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": " and $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "other",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": " right\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Split each prefetched identifier at native next.offset",
+        "Identifier replay produces no duplicate interval",
+        "Literal fragments cannot absorb interpolation identifiers"
+      ],
+      "reason": "getStringPart scans a literal fragment and its next identifier in one fresh fetch."
+    },
+    {
+      "id": "interpolation-prefetched-this",
+      "text": "class Box { val text = s\"$this\" }\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"$",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "this",
+          "occurrence": 0,
+          "native_token_constant": "THIS"
+        }
+      ],
+      "checks": [
+        "Preserve the actual native prefetched token THIS",
+        "Do not replace every prefetched interpolation token with IDENTIFIER"
+      ],
+      "reason": "finishNamedToken converts the prefetched identifier through the native keyword table."
+    },
+    {
+      "id": "interpolation-executable-block",
+      "text": "val text = s\"value ${ { val x = next(); x + 1 } } tail\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"value $",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "{",
+          "occurrence": 0,
+          "native_token_constant": "LBRACE"
+        },
+        {
+          "text": ";",
+          "occurrence": 0,
+          "native_token_constant": "SEMI"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        },
+        {
+          "text": " tail\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Literal fragment ends before the interpolation brace",
+        "Retain both nested braces and all executable block tokens",
+        "Return to literal scanning after the outer interpolation close"
+      ],
+      "reason": "A literal envelope must not hide executable interpolation."
+    },
+    {
+      "id": "interpolation-escaped-dollar",
+      "text": "val text = s\"$$value // literal\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"$$value // literal\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "No prefetched identifier or comment is invented inside escaped-dollar literal text"
+      ],
+      "reason": "The escaped dollar follows a different branch from executable interpolation."
+    },
+    {
+      "id": "multiline-interpolation-crlf",
+      "text": "val text = s\"\"\"row\r\n$value\r\n${value + 1}\r\ntail\"\"\"\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"\"\"row\r\n$",
+          "occurrence": 0,
+          "native_token_constant": "STRINGPART"
+        },
+        {
+          "text": "value",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": "+",
+          "occurrence": 0
+        },
+        {
+          "text": "\r\ntail\"\"\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        }
+      ],
+      "checks": [
+        "Raw CRLF inside the literal is preserved",
+        "Both prefetched identifier and braced-expression interpolation routes remain separate from literal fragments",
+        "Closing quotes belong to the final literal interval"
+      ],
+      "reason": "String scanning switches between nextRawChar and nextChar around literal and expression boundaries."
+    },
+    {
+      "id": "unicode-supplementary-identifier",
+      "text": "val \ud801\udc00 = 1\nval text = s\"$\ud801\udc00\"\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\ud801\udc00",
+          "occurrence": 0,
+          "native_token_constant": "IDENTIFIER"
+        },
+        {
+          "text": "\ud801\udc00",
+          "occurrence": 1,
+          "native_token_constant": "IDENTIFIER"
+        }
+      ],
+      "checks": [
+        "Each supplementary identifier spans two UTF-16 code units and four UTF-8 bytes",
+        "No event endpoint lies inside its surrogate pair",
+        "The interpolation prefetch retains the complete identifier"
+      ],
+      "reason": "Exercise both ordinary and interpolation-specific supplementary-identifier branches."
+    },
+    {
+      "id": "unicode-literal-and-crlf",
+      "text": "val text = \"\u03bb\ud83d\ude00\"\r\nval tail = 2\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"\u03bb\ud83d\ude00\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        },
+        {
+          "text": "2",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Literal end excludes the following CRLF",
+        "UTF-16 and UTF-8 offsets remain distinct",
+        "Both CRLF pairs remain unchanged"
+      ],
+      "reason": "lastCharOffset must identify the first unconsumed source boundary through CRLF normalization."
+    },
+    {
+      "id": "comment-crlf-native-span-overhang",
+      "text": "// line\r\n/* block */\r\nval x = 1\r\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "val",
+          "occurrence": 0,
+          "native_token_constant": "VAL"
+        }
+      ],
+      "checks": [
+        "Retain native comment raw text and native spans without correction",
+        "Explicitly record the reviewed terminal-CR overhang before LF",
+        "Do not generalize this exception to arbitrary adjacent whitespace or code",
+        "Do not overlap a physical code token when validating comment coverage"
+      ],
+      "reason": "Native Comment uses charOffset - 1 after nextChar may have consumed a CRLF pair."
+    },
+    {
+      "id": "line-comment-at-eof",
+      "text": "val x = 1 // terminal comment",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "1",
+          "occurrence": 0,
+          "native_token_constant": "INTLIT"
+        }
+      ],
+      "checks": [
+        "Retain the comment through exact source EOF",
+        "Do not invent a final newline",
+        "Comment-only tail is covered separately from the integer token"
+      ],
+      "reason": "Terminal comments use the EOF boundary rather than the CRLF exception."
+    },
+    {
+      "id": "literal-comment-and-delimiter-text",
+      "text": "val text = \"// not a comment /* } ; */\"\nval quote: Char = '\\''\n",
+      "expected_parse": "ok",
+      "expected_capture": "complete-candidate",
+      "required_raw_lexemes": [
+        {
+          "text": "\"// not a comment /* } ; */\"",
+          "occurrence": 0,
+          "native_token_constant": "STRINGLIT"
+        },
+        {
+          "text": "'\\''",
+          "occurrence": 0,
+          "native_token_constant": "CHARLIT"
+        }
+      ],
+      "checks": [
+        "No comment, close brace or semicolon event is invented inside the string",
+        "Escaped character literal remains one physical interval"
+      ],
+      "reason": "Coverage classification must follow native literal boundaries rather than text-shaped delimiters."
+    },
+    {
+      "id": "unterminated-string-recovery",
+      "text": "val text = \"unfinished\nval tail = 1\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "required_raw_lexemes": [],
+      "checks": [
+        "Retain unclosed-string diagnostics and recovery events",
+        "A recovery SEMI cannot certify a written semicolon or complete coverage"
+      ],
+      "reason": "The scanner can synthesize SEMI after an unterminated string."
+    },
+    {
+      "id": "mismatched-delimiter-recovery",
+      "text": "val values = List(1, 2]\n",
+      "expected_parse": "error",
+      "expected_capture": "reject-diagnostics",
+      "required_raw_lexemes": [],
+      "checks": [
+        "Diagnostic and recovered graph parity with the unmodified parser",
+        "Retain partial events without qualification"
+      ],
+      "reason": "Error recovery must not turn a malformed source into a successful coverage result."
+    },
+    {
+      "id": "xml-direct-reader-handoff",
+      "text": "val node = <node value=\"x\">text</node>\n",
+      "expected_parse": "ok",
+      "expected_capture": "reject-xml",
+      "required_raw_lexemes": [],
+      "checks": [
+        "At source version 3.10, retain the clean stock parse and empty incoming/buffered diagnostics; XmlLiteral diagnostics begin at future.",
+        "Reject complete coverage on XMLSTART or XML handoff regardless of diagnostic severity",
+        "Do not bridge the XML body's unread event gap with an invented token"
+      ],
+      "reason": "MarkupParser advances the main character reader directly, bypassing scanner event boundaries. The XmlLiteral migration diagnostic has future/future thresholds, so source 3.10 parses this fixture without a diagnostic; physical coverage remains rejected."
+    }
+  ],
+  "v1_contract": {
+    "path": "../candidate-token-capture-v1/fixtures.json",
+    "sha256": "aa075a277e52201f22e28aa5f44020d03b1b7b0d5a1b87e04468ab5bdf6435e0",
+    "unchanged_cases": 28,
+    "only_case_correction": "xml-direct-reader-handoff"
+  }
+}

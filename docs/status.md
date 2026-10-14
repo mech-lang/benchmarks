@@ -17,7 +17,7 @@ Prolog, Julia AOT, Rebol, and Kotlin are not selectable series in this dataset. 
 | Pony | Twenty source forms, required work, canonical LOC, runtime metadata, and independent reconciliation of sixty Pony samples and thirty matched Mech controls | Published in the dataset |
 | Prolog | Twenty original forms plus a linear reverse-complement replacement; replacement passed 540 bounded cases, compiled-work review and nine native source readers with independently reviewed canonical LOC | Original quadratic reverse-complement run remains cancelled; a continuation reusing nine completed regex samples and measuring the remaining 81 slots is being prepared |
 | Elixir | Twenty compiled source forms; required work, canonical and formatted source counts, runtime metadata, and independent reconciliation of sixty Elixir samples and thirty matched Mech controls | Published in the dataset; identical source aliases retain separate measurements without a distinct optimization claim |
-| Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and all four fresh single-main tree/pi captures | Final optimized-pi execution-path review and full measurements remain; the [serial full-suite controller](../experiments/kotlin/full90-v1/) needs its prerequisite adapter to recognize the preserved failed capture and completed continuation |
+| Kotlin | Twenty compiled source forms, source/class and helper review, all 186 bounded and supplemental workload checks, JIT/runtime observations, qualified canonical source counts, and independent reviews of all four fresh single-main tree/pi captures | Combined required-work qualification, full-suite prerequisite adapter and full measurements remain; the preserved failed captures and completed continuation remain separate records |
 | Julia AOT | Trimmed N-body pilot produced the expected output with the code-generation library disabled | [Offline native inspection](../experiments/julia-aot/trimmed-native-inspection-v1/) prepared; execution-path/fallback qualification and the remaining suite |
 | Rebol | Retained toolchain sources and resolved build specification | SDK and runtime qualification, benchmark implementations, and measurements |
 
@@ -29,8 +29,8 @@ Current qualification tools and results are organized by implementation under
 
 | Language | Planned runtime | Workloads | Status |
 | --- | --- | --- | --- |
-| Scala | JVM | All ten | [Toolchain verified](../experiments/scala/toolchain-v1/); both readers compiled and all 80 native parser transports match. A native tree-container classification correction, benchmark compilation, correctness, required work, source counts and measurements remain |
-| TypeScript | Node.js / V8, using emitted JavaScript | All ten | [Source drafts](../experiments/typescript/source-v1/INVENTORY.md) prepared; compiler/runtime, correctness, required work, source counts and measurements pending |
+| Scala | JVM | All ten | [Toolchain verified](../experiments/scala/toolchain-v1/); corrected native reader passes all 80 parity checks, 72 positive coverage cases and eight intended rejections. Benchmark compilation, correctness, required work, source counts and measurements remain |
+| TypeScript | Node.js / V8, using emitted JavaScript | All ten | [Compiler and declarations retained](../experiments/typescript/toolchain-v1/), Node and compiler versions verified locally; complete runtime/API qualification, emitted applications, correctness, required work, source counts and measurements remain |
 
 Each addition requires its own source bundles, compiler/runtime provenance,
 correctness and required-work checks, source counts, and sequential fresh-process
@@ -40,9 +40,9 @@ TypeScript measurements.
 
 The [shared correctness corpus](../experiments/shared/bounded-corpus-v1/)
 contains 149 prepared cases for each addition. Scala 3.10.0 is retained and its
-compiler/JDK versions have been observed locally. TypeScript 7.0.2 is selected;
-its local installation and runtime validation remain pending. Neither addition
-has executed benchmark subjects yet.
+compiler/JDK versions have been observed locally. TypeScript 7.0.2 and its
+declaration dependencies are retained; native version checks also verify
+Node 24.19.0. Neither addition has executed benchmark subjects yet.
 The output checker has pure regression coverage for complete output, exact
 numeric tolerances and language-specific rejections. Source-count preparation
 includes [41 Scala owner fixtures and 29 capture fixtures](../experiments/scala/source-counts-v1/) and

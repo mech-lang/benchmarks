@@ -1,0 +1,3652 @@
+{
+  "schema": "scala-v1-native-graph-diagnosis-v2",
+  "status": "saved-v1-evidence-diagnosed-v2-not-executed",
+  "report_sha256": "a72690ad68a0b2b1d0947cbe010811411739789584f18a4040e6e2a6fb293ac9",
+  "terminal_sha256": "832dbad46e40a9ce682f003567784d3f460447cd465dcf04495ed532234370fc",
+  "frozen_reader_sha256": "b786fb092aa62ed0df3d7bd5e32c3a55aa555eee07cd66fb963fb2ea39560bce",
+  "upstream": {
+    "path": "compiler/src/dotty/tools/dotc/ast/Trees.scala",
+    "url": "https://github.com/scala/scala3/blob/25c18aaa21b6be202945e024cd5180d9d62d650f/compiler/src/dotty/tools/dotc/ast/Trees.scala",
+    "commit": "25c18aaa21b6be202945e024cd5180d9d62d650f",
+    "git_blob_sha": "02077aed374ad3ac5aa1b0292af283e06fbc077a",
+    "source_bytes": 90528,
+    "source_sha256": "7724f5302bd575e27f796b23e294abed3806492d9a241644e605ddf68a76bf69",
+    "facts": [
+      {
+        "lines": "132-141",
+        "fact": "hasType tests a non-null type slot; typeOpt is a final direct slot read."
+      },
+      {
+        "lines": "1057-1059",
+        "fact": "Thicket initializes its type slot to the NoType singleton."
+      },
+      {
+        "lines": "1086-1094",
+        "fact": "EmptyTree inherits Thicket; EmptyValDef also initializes NoType."
+      },
+      {
+        "lines": "1099-1102,1233-1240",
+        "fact": "Shared empty sentinels and Thicket constructors retain native trees."
+      }
+    ]
+  },
+  "inputs": 80,
+  "exact_parity_cases": 80,
+  "original_complete": 27,
+  "original_incomplete": 53,
+  "graph_problem_cases": 47,
+  "graph_problem_nodes": 71,
+  "native_problem_classes": {
+    "dotty.tools.dotc.ast.Trees$EmptyTree": 41,
+    "dotty.tools.dotc.ast.Trees$Thicket": 30
+  },
+  "thicket_child_classes": {
+    "dotty.tools.dotc.ast.Trees$Literal": 30,
+    "dotty.tools.dotc.ast.Trees$Block": 11,
+    "dotty.tools.dotc.ast.Trees$Ident": 18,
+    "dotty.tools.dotc.ast.Trees$This": 1
+  },
+  "old_empty_valdef_sentinels": 22,
+  "categories": {
+    "already-complete-v1": 27,
+    "native-NoType-container-false-rejection": 45,
+    "intentional-token-or-parse-rejection": 8
+  },
+  "expected_v2_positive_cases": 72,
+  "expected_v2_rejected_cases": 8,
+  "cases": [
+    {
+      "index": 0,
+      "id": "owner-packed-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0000.json",
+      "raw_result_sha256": "bd1ce360f9edc53ea8a2efddc15fec7e3abe7dbd00c677ad4cdc6210d625cab0",
+      "source_sha256": "21c81db3b5a20af9599e627038c164fae82b3fc4fdcec7185ff3c3498f91ef40",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 1,
+      "id": "owner-expanded-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0001.json",
+      "raw_result_sha256": "a2a3c03cff9910434fd0caa5fb4c9f4496f1fe99bbafcb674a63aed07f3b414d",
+      "source_sha256": "623ac2ad821b737b0b087aaec85e6bade6c8e8338a35127850fe764e152510d7",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 2,
+      "id": "owner-expression-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0002.json",
+      "raw_result_sha256": "b7ea4c36d31d7d34c3e66ecb421004d447cfba987b0772523a99f90a420ffaaf",
+      "source_sha256": "47569e29ae99605546e4f9943c3790c852fcb4758c6495865a208144f7c41017",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "98894f51b9a50970d3546ca239ad181a1d45fe6d8d05a43a046b1c567fdf8627",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 3,
+      "id": "owner-generic-expression-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0003.json",
+      "raw_result_sha256": "dee5a05121f02164389318204c7cae79266f20b413b5f9a9cff41df291f29df8",
+      "source_sha256": "64fc0fdc6b3396a4cd38d1d3b258ac6f014da31aa6ce0faa8e9b8b20f8a5696c",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "98894f51b9a50970d3546ca239ad181a1d45fe6d8d05a43a046b1c567fdf8627",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 4,
+      "id": "owner-tuple-type-alias",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0004.json",
+      "raw_result_sha256": "e64565c4417fa11386ced02980056dc66763975a6c1992f78565c5c36e55b0e0",
+      "source_sha256": "6d3c9fdbe3ac8b3002cc56339b047cdeccdbea700c710fe0594876772bf3e924",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 5,
+      "id": "owner-constructor-fields-no-body",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0005.json",
+      "raw_result_sha256": "f82fa526a711733bed1dd098cdf4926f46734ce8cdafb5d5a6e7c8b774bc4054",
+      "source_sha256": "a552625c6610286135722c9f789796eebb75d9e08e0948b8409bc0696cdfeaed",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 6,
+      "id": "owner-constructor-plain-formals",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0006.json",
+      "raw_result_sha256": "65d4c28cd5ea904f9d2991825e3a2006fd92180c3bb16160d92eaeba8ff58c95",
+      "source_sha256": "407193dc5020ba335f02d3053d4bbac533ba691d4c06a849b6da696fa1a6854e",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 7,
+      "id": "owner-constructor-fields-packed-body",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0007.json",
+      "raw_result_sha256": "d630f2d3a51580519ca8b4f3ba4a5e60553de0affb134cca3286f0c7f36c2a9d",
+      "source_sha256": "584c14d75cfa6e2414f0f83d4bc66621ff9ac9efed6ef5d30621281c987dc41e",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 8,
+      "id": "owner-constructor-fields-expanded-body",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0008.json",
+      "raw_result_sha256": "9893275daf61e9c30ebff994a0ac2800869b8b46a06fd9eb9c0e9fd37bb5a420",
+      "source_sha256": "a14cc9cfcf53c323f300f6070b161ec8a4906bd4c19abf8b795c089331796b52",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 9,
+      "id": "owner-explicit-class-fields",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0009.json",
+      "raw_result_sha256": "988990c4168493514649787df4c3f9c4886625d36872b2b335df82eb607cd0c8",
+      "source_sha256": "d2f32ff21a1055ad1d55510d1918ba879ee4f69b172cb41a2bf3cbf45a3513c7",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 10,
+      "id": "owner-object-main",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0010.json",
+      "raw_result_sha256": "caa42ac037ddfc4dd5ddd6cd1ac4d1058e3ca9cf59c0e69d712f73992eb9450f",
+      "source_sha256": "b9964b8cef7f8cdd81acb5e597bae3c2a37d1babe4b1f6d18d41029dcb75c423",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 11,
+      "id": "owner-tuple-pattern-binding",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0011.json",
+      "raw_result_sha256": "8f278d4303db910e42a9318f9c0c64b13000a39e433097ba569b0eaa85cf7871",
+      "source_sha256": "8527a151b7c8a94dc90df9797b0144a0cc880b1a426e8f56745d58475b2b0fdc",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 12,
+      "id": "owner-expression-lambda",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0012.json",
+      "raw_result_sha256": "a36e9bb3c3a1f8cf7f7a245bfa6a505e2f69321d7f5997f41743d0da42f3fb27",
+      "source_sha256": "b800c24e482b34980888cb2dd37117cfd761c8b2abea5629fcf5a43d9c2e5ea5",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 13,
+      "id": "owner-braced-callback-packed",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0013.json",
+      "raw_result_sha256": "f5cb9e37f5ebd166fdbc9593db945dc94be7e0b6becc94368961c613dd98271d",
+      "source_sha256": "4e1b9d6f28de7be4bd112090c72ffc6514e94749d8192c290656dc61ed8ab953",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 11
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 11,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "ee3d7b1fe831dafab2c519d7501d2475ff88bda71ef2d21e02e8bedec11a1869",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 14,
+      "id": "owner-braced-callback-expanded",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0014.json",
+      "raw_result_sha256": "47861e82f8f014d9c1b713dab76f11c372712ef80cf683aad3c67a6eea41fb67",
+      "source_sha256": "82153e1dc9aba371d87e55403dfbcf7bd7843411acb0c38ea75b18ef1bd5add7",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 11
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 11,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "ee3d7b1fe831dafab2c519d7501d2475ff88bda71ef2d21e02e8bedec11a1869",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 15,
+      "id": "owner-braced-one-expression-callback",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0015.json",
+      "raw_result_sha256": "5671c6d2445132576cef267955284b28473c963439e0974aaf85925362a192bf",
+      "source_sha256": "91baf0bf51865c407d7037a47da8f864ff6cb7584040ecb4daf27957587402e6",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 11
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 11,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "ee3d7b1fe831dafab2c519d7501d2475ff88bda71ef2d21e02e8bedec11a1869",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 16,
+      "id": "owner-parenthesized-expression-callback",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0016.json",
+      "raw_result_sha256": "b668a17e8fa9d7186a32232983889d6bda77bf6979a0312d56a27a6e94e12efe",
+      "source_sha256": "42d95aa76f6887ef5a39da2c3ec5223f4b395ee8ba67012612ac8b8e1985501b",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 10
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 10,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "443f9b8446a6f01a14ee546fd8f11df722890143c699f071f0662de68180fa6f",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 17,
+      "id": "owner-while-and-compound-updates",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0017.json",
+      "raw_result_sha256": "019cff6553c1098062bea8047cf275f8a2d72f901307730c15c9bb910f3193d3",
+      "source_sha256": "3effdff0eb11b849c4f153c2866b65fc25dd0e78cb59ff5a54b81a7b0e762902",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 18,
+      "id": "owner-unbraced-if-else",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0018.json",
+      "raw_result_sha256": "ac7a76980580d3ad007702ab3af5a6099c658ce83a196216dba4f703db3dcf0f",
+      "source_sha256": "d42e2591ee7f8faa3db3fb37fcafc45f3878823f38b0530889d90396a49f02a7",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 19,
+      "id": "owner-scalar-conditional-value",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0019.json",
+      "raw_result_sha256": "2b1414f063d3b04a562953ab27dc6814a098c8da75f9bb509b96248946a279b8",
+      "source_sha256": "90fc67c90163a90acaf8e4a2fd99155e1f4217be376384edc2c08f8189e4aa71",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 20,
+      "id": "owner-try-finally",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0020.json",
+      "raw_result_sha256": "4b39407b9e464e1e5c023ac514c18855e9914d5d9bb21404b533d24ff0a11f48",
+      "source_sha256": "89f014038d9c9d1e3e3564d2f9acfbf913baa65a7c784e6372cc14c7afdf99fc",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 9
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 9,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "141ce5daae215d831d57eafa5c85d2113a5d6be82cc862b7ebd7d5bf03e77a44",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 21,
+      "id": "owner-updates",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0021.json",
+      "raw_result_sha256": "a8f6cadf86a9a3c7606148b138896414a4cdc897db5079e986c98c250b60814f",
+      "source_sha256": "2efcd84845f6cc8847c1d8681a6abfc2ec8157965622018c9e9476d2f55be488",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 22,
+      "id": "owner-indented-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0022.json",
+      "raw_result_sha256": "e65769cffbecd2685c8466d744ce2251912c30ed4a531c328b6ad57a89510d79",
+      "source_sha256": "e324cd3c9473a16587a31c354fbdfe1dffe855f2556a3333946f5a5c201931e7",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 23,
+      "id": "owner-braced-layout-counterpart",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0023.json",
+      "raw_result_sha256": "ed69d0259832b64fe1de319a1426c57518205b7c3947c7355e5decd6d7cb5cd7",
+      "source_sha256": "a2f9f0d26a19016c8460b11cf94229ab58d42b2a17749c5824d9efd62bd5bc11",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 24,
+      "id": "owner-written-end-marker",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0024.json",
+      "raw_result_sha256": "5c3c89714699aecf8ed8ea4e051f0badb45e01b50f84aa19d03ac8564ffc3226",
+      "source_sha256": "9a22bd1826c5d9122afb72caf879bd48152adb3239606f25a824bd635e4081d2",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 25,
+      "id": "owner-wrapped-literal-data",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0025.json",
+      "raw_result_sha256": "dd12965e38612c8ed53768ab4fbf739444b3024ebb4d98d8f96d1817fdec07b5",
+      "source_sha256": "92b3617bc022aea5aaeb14f22df61b859284b3232dc69badc392003fe38ee60e",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 26,
+      "id": "owner-packed-literal-data",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0026.json",
+      "raw_result_sha256": "b96b4dcbef42f44ec9843a187c17125c7557d34ea1674f0d95eb7b3ad33783be",
+      "source_sha256": "e74d30b15a4d584f0ce47ca34e5b561af08a6bb770a8f085b90670a857f4373a",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 27,
+      "id": "owner-grouped-import",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0027.json",
+      "raw_result_sha256": "e3e30b44167e02b3b15a67841dd3abe4294e5d8bd72b5dc5791ebdab53b3839c",
+      "source_sha256": "5c4462ce5a3bf8831b58b2585d22e71260463a22a1e093c37bdf9829c6a3f00d",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 28,
+      "id": "owner-nested-comments-and-literal",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0028.json",
+      "raw_result_sha256": "a099736d6ec0e25d49d600178f64f41f42833ef02e0ca5767b05f334d1338a04",
+      "source_sha256": "9ed5ef1507db1f54927b5b932623972ba91435b4bcee17e8c5a863f05225db5b",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 29,
+      "id": "owner-protected-character-literals",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0029.json",
+      "raw_result_sha256": "40b6edbf7404aaa5e9149924535303a895a80d5cbdf8a34dd09cea3ca1a2ac83",
+      "source_sha256": "3855f133cbfa43f7857bab4e1cfa8cb3834bb2eebb3b7ff512269058d6bc03b1",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 30,
+      "id": "owner-scalar-interpolation",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0030.json",
+      "raw_result_sha256": "8a6e3448d6de7b97f39a3420f4e63cdfe68707d3f5cd37d4b96abe2d0b0af3c8",
+      "source_sha256": "8bb10759a835748f02edbb6927589b1a468d646beeaf045904092558e6aae435",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "2281701392",
+            "exists": true,
+            "start": 16,
+            "end": 34,
+            "point": 16,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "27e9e022bb31ee6282e0f198cd9335b4d46427d032f97b9bf0d252432718a60e",
+          "children": [
+            {
+              "node_id": 6,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1476395024",
+                "exists": true,
+                "start": 16,
+                "end": 22,
+                "point": 16,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "989fce055381ae6d9d61fa1d6923738b3e6d134cecace9e820da537abe7010d1"
+            },
+            {
+              "node_id": 7,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "2281701399",
+                "exists": true,
+                "start": 23,
+                "end": 34,
+                "point": 23,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "0dfdb59077699a1a4c63fe9cc16edf1c4715dfa78802025689d07a139a2a26f4"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 31,
+      "id": "owner-executable-interpolation",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0031.json",
+      "raw_result_sha256": "b8dab580d5b20062e156d5433398cf8571575eb809e3f31bcdf4467801bbfe06",
+      "source_sha256": "f21f4bf02c86b2fbcd41f8d1495efc4407c772ee8ce429ffa37cb392dffe6fd8",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "3892314128",
+            "exists": true,
+            "start": 16,
+            "end": 58,
+            "point": 16,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "b96d24cff4b65bea0a1603f6c0798ab2a45be063933699bece2718d854fe56da",
+          "children": [
+            {
+              "node_id": 6,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1476395024",
+                "exists": true,
+                "start": 16,
+                "end": 22,
+                "point": 16,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "989fce055381ae6d9d61fa1d6923738b3e6d134cecace9e820da537abe7010d1"
+            },
+            {
+              "node_id": 7,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "3892314137",
+                "exists": true,
+                "start": 25,
+                "end": 58,
+                "point": 25,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "1f84ab3922f41f66937736947ea08044f795a905ab7e16838dc2e42ee4cf1f23"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 32,
+      "id": "owner-match-expression",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0032.json",
+      "raw_result_sha256": "6eb5ee94c42659a10f28148b539db15179f6333a4f4bef7d64e84cdda0b93784",
+      "source_sha256": "befd9d77ec32c88a9e1763204b93d1f3307152557bd057bf6ac216da290ee2b1",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "98894f51b9a50970d3546ca239ad181a1d45fe6d8d05a43a046b1c567fdf8627",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 33,
+      "id": "owner-pattern-callback",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0033.json",
+      "raw_result_sha256": "b3716339224dbcf79f70c208fad8dd6f35c66cb5d9932a594fda913e57642d32",
+      "source_sha256": "8d2a5d643530dd04820451669e7756e96705a21b194d6945f9f600866fe00607",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "d250d60fef762ca09f3ea622c0fd889b966c2ecc12fe9db6bcd8a373c04fce1d",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 34,
+      "id": "owner-anonymous-runnable",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0034.json",
+      "raw_result_sha256": "daeaf3d552813a46486112523a46c883303ce93ad044da822b689a0a49953883",
+      "source_sha256": "acddda9c976f05f5abcfd33a189227075f1ddfab68708aa086d05d1554604c8d",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "d250d60fef762ca09f3ea622c0fd889b966c2ecc12fe9db6bcd8a373c04fce1d",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 35,
+      "id": "owner-unicode-crlf",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0035.json",
+      "raw_result_sha256": "dfa545315c8a09fe0eb6e2d30f2db13d2fdb0b9adc125b6059f4d6afbfa1f33a",
+      "source_sha256": "e244d48cf36c151b602c4d3096bad219ce79e8e4dcd54f375e859a4a8f3b8a44",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 36,
+      "id": "owner-comment-only",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0036.json",
+      "raw_result_sha256": "c5a713ec30fac345a72c7199aa4fe0826cbb04fa9c7d1452f63c6132bfe061d7",
+      "source_sha256": "efe6cd287a9d5251a4871d8d21a6876192878e6705a8333f21d66ade36da5be2",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 0
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 0,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "038ba36304747315958286e66b22b08fb1b081b96d49ee4b0e8d7228442eb758",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 37,
+      "id": "owner-never-evaluate",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0037.json",
+      "raw_result_sha256": "a1aca27058a573f1198170a75b51d689c2096bb0183e364f3173d2c928308569",
+      "source_sha256": "c08bca5370252aae7b5167f3db1e11234f215bed4055e8d0e481cdeee7eb5caa",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 38,
+      "id": "owner-meaningful-directive",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0038.json",
+      "raw_result_sha256": "c9f810def65c20c3d3da29f5029983b9362bc5d9fe29d51bb80dacd182f76695",
+      "source_sha256": "433aba724d60f1ea7595eabb7030e63b8121319a13991f47109c0562f4065e70",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 39,
+      "id": "owner-unclosed-method",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0039.json",
+      "raw_result_sha256": "4a94488a00b3c636eb1b71e6491865959db56b0954c3263437ceda2c8e02441b",
+      "source_sha256": "1bbbac3f47640e14259f4c5933d7b1feef5856e4d8c631d033e0ad498b6ea70d",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 40,
+      "id": "owner-mismatched-array-delimiter",
+      "group": "owner",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0040.json",
+      "raw_result_sha256": "21567e052fd9d3bc06091a7b3fa8dca2c5cf90cee93ce9a1d6cdab3a90075b99",
+      "source_sha256": "d8b056eaadec60057fbf646c87bf80d968113f258e51963d33ab836bf5d6ab31",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 41,
+      "id": "capture-empty-input",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0041.json",
+      "raw_result_sha256": "aa0b3989b094498aae323639fc6304df92378e8f6d88b16d0d54f67df68fbb0c",
+      "source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 0
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 0,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "038ba36304747315958286e66b22b08fb1b081b96d49ee4b0e8d7228442eb758",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 42,
+      "id": "capture-whitespace-only-crlf",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0042.json",
+      "raw_result_sha256": "8c562b624264894b37cb683d19281da43b81888e03a172fdb27447092c2d8bec",
+      "source_sha256": "7838f07af6ae27465dfc351adb76066600fe279aed1cf65cc4fcf3cd91ab64d8",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 0
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 0,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "038ba36304747315958286e66b22b08fb1b081b96d49ee4b0e8d7228442eb758",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 43,
+      "id": "capture-first-token-through-eof",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0043.json",
+      "raw_result_sha256": "649a9d3463ffa047dd63797a838d8ec6578fdb4db75fb667c915603d9e5a38bc",
+      "source_sha256": "66c997d522a063f260312d9a7c676a4a0f08b4d833b5b4c9f2ffa6532351f1e6",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 44,
+      "id": "capture-terminal-native-su-source-character",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0044.json",
+      "raw_result_sha256": "052327c6823239e8fad83aa8dd4697439e16d56f19cea3b4802b338a80c7b88a",
+      "source_sha256": "3496801a66251bba3822cac8dd6f07500ba99a2ac3974b870f02a4d25761d781",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "eof_before_source_end",
+          "detail": "9"
+        },
+        {
+          "kind": "eof_before_source_end",
+          "detail": "9"
+        },
+        {
+          "kind": "unexplained_source_gap",
+          "detail": "9:10"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 45,
+      "id": "capture-first-token-case-class-fusion",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0045.json",
+      "raw_result_sha256": "343514969de943d9d3f4ac5d51f33e858982aea53fd55f1c002a5a454fdf7f29",
+      "source_sha256": "d1f2efc41943fc1ea5a2a90998c28d2ea6b0f871cdc034635db27cb783c0c89f",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 46,
+      "id": "capture-case-object-fusion-with-comment",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0046.json",
+      "raw_result_sha256": "a04cfdb03f3500dbdd483d9590e2223a1a304c5cba53d8d7aaf2c37eb12bd96a",
+      "source_sha256": "39bf7f68d387d131975e3f1f287d16524ef33a90b408e53f499b9344acbc2a6b",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 47,
+      "id": "capture-first-character-error",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0047.json",
+      "raw_result_sha256": "5783e3a96072cf87d5f25081d8a40fbdd19fe1fbc1fee8fdddef4c7d8888c681",
+      "source_sha256": "558a44c1a73754d52534224f6abc734cdc6c55235634a06d5c886274775c0021",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 0
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 0,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "038ba36304747315958286e66b22b08fb1b081b96d49ee4b0e8d7228442eb758",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [
+        {
+          "kind": "invalid_physical_token",
+          "detail": "1"
+        },
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 48,
+      "id": "capture-unterminated-leading-comment",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0048.json",
+      "raw_result_sha256": "41191257c66f3abfbf4d71e1e1b8a81b2c620726ad1fe00bd1743fba5683dbc4",
+      "source_sha256": "afc4ad2b40ef88baf57a8b4e43d9430dff33f4f8b9a29a87c4fac55590153903",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 0
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 0,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "038ba36304747315958286e66b22b08fb1b081b96d49ee4b0e8d7228442eb758",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 49,
+      "id": "capture-leading-nested-comments",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0049.json",
+      "raw_result_sha256": "80c00773ab16dc5debe74cd0157ace9257b12789cbb20a5da13d7c991604d59e",
+      "source_sha256": "f61821e5ce591fa042354044df4f6c7e6e64d21c0517b367b37511fa0ae70c6f",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 50,
+      "id": "capture-semicolon-before-else",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0050.json",
+      "raw_result_sha256": "965c78c97e6d56d17503e7c3953755019f7d17e0fc076aa4a028f77b3a171193",
+      "source_sha256": "3690737a1d3d3496c010197356de85148f4bd2bd9086abc9779ce282a349913f",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "98894f51b9a50970d3546ca239ad181a1d45fe6d8d05a43a046b1c567fdf8627",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 51,
+      "id": "capture-trailing-comma-before-close",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0051.json",
+      "raw_result_sha256": "191929cda89ad8a57906a5546f5473e17bf70eca4a925638f04f439f6b112589",
+      "source_sha256": "ba6a899444910a1d5f240615d0fbac938787ed86d4d21ce955cf24c0cc671455",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 52,
+      "id": "capture-explicit-and-inferred-separators",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0052.json",
+      "raw_result_sha256": "3d569cda5f5d50b13fda28f46e4f3404ab1c4ef2764eea268f3f9b545af866e4",
+      "source_sha256": "9f3226e25ba1d9c528cc42c6db8cb842c0f6fc7a76e673525e6e60b1b038732c",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 53,
+      "id": "capture-indentation-and-written-end",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0053.json",
+      "raw_result_sha256": "67cdb30beb74ef16a2114e14958b9389c28bd5095ce1a21d2e587646519e9f5f",
+      "source_sha256": "d89b4d7f8e665f2d9e243deeacac1b3a3e88b660377bb596e41e0403d9f091ce",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 54,
+      "id": "capture-multiple-outdents-before-token",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0054.json",
+      "raw_result_sha256": "fd13cd9ff7f293d578adcbf3b63beda9eb6c738890968dac5f7f871cb700727c",
+      "source_sha256": "87d345f4f15536d47c9cfcf563a9545f9ab37b321638f11b058b2dd56b7dea4c",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 55,
+      "id": "capture-self-arrow-reclassification",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0055.json",
+      "raw_result_sha256": "2552050a93bc78834c50ec8578eca1b4b47c2e3c89d35c344ff26d1c4c942ed2",
+      "source_sha256": "90c2599a1c18974f0970a953bde194cfefa7341e781ff5d9ece5b02ed0ef23ed",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 56,
+      "id": "capture-colon-argument-region",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0056.json",
+      "raw_result_sha256": "3409b148e220c276694387203baf535661d984d9ff913c34b772c5f921a6bce0",
+      "source_sha256": "5972830a462d386ddefc1785591b839546dfde3ccc9230b6ceb6f0e01eb58e45",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 10
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 10,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "443f9b8446a6f01a14ee546fd8f11df722890143c699f071f0662de68180fa6f",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 57,
+      "id": "capture-interpolation-prefetched-identifiers",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0057.json",
+      "raw_result_sha256": "4aab8aab522e7ccea95276d5db1de59b49fa8f9892fb2dfa8a9ce07b6df2ab22",
+      "source_sha256": "96180ddc0303be742e1a53daaff7b5016de6c8b2b4aec9a3f73af440335a1417",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "1610612749",
+            "exists": true,
+            "start": 13,
+            "end": 24,
+            "point": 13,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "c53803d0c3c66a6c554335c15ca92a8762e85d540247b5f61345011e2f7cb0d7",
+          "children": [
+            {
+              "node_id": 6,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1207959565",
+                "exists": true,
+                "start": 13,
+                "end": 18,
+                "point": 13,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "e7d6ee0e6ef94ae230159e09324cc05ead12ce466a710eb76c8c9efb78999e4e"
+            },
+            {
+              "node_id": 7,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "1610612755",
+                "exists": true,
+                "start": 19,
+                "end": 24,
+                "point": 19,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "7c51916369bd4db65c423f3d95d4d9a957b9129ce508f852510170c929998139"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "2348810264",
+            "exists": true,
+            "start": 24,
+            "end": 35,
+            "point": 24,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "01320763401ce5db5c8cd9a55d535731078bdb32282f97be26ec1d4a97db9c3f",
+          "children": [
+            {
+              "node_id": 9,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1946157080",
+                "exists": true,
+                "start": 24,
+                "end": 29,
+                "point": 24,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "371b215d59b81e3861f736b77b593e6caa90f716654058e26c27f1681d515b67"
+            },
+            {
+              "node_id": 10,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "2348810270",
+                "exists": true,
+                "start": 30,
+                "end": 35,
+                "point": 30,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "0e54e16ea056c93a8e1f61f917e379e9e524805ba4b990d0cde9fd97cabf3d46"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 58,
+      "id": "capture-interpolation-prefetched-this",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0058.json",
+      "raw_result_sha256": "6901dbd93989a5696eac7c5640dca71342e04f9130c79ff47de98e50593f70d5",
+      "source_sha256": "a9d009afacb1ad83e2a55807518d76b1027c6317ebd070a5b932f9fcd2fe079d",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 11
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 11,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "2013265945",
+            "exists": true,
+            "start": 25,
+            "end": 30,
+            "point": 25,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "e2a12a880a5eb4e3d6b173806bdfe11c18629c4220683a332bbdd2d0c7ac968e",
+          "children": [
+            {
+              "node_id": 12,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1677721625",
+                "exists": true,
+                "start": 25,
+                "end": 25,
+                "point": 25,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "cf695c6415a8e68eaf853c35b571f771bdf712ac58ea79043bcc7f31e9374432"
+            },
+            {
+              "node_id": 13,
+              "native_class": "dotty.tools.dotc.ast.Trees$This",
+              "span": {
+                "coords": "2013265946",
+                "exists": true,
+                "start": 26,
+                "end": 30,
+                "point": 26,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "14f78ce22ca72bd41850e8e7d6823e5e024a6f3685e2054ff99c5e9290bdc4fe"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 59,
+      "id": "capture-interpolation-executable-block",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0059.json",
+      "raw_result_sha256": "959e67c234bc8dc63b8ece823b1796c1f891458e15bbafe8ff436f33bee78978",
+      "source_sha256": "2a5c40e1c41764a42367454dcc79ee9bbfe68e50a55a578df21696a3b9e15113",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "3154116621",
+            "exists": true,
+            "start": 13,
+            "end": 47,
+            "point": 13,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "f32cfe89ac21c3b4bbc81b53baf05759aa655c8455f505a9352b73b17b06dff7",
+          "children": [
+            {
+              "node_id": 6,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1275068429",
+                "exists": true,
+                "start": 13,
+                "end": 19,
+                "point": 13,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "46b613cdee74fe62ce670007194628ae30f181b434c1490559b9ed5c440eb912"
+            },
+            {
+              "node_id": 7,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "3154116630",
+                "exists": true,
+                "start": 22,
+                "end": 47,
+                "point": 22,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "7d67275bbe0ffd4a68567acc031129cf95d192d1901969458aeea0576fdd84b9"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 60,
+      "id": "capture-interpolation-escaped-dollar",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0060.json",
+      "raw_result_sha256": "5766b09cd5499adc5fbbcd4c59cb1d7548cdbd900994cb7fd8ce896be77f868f",
+      "source_sha256": "6f30985451845a24db6e79e91998eeb0417ca7312c17f897ae2009f89823d9f2",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 61,
+      "id": "capture-multiline-interpolation-crlf",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0061.json",
+      "raw_result_sha256": "3b731786b380eed973352adb4f767d975ba51e0cb1cc236383650115b41d9e2e",
+      "source_sha256": "d09b59a1fda1c4d41c73586bc41cbf5164a7f5c97fa33e32ac04acfb9832d5cf",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 5
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 5,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "1744830479",
+            "exists": true,
+            "start": 15,
+            "end": 26,
+            "point": 15,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "124d8c4b069a20fc73c6186e3ca8bd11396eeecb78a52b0429fa818d5d9d400e",
+          "children": [
+            {
+              "node_id": 6,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1342177295",
+                "exists": true,
+                "start": 15,
+                "end": 20,
+                "point": 15,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "fa8afcb64efbac64732607f113e701389ed6c6f95ac101cb21890cc8e52834ee"
+            },
+            {
+              "node_id": 7,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "1744830485",
+                "exists": true,
+                "start": 21,
+                "end": 26,
+                "point": 21,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "541f5d5fdf275d578a5289ce4e6b12e27202bda047ab3e95f49b820bf92c8388"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "2684354586",
+            "exists": true,
+            "start": 26,
+            "end": 40,
+            "point": 26,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "6783f6d4e83ee517008bc0aa6ab761b0f8717412683936eba4923bfa90c460e5",
+          "children": [
+            {
+              "node_id": 9,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1879048218",
+                "exists": true,
+                "start": 26,
+                "end": 28,
+                "point": 26,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "bfe5aa170cdb939e49b1bc580e53c2a98a4a58c00f382787840c886529f03ffd"
+            },
+            {
+              "node_id": 10,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "2684354589",
+                "exists": true,
+                "start": 29,
+                "end": 40,
+                "point": 29,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "eb26891a73cd4a27026392017b63c331e397237b92092df657ef5459db10e215"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 62,
+      "id": "capture-unicode-supplementary-identifier",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0062.json",
+      "raw_result_sha256": "196d970f3e272b6cee4711985a4018cab3423af453b9d4199e24d52224b3210a",
+      "source_sha256": "49b8fee192876e9537e15d941d51eeb683ee2e231a2090ba4ed3bc14cbafd175",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "1811939352",
+            "exists": true,
+            "start": 24,
+            "end": 27,
+            "point": 24,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "80e8d3b9a1aaf07ef284e82a1217a9eec0c8fe84f387a3bc3efd510bbbffcb48",
+          "children": [
+            {
+              "node_id": 9,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "1610612760",
+                "exists": true,
+                "start": 24,
+                "end": 24,
+                "point": 24,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "cd13d8669f09254060c4b86de29eb6823e581cc49bfe9492082051749df3394e"
+            },
+            {
+              "node_id": 10,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "1811939353",
+                "exists": true,
+                "start": 25,
+                "end": 27,
+                "point": 25,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "e1f76d3dcd05aa8f0c9f040448219763c37179aa3b476c51b2a5a6bf5d6815f3"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 63,
+      "id": "capture-unicode-literal-and-crlf",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0063.json",
+      "raw_result_sha256": "02d70c0531b9dfcbd19d261dbdf158382442680e51a55f20cc40f4caa1af3dfe",
+      "source_sha256": "2c7dcdbac310ca7392cad35f61a6836a25014b6e545fd37748dc3fe30d543512",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 64,
+      "id": "capture-comment-crlf-native-span-overhang",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0064.json",
+      "raw_result_sha256": "9e080247808434d5e86b1ce309bae19243b9b2bee8fca9eb8844f02d1a98e1a0",
+      "source_sha256": "c7948ece199aca495f19b352173aec458ab08ab7e1deb02e533645269011f6fe",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 65,
+      "id": "capture-line-comment-at-eof",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0065.json",
+      "raw_result_sha256": "ba30d862c798f0e113e918ed9434facdcda86b9cb7984d812a40e5390d92cfe1",
+      "source_sha256": "41efa565ed38f5e1e024976bb20912c45f9c2e7735bc381c7327360c81d363ba",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 66,
+      "id": "capture-literal-comment-and-delimiter-text",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0066.json",
+      "raw_result_sha256": "535e3502b6cb977c886c2337d3561e70353082542ead974813f3de923aa728de",
+      "source_sha256": "094744945fcceb6658e69e472a06d3bdadff603d61bac6033c3038e0a3dffc70",
+      "category": "already-complete-v1",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": true,
+      "v2_native_result": null
+    },
+    {
+      "index": 67,
+      "id": "capture-unterminated-string-recovery",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0067.json",
+      "raw_result_sha256": "9939b925d3f522dcd20947e5cade89842ec7cf23c1a01ac58b74400d30d0a6d2",
+      "source_sha256": "1cf3129747cd71b4893a1c16c6afa22bd43a858f0cdbf2dfd2b7d54c52f98ab6",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 68,
+      "id": "capture-mismatched-delimiter-recovery",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0068.json",
+      "raw_result_sha256": "7aef040ec455ac28991ad19c3bbd6e57a191bd8c107809901e69fcbce14f0d10",
+      "source_sha256": "bd08aee9b1e2e954280e44bbbdf89eb995dc43f5bc162d79a5d64dbe030ee92b",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "native_parse_not_clean",
+          "detail": "Errors or exceptions prevent coverage admission"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 69,
+      "id": "capture-xml-direct-reader-handoff",
+      "group": "capture",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0069.json",
+      "raw_result_sha256": "8557cb23e44f38a1adc1bb4b2c35e3fb1f8c588ecffa06df4e7e42b7ccd26b62",
+      "source_sha256": "117c92f67c0a7d54385569125fe9dbead8a4d83e6c4f014bb29fb8faf08f611a",
+      "category": "intentional-token-or-parse-rejection",
+      "original_graph_problems": [],
+      "diagnosed_nodes": [],
+      "retained_non_graph_issues": [
+        {
+          "kind": "unsupported_xml_character_reader",
+          "detail": "XML reads source outside token hooks"
+        },
+        {
+          "kind": "unexplained_source_gap",
+          "detail": "12:39"
+        }
+      ],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 70,
+      "id": "scala-binarytrees-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0070.json",
+      "raw_result_sha256": "87b416edf0e2870a50c9ce925725999b5c779f647c246907c0a3558d3b8edad9",
+      "source_sha256": "bdcebd103b9da8de792d8f59da68125aad57d1bb286f10a4074506cb8d5a518b",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 111
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 114
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 225
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 228
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 231
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 253
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 256
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "d250d60fef762ca09f3ea622c0fd889b966c2ecc12fe9db6bcd8a373c04fce1d",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 111,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "54291071750",
+            "exists": true,
+            "start": 774,
+            "end": 809,
+            "point": 774,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "84eb21722c1e305be0c5ee93fc9562b88f861f8aef7bc070916ffe2fddb6fbba",
+          "children": [
+            {
+              "node_id": 112,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "53418656518",
+                "exists": true,
+                "start": 774,
+                "end": 796,
+                "point": 774,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "352f4e5aec14f7e77c0f095a0d1fd87aa07d6d583dfa96cacb0801dec7964fa3"
+            },
+            {
+              "node_id": 113,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "54291071773",
+                "exists": true,
+                "start": 797,
+                "end": 809,
+                "point": 797,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "9e2b1917548bf17526a1617ae6ef3928fae7defe152c3d7757c0dd904a7c21dd"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 114,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "56908317481",
+            "exists": true,
+            "start": 809,
+            "end": 848,
+            "point": 809,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "71adca3899d57e1523d6f81dec3f922a530f046731e03589edb9b697ef3cb208",
+          "children": [
+            {
+              "node_id": 115,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "54962160425",
+                "exists": true,
+                "start": 809,
+                "end": 819,
+                "point": 809,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "d0677378716692d7c41cc1d7cc26630e1409c01d6f329acd493c53164b222431"
+            },
+            {
+              "node_id": 116,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "56908317492",
+                "exists": true,
+                "start": 820,
+                "end": 848,
+                "point": 820,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "f7d11c346944f23cf59517dbee5d4db94b87d618ae0790f7269a61a6808a9339"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 225,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "98851358134",
+            "exists": true,
+            "start": 1462,
+            "end": 1473,
+            "point": 1462,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "2118ec71ca952032e298ec163e8ec0103517b17fda6d1a9b5b5de28af29409fd",
+          "children": [
+            {
+              "node_id": 226,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "98113160630",
+                "exists": true,
+                "start": 1462,
+                "end": 1462,
+                "point": 1462,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "e32c21ecd4dbeca63118aa45670e5b18a0e8df89b0ff7faa042822f628b38415"
+            },
+            {
+              "node_id": 227,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "98851358135",
+                "exists": true,
+                "start": 1463,
+                "end": 1473,
+                "point": 1463,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "d758ec4acd808606a78b147a59829d08c0dd3e1f9a682ea4eb3b6057e23d7bc3"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 228,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "100193535425",
+            "exists": true,
+            "start": 1473,
+            "end": 1493,
+            "point": 1473,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "eb49c492e888a51a7762f4fdc7d9d927a72e9288efb0ffeca5de418ef7247d37",
+          "children": [
+            {
+              "node_id": 229,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "100059317697",
+                "exists": true,
+                "start": 1473,
+                "end": 1491,
+                "point": 1473,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "14060baa5c240097bfe0a381a08c39f8488eb5f9283094adbff36a6e7a4b6f47"
+            },
+            {
+              "node_id": 230,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "100193535444",
+                "exists": true,
+                "start": 1492,
+                "end": 1493,
+                "point": 1492,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "bf29bf18549c37f9a7ebd8dc5cbcfc24f7efde5e8ff52c7dc309e3f7bdf7d3fa"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 231,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "101267277269",
+            "exists": true,
+            "start": 1493,
+            "end": 1509,
+            "point": 1493,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "c227ca3178ebae4cc7a858782c08f689f4853cf1dec18629d8b8e9379b8cc74c",
+          "children": [
+            {
+              "node_id": 232,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "100864624085",
+                "exists": true,
+                "start": 1493,
+                "end": 1503,
+                "point": 1493,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "9f4d3cd18eaf528b35855b4cc767270657244fde1fb5502be7655c5fff6fd0e6"
+            },
+            {
+              "node_id": 233,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "101267277280",
+                "exists": true,
+                "start": 1504,
+                "end": 1509,
+                "point": 1504,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "db982ae4540e50b34853b5b22e594a7c650cf789bbcaba20831ff41e2c27a10d"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 253,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "111803369056",
+            "exists": true,
+            "start": 1632,
+            "end": 1666,
+            "point": 1632,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "9c0cd4f0b39b6d5c173eeb41612b2bf5201f8ca1ae00bb3de5b6ce4d40dbb2b5",
+          "children": [
+            {
+              "node_id": 254,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "111199389280",
+                "exists": true,
+                "start": 1632,
+                "end": 1657,
+                "point": 1632,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "7eb5902c9b89b8bb3bd1fd7ec5828beb7e79b9541ffccd712630079acf5cf41c"
+            },
+            {
+              "node_id": 255,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "111803369082",
+                "exists": true,
+                "start": 1658,
+                "end": 1666,
+                "point": 1658,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "2ad715d1c596bab5bc15db64357444be3e942523a7a1943969c10e5a98d4ef11"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 256,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "113816635010",
+            "exists": true,
+            "start": 1666,
+            "end": 1696,
+            "point": 1666,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "749ae8a162344459e77237557696eda8193e8c13899968bb85fbb0b751e2cbd5",
+          "children": [
+            {
+              "node_id": 257,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "112474457730",
+                "exists": true,
+                "start": 1666,
+                "end": 1676,
+                "point": 1666,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "109ee8d96e9658fd59269419076f57ed3857b9fa3dafddd94be3cf45897330c6"
+            },
+            {
+              "node_id": 258,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "113816635021",
+                "exists": true,
+                "start": 1677,
+                "end": 1696,
+                "point": 1677,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "7c33a412393dcbf2a95a5d59f196a47863e72f7225d662ef94152dbbc7ac3c3a"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 71,
+      "id": "scala-fannkuchredux-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0071.json",
+      "raw_result_sha256": "9c556d3138c51d60a3acae18bdba23eef737408c440944de8c4bbadd9203f53c",
+      "source_sha256": "ba8c9dd5dafea3ecca8e9033e3f608120f6b922c58d3a702933adf7819812762",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 519
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 679
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 684
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 687
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "d250d60fef762ca09f3ea622c0fd889b966c2ecc12fe9db6bcd8a373c04fce1d",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 519,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "204950473693",
+            "exists": true,
+            "start": 3037,
+            "end": 3054,
+            "point": 3037,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "6593760b5809b7dee1e8aa5210781622de67facea10b45a5f54f34d27228f828",
+          "children": [
+            {
+              "node_id": 520,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "204816255965",
+                "exists": true,
+                "start": 3037,
+                "end": 3052,
+                "point": 3037,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "33f16e892bf5d81634776f20b3ed329f750e0946319a56346c5ee54586f1aab7"
+            },
+            {
+              "node_id": 521,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "204950473709",
+                "exists": true,
+                "start": 3053,
+                "end": 3054,
+                "point": 3053,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "f4a0739efc3591f439db30113e84123f5795268878cb827b64d6d5a1b69bbe73"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 679,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "256825626339",
+            "exists": true,
+            "start": 3811,
+            "end": 3827,
+            "point": 3811,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "82e19c9816e516d04e6c648c92c52ee205777c5f96cca44f580d90f73157e8e0",
+          "children": [
+            {
+              "node_id": 680,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "255751884515",
+                "exists": true,
+                "start": 3811,
+                "end": 3811,
+                "point": 3811,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "cba3c54c2921937b1149b1d1d737c23203c7955e7b2c9f233cf7344e076c7a1b"
+            },
+            {
+              "node_id": 681,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "256825626340",
+                "exists": true,
+                "start": 3812,
+                "end": 3827,
+                "point": 3812,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "bfb2ed1c9fe2221914b2492842cc94159e2c621fd5de06d4f720b3e0406fa2c7"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 684,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "257899368179",
+            "exists": true,
+            "start": 3827,
+            "end": 3843,
+            "point": 3827,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "166be78792cab7c3e176f4ea2e48e39f362ff9c43af499a35391a7f9db3cb229",
+          "children": [
+            {
+              "node_id": 685,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "257765150451",
+                "exists": true,
+                "start": 3827,
+                "end": 3841,
+                "point": 3827,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "43d94c1c774a5340919a7f0d6877c3b65719550919761725ff34c08e4411b2db"
+            },
+            {
+              "node_id": 686,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "257899368194",
+                "exists": true,
+                "start": 3842,
+                "end": 3843,
+                "point": 3842,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "b9200b4512526ed91b8152ecf7ce8aa9981534c6a74bdbbf3c51391fed9f7adf"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 687,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "259040218883",
+            "exists": true,
+            "start": 3843,
+            "end": 3860,
+            "point": 3843,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "00d819af9c79019d349592624dab576e5eaeb5dcfcf0d92cf72155d56388446f",
+          "children": [
+            {
+              "node_id": 688,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "258167803651",
+                "exists": true,
+                "start": 3843,
+                "end": 3847,
+                "point": 3843,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "b871480dad001864d7da86858b1daa466674ff73d016ee1618ec2d77f3b4cd54"
+            },
+            {
+              "node_id": 689,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "259040218888",
+                "exists": true,
+                "start": 3848,
+                "end": 3860,
+                "point": 3848,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "e0aa860b725f6dc0c5885dcaac6bfc7c694f62f5104fcc94771849d3375ebc28"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 72,
+      "id": "scala-fasta-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0072.json",
+      "raw_result_sha256": "c7dc5c667e1885ca1aed9b5fa94b7c21795416f30b2c736ae306165b453d678c",
+      "source_sha256": "a3e2f78453acff46081258324f49040b8a9a93ce48377eae1a5a3d5c30ae37f1",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 73,
+      "id": "scala-knucleotide-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0073.json",
+      "raw_result_sha256": "d7362d1916ce7927e6b0e311ed79098e2e868858471e499e0459d08bb5e1de5b",
+      "source_sha256": "8ab9a123c499bbad40b3c09aebf0910dc6977ec564bb3d025941206fc6a2d269",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 66
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 532
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 542
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 66,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "48452600497",
+            "exists": true,
+            "start": 689,
+            "end": 722,
+            "point": 689,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "e0a4886a40d849abfc8bb7a9342dffe32ae44038be14fac0100cd9795efd0696",
+          "children": [
+            {
+              "node_id": 67,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "47982838449",
+                "exists": true,
+                "start": 689,
+                "end": 715,
+                "point": 689,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "c20def65c4c1da0ffbdbba7098ba32accf89c7a46efe9d1d5fe6b0d76fd350da"
+            },
+            {
+              "node_id": 68,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "48452600524",
+                "exists": true,
+                "start": 716,
+                "end": 722,
+                "point": 716,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "6dd4d1fbdadb4ab25c0fd0c50f6599f13c57c6ab9fd350eeb73e5c393fb2efcf"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 532,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "209044114438",
+            "exists": true,
+            "start": 3078,
+            "end": 3115,
+            "point": 3078,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "398260607e8edabb5033eadce24291ddf0525739687cd67c4213afca9800857b",
+          "children": [
+            {
+              "node_id": 533,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "206561086470",
+                "exists": true,
+                "start": 3078,
+                "end": 3078,
+                "point": 3078,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "b3bf02be44bb244cd2f5e1b0f22669c5b7d160f088ac4d03bd1ae41410e6eb6f"
+            },
+            {
+              "node_id": 534,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "209044114439",
+                "exists": true,
+                "start": 3079,
+                "end": 3115,
+                "point": 3079,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "72255de3e3f9772a223f0d14e925c754fd15584edfb7a55d882d9f3d0fb79ccd"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 542,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "209580985387",
+            "exists": true,
+            "start": 3115,
+            "end": 3123,
+            "point": 3115,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "f5399f38abe8a5997c0b6ef6b891af17566c5e9cf7632a56b621e4bc17e3ee85",
+          "children": [
+            {
+              "node_id": 543,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "209178332203",
+                "exists": true,
+                "start": 3115,
+                "end": 3117,
+                "point": 3115,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "b8c04905b9107b7473fb8479350e02356bc0d01a06cd90f44626a128b5724a24"
+            },
+            {
+              "node_id": 544,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "209580985390",
+                "exists": true,
+                "start": 3118,
+                "end": 3123,
+                "point": 3118,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "7355805be300f10c41853830ef376d99dfab1cd396556f9322b918c6595eb31c"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 74,
+      "id": "scala-mandelbrot-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0074.json",
+      "raw_result_sha256": "9dd863cbe6c2344222d3c09096f414b6f893408f5b415de2f5d8aac188cd016f",
+      "source_sha256": "de29618bbbfb47d11770eb62e771e5e659a8707a2781fbc5df7eb324e71471b7",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 320
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 323
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 320,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "135224362969",
+            "exists": true,
+            "start": 2009,
+            "end": 2015,
+            "point": 2009,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "c0dabe675183d321d56a347655a62429c439a0790d703183fa4a32b91f2850ba",
+          "children": [
+            {
+              "node_id": 321,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "135090145241",
+                "exists": true,
+                "start": 2009,
+                "end": 2013,
+                "point": 2009,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "57ab99f99e3dcd8c08014ae93c86cb7a81aea9de18be5017a82c1fb26c6594f5"
+            },
+            {
+              "node_id": 322,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "135224362974",
+                "exists": true,
+                "start": 2014,
+                "end": 2015,
+                "point": 2014,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "9a5552178f87a9268a35d0c7b3775a711e0fe7e849fd55fc67b15e43a40013d2"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 323,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "135425689567",
+            "exists": true,
+            "start": 2015,
+            "end": 2018,
+            "point": 2015,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "1e402bd41d9b09d64cd86e243860b4d990f5dd5befcc5eac7ba509d6a97a4495",
+          "children": [
+            {
+              "node_id": 324,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "135291471839",
+                "exists": true,
+                "start": 2015,
+                "end": 2016,
+                "point": 2015,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "04bb7d0da9eebc956ea0b3a616f6d8aa4687c7c06a8188bdd4d7ad3bd27f6826"
+            },
+            {
+              "node_id": 325,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "135425689569",
+                "exists": true,
+                "start": 2017,
+                "end": 2018,
+                "point": 2017,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "6eecfd1c1e521530bbea29dee0ec904b734beefaa8a37752343b232c19f90c73"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 75,
+      "id": "scala-nbody-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0075.json",
+      "raw_result_sha256": "b8f6140aaf305fa652ae987ca6a3a2aa321622510787eefdd835baa8b0760941",
+      "source_sha256": "74b6a0eb04fa87240d47b903969898314c400e8715c436515d503f6f4112957b",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 76,
+      "id": "scala-pidigits-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0076.json",
+      "raw_result_sha256": "2968c7bb8b813010138731606cd6362e958b517d12d3837abd4b4739d6d10d27",
+      "source_sha256": "5dca3a4127f2283792a2dfa0fc1fff47366d70405b28d14d156c8b0609408ad5",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 6
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 157
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 160
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 6,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "2eee3913e10750cf8a5780fe83e08e65f25d0098e4754d622ae1f731bff20daf",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 157,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "57109644110",
+            "exists": true,
+            "start": 846,
+            "end": 851,
+            "point": 846,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "f21f376add4ff64334061ae2139c0abfe57fa554164b7f9ec86384dafc02a452",
+          "children": [
+            {
+              "node_id": 158,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "56774099790",
+                "exists": true,
+                "start": 846,
+                "end": 846,
+                "point": 846,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "85c7e136a56aaf2c4dbf4c67c6dacab01608cbd6f9c3c6980337bed60f1f9f76"
+            },
+            {
+              "node_id": 159,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "57109644111",
+                "exists": true,
+                "start": 847,
+                "end": 851,
+                "point": 847,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "583c61e4f4e77250bdc567022539c35bb7e32acf69db4edd90faa581ef0d61bb"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 160,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "57847841619",
+            "exists": true,
+            "start": 851,
+            "end": 862,
+            "point": 851,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "c00a28d03bcebabb3d7d2563b4e97b0cae81adfdc6dc77488a1f96fd8606b47c",
+          "children": [
+            {
+              "node_id": 161,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "57310970707",
+                "exists": true,
+                "start": 851,
+                "end": 854,
+                "point": 851,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "a43d253c21ee0e397a1ef0c8cfe7eceb5bd236a79182353d19f6151e4c68fae8"
+            },
+            {
+              "node_id": 162,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "57847841623",
+                "exists": true,
+                "start": 855,
+                "end": 862,
+                "point": 855,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "9cc106249ca3a6080c25a3fe506b3534d3b9e3fbab165af39d046052aefe2d2c"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 77,
+      "id": "scala-regexredux-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0077.json",
+      "raw_result_sha256": "c13fd1adeb1e8ad6fae95a11c424a25042e173e7285fb481f43747ffc60127ee",
+      "source_sha256": "3e4db60819b528f72b39d7d2571a9c8493b054c13cee95f6b56a831e0cbbc362",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 8
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 204
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 210
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 8,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "d250d60fef762ca09f3ea622c0fd889b966c2ecc12fe9db6bcd8a373c04fce1d",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 204,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "124822488886",
+            "exists": true,
+            "start": 1846,
+            "end": 1860,
+            "point": 1846,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "aa54031bb8b0ace374dc0262d7785a850a0bf125b7114de7f9cac1916398dd6c",
+          "children": [
+            {
+              "node_id": 205,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "123882964790",
+                "exists": true,
+                "start": 1846,
+                "end": 1846,
+                "point": 1846,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": true
+              },
+              "transport_sha256": "33816f2b929b86380f5b1cf8226d492b83e0fd5a11ec0a562c691913f065cd6a"
+            },
+            {
+              "node_id": 206,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "124822488887",
+                "exists": true,
+                "start": 1847,
+                "end": 1860,
+                "point": 1847,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "182ff9f830f4f49ffa74b35e2f9d26fb56d45d2b5698ec3394f79cc1b0fe081f"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 210,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "126097557316",
+            "exists": true,
+            "start": 1860,
+            "end": 1879,
+            "point": 1860,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "b03007a9788f8de5b52d70339a31bf79b2b3e53b28ad59d11b1c2002c8777677",
+          "children": [
+            {
+              "node_id": 211,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "124889597764",
+                "exists": true,
+                "start": 1860,
+                "end": 1861,
+                "point": 1860,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "c091ca97938b8de54bcce96993303b3279c2cfdf96657e3345a8f0a7e48ac7a8"
+            },
+            {
+              "node_id": 212,
+              "native_class": "dotty.tools.dotc.ast.Trees$Block",
+              "span": {
+                "coords": "126097557318",
+                "exists": true,
+                "start": 1862,
+                "end": 1879,
+                "point": 1862,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "f999976244a93eb1bd636c21e669cc8f3376d369c0de6bce7ebea6fdc8aac1a4"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 78,
+      "id": "scala-revcomp-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0078.json",
+      "raw_result_sha256": "d3b3f3f8eb80615a0a8cc6bb945182fb8cd804918a27287ab6c527ec8e93bbc5",
+      "source_sha256": "bd54d135034e035e77594fc22cec60b943356452ec5f5cb0fa50c27bfa381b6f",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        },
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 160
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        },
+        {
+          "node_id": 160,
+          "native_class": "dotty.tools.dotc.ast.Trees$Thicket",
+          "constructor_semantics": "Thicket-NoType-constructor",
+          "span": {
+            "coords": "91737818430",
+            "exists": true,
+            "start": 1342,
+            "end": 1367,
+            "point": 1342,
+            "synthetic": false,
+            "source_derived": true,
+            "zero_extent": false
+          },
+          "source_id": 0,
+          "node_transport_sha256": "feb857242bd5095e368d62854b7a243b4a2c95a141e71096484e8e4035d79c5e",
+          "children": [
+            {
+              "node_id": 161,
+              "native_class": "dotty.tools.dotc.ast.Trees$Literal",
+              "span": {
+                "coords": "91402274110",
+                "exists": true,
+                "start": 1342,
+                "end": 1362,
+                "point": 1342,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "44d891b94b92c5e7ebd741bbc6aab1a10224aea0cf76031e60e924999841b0b3"
+            },
+            {
+              "node_id": 162,
+              "native_class": "dotty.tools.dotc.ast.Trees$Ident",
+              "span": {
+                "coords": "91737818451",
+                "exists": true,
+                "start": 1363,
+                "end": 1367,
+                "point": 1363,
+                "synthetic": false,
+                "source_derived": true,
+                "zero_extent": false
+              },
+              "transport_sha256": "614ee7d8d772a905154b060692d9d91ebe90d69847de761fc4b7b453ff1a8a57"
+            }
+          ],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    },
+    {
+      "index": 79,
+      "id": "scala-spectralnorm-jvm-v1",
+      "group": "application",
+      "raw_result": "/private/tmp/mech-benchmark-completion/experiments/scala/source-counts-v1/native-token-capture-v1/native/parser-output/0079.json",
+      "raw_result_sha256": "75de011ed82e051bc84429b10f156792eb2b0e7d7f61c47183d0496c598cfa9f",
+      "source_sha256": "4b945cbdfb8c7944c8c7874055211e43800a58ad1e71bd44e520d346ae114115",
+      "category": "native-NoType-container-false-rejection",
+      "original_graph_problems": [
+        {
+          "kind": "typed_tree_in_parse_output",
+          "node": 7
+        }
+      ],
+      "diagnosed_nodes": [
+        {
+          "node_id": 7,
+          "native_class": "dotty.tools.dotc.ast.Trees$EmptyTree",
+          "constructor_semantics": "shared-empty-tree-NoType-constructor",
+          "span": {
+            "coords": "-4503599627370495",
+            "exists": false
+          },
+          "source_id": 1,
+          "node_transport_sha256": "4358242e52a80463b555488264c389696625871d6e120fdc73422f5f5ddd48eb",
+          "children": [],
+          "native_NoType_identity_observed_in_v1": false
+        }
+      ],
+      "retained_non_graph_issues": [],
+      "original_candidate_coverage_complete": false,
+      "v2_native_result": null
+    }
+  ],
+  "native_v2_executions": 0,
+  "native_v2_coverage_qualified": false,
+  "native_fixture_transport_verified": false,
+  "canonical_loc": null,
+  "formatted_loc": null,
+  "chart_admission": false
+}
