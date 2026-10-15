@@ -46,6 +46,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Perl](perl/)
 - [PHP](php/)
 - [Pony](pony/)
+- [Prolog](prolog/)
 - [Python (CPython)](python/)
 - [R](r/)
 - [Racket](racket/)

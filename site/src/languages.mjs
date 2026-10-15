@@ -1157,5 +1157,24 @@ export const languageMetadata = {
     "sources": [
       "https://devblogs.microsoft.com/typescript/ten-years-of-typescript/"
     ]
+  },
+  "prolog": {
+    "platform": "runtime",
+    "runtime": "SWI-Prolog 10.0.2",
+    "execution": [
+      "interpreted"
+    ],
+    "typing": "dynamic",
+    "style": [
+      "logic"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "SWI-Prolog executes precompiled QLF virtual-machine instructions; explicit source aliases retain independent samples.",
+    "sources": [
+      "https://www.swi-prolog.org/pldoc/man?section=qlf",
+      "https://www.swi-prolog.org/pldoc/man?section=gc"
+    ]
   }
 };

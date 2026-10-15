@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "audited_on": "2026-10-14",
-  "scope": "57 measured variants; all classifications explicit.",
+  "audited_on": "2026-10-15",
+  "scope": "58 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2810,6 +2810,55 @@
         {
           "path": "experiments/typescript/full60-v1/publication/candidate-v1.json",
           "sha256": "3d0a5c9c76ab3203624344390d53d79f1aabacac1376953b4821ab36c241ba2e",
+          "status": "independently-reproduced-publication-candidate"
+        }
+      ]
+    },
+    "prolog": {
+      "key": "prolog",
+      "label": "Prolog",
+      "family": "prolog",
+      "platform": "runtime",
+      "runtime": "SWI-Prolog 10.0.2",
+      "execution": [
+        "interpreted"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "logic"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "SWI-Prolog executes precompiled QLF virtual-machine instructions; explicit source aliases retain independent samples.",
+      "sources": [
+        "https://www.swi-prolog.org/pldoc/man?section=qlf",
+        "https://www.swi-prolog.org/pldoc/man?section=gc"
+      ],
+      "runtime_policy": "SWI-Prolog 10.0.2 arm64 bytecode VM; -q -O -f none --stack-limit=8g; one compute worker",
+      "memory_policy": "SWI term, atom and clause garbage collection; retained preparation observed gc=true and bounded=false.",
+      "evidence_scope": [
+        "Loaded-image and GC observations are from retained probe/preparation commands, not timed processes.",
+        "QLF contains application bytecode; native application AOT compilation is not claimed.",
+        "Compact/optimized labels are explicit source aliases; distinct source algorithms are not claimed.",
+        "Nine original regex, 31 linear-continuation, 14 preserved stopped-prefix and up to 36 new observations retain their actual cohorts and matched controls.",
+        "Cancelled reverse-complement and pre-correction knucleotide attempts supply no timing or timeout result.",
+        "Source-linear traversal is established separately from any empirical runtime scaling claim."
+      ],
+      "runtime_publication_metadata_qualified": true,
+      "runtime_gc_configuration_observed": true,
+      "observed_in_each_timed_process": false,
+      "gc_numeric_defaults_claimed": false,
+      "chart_admission": false,
+      "release_year": 1972,
+      "release_name": "Prolog",
+      "release_source": "https://www.swi-prolog.org/news/53a33da0-cfa9-11ec-99f9-00163e8f424e",
+      "release_note": "Language origin, not the measured SWI-Prolog runtime release: SWI-Prolog's 2022 announcement marks the language's fiftieth anniversary.",
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/prolog/full36-knucleotide-v1/publication/candidate-v1.json",
+          "sha256": "eb549bbd42274beba6194471ef847a8709ebce6ca21a973740f45c2d5ca74701",
           "status": "independently-reproduced-publication-candidate"
         }
       ]
