@@ -1,9 +1,12 @@
 # Julia entry dispatch diagnostic
 
-This source draft observes one execution of the unchanged retained N-body image
-with argument `1`. It resolves the actual entry target and records any observed
-interpreter or code-generation fallback. It does not repeat the full benchmark,
-rewrite the executable, or establish an AOT classification by itself.
+This diagnostic is designed to observe one execution of the unchanged retained
+N-body image with argument `1`, resolving the entry target and recording any
+interpreter or code-generation fallback. The first owned attempt stopped at its
+120-second deadline before a debugger endpoint appeared. No trace event or
+subject output was produced. Both started children were killed and reaped;
+[the independent closure review](run-v1-independent-review.json) confirms the
+failed run is closed. This result does not establish AOT qualification.
 
 [The static owner review](../trimmed-native-inspection-v1/static-owner-chain-review-v1.json)
 already joins native bodies from the exported entry to state construction, the
@@ -57,10 +60,11 @@ The 5 ownership-component test methods passed on 2026-10-15 UTC in
 [the initial pure-validation record](../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json); the 4 controller methods
 passed in [the repaired-run record](../../shared/pure-validation-20261015/post-prolog-pure-validation-repaired-v1/report.json). The original
 controller failures remain in the first record. These use fake children and
-small local files, without a debugger or Julia process. Preparation of the owned
-diagnostic and its subject execution remain pending. Exact local
-LLDB/debugserver/Python intake remains required. [controller.py](controller.py)
-now provides the source-only `prepare` and `run` entry points; it accepts no
+small local files, without a debugger or Julia process. The
+[reviewed local tool intake](tool-intake-v1/tool-intake.json) and
+[actual plan](plan-v1.json) are now retained. The first owned run failed before
+the LLDB client could connect. [controller.py](controller.py) provides the
+`prepare` and `run` entry points; it accepts no
 unreviewed tool discovery or automatic capability probe. [client.py](client.py) contains the bounded
 remote connection and observation loop. It uses synchronous continue operations;
 queued process notifications are retained separately and cannot be counted as
@@ -69,8 +73,9 @@ extra breakpoint visits. The draft uses documented
 [process memory reads](https://lldb.llvm.org/python_api/lldb.SBProcess.html),
 [DWARF type fields](https://lldb.llvm.org/python_api/lldb.SBType.html), and
 [file specifications](https://lldb.llvm.org/python_api/lldb.SBFileSpec.html).
-Those references support the proposed API route; they do not establish the API
-or debug-type behavior of a locally selected tool.
+Those references describe the API route. The [local static capture](intake-run-v2/report.json)
+records the selected tool's API presence and debug-type behavior; process methods
+were not exercised by that capture.
 
 The existing common mutex must remain held from input replay through final
 cleanup. [owned_processes.py](owned_processes.py) supplies a concrete draft
@@ -88,8 +93,9 @@ external PID. The separate LLDB client connects only to that owned endpoint.
 The upstream [debugserver command interface](https://github.com/llvm/llvm-project/blob/main/lldb/tools/debugserver/source/debugserver.cpp)
 supports the socket-path/attach form, and the
 [LLDB connection implementation](https://github.com/llvm/llvm-project/blob/main/lldb/source/Host/posix/ConnectionFileDescriptorPosix.cpp)
-supports `unix-connect`. Exact locally retained tool compatibility remains an
-intake requirement; these upstream sources are not a native capability receipt.
+supports `unix-connect`. The local intake records the command interface and
+static APIs. The failed owned attempt does not establish working transport;
+these upstream sources are not a successful attach receipt.
 
 This route owns the inferior before any debugger transport operation, so a hung
 attach cannot lose an unreported subject PID. The journal retains all three
@@ -105,7 +111,8 @@ bound, for at most ten additional seconds; the outer owner must reserve both.
 A sampled RSS read may retry at most twice only when the same subject's exact
 birth/group identity shows the permitted controller/tracer parent transition.
 Other kernel failures remain fatal. The pure fault cases cover synthetic
-children; actual three-child ownership remains to be exercised.
+children. The actual failed run registered and reaped the suspended subject and
+debugserver; it did not reach creation of the third child, the LLDB client.
 
 Preparation consumes an explicitly pinned JSON intake with schema
 `julia-entry-debugger-tool-intake-v1` and status
@@ -115,8 +122,9 @@ paths and dependencies, capability-evidence file pins, the two module UUIDs,
 the matching DWARF/header, a physical working directory and both complete
 environments. Its seven named capability fields are defined in `CAPABILITIES`;
 they cover the local spawn ABI, owned Unix attach interface, LLDB batch/Python
-APIs and settings, UUIDs and CodeInstance fields. No such actual intake exists
-yet. Preparation hashes the declared closure under the common mutex and writes
+APIs and settings, UUIDs and CodeInstance fields. The
+[actual intake and dependency review](tool-intake-v1/README.md) preserve that
+limited approval. Preparation hashes the declared closure under the common mutex and writes
 a fresh plan; run reconstructs the same plan before creating any child.
 
 The retained `canary-observation-v2` packet already records CLT
@@ -155,10 +163,16 @@ usage route retained the Unix-socket attach syntax and exited 1, as expected for
 that invocation; the observer's unsuccessful status remains unchanged. Both
 processes were reaped and their groups were empty. No Julia process was created.
 The first capture's rejected `--help` option and truncated LLDB output remain
-preserved. Physical dependency review and the owned diagnostic are separate
-remaining steps.
+preserved. The subsequent file-only dependency review completed; the
+[owned diagnostic report](run-v1/report.json) records the separate failed attach
+attempt. Its [OS log](run-v1-os-log.json) ends immediately before
+`task_for_pid(183)`, with no recorded return. Developer mode was separately
+observed disabled, but this is not proven to be the sole cause. Permission for
+a machine-wide setting change remains pending; see the
+[next-action record](run-v1-next-action.json).
 
-The eventual CLI shape, after that intake has actually been reviewed, is:
+The controller interface is shown below. The retained plan and output paths are
+occupied by the actual attempt; any authorized follow-up must use fresh paths.
 
 ```text
 <retained-python> -I -S -B <absolute-controller.py> prepare \
@@ -179,6 +193,6 @@ replacement fails the capture. LLDB exits explicitly with the client result;
 Python script errors cannot silently become a successful CLI exit. Raw-capture
 success still leaves application-output and native-owner semantic review open.
 
-The proposed limits and the exact remaining preparation checks are explicit in
-the draft. Completion of this bounded capture would still leave full timing,
+The limits and preparation checks are explicit in the preserved source and plan.
+A successful future bounded capture would still leave full timing,
 universal fallback exclusion, serialized-IR removal and chart admission false.
