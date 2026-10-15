@@ -1,12 +1,20 @@
 # Exact Rebol source-count proposal
 
-This unprepared packet describes canonical owners for ten authored Rebol mains,
-four authored Rebol support files, and the additive corrected general C
-extension. Its 12 pure test methods passed on 2026-10-15 UTC, recorded in
-[the initial pure-validation record](../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). No actual source projection
-has run. Source digests are deliberately unset;
-no canonical count, compiler input, runtime, required work, timing, or chart
-admission is qualified by this draft.
+This packet records canonical owners for ten authored Rebol mains, four
+Rebol support files and the corrected general C extension. The actual
+[fifteen-source proposal](proposal-v1.json) and its
+[source identity review](proposal-source-review-v1.json) retain complete owner
+spans and all ten bundle totals. The proposal itself remains unqualified. The separate
+[count admission](count-review-v1.json) qualifies these exact source counts;
+native runtime/work/timing qualification remains separate.
+The original owner ledger retains unset approval digests so its historical
+source identity is preserved.
+The later [regex literal correction](../regex-literals-v1/README.md) changes the
+regex-redux main. Its exact identity and counts require a new review; this
+admission continues to describe the original source.
+
+The 12 original pure test methods passed on October 15, 2026, as recorded in
+[the initial validation record](../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json).
 
 The [owner ledger](owner_ledger.py) applies the existing
 [approved rule v2](../../../archive/validation/loc-normalization/20261012/PLAN.md)
@@ -81,7 +89,7 @@ including the nine separate typed command declarations on rows 27–35. It is
 authored C data, never generated SDK output, and is not counted again as a
 second runtime-produced Rebol file.
 
-The recorded focused test command and still-pending proposal command are:
+The recorded focused test and proposal-production commands are:
 
 ```sh
 PY=/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
@@ -94,8 +102,11 @@ E=/private/tmp/mech-benchmark-completion
 
 The proposal output is exclusive-create and always unqualified. Its exact
 fifteen source identities, complete spans, individual counts and bundle totals
-need independent owner review before any digest freeze or separate admission
-receipt. `count_source` rejects every current source while its reviewed digest
+are bound by the proposal review. The separate count-admission
+receipt supplies the approved source digests through an
+[isolated ledger binding](../../../tools/qualification/rebol_reviewed_count_ledger.py).
+Its [validation](reviewed-binding-validation-v1.json) includes eight focused tests
+and exact replay of all fifteen owner projections, without modifying the ledger. `count_source` rejects every current source while its reviewed digest
 is unset. Even a frozen exact-source count does not itself grant admission.
 Native compiler-input and primitive/runtime qualification are separate gates;
 these fixtures execute neither Rebol nor C. The focused

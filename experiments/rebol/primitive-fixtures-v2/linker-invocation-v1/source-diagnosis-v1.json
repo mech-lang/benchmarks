@@ -1,0 +1,123 @@
+{
+  "schema": "rebol-regex-caret-source-diagnosis-v1",
+  "status": "source-defect-confirmed-original-bytes-preserved",
+  "references": {
+    "actual_closure": {
+      "path": "experiments/rebol/primitive-fixtures-v2/linker-invocation-v1/failed-stage-review-v1.json",
+      "sha256": "631984b01ef4a492700095f1d49fc11662b117ac4155abc7b472f57a0bccf9ec",
+      "bytes": 18292
+    },
+    "actual_report": {
+      "path": "experiments/rebol/primitive-fixtures-v2/linker-invocation-v1/run-v1/report.json",
+      "sha256": "36561352331eab99fe971c428a3453a3e6ed42f4a45e49dcf304362f4bb624e1",
+      "bytes": 2192669
+    },
+    "failed_capture": {
+      "path": "experiments/rebol/primitive-fixtures-v2/linker-invocation-v1/run-v1/03-regex/process.json",
+      "sha256": "afd3132552a9cb055ea1585fcfef2b45494997726d411fa2062d5faa6e5a8431",
+      "bytes": 2931
+    },
+    "failed_stderr": {
+      "path": "experiments/rebol/primitive-fixtures-v2/linker-invocation-v1/run-v1/03-regex/stderr.bin",
+      "sha256": "1a7eee0f936702480d2e6874f16c8da55bc4a564098aec5cf4c5e65ee7bcba29",
+      "bytes": 59
+    },
+    "fixture": {
+      "path": "experiments/rebol/primitive-fixtures-v1/regex.reb",
+      "sha256": "61c0e87c76b5e67edbfd8be4210337470d67733b9bc81892f90ab54f27e5d6b6",
+      "bytes": 2632,
+      "lines": [
+        16,
+        17
+      ]
+    },
+    "scanner": {
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/core/l-scan.c",
+      "sha256": "87dccaff9b33b43935b3a8d6b6d4e6d49900a3fb359f3b5e0c852370cf4eaa6d",
+      "bytes": 65261,
+      "lines": [
+        [
+          305,
+          397
+        ],
+        [
+          443,
+          453
+        ]
+      ]
+    },
+    "benchmark_main": {
+      "path": "archive/languages/rebol/20261013/drafts/private-v1/sources/regexredux/main.reb",
+      "sha256": "11ae616b62e40366e4877576363ffc7b70c3861ed6bbdb28ea2ee6c095571674",
+      "bytes": 1969,
+      "lines": [
+        45,
+        46
+      ]
+    },
+    "ascii_facade": {
+      "path": "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_io.reb",
+      "sha256": "731c641d9cac19e03073c9a95b8e51f64b2f4a4d0d1492ba51f1ca079ee2e847",
+      "bytes": 1768,
+      "lines": [
+        25
+      ]
+    }
+  },
+  "observed": {
+    "native_attempts": 4,
+    "validated_captures": 3,
+    "successful_stages": [
+      "compile-io-interposer",
+      "arithmetic",
+      "formatting"
+    ],
+    "failed_stage": "regex",
+    "exit_status": 1,
+    "stdout_bytes": 0,
+    "stderr_text": "\n** User error: \"Fixture mismatch: LF multiline boundary\"\n\n",
+    "later_fixture_processes_started": 0
+  },
+  "scanner_rule": "Scan_Quote passes every caret escape to Scan_Char. Its default branch uppercases the following byte and subtracts @ for the range @ through _. Otherwise it returns the following byte, consuming the caret.",
+  "fixture_defect": {
+    "source_string": "(?m)^b",
+    "source_predicted_pattern_hex": "283f6d2902",
+    "intended_pattern_hex": "283f6d295e62",
+    "explanation": "The b following caret is converted to control byte 0x02. The CR non-match assertion can pass without testing a multiline anchor; the LF positive assertion then fails.",
+    "proposed_additive_literal": "#{283F6D295E62}",
+    "proposed_source_lines": [
+      16,
+      17
+    ]
+  },
+  "benchmark_defects": [
+    {
+      "source_line": 45,
+      "written_pattern": "<[^>]*>",
+      "source_predicted_pattern": "<[>]*>",
+      "intended_pattern": "<[^>]*>"
+    },
+    {
+      "source_line": 46,
+      "written_pattern": "\\|[^|][^|]*\\|",
+      "source_predicted_pattern": "\\|[|][|]*\\|",
+      "intended_pattern": "\\|[^|][^|]*\\|"
+    }
+  ],
+  "benchmark_impact": "The two intended negated character classes lose their carets during Rebol source scanning. The counted IO facade only converts the resulting string to binary and cannot restore those characters. Any correction needs an explicit new source version and count/bounded-correctness review.",
+  "source_review": {
+    "independently_confirmed": true,
+    "original_fixture_edited": false,
+    "original_benchmark_edited": false,
+    "native_pattern_bytes_directly_observed": false,
+    "native_confirmation_of_repair": false
+  },
+  "scope": "Source diagnosis only. The saved failure does not establish a PCRE2 implementation defect. Successful interposer/arithmetic/formatting captures remain reusable with their exact inputs and identities; the full primitive stage is unqualified.",
+  "full_primitive_fixtures_qualified": false,
+  "benchmark_correctness_qualified": false,
+  "source_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false,
+  "native_commands_started_by_review": 0
+}

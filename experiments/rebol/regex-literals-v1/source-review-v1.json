@@ -1,0 +1,106 @@
+{
+  "schema": "rebol-regex-literals-independent-source-review-v1",
+  "status": "independent-source-review-complete-native-validation-pending",
+  "independent_review": true,
+  "files": {
+    "regex.reb": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/regex-literals-v1/regex.reb",
+      "sha256": "0cb030cb93f6fe521e9e4fa33635c65c8200beb62d9faa6d1007ba2237b925eb",
+      "bytes": 2645
+    },
+    "main.reb": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/regex-literals-v1/main.reb",
+      "sha256": "e031f15f60e0b53cd565a87a2993efec9fcecc9ea5dcde35f1a6f13576c7f650",
+      "bytes": 2080
+    },
+    "README.md": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/regex-literals-v1/README.md",
+      "sha256": "ac08096a1eca48df5117729fb8cf461518e8ba6eea8fb0c052cc1c6930722877",
+      "bytes": 968
+    },
+    "source-changes.json": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/regex-literals-v1/source-changes.json",
+      "sha256": "bc92b8d4deb4028f97b4f2245bc202e2f3933722393c4b1d993e629ce80674af",
+      "bytes": 1445
+    }
+  },
+  "original_sources": {
+    "original_fixture": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/primitive-fixtures-v1/regex.reb",
+      "sha256": "61c0e87c76b5e67edbfd8be4210337470d67733b9bc81892f90ab54f27e5d6b6",
+      "bytes": 2632
+    },
+    "original_main": {
+      "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/sources/regexredux/main.reb",
+      "sha256": "11ae616b62e40366e4877576363ffc7b70c3861ed6bbdb28ea2ee6c095571674",
+      "bytes": 1969
+    }
+  },
+  "scanner": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/l-scan.c",
+    "sha256": "87dccaff9b33b43935b3a8d6b6d4e6d49900a3fb359f3b5e0c852370cf4eaa6d",
+    "bytes": 65261
+  },
+  "scanner_lines": {
+    "character_escape": [
+      337,
+      397
+    ],
+    "quoted_string_escape_dispatch": [
+      441,
+      457
+    ]
+  },
+  "relative_helper_paths": [
+    {
+      "source": "regex.reb",
+      "file_literal": "%../primitive-fixtures-v1/common.reb",
+      "target": {
+        "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/primitive-fixtures-v1/common.reb",
+        "sha256": "e0633162f20f8a86cc56377deca2d6f123aa948e8f36867e14c363783bf8da12",
+        "bytes": 1372
+      }
+    },
+    {
+      "source": "main.reb",
+      "file_literal": "%../../../archive/languages/rebol/20261013/drafts/private-v1/support/clbg_io.reb",
+      "target": {
+        "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/support/clbg_io.reb",
+        "sha256": "731c641d9cac19e03073c9a95b8e51f64b2f4a4d0d1492ba51f1ca079ee2e847",
+        "bytes": 1768
+      }
+    },
+    {
+      "source": "main.reb",
+      "file_literal": "%../../../archive/languages/rebol/20261013/drafts/private-v1/support/clbg_regex.reb",
+      "target": {
+        "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/support/clbg_regex.reb",
+        "sha256": "9d23c7a5776d56a808d6c9216df022ed46969682e16759f7bdd2b311f5c83a0a",
+        "bytes": 305
+      }
+    }
+  ],
+  "findings": [
+    "Fixture diff is exactly two anchor-pattern string conversions replaced by binary #{283F6D295E62}, plus the relative common.reb relocation.",
+    "Binary 283F6D295E62 is the six intended ASCII bytes (?m)^b. Quoted caret-b previously decoded to byte 02.",
+    "Main diff is exactly three additional carets across two negated-class patterns, plus two relative support-path relocations. The scanner caret-caret branch retains one literal caret, yielding <[^>]*> and \\|[^|][^|]*\\|.",
+    "All three relative paths resolve to the original preserved helpers. The common helper continues to load the explicitly selected support directory, and IO/regex facades and extension loader are unchanged.",
+    "All other source bytes and fixture expected results remain unchanged. This source review does not establish successful native PCRE2 fixture or benchmark behavior.",
+    "The separate prior count admission covers the original regex main only. It does not admit the corrected source identity."
+  ],
+  "prior_original_main_count_admission": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/source-counts-v1/count-review-v1.json",
+    "sha256": "e80b7331b96fe6f979cbb51ef0e04b117f276621aa156be3269501b7c7192a0f",
+    "bytes": 8383
+  },
+  "corrected_main_count_admitted": false,
+  "native_processes_started": 0,
+  "tests_executed": false,
+  "full_primitive_fixtures_qualified": false,
+  "benchmark_correctness_qualified": false,
+  "source_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "runtime_source_equivalence_proven": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}
