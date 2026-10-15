@@ -3,13 +3,16 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import * as math from '../src/math.mjs';
 import * as formatted from '../src/formatted_axis.mjs';
+import * as benchmarkFilters from '../src/benchmark_traits.mjs';
 
 // Exercise the real SVG renderer with a small DOM adapter; no browser or benchmark workers.
 class Element {
   constructor(tag='div') {
     this.tagName=tag;this.children=[];this.attributes={};this.dataset={};this.parentNode=null;
     this.clientWidth=1000;this.textContent='';this.innerHTML='';this.hidden=false;this.open=false;
-    this.style={setProperty(){},removeProperty(){}};
+    this.listeners={};
+    const properties=new Map();
+    this.style={setProperty:(name,value)=>properties.set(name,String(value)),removeProperty:name=>properties.delete(name),getPropertyValue:name=>properties.get(name)??''};
     const classes=new Set();
     this.classList={add:(...values)=>values.forEach(v=>classes.add(v)),remove:(...values)=>values.forEach(v=>classes.delete(v)),
       contains:value=>classes.has(value),toggle:(value,on=!classes.has(value))=>{on?classes.add(value):classes.delete(value);return on;}};
@@ -20,7 +23,10 @@ class Element {
   append(child){child.parentNode=this;this.children.push(child);}
   insertBefore(child,before){this.children=this.children.filter(node=>node!==child);child.parentNode=this;this.children.splice(this.children.indexOf(before),0,child);}
   replaceChildren(){this.children=[];}
-  addEventListener(){} before(){} after(){} focus(){} scrollIntoView(){}
+  addEventListener(type,callback){(this.listeners[type]??=[]).push(callback);}
+  emit(type,event={}){for(const callback of this.listeners[type]??[])callback({pointerType:'mouse',...event});}
+  getScreenCTM(){return null;}
+  before(){} after(){} focus(){} scrollIntoView(){}
   contains(node){return node===this||this.children.some(child=>child.contains(node));}
   getBBox(){return {x:0,y:-12,width:this.textContent.length*7,height:16};}
   querySelectorAll(selector){const key=selector.match(/^\[([^\]]+)\]$/)?.[1];return this.children.flatMap(child=>[...(key&&child.getAttribute(key)!==null?[child]:[]),...child.querySelectorAll(selector)]);}
@@ -32,14 +38,14 @@ const document={querySelector:element,createComment:()=>new Element('comment'),c
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
-const context=vm.createContext({...math,...formatted,document,window:{},innerWidth:1000,
+const context=vm.createContext({...math,...formatted,...benchmarkFilters,document,window:{},innerWidth:1000,
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
   setTimeout:()=>0,clearTimeout(){}});
 const executable=source.replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'file:///test/app.mjs'")
   .replace(/start\(\)\.catch\(error=>\{[^\n]+\}\);\s*$/,'');
 vm.runInContext(executable+`\nglobalThis.harness={
-  initialize(fixture){data=fixture;programCatalog={...fixture.program_inventory,...fixture.programs};Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
+  initialize(fixture){data=fixture;programCatalog={...fixture.program_inventory,...fixture.programs};Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
   render(options){Object.assign(state,options);model=comparison(data,allSelection());renderChart();},
   table(){renderTable();},
   locAudit:renderLocAudit,
@@ -52,7 +58,11 @@ vm.runInContext(executable+`\nglobalThis.harness={
   overview(){renderLanguageOverview();},
   resetLanguage(){const original=update;update=()=>{};try{reset();}finally{update=original;}},
   compareLanguage(key){const original=update;update=()=>{};try{compareOverviewLanguage(key);}finally{update=original;}},
-  selectBenchmarks(keys){const original=update;update=()=>{};try{selectBenchmarks(keys);}finally{update=original;}},
+  selectBenchmarks(keys,options){const original=update;update=()=>{};try{selectBenchmarks(keys,options);}finally{update=original;}},
+  selectBenchmarkFacet(dimension,option,checked){const original=update;update=()=>{};try{selectBenchmarkFacet(dimension,option,checked);}finally{update=original;}},
+  effectiveBenchmarks,
+  domain:selectedPlotDomain,
+  savedSelection:savedChartSelection,
   switchView(view){const original=update;update=()=>{};try{selectView(view);}finally{update=original;}},
   play(){const original=update;update=()=>{};try{playYears();}finally{update=original;pauseYears();}}
 };`,context);
@@ -131,6 +141,93 @@ assert.deepEqual([...hero.benchmarks],['b2'],'The remembered hero retains its be
 context.harness.switchView('summary');
 console.log('Language hero: chart/results/table order, all-variant ratios, preserved target, local reset and separate All benchmarks tab passed.');
 if(process.argv.includes('--language-view-only'))process.exit(0);
+// Hover/focus brightens only existing sample marks, without moving them or
+// changing the layer switches. Exit restores the hero's baseline emphasis.
+context.harness.initialize(fixture);
+for(const view of ['summary','language'])for(const sampleMode of ['off','dim','highlight']){
+  context.harness.render({view,sampleMode,medianMode:'highlight',densityMode:'off',global:true,
+    languageFocus:view==='language'?{keys:['alpha'],label:'Alpha',variant:'alpha'}:null});
+  const svg=element('#chart'),samples=svg.querySelectorAll('[data-sample]');
+  const layer=svg.querySelectorAll('[data-layer]').find(node=>node.dataset.layer==='samples');
+  const medianLayer=svg.querySelectorAll('[data-layer]').find(node=>node.dataset.layer==='medians');
+  assert.ok(layer.parentNode.children.indexOf(layer)<layer.parentNode.children.indexOf(medianLayer),'Background samples must not cover median hover targets.');
+  const mark=view==='language'?svg.querySelectorAll('[data-median-language]').find(node=>node.dataset.medianLanguage==='alpha'):
+    svg.querySelectorAll('[data-profile-median]').find(node=>node.dataset.chartLanguage==='alpha');
+  assert.ok(mark,'Both the profile median and hero coordinate median are interactive.');
+  const baseline=samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]);
+  const positions=samples.map(node=>[node.getAttribute('cx'),node.getAttribute('cy')]);
+  const baseOpacity=math.layerPresentation(sampleMode).opacity;
+  for(const [enter,leave] of [['pointerenter','pointerleave'],['focus','blur']]){
+    mark.emit(enter);
+    assert.equal(svg.dataset.highlightLanguage,'alpha');
+    assert.equal(Number(layer.getAttribute('opacity')),sampleMode==='off'?0:1);
+    assert.equal(svg.querySelectorAll('[data-sample]').length,samples.length,'Hover cannot reveal Off samples or create points.');
+    for(const node of samples){
+      assert.equal(node.classList.contains('sample-highlighted'),node.dataset.chartLanguage==='alpha');
+      assert.equal(node.classList.contains('chart-dimmed'),node.dataset.chartLanguage!=='alpha');
+      assert.equal(node.style.getPropertyValue('--chart-opacity'),String(baseOpacity));
+    }
+    assert.match(element('#hover-details').textContent,/Alpha/);
+    assert.equal(element('#hover-details').style.getPropertyValue('left'),'','Details remain in the fixed readout.');
+    assert.deepEqual(samples.map(node=>[node.getAttribute('cx'),node.getAttribute('cy')]),positions);
+    mark.emit(leave);
+    assert.equal(svg.dataset.highlightLanguage,undefined);
+    assert.equal(Number(layer.getAttribute('opacity')),baseOpacity);
+    assert.deepEqual(samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]),baseline);
+    assert.equal(context.harness.selection().sampleMode,sampleMode);
+  }
+  mark.emit('pointerenter',{pointerType:'touch'});
+  assert.equal(svg.dataset.highlightLanguage,undefined,'Touch does not leave a sticky hover state.');
+}
+const facetFixture=structuredClone(fixture),names={b1:'binarytrees',b2:'nbody'};
+for(const b of facetFixture.benchmarks)b.key=names[b.key];
+for(const p of Object.values(facetFixture.programs))p.benchmark=names[p.benchmark];
+context.harness.initialize(facetFixture);
+context.harness.render({view:'language',languageFocus:{keys:['alpha'],selectionKey:'alpha',family:false,label:'Alpha',variant:'alpha',benchmark:'nbody'},global:true});
+context.harness.selectBenchmarkFacet('resource','memory',true);
+assert.deepEqual([...context.harness.effectiveBenchmarks()],['binarytrees']);
+assert.equal(context.harness.selection().view,'language','Facets preserve the language hero.');
+context.harness.relativeTable();
+assert.match(element('#language-comparisons-note').textContent,/Scope: Benchmark 1\./);
+const saved=context.harness.savedSelection();
+context.harness.selectBenchmarkFacet('workload','numerical',true);
+assert.equal(context.harness.effectiveBenchmarks().size,0);
+assert.equal(saved.benchmarkFilters.workload.size,0,'Saved hero filters must not share mutable sets.');
+context.harness.relativeTable();
+assert.match(element('#language-comparisons-note').textContent,/no benchmarks selected/);
+context.harness.selectBenchmarks(['nbody'],{clearFilters:true});
+assert.deepEqual([...context.harness.effectiveBenchmarks()],['nbody']);
+context.harness.selectBenchmarkFacet('resource','memory',true);
+context.harness.selectBenchmarkFacet('resource','memory',false);
+assert.deepEqual([...context.harness.effectiveBenchmarks()],['nbody'],'Clearing a facet preserves manual exclusions.');
+context.harness.selectBenchmarkFacet('resource','memory',true);context.harness.resetLanguage();
+assert.equal(context.harness.selection().benchmarkFilters.resource.size,0);
+assert.equal(context.harness.selection().languageFocus.variant,'alpha');
+assert.equal(context.harness.selection().view,'language');
+// The same subset must fit the same axes whether chosen by checkbox or facet.
+// A large excluded workload gap makes an unfiltered geometric mean too small.
+const domainFixture=structuredClone(facetFixture);
+for(const p of Object.values(domainFixture.programs)){
+  const value=p.benchmark==='binarytrees'?(p.language==='beta'?2**20:4):1;
+  Object.assign(p,{x:value,y:value,loc:value,seconds:value,samples:[value,value,value]});
+}
+context.harness.initialize(domainFixture);
+for(const mode of ['summary','language','source-comparison']){
+  Object.assign(context.harness.selection(),{view:mode==='language'?'language':'summary',focusMeans:true,
+    languageFocus:mode==='summary'?null:{keys:['alpha'],label:'Alpha',variant:'alpha',comparison:mode==='source-comparison',
+      comparisonProgram:mode==='source-comparison'?'alpha-b1-fast':null}});
+  context.harness.selectBenchmarks(['binarytrees'],{clearFilters:true});
+  const manual=context.harness.domain();
+  context.harness.selectBenchmarks(['binarytrees','nbody']);
+  const full=context.harness.domain();
+  context.harness.selectBenchmarkFacet('resource','memory',true);
+  assert.deepEqual(context.harness.domain(),manual,`${mode}: facet and manual subsets must share the fitted domain.`);
+  assert.ok(manual.xMax>full.xMax&&manual.yMax>full.yMax,'The fixture must expose an undersized full-suite mean range.');
+}
+assert.match(html,/id="benchmark-groups"/);assert.match(html,/id="benchmark-filter-status" aria-live="polite"/);
+assert.match(css,/#filter-drawer \.control-row,#filter-drawer \.trait-choice\{min-height:44px\}/);
+console.log('Median hover/focus and benchmark facets: visible samples, Off, static readout, restoration, hero scope and reset passed.');
+if(process.argv.includes('--interactions-only'))process.exit(0);
 // The navigation tests exercise the real Reset default (nbody). Restore the
 // synthetic fixture's benchmark identity before the exhaustive render matrix.
 context.harness.initialize(fixture);
