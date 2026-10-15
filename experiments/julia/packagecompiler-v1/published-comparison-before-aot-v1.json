@@ -1,0 +1,377 @@
+{
+  "schema": "julia-published-comparison-v1",
+  "data": {
+    "path": "data/benchmarks.json",
+    "sha256": "ef8e20ce6b3061bcbfa53ae734e3eb5d8edc27086193fe4ea941e94e6662749d"
+  },
+  "selection": "Each workload and execution variant uses its published fastest endpoint and stored median. Existing cohorts and samples are preserved; this is not a fresh matched experiment.",
+  "julia_aot_benchmark_samples": 0,
+  "unit": "Runtime divided by target runtime; larger values mean longer runtime.",
+  "workloads": [
+    {
+      "benchmark": "nbody",
+      "programs": {
+        "julia": {
+          "key": "nbody:nbody-julia-5",
+          "median_seconds": 1.642435958,
+          "samples": [
+            1.640688292,
+            1.645195541,
+            1.642435958
+          ]
+        },
+        "mech": {
+          "key": "nbody:pairwise-mass-tails",
+          "median_seconds": 1.039486459,
+          "samples": [
+            1.02965075,
+            1.041882209,
+            1.039486459,
+            1.042079458,
+            1.034882542,
+            1.039196875,
+            1.040053125
+          ]
+        },
+        "mech-jit": {
+          "key": "nbody:compact-baseline:jit",
+          "median_seconds": 1.380457333,
+          "samples": [
+            1.38644825,
+            1.380457333,
+            1.37799525
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 1.580045554013321,
+      "julia_jit_x_mech_jit": 1.1897766912003502,
+      "mech_jit_x_mech_aot": 1.3280185817216117
+    },
+    {
+      "benchmark": "mandelbrot",
+      "programs": {
+        "julia": {
+          "key": "mandelbrot:mandelbrot-julia-7",
+          "median_seconds": 0.566924833,
+          "samples": [
+            0.728558916,
+            0.566924833,
+            0.56363525
+          ]
+        },
+        "mech": {
+          "key": "mandelbrot:array-state:five16-rows-loop-fma",
+          "median_seconds": 0.442216834,
+          "samples": [
+            0.467605542,
+            0.436260125,
+            0.442216834
+          ]
+        },
+        "mech-jit": {
+          "key": "mandelbrot:mech-program-simd-loop-fma:jit",
+          "median_seconds": 0.783310375,
+          "samples": [
+            0.7887555,
+            0.783310375,
+            0.775889833
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 1.2820064488996816,
+      "julia_jit_x_mech_jit": 0.7237550415440367,
+      "mech_jit_x_mech_aot": 1.771326450679623
+    },
+    {
+      "benchmark": "knucleotide",
+      "programs": {
+        "julia": {
+          "key": "knucleotide:knucleotide-julia-6",
+          "median_seconds": 1.597850708,
+          "samples": [
+            1.580006417,
+            1.597850708,
+            1.618463083
+          ]
+        },
+        "mech": {
+          "key": "knucleotide:mech-compact-final-std1-simd0-p4",
+          "median_seconds": 0.51382825,
+          "samples": [
+            0.514645333,
+            0.51382825,
+            0.511360375
+          ]
+        },
+        "mech-jit": {
+          "key": "knucleotide:mech-compact-final-std1-simd0-p4:jit",
+          "median_seconds": 0.612303667,
+          "samples": [
+            0.612303667,
+            0.621293791,
+            0.600049084
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 3.109698051829575,
+      "julia_jit_x_mech_jit": 2.6095723316973043,
+      "mech_jit_x_mech_aot": 1.191650453239969
+    },
+    {
+      "benchmark": "spectralnorm",
+      "programs": {
+        "julia": {
+          "key": "spectralnorm:spectralnorm-julia-4",
+          "median_seconds": 0.349881833,
+          "samples": [
+            0.361662584,
+            0.349881833,
+            0.334939041
+          ]
+        },
+        "mech": {
+          "key": "spectralnorm:mech-integer-simd1-u4-r4-p8-g8",
+          "median_seconds": 0.086075292,
+          "samples": [
+            0.085478125,
+            0.087581917,
+            0.086075292
+          ]
+        },
+        "mech-jit": {
+          "key": "spectralnorm:mech-integer-simd1-u4-r4-p8-g8:jit",
+          "median_seconds": 0.237050083,
+          "samples": [
+            0.236124375,
+            0.237050083,
+            0.252470667
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 4.064834691469882,
+      "julia_jit_x_mech_jit": 1.475982748337616,
+      "mech_jit_x_mech_aot": 2.753985231906039
+    },
+    {
+      "benchmark": "revcomp",
+      "programs": {
+        "julia": {
+          "key": "revcomp:revcomp-julia-7",
+          "median_seconds": 0.283163375,
+          "samples": [
+            0.280015542,
+            0.283163375,
+            0.286333209
+          ]
+        },
+        "mech": {
+          "key": "revcomp:mech-revcomp-optimized",
+          "median_seconds": 0.149272625,
+          "samples": [
+            0.150758708,
+            0.147125375,
+            0.149272625
+          ]
+        },
+        "mech-jit": {
+          "key": "revcomp:mech-revcomp-optimized:jit",
+          "median_seconds": 0.17443625,
+          "samples": [
+            0.2306585,
+            0.171184542,
+            0.17443625
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 1.8969544817745385,
+      "julia_jit_x_mech_jit": 1.6233057922306862,
+      "mech_jit_x_mech_aot": 1.1685749480187677
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "programs": {
+        "julia": {
+          "key": "fannkuchredux:fannkuchredux-julia-2",
+          "median_seconds": 2.9514915,
+          "samples": [
+            2.9514915,
+            3.007239,
+            2.950913625
+          ]
+        },
+        "mech": {
+          "key": "fannkuchredux:mech-fannkuch-even",
+          "median_seconds": 1.702457333,
+          "samples": [
+            1.747547916,
+            1.695695875,
+            1.702457333
+          ]
+        },
+        "mech-jit": {
+          "key": "fannkuchredux:mech-fannkuch-even:jit",
+          "median_seconds": 2.02061375,
+          "samples": [
+            2.069023042,
+            1.997324917,
+            2.02061375
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 1.733665474481527,
+      "julia_jit_x_mech_jit": 1.4606905946274988,
+      "mech_jit_x_mech_aot": 1.1868806993473122
+    },
+    {
+      "benchmark": "fasta",
+      "programs": {
+        "julia": {
+          "key": "fasta:fasta-julia-3",
+          "median_seconds": 4.057375166,
+          "samples": [
+            4.057375166,
+            4.057447334,
+            4.0427235
+          ]
+        },
+        "mech": {
+          "key": "fasta:mech-fasta-final-expanded-v2",
+          "median_seconds": 0.541193292,
+          "samples": [
+            0.572612958,
+            0.55167075,
+            0.539613667,
+            0.541193292,
+            0.54118425
+          ]
+        },
+        "mech-jit": {
+          "key": "fasta:mech-fasta-final-expanded-v2:jit",
+          "median_seconds": 0.765849375,
+          "samples": [
+            0.765905125,
+            0.764206834,
+            0.765849375
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 7.497090643909902,
+      "julia_jit_x_mech_jit": 5.297876186162585,
+      "mech_jit_x_mech_aot": 1.4151124678019846
+    },
+    {
+      "benchmark": "binarytrees",
+      "programs": {
+        "julia": {
+          "key": "binarytrees:binarytrees-julia-3",
+          "median_seconds": 2.085797291,
+          "samples": [
+            2.095779042,
+            1.956226375,
+            2.085797291
+          ]
+        },
+        "mech": {
+          "key": "binarytrees:mech-binarytrees-parallel",
+          "median_seconds": 0.394411208,
+          "samples": [
+            0.392365584,
+            0.396581708,
+            0.394411208
+          ]
+        },
+        "mech-jit": {
+          "key": "binarytrees:mech-binarytrees-parallel:jit",
+          "median_seconds": 0.525068667,
+          "samples": [
+            0.517185166,
+            0.527682959,
+            0.525068667
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 5.28838240063401,
+      "julia_jit_x_mech_jit": 3.9724276501153324,
+      "mech_jit_x_mech_aot": 1.3312721757136272
+    },
+    {
+      "benchmark": "regexredux",
+      "programs": {
+        "julia": {
+          "key": "regexredux:regexredux-julia-3",
+          "median_seconds": 1.764936083,
+          "samples": [
+            1.830817458,
+            1.764936083,
+            1.764657458
+          ]
+        },
+        "mech": {
+          "key": "regexredux:mech-regex-final-reuse-signed",
+          "median_seconds": 0.489611584,
+          "samples": [
+            0.489611584,
+            0.493169167,
+            0.485795291
+          ]
+        },
+        "mech-jit": {
+          "key": "regexredux:mech-regex-final-reuse-signed:jit",
+          "median_seconds": 0.564492708,
+          "samples": [
+            0.580714625,
+            0.564492708,
+            0.558462458
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 3.604767821424748,
+      "julia_jit_x_mech_jit": 3.1265879221950907,
+      "mech_jit_x_mech_aot": 1.1529398536452928
+    },
+    {
+      "benchmark": "pidigits",
+      "programs": {
+        "julia": {
+          "key": "pidigits:pidigits-julia-3",
+          "median_seconds": 0.399957042,
+          "samples": [
+            0.399957042,
+            0.397526583,
+            0.399330292,
+            0.400046,
+            0.3998565,
+            0.402663833,
+            0.404838875
+          ]
+        },
+        "mech": {
+          "key": "pidigits:mech-pi-final-advance-signed",
+          "median_seconds": 0.300272042,
+          "samples": [
+            0.300272042,
+            0.295433917,
+            0.304735166
+          ]
+        },
+        "mech-jit": {
+          "key": "pidigits:mech-pi-final-advance-signed:jit",
+          "median_seconds": 0.447466125,
+          "samples": [
+            0.448322625,
+            0.4470305,
+            0.447466125
+          ]
+        }
+      },
+      "julia_jit_x_mech_aot": 1.331982289579927,
+      "julia_jit_x_mech_jit": 0.8938264142341501,
+      "mech_jit_x_mech_aot": 1.4902024245067744
+    }
+  ],
+  "geometric_ratios": {
+    "julia_jit_x_mech_aot": 2.6332582283365418,
+    "julia_jit_x_mech_jit": 1.847203692785168,
+    "mech_jit_x_mech_aot": 1.425537550959624
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "schema": "julia-packagecompiler-regex-string-dispatch-review-v1",
+  "profile": "regexredux-julia-3",
+  "reviewed_utc": "2026-10-15T23:44:36.887958+00:00",
+  "retained_failed_version": {
+    "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/retained-source/manifest.json",
+    "sha256": "04e0e5dcdeb8d54407cc4fbe2d6a5cd95ba3292ed8647ac2be4cfc0bf160277f"
+  },
+  "previous_adapted_source_sha256": "2a83eba5251a55cced1b57f514d2494f84866a7600823b90082ff099ae517336",
+  "current_adapted_source": {
+    "path": "experiments/julia/packagecompiler-v1/packages/regexredux-julia-3/src/BenchRegexreduxJulia3.jl",
+    "sha256": "b3602e0c6248e09f125c1cb6e53072ffeb1f801e1936e820843c5b5945593a98"
+  },
+  "failure": "The v1 nonincremental PackageCompiler system-image build rejected __precompile__(false). That flag had been added to allow the original generic Base.PCRE.exec method overwrite.",
+  "dispatch_facts": [
+    "The benchmark reads its entire input with read(io, String). Pinned Base.read(io, String) explicitly constructs String.",
+    "Pinned replace(AbstractString, Pair...) passes String(s) to _replace_; its result is String(str) or takestring! of an IOBuffer. All subsequent benchmark sequences remain String.",
+    "Pinned RegexMatchIterator stores String for an AbstractString input; iterate calls the String/SubString match method, which calls PCRE.exec_r_data then exec with that String subject. Replacement matching also calls PCRE.exec or exec_r_data with the String subject.",
+    "Pinned Base.PCRE.exec has a more-specific subject::Union{String,SubString{String}} method. This dispatches to _exec and pcre2_match_8, bypassing the original generic overload even when that overload is defined."
+  ],
+  "adaptation": "Remove only the inactive generic exec overwrite/alias and __precompile__(false). No eachmatch, replace, pattern, option, task, input/output or benchmark algorithm changes.",
+  "engine_scope": "The application retains Julia Base Regex and bundled PCRE2. Effective String matching uses pcre2_match_8. Base Regex compilation requests PCRE JIT; this review does not claim direct pcre2_jit_match_8 invocation for the original String workload, disable PCRE JIT, or treat PCRE vendor JIT as Julia runtime code generation.",
+  "limits": "Exact dispatch facts are scoped to the pinned Julia 1.13.1 source. A fresh v2 native build and output validation remain pending; no native process, compiler, test or benchmark was launched for this review.",
+  "runtime_sources": [
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/io.jl",
+      "sha256": "75ee28c21e666e71f763d6512d41b881fcd759a0c20697daeeae040a77234f91",
+      "upstream_source": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/io.jl",
+      "line_spans": [
+        {
+          "first": 1203,
+          "last": 1203,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/io.jl#L1203-L1203",
+          "text": "read(s::IO, ::Type{String}) = String(read(s)::Vector{UInt8})\n"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/strings/util.jl",
+      "sha256": "055674811301b2efc7957d701220ac2ee0f5c4ecaaaaf81a05ab768bbfd29dce",
+      "upstream_source": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/strings/util.jl",
+      "line_spans": [
+        {
+          "first": 1102,
+          "last": 1111,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/strings/util.jl#L1102-L1111",
+          "text": "function _replace_(str, pat_repl::NTuple{N, Pair}, count::Int) where N\n    count == 0 && return String(str)\n    e1, patterns, replaces, rs, notfound = _replace_init(str, pat_repl, count)\n    if notfound\n        foreach(_free_pat_replacer, patterns)\n        return String(str)\n    end\n    out = IOBuffer(sizehint=floor(Int, 1.2sizeof(str)))\n    return takestring!(_replace_finish(out, str, count, e1, patterns, replaces, rs))\nend\n"
+        },
+        {
+          "first": 1166,
+          "last": 1167,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/strings/util.jl#L1166-L1167",
+          "text": "replace(s::AbstractString, pat_f::Pair...; count=typemax(Int)) =\n    _replace_(String(s), pat_f, Int(count))\n"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/regex.jl",
+      "sha256": "889a71e3c61f9c72c3274260c307641e63a8725f75759f6874739df756f1164a",
+      "upstream_source": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/regex.jl",
+      "line_spans": [
+        {
+          "first": 70,
+          "last": 84,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/regex.jl#L70-L84",
+          "text": "function compile(regex::Regex)\n    if regex.regex == C_NULL\n        if !isdefinedglobal(PCRE, :PCRE_COMPILE_LOCK)\n            regex.regex = PCRE.compile(regex.pattern, regex.compile_options)\n            PCRE.jit_compile(regex.regex)\n        else\n            l = PCRE.PCRE_COMPILE_LOCK\n            lock(l)\n            try\n                if regex.regex == C_NULL\n                    regex.regex = PCRE.compile(regex.pattern, regex.compile_options)\n                    PCRE.jit_compile(regex.regex)\n                end\n            finally\n                unlock(l)\n"
+        },
+        {
+          "first": 430,
+          "last": 434,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/regex.jl#L430-L434",
+          "text": "function match(re::Regex, str::Union{SubString{String}, String}, idx::Integer,\n               add_opts::UInt32=UInt32(0))\n    compile(re)\n    opts = re.match_options | add_opts\n    matched, data = PCRE.exec_r_data(re.regex, str, idx-1, opts)\n"
+        },
+        {
+          "first": 486,
+          "last": 496,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/regex.jl#L486-L496",
+          "text": "function _findnext_re(re::Regex, str, idx::Integer, match_data::Ptr{Cvoid})\n    if idx > nextind(str,lastindex(str))\n        throw(BoundsError())\n    end\n    opts = re.match_options\n    compile(re)\n    alloc = match_data == C_NULL\n    if alloc\n        matched, data = PCRE.exec_r_data(re.regex, str, idx-1, opts)\n    else\n        matched = PCRE.exec(re.regex, str, idx-1, opts, match_data)\n"
+        },
+        {
+          "first": 730,
+          "last": 751,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/regex.jl#L730-L751",
+          "text": "struct RegexMatchIterator{S <: AbstractString}\n    regex::Regex\n    string::S\n    overlap::Bool\n\n    RegexMatchIterator(regex::Regex, string::AbstractString, ovr::Bool=false) =\n        new{String}(regex, String(string), ovr)\n    RegexMatchIterator(regex::Regex, string::AnnotatedString, ovr::Bool=false) =\n        new{AnnotatedString{String}}(regex, AnnotatedString(String(string.string), string.annotations), ovr)\nend\ncompile(itr::RegexMatchIterator) = (compile(itr.regex); itr)\neltype(::Type{<:RegexMatchIterator}) = RegexMatch\nIteratorSize(::Type{<:RegexMatchIterator}) = SizeUnknown()\n\nfunction iterate(itr::RegexMatchIterator, (offset,prevempty)=(1,false))\n    opts_nonempty = UInt32(PCRE.ANCHORED | PCRE.NOTEMPTY_ATSTART)\n    while true\n        mat = match(itr.regex, itr.string, offset,\n                    prevempty ? opts_nonempty : UInt32(0))\n\n        if mat === nothing\n            if prevempty && offset <= sizeof(itr.string)\n"
+        }
+      ]
+    },
+    {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/pcre.jl",
+      "sha256": "8d2b0964f15194b8f3b2a8e551d41218248e3660045624f8571ceb49547a679e",
+      "upstream_source": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/pcre.jl",
+      "line_spans": [
+        {
+          "first": 199,
+          "last": 211,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/pcre.jl#L199-L211",
+          "text": "exec(re, subject::Union{String,SubString{String}}, offset, options, match_data) =\n    _exec(re, subject, offset, options, match_data)\nexec(re, subject, offset, options, match_data) =\n    _exec(re, String(subject)::String, offset, options, match_data)\n\nfunction _exec(re, subject, offset, options, match_data)\n    rc = ccall((:pcre2_match_8, PCRE_LIB), Cint,\n               (Ptr{Cvoid}, Ptr{UInt8}, Csize_t, Csize_t, UInt32, Ptr{Cvoid}, Ptr{Cvoid}),\n               re, subject, ncodeunits(subject), offset, options, match_data, get_local_match_context())\n    # rc == -1 means no match, -2 means partial match.\n    rc < -2 && error(\"PCRE.exec error: $(err_message(rc))\")\n    return rc >= 0\nend\n"
+        },
+        {
+          "first": 220,
+          "last": 223,
+          "source_link": "https://github.com/JuliaLang/julia/blob/v1.13.1/base/pcre.jl#L220-L223",
+          "text": "function exec_r_data(re, subject, offset, options)\n    match_data = create_match_data(re)\n    ans = exec(re, subject, offset, options, match_data)\n    return ans, match_data\n"
+        }
+      ]
+    }
+  ],
+  "native_executions": 0,
+  "tests_run": 0,
+  "historical_julia_sources_or_measurements_mutated": false
+}

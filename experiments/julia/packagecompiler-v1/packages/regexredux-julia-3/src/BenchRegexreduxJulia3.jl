@@ -1,5 +1,3 @@
-__precompile__(false)
-
 module BenchRegexreduxJulia3
 
 # The Computer Language Benchmarks Game
@@ -9,15 +7,6 @@ module BenchRegexreduxJulia3
 # fixed by David Campbell
 # modified by Jarret Revels, Alex Arslan, Yichao Yu
 # made (slightly) multi-threaded by Adam Beckmeyer
-
-# Speedup from pcre_jit_match instead of pcre_match in Base. Maybe 2%.
-const PCRE = Base.PCRE
-function PCRE.exec(re, subject, offset, options, match_data)
-    0 <= ccall((:pcre2_jit_match_8, PCRE.PCRE_LIB), Cint,
-               (Ptr{Cvoid}, Ptr{UInt8}, Csize_t, Csize_t, Cuint, Ptr{Cvoid}, Ptr{Cvoid}),
-               re, subject, sizeof(subject), offset, options, match_data,
-               PCRE.get_local_match_context())
-end
 
 const variants = (
       r"agggtaaa|tttaccct",

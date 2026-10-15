@@ -876,12 +876,19 @@
       },
       "adapted_source": {
         "path": "experiments/julia/packagecompiler-v1/packages/regexredux-julia-3/src/BenchRegexreduxJulia3.jl",
-        "sha256": "2a83eba5251a55cced1b57f514d2494f84866a7600823b90082ff099ae517336",
+        "sha256": "b3602e0c6248e09f125c1cb6e53072ffeb1f801e1936e820843c5b5945593a98",
         "role": "application"
       },
-      "module_prefix": "__precompile__(false)\n\nmodule BenchRegexreduxJulia3\n\n",
+      "module_prefix": "module BenchRegexreduxJulia3\n\n",
       "module_suffix": "\nend\n",
       "edits": [
+        {
+          "start": 265,
+          "end": 694,
+          "original": "# Speedup from pcre_jit_match instead of pcre_match in Base. Maybe 2%.\nconst PCRE = Base.PCRE\nfunction PCRE.exec(re, subject, offset, options, match_data)\n    0 <= ccall((:pcre2_jit_match_8, PCRE.PCRE_LIB), Cint,\n               (Ptr{Cvoid}, Ptr{UInt8}, Csize_t, Csize_t, Cuint, Ptr{Cvoid}, Ptr{Cvoid}),\n               re, subject, sizeof(subject), offset, options, match_data,\n               PCRE.get_local_match_context())\nend\n\n",
+          "replacement": "",
+          "purpose": "Remove the generic Base.PCRE.exec overwrite and its alias: it is inactive for the original String/Substring matching paths on pinned Julia 1.13.1, while method overwriting prevents ordinary package precompilation. All original eachmatch and replace work, patterns, options and threading are retained."
+        },
         {
           "start": 1788,
           "end": 1837,
@@ -891,16 +898,27 @@
         }
       ],
       "runtime_initializers": [],
-      "precompile_disabled": true,
+      "precompile_disabled": false,
       "declared_standard_library_dependencies": {},
       "notes": [
-        "__precompile__(false) is required because the original profile overwrites the exact existing Base.PCRE.exec(re, subject, offset, options, match_data) method. Its original method body is retained. This is an ordinary PackageCompiler package load policy, not a custom executable entry or disabled Julia code generator.",
-        "Regex constants and Base.PCRE native-library calls remain original; standard Julia package/sysimage serialization is responsible for restoring Regex objects. PCRE may perform vendor regex JIT independently of Julia compilation."
+        "The original generic Base.PCRE.exec overwrite is inactive for the String/SubString matching paths of pinned Julia 1.13.1 and is removed to permit ordinary package precompilation. Original eachmatch, replace, regex patterns/options and task structure are unchanged.",
+        "The effective native-library entry is pcre2_match_8 through Julia Base Regex. Regex compilation requests PCRE JIT; no direct pcre2_jit_match_8 optimization is claimed. Native library work and PCRE vendor JIT are distinct from Julia AOT.",
+        "The v1 package and complete adaptation/count receipts are retained with the failed build. The revised package requires a separate v2 build and fresh output validation."
       ],
       "source_transformation_only": true,
       "compiler_acceptance": false,
       "runtime_output_validated": false,
-      "chart_admission": false
+      "chart_admission": false,
+      "retained_prior_versions": [
+        {
+          "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/retained-source/manifest.json",
+          "sha256": "04e0e5dcdeb8d54407cc4fbe2d6a5cd95ba3292ed8647ac2be4cfc0bf160277f"
+        }
+      ],
+      "runtime_dispatch_review": {
+        "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/source-fix-review.json",
+        "sha256": "a907981c7740e94f0c15b85b8d9a40125d7a75daa9141c8a40032b4dc7d1429f"
+      }
     },
     {
       "profile": "revcomp-julia-7",
@@ -1202,6 +1220,22 @@
       },
       "previous_adapted_source_sha256": "467964a13a820ba5cbaa459e8e7e33ede300091d1feb40df9f7023f747069627",
       "current_adapted_source_sha256": "6f6f978d2f08d962db0ea032ab7a170411127d7d46d126d06ce7990b5936d89b",
+      "source_transformation_only": true,
+      "native_executions": 0
+    },
+    {
+      "profile": "regexredux-julia-3",
+      "reason": "Remove the inactive generic PCRE.exec overwrite and package precompile exclusion for ordinary PackageCompiler application compatibility; retain actual pinned-runtime String dispatch unchanged.",
+      "retained_prior_version": {
+        "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/retained-source/manifest.json",
+        "sha256": "04e0e5dcdeb8d54407cc4fbe2d6a5cd95ba3292ed8647ac2be4cfc0bf160277f"
+      },
+      "runtime_dispatch_review": {
+        "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/source-fix-review.json",
+        "sha256": "a907981c7740e94f0c15b85b8d9a40125d7a75daa9141c8a40032b4dc7d1429f"
+      },
+      "previous_adapted_source_sha256": "2a83eba5251a55cced1b57f514d2494f84866a7600823b90082ff099ae517336",
+      "current_adapted_source_sha256": "b3602e0c6248e09f125c1cb6e53072ffeb1f801e1936e820843c5b5945593a98",
       "source_transformation_only": true,
       "native_executions": 0
     }
