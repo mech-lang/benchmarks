@@ -8,9 +8,10 @@ All four corrected binary-tree cases passed. Eight cases were not started.
 The invalid-input program exited normally with status 1, wrote no stdout, and
 reported `Unsupported revcomp sequence byte`. Rebol enclosed that string in
 double quotes; the checker had predicted an unquoted diagnostic. The original
-producer remains failed. Correcting the diagnostic contract and accepting the
-saved capture require a separate review; no additional execution is needed to
-inspect those bytes.
+producer remains failed. A subsequent [checker correction and separate capture
+review](../quoted-rejection-v1/retained-rejection-review-v1.json) accepted the
+saved rejection without rerunning it. There are now 141 accepted corpus cases;
+the final eight still require execution.
 
 The [independent closure](failed-stage-review-v1.json) replayed all 117 new and
 23 prior output contracts, 6,146 input pins, 592 run artifacts and eight durable

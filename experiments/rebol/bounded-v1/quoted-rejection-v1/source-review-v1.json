@@ -1,0 +1,145 @@
+{
+  "schema": "rebol-quoted-rejection-checker-source-review-v1",
+  "status": "independent-source-review-complete",
+  "independent_review": true,
+  "reviewed_at": "2026-10-15T06:17:33.678727+00:00",
+  "files": {
+    "tools/qualification/rebol_outputs_quoted.py": "68a0e0d9d5f1fd1a99253f495574568e98c6eabc1d084f633f7a6c225dcbddab",
+    "tools/qualification/test_rebol_outputs_quoted.py": "00c660d1fd852075664ee04bdbc0855c61c70e62874aa9c8647588f0bbea2839",
+    "experiments/rebol/bounded-v1/quoted-rejection-v1/README.md": "5c48e9978acb36715fdac020deb8c51056a8fe1c6ec6ca6c39138962871e464d"
+  },
+  "dependencies": {
+    "tools/qualification/rebol_outputs.py": "c4b6e7f7ac9974d27e29db2c8159c0324f6a020fd081800bdf4b6cd090833974"
+  },
+  "formatting_sources": [
+    {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/boot/errors.reb",
+      "sha256": "046a5b02d7de49798c016b382a1216a6edbe852f60a9842815696072612d4881",
+      "bytes": 10493,
+      "lines": [
+        234,
+        238
+      ],
+      "finding": "User.message is [:arg1]."
+    },
+    {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/c-error.c",
+      "sha256": "87077ae4593f2f20ed2b4eea7ab0d1c5af88a73b40b0851a8bbc2c97c5c96e95",
+      "bytes": 24647,
+      "lines": [
+        411,
+        415
+      ],
+      "finding": "MAKE ERROR! string stores the message as the error object arg1 string."
+    },
+    {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/s-mold.c",
+      "sha256": "4f08f9f088b4af9096195b050107095bf0ffe04c12c0bac307aef97d2deebf43",
+      "bytes": 43329,
+      "line_ranges": [
+        [
+          38,
+          38
+        ],
+        [
+          448,
+          466
+        ],
+        [
+          915,
+          933
+        ],
+        [
+          1165,
+          1175
+        ],
+        [
+          1301,
+          1303
+        ]
+      ],
+      "finding": "The error frame resolves :arg1; wval != 0 selects molded string output and the short-string path emits both double quotes."
+    },
+    {
+      "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/sources/revcomp/main.reb",
+      "sha256": "3fd70087f252e98103342fb7326087d547a93200fa374bc69ede21421ad8797f",
+      "bytes": 1343,
+      "line_ranges": [
+        [
+          11,
+          17
+        ],
+        [
+          41,
+          41
+        ]
+      ],
+      "finding": "The unchanged main raises the generic user message before its single buffered stdout write."
+    },
+    {
+      "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/support/clbg_io.reb",
+      "sha256": "731c641d9cac19e03073c9a95b8e51f64b2f4a4d0d1492ba51f1ca079ee2e847",
+      "bytes": 1768,
+      "lines": [
+        4,
+        6
+      ],
+      "finding": "The unchanged fail helper invokes DO MAKE ERROR! on the message string."
+    }
+  ],
+  "pure_validation": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/bounded-v1/quoted-rejection-v1/validation-v1/result.json",
+    "sha256": "2a22eb6a531be6bf7b5e86582326101b70751f0a449e5440ec046d865ab651e9",
+    "bytes": 454,
+    "methods": 8,
+    "exit_code": 0,
+    "seconds": 0.004,
+    "captures": {
+      "stdout.bin": {
+        "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/bounded-v1/quoted-rejection-v1/validation-v1/stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr.bin": {
+        "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/bounded-v1/quoted-rejection-v1/validation-v1/stderr.bin",
+        "sha256": "60bb849356ffbc091f601e17fc6ae0b2eb5e26d734d433da020c6e775efbf97f",
+        "bytes": 106
+      }
+    }
+  },
+  "observed_diagnostic": {
+    "stderr": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/bounded-v1/tree-continuation-v1/run-v1/140-revcomp-extended-invalid-space/stderr.bin",
+      "sha256": "2f7986c2913ff765bc177840d169a946727a6a20aea2c9b4bed013aed32ad869",
+      "bytes": 53
+    },
+    "process": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/bounded-v1/tree-continuation-v1/run-v1/140-revcomp-extended-invalid-space/process.json",
+      "sha256": "82fa51fcadd98d9dafb5dee6a0b2e229c2875fb71a099b1f854870cec159691e",
+      "bytes": 2796
+    },
+    "bytes": 53,
+    "raw_bytes_checked": true,
+    "native_ownership_review_in_this_record": false
+  },
+  "findings": [
+    "Only the exact negative stderr literal and explanatory docstrings differ from the frozen checker; an AST comparison verifies all remaining implementation structure is identical.",
+    "Successful complete-byte and signed-integer nanounit checks, method restrictions, expected-output pins, exit/stream types and all output flags are preserved.",
+    "The old source prediction omitted bound-word molding in the error formatter. The retained source explains the observed quotes; no runtime source-equivalence claim is made.",
+    "The new checker accepts only the exact 53-byte quoted user error with empty stdout and normal integer exit 1. Unquoted messages, extra bytes, context, partial stdout and other exits are rejected.",
+    "The seven negative corpus identities and expected_invalid_byte metadata are unchanged. Only the retained invalid-space process has been observed here; the remaining six negative cases still require native captures.",
+    "Independent code/test and formatting-source reviews found no concrete blocker. Existing observer/producer failures remain unchanged; actual retained-capture acceptance is a separate record."
+  ],
+  "acceptance_contract": {
+    "schema": "rebol-retained-quoted-rejection-review-v1",
+    "status": "exact-retained-revcomp-rejection-qualified",
+    "case_id": "revcomp:extended-invalid-space"
+  },
+  "native_processes_started": 0,
+  "benchmark_correctness_qualified": false,
+  "runtime_source_equivalence_proven": false,
+  "source_work_qualified": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}
