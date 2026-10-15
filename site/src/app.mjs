@@ -885,13 +885,13 @@ function renderChart(){
     if(!sampleNodes.has(program.key))sampleNodes.set(program.key,new Map());
     const programNodes=sampleNodes.get(program.key);
     if(!programNodes.has(runNumber))programNodes.set(runNumber,{node:node('circle',{
-      r:2.4,fill:'none','stroke-width':1.15,class:'timing-run','data-sample':'true',
+      r:2.4,'stroke-width':1.15,class:'timing-run','data-sample':'true',
       'data-chart-language':program.language,'data-program':program.key,'data-timing-run':runNumber,
       'data-run-seconds':elapsed,'data-observation-source':timingOwner(program),style:'--chart-opacity:1',tabindex:0,role:'button'})});
     const cached=programNodes.get(runNumber),run=cached.node,x=X(point.x),y=Y(point.y),color=displayColor(entry.language.key);
     if(cached.x!==x){run.setAttribute('cx',x);cached.x=x;}
     if(cached.y!==y){run.setAttribute('cy',y);cached.y=y;}
-    if(cached.color!==color){run.setAttribute('stroke',color);cached.color=color;}
+    if(cached.color!==color){run.setAttribute('fill',color);run.setAttribute('stroke',color);cached.color=color;}
     if(cached.ratioX!==point.x){run.setAttribute('data-ratio-x',point.x);cached.ratioX=point.x;}
     if(cached.loc!==program.loc||cached.ratioY!==point.y){
       cached.description=`${shortName(program.language)} · ${inputBenchmark.title}\n${program.id} · run ${runNumber}: ${seconds(elapsed)} · ${program.loc} LOC${program.timing_alias_of?` · shared from ${program.timing_alias_of}`:''}\nRun time / fixed benchmark median baseline: ${ratio(point.y)}`;
