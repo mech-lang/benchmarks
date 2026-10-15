@@ -1,0 +1,85 @@
+{
+  "schema": "rebol-complete-map-observation-source-review-v1",
+  "status": "independent-source-review-complete",
+  "independent_review": true,
+  "reviewed_at": "2026-10-15T06:54:42.328955+00:00",
+  "files": {
+    "experiments/rebol/work-observations-v1/complete-maps-v1/knucleotide.reb": "e934a2ccd8283661b45dfb4fd0a9255592d0a2a05043f66eaf6463c9fec0e805",
+    "experiments/rebol/work-observations-v1/complete-maps-v1/map_contract.py": "d7069fce1ebeb0c37e10f44e7bd11de7f87e7462cb9eef9c0d0ee23682de6346",
+    "experiments/rebol/work-observations-v1/complete-maps-v1/test_map_contract.py": "ac84e892e1a4022bd316922aff2d9d2c8c5d8074fd3abba131759f620b837c94",
+    "experiments/rebol/work-observations-v1/complete-maps-v1/README.md": "a6e3482c0939e9f40821ff4cb0d6ab527b822c716ae19fd2ccb4731e8efde402"
+  },
+  "dependencies": {
+    "experiments/rebol/work-observations-v1/knucleotide.reb": "63e5425df08da872e7154d40932980321784cefe2dd7c5ac2832cb3d073e858a",
+    "experiments/rebol/work-observations-v1/map_contract.py": "9d87a89282a8d1e7f5bab6a9bc79a0b0b3b7ff109ce54242b32624fc54b396a8",
+    "archive/languages/rebol/20261013/drafts/private-v1/sources/knucleotide/main.reb": "5c16c9be1685627f47e71ef690f3d7f180b7d34e9ae496e648062b34601a8140"
+  },
+  "references": {
+    "failed_stage_review": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/remaining-intake-v1/final-bounded-v1/failed-stage-review-v1.json",
+      "sha256": "4449440e8f46c83669b9e4300801c2b1f7dac7f2d43639bd6e72d35a7193e064",
+      "bytes": 27853
+    },
+    "diagnosis": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/remaining-intake-v1/final-bounded-v1/DIAGNOSTIC.md",
+      "sha256": "bbe057650d0f47c3656529db01e46d2849289c4c559ec463b6f442bfbec847a5",
+      "bytes": 4269
+    }
+  },
+  "pure_validation": {
+    "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/complete-maps-v1/validation-v2/result.json",
+    "sha256": "e02d968be2c9938500319a893baf7df8839612f384fd19833f8b09d27958eeab",
+    "bytes": 1694,
+    "methods": 6,
+    "exit_code": 0,
+    "test_runner_seconds": 0.004,
+    "captures": {
+      "stdout.bin": {
+        "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/complete-maps-v1/validation-v2/stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "stderr.bin": {
+        "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/complete-maps-v1/validation-v2/stderr.bin",
+        "sha256": "065c7d15facfd20f14fb9182747be315f3349fa1d5e1a0e966047509f4bfa9b1",
+        "bytes": 104
+      }
+    },
+    "README_test_time_sha256": "85671487e8931333948a057844b781b0bcdd27134d76420288bb52ad652a62d5",
+    "README_final_sha256": "a6e3482c0939e9f40821ff4cb0d6ab527b822c716ae19fd2ccb4731e8efde402",
+    "README_only_post_test_change": "Records the actual passing test outcome and links its retained receipt."
+  },
+  "findings": [
+    "The same original knucleotide main is loaded; only wrapper title/comments, relative path and global dump removal differ.",
+    "All seven actual maps are traversed directly with foreach; every original sidecar key/count and total is retained.",
+    "The five pure record-selection, independent sliced-window and sidecar-validation functions are exact original function ASTs.",
+    "The new policy requires normal exact-int exit zero, empty complete stderr and exact caller-pinned stdout. It accepts no partial dump or resource failure.",
+    "Missing, duplicate, noncanonical, changed and extra sidecar entries reject; original input/output/sidecar bounds remain.",
+    "Backing-series capacities, identities, addresses, hash-bucket capacities and capacity growth trajectory are explicitly unobserved.",
+    "The failed global-dump run and successful tree/pi captures remain separate immutable evidence. This source review does not qualify a new native capture."
+  ],
+  "source_authority": {
+    "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/core/n-loop.c",
+    "sha256": "139d241bdf57a514f3a3b4348e649b3d182afb5e9c865e86136c708c06ee6294",
+    "line_ranges": [
+      [
+        391,
+        395
+      ],
+      [
+        462,
+        478
+      ]
+    ],
+    "finding": "foreach reads the existing map backing values; it does not first copy the complete map."
+  },
+  "native_execution": false,
+  "metadata_prepared": false,
+  "runtime_qualified": false,
+  "runtime_source_equivalence_proven": false,
+  "required_work_qualified": false,
+  "source_work_qualified": false,
+  "full_size_work_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}
