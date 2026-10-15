@@ -130,7 +130,7 @@ Build `7bba6e95588940c0` reduces work during view and layer changes:
   place, preserving points, cells, keyboard focus and hover details.
 
 The [matched measurements](../site/publications/explorer-performance-v2/comparison.json)
-compare the frozen live build `72094b4bd8833f60` with this candidate. Both use the
+compare the frozen live build `72094b4bd8833f60` with this build. Both use the
 same byte-for-byte browser dataset, Chrome 155 and Node 24 on the separate M1 Mac
 mini. Each configuration has three fresh, serial browser contexts using the
 same loopback server and [profiling harness](../site/publications/explorer-performance-v2/profile.mjs).
@@ -172,3 +172,12 @@ explicitly collects garbage outside timing measurements: initial retained heap
 is 13.5 → 13.4 MiB. After 20 view/layer/reset cycles it is 18.3 → 18.2 MiB,
 with identical DOM-node and listener counts and little growth
 after warmup. This pass does not claim a retained-memory reduction.
+
+Build `7bba6e95588940c0` is
+[published and verified](../site/publications/explorer-performance-v2/deployment.json)
+at [mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/). All 36 live
+assets and the final manifest matched on October 15 at 14:05 UTC. The
+[compression check](../site/publications/explorer-performance-v2/gzip.json)
+and [fresh mobile browser](../site/publications/explorer-performance-v2/live-browser.json)
+passed with the unchanged dataset, all 2,835 selected runs, Samples Off,
+language pages and resource filters, with no page errors.
