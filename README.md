@@ -46,13 +46,22 @@ Generated files are written to `site/public/`.
 ```sh
 python3 tools/export_catalog.py
 python3 tools/verify_repository.py
+python3 tools/test_build_site.py
+python3 tools/build_site.py
+node site/tests/data_projection.mjs data/benchmarks.json site/public/data.json
 node site/tests/layers.mjs
 node site/tests/rankings.mjs
 node site/tests/languages.mjs data/benchmarks.json
 node site/tests/publication.mjs
+node site/tests/benchmark_traits.mjs
+node site/tests/density.mjs
 ```
 
 These commands export and check recorded results. Running the benchmarks requires the toolchains and dependencies specified in the measurement reports. Measurements run sequentially, without competing benchmark or compilation jobs.
+
+The [explorer performance audit](docs/explorer-performance.md) describes browser
+payload projection, rendering changes and their validation. Complete measurement
+evidence remains in the canonical catalog.
 
 Pending APL, Julia AOT and Rebol tooling has
 [250 passing pure test methods across 21 scripts](experiments/shared/pure-validation-20261015/README.md),

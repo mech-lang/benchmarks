@@ -38,10 +38,12 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
     const chart=svg('svg',{class:'ranking-chart',viewBox:`0 0 ${width} 100`,role:'group',
       'aria-label':`${title} distances from ${referenceLanguage===null?'the coordinate median':referenceLabel} in log₂ sample standard deviations`,
       'data-ranking-metric':key,'data-ranking-extent':extent},card);
-    const labels=new Map(metric.entries.map(row=>{
-      const node=svg('text',{class:'ranking-language-label',visibility:'hidden'},chart,labelFor(row.entry.language.key));
-      return [row,{node,width:node.getBBox().width}];
-    }));
+    // Append all measuring nodes before reading geometry so each label does
+    // not force another layout of the growing chart.
+    const labels=new Map(metric.entries.map(row=>[row,{
+      node:svg('text',{class:'ranking-language-label',visibility:'hidden'},chart,labelFor(row.entry.language.key))
+    }]));
+    for(const label of labels.values())label.width=label.node.getBBox().width;
     const labelOffset=9;
     const labelPosition=(row,x)=>{
       const labelWidth=labels.get(row).width;

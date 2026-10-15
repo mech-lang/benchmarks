@@ -1,0 +1,90 @@
+# Explorer performance
+
+The explorer's browser payload contains the fields needed for charts, filters,
+source inspection and displayed audits. The complete measurement and admission
+records remain in the [canonical catalog](../data/benchmarks.json). Projection
+does not recalculate observations or remove programs, samples or source files.
+
+The build emits compact JSON and a deterministic gzip sidecar. GitLab Pages
+[serves precompressed assets](https://docs.gitlab.com/user/project/pages/introduction/#serving-compressed-assets)
+according to the browser's accepted encodings. The data URL carries the same
+build version as the application; the version includes the projection code and
+emitted data. Ordinary JSON remains available for clients without compression.
+
+Chart updates reuse derived selection data. Layer, profile and axis-range changes
+redraw the chart without rebuilding the language controls, tables and rankings.
+Recorded sample circles are reused across selections, with shared handlers on
+their current layer. Hidden samples are detached from the chart; each visible
+run still has its own coordinates, readout, source action and keyboard target.
+SVG labels are inserted together, measured together, then positioned, avoiding
+one layout per label. Hover handlers reuse a language-to-mark index. Resize
+handling ignores changes that leave the chart's width and responsive layout
+unchanged.
+
+Density uses separable Gaussian factors instead of evaluating a two-dimensional
+exponential for every sample in every cell. Every observation still contributes
+to every cell with its original weight, including coincident observations and
+distant tails. The field is reused while its inputs and domain are unchanged.
+
+## Validation
+
+The projected and canonical catalogs produce identical endpoints, chart
+coordinates, covariance, rankings, fixed domains and language comparisons.
+Checks cover 971 unique programs, 900 complete source files, 1,178 rendered LOC
+audits, 1,660 source/link cases, 48 selection models, 1,392 language comparisons
+and 4,624 inspector selections. Ordered source navigation and every recorded
+sample are preserved. The original canonical catalog is unchanged.
+
+The [validation record](../site/publications/explorer-performance-v1/validation.json)
+binds the tested source and generated assets to the captured check outputs.
+Independent density checks compare the optimized estimator with the direct
+two-dimensional formula. The layer and ranking suites also exercise selection
+changes, cache invalidation, independent visibility, hover restoration and
+target-relative ranking origins.
+
+The browser audit uses the same host, Chrome version, loopback server and
+instrumentation before and after the change. Each configuration has three fresh
+browser contexts: desktop at 1,280 px, mobile layout at 390 px, and the mobile
+layout with 4× CPU throttling. Loopback timing excludes Internet latency and uses
+uncompressed data for both builds. CPU throttling is a simulation, not a physical
+phone measurement. Event timings measure synchronous work; separate measurements
+wait for two animation-frame callbacks, allowing intervening rendering work.
+They do not guarantee that every CSS transition has completed. Response JSON time
+includes body consumption and parsing. Heap readings do not force garbage
+collection.
+
+## Browser measurements
+
+The [per-run measurements and browser checks](../site/publications/explorer-performance-v1/performance.json)
+compare build `80f03cc4ba6ce434` with `381120eba12efd76`. Values below are medians
+of three runs on an Apple M1 Mac mini with 8 GiB RAM and Chrome 155. Control rows
+report synchronous event processing; readiness includes loading and initialization.
+The evidence also retains elapsed times through two animation-frame callbacks,
+layout counts and individual observations.
+
+| Measurement | Desktop before → after | Mobile layout, 4× CPU slowdown, before → after |
+| --- | ---: | ---: |
+| Explorer ready | 403 → 216 ms | 1,253 → 671 ms |
+| JS heap after initialization | 70.1 → 13.7 MiB | 72.0 → 13.7 MiB |
+| Resource filter | 58 → 44 ms | 226 → 170 ms |
+| Enable density | 185 → 60 ms | 703 → 244 ms |
+| Open language page | 149 → 120 ms | 565 → 447 ms |
+| Reset | 47 → 46 ms | 186 → 153 ms |
+
+Desktop reset changed little. Opening a language page remains the slowest
+measured control under CPU throttling. Repeated-hover measurements include a
+geometry lookup; its occasional layout flush is retained in the individual
+observations and distinguished from the separately measured pointer handlers.
+
+Real pointer and keyboard checks passed at 390 px and 1,280 px, including median
+highlighting, sample readouts and source selection after layer and filter
+changes. Samples Off attaches no sample dots. Independent layers, global
+statistics, axis ranges, mobile filters and language-page navigation remain
+covered by the regression checks.
+
+## Payload
+
+The previous browser JSON was 73,826,163 bytes. The projected JSON is 8,335,571
+bytes, an 89% reduction before compression. Its gzip sidecar is 1,210,607 bytes.
+All 900 source files remain available in the inspector. The canonical catalog
+retains its original bytes and hash.

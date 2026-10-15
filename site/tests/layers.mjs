@@ -20,20 +20,29 @@ class Element {
   setAttribute(key,value){this.attributes[key]=String(value);if(key.startsWith('data-'))this.dataset[key.slice(5).replace(/-([a-z])/g,(_,letter)=>letter.toUpperCase())]=String(value);if(key==='class')this.classList.add(...String(value).split(' '));}
   getAttribute(key){return this.attributes[key]??null;}
   removeAttribute(key){delete this.attributes[key];}
-  append(child){child.parentNode=this;this.children.push(child);}
+  append(child){if(child.parentNode)child.parentNode.children=child.parentNode.children.filter(node=>node!==child);child.parentNode=this;this.children.push(child);}
   insertBefore(child,before){this.children=this.children.filter(node=>node!==child);child.parentNode=this;this.children.splice(this.children.indexOf(before),0,child);}
-  replaceChildren(){this.children=[];}
+  replaceChildren(){for(const child of this.children)child.parentNode=null;this.children=[];}
   addEventListener(type,callback){(this.listeners[type]??=[]).push(callback);}
-  emit(type,event={}){for(const callback of this.listeners[type]??[])callback({pointerType:'mouse',...event});}
+  emit(type,event={}){
+    const value={pointerType:'mouse',target:this,preventDefault(){this.defaultPrevented=true;},...event};
+    const bubbling=new Set(['click','keydown','pointerover','pointermove','pointerout','focusin','focusout']);
+    const dispatch=(name,bubbles)=>{for(let current=this;current;current=bubbles?current.parentNode:null)for(const callback of current.listeners[name]??[])callback(value);};
+    dispatch(type,bubbling.has(type));
+    const related={pointerenter:'pointerover',pointerleave:'pointerout',focus:'focusin',blur:'focusout'}[type];
+    if(related)dispatch(related,true);
+    return value;
+  }
   getScreenCTM(){return null;}
   before(){} after(){} focus(){} scrollIntoView(){}
+  closest(){return this.parentNode??this;}
   contains(node){return node===this||this.children.some(child=>child.contains(node));}
   getBBox(){return {x:0,y:-12,width:this.textContent.length*7,height:16};}
   querySelectorAll(selector){const key=selector.match(/^\[([^\]]+)\]$/)?.[1];return this.children.flatMap(child=>[...(key&&child.getAttribute(key)!==null?[child]:[]),...child.querySelectorAll(selector)]);}
 }
 const elements=new Map();
 const element=selector=>{if(!elements.has(selector))elements.set(selector,new Element(selector));return elements.get(selector);};
-const document={querySelector:element,createComment:()=>new Element('comment'),createElementNS:(_,tag)=>new Element(tag),
+const document={querySelector:element,querySelectorAll:()=>[],createComment:()=>new Element('comment'),createElementNS:(_,tag)=>new Element(tag),
   documentElement:new Element('html'),body:new Element('body'),activeElement:null};
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
@@ -41,20 +50,49 @@ const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
 const context=vm.createContext({...math,...formatted,...benchmarkFilters,document,window:{},innerWidth:1000,
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
+  realAxisData:formatted.axisData,realProjectProgram:formatted.projectProgram,
   setTimeout:()=>0,clearTimeout(){}});
 const executable=source.replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'file:///test/app.mjs'")
   .replace(/start\(\)\.catch\(error=>\{[^\n]+\}\);\s*$/,'');
 vm.runInContext(executable+`\nglobalThis.harness={
-  initialize(fixture){data=fixture;programCatalog={...fixture.program_inventory,...fixture.programs};Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';},
-  render(options){Object.assign(state,options);model=comparison(data,allSelection());renderChart();},
+  initialize(fixture){
+    data=fixture;programCatalog={...fixture.program_inventory,...fixture.programs};
+    languageIndex=new Map(fixture.languages.map(item=>[item.key,item]));benchmarkIndex=new Map(fixture.benchmarks.map(item=>[item.key,item]));
+    familyIndex=languageFamilies(data.languages).map(f=>({...f,label:f.members.length>1?f.label:shortName(f.members[0].key)}));
+    programsByBenchmark.clear();comparisonViews.clear();domains.clear();benchmarkEntries=null;densityCache=null;
+    if(renderedSamplePlot)renderedSamplePlot.replaceChildren();renderedSamplePlot=null;sampleNodes.clear();
+    for(const program of Object.values(programCatalog)){
+      if(!programsByBenchmark.has(program.benchmark))programsByBenchmark.set(program.benchmark,new Map());
+      const languages=programsByBenchmark.get(program.benchmark);if(!languages.has(program.language))languages.set(program.language,[]);
+      languages.get(program.language).push(program);
+    }
+    Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';
+  },
+  render(options){Object.assign(state,options);benchmarkEntries=null;model=comparison(plotData(),allSelection());renderChart();},
+  derived(){return {model,entries:currentEntries(),samples:currentSampleInputs(),density:currentDensityField(),view:plotData()};},
+  cachedSamples(){return [...sampleNodes.values()].flatMap(nodes=>[...nodes.values()]);},
+  sampleAction(node,type,event){const original=openPoint,calls=[];openPoint=info=>calls.push(info);try{const emitted=node.emit(type,event);return {calls,prevented:emitted.defaultPrevented===true};}finally{openPoint=original;}},
+  visual(options){
+    const originals=[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector];
+    const unexpected=()=>{throw new Error('Visual-only changes must not rebuild unrelated controls or results.');};
+    renderYears=renderControls=renderLanguageOverview=renderMedianRankings=renderTable=renderInspector=unexpected;
+    try{Object.assign(state,options);updatePlot();}finally{[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector]=originals;}
+  },
+  selectionUpdate(options,resetAll=false){
+    const originals=[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector];
+    renderYears=renderControls=renderLanguageOverview=renderMedianRankings=renderTable=renderInspector=()=>{};
+    try{Object.assign(state,options);resetAll?reset():update();}finally{[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector]=originals;}
+  },
+  formatting(real){axisData=real?realAxisData:data=>data;projectProgram=real?realProjectProgram:program=>program;},
   table(){renderTable();},
   locAudit:renderLocAudit,
+  sameJSONValue,
   programSource,
   compare(key){state.languageFocus={keys:[catalogProgram(key).language],comparison:true,comparisonProgram:key};return comparisonData();},
   inspect(key){state.detail={...state.detail,program:key};const original=renderLanguageOverview,originalRankings=renderMedianRankings;renderLanguageOverview=renderMedianRankings=()=>{};try{renderInspector();}finally{renderLanguageOverview=original;renderMedianRankings=originalRankings;}},
   selection(){return state;},
   relativeTable(){renderLanguageComparisons();},
-  rankings(){model=comparison(data,allSelection());return currentRankings();},
+  rankings(){benchmarkEntries=null;model=comparison(plotData(),allSelection());return currentRankings();},
   overview(){renderLanguageOverview();},
   resetLanguage(){const original=update;update=()=>{};try{reset();}finally{update=original;}},
   compareLanguage(key){const original=update;update=()=>{};try{compareOverviewLanguage(key);}finally{update=original;}},
@@ -80,6 +118,10 @@ for(let bi=0;bi<2;bi++){
   fixture.benchmarks.push(benchmark);
 }
 context.harness.initialize(fixture);
+assert.equal(context.harness.sameJSONValue({a:[1,{proof:'retained',value:null}]},{a:[1,{proof:'retained',value:null}]}),true);
+assert.equal(context.harness.sameJSONValue({a:[1,{proof:'retained'}]},{a:[1,{proof:'changed'}]}),false);
+assert.equal(context.harness.sameJSONValue({a:1,b:2},{b:2,a:1}),false,'Startup identity checks retain JSON key-order equality.');
+assert.equal(context.harness.sameJSONValue([],{}),false);
 // Language hero order follows the reading order, including narrow screens.
 const sections=['id="language-overview"','class="chart-card"','id="median-rankings"','id="language-results"','id="language-comparisons"'];
 for(let index=1;index<sections.length;index++)assert.ok(html.indexOf(sections[index-1])<html.indexOf(sections[index]));
@@ -168,6 +210,10 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
       assert.equal(node.style.getPropertyValue('--chart-opacity'),String(baseOpacity));
     }
     assert.match(element('#hover-details').textContent,/Alpha/);
+    for(const spread of svg.querySelectorAll('[data-hover-spread]')){
+      assert.equal(spread.dataset.chartLanguage,'alpha');
+      assert.equal(spread.classList.contains('chart-dimmed'),false,'New hover spreads belong to the highlighted language.');
+    }
     assert.equal(element('#hover-details').style.getPropertyValue('left'),'','Details remain in the fixed readout.');
     assert.deepEqual(samples.map(node=>[node.getAttribute('cx'),node.getAttribute('cy')]),positions);
     mark.emit(leave);
@@ -178,6 +224,17 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
   }
   mark.emit('pointerenter',{pointerType:'touch'});
   assert.equal(svg.dataset.highlightLanguage,undefined,'Touch does not leave a sticky hover state.');
+  // Focus can switch directly between languages while the sample layer stays
+  // lifted; both old and new indexed groups must update and then restore.
+  const other=svg.querySelectorAll('[data-profile-median]').find(node=>node.dataset.chartLanguage==='beta');
+  mark.emit('focus');other.emit('pointerenter');
+  for(const node of samples){
+    assert.equal(node.classList.contains('sample-highlighted'),node.dataset.chartLanguage==='beta');
+    assert.equal(node.classList.contains('chart-dimmed'),node.dataset.chartLanguage!=='beta');
+  }
+  other.emit('pointerleave');assert.equal(svg.dataset.highlightLanguage,'alpha');
+  mark.emit('blur');
+  assert.deepEqual(samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]),baseline);
 }
 const facetFixture=structuredClone(fixture),names={b1:'binarytrees',b2:'nbody'};
 for(const b of facetFixture.benchmarks)b.key=names[b.key];
@@ -226,6 +283,91 @@ for(const mode of ['summary','language','source-comparison']){
 }
 assert.match(html,/id="benchmark-groups"/);assert.match(html,/id="benchmark-filter-status" aria-live="polite"/);
 assert.match(css,/#filter-drawer \.control-row,#filter-drawer \.trait-choice\{min-height:44px\}/);
+// Reuse measured derivations for visual-only edits, then invalidate them for
+// every selection boundary. Exercise the real update/updatePlot paths without
+// rebuilding unrelated synthetic controls or requiring a browser.
+const cacheFixture=structuredClone(facetFixture);
+for(const b of cacheFixture.benchmarks)b.baseline_formatted_loc=1;
+for(const p of Object.values(cacheFixture.programs))Object.assign(p,{formatted_loc:p.loc*3,formatted_x:p.x*3,formatted_loc_status:'qualified',formatted_loc_complete:true});
+context.harness.formatting(true);context.harness.initialize(cacheFixture);
+context.harness.render({view:'summary',languageFocus:null,locMetric:'canonical',focusMeans:true,global:false,fast:true,small:true,
+  disabled:new Set(),sampleMode:'dim',medianMode:'highlight',densityMode:'off'});
+const initial=context.harness.derived();
+const originalSampleLayer=element('#chart').querySelectorAll('[data-layer]').find(node=>node.dataset.layer==='samples');
+const initialSampleNodes=element('#chart').querySelectorAll('[data-sample]');
+const initialByKey=new Map(initialSampleNodes.map(node=>[`${node.dataset.program}:${node.dataset.timingRun}`,node]));
+for(const options of [{sampleMode:'off'},{sampleMode:'highlight',densityMode:'highlight'},{densityMode:'dim',medianMode:'off'},{global:true,fast:false},{fast:true,small:false}]){
+  context.harness.visual(options);
+  const next=context.harness.derived();
+  assert.equal(next.model,initial.model);assert.equal(next.samples,initial.samples);
+  assert.equal(next.density,initial.density,'Opacity and layer visibility reuse the identical density estimator.');
+  const visibleSamples=element('#chart').querySelectorAll('[data-sample]');
+  if(options.sampleMode==='off'){
+    assert.equal(visibleSamples.length,0);assert.ok(initialSampleNodes.every(node=>node.parentNode===null));
+  }else for(const node of visibleSamples)assert.equal(node,initialByKey.get(`${node.dataset.program}:${node.dataset.timingRun}`));
+}
+assert.equal(originalSampleLayer.children.length,0,'The circle cache must not retain its old SVG parent.');
+assert.ok(context.harness.cachedSamples().every(record=>Object.values(record).every(value=>value instanceof Element||typeof value==='string'||typeof value==='number')),
+  'Persistent sample records retain only a circle and scalar display values, never old models or handlers.');
+assert.ok(initialSampleNodes.every(node=>Object.keys(node.listeners).length===0),'Sample callbacks belong to the fresh parent layer.');
+const sampleFor=(program,run=1)=>element('#chart').querySelectorAll('[data-sample]').find(node=>node.dataset.program===program&&Number(node.dataset.timingRun)===run);
+const assertSampleActions=(node,program)=>{
+  node.emit('pointerover');assert.equal(element('#chart').dataset.highlightLanguage,node.dataset.chartLanguage);
+  assert.ok(element('#hover-details').textContent.includes(program));
+  node.emit('pointerout');assert.equal(element('#chart').dataset.highlightLanguage,undefined);
+  node.emit('focusin');assert.equal(element('#chart').dataset.highlightLanguage,node.dataset.chartLanguage);
+  assert.ok(element('#hover-details').textContent.includes(`${Number(node.dataset.runSeconds).toFixed(3)} s`));
+  for(const [type,event] of [['click',{}],['keydown',{key:'Enter'}],['keydown',{key:' '}]]){
+    const result=context.harness.sampleAction(node,type,event);
+    assert.equal(result.calls.length,1);assert.equal(result.calls[0].program,program);
+    if(type==='keydown')assert.equal(result.prevented,true);
+  }
+  node.emit('focusout');assert.equal(element('#chart').dataset.highlightLanguage,undefined);
+};
+assertSampleActions(sampleFor('alpha-b1-fast'),'alpha-b1-fast');
+context.harness.visual({sampleMode:'off'});
+assert.equal(element('#chart').querySelectorAll('[data-sample]').length,0);
+assert.ok(initialSampleNodes.every(node=>node.parentNode===null));
+context.harness.visual({sampleMode:'dim'});
+assert.equal(sampleFor('alpha-b1-fast'),initialByKey.get('alpha-b1-fast:1'));
+assertSampleActions(sampleFor('alpha-b1-fast'),'alpha-b1-fast');
+context.harness.selectBenchmarkFacet('resource','memory',true);context.harness.selectionUpdate({});
+const filtered=context.harness.derived();
+assert.notEqual(filtered.model,initial.model);assert.notEqual(filtered.samples,initial.samples);assert.notEqual(filtered.density,initial.density);
+assert.ok(filtered.samples.length<initial.samples.length);assert.ok(filtered.samples.every(point=>point.benchmark.key==='binarytrees'));
+context.harness.selectionUpdate({disabled:new Set(['alpha-b1-fast'])});
+const disabled=context.harness.derived();
+assert.ok(disabled.samples.every(point=>point.program.key!=='alpha-b1-fast'));assert.notEqual(disabled.samples,filtered.samples);
+context.harness.selectionUpdate({view:'language',languageFocus:{keys:['alpha'],label:'Alpha',variant:'alpha'},disabled:new Set()});
+const heroCache=context.harness.derived();assert.notEqual(heroCache.samples,disabled.samples);
+const heroSample=sampleFor('alpha-b1-fast');assert.equal(heroSample,initialByKey.get('alpha-b1-fast:1'));
+assertSampleActions(heroSample,'alpha-b1-fast');
+context.harness.selectionUpdate({locMetric:'formatted'});
+const formattedCache=context.harness.derived();assert.notEqual(formattedCache.model,heroCache.model);
+assert.equal(formattedCache.samples.length,heroCache.samples.length);
+assert.deepEqual(formattedCache.samples.map(point=>point.x),heroCache.samples.map(point=>point.x*3));
+assert.deepEqual(formattedCache.samples.map(point=>point.elapsed),heroCache.samples.map(point=>point.elapsed));
+const formattedSample=sampleFor('alpha-b1-fast');assert.equal(formattedSample,heroSample);
+assert.equal(Number(formattedSample.dataset.ratioX),cacheFixture.programs['alpha-b1-fast'].x*3);
+assert.ok(formattedSample.getAttribute('aria-label').includes(`${cacheFixture.programs['alpha-b1-fast'].loc*3} LOC`));
+assertSampleActions(formattedSample,'alpha-b1-fast');
+context.harness.compare('alpha-b1-fast');context.harness.selectionUpdate({view:'benchmark',focus:'binarytrees'});
+const sourceCache=context.harness.derived();
+context.harness.visual({sampleMode:'dim',medianMode:'highlight'});
+assert.equal(context.harness.derived().view,sourceCache.view,'Source comparisons retain their formatted projection identity.');
+assert.equal(context.harness.derived().samples,sourceCache.samples);
+context.harness.compare('alpha-b1-small');context.harness.selectionUpdate({});
+assert.notEqual(context.harness.derived().view,sourceCache.view,'Changing the explicit source replaces its projection.');
+context.harness.selectionUpdate({languageFocus:null},true);
+const resetCache=context.harness.derived();
+assert.equal(context.harness.selection().locMetric,'canonical');assert.equal(context.harness.selection().disabled.size,0);
+assert.deepEqual([...context.harness.effectiveBenchmarks()],['binarytrees','nbody']);
+assert.equal(resetCache.samples.length,initial.samples.length);assert.notEqual(resetCache.samples,initial.samples);
+const resetSample=sampleFor('alpha-b1-fast');assert.equal(resetSample,heroSample);
+assert.equal(Number(resetSample.dataset.ratioX),cacheFixture.programs['alpha-b1-fast'].x);
+assert.equal(context.harness.cachedSamples().length,initialSampleNodes.length,'Filtering and LOC changes cannot duplicate recorded run nodes.');
+assertSampleActions(resetSample,'alpha-b1-fast');
+context.harness.formatting(false);
 console.log('Median hover/focus and benchmark facets: visible samples, Off, static readout, restoration, hero scope and reset passed.');
 if(process.argv.includes('--interactions-only'))process.exit(0);
 // The navigation tests exercise the real Reset default (nbody). Restore the

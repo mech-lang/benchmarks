@@ -124,10 +124,24 @@ export function densityGrid(points,domain,{columns=48,rows=36,bandwidthCells=1.2
     .map(point=>({...point,lx:Math.log2(point.x),ly:Math.log2(point.y)}));
   const bandwidth_x=(xMax-xMin)/columns*bandwidthCells,bandwidth_y=(yMax-yMin)/rows*bandwidthCells;
   const scale=1/(2*Math.PI*bandwidth_x*bandwidth_y),cells=[];
+  // The Gaussian is separable: reuse its horizontal and vertical factors
+  // instead of evaluating exp once per observation in every grid cell.
+  // Every recorded observation still contributes to every cell, in order.
+  const count=inputs.length,xWeights=new Float64Array(columns*count),yWeights=new Float64Array(rows*count);
+  for(let column=0;column<columns;column++){
+    const lx=xMin+(column+.5)*(xMax-xMin)/columns;
+    for(let i=0;i<count;i++)xWeights[column*count+i]=inputs[i].weight*Math.exp(-.5*((lx-inputs[i].lx)/bandwidth_x)**2);
+  }
+  for(let row=0;row<rows;row++){
+    const ly=yMin+(row+.5)*(yMax-yMin)/rows;
+    for(let i=0;i<count;i++)yWeights[row*count+i]=Math.exp(-.5*((ly-inputs[i].ly)/bandwidth_y)**2);
+  }
   let peak=0;
   for(let row=0;row<rows;row++)for(let column=0;column<columns;column++){
-    const lx=xMin+(column+.5)*(xMax-xMin)/columns,ly=yMin+(row+.5)*(yMax-yMin)/rows;
-    const value=inputs.reduce((sum,point)=>sum+point.weight*Math.exp(-.5*(((lx-point.lx)/bandwidth_x)**2+((ly-point.ly)/bandwidth_y)**2)),0)*scale;
+    let sum=0;
+    const xOffset=column*count,yOffset=row*count;
+    for(let i=0;i<count;i++)sum+=xWeights[xOffset+i]*yWeights[yOffset+i];
+    const value=sum*scale;
     cells.push({row,column,value});peak=Math.max(peak,value);
   }
   return {columns,rows,cells,peak,bandwidth_x,bandwidth_y,runs:inputs.length,programs:new Set(inputs.map(point=>point.program)).size,
