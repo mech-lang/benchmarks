@@ -8,9 +8,9 @@ import importlib.util
 from pathlib import Path
 
 PARENT_SHA = '67d252c4c8ae7435b7a4f5ac220ca1974436046871618d5898281de4b3b27683'
-# Freeze after source review and the timing lane permits small-source hashing.
-# None deliberately keeps the standalone catalog verifier unlaunchable.
-PUBLICATION_SHA = None
+# Exact reviewed publication leaf, retained in the tested-source transfer record.
+# The original producer and its already prepared plan do not depend on this leaf.
+PUBLICATION_SHA = 'c3ae7260e5b3ec345b58e814bafb586d6ee3d2d82508bc553c0fea685463e456'
 
 
 def attach(parent, publication):

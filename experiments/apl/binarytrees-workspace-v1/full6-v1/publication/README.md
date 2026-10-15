@@ -43,10 +43,14 @@ expands to ten workloads through a recorded history boundary with no rebasing.
 These sources have not performed an actual publication. Independent source review found no remaining
 concrete blocker in the evidence joins, alias accounting or transaction routing.
 The 15 focused test methods passed on 2026-10-15 UTC, recorded in
-[the initial pure-validation record](../../../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). Source-hash freezing remains
-pending. The history module has no
-`PUBLICATION_SHA` until that freeze; it rejects standalone execution in this
-state. No full-size APL result or chart admission is asserted here.
+[the initial pure-validation record](../../../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). The history module now binds the
+exact tested publication leaf at SHA-256
+`c3ae7260e5b3ec345b58e814bafb586d6ee3d2d82508bc553c0fea685463e456`.
+Its router test no longer replaces that pin in memory. Two added standalone
+loader regressions cover prior-adapter preservation and rejection of a changed
+publication identity; the resulting 17-method suite passed on 2026-10-15 UTC,
+recorded in [the follow-up validation receipt](../../../../shared/follow-up-pure-validation-20261015/validation.json).
+No full-size APL result or chart admission is asserted here.
 
 The actual command inputs must come from the closed N=21 cohort and independent
 source/count/work dispositions. Required inputs are the plan, producer report,
@@ -55,9 +59,8 @@ reviewed producer/reconciler/publication/exporter/importer source digests.
 The existing durable job name is `apl-binarytrees-full6-v1`. No other cohort or
 partial prefix is accepted.
 
-The focused test file passed with the retained Python using `-I -S -B`.
-Bind the reviewed pure publication source digest in the
-new history module, then freeze and review the final small source files. The
+The final 17-method revision passed with the retained Python using `-I -S -B`
+after the timing cohort closed. The receipt records its exact source identities. The
 clean publication repository's normal verification entry point must select this
 additive history module before an actual admission is published; the original
 measurement checkout's frozen verifier and evidence must remain untouched.
@@ -92,3 +95,23 @@ history digests. Apply requires those six explicit `--expected-…-sha256` value
 and the same inputs. The transaction saves its real success receipt and history
 entry atomically; final evidence or output changes trigger rollback while all
 measurement leases are still held.
+
+## Compatibility with the current publication checkout
+
+The importer does not load, pin or rewrite `site/src/traits.mjs` or the language
+module. It changes only the two catalog documents and normalization history.
+Existing language classifications, source records, measurements and non-APL
+aggregates are preserved. This avoids requiring the original checkout's older
+traits bytes in the publication checkout.
+
+Direct-link verification walks only the new APL candidate and its consumer
+sources; it does not traverse existing Prolog catalog references or expand the
+Prolog declared gzip evidence. Existing successful history entries and their
+snapshot bytes continue to use the unchanged parent validator. The APL six-slot
+reports, counted sources and new review receipts use their exact raw identities;
+there is no generic compression exemption or receipt-hash substitution.
+
+After the tested history leaf is copied to the publication checkout, its
+`tools/verify_repository.py` must select `normalization_history_apl_trees.py`
+before the new admission is verified. Keep the original evidence checkout's
+verification entry point and the frozen producer/plan chain unchanged.

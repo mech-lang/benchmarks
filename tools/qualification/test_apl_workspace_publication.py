@@ -192,14 +192,7 @@ class Publication(unittest.TestCase):
         class EnteredReview(Exception):pass
         # Only source modules are loaded. The native/evidence context is replaced
         # at its entry; no retained plan, runtime or result file is replayed.
-        actual_module = e.module
         publication_sha = e.sha(e.PUBLICATION.read_bytes())
-        def source_module(path,digest):
-            value = actual_module(path,digest)
-            if path == i.HISTORY:
-                # Model the explicit future freeze without editing the draft.
-                value.PUBLICATION_SHA = publication_sha
-            return value
         with tempfile.TemporaryDirectory() as directory:
             publication = Path(directory).resolve()
             packet = publication/p.PACKET;packet.mkdir(parents=True)
@@ -209,10 +202,23 @@ class Publication(unittest.TestCase):
                 exporter_sha256=e.sha(i.EXPORTER.read_bytes()),publication_sha256=publication_sha,
                 reconciler_sha256=e.sha(e.RECONCILER.read_bytes()),normalization_sha256=e.sha(i.HISTORY.read_bytes()),
                 adapter_sha256=e.sha(Path(i.__file__).read_bytes()),producer_sha256='b'*64)
-            with patch.object(i,'load_exporter',return_value=e), patch.object(e,'module',side_effect=source_module), \
+            with patch.object(i,'load_exporter',return_value=e), \
                  patch.object(e,'context',side_effect=EnteredReview('held review entered')):
                 with self.assertRaisesRegex(EnteredReview,'held review entered'):i.publish(args)
             self.assertFalse(args.output.exists());self.assertFalse(args.apply_output.exists())
+
+    def test_standalone_history_load_preserves_all_prior_adapters(self):
+        prior = e.module(i.PREVIOUS_HISTORY,i.PREVIOUS_HISTORY_SHA)
+        original_keys = set(prior.ADAPTERS)
+        self.assertNotIn(p.AUDIT,original_keys)
+        loaded = n.load()
+        self.assertEqual(set(loaded.ADAPTERS),original_keys|{p.AUDIT})
+        self.assertEqual(set(prior.ADAPTERS),original_keys)
+
+    def test_standalone_history_load_rejects_changed_publication_identity(self):
+        with patch.object(n,'PUBLICATION_SHA','0'*64):
+            with self.assertRaisesRegex(ValueError,'Reviewed APL tree history dependency changed'):
+                n.load()
 
     def test_owned_write_registers_before_pending_stop_is_delivered(self):
         writer = e.safe_writer()
