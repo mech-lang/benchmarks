@@ -50,7 +50,6 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Python (CPython)](python/)
 - [R](r/)
 - [Racket](racket/)
-- [Rebol 3](rebol3/)
 - [Roc](roc/)
 - [Ruby (YJIT)](ruby/)
 - [Rust](rust/)
