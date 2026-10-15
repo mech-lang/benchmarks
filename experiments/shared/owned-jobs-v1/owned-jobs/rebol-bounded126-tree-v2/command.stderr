@@ -1,0 +1,26 @@
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded_continue.py", line 346, in <module>
+    if __name__=='__main__':main()
+                            ^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded_continue.py", line 343, in main
+    try:sys.argv=[previous[0],*remaining];controller.main()
+                                          ^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded.py", line 478, in main
+    run(e,inspector.kb,checker,plan,args.plan,args.plan_sha256,pins,resolutions,common,leases)
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded_continue.py", line 238, in <lambda>
+    r.run=lambda *args:run(r,*args)
+                       ^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded_continue.py", line 326, in run
+    capture,snapshot=r.checked_case(e,kb,checker,slot,directory,os.getpid())
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_bounded.py", line 356, in checked_case
+    result=checker.validate(case,*streams,final['exit_status'],expected)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_outputs.py", line 79, in validate
+    record.update(rejection(case, stdout, stderr, exit_status, expected))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_outputs.py", line 57, in rejection
+    require(stderr == NEGATIVE_STDERR, 'Rebol user-error diagnostic differs')
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_outputs.py", line 22, in require
+    raise ValueError(message)
+ValueError: Rebol user-error diagnostic differs
