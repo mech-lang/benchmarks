@@ -47,11 +47,18 @@ Generated files are written to `site/public/`.
 python3 tools/export_catalog.py
 python3 tools/verify_repository.py
 node site/tests/layers.mjs
+node site/tests/rankings.mjs
 node site/tests/languages.mjs data/benchmarks.json
 node site/tests/publication.mjs
 ```
 
 These commands export and check recorded results. Running the benchmarks requires the toolchains and dependencies specified in the measurement reports. Measurements run sequentially, without competing benchmark or compilation jobs.
+
+Pending APL, Julia AOT and Rebol tooling has
+[250 passing pure test methods across 21 scripts](experiments/shared/pure-validation-20261015/README.md),
+with the initial failures and repaired results preserved. These checks do not
+perform native intake or admit new benchmark results; remaining qualification
+work is recorded in [coverage status](docs/status.md).
 
 ## License
 

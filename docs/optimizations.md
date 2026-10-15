@@ -231,9 +231,11 @@ All measurements below are from the Apple M3 studies linked with each entry. Eac
 
 **Origin and scope:** Reuse general Rust/native libraries as intended by Mech; packed-key and counting techniques compared with Rust/Julia/Chapel. Change kind: library/runtime and separate source variants.
 
-**Evidence limits:** No isolated before/after speedup is asserted here without a matched receipt. The withdrawn eight-line k-nucleotide host shortcut was replaced by counted 17/24-line Mech bodies. Mech uses Rust `regex::bytes` (regex 1.13.1) through general library operations; that timing does not measure a Mech-generated regex engine.
+**Evidence limits:** No isolated before/after speedup is asserted here without a matched receipt. The withdrawn eight-line k-nucleotide host shortcut was replaced by counted 17/24-line Mech bodies. The retained projects for the measured regex submissions pin regex 1.13.1. Rust `regex::bytes` supplies the general regex operations; the timing does not measure a Mech-generated regex engine.
 
 **Receipts:** [knucleotide/README.md](../archive/workloads/knucleotide/README.md), [pidigits/README.md](../archive/workloads/pidigits/README.md), [regexredux/README.md](../archive/workloads/regexredux/README.md).
+
+The [regex timing report](../archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json) records the `--keep-project` build commands corresponding to the retained [serial dependency lock](../archive/workloads/regexredux/.build/mech-regexredux.project/Cargo.lock) and [async dependency lock](../archive/workloads/regexredux/.build/mech-regexredux-async.project/Cargo.lock).
 
 **Containing commits:** `bf9d7f2b6`.
 
@@ -245,7 +247,7 @@ All measurements below are from the Apple M3 studies linked with each entry. Eac
 
 **Evidence limits:** Several source/execution variants were compared. A byte-identical native object for the equivalent row form does not establish a compiler speedup. Arrow mutation repair is a correctness fix; do not advertise an unmeasured runtime gain.
 
-**Receipts:** [mandelbrot/README.md](../archive/workloads/mandelbrot/README.md).
+**Receipts:** [array-state sources and arrow repair](../archive/workloads/mandelbrot/experiments/20261011-array-state/design.txt), [native code comparison](../archive/workloads/mandelbrot/experiments/20261011-array-state/validation-current/codegen-comparison.json), [compiler identity and focused tests](../archive/workloads/mandelbrot/experiments/20261011-array-state/evidence/compiler-pins.json), and [original source forms](../archive/workloads/mandelbrot/README.md).
 
 **Containing commits:** `005d983df`, `c3396db09`.
 
@@ -258,6 +260,8 @@ All measurements below are from the Apple M3 studies linked with each entry. Eac
 | Matched comparison | Before (s) | After (s) | Speedup |
 | --- | ---: | ---: | ---: |
 | Default resident fannkuch confirmation | 56.117233 | 59.300908 | 0.946× |
+
+These historical measurements cover loaded interpretation, including input and complete output. Preparation is excluded; the raw report retains whole-process time separately. They are separate from the current language comparison's whole-process interpreter timings.
 
 **Evidence limits:** Ninety full runs preserve capability evidence. Same-package static control excludes driver-package identity as the explanation; cause of the regression is not isolated.
 
@@ -285,9 +289,8 @@ All 51 native-sequence tests passed, and rebuilding 13 unchanged programs preser
 
 ### 2026-10-07 — Mandelbrot masks and recurrence organization
 
-Chapel's eight-pixel organization and five recurrence steps per escape check, plus Rust #4's Boolean-mask/integer arithmetic investigation, informed the Mech source and native mask work. Coordinate FMA changed one N=200 pixel and was rejected; recurrence-only contraction preserved the recorded output checks. Source/grouping/worker forms have separate measurements, so this entry makes no isolated-pass timing claim. [Mandelbrot evidence](../archive/workloads/mandelbrot/README.md) remains authoritative. Containing commit: `bf9d7f2b6`.
+The comparison includes [Chapel #3's eight-pixel grouping](../archive/workloads/mandelbrot/upstream/mandelbrot-chapel-3.chpl) and Rust #4's Boolean-mask/integer arithmetic. Chapel #3 checks escape every recurrence; the retained Mech source explicitly groups five recurrence steps per check. Full FMA [failed the complete official N=200 bitmap check](../archive/workloads/mandelbrot/results/apple-m3-16000.json) and was rejected; recurrence-only contraction preserved the recorded output checks. Source/grouping/worker forms have separate measurements, so this entry makes no isolated-pass timing claim. The [Mandelbrot study](../archive/workloads/mandelbrot/README.md) describes the source and arithmetic policies. Containing commit: `bf9d7f2b6`.
 
 ## Maintaining this history
 
 After each Mech optimization experiment, append an entry to the ledger and this document with the source/compiler/library/policy scope, inspiration, unchanged-work validation, exact before/after cohort, timing boundary and receipt paths. Record rejected ideas and regressions as well as selected changes. If there is no matched timing, say so. Preserve the old inputs, sources and reports. Retain exact sources, reports, and version identifiers for reproducibility.
-

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-13",
-  "scope": "Mech optimization and capability history on codex/clbg-native-benchmarks; historical receipts remain authoritative.",
+  "updated_at": "2026-10-14",
+  "scope": "Mech compiler, runtime and language optimization studies; historical receipts remain authoritative.",
   "hardware": "Apple M3; each receipt specifies power, workers, source and timing conditions.",
   "ratio_definition": "speedup = before_seconds / after_seconds; elapsed_change_percent = 100 * (after_seconds / before_seconds - 1). These are within-study comparisons, not x-of-Mech language rankings.",
   "rules": [
@@ -88,7 +88,9 @@
           "after_seconds": 1.98366,
           "speedup": 1.022648034441386,
           "elapsed_change_percent": -2.214646063809955,
-          "report": "nbody/results/apple-m3-chapel-tricks-50m.table.md",
+          "report": "nbody/results/apple-m3-chapel-tricks-50m.json",
+          "before_program_id": "mech-sqrt-fma",
+          "after_program_id": "mech-pairwise-fma",
           "timing_boundary": "Fresh-process wall time; AOT build excluded; startup, computation and output included.",
           "precision": "as reported in the linked study"
         }
@@ -123,6 +125,8 @@
           "speedup": 1.2664576802507836,
           "elapsed_change_percent": -21.039603960396047,
           "report": "spectralnorm/results/induction-worker-counters.json",
+          "before_program_id": "mech-optimized-simd1-u4-r4-p8-workers1",
+          "after_program_id": "mech-integer-simd1-u4-r4-p8-workers1",
           "timing_boundary": "Diagnostic worker run with counters; distinct from published fresh-process cohorts.",
           "precision": "as reported in the linked study"
         }
@@ -646,10 +650,13 @@
       "evidence": [
         "knucleotide/README.md",
         "pidigits/README.md",
-        "regexredux/README.md"
+        "regexredux/README.md",
+        "regexredux/results/apple-m3-ac-normal-20261009.json",
+        "regexredux/.build/mech-regexredux.project/Cargo.lock",
+        "regexredux/.build/mech-regexredux-async.project/Cargo.lock"
       ],
       "limitations": [
-        "No isolated before/after speedup is asserted here without a matched receipt. The withdrawn eight-line k-nucleotide host shortcut was replaced by counted 17/24-line Mech bodies. Mech uses Rust regex::bytes (regex 1.13.1) through general library operations; that timing does not measure a Mech-generated regex engine."
+        "No isolated before/after speedup is asserted here without a matched receipt. The withdrawn eight-line k-nucleotide host shortcut was replaced by counted 17/24-line Mech bodies. The retained projects for the measured regex submissions pin regex 1.13.1. Rust regex::bytes supplies the general regex operations; the timing does not measure a Mech-generated regex engine."
       ],
       "measurements": [],
       "containing_commits": [
@@ -665,7 +672,11 @@
       "inspiration": "Uiua array/state comparisons prompted exploration of ordinary Mech array forms.",
       "mechanism": "Reduce Mandelbrot source state scaffolding from 20 to 11 and 29 to 16 lines; preserve mutation and return the updated state from arrow bodies.",
       "evidence": [
-        "mandelbrot/README.md"
+        "mandelbrot/README.md",
+        "mandelbrot/experiments/20261011-array-state/design.txt",
+        "mandelbrot/experiments/20261011-array-state/validation-current/report.json",
+        "mandelbrot/experiments/20261011-array-state/validation-current/codegen-comparison.json",
+        "mandelbrot/experiments/20261011-array-state/evidence/compiler-pins.json"
       ],
       "limitations": [
         "Several source/execution variants were compared. A byte-identical native object for the equivalent row form does not establish a compiler speedup. Arrow mutation repair is a correctness fix; do not advertise an unmeasured runtime gain."
@@ -700,7 +711,9 @@
           "speedup": 0.946313216654288,
           "elapsed_change_percent": 5.67325726840453,
           "report": "interpreter-integration/20261011/fannkuch-confirmation.json",
-          "timing_boundary": "Recorded default interpreter full run; use this study boundary only.",
+          "before_json_pointer": "/programs/before",
+          "after_json_pointer": "/programs/after",
+          "timing_boundary": "Fresh loaded interpretation including input and complete output; preparation excluded; whole-process time retained separately.",
           "precision": "as reported in the linked study"
         }
       ],
@@ -759,13 +772,15 @@
       "title": "Lane masks, recurrence organization and bounded FMA",
       "change_kind": "source organization and compiler floating-point policy",
       "status": "documented; no isolated timing asserted here",
-      "inspiration": "Chapel eight-pixel organization and five recurrence steps per escape check; Rust submission #4 Boolean mask/integer arithmetic investigation.",
-      "mechanism": "Keep per-lane escape state in ordinary Mech source, group recurrence steps, lower native masks and separate coordinate arithmetic from recurrence contraction.",
+      "inspiration": "Eight-pixel grouping in Chapel submission #3; Rust submission #4 Boolean mask/integer arithmetic comparison.",
+      "mechanism": "Keep per-lane escape state in ordinary Mech source, group five recurrence steps per escape check, lower native masks and separate coordinate arithmetic from recurrence contraction.",
       "evidence": [
-        "mandelbrot/README.md"
+        "mandelbrot/README.md",
+        "mandelbrot/upstream/mandelbrot-chapel-3.chpl",
+        "mandelbrot/results/apple-m3-16000.json"
       ],
       "limitations": [
-        "Coordinate FMA changed one N=200 pixel and was rejected; recurrence-only contraction preserved the output checks. Different source/grouping/worker forms have separate measurements; this entry makes no isolated-pass speedup claim."
+        "Full FMA failed the complete official N=200 bitmap check and was rejected; recurrence-only contraction preserved the recorded output checks. Chapel #3 checks escape every recurrence; the five-step grouping is an explicit Mech source choice. Different source/grouping/worker forms have separate measurements; this entry makes no isolated-pass speedup claim."
       ],
       "measurements": [],
       "containing_commits": [

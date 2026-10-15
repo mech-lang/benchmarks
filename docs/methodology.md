@@ -35,6 +35,8 @@ Each workload has saved minimum-LOC and minimum-time baselines. Coordinates are 
 
 The **global median** is the coordinate-wise median of the visible language-variant summary points, calculated separately for fastest and smallest profiles. Each execution variant has one vote. This differs from both the median timing of repeated runs and the geometric mean used for a language's multi-workload summary. Its display toggle is independent of the language summary layer.
 
+The one-dimensional **rankings** use the fastest-time coordinate for speed and the fewest-LOC coordinate for source size. Their signed distance is `(log2(coordinate) − log2(reference)) / sample SD`, using the sample SD of the selected variants' log2 coordinates. Global Rankings use the coordinate median as the reference; a language page uses its selected execution variant, which sits at zero in both charts. Negative distances mean faster or smaller, and positive distances mean slower or larger. Recentering preserves the recorded coordinates and population spread. The readout still shows multiples of the fixed best baseline; the separate language-comparison table uses matched workloads and the selected language at 1.0×.
+
 Spread contours use sample covariance in log2 ratio space across workloads, at one or two standard deviations. They describe workload variation, not confidence intervals or uncertainty in a stopwatch sample. Global contours use the same covariance construction across visible language variants and are translated to the global coordinate median. Recorded-sample and density layers display saved run observations.
 
 ## Provenance and reproduction
