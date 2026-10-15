@@ -10,8 +10,9 @@ reported `Unsupported revcomp sequence byte`. Rebol enclosed that string in
 double quotes; the checker had predicted an unquoted diagnostic. The original
 producer remains failed. A subsequent [checker correction and separate capture
 review](../quoted-rejection-v1/retained-rejection-review-v1.json) accepted the
-saved rejection without rerunning it. There are now 141 accepted corpus cases;
-the final eight still require execution.
+saved rejection without rerunning it. That raised the accepted count to 141.
+The [final eight-case continuation](final8-v1/OUTCOME.md) subsequently completed
+all 149 corpus contracts.
 
 The [independent closure](failed-stage-review-v1.json) replayed all 117 new and
 23 prior output contracts, 6,146 input pins, 592 run artifacts and eight durable
