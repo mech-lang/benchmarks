@@ -8,6 +8,11 @@ The live explorer has persistent language tabs with comparison controls, the mai
 | --- | ---: | --- |
 | Futhark | 9 / 10 | Binary trees: array representation does not meet the per-node allocation contract |
 
+The [explorer performance update](explorer-performance.md) has passed controlled
+browser measurements and interaction checks. Its Pages asset build passed, but
+deployment remained pending at 04:02 UTC on October 15. One retry uses identical
+website contents; the live version above remains the latest verified deployment.
+
 Twelve chart gaps have been filled from **111 preserved observations: 72 subject
 observations and 39 matched Mech controls**. No replacement timing run was needed.
 These admissions completed Lua, R and Uiua and brought GNU APL to nine workloads;
@@ -73,7 +78,7 @@ Current qualification tools and results are organized by implementation under
 [`experiments/`](../experiments/); earlier evidence remains under
 [`archive/languages/`](../archive/languages/).
 
-The pending APL binary-trees, Julia entry-dispatch and Rebol tooling has
+The APL binary-trees, Julia entry-dispatch and Rebol tooling has
 [250 passing pure test methods across 21 scripts](../experiments/shared/pure-validation-20261015/README.md).
 The initial three script failures and their repaired results are retained.
 These checks cover synthetic receipt, ownership, source-count and publication

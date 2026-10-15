@@ -89,3 +89,13 @@ The previous browser JSON was 73,826,163 bytes. The projected JSON is 8,335,571
 bytes, an 89% reduction before compression. Its gzip sidecar is 1,210,607 bytes.
 All 900 source files remain available in the inspector. The canonical catalog
 retains its original bytes and hash.
+
+## Publication
+
+The measured build is committed and validated. As of October 15, 2026 at
+04:02 UTC, its [first Pages deployment](https://gitlab.com/mech-lang/web/website/-/pipelines/2949127666)
+had passed the asset build but remained in the deployment stage; the public site
+still served `80f03cc4ba6ce434`. After more than an hour, an
+[identical-content retry](../site/publications/explorer-performance-v1/publication-retry-v1.json)
+was submitted. Both revisions have the same complete website tree. The
+measurements above describe the validated candidate, not a verified live rollout.
