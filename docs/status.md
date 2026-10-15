@@ -7,7 +7,7 @@ The live explorer has persistent language tabs with comparison controls, the mai
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
 | Futhark | 9 / 10 | Binary trees: array representation does not meet the per-node allocation contract |
-| GNU APL | 9 / 10 | Binary trees: the full-size run exceeded its workspace allocation |
+| GNU APL | 9 / 10 | Binary trees: the replacement workspace cohort has qualified; catalog admission is pending |
 
 Twelve chart gaps have been filled from **111 preserved observations: 72 subject
 observations and 39 matched Mech controls**. No replacement timing run was needed.
@@ -34,7 +34,7 @@ matched Mech controls. Its [admission](../experiments/lua/retained-pidigits-v1/p
 adds the tenth workload and a complete-suite aggregate while preserving the
 absence of a historical partial aggregate. LuaJIT and existing timings are unchanged.
 
-GNU APL binary trees remains without valid full-size samples. The
+GNU APL binary trees has completed a qualified full-size cohort. The
 [workspace-configuration packet](../experiments/apl/binarytrees-workspace-v1/)
 observed the supported memory-scale change from 90 to 200. Earlier shutdown and
 allocation-witness failures remain retained. Two subsequent
@@ -44,10 +44,15 @@ seven-node tree were retained and released with the expected counts. The unchang
 whole subject then passed [complete N=4 and N=10 checks](../experiments/apl/binarytrees-workspace-v1/whole-subject-v1/actual-bounded-work-review-v1.json).
 These are bounded qualification results, not timing samples. The unchanged main
 plus workspace setup has [41 canonical source units](../experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json).
-The [prepared N=21 cohort](../experiments/apl/binarytrees-workspace-v1/full6-v1/plan-v1.json)
-schedules three APL samples and three matched Mech controls, serially, with setup
-inside the measured process. Full-size execution and timing qualification remain
-pending; the small-input results do not establish full-size resource sufficiency.
+The [N=21 cohort](../experiments/apl/binarytrees-workspace-v1/full6-v1/plan-v1.json)
+completed three APL samples and three matched Mech controls, serially, with setup
+inside the measured process. [Independent reconciliation](../experiments/apl/binarytrees-workspace-v1/full6-v1/reconciliation/actual-v1.json)
+passed for all six observations. APL's median was 1,239.684 seconds; the matched
+Mech median was 0.411950 seconds. The [publication candidate](../experiments/apl/binarytrees-workspace-v1/full6-v1/publication/export-v1/candidate.json)
+retains the raw evidence and source counts. Catalog admission remains pending;
+these observations are not yet included in the explorer. The optimized label
+shares the compact program's measurements and does not represent another run
+or a distinct optimization.
 
 Julia AOT and Rebol are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
 
@@ -73,7 +78,11 @@ The initial three script failures and their repaired results are retained.
 These checks cover synthetic receipt, ownership, source-count and publication
 contracts; they perform no native intake or benchmark execution and do not
 grant native, timing or chart admission. The implementations' remaining gates
-above are unchanged.
+are separate from the native and publication results above. A later
+[helper validation](../experiments/shared/follow-up-pure-validation-20261015/README.md)
+passed 17 APL publication, five Rebol relocation and six Julia transport methods.
+The APL set extends the earlier suite; these counts are not an additional set of
+28 distinct methods.
 
 ## Scala and TypeScript evidence
 
