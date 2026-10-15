@@ -1,0 +1,76 @@
+{
+  "schema": "julia-entry-authorization-readonly-v1",
+  "recorded_at": "2026-10-15T21:43:12.538062+00:00",
+  "commands": [
+    {
+      "command": [
+        "/usr/sbin/dseditgroup",
+        "-o",
+        "checkmember",
+        "-m",
+        "cim310",
+        "admin"
+      ],
+      "exit_code": 0,
+      "stdout": "yes cim310 is a member of admin\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/sbin/dseditgroup",
+        "-o",
+        "checkmember",
+        "-m",
+        "cim310",
+        "_developer"
+      ],
+      "exit_code": 0,
+      "stdout": "yes cim310 is a member of _developer\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/id",
+        "-Gn"
+      ],
+      "exit_code": 0,
+      "stdout": "staff everyone localaccounts _appserverusr admin _appserveradm _lpadmin com.apple.access_ssh _appstore _lpoperator _developer _analyticsusers com.apple.access_ftp com.apple.access_screensharing com.apple.access_remote_ae com.apple.sharepoint.group.1\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "authorizationdb",
+        "read",
+        "system.privilege.taskport"
+      ],
+      "exit_code": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>allow-root</key>\n\t<false/>\n\t<key>authenticate-user</key>\n\t<true/>\n\t<key>class</key>\n\t<string>user</string>\n\t<key>comment</key>\n\t<string>Used by task_for_pid(...).\n\t\tTask_for_pid is called by programs requesting full control over another program\n\t\tfor things like debugging or performance analysis. This authorization only applies\n\t\tif the requesting and target programs are run by the same user; it will never\n\t\tauthorize access to the program of another user.  WARNING: administrators are advised not to modify this right.</string>\n\t<key>created</key>\n\t<real>739256839.71629906</real>\n\t<key>group</key>\n\t<string>_developer</string>\n\t<key>modified</key>\n\t<real>739256839.71629906</real>\n\t<key>session-owner</key>\n\t<false/>\n\t<key>shared</key>\n\t<true/>\n\t<key>timeout</key>\n\t<integer>36000</integer>\n\t<key>tries</key>\n\t<integer>10000</integer>\n\t<key>version</key>\n\t<integer>0</integer>\n</dict>\n</plist>\n",
+      "stderr": "YES (0)\n"
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "authorizationdb",
+        "read",
+        "system.privilege.taskport.safe"
+      ],
+      "exit_code": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>class</key>\n\t<string>allow</string>\n\t<key>comment</key>\n\t<string>For use by Apple.</string>\n\t<key>created</key>\n\t<real>739256839.71629906</real>\n\t<key>modified</key>\n\t<real>739256839.71629906</real>\n\t<key>version</key>\n\t<integer>0</integer>\n</dict>\n</plist>\n",
+      "stderr": "YES (0)\n"
+    },
+    {
+      "command": [
+        "/usr/bin/security",
+        "authorizationdb",
+        "read",
+        "system.privilege.taskport.debug"
+      ],
+      "exit_code": 0,
+      "stdout": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<dict>\n\t<key>class</key>\n\t<string>rule</string>\n\t<key>comment</key>\n\t<string>For use by Apple.  WARNING: administrators are advised\n            not to modify this right.</string>\n\t<key>created</key>\n\t<real>739256839.71629906</real>\n\t<key>k-of-n</key>\n\t<integer>1</integer>\n\t<key>modified</key>\n\t<real>813763237.85757697</real>\n\t<key>rule</key>\n\t<array>\n\t\t<string>is-admin</string>\n\t\t<string>is-developer</string>\n\t\t<string>authenticate-developer</string>\n\t</array>\n\t<key>version</key>\n\t<integer>0</integer>\n</dict>\n</plist>\n",
+      "stderr": "YES (0)\n"
+    }
+  ],
+  "settings_changed": false,
+  "subject_or_debugger_processes_launched": 0
+}
