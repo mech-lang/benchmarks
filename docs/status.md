@@ -2,7 +2,7 @@
 
 The current dataset contains **58 execution variants across 52 language families**, **10 workloads**, and **916 selected timed program profiles**. The source inventory retains **971 profiles** across **900 source files**, including fifty-five measured candidates that are not selected endpoints. Fifty-six execution variants cover the complete suite. The catalog retains **2,997 samples**, of which **2,832 belong to selected profiles**.
 
-The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Its [current verified deployment](../site/publications/hero-ranking-origin-v1/deployment.json), build `b132586a64ed8dff`, passed verification of all 33 live assets and the final manifest on October 14, 2026 at 22:22 UTC. [Mobile, desktop and interaction checks](../site/publications/hero-ranking-origin-v1/validation.json) and a [fresh live-browser check](../site/publications/hero-ranking-origin-v1/live-browser.json) passed. Scala and TypeScript are included in the live dataset.
+The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Median hover and keyboard focus highlight that language’s visible samples; Samples Off remains hidden. Benchmark filters combine resource emphasis (compute, memory, I/O) with workload type (numerical, strings/sequences, allocation, data structures, combinatorial, graphics). Resource tags describe exercised work rather than claiming a measured bottleneck. Its [current verified deployment](../site/publications/prolog-chart-filters-v1/deployment.json), build `80f03cc4ba6ce434`, passed verification of all 34 live assets and the final manifest on October 15, 2026 at 01:53 UTC. [Mobile, desktop and interaction checks](../site/publications/prolog-chart-filters-v1/validation.json) passed with all 58 execution variants. Prolog, Scala and TypeScript are included in the live dataset.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -42,9 +42,12 @@ allocation-witness failures remain retained. Two subsequent
 passed: the recorder control retained no values, and distinct leaves plus a
 seven-node tree were retained and released with the expected counts. The unchanged
 whole subject then passed [complete N=4 and N=10 checks](../experiments/apl/binarytrees-workspace-v1/whole-subject-v1/actual-bounded-work-review-v1.json).
-These are bounded qualification results, not timing samples. Full N=21 execution,
-setup-plus-subject canonical counts and timing qualification remain pending;
-the small-input results do not establish full-size resource sufficiency.
+These are bounded qualification results, not timing samples. The unchanged main
+plus workspace setup has [41 canonical source units](../experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json).
+The [prepared N=21 cohort](../experiments/apl/binarytrees-workspace-v1/full6-v1/plan-v1.json)
+schedules three APL samples and three matched Mech controls, serially, with setup
+inside the measured process. Full-size execution and timing qualification remain
+pending; the small-input results do not establish full-size resource sufficiency.
 
 Julia AOT and Rebol are not selectable series in this dataset. Their experimental sources and qualification records are retained in the archive. The existing Julia series is JIT. A toolchain installation or incomplete study is not an admitted timing.
 
