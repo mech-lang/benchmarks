@@ -25,8 +25,11 @@ def main():
     root = Path(__file__).resolve().parents[1]
     training = json.loads((root/'experiments/julia/packagecompiler-v1/training-inputs.json').read_text())
     profile = next(p for p in training['profiles'] if p['profile'] == args.profile)
-    corpus = root/'experiments/shared/bounded-corpus-v1/cases'
-    manifest = json.loads((corpus/'manifest.json').read_text())
+    corpus_reference = profile.get('corpus_manifest', training['corpus_manifest'])
+    corpus_manifest = root/corpus_reference['path']
+    assert sha(corpus_manifest) == corpus_reference['sha256']
+    corpus = corpus_manifest.parent
+    manifest = json.loads(corpus_manifest.read_text())
     case = next(c for c in manifest['cases'] if c['benchmark'] == profile['workload']
         and c['case'] == (args.case or profile['case']))
     assert case['expected_exit'] == 0

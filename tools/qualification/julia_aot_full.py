@@ -184,6 +184,13 @@ def schedule_for(manifests):
 
 def build_draft(output,adaptation_ref,counts_ref,bundle_root,evidence_map_ref=None):
     pins={};rows=source_rows(adaptation_ref,counts_ref,pins)
+    # Fixture selection is metadata, so it is bound by the draft even while
+    # completed app build/validation reports are still unavailable.
+    training=read_ref(binding(PACKET/'training-inputs.json'),pins)
+    for item in training['profiles']:
+        if item.get('corpus_manifest'):
+            reference=item['corpus_manifest']
+            pins.update(merge(pins,{str(absolute_source(reference['path'])):reference['sha256']}))
     overrides=read_ref(evidence_map_ref,pins) if evidence_map_ref else {}
     require(type(overrides) is dict and set(overrides)<=set(rows),'Unknown evidence-map profile')
     h=helpers();controls=h.controls(pins);manifests={}
@@ -275,6 +282,11 @@ def completed_subject(row,pins):
     require(report['executable']['path']==row['binary'] and report['command'][-1]==row['original_profile_id']
             and report['command'][-3]==row['bundle'],'Build app identity differs')
     command=report['command'];profile=row['original_profile_id']
+    training_ref=binding(PACKET/'training-inputs.json');training=read_ref(training_ref,pins)
+    training_rows=[item for item in training['profiles'] if item['profile']==profile]
+    require(len(training_rows)==1 and training_rows[0]['workload']==row['benchmark'],
+            'Exact retained training/validation profile mapping required')
+    training_path=str(absolute_source(training_rows[0]['training']))
     build_threads=report['environment'].get('JULIA_NUM_THREADS')
     require(build_threads in ('8','8,0')
             and (profile!='fannkuchredux-julia-2' or build_threads=='8,0'),
@@ -282,11 +294,13 @@ def completed_subject(row,pins):
             'other retained builds may use the historical eight-thread build environment')
     require(command==[command[0],'--startup-file=no','--history-file=no','--color=no',
         '--project='+str(PACKET/'toolchain'),str(PACKET/'build_app.jl'),row['package'],row['bundle'],
-        str(PACKET/'training'/(profile+'.jl')),profile],'Expected PackageCompiler recipe/package/training command required')
-    required_inputs=[str(PACKET/'build_app.jl'),str(PACKET/'training'/(profile+'.jl')),
+        training_path,profile],'Expected PackageCompiler recipe/package/training command required')
+    required_inputs=[str(PACKET/'build_app.jl'),training_path,
         str(PACKET/'toolchain/Project.toml'),str(PACKET/'toolchain/Manifest.toml'),
         str(Path(row['package'])/'Project.toml'),row['source'],command[0]]
     require(set(required_inputs)<=set(report['input_sha256']),'Build recipe input closure is incomplete')
+    require(report['input_sha256'][training_path]==training_rows[0]['sha256'],
+            'Build did not bind the selected training source')
     pins.update(merge(pins,report['input_sha256']))
     require(report['input_sha256'].get(row['source'])==row['source_sha256'],'Build did not bind the counted adapted source')
     for name,field in (('stdout.txt','stdout_sha256'),('stderr.txt','stderr_sha256')):
@@ -296,12 +310,11 @@ def completed_subject(row,pins):
     executable_sha=sha(row['binary']);image_sha=sha(row['sysimage'])
     require(report['executable']['sha256']==executable_sha,'Launcher differs from the completed build')
     validation_refs=[];image_bound=False;validation_artifacts={};validated_cases=[]
-    training_ref=binding(PACKET/'training-inputs.json');training=read_ref(training_ref,pins)
-    training_rows=[item for item in training['profiles'] if item['profile']==profile]
-    require(len(training_rows)==1 and training_rows[0]['workload']==row['benchmark'],
-            'Exact retained training/validation profile mapping required')
-    corpus=ROOT/'experiments/shared/bounded-corpus-v1/cases'
-    corpus_ref=binding(corpus/'manifest.json');cases=read_ref(corpus_ref,pins)['cases']
+    selected=training_rows[0].get('corpus_manifest')
+    corpus_ref=(dict(path=str(absolute_source(selected['path'])),sha256=selected['sha256']) if selected
+                else binding(ROOT/'experiments/shared/bounded-corpus-v1/cases/manifest.json'))
+    corpus=Path(corpus_ref['path']).parent
+    cases=read_ref(corpus_ref,pins)['cases']
     require(type(row['validation_report_paths']) is list and row['validation_report_paths'],
             'At least one completed no-codegen output validation required')
     for path in row['validation_report_paths']:

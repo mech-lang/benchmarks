@@ -9,6 +9,13 @@ using Printf
 
 const COUNTSFOR = ("ggt", "ggta", "ggtatt", "ggtattttaatt", "ggtattttaatttatagt")
 
+struct NucleotideKey{T<:Unsigned}
+    value::T
+end
+
+Base.:(==)(a::NucleotideKey, b::NucleotideKey) = a.value == b.value
+Base.isequal(a::NucleotideKey, b::NucleotideKey) = isequal(a.value, b.value)
+
 # This is not reading the file in line-by-line. Doing so is impossible
 # in Julia without using FFI because all io is automatically
 # buffered. Thus despite not appearing to be buffered reads, all are.
@@ -50,7 +57,7 @@ end
 
 # Count the number of each subsequence of length n present in seq and
 # store the result in hashtable d.
-function count_subseqs!(d::Dict{T}, seq, n) where T
+function count_subseqs!(d::Dict{NucleotideKey{T}}, seq, n) where T
     # This results in a number where the last 2n bits are 1 and the rest are 0.
     mask = (1 << 2n - 1) % T
     key = zero(T)
@@ -64,7 +71,7 @@ function count_subseqs!(d::Dict{T}, seq, n) where T
     # only the last n nucleotides are encoded in key.
     for i=n:length(seq)
         key = mask & (key << 2 | @inbounds seq[i])
-        inc!(d, key)
+        inc!(d, NucleotideKey(key))
     end
 end
 
@@ -84,22 +91,20 @@ end
     end
 end
 
-# Define a fast hashing function for UInt keys encoded with the
-# sequence. Defining a Base function on a Base type is "type-piracy"
-# and should be avoided in production code. Instead, Base.hash could
-# be defined on a wrapper struct. For this workload, this simple
-# xor/bitshift hash speeds things up by over 20% compared to Julia's
-# default hash.
-Base.hash(x::Unsigned)::UInt = x ⊻ x >> 7
+# Keep the original one-argument xor/shift hash on application-owned keys.
+# Julia Dict.hashindex calls this method, preserving the original bucket hash.
+# The separate two-argument method mixes an explicit seed for composed hashes.
+Base.hash(key::NucleotideKey)::UInt = UInt(key.value ⊻ key.value >> 7)
+Base.hash(key::NucleotideKey, seed::UInt)::UInt = hash(key) ⊻ seed
 
 # Create a sorted array with the number of appearances of each
 # sequence of length n.
 function frequency_table(seq, n)
-    d = Dict{UInt32,Int32}()
+    d = Dict{NucleotideKey{UInt32},Int32}()
     count_subseqs!(d, seq, n)
 
     total = sum(values(d))
-    counts = [decode(k, n) => get(d, k, 0) / total for k in keys(d)]
+    counts = [decode(k.value, n) => get(d, k, 0) / total for k in keys(d)]
     sort!(counts; lt=freq_isless, rev=true)
 end
 
@@ -113,7 +118,7 @@ freq_isless(a, b) = a[2] == b[2] ? isless(b[1], a[1]) : isless(a[2], b[2])
 # hashtable of all sequences of the same length as subseq appearing in
 # seq.
 function count_sequence(seq, subseq)
-    d = length(subseq) < 16 ? Dict{UInt32,Int32}() : Dict{UInt,Int32}()
+    d = length(subseq) < 16 ? Dict{NucleotideKey{UInt32},Int32}() : Dict{NucleotideKey{UInt},Int32}()
     count_subseqs!(d, seq, length(subseq))
 
     # Construct the key needed for accessing the count of subseq
@@ -122,7 +127,7 @@ function count_sequence(seq, subseq)
         key = key << 2 | (c >> 1 & 0x03)
     end
 
-    get(d, key, 0)
+    get(d, NucleotideKey(key), 0)
 end
 
 function main(io, out)

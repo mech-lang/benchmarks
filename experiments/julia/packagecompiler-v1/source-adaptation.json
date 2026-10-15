@@ -408,12 +408,68 @@
       },
       "adapted_source": {
         "path": "experiments/julia/packagecompiler-v1/packages/knucleotide-julia-6/src/BenchKnucleotideJulia6.jl",
-        "sha256": "467964a13a820ba5cbaa459e8e7e33ede300091d1feb40df9f7023f747069627",
+        "sha256": "6f6f978d2f08d962db0ea032ab7a170411127d7d46d126d06ce7990b5936d89b",
         "role": "application"
       },
       "module_prefix": "module BenchKnucleotideJulia6\n\n",
       "module_suffix": "\nend\n",
       "edits": [
+        {
+          "start": 152,
+          "end": 234,
+          "original": "const COUNTSFOR = (\"ggt\", \"ggta\", \"ggtatt\", \"ggtattttaatt\", \"ggtattttaatttatagt\")\n",
+          "replacement": "const COUNTSFOR = (\"ggt\", \"ggta\", \"ggtatt\", \"ggtattttaatt\", \"ggtattttaatttatagt\")\n\nstruct NucleotideKey{T<:Unsigned}\n    value::T\nend\n\nBase.:(==)(a::NucleotideKey, b::NucleotideKey) = a.value == b.value\nBase.isequal(a::NucleotideKey, b::NucleotideKey) = isequal(a.value, b.value)\n",
+          "purpose": "Use an application-owned immutable numeric key type so specialized nucleotide hashing cannot affect Julia runtime dictionaries during native application startup. Equality retains the underlying numeric value semantics, including equal values across unsigned widths."
+        },
+        {
+          "start": 1547,
+          "end": 1599,
+          "original": "function count_subseqs!(d::Dict{T}, seq, n) where T\n",
+          "replacement": "function count_subseqs!(d::Dict{NucleotideKey{T}}, seq, n) where T\n",
+          "purpose": "Retain numeric unsigned T for the original mask and rolling key; only dictionary storage is wrapped."
+        },
+        {
+          "start": 2046,
+          "end": 2067,
+          "original": "        inc!(d, key)\n",
+          "replacement": "        inc!(d, NucleotideKey(key))\n",
+          "purpose": "Wrap the unchanged original numeric rolling key at the dictionary boundary."
+        },
+        {
+          "start": 2643,
+          "end": 3037,
+          "original": "# Define a fast hashing function for UInt keys encoded with the\n# sequence. Defining a Base function on a Base type is \"type-piracy\"\n# and should be avoided in production code. Instead, Base.hash could\n# be defined on a wrapper struct. For this workload, this simple\n# xor/bitshift hash speeds things up by over 20% compared to Julia's\n# default hash.\nBase.hash(x::Unsigned)::UInt = x \u22bb x >> 7\n",
+          "replacement": "# Keep the original one-argument xor/shift hash on application-owned keys.\n# Julia Dict.hashindex calls this method, preserving the original bucket hash.\n# The separate two-argument method mixes an explicit seed for composed hashes.\nBase.hash(key::NucleotideKey)::UInt = UInt(key.value \u22bb key.value >> 7)\nBase.hash(key::NucleotideKey, seed::UInt)::UInt = hash(key) \u22bb seed\n",
+          "purpose": "Remove the global Unsigned hash customization from the AOT package. Preserve its exact one-argument xor/shift numeric result on the owned wrapper type, which Julia Dict.hashindex calls; provide a separate owned-type seeded method for hash composition. The upstream Julia/JIT source remains unchanged."
+        },
+        {
+          "start": 3158,
+          "end": 3187,
+          "original": "    d = Dict{UInt32,Int32}()\n",
+          "replacement": "    d = Dict{NucleotideKey{UInt32},Int32}()\n",
+          "purpose": "Store fixed-width nucleotide counters using the owned isbits key wrapper."
+        },
+        {
+          "start": 3245,
+          "end": 3314,
+          "original": "    counts = [decode(k, n) => get(d, k, 0) / total for k in keys(d)]\n",
+          "replacement": "    counts = [decode(k.value, n) => get(d, k, 0) / total for k in keys(d)]\n",
+          "purpose": "Decode the unchanged numeric value from each owned dictionary key; counts, fractions and sorting remain unchanged."
+        },
+        {
+          "start": 3835,
+          "end": 3907,
+          "original": "    d = length(subseq) < 16 ? Dict{UInt32,Int32}() : Dict{UInt,Int32}()\n",
+          "replacement": "    d = length(subseq) < 16 ? Dict{NucleotideKey{UInt32},Int32}() : Dict{NucleotideKey{UInt},Int32}()\n",
+          "purpose": "Preserve the original UInt32-versus-UInt table choice, wrapping only dictionary keys."
+        },
+        {
+          "start": 4105,
+          "end": 4124,
+          "original": "    get(d, key, 0)\n",
+          "replacement": "    get(d, NucleotideKey(key), 0)\n",
+          "purpose": "Wrap the unchanged numeric query key for lookup; owned equality/hash preserve cross-width equal numeric keys."
+        },
         {
           "start": 5059,
           "end": 5098,
@@ -428,12 +484,19 @@
         "Printf": "de0858da-6303-5e67-8744-51eddeeeb8d7"
       },
       "notes": [
-        "The original Base.hash(::Unsigned) customization is preserved and isolated in this profile-specific executable. No other workload shares its process or package."
+        "The original global Unsigned hash customization is replaced by application-owned NucleotideKey dictionary keys. The one-argument hash is exactly UInt(value xor (value >> 7)), preserving the original Dict bucket hash; only the owned-type two-argument method additionally xors its supplied seed. Numeric encoding, rolling masks, counts, fractions, output and sorting remain original.",
+        "The v1 package, original adaptation/count receipts, failed native startup validation and original native bundle are retained; the new package needs a separate build and fresh output validation."
       ],
       "source_transformation_only": true,
       "compiler_acceptance": false,
       "runtime_output_validated": false,
-      "chart_admission": false
+      "chart_admission": false,
+      "retained_prior_versions": [
+        {
+          "path": "experiments/julia/packagecompiler-v1/builds/knucleotide-julia-6-v1/retained-source/manifest.json",
+          "sha256": "d5979d8c428db2c2b988d42051aca312b41c12e4df4e9438d442adc1e08a398b"
+        }
+      ]
     },
     {
       "profile": "mandelbrot-julia-1",
@@ -1127,6 +1190,20 @@
       "compiler_acceptance": false,
       "runtime_output_validated": false,
       "chart_admission": false
+    }
+  ],
+  "profile_revisions": [
+    {
+      "profile": "knucleotide-julia-6",
+      "reason": "Replace global Unsigned hash piracy with an owned key type for ordinary native application startup; preserve the original one-argument xor/shift hash.",
+      "retained_prior_version": {
+        "path": "experiments/julia/packagecompiler-v1/builds/knucleotide-julia-6-v1/retained-source/manifest.json",
+        "sha256": "d5979d8c428db2c2b988d42051aca312b41c12e4df4e9438d442adc1e08a398b"
+      },
+      "previous_adapted_source_sha256": "467964a13a820ba5cbaa459e8e7e33ede300091d1feb40df9f7023f747069627",
+      "current_adapted_source_sha256": "6f6f978d2f08d962db0ea032ab7a170411127d7d46d126d06ce7990b5936d89b",
+      "source_transformation_only": true,
+      "native_executions": 0
     }
   ]
 }

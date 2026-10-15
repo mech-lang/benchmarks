@@ -2,7 +2,7 @@ using BenchKnucleotideJulia6
 
 empty!(ARGS)
 push!(ARGS, "0")
-open("/private/tmp/mech-benchmark-publication/experiments/shared/bounded-corpus-v1/cases/knucleotide/arbitrary-widths/stdin.bin", "r") do input
+open("/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training-fixtures/knucleotide/clbg-shape/stdin.bin", "r") do input
     mktemp() do path, output
         redirect_stdin(input) do
             redirect_stdout(output) do
@@ -11,6 +11,6 @@ open("/private/tmp/mech-benchmark-publication/experiments/shared/bounded-corpus-
         end
         flush(output)
         seekstart(output)
-        @assert read(output) == read("/private/tmp/mech-benchmark-publication/experiments/shared/bounded-corpus-v1/cases/knucleotide/arbitrary-widths/expected.stdout")
+        @assert read(output) == read("/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training-fixtures/knucleotide/clbg-shape/expected.stdout")
     end
 end

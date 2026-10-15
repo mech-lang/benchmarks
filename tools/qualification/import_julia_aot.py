@@ -285,6 +285,24 @@ def verify_build_evidence(plan,files):
             same(row['bundle_inventory'],plan['bundle_inventories'][row['original_profile_id']],
                  'Per-profile app bundle inventory differs')
             require(plan['pins'].get(row['sysimage'])==row['sysimage_sha256'],'Unpinned native app image')
+            training = document(row['training_inputs_evidence'])
+            training_rows = [item for item in training['profiles'] if item['profile']==row['original_profile_id']]
+            require(len(training_rows)==1 and training_rows[0]['workload']==row['benchmark'],
+                    'Training profile mapping differs')
+            training_row = training_rows[0]
+            training_path = ROOT/training_row['training']
+            require(training_path.is_relative_to(ROOT) and '..' not in training_path.parts
+                    and build['command'][-2]==str(training_path)
+                    and build['input_sha256'].get(str(training_path))==training_row['sha256'],
+                    'Completed build did not use the selected exact training recipe')
+            corpus_binding = training_row.get('corpus_manifest',training['corpus_manifest'])
+            corpus_path = ROOT/corpus_binding['path']
+            require(corpus_path.is_relative_to(ROOT) and '..' not in corpus_path.parts,
+                    'Selected fixture manifest escaped repository')
+            same(row['bounded_corpus_evidence'],dict(path=str(corpus_path),sha256=corpus_binding['sha256']),
+                 'Selected per-profile fixture manifest differs')
+            corpus = document(row['bounded_corpus_evidence'])
+            validated_cases = []
             image_bound = False
             require(row['validation_evidence'],'Completed native output validation required')
             for binding in row['validation_evidence']:
@@ -300,11 +318,28 @@ def verify_build_evidence(plan,files):
                 require(validation['command'][0]==row['binary']
                         and validation['command'][-4:]==row['runtime_arguments'],
                         'Validated native executable or Julia flags differ')
+                cases = [case for case in corpus['cases'] if case['benchmark']==row['benchmark']
+                         and case['case']==validation['case']]
+                require(len(cases)==1 and cases[0]['expected_exit']==0,'Unknown successful validation case')
+                case = cases[0]
+                validated_cases.append(case['case'])
+                same(validation['command'],[row['binary']]
+                     +([str(case['n'])] if case['input_kind']=='integer-argument' else [])
+                     +row['runtime_arguments'],'Validated fixture argv differs')
+                require(validation['stdin_sha256']==case['stdin']['sha256']
+                        and validation['expected_sha256']==case['expected']['sha256'],
+                        'Validated input or independent reference differs')
+                for field in ('stdin','expected'):
+                    path = corpus_path.parent/case[field]['path']
+                    require(path.is_relative_to(corpus_path.parent) and '..' not in path.parts
+                            and plan['pins'].get(str(path))==case[field]['sha256'],
+                            'Selected fixture bytes are not pinned')
                 if 'sysimage' in validation:
                     same(validation['sysimage'],dict(path=row['sysimage'],sha256=row['sysimage_sha256']),
                          'Validated native image differs')
                     require(validation['sysimage_unchanged'] is True,'Validated image changed')
                     image_bound = True
+            require(training_row['case'] in validated_cases,'Selected default validation case did not pass')
             if row['image_identity_evidence']:
                 image = document(row['image_identity_evidence'])
                 require(image['schema']=='julia-packagecompiler-built-image-identity-v1'
