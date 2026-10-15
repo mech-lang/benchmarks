@@ -1,0 +1,11 @@
+# Remaining primitive fixtures
+
+This additive continuation prepares exactly sixteen fresh fixture processes: corrected regex, GC ownership, and fourteen IO cases. It retains the failed linker-stage report and its three successful captures separately. Arithmetic, formatting, and diagnostic interposer compilation are not repeated. The last injected IO fixture uses the exact previously compiled interposer at its original path.
+
+The controller loads the frozen linker adapter, preserves the original helper identity, and reuses its transport, observer, output checker, and capture ownership checks. Its tenth inherited lease covers the closed linker-stage job. All prior input pins, failed records, output inventories, and durable jobs remain prerequisites. The reviewed regex fixture changes only the two literal anchor patterns and its relative common-helper path; the benchmark main is not executed by this stage.
+
+Preparation fixes sixteen slots at the original limits: 180 seconds, 512 MiB process-group RSS, 1 MiB per output stream, and five seconds for cleanup. The runner stops at the first unexpected failure without retry. Its fixture-only report and terminal count only new attempts; no combined nineteen-process success is fabricated. An independent disposition must later join the preserved successes with any new successful captures. All correctness, work, count, timing, and chart gates remain false in producer output.
+
+The additive entrypoint is `tools/qualification/rebol_primitive_remaining.py --adapter-sha256 SHA prepare|run`, with the original required plan, output, extension-review, and source-review options. `load_controller(SHA)` exposes `validate_prior_linker(...)`, the exact sixteen-slot `schedule(...)`, and the original extension/first-failure intake APIs. `extension_inputs(...)` still returns only the three extension-stage jobs; the closed linker stage is a separate `prior_linker_stage` record.
+
+Six focused pure tests cover exact slot changes, helper preservation, malformed prior evidence, fixture-only completion, stop-on-failure retention, and late report mutation. Test execution and native preparation are recorded separately; no native result is asserted here.
