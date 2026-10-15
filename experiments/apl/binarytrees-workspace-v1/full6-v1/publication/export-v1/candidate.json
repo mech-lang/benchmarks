@@ -1,0 +1,2272 @@
+{
+  "schema": "apl-workspace-full6-publication-candidate-v1",
+  "status": "validated-six-observations-awaiting-publication",
+  "files": {
+    "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74": {
+      "path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+      "archive_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+      "name": "binarytrees.compact.apl",
+      "sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+      "code": "\u235d GNU APL 2.0; explicit canonical algorithm, authored for this comparison.\n\u2395IO\u21900\n\u2395CT\u21900\nOUT\u2190'w'\u2395FIO[3]'/dev/fd/3'\n\u2207 Z\u2190Make D;Left;Right\n \u2192(D>0)/Branch\n Z\u21900(\u2282\u236c)(\u2282\u236c)\n \u21920\nBranch:Left\u2190Make D-1\n Right\u2190Make D-1\n Z\u21901 Left Right\n\u2207\n\u2207 Z\u2190Check T\n Z\u21901\n \u2192(0=\u2283T[0])/0\n Z\u21901+(Check \u2283T[1])+Check \u2283T[2]\n\u2207\n\u2207 Run N;Maximum;Stretch;Long;D;Iterations;I;Sum;Temporary\n Maximum\u21906\u2308N\n Stretch\u2190Make Maximum+1\n \u22a3(('stretch tree of depth %d',(\u2395UCS 9),' check: %d',\u2395UCS 10)(Maximum+1)(Check Stretch))\u2395FIO[22]OUT\n Stretch\u2190\u236c\n Long\u2190Make Maximum\n D\u21904\nDepth:\u2192(D>Maximum)/End\n Iterations\u21902*((Maximum-D)+4)\n I\u21900\n Sum\u21900\nLoop:\u2192(I\u2265Iterations)/Emit\n Temporary\u2190Make D\n Sum\u2190Sum+Check Temporary\n I\u2190I+1\n \u2192Loop\nEmit:\u22a3(('%d',(\u2395UCS 9),' trees of depth %d',(\u2395UCS 9),' check: %d',\u2395UCS 10) Iterations D Sum)\u2395FIO[22]OUT\n D\u2190D+2\n \u2192Depth\nEnd:\u22a3(('long lived tree of depth %d',(\u2395UCS 9),' check: %d',\u2395UCS 10) Maximum (Check Long))\u2395FIO[22]OUT\n\u2207\nRun \u234e,\u2283\u00af1\u2191\u2395ARG\n\n\u22a3\u2395FIO[4]OUT\n)OFF\n"
+    },
+    "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c": {
+      "path": "experiments/apl/binarytrees-workspace-v1/setup.apl",
+      "archive_path": "experiments/apl/binarytrees-workspace-v1/setup.apl",
+      "name": "setup.apl",
+      "sha256": "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c",
+      "code": "\u2395SYL[(\u2395IO+31);(\u2395IO+1)]\u2190200\n"
+    }
+  },
+  "program_inventory": {
+    "binarytrees:apl-workspace200-compact": {
+      "key": "binarytrees:apl-workspace200-compact",
+      "id": "apl-binarytrees-workspace200-compact",
+      "language": "apl",
+      "benchmark": "binarytrees",
+      "variant": "compact",
+      "files": [
+        "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+        "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c"
+      ],
+      "file_roles": {
+        "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74": {
+          "role": "application",
+          "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+          "normalized_loc": 40,
+          "physical_loc": 40,
+          "formatted_loc": null,
+          "source_owner_review": {
+            "path": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+            "sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0"
+          }
+        },
+        "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c": {
+          "role": "runtime-setup",
+          "source_path": "experiments/apl/binarytrees-workspace-v1/setup.apl",
+          "normalized_loc": 1,
+          "physical_loc": 1,
+          "formatted_loc": null,
+          "source_owner_review": {
+            "path": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+            "sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0"
+          }
+        }
+      },
+      "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+      "loc": 41,
+      "canonical_loc": 41,
+      "physical_loc": 41,
+      "loc_metric": "canonical-source-units",
+      "canonical_loc_qualified": true,
+      "formatted_loc": null,
+      "formatted_x": null,
+      "formatted_loc_qualified": false,
+      "formatted_loc_complete": false,
+      "formatted_loc_status": "unavailable",
+      "loc_expansions": [],
+      "samples": [
+        1239.683669375,
+        1241.905539417,
+        1234.105568833
+      ],
+      "seconds": 1239.683669375,
+      "timing_sd": 4.018529027132986,
+      "sample_evidence": [
+        {
+          "attempt": 1,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.json",
+            "sha256": "1db513d54bac3c49fe619d5a9a77b81bc74f51bacf9e7717fdfbb96aa5453f5f"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "20e3632c96ca2bb6c054b6450f9e71c5f625645e5423c0f5565667bdd6c14828"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/001-apl-binarytrees-workspace200-compact.json",
+            "sha256": "102fb71553d004e19657357b24ed33cb9541cf19452c33302c798729c5825ede"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 4,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.json",
+            "sha256": "9da3c5c739d99fffb4d1cdc3d2a44ac116c4c948ca4f5ac064c397b61e02704e"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "7918deef4864f50985b34f1c8afa198a950ee0152ead8a6c5f1bc6d15c7e9b27"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/004-apl-binarytrees-workspace200-compact.json",
+            "sha256": "aba6880362cd3dbd8a92815cf161dcd1b8ab2653b99a7da021ef2dc1d9de640e"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 5,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.json",
+            "sha256": "9a7456bc74c9e83a3d9c8ad1c5dcd3439b18f73e04fce86cfe5106aff17731f5"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "1dac55714ef285f18773962dde9f01fe40f6135e33a0a1c667004e59107673aa"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/005-apl-binarytrees-workspace200-compact.json",
+            "sha256": "1e70e0a9367e381d7bd77b3067fb061c1adbc0cc26123f414b885b714b76a2fc"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        }
+      ],
+      "sample_execution_metadata": [
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T01:57:20.167789+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1239.683669375,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4217024,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:18:00.066826+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 1,
+          "attempt": 1,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 83181,
+            "pgid": 83181,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T02:18:01.780928+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1241.905539417,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4218176,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:38:43.897893+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 2,
+          "attempt": 4,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 87710,
+            "pgid": 87710,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T02:38:44.092572+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1234.105568833,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4218208,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:59:18.414307+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 3,
+          "attempt": 5,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 91661,
+            "pgid": 91661,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.supervisor.json"
+        }
+      ],
+      "report": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+      "report_sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07",
+      "loc_report": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+      "loc_report_sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0",
+      "source_work_evidence": {
+        "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json",
+        "sha256": "e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8"
+      },
+      "source_work_qualified": true,
+      "required_work_validated": true,
+      "full_workload_qualified": true,
+      "native_observations": 3,
+      "source_alias_of": null,
+      "timing_alias_of": null,
+      "aliased_sample_source": null,
+      "distinct_optimization_claimed": false,
+      "setup_inside_timer": true,
+      "runtime": {
+        "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl",
+        "sha256": "ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836",
+        "version": "BUILDTAG:\n---------\n    Project:        GNU APL\n    Version / SVN:  2.0 / SVN: no-svnversion\n    Build Date:     2026-10-11 14:05:09 EDT\n    Build OS:       Darwin 25.2.0 arm64\n    config.status:  default ./configure options\n    Archive SVN:   no-svn",
+        "architecture": "arm64-apple-darwin",
+        "distribution_url": "https://ftp.gnu.org/gnu/apl/apl-2.0.tar.gz",
+        "distribution_sha256": "24bbb744fce47e62837234a053bdeecee51b9ea61c82c79f7cc191bc6a54c0a1",
+        "primary_runtime_documentation": "https://www.gnu.org/software/apl/apl.html",
+        "build_flags": [
+          "--without-x",
+          "--without-gtk3",
+          "--without-sqlite3",
+          "--without-postgresql",
+          "--with-pcre=/opt/homebrew/opt/pcre2",
+          "CORE_COUNT_WANTED=argv",
+          "CXXFLAGS=-O3 -DNDEBUG -std=c++11",
+          "LDFLAGS=-L/opt/homebrew/opt/pcre2/lib",
+          "CPPFLAGS=-I/opt/homebrew/opt/pcre2/include"
+        ],
+        "pins": {
+          "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl": "ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836",
+          "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh": "50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4",
+          "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib": "ca9968ffff24cbfee530350877d70323586a7590016924be418f37deb0012eb9"
+        },
+        "numerical_primitive_parallelism": {
+          "enabled": false,
+          "requested_cc_is_ceiling_only": true,
+          "reason": "This pinned GNU APL2.0 macOS configuration leaves HAVE_AFFINITY_NP undefined; src/Parallel.hh therefore undefines PARALLEL_ENABLED. No runtime or source byte changes.",
+          "proof_source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Parallel.hh",
+          "proof_source_sha256": "2bf9f05184a5bacd758fa2e0caa6b27c61cfd8ca0c72ec530332d4099ad2c5cd",
+          "proof_config": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/config.h",
+          "proof_config_sha256": "6e685f7cc0c147fba596d155c46cf0316a82c5b230df9a2fe92b43e79b0e86a1"
+        }
+      },
+      "runtime_arguments": [
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+        "--cc",
+        "1",
+        "-f",
+        "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+        "-f",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+        "--",
+        "{n}"
+      ],
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+        "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1"
+      },
+      "execution_mode": "interpreted",
+      "runtime_policy": "GNU APL 2.0 \u00b7 native ARM64 interpreter \u00b7 serial numerical primitives on macOS",
+      "memory_policy": "GNU APL workspace scale 200; unchanged allocator and garbage collection",
+      "workspace_scale": 200,
+      "maximum_workers": 1,
+      "numerical_primitive_parallelism_enabled": false,
+      "runtime_publication_metadata_qualified": true,
+      "runtime_metadata_basis": {
+        "path": "experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json",
+        "sha256": "76a28e0e75497ebc181c95cbaa3a529b69fe8b2cbac3ae04ed011468565a41d6"
+      },
+      "runtime_metadata_scope": "Identical retained image, launcher and recorded static dependencies; the prior profile-specific approval is not extended to this new source.",
+      "per_process_loaded_images_qualified": false,
+      "complete_transitive_os_inventory_qualified": false,
+      "matched_mech_control": {
+        "key": "binarytrees:apl-workspace200-full-study:mech-control",
+        "samples": [
+          0.421101917,
+          0.404917917,
+          0.411949666
+        ],
+        "seconds": 0.411949666,
+        "timing_sd": 0.008115120130205518,
+        "sample_evidence": [
+          {
+            "attempt": 2,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+              "sha256": "19ca58c3e8d632a41f50625555622c56254c665b841670019c4fa7425ae569fa"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json",
+              "sha256": "a5e73d72e94c9cfe0aabd039fb3d730eb591d74e07feebe1863be38c0f571998"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/002-mech-aot-control.json",
+              "sha256": "bd410b4fda62bf8809a31b93612e76a7aabda032efd53e16e3030c68f0cd112c"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          },
+          {
+            "attempt": 3,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+              "sha256": "c3ca30a0ddb5d93b99ed30f0f99b9c7cd5b7f9e97ac8b2700c7cdd583ff252ff"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json",
+              "sha256": "f955d8f57a86048a1f8df2ed69a8371baf9dbf63c2c6b657d0e262f50ca0d937"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/003-mech-aot-control.json",
+              "sha256": "2fe9be6c9a04cdf52ee669ccb84e6b86e9887b9dd138cd7716d4001cf6810869"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          },
+          {
+            "attempt": 6,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+              "sha256": "284bfe002ee01aacd2598e955e199568f952b4a3f43bb98252b49650deef3e18"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json",
+              "sha256": "2567c5166dd2a668c15327bf777440c5d4beabd3ca7226fa957123d94f461613"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/006-mech-aot-control.json",
+              "sha256": "f8c097f9b66f750a953782fb2c789f8cd9fac4456e2a87b0c9f32994d108e4d9"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          }
+        ],
+        "sample_execution_metadata": [
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:18:00.254865+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.421101917,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:18:00.868726+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 1,
+            "attempt": 2,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 87678,
+              "pgid": 87678,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json"
+          },
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:18:01.023603+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.404917917,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:18:01.624093+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 2,
+            "attempt": 3,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 87694,
+              "pgid": 87694,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json"
+          },
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:59:18.608050+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.411949666,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:59:19.238321+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 3,
+            "attempt": 6,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 94326,
+              "pgid": 94326,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json"
+          }
+        ],
+        "original_profile": {
+          "id": "mech-aot-control",
+          "key": "binarytrees:apl-workspace200-full-study:mech-control",
+          "benchmark": "binarytrees",
+          "language": "mech",
+          "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/binarytrees/binarytrees-parallel.mec",
+          "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+          "binary": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+          "binary_sha256": "b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+            "{n}"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+          "runtime_environment": {},
+          "maximum_workers": 8,
+          "loc": null,
+          "chart_admission": false,
+          "control_provenance": {
+            "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json",
+            "sha256": "d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3",
+            "original_id": "mech-control-binarytrees-for-r"
+          }
+        },
+        "native_observations": 3,
+        "report": {
+          "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+          "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+        }
+      },
+      "mech_comparison": {
+        "scope": "paired-control",
+        "control_key": "binarytrees:apl-workspace200-full-study:mech-control",
+        "seconds": 0.411949666,
+        "samples_seconds": [
+          0.421101917,
+          0.404917917,
+          0.411949666
+        ],
+        "time_x_mech": 3009.308592023473
+      },
+      "timing_boundary": "Fresh process including startup, source parsing, workspace assignment, all N=21 work, output and shutdown.",
+      "eligible_for_publication_review": true,
+      "eligible_for_chart": false,
+      "chart_admission": false
+    },
+    "binarytrees:apl-workspace200-optimized": {
+      "key": "binarytrees:apl-workspace200-optimized",
+      "id": "apl-binarytrees-workspace200-optimized",
+      "language": "apl",
+      "benchmark": "binarytrees",
+      "variant": "optimized",
+      "files": [
+        "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+        "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c"
+      ],
+      "file_roles": {
+        "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74": {
+          "role": "application",
+          "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+          "normalized_loc": 40,
+          "physical_loc": 40,
+          "formatted_loc": null,
+          "source_owner_review": {
+            "path": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+            "sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0"
+          }
+        },
+        "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c": {
+          "role": "runtime-setup",
+          "source_path": "experiments/apl/binarytrees-workspace-v1/setup.apl",
+          "normalized_loc": 1,
+          "physical_loc": 1,
+          "formatted_loc": null,
+          "source_owner_review": {
+            "path": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+            "sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0"
+          }
+        }
+      },
+      "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+      "source_path": "archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+      "loc": 41,
+      "canonical_loc": 41,
+      "physical_loc": 41,
+      "loc_metric": "canonical-source-units",
+      "canonical_loc_qualified": true,
+      "formatted_loc": null,
+      "formatted_x": null,
+      "formatted_loc_qualified": false,
+      "formatted_loc_complete": false,
+      "formatted_loc_status": "unavailable",
+      "loc_expansions": [],
+      "samples": [
+        1239.683669375,
+        1241.905539417,
+        1234.105568833
+      ],
+      "seconds": 1239.683669375,
+      "timing_sd": 4.018529027132986,
+      "sample_evidence": [
+        {
+          "attempt": 1,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.json",
+            "sha256": "1db513d54bac3c49fe619d5a9a77b81bc74f51bacf9e7717fdfbb96aa5453f5f"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "20e3632c96ca2bb6c054b6450f9e71c5f625645e5423c0f5565667bdd6c14828"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/001-apl-binarytrees-workspace200-compact.json",
+            "sha256": "102fb71553d004e19657357b24ed33cb9541cf19452c33302c798729c5825ede"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 4,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.json",
+            "sha256": "9da3c5c739d99fffb4d1cdc3d2a44ac116c4c948ca4f5ac064c397b61e02704e"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "7918deef4864f50985b34f1c8afa198a950ee0152ead8a6c5f1bc6d15c7e9b27"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/004-apl-binarytrees-workspace200-compact.json",
+            "sha256": "aba6880362cd3dbd8a92815cf161dcd1b8ab2653b99a7da021ef2dc1d9de640e"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 5,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.json",
+            "sha256": "9a7456bc74c9e83a3d9c8ad1c5dcd3439b18f73e04fce86cfe5106aff17731f5"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.supervisor.json",
+            "sha256": "1dac55714ef285f18773962dde9f01fe40f6135e33a0a1c667004e59107673aa"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/005-apl-binarytrees-workspace200-compact.json",
+            "sha256": "1e70e0a9367e381d7bd77b3067fb061c1adbc0cc26123f414b885b714b76a2fc"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        }
+      ],
+      "sample_execution_metadata": [
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T01:57:20.167789+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1239.683669375,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4217024,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:18:00.066826+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 1,
+          "attempt": 1,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 83181,
+            "pgid": 83181,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/001-apl-binarytrees-workspace200-compact.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T02:18:01.780928+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1241.905539417,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4218176,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:38:43.897893+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 2,
+          "attempt": 4,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 87710,
+            "pgid": 87710,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/004-apl-binarytrees-workspace200-compact.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-compact",
+          "id": "apl-binarytrees-workspace200-compact",
+          "benchmark": "binarytrees",
+          "language": "apl",
+          "source_sha256": "d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+            "--cc",
+            "1",
+            "-f",
+            "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+            "-f",
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+            "--",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011",
+          "runtime_environment": {
+            "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+            "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "execution_fingerprint": "{\"binary_sha256\": \"50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh\", \"--cc\", \"1\", \"-f\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\", \"-f\", \"{source}\", \"--\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011\", \"environment\": {\"HOME\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home\", \"LANG\": \"C\", \"LC_ALL\": \"C\", \"OMP_NUM_THREADS\": \"1\", \"OPENBLAS_NUM_THREADS\": \"1\", \"PATH\": \"/usr/bin:/bin:/usr/sbin:/sbin\", \"TMPDIR\": \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp\", \"VECLIB_MAXIMUM_THREADS\": \"1\"}, \"source_sha256\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl\": \"ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836\", \"/private/tmp/mech-benchmark-completion/archive/comparisons/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl\": \"d1293d125d2d65940137d2d624402d4931f74d1f031bc2261165ad6663c57e74\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json\": \"e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl\": \"3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c\", \"/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json\": \"bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0\"}}",
+          "started_at": "2026-10-15T02:38:44.092572+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 1234.105568833,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 4218208,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "\nWARNING: File pipe-to_client still open - closing it\n",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:59:18.414307+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 3,
+          "attempt": 5,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 91661,
+            "pgid": 91661,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+              "--cc",
+              "1",
+              "-f",
+              "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+              "-f",
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+              "--",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/005-apl-binarytrees-workspace200-compact.supervisor.json"
+        }
+      ],
+      "report": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+      "report_sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07",
+      "loc_report": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+      "loc_report_sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0",
+      "source_work_evidence": {
+        "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json",
+        "sha256": "e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8"
+      },
+      "source_work_qualified": true,
+      "required_work_validated": true,
+      "full_workload_qualified": true,
+      "native_observations": 0,
+      "source_alias_of": "binarytrees:apl-workspace200-compact",
+      "timing_alias_of": "binarytrees:apl-workspace200-compact",
+      "aliased_sample_source": "binarytrees:apl-workspace200-compact",
+      "distinct_optimization_claimed": false,
+      "setup_inside_timer": true,
+      "runtime": {
+        "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl",
+        "sha256": "ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836",
+        "version": "BUILDTAG:\n---------\n    Project:        GNU APL\n    Version / SVN:  2.0 / SVN: no-svnversion\n    Build Date:     2026-10-11 14:05:09 EDT\n    Build OS:       Darwin 25.2.0 arm64\n    config.status:  default ./configure options\n    Archive SVN:   no-svn",
+        "architecture": "arm64-apple-darwin",
+        "distribution_url": "https://ftp.gnu.org/gnu/apl/apl-2.0.tar.gz",
+        "distribution_sha256": "24bbb744fce47e62837234a053bdeecee51b9ea61c82c79f7cc191bc6a54c0a1",
+        "primary_runtime_documentation": "https://www.gnu.org/software/apl/apl.html",
+        "build_flags": [
+          "--without-x",
+          "--without-gtk3",
+          "--without-sqlite3",
+          "--without-postgresql",
+          "--with-pcre=/opt/homebrew/opt/pcre2",
+          "CORE_COUNT_WANTED=argv",
+          "CXXFLAGS=-O3 -DNDEBUG -std=c++11",
+          "LDFLAGS=-L/opt/homebrew/opt/pcre2/lib",
+          "CPPFLAGS=-I/opt/homebrew/opt/pcre2/include"
+        ],
+        "pins": {
+          "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/gnu-apl-local/bin/apl": "ac9a9e7c4521f3e871fd32143fd50661dd6ea8a7afbde9bbb388cc6786d80836",
+          "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh": "50c937c62df5095151dd766dcbd8bc2058e24a93ccefb6b5b601944a48cdadf4",
+          "/opt/homebrew/opt/pcre2/lib/libpcre2-32.0.dylib": "ca9968ffff24cbfee530350877d70323586a7590016924be418f37deb0012eb9"
+        },
+        "numerical_primitive_parallelism": {
+          "enabled": false,
+          "requested_cc_is_ceiling_only": true,
+          "reason": "This pinned GNU APL2.0 macOS configuration leaves HAVE_AFFINITY_NP undefined; src/Parallel.hh therefore undefines PARALLEL_ENABLED. No runtime or source byte changes.",
+          "proof_source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/src/Parallel.hh",
+          "proof_source_sha256": "2bf9f05184a5bacd758fa2e0caa6b27c61cfd8ca0c72ec530332d4099ad2c5cd",
+          "proof_config": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/.build/toolchains/apl-2.0/config.h",
+          "proof_config_sha256": "6e685f7cc0c147fba596d155c46cf0316a82c5b230df9a2fe92b43e79b0e86a1"
+        }
+      },
+      "runtime_arguments": [
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run-apl.sh",
+        "--cc",
+        "1",
+        "-f",
+        "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/setup.apl",
+        "-f",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/sources/apl/binarytrees.compact.apl",
+        "--",
+        "{n}"
+      ],
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "HOME": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/home",
+        "TMPDIR": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/environment/tmp",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1",
+        "VECLIB_MAXIMUM_THREADS": "1"
+      },
+      "execution_mode": "interpreted",
+      "runtime_policy": "GNU APL 2.0 \u00b7 native ARM64 interpreter \u00b7 serial numerical primitives on macOS",
+      "memory_policy": "GNU APL workspace scale 200; unchanged allocator and garbage collection",
+      "workspace_scale": 200,
+      "maximum_workers": 1,
+      "numerical_primitive_parallelism_enabled": false,
+      "runtime_publication_metadata_qualified": true,
+      "runtime_metadata_basis": {
+        "path": "experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json",
+        "sha256": "76a28e0e75497ebc181c95cbaa3a529b69fe8b2cbac3ae04ed011468565a41d6"
+      },
+      "runtime_metadata_scope": "Identical retained image, launcher and recorded static dependencies; the prior profile-specific approval is not extended to this new source.",
+      "per_process_loaded_images_qualified": false,
+      "complete_transitive_os_inventory_qualified": false,
+      "matched_mech_control": {
+        "key": "binarytrees:apl-workspace200-full-study:mech-control",
+        "samples": [
+          0.421101917,
+          0.404917917,
+          0.411949666
+        ],
+        "seconds": 0.411949666,
+        "timing_sd": 0.008115120130205518,
+        "sample_evidence": [
+          {
+            "attempt": 2,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+              "sha256": "19ca58c3e8d632a41f50625555622c56254c665b841670019c4fa7425ae569fa"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json",
+              "sha256": "a5e73d72e94c9cfe0aabd039fb3d730eb591d74e07feebe1863be38c0f571998"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/002-mech-aot-control.json",
+              "sha256": "bd410b4fda62bf8809a31b93612e76a7aabda032efd53e16e3030c68f0cd112c"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          },
+          {
+            "attempt": 3,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+              "sha256": "c3ca30a0ddb5d93b99ed30f0f99b9c7cd5b7f9e97ac8b2700c7cdd583ff252ff"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json",
+              "sha256": "f955d8f57a86048a1f8df2ed69a8371baf9dbf63c2c6b657d0e262f50ca0d937"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/003-mech-aot-control.json",
+              "sha256": "2fe9be6c9a04cdf52ee669ccb84e6b86e9887b9dd138cd7716d4001cf6810869"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          },
+          {
+            "attempt": 6,
+            "raw": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+              "sha256": "284bfe002ee01aacd2598e955e199568f952b4a3f43bb98252b49650deef3e18"
+            },
+            "supervisor": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json",
+              "sha256": "2567c5166dd2a668c15327bf777440c5d4beabd3ca7226fa957123d94f461613"
+            },
+            "outer": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/006-mech-aot-control.json",
+              "sha256": "f8c097f9b66f750a953782fb2c789f8cd9fac4456e2a87b0c9f32994d108e4d9"
+            },
+            "producer_report": {
+              "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+              "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+            }
+          }
+        ],
+        "sample_execution_metadata": [
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:18:00.254865+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.421101917,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:18:00.868726+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 1,
+            "attempt": 2,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 87678,
+              "pgid": 87678,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json"
+          },
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:18:01.023603+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.404917917,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:18:01.624093+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 2,
+            "attempt": 3,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 87694,
+              "pgid": 87694,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json"
+          },
+          {
+            "key": "binarytrees:apl-workspace200-full-study:mech-control",
+            "id": "mech-aot-control",
+            "benchmark": "binarytrees",
+            "language": "mech",
+            "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+            "runtime_environment": {},
+            "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+            "started_at": "2026-10-15T02:59:18.608050+00:00",
+            "workload_n": 21,
+            "full_workload": true,
+            "timeout_seconds": 14400,
+            "maximum_rss_mib": 10240,
+            "power_at_start": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "seconds": 0.411949666,
+            "exit_status": 0,
+            "remaining_group_members": [],
+            "competing_compilers": [],
+            "power_changes": [],
+            "power_at_end": {
+              "source": "AC Power",
+              "low_power_mode": 0
+            },
+            "monitor_errors": [],
+            "peak_process_group_rss_kib": 0,
+            "resource_violation": null,
+            "resource_monitor_errors": [],
+            "stderr": "",
+            "stdout_bytes": 455,
+            "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "validation": {
+              "bytes": 455,
+              "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+              "reference_match": true
+            },
+            "finished_at": "2026-10-15T02:59:19.238321+00:00",
+            "valid_environment": true,
+            "pins_unchanged_at_end": true,
+            "round": 3,
+            "attempt": 6,
+            "sampler_wait_status": 0,
+            "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+            "supervised_native_group": {
+              "type": "native-group-started",
+              "pid": 94326,
+              "pgid": 94326,
+              "command": [
+                "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+                "21"
+              ],
+              "inherited_common_mutex": true
+            },
+            "supervisor_remaining_members": [],
+            "qualification_checks": {
+              "sampler_exited_normally": true,
+              "authoritative_native_group_received": true,
+              "native_inherited_common_mutex": true,
+              "native_exited_normally": true,
+              "no_execution_error": true,
+              "no_wrapper_integrity_error": true,
+              "no_resource_violation": true,
+              "no_resource_monitor_errors": true,
+              "no_compiler_power_monitor_errors": true,
+              "no_monitor_finish_error": true,
+              "no_execute_cleanup_error": true,
+              "no_remaining_execute_group": true,
+              "no_supervisor_cleanup": true,
+              "no_supervisor_remaining_group": true,
+              "valid_environment": true,
+              "actual_full_workload": true,
+              "exact_command_and_group": true,
+              "complete_output_reference_match": true,
+              "complete_output_bytes_and_hash": true,
+              "pins_unchanged": true
+            },
+            "qualified": true,
+            "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json"
+          }
+        ],
+        "original_profile": {
+          "id": "mech-aot-control",
+          "key": "binarytrees:apl-workspace200-full-study:mech-control",
+          "benchmark": "binarytrees",
+          "language": "mech",
+          "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/binarytrees/binarytrees-parallel.mec",
+          "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+          "binary": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+          "binary_sha256": "b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+            "{n}"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+          "runtime_environment": {},
+          "maximum_workers": 8,
+          "loc": null,
+          "chart_admission": false,
+          "control_provenance": {
+            "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json",
+            "sha256": "d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3",
+            "original_id": "mech-control-binarytrees-for-r"
+          }
+        },
+        "native_observations": 3,
+        "report": {
+          "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+          "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+        }
+      },
+      "mech_comparison": {
+        "scope": "paired-control",
+        "control_key": "binarytrees:apl-workspace200-full-study:mech-control",
+        "seconds": 0.411949666,
+        "samples_seconds": [
+          0.421101917,
+          0.404917917,
+          0.411949666
+        ],
+        "time_x_mech": 3009.308592023473
+      },
+      "timing_boundary": "Fresh process including startup, source parsing, workspace assignment, all N=21 work, output and shutdown.",
+      "eligible_for_publication_review": true,
+      "eligible_for_chart": false,
+      "chart_admission": false
+    }
+  },
+  "matched_mech_controls": {
+    "binarytrees": {
+      "key": "binarytrees:apl-workspace200-full-study:mech-control",
+      "samples": [
+        0.421101917,
+        0.404917917,
+        0.411949666
+      ],
+      "seconds": 0.411949666,
+      "timing_sd": 0.008115120130205518,
+      "sample_evidence": [
+        {
+          "attempt": 2,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+            "sha256": "19ca58c3e8d632a41f50625555622c56254c665b841670019c4fa7425ae569fa"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json",
+            "sha256": "a5e73d72e94c9cfe0aabd039fb3d730eb591d74e07feebe1863be38c0f571998"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/002-mech-aot-control.json",
+            "sha256": "bd410b4fda62bf8809a31b93612e76a7aabda032efd53e16e3030c68f0cd112c"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 3,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+            "sha256": "c3ca30a0ddb5d93b99ed30f0f99b9c7cd5b7f9e97ac8b2700c7cdd583ff252ff"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json",
+            "sha256": "f955d8f57a86048a1f8df2ed69a8371baf9dbf63c2c6b657d0e262f50ca0d937"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/003-mech-aot-control.json",
+            "sha256": "2fe9be6c9a04cdf52ee669ccb84e6b86e9887b9dd138cd7716d4001cf6810869"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        },
+        {
+          "attempt": 6,
+          "raw": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+            "sha256": "284bfe002ee01aacd2598e955e199568f952b4a3f43bb98252b49650deef3e18"
+          },
+          "supervisor": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json",
+            "sha256": "2567c5166dd2a668c15327bf777440c5d4beabd3ca7226fa957123d94f461613"
+          },
+          "outer": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/outer-supervisor/006-mech-aot-control.json",
+            "sha256": "f8c097f9b66f750a953782fb2c789f8cd9fac4456e2a87b0c9f32994d108e4d9"
+          },
+          "producer_report": {
+            "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+            "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+          }
+        }
+      ],
+      "sample_execution_metadata": [
+        {
+          "key": "binarytrees:apl-workspace200-full-study:mech-control",
+          "id": "mech-aot-control",
+          "benchmark": "binarytrees",
+          "language": "mech",
+          "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+          "runtime_environment": {},
+          "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+          "started_at": "2026-10-15T02:18:00.254865+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 0.421101917,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 0,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:18:00.868726+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 1,
+          "attempt": 2,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 87678,
+            "pgid": 87678,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/002-mech-aot-control.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-full-study:mech-control",
+          "id": "mech-aot-control",
+          "benchmark": "binarytrees",
+          "language": "mech",
+          "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+          "runtime_environment": {},
+          "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+          "started_at": "2026-10-15T02:18:01.023603+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 0.404917917,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 0,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:18:01.624093+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 2,
+          "attempt": 3,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 87694,
+            "pgid": 87694,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/003-mech-aot-control.supervisor.json"
+        },
+        {
+          "key": "binarytrees:apl-workspace200-full-study:mech-control",
+          "id": "mech-aot-control",
+          "benchmark": "binarytrees",
+          "language": "mech",
+          "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+          "command": [
+            "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+            "21"
+          ],
+          "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+          "runtime_environment": {},
+          "execution_fingerprint": "{\"binary_sha256\": \"b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0\", \"command\": [\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after\", \"{n}\"], \"cwd\": \"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech\", \"environment\": {}, \"source_sha256\": \"61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f\", \"support\": {\"/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json\": \"d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3\"}}",
+          "started_at": "2026-10-15T02:59:18.608050+00:00",
+          "workload_n": 21,
+          "full_workload": true,
+          "timeout_seconds": 14400,
+          "maximum_rss_mib": 10240,
+          "power_at_start": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "seconds": 0.411949666,
+          "exit_status": 0,
+          "remaining_group_members": [],
+          "competing_compilers": [],
+          "power_changes": [],
+          "power_at_end": {
+            "source": "AC Power",
+            "low_power_mode": 0
+          },
+          "monitor_errors": [],
+          "peak_process_group_rss_kib": 0,
+          "resource_violation": null,
+          "resource_monitor_errors": [],
+          "stderr": "",
+          "stdout_bytes": 455,
+          "stdout_sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+          "validation": {
+            "bytes": 455,
+            "sha256": "341de11a51feab3d8122b4b5d6a68b038a2d14434aa9bc2372f39300bf5f48e1",
+            "reference_match": true
+          },
+          "finished_at": "2026-10-15T02:59:19.238321+00:00",
+          "valid_environment": true,
+          "pins_unchanged_at_end": true,
+          "round": 3,
+          "attempt": 6,
+          "sampler_wait_status": 0,
+          "result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.json",
+          "supervised_native_group": {
+            "type": "native-group-started",
+            "pid": 94326,
+            "pgid": 94326,
+            "command": [
+              "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+              "21"
+            ],
+            "inherited_common_mutex": true
+          },
+          "supervisor_remaining_members": [],
+          "qualification_checks": {
+            "sampler_exited_normally": true,
+            "authoritative_native_group_received": true,
+            "native_inherited_common_mutex": true,
+            "native_exited_normally": true,
+            "no_execution_error": true,
+            "no_wrapper_integrity_error": true,
+            "no_resource_violation": true,
+            "no_resource_monitor_errors": true,
+            "no_compiler_power_monitor_errors": true,
+            "no_monitor_finish_error": true,
+            "no_execute_cleanup_error": true,
+            "no_remaining_execute_group": true,
+            "no_supervisor_cleanup": true,
+            "no_supervisor_remaining_group": true,
+            "valid_environment": true,
+            "actual_full_workload": true,
+            "exact_command_and_group": true,
+            "complete_output_reference_match": true,
+            "complete_output_bytes_and_hash": true,
+            "pins_unchanged": true
+          },
+          "qualified": true,
+          "supervisor_result_path": "/private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/attempts/006-mech-aot-control.supervisor.json"
+        }
+      ],
+      "original_profile": {
+        "id": "mech-aot-control",
+        "key": "binarytrees:apl-workspace200-full-study:mech-control",
+        "benchmark": "binarytrees",
+        "language": "mech",
+        "source": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/binarytrees/binarytrees-parallel.mec",
+        "source_sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+        "binary": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+        "binary_sha256": "b8f1e30861f6003c10fcbd2b3e58c355d6158068621523fc870bfc292677deb0",
+        "command": [
+          "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/function-application-audit/20261009T171437Z/application-v3/builds/binarytrees/mech-binarytrees-parallel-after",
+          "{n}"
+        ],
+        "cwd": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech",
+        "runtime_environment": {},
+        "maximum_workers": 8,
+        "loc": null,
+        "chart_admission": false,
+        "control_provenance": {
+          "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/source-audit-r.json",
+          "sha256": "d76be20504617addb9efd5915bf7074877e727e3a49ccbd36585b4be5c763af3",
+          "original_id": "mech-control-binarytrees-for-r"
+        }
+      },
+      "native_observations": 3,
+      "report": {
+        "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+        "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+      }
+    }
+  },
+  "source_forms": 2,
+  "distinct_subject_sources": 1,
+  "counted_physical_files": 2,
+  "timing_aliases": 1,
+  "subject_native_observations": 3,
+  "control_native_observations": 3,
+  "source_units": 41,
+  "endpoints": {
+    "binarytrees": {
+      "language": "apl",
+      "label": "APL (GNU APL)",
+      "fast": "binarytrees:apl-workspace200-compact",
+      "small": "binarytrees:apl-workspace200-compact",
+      "programs": [
+        "binarytrees:apl-workspace200-compact"
+      ],
+      "formatted_fast": null,
+      "formatted_small": null
+    }
+  },
+  "previous_failures": [
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/bounded-run-v1/report.json",
+      "sha256": "daff19879de9ab9e7b30574a29195224340b24a9f7b3e080baa0b5f539335388"
+    },
+    {
+      "path": "experiments/apl/binarytrees-workspace-v1/remaining-three-v1/run-v1/report.json",
+      "sha256": "98a72540c56d68d8ef45c51aa77d4b8c6054ed2513396a1504d0bd85e27b210b"
+    }
+  ],
+  "chart_admission": false,
+  "dataset_files_changed": false,
+  "historical_reports_mutated": false,
+  "native_processes_started": 0,
+  "report": {
+    "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+    "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+  },
+  "source_counts": {
+    "path": "experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json",
+    "sha256": "bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0"
+  },
+  "source_work": {
+    "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json",
+    "sha256": "e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8"
+  },
+  "runtime_metadata_basis": {
+    "path": "experiments/apl/retained-native-v1/runtime-publication-scope-review-v1.json",
+    "sha256": "76a28e0e75497ebc181c95cbaa3a529b69fe8b2cbac3ae04ed011468565a41d6"
+  },
+  "reconciliation": {
+    "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/publication/export-v1/reconciliation.json",
+    "sha256": "4434842bc52d58d76877afaa7c46131ac7e27ea2aef0f0c6d4110b79555abde7"
+  },
+  "consumer_sources": {
+    "exporter": {
+      "path": "tools/qualification/apl_workspace_export.py",
+      "sha256": "41c437eeea4fab2f17ec867029d503e1cbce6e06886746ad7687e201957ee9bf"
+    },
+    "publication": {
+      "path": "tools/qualification/apl_workspace_publication.py",
+      "sha256": "c3ae7260e5b3ec345b58e814bafb586d6ee3d2d82508bc553c0fea685463e456"
+    },
+    "reconciler": {
+      "path": "tools/qualification/apl_workspace_reconcile.py",
+      "sha256": "2a0a60a3a904e6ac15c092038bc44737082819fb958fdec9404b7a678cf93943"
+    }
+  },
+  "native_cohort": {
+    "plan": {
+      "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/plan-v1.json",
+      "sha256": "8dfe92889969219c9401deb57819d9f72020eee0573ad6e904f91eec48d3754b"
+    },
+    "report": {
+      "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/report.json",
+      "sha256": "047d371dad94e976f7193fd9c3538eed2319ef5785f80b973fdca55d56111b07"
+    },
+    "terminal": {
+      "path": "experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1/terminal.json",
+      "sha256": "8bb2c5ceda9326ce113e48b536270e6313e823f9215b4d26e1c6fd2bdb2f31d2"
+    },
+    "durable": {
+      "path": "experiments/shared/owned-jobs-v1/owned-jobs/apl-binarytrees-full6-v1/terminal.json",
+      "sha256": "7e305c4f90de6fea3c4d9a010e4b598158c6cf4cfe743421585eef2b4051e505"
+    }
+  }
+}
