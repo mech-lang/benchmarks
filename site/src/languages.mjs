@@ -1176,5 +1176,32 @@ export const languageMetadata = {
       "https://www.swi-prolog.org/pldoc/man?section=qlf",
       "https://www.swi-prolog.org/pldoc/man?section=gc"
     ]
+  },
+  "rebol3": {
+    "platform": "runtime",
+    "runtime": "Oldes Rebol/Bulk 3.22.1 (macOS)",
+    "execution": [
+      "interpreted"
+    ],
+    "typing": "dynamic",
+    "style": [
+      "imperative",
+      "functional",
+      "object"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Rebol 3 interprets user-defined functions with dynamic value types, first-class functions, prototype objects and automatic tracing garbage collection. These categories describe the language/runtime model; foreign-library allocation is excluded.",
+    "sources": [
+      "https://www.rebol.com/news/news8a01.html",
+      "https://www.rebol.com/rebol-summary.html",
+      "https://rebol.tech/docs/datatypes.html#function",
+      "https://rebol.tech/docs/datatypes.html#closure",
+      "https://www.rebol.com/docs/core23/rebolcore-3.html",
+      "https://www.rebol.com/docs/core23/rebolcore-10.html",
+      "https://rebol.tech/docs/functions.html#recycle",
+      "https://github.com/Oldes/Rebol3/releases/tag/3.22.1"
+    ]
   }
 };

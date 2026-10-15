@@ -1,0 +1,66 @@
+{
+  "schema": "rebol-explorer-validation-summary-v1",
+  "status": "passed",
+  "recorded_at": "2026-10-15T21:32:34.943964+00:00",
+  "scope": "Observed functional/data command results, summarized after actual independently reconciled catalog admission; no performance profile or new language timing run.",
+  "build": "c63f48e241fddea7",
+  "canonical_data_sha256": "ea8101955004852c46ce02fb0a96155a4389f603845960e8a5307a555d72e769",
+  "browser_data_sha256": "1f7dd569075014c7934a8c83d361135637471a0038adc81a1914525ea55d356c",
+  "checks": [
+    {
+      "command": "python3 -I -S -B tools/verify_repository.py",
+      "exit_code": 0,
+      "scope": "After catalog import, before the isolated platform-field normalization; source bundles and timing values unchanged by that normalization.",
+      "result": {
+        "status": "passed",
+        "programs": 983,
+        "samples": 3033,
+        "source_files": 917,
+        "exported_source_copies": 1346,
+        "archive_index_checked": false
+      }
+    },
+    {
+      "command": "node site/tests/data_projection.mjs data/benchmarks.json site/public/data.json",
+      "exit_code": 0,
+      "scope": "Rechecked after platform normalization and final build.",
+      "result": {
+        "status": "browser-projection-parity-passed",
+        "ordered_pool_rows": 1201,
+        "unique_programs": 983,
+        "recorded_pool_samples": 3687,
+        "source_files": 917,
+        "model_cases": 48,
+        "relative_comparisons": 1416,
+        "inspector_cases": 4712,
+        "rendered_loc_audits": 1201,
+        "source_and_link_cases": 1750,
+        "source_bytes_samples_and_displayed_metadata_identical": true
+      }
+    },
+    {
+      "command": "node site/tests/languages.mjs data/benchmarks.json",
+      "exit_code": 0,
+      "scope": "Rechecked after platform normalization; all 59 variants and combined platform/execution/memory filters passed."
+    },
+    {
+      "command": "node site/tests/publication.mjs",
+      "exit_code": 0,
+      "scope": "Explicit eligibility across canonical/formatted endpoints, samples, density, bounds and source inspection."
+    },
+    {
+      "command": "node site/tests/layers.mjs",
+      "exit_code": 0,
+      "scope": "216 layer combinations / 432 SVG renders; independent views, Samples Off, median focus, static readout, facets, source inspectors and timing-alias deduplication."
+    }
+  ],
+  "initial_failure": {
+    "check": "language taxonomy consistency",
+    "message": "rebol3 dataset runtime_family rebol did not match reviewed platform runtime",
+    "retained_correction": "experiments/rebol/full60-v1/publication/platform-normalization-v1.json",
+    "affected_checks_repeated_and_passed": true
+  },
+  "native_benchmark_runs": 0,
+  "browser_functional_verification": "pending",
+  "website_deployment": "pending"
+}
