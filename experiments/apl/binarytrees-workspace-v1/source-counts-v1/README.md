@@ -16,8 +16,10 @@ The compact and optimized labels use one identical tree source and command.
 They do not represent separate authored implementations or additional native
 observations. Each label receives the same complete 41-unit bundle count.
 
-`source-owner-review.json` records every written owner and excluded row, exact
-source identities and the proposed count. The checker reuses the pinned APL
+[The source-owner review](source-owner-review.json) records every written owner
+and excluded row, exact source identities and the independently reviewed count.
+[The qualified two-file count](qualified-source-counts-v1.json) admits 41 canonical
+units and 41 physical code lines. The checker reuses the pinned APL
 owner reader in a private module with these two exact source identities; it does
 not change the original nine-source reader or admit unknown sources.
 

@@ -50,28 +50,32 @@ iteration. The retained scoped diagnostic supports bounded ownership and
 release, while the N=4/N=10 captures support the complete program's small-input
 behavior. Neither establishes full-size completion.
 
-The count and source-work dispositions are not yet written. Preparation and
-native execution are unstarted, and timing/chart admission remains false. The
-controller requires exact paths and SHA-256 values for both future approved
-receipts. It replays their small owner metadata and the retained native evidence
+The [41-unit count](../source-counts-v1/qualified-source-counts-v1.json) and
+[source-work disposition](required-work-review-v1.json) now bind the exact
+two-file bundle and retained bounded evidence. Preparation and native execution
+are unstarted, and full-size work, timing and chart admission remain false. The
+controller requires exact paths and SHA-256 values for both approved receipts.
+It replays their small owner metadata and the retained native evidence
 under the original leases before creating an executable plan. A successful
 measurement still requires independent reconciliation and publication review.
 
 The 9 focused pure test methods passed on 2026-10-15 UTC, recorded in
-[the initial pure-validation record](../../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). Once the required source
-reviews are complete, prepare from the original evidence checkout while the
-timing lane is free:
+[the initial pure-validation record](../../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). After exclusive scheduling is
+released and the prerequisite review is closed, prepare from the original
+evidence checkout:
 
 ```sh
-python3 -I -S -B tools/qualification/apl_workspace_full.py prepare \
-  --counts /absolute/path/to/qualified-source-counts-v1.json \
-  --counts-sha256 APPROVED_COUNT_SHA256 \
-  --work /absolute/path/to/required-work-review-v1.json \
-  --work-sha256 APPROVED_WORK_SHA256 \
-  --plan /absolute/path/to/full6-v1/plan-v1.json \
-  --output /absolute/path/to/full6-v1/run-v1
+/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3.12 -I -S -B \
+  /private/tmp/mech-benchmark-completion/tools/qualification/apl_workspace_full.py prepare \
+  --counts /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/source-counts-v1/qualified-source-counts-v1.json \
+  --counts-sha256 bb6151a5e534842a0714923cc6da4c6f763ee957940bdcfb9d6273370b83a7f0 \
+  --work /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/required-work-review-v1.json \
+  --work-sha256 e25bc02f9ba8881881967cabb18b7bb26a956652b60680797ac870eb8e91f6c8 \
+  --plan /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/plan-v1.json \
+  --output /private/tmp/mech-benchmark-completion/experiments/apl/binarytrees-workspace-v1/full6-v1/run-v1
 ```
 
 After reviewing the concrete prepared plan, invoke its `run --plan ...
 --plan-sha256 ...` command through the existing durable owner using the retained
-Python with `-I -S -B`. No plan or qualification digest is supplied by this draft.
+Python with `-I -S -B`. No executable plan exists yet. Preserve the producer,
+focused test and this README unchanged once preparation pins them.
