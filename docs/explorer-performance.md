@@ -92,7 +92,7 @@ retains its original bytes and hash.
 
 ## Publication
 
-Build `381120eba12efd76` is live at
+Build `381120eba12efd76` was published at
 [mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/).
 [Deployment verification](../site/publications/explorer-performance-v1/deployment.json)
 passed all 35 live assets and the final manifest on October 15, 2026 at
@@ -105,3 +105,12 @@ and filter checks with no page errors.
 The first Pages deployment stalled after its asset build. An
 [identical-content retry](../site/publications/explorer-performance-v1/publication-retry-v1.json)
 completed successfully; both revisions have the same complete website tree.
+
+The subsequent APL coverage and timing-alias update, build `72094b4bd8833f60`,
+is the [current verified deployment](../site/publications/apl-timing-aliases-v1/deployment.json).
+All 35 live assets matched on October 15 at 05:29 UTC. A
+[fresh mobile check](../site/publications/apl-timing-aliases-v1/live-browser.json)
+verified all 2,835 selected runs, Samples Off, language pages and resource
+filters without page errors. Its 8,369,808-byte JSON arrived as a 1,213,325-byte
+gzip body. This deployment check does not extend the earlier performance
+comparison to the enlarged dataset.

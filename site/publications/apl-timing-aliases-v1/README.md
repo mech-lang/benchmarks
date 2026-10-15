@@ -32,3 +32,20 @@ The [mobile](browser/mech-alias-apl-browser-v1.apl-390.png) and
 captures. JSON and stream files are copied without rewriting their original
 execution paths. These checks do not establish live deployment or new
 performance measurements, and launched no benchmarks.
+
+## Live deployment
+
+The [publication receipt](publication.json) records website commit
+`1024bfbc18c976c33b932af693be509294171c18`.
+[Deployment verification](deployment.json) passed all 35 live assets and the
+final manifest on October 15, 2026 at 05:29 UTC; both the build and Pages
+deployment jobs succeeded.
+
+A [fresh mobile browser](live-browser.json) verified 58 execution variants,
+2,835 selected runs, sample visibility, language-page navigation and resource
+filters with no JavaScript errors or horizontal overflow. The JSON arrived
+compressed: 1,213,325 transferred body bytes decoded to 8,369,808 bytes with
+the tested SHA-256. The [execution record](live-check-execution.json) retains
+both successful process exits and exact verification-script identities.
+These checks establish live behavior without adding performance measurements
+or rerunning benchmark timings.

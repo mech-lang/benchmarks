@@ -2,7 +2,7 @@
 
 The current dataset contains **58 execution variants across 52 language families**, **10 workloads**, and **917 selected timed program profiles**. The source inventory retains **973 profiles** across **902 source files**, including fifty-six measured candidates that are not selected endpoints. Fifty-seven execution variants cover the complete suite. The catalog retains **3,003 sample entries representing 2,991 distinct recorded runs**; **2,835 runs belong to selected profiles**. Four program labels explicitly share another program's measurements.
 
-The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Median hover and keyboard focus highlight that language’s visible samples; Samples Off remains hidden. Benchmark filters combine resource emphasis (compute, memory, I/O) with workload type (numerical, strings/sequences, allocation, data structures, combinatorial, graphics). Resource tags describe exercised work rather than claiming a measured bottleneck. Its [current verified deployment](../site/publications/explorer-performance-v1/deployment.json), build `381120eba12efd76`, passed verification of all 35 live assets and the final manifest on October 15, 2026 at 04:05 UTC. [Mobile, desktop and interaction checks](../site/publications/explorer-performance-v1/browser.json) passed with all 58 execution variants; [fresh live mobile checks](../site/publications/explorer-performance-v1/live-browser.json) also passed. Prolog, Scala and TypeScript are included in the live dataset.
+The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Median hover and keyboard focus highlight that language’s visible samples; Samples Off remains hidden. Benchmark filters combine resource emphasis (compute, memory, I/O) with workload type (numerical, strings/sequences, allocation, data structures, combinatorial, graphics). Resource tags describe exercised work rather than claiming a measured bottleneck. Its [current verified deployment](../site/publications/apl-timing-aliases-v1/deployment.json), build `72094b4bd8833f60`, passed verification of all 35 live assets and the final manifest on October 15, 2026 at 05:29 UTC. [Mobile, desktop and interaction checks](../site/publications/explorer-performance-v1/browser.json) passed with all 58 execution variants; [fresh live mobile checks](../site/publications/apl-timing-aliases-v1/live-browser.json) also passed. APL, Prolog, Scala and TypeScript cover all ten workloads in the live dataset.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
@@ -13,8 +13,8 @@ browser measurements show about 1.9× faster initialization and 3× faster densi
 updates. The browser payload fell from 73.8 MB to 8.3 MB before compression;
 [live compression verification](../site/publications/explorer-performance-v1/gzip.json)
 confirmed a 1.21 MB transferred body. The subsequent APL coverage and shared-run
-display update has [passed its functional and browser checks](../site/publications/apl-timing-aliases-v1/README.md)
-and awaits publication.
+display update is also live, with [functional, browser and deployment checks](../site/publications/apl-timing-aliases-v1/README.md)
+retained separately from the performance measurements.
 
 Twelve chart gaps have been filled from **111 preserved observations: 72 subject
 observations and 39 matched Mech controls**. No replacement timing run was needed.
@@ -59,7 +59,7 @@ passed for all six observations. APL's median was 1,239.684 seconds; the matched
 Mech median was 0.411950 seconds. The [publication candidate](../experiments/apl/binarytrees-workspace-v1/full6-v1/publication/export-v1/candidate.json)
 retains the raw evidence and source counts. [Catalog admission](../experiments/apl/binarytrees-workspace-v1/full6-v1/publication/apply-target-v1/SUCCESS.json)
 adds the tenth APL workload without changing earlier measurements or baselines.
-The public explorer update is pending. The optimized label
+The public explorer includes this cohort. The optimized label
 shares the compact program's measurements and does not represent another run
 or a distinct optimization.
 
