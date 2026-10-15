@@ -1,0 +1,49 @@
+{
+  "schema": "benchmark-rebol-removal-validation-v1",
+  "status": "passed",
+  "checked_at": "2026-10-15T22:31:56.474458+00:00",
+  "source_commit": "22e8b1d6d2bd2d9a7fac37f530fe9fa2b6fd092d",
+  "checks": [
+    {
+      "check": "build",
+      "command": [
+        "python3",
+        "-I",
+        "-S",
+        "-B",
+        "tools/build_site.py"
+      ],
+      "exit_code": 0,
+      "stdout": "Built site/public (36 files, 1f15703a1664f751)\n",
+      "stderr": ""
+    },
+    {
+      "check": "projection",
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/data_projection.mjs",
+        "data/benchmarks.json",
+        "site/public/data.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\":\"browser-projection-parity-passed\",\"ordered_pool_rows\":1181,\"unique_programs\":973,\"recorded_pool_samples\":3627,\"source_files\":902,\"model_cases\":48,\"relative_comparisons\":1392,\"inspector_cases\":4632,\"rendered_loc_audits\":1181,\"source_and_link_cases\":1666,\"source_bytes_samples_and_displayed_metadata_identical\":true}\n",
+      "stderr": ""
+    },
+    {
+      "check": "taxonomy",
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/languages.mjs",
+        "data/benchmarks.json"
+      ],
+      "exit_code": 0,
+      "stdout": "Passed: all 58 variants classified; JVM/.NET/V8, execution, memory distinctions, and combined filters.\n{\n  \"platform\": {\n    \"Native toolchains\": 23,\n    \"JVM\": 4,\n    \".NET\": 4,\n    \"BEAM\": 3,\n    \"Node.js / V8\": 3,\n    \"Other language runtimes\": 21\n  },\n  \"execution\": {\n    \"AOT\": 28,\n    \"JIT\": 20,\n    \"Interpreted\": 11\n  },\n  \"typing\": {\n    \"Static\": 37,\n    \"Dynamic\": 21\n  },\n  \"style\": {\n    \"Imperative\": 43,\n    \"Object-oriented\": 31,\n    \"Functional\": 40,\n    \"Logic\": 1,\n    \"Array\": 13,\n    \"Reactive / dataflow\": 3\n  },\n  \"memory\": {\n    \"Manual allocation\": 11,\n    \"Ownership / RAII\": 11,\n    \"Reference counting\": 23,\n    \"Tracing GC\": 33,\n    \"Cycle collection\": 5\n  }\n}\n",
+      "stderr": ""
+    }
+  ],
+  "source_tree_unchanged_after_build_and_tests": true,
+  "native_benchmark_runs": 0,
+  "performance_profile": false,
+  "browser_functional_verification": "pending",
+  "website_deployment": "pending"
+}
