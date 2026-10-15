@@ -2,16 +2,19 @@
 
 The current dataset contains **58 execution variants across 52 language families**, **10 workloads**, and **917 selected timed program profiles**. The source inventory retains **973 profiles** across **902 source files**, including fifty-six measured candidates that are not selected endpoints. Fifty-seven execution variants cover the complete suite. The catalog retains **3,003 sample entries representing 2,991 distinct recorded runs**; **2,835 runs belong to selected profiles**. Four program labels explicitly share another program's measurements.
 
-The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Median hover and keyboard focus highlight that language’s visible samples; Samples Off remains hidden. Benchmark filters combine resource emphasis (compute, memory, I/O) with workload type (numerical, strings/sequences, allocation, data structures, combinatorial, graphics). Resource tags describe exercised work rather than claiming a measured bottleneck. Its [current verified deployment](../site/publications/prolog-chart-filters-v1/deployment.json), build `80f03cc4ba6ce434`, passed verification of all 34 live assets and the final manifest on October 15, 2026 at 01:53 UTC. [Mobile, desktop and interaction checks](../site/publications/prolog-chart-filters-v1/validation.json) passed with all 58 execution variants. Prolog, Scala and TypeScript are included in the live dataset.
+The live explorer has persistent language tabs with comparison controls, the main graph, stacked ranking charts, per-benchmark results, and an all-language table relative to the selected execution variant at 1.0×. Language-page rankings center both speed and LOC at the selected variant’s 0σ, including variant changes and program navigation; global Rankings retain the coordinate-median origin. Reset preserves the selected language page; the Rankings reset remains in Rankings. Median hover and keyboard focus highlight that language’s visible samples; Samples Off remains hidden. Benchmark filters combine resource emphasis (compute, memory, I/O) with workload type (numerical, strings/sequences, allocation, data structures, combinatorial, graphics). Resource tags describe exercised work rather than claiming a measured bottleneck. Its [current verified deployment](../site/publications/explorer-performance-v1/deployment.json), build `381120eba12efd76`, passed verification of all 35 live assets and the final manifest on October 15, 2026 at 04:05 UTC. [Mobile, desktop and interaction checks](../site/publications/explorer-performance-v1/browser.json) passed with all 58 execution variants; [fresh live mobile checks](../site/publications/explorer-performance-v1/live-browser.json) also passed. Prolog, Scala and TypeScript are included in the live dataset.
 
 | Partial coverage | Measured workloads | Missing workloads |
 | --- | ---: | --- |
 | Futhark | 9 / 10 | Binary trees: array representation does not meet the per-node allocation contract |
 
-The [explorer performance update](explorer-performance.md) has passed controlled
-browser measurements and interaction checks. Its Pages asset build passed, but
-deployment remained pending at 04:02 UTC on October 15. One retry uses identical
-website contents; the live version above remains the latest verified deployment.
+The [explorer performance update](explorer-performance.md) is live. Controlled
+browser measurements show about 1.9× faster initialization and 3× faster density
+updates. The browser payload fell from 73.8 MB to 8.3 MB before compression;
+[live compression verification](../site/publications/explorer-performance-v1/gzip.json)
+confirmed a 1.21 MB transferred body. The subsequent APL coverage and shared-run
+display update has [passed its functional and browser checks](../site/publications/apl-timing-aliases-v1/README.md)
+and awaits publication.
 
 Twelve chart gaps have been filled from **111 preserved observations: 72 subject
 observations and 39 matched Mech controls**. No replacement timing run was needed.

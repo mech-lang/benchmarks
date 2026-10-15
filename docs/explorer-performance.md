@@ -92,10 +92,16 @@ retains its original bytes and hash.
 
 ## Publication
 
-The measured build is committed and validated. As of October 15, 2026 at
-04:02 UTC, its [first Pages deployment](https://gitlab.com/mech-lang/web/website/-/pipelines/2949127666)
-had passed the asset build but remained in the deployment stage; the public site
-still served `80f03cc4ba6ce434`. After more than an hour, an
+Build `381120eba12efd76` is live at
+[mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/).
+[Deployment verification](../site/publications/explorer-performance-v1/deployment.json)
+passed all 35 live assets and the final manifest on October 15, 2026 at
+04:05 UTC. The [compression check](../site/publications/explorer-performance-v1/gzip.json)
+confirmed an exact 1,210,607-byte gzip response decoding to the tested JSON.
+A [fresh mobile browser](../site/publications/explorer-performance-v1/live-browser.json)
+also received that compressed body and passed sample visibility, language-page
+and filter checks with no page errors.
+
+The first Pages deployment stalled after its asset build. An
 [identical-content retry](../site/publications/explorer-performance-v1/publication-retry-v1.json)
-was submitted. Both revisions have the same complete website tree. The
-measurements above describe the validated candidate, not a verified live rollout.
+completed successfully; both revisions have the same complete website tree.
