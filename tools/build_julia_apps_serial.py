@@ -4,6 +4,7 @@ import datetime
 import json
 import os
 from pathlib import Path
+import re
 import signal
 import subprocess
 import sys
@@ -17,6 +18,12 @@ def save(path, value):
     temporary = path.with_suffix('.tmp')
     temporary.write_text(json.dumps(value, indent=2) + '\n')
     os.replace(temporary, path)
+
+
+def attempt(value):
+    if not re.fullmatch(r'v[1-9][0-9]*', value):
+        raise argparse.ArgumentTypeError('expected v followed by a positive integer')
+    return value
 
 
 def run_command(kind, command, target, output, progress, stop_requested):
@@ -85,6 +92,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--profiles', nargs='+', choices=list(by_id), required=True)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--attempt', type=attempt, default='v1')
+    parser.add_argument('--julia-threads', choices=['8', '8,0'], default='8')
     args = parser.parse_args()
     if len(args.profiles) != len(set(args.profiles)):
         parser.error('--profiles must not contain duplicates')
@@ -97,10 +106,12 @@ def main():
     targets = []
     occupied = [output] if output.exists() or output.is_symlink() else []
     for profile in args.profiles:
+        profile_attempt = profile + '-' + args.attempt
+        bundle_profile = profile if args.attempt == 'v1' else profile_attempt
         target = dict(profile=profile, status='pending', commands=[],
-            bundle=str(bundle_root/profile/'bundle'),
-            build_output=str(base/'builds'/(profile + '-v1')),
-            validation_output=str(base/'validation'/(profile + '-v1')))
+            bundle=str(bundle_root/bundle_profile/'bundle'),
+            build_output=str(base/'builds'/profile_attempt),
+            validation_output=str(base/'validation'/profile_attempt))
         targets.append(target)
         for name in ('bundle', 'build_output', 'validation_output'):
             path = Path(target[name])
@@ -114,6 +125,7 @@ def main():
     output.mkdir(parents=True)
     progress = dict(schema='julia-packagecompiler-serial-v1', status='running',
         repository=str(root), started_at=now(), profiles=args.profiles,
+        attempt=args.attempt, julia_threads=args.julia_threads,
         targets=targets, stop_signals=stop_requested, benchmark_samples=0,
         timing_admission=False, automatic_retries=0)
     save(output/'progress.json', progress)
@@ -128,6 +140,7 @@ def main():
             '--training', str(root/by_id[profile]['training']),
             '--builder', str(base/'build_app.jl'), '--depot', depot,
             '--retained-depot', retained_depot, '--executable', profile,
+            '--julia-threads', args.julia_threads,
             '--output', target['build_output']]
         result = run_command('build', build, target, output, progress, stop_requested)
         if stop_requested or not result['cleanup_confirmed']:
