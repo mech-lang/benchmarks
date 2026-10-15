@@ -44,7 +44,7 @@ def main():
         assert sha(stdin) == case['stdin']['sha256']
         assert sha(expected) == case['expected']['sha256']
         environment = dict(PATH='/usr/bin:/bin:/usr/sbin:/sbin', LC_ALL='C', LANG='C',
-            JULIA_NUM_THREADS='8', JULIA_LOAD_CODEGEN_LIB='0', OPENBLAS_NUM_THREADS='1',
+            JULIA_NUM_THREADS='8,0', JULIA_LOAD_CODEGEN_LIB='0', OPENBLAS_NUM_THREADS='1',
             OMP_NUM_THREADS='1', VECLIB_MAXIMUM_THREADS='1')
         command = [str(executable)]
         if case['input_kind'] == 'integer-argument':

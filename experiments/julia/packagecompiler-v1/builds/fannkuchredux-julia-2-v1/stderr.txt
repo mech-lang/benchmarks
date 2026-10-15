@@ -1,0 +1,62 @@
+Precompiling packages...
+   0.2 s  ✓ BenchFannkuchreduxJulia2
+  1 dependency successfully precompiled in 1 seconds
+ERROR: LoadError: AssertionError: read(output) == read("/private/tmp/mech-benchmark-publication/experiments/shared/bounded-corpus-v1/cases/fannkuchredux/n-7/expected.stdout")
+Stacktrace:
+  [1] (::var"#7#8"{IOStream})(path::String, output::IOStream)
+    @ Main /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl:14
+  [2] mktemp(fn::var"#7#8"{IOStream}, parent::String)
+    @ Base.Filesystem ./file.jl:912
+  [3] mktemp
+    @ ./file.jl:910 [inlined]
+  [4] #5
+    @ /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl:6 [inlined]
+  [5] open(::var"#5#6", ::String, ::Vararg{String}; kwargs::@Kwargs{})
+    @ Base ./io.jl:429
+  [6] open(::Function, ::String, ::String)
+    @ Base ./io.jl:426
+  [7] top-level scope
+    @ /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl:5
+  [8] include(mod::Module, _path::String)
+    @ Base /private/tmp/mech-julia-packagecompiler-builds-v1/depot/scratchspaces/9b87118b-4619-50d2-8e1e-99f35a4d4d9d/base_sysimages/24783422dd653764.dylib:-1
+  [9] exec_options(opts::Base.JLOptions)
+    @ Base /private/tmp/mech-julia-packagecompiler-builds-v1/depot/scratchspaces/9b87118b-4619-50d2-8e1e-99f35a4d4d9d/base_sysimages/24783422dd653764.dylib:-1
+ [10] _start()
+    @ Base /private/tmp/mech-julia-packagecompiler-builds-v1/depot/scratchspaces/9b87118b-4619-50d2-8e1e-99f35a4d4d9d/base_sysimages/24783422dd653764.dylib:-1
+in expression starting at /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl:5
+┌ Warning: it is not recommended to create an app/library without a preexisting manifest
+└ @ PackageCompiler ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:96
+     Project No packages added to or removed from `/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-2/Project.toml`
+    Manifest No packages added to or removed from `/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-2/Manifest.toml`
+- PackageCompiler: bundling libraries
+[ Info: PackageCompiler: Executing /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl => /tmp/jl_packagecompiler_huLJaX/jl_5RNtwt
+ERROR: LoadError: failed process: Process(setenv(`/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/bin/julia --color=no --startup-file=no --pkgimages=no --sysimage=/private/tmp/mech-julia-packagecompiler-builds-v1/depot/scratchspaces/9b87118b-4619-50d2-8e1e-99f35a4d4d9d/base_sysimages/24783422dd653764.dylib --compile=all --trace-compile=/tmp/jl_packagecompiler_huLJaX/jl_5RNtwt /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl`,["JULIA_NUM_PRECOMPILE_TASKS=1", "JULIA_DEPOT_PATH=/private/tmp/mech-julia-packagecompiler-builds-v1/depot:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot", "JULIA_PKG_OFFLINE=true", "OPENBLAS_NUM_THREADS=1", "OMP_NUM_THREADS=1", "JULIA_NUM_THREADS=8", "JULIA_PKG_SERVER=", "VECLIB_MAXIMUM_THREADS=1", "PATH=/usr/bin:/bin:/usr/sbin:/sbin", "OPENBLAS_MAIN_FREE=1", "LC_ALL=C", "__CF_USER_TEXT_ENCODING=0x1F5:0x0:0x0", "JULIA_LOAD_PATH=/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-2:@stdlib", "LANG=C", "JULIA_IMAGE_THREADS=1"]), ProcessExited(1)) [1]
+
+Stacktrace:
+  [1] pipeline_error
+    @ ./process.jl:610 [inlined]
+  [2] run(::Cmd; wait::Bool)
+    @ Base ./process.jl:525
+  [3] run
+    @ ./process.jl:522 [inlined]
+  [4] run_precompilation_script(project::String, sysimg::String, precompile_file::String, precompile_dir::String)
+    @ PackageCompiler ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:548
+  [5] create_sysimg_object_file(object_file::String, packages::Vector{String}, packages_sysimg::Set{Base.PkgId}; project::String, base_sysimage::String, precompile_execution_file::Vector{String}, precompile_statements_file::Vector{String}, cpu_target::String, script::Nothing, sysimage_build_args::Cmd, extra_precompiles::String, incremental::Bool, import_into_main::Bool)
+    @ PackageCompiler ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:590
+  [6] create_sysimg_object_file
+    @ ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:553 [inlined]
+  [7] create_sysimage(packages::Vector{String}; sysimage_path::String, project::String, precompile_execution_file::String, precompile_statements_file::Vector{String}, incremental::Bool, filter_stdlibs::Bool, cpu_target::String, script::Nothing, sysimage_build_args::Cmd, compress_sysimage::Bool, include_transitive_dependencies::Bool, base_sysimage::Nothing, julia_init_c_file::Nothing, julia_init_h_file::Nothing, version::Nothing, soname::Nothing, compat_level::String, extra_precompiles::String, import_into_main::Bool)
+    @ PackageCompiler ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:865
+  [8] create_sysimage
+    @ ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:773 [inlined]
+  [9] create_app(package_dir::String, app_dir::String; executables::Vector{Pair{String, String}}, precompile_execution_file::String, precompile_statements_file::Vector{String}, incremental::Bool, filter_stdlibs::Bool, force::Bool, c_driver_program::String, cpu_target::String, include_lazy_artifacts::Bool, sysimage_build_args::Cmd, compress_sysimage::Bool, include_transitive_dependencies::Bool, include_preferences::Bool, script::Nothing, quiet::Bool)
+    @ PackageCompiler ~/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl:1129
+ [10] top-level scope
+    @ /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/build_app.jl:7
+ [11] include(mod::Module, _path::String)
+    @ Base ./Base.jl:309
+ [12] exec_options(opts::Base.JLOptions)
+    @ Base ./client.jl:344
+ [13] _start()
+    @ Base ./client.jl:577
+in expression starting at /private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/build_app.jl:7

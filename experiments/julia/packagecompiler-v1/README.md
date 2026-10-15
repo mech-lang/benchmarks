@@ -18,6 +18,12 @@ Those restrictions disable runtime code generation; stripped benchmark method
 bodies cannot supply an interpreted substitute. This does not claim that Julia's
 runtime contains no interpreter or performs no launcher setup evaluation.
 
+Validation and scoring explicitly use eight compute threads and no interactive
+pool (`JULIA_NUM_THREADS=8,0`). The original fannkuch version 2 indexes per-worker
+arrays with thread IDs; the extra interactive thread introduced by newer Julia
+defaults would shift worker IDs beyond those arrays. Its build-time training
+uses the same explicit pool configuration, preserving the original kernel.
+
 [Source adaptation](source-adaptation.json) records original identities, exact
 edits, standard-library dependencies and runtime initialization. All authored
 application code, including module, entry and reset logic, contributes to LOC.

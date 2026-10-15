@@ -1,0 +1,34 @@
+{
+  "schema": "julia-packagecompiler-thread-pool-review-v1",
+  "reviewed_at": "2026-10-15T22:59:00.681711+00:00",
+  "profile": "fannkuchredux-julia-2",
+  "failed_build": "experiments/julia/packagecompiler-v1/builds/fannkuchredux-julia-2-v1/report.json",
+  "status": "configuration-correction-prepared-awaiting-native-validation",
+  "source": {
+    "path": "experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-2/src/BenchFannkuchreduxJulia2.jl",
+    "sha256": "a83fa7261f40c7cc6e4e5417b435a78b9c06bad6b496568a5476144d8c8c3e1b"
+  },
+  "observed": "Build-time training returned zero but failed exact complete output comparison for n=7. The failed attempt is retained and supplies no benchmark sample.",
+  "source_finding": "Per-worker result arrays have Threads.nthreads() entries and are indexed by Threads.threadid() inside propagated inbounds code. Julia 1.12+ defaults add an interactive pool; default worker IDs are offset by that pool size. Eight default workers can therefore have IDs 2..9 while arrays have length8.",
+  "inference": "This unchecked array access is consistent with the output mismatch; the corrected native build must still pass actual complete-output validation.",
+  "n7_domain_review": "factorial(7)=5040 divides by preferred_num_blocks=24 exactly, giving blocksize210; no partial-block issue.",
+  "correction": {
+    "build_training_environment": {
+      "JULIA_NUM_THREADS": "8,0"
+    },
+    "validation_and_scoring_environment": {
+      "JULIA_NUM_THREADS": "8,0"
+    },
+    "compute_worker_count": 8,
+    "interactive_worker_count": 0,
+    "source_modified": false,
+    "loc_modified": false,
+    "existing_julia_jit_measurements_modified": false
+  },
+  "references": [
+    "https://docs.julialang.org/en/v1/manual/multi-threading/",
+    "https://docs.julialang.org/en/v1.13-dev/base/multi-threading/"
+  ],
+  "benchmark_samples": 0,
+  "native_probe_executed_for_this_review": false
+}

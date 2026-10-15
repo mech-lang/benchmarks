@@ -38,6 +38,7 @@ def main():
     for name in ['julia', 'project', 'package', 'bundle', 'training', 'builder', 'depot', 'retained-depot', 'output']:
         parser.add_argument('--' + name, type=Path, required=True)
     parser.add_argument('--executable', required=True)
+    parser.add_argument('--julia-threads', choices=['8', '8,0'], default='8')
     parser.add_argument('--timeout', type=int, default=1800)
     args = parser.parse_args()
     for name in ['julia', 'project', 'package', 'training', 'builder', 'retained_depot']:
@@ -67,7 +68,7 @@ def main():
         environment = dict(PATH='/usr/bin:/bin:/usr/sbin:/sbin', LC_ALL='C', LANG='C',
             JULIA_DEPOT_PATH=str(args.depot) + ':' + str(args.retained_depot),
             JULIA_PKG_OFFLINE='true', JULIA_PKG_SERVER='',
-            JULIA_NUM_THREADS='8', JULIA_IMAGE_THREADS='1', JULIA_NUM_PRECOMPILE_TASKS='1',
+            JULIA_NUM_THREADS=args.julia_threads, JULIA_IMAGE_THREADS='1', JULIA_NUM_PRECOMPILE_TASKS='1',
             OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1', VECLIB_MAXIMUM_THREADS='1')
         command = [str(args.julia), '--startup-file=no', '--history-file=no', '--color=no',
             '--project=' + str(args.project), str(args.builder), str(args.package),
