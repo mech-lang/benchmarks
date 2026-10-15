@@ -1,4 +1,4 @@
-import {comparison,languageRelativeComparisons,same,chartDomain,comparisonMetrics,languagesByYear,globalStatistics,languageFamilies,median,releaseYearsInWindow,clampReleaseWindow,decadeWindow,medianRankings,recordedSamplePoints,sampleDensityPoints,densityGrid,layerPresentation,chartLayerState,summaryNumber,eligibleForChart} from './math.mjs?v=20261013-combined2';
+import {comparison,languageRelativeComparisons,same,chartDomain,comparisonMetrics,languagesByYear,globalStatistics,languageFamilies,median,releaseYearsInWindow,clampReleaseWindow,decadeWindow,medianRankings,timingOwner,observationSummary,recordedSamplePoints,sampleDensityPoints,densityGrid,layerPresentation,chartLayerState,summaryNumber,eligibleForChart} from './math.mjs?v=20261013-combined2';
 import {traitDimensions,languageTraits,emptyTraitFilters,matchesTraits,filterLanguageKeys} from './traits.mjs?v=20261013-combined2';
 import {benchmarkDimensions,benchmarkTraits,emptyBenchmarkFilters,matchesBenchmark,filterBenchmarkKeys} from './benchmark_traits.mjs';
 import {renderRankingCharts} from './rankings.mjs?v=20261013-combined2';
@@ -233,9 +233,9 @@ function renderLanguageOverview(){
   if(panel.hidden)return;
   const selectedBenchmarks=effectiveBenchmarks();
   const programs=focusPrograms().filter(p=>selectedBenchmarks.has(p.benchmark)),measured=programs.filter(measuredTiming);
-  const covered=data.benchmarks.filter(b=>measured.some(p=>p.benchmark===b.key));
+  const covered=data.benchmarks.filter(b=>measured.some(p=>p.benchmark===b.key)),observations=observationSummary(measured);
   $('#language-overview-title').textContent=`${focus.label} · ${focus.comparison?'comparison':'language overview'}`;
-  $('#language-overview-summary').textContent=`${covered.length}/${selectedBenchmarks.size} selected benchmarks · ${measured.length} timed published programs · ${measured.reduce((n,p)=>n+p.samples.length,0)} recorded runs. ${data.program_inventory?'Every qualified program retained in this publication is listed below.':'This publication retains its fastest and fewest-LOC program pool.'} Unavailable timings stay blank.`;
+  $('#language-overview-summary').textContent=`${covered.length}/${selectedBenchmarks.size} selected benchmarks · ${measured.length} programs · ${observations.runs} recorded runs. ${data.program_inventory?'Every qualified program retained in this publication is listed below.':'This publication retains its fastest and fewest-LOC program pool.'} Unavailable timings stay blank.${measured.some(p=>p.timing_alias_of)?' Timing aliases share recorded runs.':''}`;
   if(state.locMetric==='formatted')$('#language-overview-summary').textContent+=` ${measured.filter(p=>plottable(plotProgram(p))).length} timed programs have qualified formatted coordinates; the chart omits the others. Their original timings and sources remain listed.`;
   if(focus.comparison&&state.view==='benchmark'){
     const viewData=plotData(),active=viewData.benchmarks.find(b=>b.key===state.focus);
@@ -258,7 +258,7 @@ function renderLanguageOverview(){
   $('#language-timings tbody').innerHTML=data.benchmarks.filter(b=>selectedBenchmarks.has(b.key)).map(b=>{
     const rows=programs.filter(p=>p.benchmark===b.key);
     if(!rows.length)return `<tr><th scope="row">${esc(b.title)}</th><td colspan="8" class="missing-timing">No published program or timing.</td></tr>`;
-    return rows.map((p,i)=>`<tr class="${p.key===focus.program?'chosen':''}">${i===0?`<th scope="rowgroup" rowspan="${rows.length}">${esc(b.title)}</th>`:''}<td>${esc(shortName(p.language))}</td><td><button data-inspect-program="${p.key}">${esc(p.id)}</button></td><td class="ratio">${p.loc}</td><td class="ratio" title="${esc(formattedText(p))}">${formattedValue(p)}</td><td class="ratio">${measuredTiming(p)?seconds(p.seconds):'—'}</td><td class="ratio">${measuredTiming(p)&&eligibleForChart(p)?`${(p.seconds/b.baseline_seconds).toFixed(3)}×`:'—'}</td><td class="ratio">${measuredTiming(p)&&Number.isFinite(p.timing_sd)&&p.timing_sd>=0?seconds(p.timing_sd):'—'}</td><td class="sample-values">${p.samples.length?p.samples.map(value=>Number(value).toFixed(6)).join(' · '):'—'}${!eligibleForChart(p)?' · excluded from charts':''}<button class="row-comparison" data-compare-program="${p.key}">Compare</button></td></tr>`).join('');
+    return rows.map((p,i)=>`<tr class="${p.key===focus.program?'chosen':''}">${i===0?`<th scope="rowgroup" rowspan="${rows.length}">${esc(b.title)}</th>`:''}<td>${esc(shortName(p.language))}</td><td><button data-inspect-program="${p.key}">${esc(p.id)}</button></td><td class="ratio">${p.loc}</td><td class="ratio" title="${esc(formattedText(p))}">${formattedValue(p)}</td><td class="ratio">${measuredTiming(p)?seconds(p.seconds):'—'}</td><td class="ratio">${measuredTiming(p)&&eligibleForChart(p)?`${(p.seconds/b.baseline_seconds).toFixed(3)}×`:'—'}</td><td class="ratio">${measuredTiming(p)&&Number.isFinite(p.timing_sd)&&p.timing_sd>=0?seconds(p.timing_sd):'—'}</td><td class="sample-values">${p.samples.length?p.samples.map(value=>Number(value).toFixed(6)).join(' · '):'—'}${!eligibleForChart(p)?' · excluded from charts':''}${renderAliasDisclosure(p)}<button class="row-comparison" data-compare-program="${p.key}">Compare</button></td></tr>`).join('');
   }).join('');
   renderLanguageComparisons();
 }
@@ -697,7 +697,7 @@ function renderChart(){
     };
     for(const cell of field.cells)node('rect',{x:margins.left+cell.column*w/field.columns,y:margins.top+h-(cell.row+1)*h/field.rows,
       width:w/field.columns+.25,height:h/field.rows+.25,fill:color(cell.value),'data-density-cell':`${cell.column}:${cell.row}`},heat);
-    $('#density-population').textContent=field.runs?`${field.runs} recorded runs · ${field.programs} programs · ${field.variants} variants · equal run weights · smoothing ${summaryNumber(field.bandwidth_x)} × ${summaryNumber(field.bandwidth_y)} log₂ doublings. Relative intensity; dot visibility does not change density.`:'No recorded runs in the current data selection.';
+    $('#density-population').textContent=field.runs?`${field.runs} recorded runs · ${field.programs} measured programs · ${field.variants} variants · equal run weights · smoothing ${summaryNumber(field.bandwidth_x)} × ${summaryNumber(field.bandwidth_y)} log₂ doublings. Relative intensity; dot visibility does not change density.`:'No recorded runs in the current data selection.';
   }
   for(let exponent=Math.ceil(xmin);exponent<=Math.floor(xmin+dx);exponent++){
     const value=2**exponent,x=X(value);node('line',{x1:x,x2:x,y1:margins.top,y2:margins.top+h,class:'grid-line'},svg);
@@ -816,7 +816,7 @@ function renderChart(){
       'data-chart-language':entry.language.key,style:'--chart-opacity:1',
       'data-program':program?.key??null,'data-mean':mean?'true':null,'data-profile-median':'true',tabindex:0,role:'button'};
     const name=label??`${shortName(entry.language.key)} · ${kind==='fast'?'fastest':'fewest LOC'}`;
-    const description=program?`${name}\n${benchmark(benchmarkKey).title} · ${program.loc} LOC · ${seconds(program.seconds)}\n${program.samples.length} timing samples`:`${name}\n${ratio(point.x)} LOC · ${ratio(point.y)} time\n${coverageLabel(entry)} selected benchmarks${partialEntry(entry)?` · missing ${missingNames(entry)}`:''}`;
+    const description=program?`${name}\n${benchmark(benchmarkKey).title} · ${program.loc} LOC · ${seconds(program.seconds)}\n${program.samples.length} ${program.timing_alias_of?'shared timing samples':'timing samples'}`:`${name}\n${ratio(point.x)} LOC · ${ratio(point.y)} time\n${coverageLabel(entry)} selected benchmarks${partialEntry(entry)?` · missing ${missingNames(entry)}`:''}`;
     attrs['aria-label']=description.replaceAll('\n',', ');
     const mark=kind==='small'?node('rect',{...attrs,x:X(point.x)-size,y:Y(point.y)-size,width:size*2,height:size*2},medianPlot):node('circle',{...attrs,cx:X(point.x),cy:Y(point.y),r:size},medianPlot);
     if(!faint)labelObstacles.push({x:X(point.x)-size-2,y:Y(point.y)-size-2,width:size*2+4,height:size*2+4});
@@ -863,14 +863,14 @@ function renderChart(){
     if(!programNodes.has(runNumber))programNodes.set(runNumber,{node:node('circle',{
       r:2.4,fill:'none','stroke-width':1.15,class:'timing-run','data-sample':'true',
       'data-chart-language':program.language,'data-program':program.key,'data-timing-run':runNumber,
-      'data-run-seconds':elapsed,style:'--chart-opacity:1',tabindex:0,role:'button'})});
+      'data-run-seconds':elapsed,'data-observation-source':timingOwner(program),style:'--chart-opacity:1',tabindex:0,role:'button'})});
     const cached=programNodes.get(runNumber),run=cached.node,x=X(point.x),y=Y(point.y),color=displayColor(entry.language.key);
     if(cached.x!==x){run.setAttribute('cx',x);cached.x=x;}
     if(cached.y!==y){run.setAttribute('cy',y);cached.y=y;}
     if(cached.color!==color){run.setAttribute('stroke',color);cached.color=color;}
     if(cached.ratioX!==point.x){run.setAttribute('data-ratio-x',point.x);cached.ratioX=point.x;}
     if(cached.loc!==program.loc||cached.ratioY!==point.y){
-      cached.description=`${shortName(program.language)} · ${inputBenchmark.title}\n${program.id} · run ${runNumber}: ${seconds(elapsed)} · ${program.loc} LOC\nRun time / fixed benchmark median baseline: ${ratio(point.y)}`;
+      cached.description=`${shortName(program.language)} · ${inputBenchmark.title}\n${program.id} · run ${runNumber}: ${seconds(elapsed)} · ${program.loc} LOC${program.timing_alias_of?` · shared from ${program.timing_alias_of}`:''}\nRun time / fixed benchmark median baseline: ${ratio(point.y)}`;
       run.setAttribute('aria-label',cached.description.replaceAll('\n',', '));
       run.setAttribute('data-ratio-y',point.y);cached.ratioY=point.y;cached.loc=program.loc;
     }
@@ -1006,6 +1006,20 @@ function selectedProgram(){
   const selected=candidates.reduce((a,b)=>state.detail.kind==='fast'?(b.seconds<a.seconds||b.seconds===a.seconds&&b.loc<a.loc?b:a):(b.loc<a.loc||b.loc===a.loc&&b.seconds<a.seconds?b:a));
   return catalogProgram(selected.key);
 }
+function renderAliasDisclosure(program){
+  if(program.timing_alias_of){
+    const owner=catalogProgram(program.timing_alias_of);
+    const target=owner?`<button data-inspect-program="${esc(owner.key)}">${esc(owner.id)}</button>`:esc(program.timing_alias_of);
+    return `<p class="profile-note timing-alias">Reuses the ${program.samples.length} runs recorded for ${target}; no additional runs.</p>`;
+  }
+  if(program.source_alias_of){
+    const reference=program.source_alias_of;
+    const owner=catalogProgram(reference)??benchmarkPrograms(program.benchmark,program.language).find(p=>p.id===reference);
+    const target=owner&&owner.key!==program.key?`<button data-inspect-program="${esc(owner.key)}">${esc(owner.id)}</button>`:esc(reference);
+    return `<p class="profile-note source-alias">Shares authored source with ${target}.${measuredTiming(program)?' Its recorded timings are independent.':''}</p>`;
+  }
+  return '';
+}
 function programSource(program,key){
   const file=data.files[key],metadata=program.file_roles?.[key];
   const details=metadata&&typeof metadata==='object'?metadata:{};
@@ -1065,12 +1079,12 @@ function renderInspector({renderRelated=true}={}){
   const formattedNote=`<p class="profile-note formatted-source-count">${esc(formattedText(program))}. ${esc((program.formatted_loc_evidence?.reasons??[]).join(' '))}${state.locMetric==='formatted'&&!plottable(plotProgram(program))?' This program has no eligible formatted chart coordinate; its original source and measured timing remain available.':''}</p>`;
   $('#inspector-body').innerHTML=`${aggregate}${navigation}<div class="inspector-controls"><label>Benchmark<select id="detail-benchmark">${available.map(item=>`<option value="${item.key}" ${item.key===b.key?'selected':''}>${esc(item.title)}</option>`).join('')}</select></label><label>Profile<select id="detail-profile"><option value="fast" ${pending?'disabled':''} ${state.detail.kind==='fast'?'selected':''}>Fastest</option><option value="small" ${state.detail.kind==='small'?'selected':''}>Fewest LOC</option></select></label><label class="program-choice">Program<select id="detail-program">${availablePrograms.map(p=>`<option value="${p.key}" ${program.key===p.key?'selected':''}>${esc(p.id)} · ${p.loc} LOC · ${seconds(p.seconds)}</option>`).join('')}</select></label></div>
     ${canonicalProgram?`<label class="inclusion"><input id="include-program" type="checkbox" ${pending||!eligibleForChart(program)||inLanguageView()?'disabled':''} ${pending||!eligibleForChart(program)||state.disabled.has(program.key)?'':'checked'}>Include this program in the speed comparison${inLanguageView()?' · all published programs shown in this view':''}</label>`:'<p class="profile-note">This qualified program is retained in the language overview. The main comparison uses the published fastest and fewest-LOC endpoints.</p>'}<p class="profile-note">${esc(b.workload)}</p>
-    <div class="detail-stats"><div class="detail-stat"><strong>${program.loc}</strong><span>canonical source LOC</span></div><div class="detail-stat"><strong>${formattedValue(program)}</strong><span>formatted source LOC</span></div><div class="detail-stat"><strong>${seconds(program.seconds)}</strong><span>median measured time</span></div><div class="detail-stat"><strong>${pending?'Not measured':seconds(program.timing_sd)}</strong><span>run-to-run SD</span></div></div>
-    ${formattedNote}
+    <div class="detail-stats"><div class="detail-stat"><strong>${program.loc}</strong><span>canonical source LOC</span></div><div class="detail-stat"><strong>${formattedValue(program)}</strong><span>formatted source LOC</span></div><div class="detail-stat"><strong>${seconds(program.seconds)}</strong><span>${program.timing_alias_of?'shared median time':'median measured time'}</span></div><div class="detail-stat"><strong>${pending?'Not measured':seconds(program.timing_sd)}</strong><span>${program.timing_alias_of?'shared run-to-run SD':'run-to-run SD'}</span></div></div>
+    ${formattedNote}${renderAliasDisclosure(program)}
     ${!eligibleForChart(program)?`<p class="profile-note publication-exclusion">Excluded from charts and comparisons. ${esc(program.exclusion_reason??'Publication qualification is incomplete.')} Saved timings and sources remain available for inspection.</p>`:''}
     ${bestComparison}
     ${program.timing_summary?`<p class="profile-note timing-boundary">${esc(program.timing_summary)}</p>`:''}
-    <section class="detail-section"><h3>Recorded timing samples</h3>${pending?'<p class="profile-note">No qualified timing median is available. Any retained successful samples below do not supply a speed ratio, geometric mean, or standard-deviation ellipse.</p>':''}${program.samples.length?`<div class="timings-table-wrap"><table class="timings-table"><thead><tr>${sortHeader('timings','run','Run')}${sortHeader('timings','elapsed','Whole process seconds')}<th scope="col">${program.samples.length} samples</th></tr></thead><tbody>${samples.map(sample=>`<tr><td>${sample.run}</td><td class="sample-value">${sample.elapsed.toFixed(6)}</td><td><div class="sample-bar" style="width:${sample.elapsed/Math.max(...program.samples)*100}%"></div></td></tr>`).join('')}</tbody></table></div>`:''}</section>
+    <section class="detail-section"><h3>${program.timing_alias_of?'Shared recorded timing samples':'Recorded timing samples'}</h3>${pending?'<p class="profile-note">No qualified timing median is available. Any retained successful samples below do not supply a speed ratio, geometric mean, or standard-deviation ellipse.</p>':''}${program.samples.length?`<div class="timings-table-wrap"><table class="timings-table"><thead><tr>${sortHeader('timings','run','Run')}${sortHeader('timings','elapsed','Whole process seconds')}<th scope="col">${program.samples.length} ${program.timing_alias_of?'shared samples':'samples'}</th></tr></thead><tbody>${samples.map(sample=>`<tr><td>${sample.run}</td><td class="sample-value">${sample.elapsed.toFixed(6)}</td><td><div class="sample-bar" style="width:${sample.elapsed/Math.max(...program.samples)*100}%"></div></td></tr>`).join('')}</tbody></table></div>`:''}</section>
     ${renderLocAudit(program)}
     <section class="detail-section"><div class="code-toolbar"><select id="detail-file" aria-label="Source file">${program.files.map((key,i)=>`<option value="${i}" ${i===Math.min(state.detail.file,program.files.length-1)?'selected':''}>${esc(data.files[key].name)}${sourceRoleLabel(programSource(program,key).role)}</option>`).join('')}</select><a id="download-source" href="#">Download source</a>${file.source_url?`<a href="${esc(file.source_url)}" target="_blank" rel="noopener">${esc(program.source_link_label??'Upstream listing')}</a>`:''}${program.license_url?`<a href="${esc(program.license_url)}" target="_blank" rel="noopener">License</a>`:''}</div><pre><code id="source-code"></code></pre><div class="source-meta">${file.loc_note?esc(file.loc_note)+'<br>':''}Verified source SHA-256: ${file.sha256}<br>Timing report: ${esc(program.report)}</div></section>
     ${program.local_adaptation?`<p class="profile-note source-provenance">${esc(program.source_provenance)}</p>`:''}${program.algorithm?.reason?`<p class="profile-note">${esc(program.algorithm.reason)}</p>`:''}${program.runtime_policy?`<p class="profile-note">Runtime policy: ${esc(program.runtime_policy)}</p>`:''}${program.runtime_support?`<p class="profile-note">${esc(program.runtime_support)}</p>`:''}

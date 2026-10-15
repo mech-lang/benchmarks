@@ -27,6 +27,9 @@ PROGRAM_FIELDS = frozenset({
     'loc_expansions', 'loc_expansion_format', 'source_url', 'source_link_label',
     'license_url', 'local_adaptation', 'source_provenance', 'algorithm',
     'runtime_policy', 'runtime_support',
+    'timing_alias_of', 'source_alias_of', 'aliased_sample_source',
+    'native_observations', 'distinct_optimization_claimed', 'source_alias_note',
+    'separate_fresh_samples_required',
 })
 FILE_ROLE_FIELDS = frozenset({
     'role', 'source_path', 'name', 'path', 'code', 'sha256', 'physical_loc',
@@ -78,6 +81,42 @@ def browser_program(program):
     return row
 
 
+def validate_timing_aliases(catalog):
+    """Check explicit shared observations; source aliases can have fresh samples.
+
+    The supported timing aliases name a direct owner in the same workload and
+    language, with the same recorded samples, source bundle and coordinates.
+    Missing optional coordinates must stay missing on both rows. No alias or
+    observation is inferred from equal numbers or shared source bytes.
+    """
+    pools = [catalog.get(name, {}) for name in ('program_inventory', 'programs')]
+    programs = {key: row for pool in pools for key, row in pool.items()}
+    fields = ('benchmark', 'language', 'samples', 'seconds', 'timing_sd', 'x', 'y',
+              'loc', 'physical_loc', 'formatted_loc', 'formatted_x', 'files')
+    def fail(key, detail):
+        raise ValueError('Invalid timing alias ' + key + ': ' + detail)
+    for pool in pools:
+        for key, row in pool.items():
+            owner_key = row.get('timing_alias_of')
+            if owner_key is None:
+                continue
+            if (type(owner_key) is not str or not owner_key or owner_key == key
+                    or row.get('key') != key or owner_key not in programs):
+                fail(key, 'explicit different existing owner required')
+            owner = programs[owner_key]
+            if owner.get('key') != owner_key or owner.get('timing_alias_of') is not None:
+                fail(key, 'owner must directly own the observations')
+            if type(row.get('native_observations')) is not int or row['native_observations'] != 0:
+                fail(key, 'alias must record zero additional native observations')
+            if 'aliased_sample_source' in row and row['aliased_sample_source'] != owner_key:
+                fail(key, 'sample source differs from timing owner')
+            for field in fields:
+                if (field in row) != (field in owner):
+                    fail(key, field + ' presence differs from owner')
+                if field in row and json.dumps(row[field], sort_keys=True, allow_nan=False) != json.dumps(owner[field], sort_keys=True, allow_nan=False):
+                    fail(key, field + ' differs from owner')
+
+
 def browser_data(catalog):
     """Project the recorded catalog without mutating or recomputing observations.
 
@@ -90,6 +129,7 @@ def browser_data(catalog):
     for field in ('languages', 'benchmarks', 'programs', 'files'):
         if field not in catalog:
             raise ValueError('Missing browser catalog field: ' + field)
+    validate_timing_aliases(catalog)
     result = {key: value for key, value in catalog.items() if key in BROWSER_FIELDS}
     for field in ('programs', 'program_inventory'):
         if field in result:

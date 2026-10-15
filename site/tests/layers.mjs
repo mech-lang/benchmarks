@@ -66,7 +66,7 @@ vm.runInContext(executable+`\nglobalThis.harness={
       const languages=programsByBenchmark.get(program.benchmark);if(!languages.has(program.language))languages.set(program.language,[]);
       languages.get(program.language).push(program);
     }
-    Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';
+    Object.assign(state,{benchmarks:new Set(fixture.benchmarks.map(b=>b.key)),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(fixture.languages.map(l=>l.key)),releaseYearStart:1960,releaseYear:2026,playbackYear:null,playing:false,focus:'b1'});for(const l of fixture.languages)colors[l.key]='#f6c04e';
   },
   render(options){Object.assign(state,options);benchmarkEntries=null;model=comparison(plotData(),allSelection());renderChart();},
   derived(){return {model,entries:currentEntries(),samples:currentSampleInputs(),density:currentDensityField(),view:plotData()};},
@@ -412,9 +412,98 @@ assert.ok(!('trail' in context.harness.selection()));
 assert.doesNotMatch(source+html+css,/median-trail|medianHistory|currentHistory|historyCache|getMedianHistory/);
 assert.ok(!('medianHistory' in math));
 assert.match(source,/filterDrawer\.append\(filterControls\)/,'Keep the shared mobile filter drawer');
+// Explicit shared timing observations are distinct from independently timed
+// source aliases, even when every sample and source coordinate is equal.
+const owner={...fixture.programs['alpha-b1-fast'],files:['source'],physical_loc:2,timing_sd:0.2,
+  report:'synthetic/report.json',native_observations:3,formatted_loc:null,formatted_x:null,
+  formatted_loc_status:'unavailable',formatted_loc_complete:false,samples:[2,2,2]};
+const alias={...owner,key:'alpha-b1-alias',id:'alias',timing_alias_of:owner.key,
+  source_alias_of:owner.key,aliased_sample_source:owner.key,native_observations:0};
+const independent={...owner,key:'alpha-b1-independent',id:'independent',source_alias_of:owner.key};
+const bench={...fixture.benchmarks[0],groups:[{language:'alpha',programs:[owner.key]}]};
+const entry={language:{key:'alpha'},inputs:[{benchmark:bench,programs:[alias,owner,independent]}]};
+const shared=math.recordedSamplePoints([entry]);
+assert.equal(shared.length,6);assert.ok(shared.slice(0,3).every(p=>p.program===owner));
+assert.deepEqual(shared.map(p=>p.observation_source),[...Array(3).fill(owner.key),...Array(3).fill(independent.key)]);
+assert.deepEqual(math.observationSummary([alias,owner,independent]),{timingOwners:2,runs:6});
+const allAliasSamples=math.recordedSamplePoints([{...entry,inputs:[{benchmark:bench,programs:[alias]}]}]);
+assert.equal(allAliasSamples.length,3);assert.ok(allAliasSamples.every(p=>p.program===alias));
+const density=math.sampleDensityPoints([...allAliasSamples,...shared]);
+assert.equal(density.length,6);assert.equal(density.reduce((n,p)=>n+p.weight,0),6);
+assert.equal(new Set(density.map(p=>p.program)).size,2);
+assert.equal(math.densityGrid(density,{xMin:0,xMax:4,yMin:0,yMax:4}).runs,6);
+assert.equal(math.recordedSamplePoints([entry],{disabled:new Set([owner.key,independent.key])}).length,3);
+assert.equal(math.recordedSamplePoints([entry],{disabled:new Set([alias.key])}).length,6);
+assert.equal(math.recordedSamplePoints([entry],{samples:false}).length,0);
+assert.equal(math.recordedSamplePoints([{...entry,inputs:[{benchmark:bench,programs:[{...owner,eligible_for_chart:false},alias]}]}]).length,3);
+const aliasFixture={languages:[fixture.languages[1]],benchmarks:[bench],programs:{[owner.key]:owner},
+  program_inventory:{[alias.key]:alias,[independent.key]:independent},
+  files:{source:{name:'main.apl',path:'retained/main.apl',sha256:'a'.repeat(64),code:'1+1\n'}}};
+context.harness.initialize(aliasFixture);
+const aliasView={view:'language',languageFocus:{keys:['alpha'],label:'Alpha',variant:'alpha',benchmark:'b1'},
+  sampleMode:'dim',medianMode:'highlight',densityMode:'highlight',global:false,disabled:new Set(),locMetric:'canonical'};
+context.harness.render(aliasView);context.harness.overview();
+assert.match(element('#language-overview-summary').textContent,/3 programs · 6 recorded runs/);
+assert.match(element('#language-timings tbody').innerHTML,/Reuses the 3 runs recorded for/);
+const sampleMarks=()=>element('#chart').querySelectorAll('[data-sample]');
+assert.equal(sampleMarks().length,6);
+assert.ok(sampleMarks().every(n=>n.dataset.program!==alias.key),'Owner wins even when alias precedes it in the inventory.');
+context.harness.inspect(alias.key);
+assert.match(element('#inspector-body').innerHTML,/Shared recorded timing samples/);
+assert.match(element('#inspector-body').innerHTML,/shared median time/);
+assert.match(element('#inspector-body').innerHTML,/no additional runs/);
+assert.ok(element('#inspector-body').innerHTML.includes(`data-inspect-program="${owner.key}"`));
+context.harness.inspect(independent.key);
+assert.match(element('#inspector-body').innerHTML,/Its recorded timings are independent/);
+assert.doesNotMatch(element('#inspector-body').innerHTML,/Shared recorded timing samples/);
+context.harness.render({...aliasView,view:'benchmark',focus:'b1',languageFocus:{...aliasView.languageFocus,comparison:true,comparisonProgram:alias.key}});
+assert.equal(sampleMarks().length,3);assert.ok(sampleMarks().every(n=>n.dataset.program===alias.key));
+for(const mark of sampleMarks()){
+  assert.equal(mark.dataset.observationSource,owner.key);
+  assert.match(mark.getAttribute('aria-label'),/shared from alpha-b1-fast/);
+  assert.equal(context.harness.sampleAction(mark,'keydown',{key:'Enter'}).calls[0].program,alias.key);
+}
+const aliasNodes=sampleMarks();
+context.harness.visual({sampleMode:'off'});assert.equal(sampleMarks().length,0);
+assert.equal(context.harness.derived().density.runs,3,'Density retains shared observations with sample dots Off.');
+context.harness.visual({sampleMode:'dim'});assert.deepEqual(sampleMarks(),aliasNodes);
+context.harness.render({...aliasView,disabled:new Set()});assert.equal(sampleMarks().length,6);
+const ownerMark=sampleMarks().find(n=>n.dataset.program===owner.key);
+assert.equal(context.harness.sampleAction(ownerMark,'click').calls[0].program,owner.key,'Reused owner markers route to their current source.');
+context.harness.formatting(true);context.harness.render({...aliasView,locMetric:'formatted'});
+assert.equal(sampleMarks().length,0,'Unavailable formatted coordinates must not be invented for either alias.');
+context.harness.overview();assert.match(element('#language-overview-summary').textContent,/6 recorded runs/);
+context.harness.formatting(false);
+console.log('Timing aliases: explicit owner/run deduplication, equal independent samples, disclosure, density, Off and source actions passed.');
 // The saved Pony audit groups line entries by source, including the counted Pi helper.
 const recorded=JSON.parse(fs.readFileSync(new URL('../../data/benchmarks.json',import.meta.url),'utf8'));
 context.harness.initialize(recorded);
+const recordedCatalog={...recorded.program_inventory,...recorded.programs};
+const actualTimingAliases=Object.values(recordedCatalog).filter(program=>program.timing_alias_of);
+assert.ok(actualTimingAliases.length>=3,'The retained catalog includes its three original explicit timing aliases.');
+for(const program of actualTimingAliases){
+  const projected=formatted.projectProgram(program,'formatted');
+  for(const field of ['timing_alias_of','source_alias_of','aliased_sample_source','native_observations'])
+    assert.deepEqual(projected[field],program[field],`Formatted projection preserves ${field}.`);
+}
+const hasAPLTree=!!recordedCatalog['binarytrees:apl-workspace200-compact'];
+for(const [key,labels,runs] of [['apl',hasAPLTree?19:17,hasAPLTree?48:45],['uiua',17,48]]){
+  context.harness.render({view:'language',languageFocus:{keys:[key],label:recorded.languages.find(l=>l.key===key).label,
+    variant:key,benchmark:'nbody'},languages:new Set([key]),disabled:new Set(),locMetric:'canonical',
+    sampleMode:'dim',medianMode:'off',densityMode:'highlight',global:false});
+  context.harness.overview();
+  assert.ok(element('#language-overview-summary').textContent.includes(`${labels} programs · ${runs} recorded runs`));
+  assert.equal(sampleMarks().length,runs,`${key} hero shows each actual native observation once.`);
+  assert.equal(context.harness.derived().density.runs,runs);
+}
+for(const key of ['kotlin','prolog']){
+  const programs=Object.values(recordedCatalog).filter(p=>p.language===key&&p.seconds>0);
+  assert.ok(programs.some(p=>p.source_alias_of));
+  assert.ok(programs.every(p=>!p.timing_alias_of));
+  assert.equal(math.observationSummary(programs).runs,programs.reduce((n,p)=>n+p.samples.length,0),`${key} source aliases retain their independent runs.`);
+}
+context.harness.initialize(recorded);
+Object.assign(context.harness.selection(),{view:'summary',languageFocus:null,disabled:new Set(),locMetric:'canonical'});
 const pony=Object.values(recorded.program_inventory).filter(program=>program.language==='pony');
 assert.equal(pony.length,20);
 let helperLinks=0;

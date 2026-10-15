@@ -4,22 +4,36 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {comparison,comparisonMetrics,chartDomain,globalStatistics,medianRankings,
   recordedSamplePoints,sampleDensityPoints,languageRelativeComparisons,languageFamilies,
-  languagesByYear} from '../src/math.mjs';
+  languagesByYear,timingOwner,observationSummary} from '../src/math.mjs';
 import {axisData,inspectorProgram} from '../src/formatted_axis.mjs';
 import {languageTraits} from '../src/traits.mjs';
 
 // Use the actual source/audit rendering functions without starting the page or
 // constructing a DOM. These functions close over only data and HTML escaping.
 const app=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
-const rendering=app.slice(app.indexOf('function programSource('),app.indexOf('function renderInspector('));
+const rendering=app.slice(app.indexOf('function renderAliasDisclosure('),app.indexOf('function renderInspector('));
+assert.ok(rendering.includes('function renderAliasDisclosure('));
 assert.ok(rendering.includes('function renderLocAudit('));
+const lookups=app.slice(app.indexOf('const catalogProgram='),app.indexOf('const plotData='));
+assert.ok(lookups.includes('const benchmarkPrograms=')&&lookups.includes('const measuredTiming='));
 const esc=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const inspectors=new Function('data','esc',rendering+'\nreturn {source:programSource,audit:renderLocAudit};');
+const inspectors=new Function('data','esc','programCatalog','programsByBenchmark',
+  lookups+rendering+'\nreturn {source:programSource,audit:renderLocAudit,alias:renderAliasDisclosure};');
+const rendererFor=data=>{
+  const catalog={...data.program_inventory,...data.programs},byBenchmark=new Map();
+  for(const program of Object.values(catalog)){
+    if(!byBenchmark.has(program.benchmark))byBenchmark.set(program.benchmark,new Map());
+    const groups=byBenchmark.get(program.benchmark);
+    if(!groups.has(program.language))groups.set(program.language,[]);
+    groups.get(program.language).push(program);
+  }
+  return inspectors(data,esc,catalog,byBenchmark);
+};
 
 if(process.argv.length!==4)throw new Error('Usage: node site/tests/data_projection.mjs canonical.json browser.json');
 const original=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
 const projected=JSON.parse(fs.readFileSync(process.argv[3],'utf8'));
-const oldInspector=inspectors(original,esc),newInspector=inspectors(projected,esc);
+const oldInspector=rendererFor(original),newInspector=rendererFor(projected);
 for(const field of ['schema','schema_version','languages','benchmarks','files','repository','archive_paths','protocol','reference_summary']){
   assert.equal(Object.hasOwn(projected,field),Object.hasOwn(original,field),field);
   assert.deepEqual(projected[field],original[field],field);
@@ -28,7 +42,9 @@ const displayedFields=['key','id','benchmark','language','loc','physical_loc','x
   'timing_sd','timing_summary','sample_details','files','report','report_sha256','source_report','loc_report',
   'binary_sha256','runtime_arguments','command','execution_mode','measured_backend','formatted_loc','formatted_loc_status',
   'formatted_loc_complete','formatted_x','eligible_for_chart','exclusion_reason','loc_expansion_format',
-  'source_url','source_link_label','license_url','local_adaptation','source_provenance','runtime_policy','runtime_support'];
+  'source_url','source_link_label','license_url','local_adaptation','source_provenance','runtime_policy','runtime_support',
+  'timing_alias_of','source_alias_of','aliased_sample_source','native_observations','distinct_optimization_claimed',
+  'source_alias_note','separate_fresh_samples_required'];
 const fileFields=['name','path','code','sha256','role','physical_loc','normalized_loc','loc_note','source_url'];
 let rowCount=0,sampleCount=0,auditCases=0,sourceCases=0;
 for(const pool of ['programs','program_inventory']){
@@ -43,6 +59,8 @@ for(const pool of ['programs','program_inventory']){
     assert.deepEqual(browserRow.formatted_loc_evidence?.reasons,row.formatted_loc_evidence?.reasons);
     assert.deepEqual(browserRow.algorithm?.reason,row.algorithm?.reason);
     assert.equal(newInspector.audit(browserRow),oldInspector.audit(row),`${key}: rendered LOC audit HTML`);
+    assert.equal(newInspector.alias(browserRow),oldInspector.alias(row),`${key}: rendered timing/source alias disclosure`);
+    assert.equal(timingOwner(browserRow),timingOwner(row),`${key}: explicit observation owner`);
     auditCases++;
     for(const file of row.files){
       const before=oldInspector.source(row,file),after=newInspector.source(browserRow,file);
@@ -56,6 +74,8 @@ for(const pool of ['programs','program_inventory']){
 }
 const catalog=data=>({...data.program_inventory,...data.programs});
 assert.deepEqual(Object.keys(catalog(projected)),Object.keys(catalog(original)),'Source browsing/navigation order');
+assert.deepEqual(observationSummary(Object.values(catalog(projected))),observationSummary(Object.values(catalog(original))),
+  'Unique observations and separately timed source aliases');
 assert.deepEqual(languageFamilies(projected.languages),languageFamilies(original.languages));
 assert.deepEqual(languageTraits(projected),languageTraits(original));
 for(const year of new Set(original.languages.map(row=>row.release_year)))
@@ -67,7 +87,7 @@ const modelView=model=>({benchmarks:model.benchmarks.map(b=>b.key),entries:model
   inputs:entry.inputs.map(input=>({benchmark:input.benchmark.key,fast:input.fast.key,small:input.small.key,
     programs:input.programs.map(program=>program.key)}))}))});
 const sampleView=samples=>samples.map(s=>({program:s.program.key,language:s.entry.language.key,
-  benchmark:s.benchmark.key,run:s.run,elapsed:s.elapsed,x:s.x,y:s.y}));
+  benchmark:s.benchmark.key,run:s.run,elapsed:s.elapsed,x:s.x,y:s.y,observation_source:s.observation_source}));
 const rankInputs=entries=>entries.map(({language,fast,small})=>({language,fast,small}));
 const all=original.benchmarks.map(b=>b.key),languages=new Set(original.languages.map(l=>l.key));
 const scopes=[all,...all.map(key=>[key]),all.filter((_,index)=>index%2===0)];

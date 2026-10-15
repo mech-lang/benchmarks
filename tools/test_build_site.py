@@ -46,7 +46,80 @@ def fixture():
                 saved_publication_audit={'physical_pins': {'/original/receipt': 'c'*64}})
 
 
+def alias_fixture():
+    catalog = fixture()
+    owner = catalog['programs']['b:first']
+    owner['native_observations'] = 3
+    catalog['program_inventory']['b:first'] = copy.deepcopy(owner)
+    alias = copy.deepcopy(owner)
+    alias.update(key='b:alias', id='alias', timing_alias_of='b:first',
+                 source_alias_of='b:first', aliased_sample_source='b:first',
+                 native_observations=0, distinct_optimization_claimed=False,
+                 source_alias_note='Same source and observations; second label only.',
+                 separate_fresh_samples_required=False)
+    catalog['program_inventory']['b:alias'] = alias
+    return catalog
+
+
 class BrowserProjection(unittest.TestCase):
+    def test_explicit_timing_alias_fields_and_order_are_preserved(self):
+        catalog = alias_fixture()
+        before = copy.deepcopy(catalog)
+        projected = builder.browser_data(catalog)
+        self.assertEqual(catalog, before)
+        self.assertEqual(list(projected['program_inventory']), list(catalog['program_inventory']))
+        for field in ('timing_alias_of', 'source_alias_of', 'aliased_sample_source',
+                      'native_observations', 'distinct_optimization_claimed', 'source_alias_note',
+                      'separate_fresh_samples_required'):
+            self.assertEqual(projected['program_inventory']['b:alias'][field],
+                             catalog['program_inventory']['b:alias'][field])
+
+    def test_timing_alias_requires_direct_same_scope_owner(self):
+        for field, value in (('timing_alias_of', 'missing'), ('timing_alias_of', 'b:alias'),
+                             ('timing_alias_of', ''), ('language', 'other'), ('benchmark', 'other')):
+            with self.subTest(field=field, value=value):
+                catalog = alias_fixture(); catalog['program_inventory']['b:alias'][field] = value
+                with self.assertRaisesRegex(ValueError, 'Invalid timing alias'):
+                    builder.browser_data(catalog)
+        catalog = alias_fixture()
+        catalog['programs']['b:first']['timing_alias_of'] = 'b:alias'
+        with self.assertRaisesRegex(ValueError, 'directly own'):
+            builder.browser_data(catalog)
+
+    def test_timing_alias_rejects_changed_samples_coordinates_and_missing_nulls(self):
+        for field, value in (('samples', [0.2, 0.3, 0.5]), ('seconds', 0.4), ('x', 2),
+                             ('y', True), ('files', ['other']), ('loc', 3), ('formatted_x', 1)):
+            with self.subTest(field=field):
+                catalog = alias_fixture(); catalog['program_inventory']['b:alias'][field] = value
+                with self.assertRaisesRegex(ValueError, 'differs from owner'):
+                    builder.browser_data(catalog)
+        catalog = alias_fixture(); del catalog['program_inventory']['b:alias']['formatted_x']
+        with self.assertRaisesRegex(ValueError, 'presence differs'):
+            builder.browser_data(catalog)
+        for pool in ('programs', 'program_inventory'):
+            for row in catalog[pool].values():row.pop('formatted_x', None)
+        builder.browser_data(catalog)  # Optional field absent from both owner and alias.
+
+    def test_timing_alias_rejects_new_native_observations_and_wrong_sample_owner(self):
+        for field, value in (('native_observations', 3), ('native_observations', False),
+                             ('aliased_sample_source', 'b:second')):
+            with self.subTest(field=field, value=value):
+                catalog = alias_fixture(); catalog['program_inventory']['b:alias'][field] = value
+                with self.assertRaisesRegex(ValueError, 'Invalid timing alias'):
+                    builder.browser_data(catalog)
+
+    def test_source_only_aliases_keep_separately_recorded_samples(self):
+        catalog = fixture()
+        row = catalog['program_inventory']['b:second']
+        row.update(source_alias_of='b:first', separate_fresh_samples_required=True,
+                   native_observations=3, samples=[0.7, 0.8, 0.9], seconds=0.8,
+                   source_alias_note='Same source with separately measured fresh processes.')
+        projected = builder.browser_data(catalog)['program_inventory']['b:second']
+        self.assertNotIn('timing_alias_of', projected)
+        for field in ('source_alias_of', 'separate_fresh_samples_required', 'native_observations',
+                      'samples', 'seconds', 'source_alias_note'):
+            self.assertEqual(projected[field], row[field])
+
     def test_samples_counts_sources_and_displayed_row_fields_are_exact(self):
         catalog = fixture()
         projected = builder.browser_data(catalog)

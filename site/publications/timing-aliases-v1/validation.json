@@ -1,0 +1,217 @@
+{
+  "schema": "isolated-timing-alias-ui-validation-v1",
+  "status": "passed",
+  "source_pins": {
+    "tools/build_site.py": {
+      "sha256": "a816593c3b976274efafb45aa817127c9fa9e082a63c43af577b3b7b079bfef0",
+      "bytes": 9164
+    },
+    "tools/test_build_site.py": {
+      "sha256": "4aeb5abd86d9887125efe8c999bf24a5642bef63754bc839b8dd788390a68142",
+      "bytes": 14588
+    },
+    "site/tests/data_projection.mjs": {
+      "sha256": "dffca3945942d644c7b23335106ab2c30fb25f26245fd69d544b4aa1e1169d35",
+      "bytes": 9723
+    },
+    "site/src/math.mjs": {
+      "sha256": "97ccae02b2885a00bc7ad7d619406d60455e21620283ded000f46e9e65eab430",
+      "bytes": 20613
+    },
+    "site/src/app.mjs": {
+      "sha256": "9bc5a94d1b04488428c8fa88dcf1f90e2388dc9a6380fbd49a4e665a32428f7c",
+      "bytes": 118050
+    },
+    "site/src/index.html": {
+      "sha256": "037338670afd04de48799e6ee71902100165aad3702483f52c3fb43fb68398da",
+      "bytes": 31586
+    },
+    "site/tests/layers.mjs": {
+      "sha256": "433b915f6a0ec800967d0481d1f8e6393dd88ec0aa1b61e66a95b1d1c3861167",
+      "bytes": 47345
+    }
+  },
+  "reused_passing_results": [
+    {
+      "name": "projection_python",
+      "argv": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "tools/test_build_site.py"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v1",
+      "started_at": "2026-10-15T03:34:06.689660+00:00",
+      "finished_at": "2026-10-15T03:34:06.960382+00:00",
+      "wall_seconds": 0.27041966700000003,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/projection_python.stdout",
+        "sha256": "74bd8713e8ebfc0b0c90f8418d184a04d572453b3b45f2a9a957786164665169",
+        "bytes": 184
+      },
+      "stderr": {
+        "path": "checks/projection_python.stderr",
+        "sha256": "b732dfec8c0375327090c38fd95f394ad1a59a2e726c312503cb4db055ff80d4",
+        "bytes": 111
+      },
+      "reuse_basis": "Unchanged test, builder, app, math, original catalog and projected data; the only revision resets the separate layers test harness."
+    },
+    {
+      "name": "projection_parity",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/data_projection.mjs",
+        "data/benchmarks.json",
+        "data/browser.json"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v1",
+      "started_at": "2026-10-15T03:34:06.960635+00:00",
+      "finished_at": "2026-10-15T03:34:10.751702+00:00",
+      "wall_seconds": 3.7911874589999996,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/projection_parity.stdout",
+        "sha256": "818d95e43b59883ad1ac2b5f82cb94d90a2d760011f9d1d54c55bf22f49ebd34",
+        "bytes": 326
+      },
+      "stderr": {
+        "path": "checks/projection_parity.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "reuse_basis": "Unchanged test, builder, app, math, original catalog and projected data; the only revision resets the separate layers test harness."
+    }
+  ],
+  "results": [
+    {
+      "name": "layers",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/layers.mjs"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v2",
+      "started_at": "2026-10-15T03:35:49.394277+00:00",
+      "finished_at": "2026-10-15T03:35:52.474479+00:00",
+      "wall_seconds": 3.080119334,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/layers.stdout",
+        "sha256": "a2efec0e041566cbd2272471cde52b5b0fad1c79669179f81003442a6f4fc607",
+        "bytes": 601
+      },
+      "stderr": {
+        "path": "checks/layers.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "rankings",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/rankings.mjs"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v2",
+      "started_at": "2026-10-15T03:35:52.475052+00:00",
+      "finished_at": "2026-10-15T03:35:52.565171+00:00",
+      "wall_seconds": 0.0901381670000001,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/rankings.stdout",
+        "sha256": "82289ddd52d0e871bf713edf484887c6e66e67ac65e5adfa65e1cbc10daf40d2",
+        "bytes": 368
+      },
+      "stderr": {
+        "path": "checks/rankings.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "publication",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/publication.mjs"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v2",
+      "started_at": "2026-10-15T03:35:52.565546+00:00",
+      "finished_at": "2026-10-15T03:35:52.612789+00:00",
+      "wall_seconds": 0.047266416999999894,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/publication.stdout",
+        "sha256": "7c90ba00404ea75d0cdc9e57ecc5707cd9f835db03d57ba2668a4aa874e234a0",
+        "bytes": 126
+      },
+      "stderr": {
+        "path": "checks/publication.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "languages",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/languages.mjs",
+        "data/browser.json"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v2",
+      "started_at": "2026-10-15T03:35:52.613024+00:00",
+      "finished_at": "2026-10-15T03:35:52.703081+00:00",
+      "wall_seconds": 0.09007900000000024,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/languages.stdout",
+        "sha256": "cac6bc7588748acdae137280015ba1727a27479fbd6f5629f16b9bbf661f0d66",
+        "bytes": 691
+      },
+      "stderr": {
+        "path": "checks/languages.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    },
+    {
+      "name": "density",
+      "argv": [
+        "/opt/homebrew/bin/node",
+        "site/tests/density.mjs"
+      ],
+      "cwd": "/tmp/mech-timing-alias-ui-v2",
+      "started_at": "2026-10-15T03:35:52.703453+00:00",
+      "finished_at": "2026-10-15T03:35:52.853470+00:00",
+      "wall_seconds": 0.1500362909999997,
+      "exit_code": 0,
+      "stdout": {
+        "path": "checks/density.stdout",
+        "sha256": "1815f1d8d0f4ef0cd7fcfc572df8c71921c6a697c68e4c4fd474a2e727f26538",
+        "bytes": 111
+      },
+      "stderr": {
+        "path": "checks/density.stderr",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    }
+  ],
+  "original_failure": {
+    "path": "/tmp/mech-timing-alias-ui-v1/validation.json",
+    "sha256": "23682c46b8b9d60b9b5d45f0e88ce0ace88c5372d496f8591cb572edf52dd4b6",
+    "bytes": 3755
+  },
+  "repair_scope": "Only layers initialize resets playbackYear=null and playing=false, preventing a previous playback cursor from hiding Uiua in a later fixture.",
+  "canonical": {
+    "sha256": "45df176004dcc8e9aaee6aa43d53a5a8a7480207843388dbf68d2eb1bed1f510",
+    "bytes": 73826163
+  },
+  "projection": {
+    "sha256": "03545432140e71df0e46d596ecae97aaca94a59cbd4343bc622edc550615d4f1",
+    "bytes": 8359676
+  },
+  "p_checkout_changed": false,
+  "site_build_performed": false,
+  "native_benchmarks_launched": 0
+}

@@ -20,6 +20,27 @@ def save_json(path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
 
 
+def timing_owners(catalog):
+    owners = {}
+    for key, program in catalog.items():
+        owner_key = program.get('timing_alias_of')
+        if owner_key is None:
+            owners[key] = key
+            continue
+        owner = catalog.get(owner_key) if isinstance(owner_key, str) else None
+        if (owner is None or owner_key == key or owner.get('timing_alias_of') is not None
+                or program.get('key') != key or owner.get('key') != owner_key
+                or type(program.get('native_observations')) is not int
+                or program['native_observations'] != 0
+                or ('aliased_sample_source' in program and program['aliased_sample_source'] != owner_key)
+                or any(json.dumps(program.get(field), sort_keys=True, allow_nan=False)
+                       != json.dumps(owner.get(field), sort_keys=True, allow_nan=False)
+                       for field in ('language', 'benchmark', 'samples'))):
+            raise ValueError(f'Invalid timing alias: {key}')
+        owners[key] = owner_key
+    return owners
+
+
 def export(root=ROOT):
     root = Path(root).resolve()
     data = json.loads((root / 'data/benchmarks.json').read_text(encoding='utf-8'))
@@ -27,6 +48,7 @@ def export(root=ROOT):
         if key in data['programs'] and data['programs'][key] != program:
             raise ValueError(f'Conflicting catalog identity: {key}')
     catalog = {**data['programs'], **data.get('program_inventory', {})}
+    owners = timing_owners(catalog)
     # Validate every directory before writing: different IDs can normalize to
     # the same slug, including on case-insensitive filesystems.
     destinations = {}
@@ -99,22 +121,27 @@ def export(root=ROOT):
                   'sources': sources}
         if publication is not None:
             record['publication_record'] = publication
-        for field in ('timing_measurement', 'timing_correction'):
+        for field in ('timing_measurement', 'timing_correction', 'timing_alias_of',
+                      'source_alias_of', 'aliased_sample_source', 'native_observations',
+                      'distinct_optimization_claimed', 'source_alias_note',
+                      'separate_fresh_samples_required'):
             if field in program:
                 record[field] = program[field]
         save_json(directory / 'program.json', record)
         language_rows[program['language']].append((program, relative))
         totals.append([program['language'], program['benchmark'], program['id'], program.get('loc'),
                        program.get('physical_loc'), program.get('seconds'), record['standard_deviation'],
-                       len(runs), int(key in data['programs']), relative.as_posix() + '/program.json'])
+                       len(runs), int(key in data['programs']), relative.as_posix() + '/program.json',
+                       program.get('timing_alias_of', '')])
         for number, seconds in enumerate(runs, 1):
             samples.append([program['language'], program['benchmark'], program['id'], number, seconds,
-                            int(key in data['programs']), program.get('report', '')])
+                            int(key in data['programs']), program.get('report', ''),
+                            owners[key], program.get('timing_alias_of', '')])
     results = root / 'results/current'
     results.mkdir(parents=True, exist_ok=True)
     for name, header, rows in [
-        ('programs.csv', ['language', 'benchmark', 'program', 'canonical_loc', 'physical_loc', 'median_seconds', 'sample_sd_seconds', 'sample_count', 'selected_for_chart', 'manifest'], totals),
-        ('samples.csv', ['language', 'benchmark', 'program', 'run', 'seconds', 'selected_for_chart', 'original_report'], samples),
+        ('programs.csv', ['language', 'benchmark', 'program', 'canonical_loc', 'physical_loc', 'median_seconds', 'sample_sd_seconds', 'sample_count', 'selected_for_chart', 'manifest', 'timing_alias_of'], totals),
+        ('samples.csv', ['language', 'benchmark', 'program', 'run', 'seconds', 'selected_for_chart', 'original_report', 'timing_owner', 'timing_alias_of'], samples),
     ]:
         with (results / name).open('w', newline='', encoding='utf-8') as stream:
             writer = csv.writer(stream); writer.writerow(header); writer.writerows(rows)
@@ -138,6 +165,12 @@ def export(root=ROOT):
                'workloads': len(data['benchmarks']), 'programs_in_catalog': len(catalog), 'programs_selected_for_chart': len(data['programs']),
                'recorded_samples_in_catalog': len(samples), 'recorded_samples_selected_for_chart': sum(len(p.get('samples', [])) for p in data['programs'].values()),
                'source_files': len(data['files'])}
+    summary.update(
+        unique_recorded_samples_in_catalog=len({(owners[key], run) for key, program in catalog.items()
+                                               for run in range(1, len(program.get('samples', [])) + 1)}),
+        unique_recorded_samples_selected_for_chart=len({(owners[key], run) for key, program in data['programs'].items()
+                                                        for run in range(1, len(program.get('samples', [])) + 1)}),
+        timing_alias_programs=sum(owner != key for key, owner in owners.items()))
     save_json(results / 'summary.json', summary)
     print(json.dumps(summary))
 

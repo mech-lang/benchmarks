@@ -45,6 +45,7 @@ Generated files are written to `site/public/`.
 
 ```sh
 python3 tools/export_catalog.py
+python3 tools/test_export_catalog.py
 python3 tools/verify_repository.py
 python3 tools/test_build_site.py
 python3 tools/build_site.py

@@ -39,6 +39,18 @@ The one-dimensional **rankings** use the fastest-time coordinate for speed and t
 
 Spread contours use sample covariance in log2 ratio space across workloads, at one or two standard deviations. They describe workload variation, not confidence intervals or uncertainty in a stopwatch sample. Global contours use the same covariance construction across visible language variants and are translated to the global coordinate median. Recorded-sample and density layers display saved run observations.
 
+Some program labels explicitly reuse another program's timings. These timing
+aliases remain available for source inspection, but each recorded run appears
+once in sample counts, sample dots and density. The original program is preferred
+when both labels are visible. Programs measured separately remain distinct even
+when their source or elapsed values match.
+
+CSV exports retain one sample entry per program and run, including shared entries.
+The `timing_alias_of` column identifies reused timings. Count distinct
+`(timing_owner, run)` pairs for recorded executions; the
+`unique_recorded_samples_*` fields in `results/current/summary.json` report those
+totals. The older `recorded_samples_*` fields count sample entries.
+
 ## Provenance and reproduction
 
 The current dataset links profiles to sources, saved reports, hashes, and validation evidence. `programs/` provides inspectable source bundles; `archive/` preserves detailed reports and experiments, and `migration/reorganization-paths.tsv` resolves their old repository paths.

@@ -90,15 +90,33 @@ export function medianRankings(entries,{referenceLanguage=null}={}){
   };
   return {speed:metric('speed'),loc:metric('loc')};
 }
+// Only an explicit timing alias shares observations. Source aliases and equal
+// elapsed values can represent independent executions and must stay separate.
+export const timingOwner=program=>program.timing_alias_of||program.key;
+export function observationSummary(programs){
+  const owners=new Map();
+  for(const program of programs){
+    if(!program?.key||!Array.isArray(program.samples))continue;
+    const key=timingOwner(program);
+    if(!owners.has(key))owners.set(key,new Set());
+    for(const [index,elapsed] of program.samples.entries())if(Number.isFinite(elapsed)&&elapsed>0)owners.get(key).add(index+1);
+  }
+  return {timingOwners:owners.size,runs:[...owners.values()].reduce((sum,runs)=>sum+runs.size,0)};
+}
 export function recordedSamplePoints(entries,{samples=true,disabled=new Set(),programsForInput=input=>input.programs??[input.fast,input.small]}={}){
   if(!samples)return [];
-  const points=[],seen=new Set();
+  const points=[],owners=new Map();
   for(const entry of entries)for(const input of entry.inputs)for(const program of programsForInput(input,entry)){
-    if(!eligibleForChart(program)||disabled.has(program.key)||seen.has(program.key)||!Array.isArray(program.samples)||
+    if(!eligibleForChart(program)||disabled.has(program.key)||!Array.isArray(program.samples)||
       ![program.loc,program.x,program.y,program.seconds,input.benchmark.baseline_seconds].every(value=>Number.isFinite(value)&&value>0))continue;
-    seen.add(program.key);
+    const owner=timingOwner(program);
+    // Prefer the original row when visible, regardless of catalog order. An
+    // alias-only selection still opens that selected source when clicked.
+    if(!owners.has(owner)||program.key===owner)owners.set(owner,{program,entry,input});
+  }
+  for(const [owner,{program,entry,input}] of owners){
     for(const [index,elapsed] of program.samples.entries())if(Number.isFinite(elapsed)&&elapsed>0)
-      points.push({x:program.x,y:elapsed/input.benchmark.baseline_seconds,program,entry,benchmark:input.benchmark,run:index+1,elapsed});
+      points.push({x:program.x,y:elapsed/input.benchmark.baseline_seconds,program,entry,benchmark:input.benchmark,run:index+1,elapsed,observation_source:owner});
   }
   return points;
 }
@@ -107,11 +125,11 @@ export function sampleDensityPoints(samples){
   for(const sample of samples){
     if(!eligibleForChart(sample.program)||!sample.program.key||!Number.isInteger(sample.run)||sample.run<=0||
       ![sample.x,sample.y].every(value=>Number.isFinite(value)&&value>0))continue;
-    const identity=JSON.stringify([sample.program.key,sample.run]);
+    const owner=timingOwner(sample.program),identity=JSON.stringify([owner,sample.run]);
     if(seen.has(identity))continue;
     seen.add(identity);
     // Equal elapsed values remain distinct recorded observations, never merged.
-    points.push({x:sample.x,y:sample.y,weight:1,language:sample.entry.language.key,program:sample.program.key,run:sample.run});
+    points.push({x:sample.x,y:sample.y,weight:1,language:sample.entry.language.key,program:owner,run:sample.run});
   }
   return points;
 }
