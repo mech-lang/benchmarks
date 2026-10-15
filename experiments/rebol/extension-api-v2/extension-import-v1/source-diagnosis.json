@@ -1,0 +1,167 @@
+{
+  "benchmark_correctness_qualified": false,
+  "canonical_source_count_qualified": false,
+  "chart_admission": false,
+  "diagnosis": [
+    "The retained file-type catalog registers .rebx for every platform/default branch, but registers .dylib only when the fourth system/version component equals 2.",
+    "The actual retained runtime reports version 3.22.1 and platform macOS separately. Retained startup assigns those separate fields; assuming a fourth version component of 2 is unsupported.",
+    "The retained importer reads unrecognized file suffixes as source and then requires a REBOL header. The actual missing-header error names the Mach-O .dylib path, consistent with this script branch rather than successful native extension loading.",
+    "The extension branch calls the native load-extension operation, which checks extension policy, opens the library, resolves RX_Init and reads its returned module source. The POSIX library opener passes the filename directly to dlopen and does not require a .dylib suffix."
+  ],
+  "extension_load_qualified": false,
+  "full_primitive_fixtures_qualified": false,
+  "limitations": [
+    "This source review does not capture the live file-type catalog, prove exact runtime/source binary equivalence, or observe RX_Init.",
+    "The .rebx route is supported by the retained suffix and native-loading implementation; actual ABI/load/command behavior remains a separate native observation.",
+    "A copied library path is explicit provenance, not a new source implementation or a distinct optimization."
+  ],
+  "native_executions": 0,
+  "new_runtime_probes": 0,
+  "observations": {
+    "current_runtime_file_type_table_captured": false,
+    "failed_load_exit_status": 1,
+    "failed_load_stderr_bytes": 163,
+    "runtime_platform": "macOS",
+    "runtime_version": "3.22.1",
+    "rx_init_entry_observed": false
+  },
+  "recommendation": {
+    "new_native_processes_proposed": 1,
+    "operation": "Retain a fresh regular byte-identical copy of the already validated library using the .rebx suffix, and select it through MECH_CLBG_REBOL_PRIMITIVES.",
+    "original_library": {
+      "bytes": 51896,
+      "identity_source": "Previously closed extension4 build and independent file review; no new library hash was calculated by this source diagnosis.",
+      "path": "experiments/rebol/extension-api-v2/run-v1/build/clbg_primitives.dylib",
+      "sha256": "245e6834c1719e15f888af5ac073854f917bd685ae0ca2dee0eff095028a8539"
+    },
+    "recompilations_proposed": 0,
+    "required_binding": "Bind both original and copied regular-file paths, exact byte equality, original hash and dependencies in the new plan. Preserve all prior captures and failed statuses.",
+    "success_condition": "The unchanged nine-command smoke must complete with its exact expected raw stdout, empty stderr and normal exit0 under the existing owned observer.",
+    "unchanged": [
+      "library bytes",
+      "compiled artifacts",
+      "runtime binary",
+      "counted loader and benchmark sources",
+      "load smoke",
+      "two reviewed process-local read exceptions"
+    ]
+  },
+  "references": {
+    "failed_load_process": {
+      "bytes": 3299,
+      "path": "experiments/rebol/extension-api-v2/load-only-run-v1/00-load-nine-commands-scoped-reads/process.json",
+      "sha256": "326bc1641e1b1fc4ee878e794d86dc3abb26b73b42316ce361d23afc4ff5fef1"
+    },
+    "failed_load_report": {
+      "bytes": 1938,
+      "path": "experiments/rebol/extension-api-v2/load-only-run-v1/report.json",
+      "sha256": "178855807c8e13a20ec6244ee02d50172098b74f5c79a44eae5c1607e8971882"
+    },
+    "failed_load_stderr": {
+      "bytes": 163,
+      "path": "experiments/rebol/extension-api-v2/load-only-run-v1/00-load-nine-commands-scoped-reads/stderr.bin",
+      "sha256": "ccf5951a12259f324acf0353c52823c2f8defc90f7a0cccb5b7587dd6a743533"
+    },
+    "failed_load_terminal": {
+      "bytes": 1826,
+      "path": "experiments/rebol/extension-api-v2/load-only-run-v1/terminal.json",
+      "sha256": "63b5702a08d1f96d51221e7da489a81f999d7bdaf319a9587efb42ed810e8df0"
+    },
+    "import_dispatch": {
+      "bytes": 36570,
+      "lines": [
+        1024,
+        1049
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/mezz/sys-load.reb",
+      "sha256": "e218838cab68b27f62048a26692dc30a43c44a3a2b07d7d8ff4adb66d87a1ab3"
+    },
+    "missing_header_branch": {
+      "bytes": 36570,
+      "lines": [
+        1211,
+        1218
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/mezz/sys-load.reb",
+      "sha256": "e218838cab68b27f62048a26692dc30a43c44a3a2b07d7d8ff4adb66d87a1ab3"
+    },
+    "native_extension_load": {
+      "bytes": 18552,
+      "lines": [
+        381,
+        410
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/core/f-extension.c",
+      "sha256": "7c1ee7f086f99a5cf22dfccd4695d5960482e65329f60a562a3212db5729b183"
+    },
+    "posix_library_open": {
+      "bytes": 38261,
+      "lines": [
+        736,
+        747
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/os/posix/host-lib.c",
+      "sha256": "a0e62065361a9c420d7cf83b776042849fbdba81a8393ddcfa80a8b1274c03ae"
+    },
+    "runtime_features": {
+      "bytes": 201,
+      "path": "archive/languages/rebol/20261013/runtime-qualification/retained-intake-v1/queries/features.stdout",
+      "sha256": "b7282047efd8577708cb03a6c05c66273dc1bba2f514ee9e3ef40fbb1ed9b596"
+    },
+    "runtime_features_receipt": {
+      "bytes": 1286,
+      "path": "archive/languages/rebol/20261013/runtime-qualification/retained-intake-v1/queries/features.json",
+      "sha256": "affa3bb9681a937ca56eb46399367de99d9194aa8648377cc68cf99d85e0cff1"
+    },
+    "suffix_lookup": {
+      "bytes": 5071,
+      "lines": [
+        150,
+        159
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/mezz/base-files.reb",
+      "sha256": "e95314e6658bd33280ad74acab8a022651190ad47fba1ad5bd62190fdeb77665"
+    },
+    "suffix_registration": {
+      "bytes": 4346,
+      "lines": [
+        76,
+        81
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/mezz/base-defs.reb",
+      "sha256": "9380f6d89eeb9cb22eb8beadeefb7cad0d9c00c9e52527e96955077a4a9dda2d"
+    },
+    "unchanged_loader": {
+      "bytes": 669,
+      "lines": [
+        1,
+        12
+      ],
+      "path": "archive/languages/rebol/20261013/drafts/private-v1/support/clbg_primitives.reb",
+      "sha256": "2671ebf31535aee49afbf9f27de1122556dda5f8962b1fc92acf9c27bcffed34"
+    },
+    "version_and_platform_assignment": {
+      "bytes": 9591,
+      "lines": [
+        44,
+        55
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/mezz/sys-start.reb",
+      "sha256": "925ea46aaf0e39130828042502ddd5513465c7ed8f20ef45814565407a47f2f5"
+    },
+    "version_initialization": {
+      "bytes": 19970,
+      "lines": [
+        23,
+        25
+      ],
+      "path": "experiments/rebol/sdk-generation-v1/work-v1/source/src/boot/sysobj.reb",
+      "sha256": "3efea59221ad29a843244c3b3535a97ab0f82f4a4afa3e0ce8a8240e8a970c01"
+    }
+  },
+  "required_work_qualified": false,
+  "schema": "rebol-extension-import-source-diagnosis-v1",
+  "source_inputs_changed": false,
+  "status": "source-reviewed-dispatch-correction-awaiting-native-load",
+  "timing_qualified": false
+}
