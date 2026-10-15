@@ -4,6 +4,7 @@ import vm from 'node:vm';
 import * as math from '../src/math.mjs';
 import * as formatted from '../src/formatted_axis.mjs';
 import * as benchmarkFilters from '../src/benchmark_traits.mjs';
+import * as labels from '../src/labels.mjs';
 
 // Exercise the real SVG renderer with a small DOM adapter; no browser or benchmark workers.
 class Element {
@@ -47,7 +48,7 @@ const document={querySelector:element,querySelectorAll:()=>[],createComment:()=>
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
-const context=vm.createContext({...math,...formatted,...benchmarkFilters,document,window:{},innerWidth:1000,
+const context=vm.createContext({...math,...formatted,...benchmarkFilters,...labels,document,window:{},innerWidth:1000,
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
   realAxisData:formatted.axisData,realProjectProgram:formatted.projectProgram,
@@ -60,7 +61,7 @@ vm.runInContext(executable+`\nglobalThis.harness={
     languageIndex=new Map(fixture.languages.map(item=>[item.key,item]));benchmarkIndex=new Map(fixture.benchmarks.map(item=>[item.key,item]));
     familyIndex=languageFamilies(data.languages).map(f=>({...f,label:f.members.length>1?f.label:shortName(f.members[0].key)}));
     programsByBenchmark.clear();comparisonViews.clear();domains.clear();benchmarkEntries=null;densityCache=null;
-    if(renderedSamplePlot)renderedSamplePlot.replaceChildren();renderedSamplePlot=null;sampleNodes.clear();
+    if(renderedSamplePlot)renderedSamplePlot.replaceChildren();renderedSamplePlot=null;renderedDensityLayer=null;sampleNodes.clear();
     for(const program of Object.values(programCatalog)){
       if(!programsByBenchmark.has(program.benchmark))programsByBenchmark.set(program.benchmark,new Map());
       const languages=programsByBenchmark.get(program.benchmark);if(!languages.has(program.language))languages.set(program.language,[]);
@@ -71,6 +72,23 @@ vm.runInContext(executable+`\nglobalThis.harness={
   render(options){Object.assign(state,options);benchmarkEntries=null;model=comparison(plotData(),allSelection());renderChart();},
   derived(){return {model,entries:currentEntries(),samples:currentSampleInputs(),density:currentDensityField(),view:plotData()};},
   cachedSamples(){return [...sampleNodes.values()].flatMap(nodes=>[...nodes.values()]);},
+  layerModes:setLayerModes,
+  updateWork(options,{rankingsReset=false}={}){
+    const originals=[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector,renderChart];
+    const calls={years:0,controls:0,overview:0,rankings:0,table:0,inspector:0,chart:0};
+    renderYears=()=>calls.years++;renderControls=()=>calls.controls++;
+    renderLanguageOverview=()=>calls.overview++;renderMedianRankings=()=>calls.rankings++;
+    renderTable=()=>calls.table++;renderInspector=()=>calls.inspector++;
+    renderChart=()=>{calls.chart++;return originals[6]();};
+    try{Object.assign(state,options);rankingsReset?reset({rankings:true}):update();return calls;}
+    finally{[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector,renderChart]=originals;}
+  },
+  globalRequests(options){
+    const original=currentGlobalStatistics;let count=0;
+    currentGlobalStatistics=(...args)=>{count++;return original(...args);};
+    try{Object.assign(state,options);benchmarkEntries=null;model=comparison(plotData(),allSelection());renderChart();return count;}
+    finally{currentGlobalStatistics=original;}
+  },
   sampleAction(node,type,event){const original=openPoint,calls=[];openPoint=info=>calls.push(info);try{const emitted=node.emit(type,event);return {calls,prevented:emitted.defaultPrevented===true};}finally{openPoint=original;}},
   visual(options){
     const originals=[renderYears,renderControls,renderLanguageOverview,renderMedianRankings,renderTable,renderInspector];
@@ -367,6 +385,68 @@ const resetSample=sampleFor('alpha-b1-fast');assert.equal(resetSample,heroSample
 assert.equal(Number(resetSample.dataset.ratioX),cacheFixture.programs['alpha-b1-fast'].x);
 assert.equal(context.harness.cachedSamples().length,initialSampleNodes.length,'Filtering and LOC changes cannot duplicate recorded run nodes.');
 assertSampleActions(resetSample,'alpha-b1-fast');
+
+// Density contrast does not change the estimator or foreground. Exercise the
+// same setter used by the controls and public interaction API, including the
+// fallback when visibility, another layer or the chart width also changes.
+const densityLayer=()=>element('#chart').querySelectorAll('[data-layer]').find(node=>node.dataset.layer==='density');
+context.harness.layerModes({density:'highlight'});
+const heat=densityLayer(),heatCells=[...heat.children],contrastSample=sampleFor('alpha-b1-fast');
+const contrastChartChildren=[...element('#chart').children],contrastField=context.harness.derived().density;
+const contrastDomain=Object.fromEntries(['xMin','xMax','yMin','yMax'].map(key=>[key,element('#chart').dataset[key]]));
+contrastSample.emit('focusin');
+const focusedDescription=element('#hover-details').textContent;
+for(const mode of ['dim','highlight']){
+  context.harness.layerModes({density:mode});
+  assert.equal(densityLayer(),heat);assert.ok(heat.children.every((node,index)=>node===heatCells[index]));
+  assert.equal(element('#chart').children.length,contrastChartChildren.length);
+  assert.ok(element('#chart').children.every((node,index)=>node===contrastChartChildren[index]),'Density contrast preserves the full chart tree.');
+  assert.equal(heat.getAttribute('opacity'),String(math.layerPresentation(mode).opacity));
+  assert.equal(heat.dataset.layerMode,mode);assert.equal(element('#show-density').value,mode);
+  assert.equal(context.harness.derived().density,contrastField);
+  assert.equal(element('#chart').dataset.highlightLanguage,'alpha');
+  assert.equal(element('#hover-details').textContent,focusedDescription);
+  assert.deepEqual(Object.fromEntries(['xMin','xMax','yMin','yMax'].map(key=>[key,element('#chart').dataset[key]])),contrastDomain);
+}
+contrastSample.emit('focusout');
+assertSampleActions(contrastSample,'alpha-b1-fast');
+context.harness.layerModes({density:'off'});
+assert.equal(densityLayer(),undefined,'Off removes the density layer.');
+context.harness.layerModes({density:'dim'});
+const beforeOtherLayer=densityLayer();
+context.harness.layerModes({density:'highlight',samples:'off'});
+assert.notEqual(densityLayer(),beforeOtherLayer,'Simultaneous layer changes use a complete render.');
+assert.equal(element('#chart').querySelectorAll('[data-sample]').length,0,'Samples Off stays absent.');
+const beforeResize=densityLayer();element('#chart').clientWidth=900;
+context.harness.layerModes({density:'dim'});
+assert.notEqual(densityLayer(),beforeResize,'A pending width change cannot use the contrast-only path.');
+assert.match(element('#chart').getAttribute('viewBox'),/^0 0 900 /);
+element('#chart').clientWidth=1000;
+context.harness.layerModes({density:'off',samples:'dim'});
+
+// Selection updates render only visible results. Reset on global Rankings
+// applies its final destination before the single update; hero Reset retains
+// the selected language and still renders its scatter plot once.
+const beforeRankings=[...element('#chart').children];
+const rankingsWork=context.harness.updateWork({view:'rankings',languageFocus:null});
+assert.equal(rankingsWork.chart,0);assert.equal(rankingsWork.table,0);
+assert.deepEqual(element('#chart').children,beforeRankings,'Rankings does not rebuild its hidden scatter plot.');
+const resetRankingsWork=context.harness.updateWork({},{rankingsReset:true});
+assert.equal(resetRankingsWork.controls,1);assert.equal(resetRankingsWork.rankings,1);assert.equal(resetRankingsWork.chart,0);
+assert.equal(context.harness.selection().view,'rankings');
+const focusedHero={keys:['alpha'],selectionKey:'alpha',family:false,label:'Alpha',variant:'alpha',benchmark:'binarytrees'};
+const heroWork=context.harness.updateWork({view:'language',languageFocus:focusedHero});
+assert.equal(heroWork.chart,1);assert.equal(heroWork.table,0,'The hidden aggregate table is not rebuilt in a language page.');
+const resetHeroWork=context.harness.updateWork({},{rankingsReset:true});
+assert.equal(resetHeroWork.controls,1);assert.equal(resetHeroWork.rankings,1);assert.equal(resetHeroWork.chart,1);assert.equal(resetHeroWork.table,0);
+assert.equal(context.harness.selection().view,'language');assert.equal(context.harness.selection().languageFocus.variant,'alpha');
+assert.equal(context.harness.globalRequests({view:'language',global:true}),0,'Language overlays use their own statistics, not an unused global covariance.');
+assert.equal(context.harness.globalRequests({view:'summary',languageFocus:null,global:false}),0);
+assert.equal(context.harness.globalRequests({global:true,fast:false,small:false}),0,'Hidden profiles need no global covariance.');
+assert.equal(context.harness.globalRequests({global:true,fast:true,small:true}),1);
+const visibleSummary=context.harness.updateWork({global:false});
+assert.equal(visibleSummary.chart,1);assert.equal(visibleSummary.table,1,'Returning to summary refreshes both visible results.');
+console.log('Render scope: hidden results, single reset, conditional global covariance and density contrast identity passed.');
 context.harness.formatting(false);
 console.log('Median hover/focus and benchmark facets: visible samples, Off, static readout, restoration, hero scope and reset passed.');
 if(process.argv.includes('--interactions-only'))process.exit(0);

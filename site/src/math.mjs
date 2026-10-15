@@ -224,28 +224,41 @@ export function sharedBenchmarks(data,selection){
     return group?.programs.some(k=>!selection.disabled.has(k)&&eligibleForChart(data.programs[k])&&[data.programs[k]?.seconds,data.programs[k]?.loc,data.programs[k]?.x,data.programs[k]?.y].every(value=>Number.isFinite(value)&&value>0));
   }));
 }
-export function comparison(data,selection){
+// Endpoint selection is shared by chart models and target-relative tables.
+// The latter need no geometric means or covariance contours of their own.
+function comparisonInputs(data,selection){
   const benchmarks=data.benchmarks.filter(b=>selection.benchmarks.has(b.key));
+  const groups=benchmarks.map(benchmark=>{
+    const first=new Map();
+    for(const group of benchmark.groups)if(!first.has(group.language))first.set(group.language,group);
+    return first;
+  });
   const entries=[];
   for(const language of data.languages){
     if(!selection.languages.has(language.key))continue;
     const inputs=[];
-    for(const benchmark of benchmarks){
-      const group=benchmark.groups.find(g=>g.language===language.key);
+    for(const [index,benchmark] of benchmarks.entries()){
+      const group=groups[index].get(language.key);
       const programs=(group?.programs??[]).filter(k=>!selection.disabled.has(k)).map(k=>data.programs[k]).filter(p=>eligibleForChart(p)&&Number.isFinite(p.seconds)&&p.seconds>0&&Number.isFinite(p.loc)&&p.loc>0&&Number.isFinite(p.x)&&p.x>0&&Number.isFinite(p.y)&&p.y>0);
       if(!programs.length)continue;
       const fast=programs.reduce((a,b)=>b.seconds<a.seconds||(b.seconds===a.seconds&&b.loc<a.loc)?b:a);
       const small=programs.reduce((a,b)=>b.loc<a.loc||(b.loc===a.loc&&b.seconds<a.seconds)?b:a);
       inputs.push({benchmark,fast,small,programs});
     }
-    if(!inputs.length)continue;
+    if(inputs.length)entries.push({language,inputs});
+  }
+  return {benchmarks,entries};
+}
+export function comparison(data,selection){
+  const selected=comparisonInputs(data,selection),{benchmarks}=selected;
+  const entries=selected.entries.map(({language,inputs})=>{
     const included=new Set(inputs.map(input=>input.benchmark.key));
     const coverage={measured:inputs.length,selected:benchmarks.length,missing:benchmarks.filter(b=>!included.has(b.key))};
     const mean=kind=>({x:gm(inputs.map(i=>i[kind].x)),y:gm(inputs.map(i=>i[kind].y))});
-    entries.push({language,inputs,coverage,fast:mean('fast'),small:mean('small'),
+    return {language,inputs,coverage,fast:mean('fast'),small:mean('small'),
       spread:{fast:spread(inputs.map(i=>i.fast)),small:spread(inputs.map(i=>i.small))},
-      spread2:{fast:spread(inputs.map(i=>i.fast),{sigma:2}),small:spread(inputs.map(i=>i.small),{sigma:2})}});
-  }
+      spread2:{fast:spread(inputs.map(i=>i.fast),{sigma:2}),small:spread(inputs.map(i=>i.small),{sigma:2})}};
+  });
   return {benchmarks,entries};
 }
 
@@ -254,15 +267,21 @@ export function comparison(data,selection){
 export function languageRelativeComparisons(data,target,{benchmarks,locData=data}={}){
   const selected=benchmarks??new Set(data.benchmarks.map(b=>b.key));
   const selection={benchmarks:selected,languages:new Set(data.languages.map(l=>l.key)),disabled:new Set()};
-  const times=comparison(data,selection),lines=locData===data?times:comparison(locData,selection);
-  const metric=(model,key,kind,field)=>{
-    const reference=new Map((model.entries.find(e=>e.language.key===target)?.inputs??[]).map(i=>[i.benchmark.key,i]));
-    const shared=(model.entries.find(e=>e.language.key===key)?.inputs??[]).filter(i=>reference.has(i.benchmark.key));
-    return {ratio:shared.length?gm(shared.map(i=>i[kind][field]/reference.get(i.benchmark.key)[kind][field])):null,
-      benchmarks:shared.map(i=>i.benchmark.key),selected:model.benchmarks.length};
+  const times=comparisonInputs(data,selection),lines=locData===data?times:comparisonInputs(locData,selection);
+  const metric=(model,kind,field)=>{
+    const inputs=new Map();
+    // Match the former entries.find behavior, including the first occurrence.
+    for(const entry of model.entries)if(!inputs.has(entry.language.key))inputs.set(entry.language.key,entry.inputs);
+    const reference=new Map((inputs.get(target)??[]).map(i=>[i.benchmark.key,i]));
+    return key=>{
+      const shared=(inputs.get(key)??[]).filter(i=>reference.has(i.benchmark.key));
+      return {ratio:shared.length?gm(shared.map(i=>i[kind][field]/reference.get(i.benchmark.key)[kind][field])):null,
+        benchmarks:shared.map(i=>i.benchmark.key),selected:model.benchmarks.length};
+    };
   };
+  const time=metric(times,'fast','seconds'),loc=metric(lines,'small','loc');
   return data.languages.map(language=>({language,target:language.key===target,
-    time:metric(times,language.key,'fast','seconds'),loc:metric(lines,language.key,'small','loc')}));
+    time:time(language.key),loc:loc(language.key)}));
 }
 
 // Axis limits use the admitted cohort, independently of display filters. Include

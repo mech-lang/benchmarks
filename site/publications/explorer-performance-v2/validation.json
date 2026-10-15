@@ -1,0 +1,149 @@
+{
+  "schema": "explorer-performance-v2-validation",
+  "status": "passed",
+  "recorded_at": "2026-10-15T13:51:30.871658+00:00",
+  "host": "Macmini.ht.home",
+  "base_source_commit": "d715f532626254f8fbf5cb1412a82db11becffa9",
+  "baseline_source_matches": [
+    "app.mjs",
+    "benchmark_traits.mjs",
+    "formatted_axis.mjs",
+    "index.html",
+    "languages.mjs",
+    "math.mjs",
+    "mech-palette.css",
+    "platform.mjs",
+    "rankings.mjs",
+    "style.css",
+    "traits.mjs"
+  ],
+  "source_sha256": {
+    "site/src/app.mjs": "7500c3b752fcf39c63cf03d9d93a4eff487cc1005c71c740cc12f659b3c01c25",
+    "site/src/benchmark_traits.mjs": "58f9a342124a42a959292fd5388bfecaf6e6b1e4788bef91868e23775dad2c9c",
+    "site/src/formatted_axis.mjs": "fb71c286fd0fd8d6965202a2c3467aa2de3833ce38f2e3e297767a9947d6016c",
+    "site/src/index.html": "037338670afd04de48799e6ee71902100165aad3702483f52c3fb43fb68398da",
+    "site/src/labels.mjs": "79692dc3cafb9ff1e54ffc267cc250a0e8faf4de3295f5d83ef595f8694bd417",
+    "site/src/languages.mjs": "480b03c0eb9318760a37e1674e75d545ef0611d466a7246b2bf416243410588f",
+    "site/src/math.mjs": "4cfd11f06656371d878e2abc79f60a2462a9037af399bd4e9da80db0bc5448da",
+    "site/src/mech-palette.css": "999768eb3675a7e724faf4a0e9e42a09bba13ed6fdd72b115d8034836ea7f85a",
+    "site/src/platform.mjs": "c58b71caaf5231f2903d98e0c236ebb905b69d6f89e6c7a118620e415b255fee",
+    "site/src/rankings.mjs": "dc910331358cb3d160e51d6100dc79ecee732edc33c087044af8b93febfcb390",
+    "site/src/style.css": "8d75fdf997afcfd12c774577f4ad5e2b24acedc43510b1ef10861ac76cb660fb",
+    "site/src/traits.mjs": "c0e82551949568f0247aa289b7d8e39ac7c9497368c9e6f7321b9dd94a0af87f",
+    "tools/build_site.py": "a816593c3b976274efafb45aa817127c9fa9e082a63c43af577b3b7b079bfef0",
+    "data/benchmarks.json": "06c1a80c9953d4b30bbff88d20994a37fcb8b4de5708186201974224878016ea"
+  },
+  "build": "7bba6e95588940c0",
+  "manifest_sha256": "94d660f3612cc2fa23d838232ea2f25a84a7eb8e73491778fd79d212c0c39c8b",
+  "identical_browser_dataset": true,
+  "checks": [
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "tools/build_site.py"
+      ],
+      "exit_code": 0,
+      "stdout": "Built site/public (36 files, 7bba6e95588940c0)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/benchmark_traits.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Benchmark facets: ten mappings, overlapping tags, OR/AND semantics, empty intersections and manual selection passed.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/data_projection.mjs",
+        "data/benchmarks.json",
+        "site/public/data.json"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"status\":\"browser-projection-parity-passed\",\"ordered_pool_rows\":1181,\"unique_programs\":973,\"recorded_pool_samples\":3627,\"source_files\":902,\"model_cases\":48,\"relative_comparisons\":1392,\"inspector_cases\":4632,\"rendered_loc_audits\":1181,\"source_and_link_cases\":1666,\"source_bytes_samples_and_displayed_metadata_identical\":true}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/density.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Density: six independent estimator comparisons preserve all cells, observations, weights, metadata and inputs.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/labels.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Label placement: 1300 exact exhaustive-oracle matches across mobile/desktop, crowding, ties, clipping and grid-boundary cases.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/languages.mjs",
+        "data/benchmarks.json"
+      ],
+      "exit_code": 0,
+      "stdout": "Passed: all 58 variants classified; JVM/.NET/V8, execution, memory distinctions, and combined filters.\n{\n  \"platform\": {\n    \"Native toolchains\": 23,\n    \"JVM\": 4,\n    \".NET\": 4,\n    \"BEAM\": 3,\n    \"Node.js / V8\": 3,\n    \"Other language runtimes\": 21\n  },\n  \"execution\": {\n    \"AOT\": 28,\n    \"JIT\": 20,\n    \"Interpreted\": 11\n  },\n  \"typing\": {\n    \"Static\": 37,\n    \"Dynamic\": 21\n  },\n  \"style\": {\n    \"Imperative\": 43,\n    \"Object-oriented\": 31,\n    \"Functional\": 40,\n    \"Logic\": 1,\n    \"Array\": 13,\n    \"Reactive / dataflow\": 3\n  },\n  \"memory\": {\n    \"Manual allocation\": 11,\n    \"Ownership / RAII\": 11,\n    \"Reference counting\": 23,\n    \"Tracing GC\": 33,\n    \"Cycle collection\": 5\n  }\n}\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/layers.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Language hero: chart/results/table order, all-variant ratios, preserved target, local reset and separate All benchmarks tab passed.\nRender scope: hidden results, single reset, conditional global covariance and density contrast identity passed.\nMedian hover/focus and benchmark facets: visible samples, Off, static readout, restoration, hero scope and reset passed.\nTiming aliases: explicit owner/run deduplication, equal independent samples, disclosure, density, Off and source actions passed.\nPassed 216 layer combinations and 432 SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback, trail removal, 20 Pony source audits and 20 Elixir inspectors.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/publication.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Passed explicit publication eligibility across canonical/formatted endpoints, samples, density, bounds and source inspection.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/rankings.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Language-relative comparisons: same-workload ratios, partial/missing coverage, formatted independence and source preservation passed.\nHero ranking origins: target zero, distinct metric references, unchanged spread and pairwise distances, missing target and ties passed.\nRanking labels: 440 marks checked across four widths; positions, spacing and interactions passed.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/Users/coreymontella/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/bin/node",
+        "site/tests/relative_comparisons.mjs"
+      ],
+      "exit_code": 0,
+      "stdout": "Relative endpoint extraction: 800 exact relative comparisons and 960 complete-model comparisons passed; no chart geometry, input mutation or persistent cache.\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "/usr/bin/python3",
+        "-I",
+        "-S",
+        "-B",
+        "tools/test_build_site.py"
+      ],
+      "exit_code": 0,
+      "stdout": "Built site/public (6 files, d6eb77a601632efd)\nBuilt site/public (6 files, d6eb77a601632efd)\nBuilt site/public (6 files, 684a60ccc2d348b7)\nBuilt site/public (6 files, 47b0bf0e1c6f7210)\n",
+      "stderr": "............\n----------------------------------------------------------------------\nRan 12 tests in 0.018s\n\nOK\n"
+    }
+  ]
+}

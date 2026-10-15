@@ -107,10 +107,68 @@ The first Pages deployment stalled after its asset build. An
 completed successfully; both revisions have the same complete website tree.
 
 The subsequent APL coverage and timing-alias update, build `72094b4bd8833f60`,
-is the [current verified deployment](../site/publications/apl-timing-aliases-v1/deployment.json).
+has its own [verified deployment](../site/publications/apl-timing-aliases-v1/deployment.json).
 All 35 live assets matched on October 15 at 05:29 UTC. A
 [fresh mobile check](../site/publications/apl-timing-aliases-v1/live-browser.json)
 verified all 2,835 selected runs, Samples Off, language pages and resource
 filters without page errors. Its 8,369,808-byte JSON arrived as a 1,213,325-byte
 gzip body. This deployment check does not extend the earlier performance
 comparison to the enlarged dataset.
+
+## Second interaction pass
+
+Build `7bba6e95588940c0` reduces work during view and layer changes:
+
+- Rankings skips the hidden scatter plot and results table. Reset selects its
+  destination before rendering once; returning to a chart refreshes its geometry.
+- Language comparisons select their endpoints directly, avoiding covariance
+  contours that the relative-comparison table never uses.
+- Label placement checks nearby rectangles through a spatial index. Candidate
+  order, overlap summation order, scoring, ties and mobile crowding are preserved.
+- Global covariance is calculated when its overlay is displayed. Changing an
+  already visible density layer between Dim and Highlight updates contrast in
+  place, preserving points, cells, keyboard focus and hover details.
+
+The [matched measurements](../site/publications/explorer-performance-v2/comparison.json)
+compare the frozen live build `72094b4bd8833f60` with this candidate. Both use the
+same byte-for-byte browser dataset, Chrome 155 and Node 24 on the separate M1 Mac
+mini. Each configuration has three fresh, serial browser contexts using the
+same loopback server and [profiling harness](../site/publications/explorer-performance-v2/profile.mjs).
+The language timing host performs no browser profiling. The throttled mobile
+configuration simulates slower hardware; it is not a physical phone measurement.
+
+| Synchronous interaction | Desktop before → after | Mobile layout, 4× CPU slowdown, before → after |
+| --- | ---: | ---: |
+| Resource filter | 44 → 32 ms | 170 → 128 ms |
+| Enable density | 50 → 40 ms | 196 → 157 ms |
+| Density Dim → Highlight | 34 → <1 ms | 138 → 1 ms |
+| Open Rankings | 51 → 16 ms | 190 → 56 ms |
+| Reset Rankings | 79 → 11 ms | 201 → 35 ms |
+| Return to All benchmarks | 48 → 29 ms | 179 → 116 ms |
+| Language axes: medians | 72 → 54 ms | 226 → 163 ms |
+| Language axes: all samples | 57 → 38 ms | 166 → 130 ms |
+| Open program details | 66 → 54 ms | 210 → 173 ms |
+| Open language page | 109 → 104 ms | 403 → 396 ms |
+
+Language-page opening remains the slowest measured interaction and changed
+little. Initialization changed from 190 to 198 ms on desktop and 674 to 640 ms
+under mobile CPU throttling. These measurements establish interaction gains,
+not a uniform improvement to every operation. Raw observations retain ranges,
+CPU samples, layout counts and elapsed times through two animation-frame
+callbacks. Sub-millisecond synchronous work still requires a rendering frame.
+
+The [regression receipt](../site/publications/explorer-performance-v2/validation.json)
+includes 1,300 exact label placements against the previous exhaustive search,
+800 relative comparisons, 960 complete models, 432 layer renders and canonical
+catalog projection checks. A [Chrome comparison](../site/publications/explorer-performance-v2/behavior-v2.json)
+matches 25 visible states at both 390 and 1,280 px, including samples, medians,
+density, global statistics, axes, rankings, filters, language pages and source
+inspection. Hidden chart geometry and tables are refreshed when shown again.
+
+Uncollected heap readings varied with garbage-collection timing, including a
+higher candidate reading in the throttled configuration. A separate
+[retention diagnostic](../site/publications/explorer-performance-v2/retention.json)
+explicitly collects garbage outside timing measurements: initial retained heap
+is 13.5 → 13.4 MiB. After 20 view/layer/reset cycles it is 18.3 → 18.2 MiB,
+with identical DOM-node and listener counts and little growth
+after warmup. This pass does not claim a retained-memory reduction.

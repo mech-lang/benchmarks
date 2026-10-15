@@ -3,6 +3,7 @@ import {traitDimensions,languageTraits,emptyTraitFilters,matchesTraits,filterLan
 import {benchmarkDimensions,benchmarkTraits,emptyBenchmarkFilters,matchesBenchmark,filterBenchmarkKeys} from './benchmark_traits.mjs';
 import {renderRankingCharts} from './rankings.mjs?v=20261013-combined2';
 import {axisData,projectProgram,hasFormattedLOC,formattedText,formattedValue} from './formatted_axis.mjs?v=20261013-combined2';
+import {createLabelPlacer} from './labels.mjs';
 
 const $=selector=>document.querySelector(selector);
 // The same controls live in the desktop sidebar or the phone's modal drawer.
@@ -67,7 +68,7 @@ const medianStatistics=new WeakMap(),sampleInputsByEntries=new WeakMap(),globalS
 // One node per recorded program/run, shared across views and LOC metrics.
 // The finite catalog bounds this cache; records contain no model or handlers.
 const sampleNodes=new Map();
-let renderedSamplePlot=null;
+let renderedSamplePlot=null,renderedDensityLayer=null;
 let benchmarkEntries=null,densityCache=null;
 const state={benchmarks:new Set(),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(),disabled:new Set(),ellipses:new Set(['mech']),
   view:'summary',focus:'nbody',locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false,playing:false,collapsedFamilies:new Set(),releaseYearStart:null,releaseYear:null,playbackYear:null,traits:emptyTraitFilters(),languageFocus:null,
@@ -489,7 +490,8 @@ function update(){
   // program. Avoid constructing those tables and SVGs twice in one update.
   if($('#inspector').open)renderInspector({renderRelated:false});
   renderLanguageOverview();renderMedianRankings();
-  renderChart();renderTable();
+  if(state.view!=='rankings')renderChart();
+  if(state.view!=='rankings'&&!languageOverviewVisible())renderTable();
   $('#selection-summary').textContent=`${effectiveBenchmarks().size}/${data.benchmarks.length} selected · ${familyCount(model.entries.map(e=>e.language.key))} languages · ${model.entries.length} variants · ${state.disabled.size} hidden`;
   const visible=currentEntries();
   const enabled=effectiveLanguages();
@@ -507,6 +509,23 @@ function updatePlot(){
   // Layer, profile and axis visibility do not change the measured selection.
   renderChart();renderPlotOptions();
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
+}
+function setLayerModes({samples=state.sampleMode,medians=state.medianMode,density=state.densityMode}={}){
+  for(const mode of [samples,medians,density])layerPresentation(mode);
+  const densityOnly=samples===state.sampleMode&&medians===state.medianMode;
+  const previousDensity=state.densityMode;
+  Object.assign(state,{sampleMode:samples,medianMode:medians,densityMode:density});
+  // A visible density layer changes only its contrast. Keep its exact cells,
+  // the foreground geometry, current hover/focus and sample handlers intact.
+  if(densityOnly&&previousDensity!=='off'&&density!=='off'&&state.view!=='rankings'&&
+      renderedDensityLayer?.parentNode===$('#chart')&&renderedDensityLayer.dataset.layerMode===previousDensity&&
+      Math.max(290,$('#chart').clientWidth)===renderedChartWidth&&(innerWidth<=720)===renderedChartMobile){
+    renderedDensityLayer.setAttribute('opacity',layerPresentation(density).opacity);
+    renderedDensityLayer.setAttribute('data-layer-mode',density);
+    renderPlotOptions();
+    return;
+  }
+  updatePlot();
 }
 function renderPlotOptions(){
   const samples=$('#show-samples'),medians=$('#show-medians'),density=$('#show-density'),axes=$('#chart-axes');
@@ -633,10 +652,13 @@ function showHoverDetails(description){
   details.classList.add('active');
 }
 function renderChart(){
+  // The Rankings tab has no visible scatter plot. Rebuild it when that view
+  // is shown again, including any selection changes made while it was hidden.
+  if(state.view==='rankings')return;
   // Cached circles must not keep a retired plot, its handlers or its sibling
   // SVG tree alive. They are attached only to the current visible sample layer.
   if(renderedSamplePlot){renderedSamplePlot.replaceChildren();renderedSamplePlot=null;}
-  const svg=$('#chart');svg.replaceChildren();
+  const svg=$('#chart');svg.replaceChildren();renderedDensityLayer=null;
   const languageView=inLanguageView(),selectedKeys=focusKeys();
   svg.classList.remove('median-focus');
   delete svg.dataset.highlightLanguage;svg.onpointerleave=null;clearHoverDetails();
@@ -663,8 +685,9 @@ function renderChart(){
   const margins={left:innerWidth<=720?75:80,right:25,top:30,bottom:72};
   const w=width-margins.left-margins.right,h=height-margins.top-margins.bottom;
   const visibleKinds=['fast','small'].filter(k=>state[k]);
-  const global=currentGlobalStatistics(entries);
-  const overlayEntries=languageView?entries.filter(e=>selectedKeys.has(e.language.key)).map(entry=>({entry,statistics:languageMedianStatistics(entry)})):[{entry:null,statistics:global}];
+  const overlayEntries=!layers.showGlobal?[]:languageView?
+    entries.filter(e=>selectedKeys.has(e.language.key)).map(entry=>({entry,statistics:languageMedianStatistics(entry)})):
+    [{entry:null,statistics:currentGlobalStatistics(entries)}];
   const globalNote=$('#global-statistics-note');
   globalNote.classList.toggle('inactive',!layers.showGlobal||empty);
   globalNote.setAttribute('aria-hidden',!layers.showGlobal||empty);
@@ -690,6 +713,7 @@ function renderChart(){
     const field=densityField(sampleInputs,currentDomain);
     const heat=node('g',{class:'density-field','clip-path':'url(#plot-clip)','pointer-events':'none',opacity:layers.densityLayer.opacity,
       'data-layer':'density','data-layer-mode':state.densityMode,'data-density-variants':field.variants,'data-density-runs':field.runs,'data-density-programs':field.programs,'data-density-peak':field.peak},svg);
+    renderedDensityLayer=heat;
     const stops=[[21,27,33],[30,92,122],[48,176,160],[246,192,78]];
     const color=value=>{
       const scaled=field.peak?Math.sqrt(value/field.peak)*3:0,index=Math.min(2,Math.floor(scaled)),fraction=scaled-index;
@@ -920,8 +944,7 @@ function renderChart(){
   }
   // Label only the visible profiles, not their faint benchmark samples. Prefer
   // a nearby offset along the line and avoid covering another label or marker.
-  const labels=node('g',{class:'line-labels'},medianPlot),placed=[],pendingLabels=[];
-  const overlap=(a,b)=>Math.max(0,Math.min(a.x+a.width,b.x+b.width)-Math.max(a.x,b.x))*Math.max(0,Math.min(a.y+a.height,b.y+b.height)-Math.max(a.y,b.y));
+  const labels=node('g',{class:'line-labels'},medianPlot),pendingLabels=[];
   for(const item of lineLabels){
     // A means-focused range can crop benchmark pairs. Keep their labels with
     // their lines rather than pinning labels for offscreen pairs to the border.
@@ -937,30 +960,13 @@ function renderChart(){
   // Attach all text, measure it together, then position it. Alternating each
   // SVG insertion/getBBox/write forces a separate layout for every label.
   const measuredLabels=pendingLabels.map(value=>({...value,box:value.label.getBBox()}));
+  const placeLabel=createLabelPlacer({left:margins.left,top:margins.top,width:w,height:h,obstacles:labelObstacles});
   for(const {item,label,box} of measuredLabels){
     const lw=box.width,lh=box.height;
-    const vx=item.b.x-item.a.x,vy=item.b.y-item.a.y,length=Math.hypot(vx,vy);
-    const nx=length>1?-vy/length:0,ny=length>1?vx/length:-1;
-    let best=null;
-    for(const t of [.5,.7,.3,.9,.1])for(const distance of [12,-12,23,-23,36,-36,51,-51]){
-      const anchor={x:item.a.x+vx*t,y:item.a.y+vy*t};
-      const center={x:anchor.x+nx*distance,y:anchor.y+ny*distance};
-      for(const side of [0,1,-1]){
-        const x=Math.max(margins.left+2,Math.min(margins.left+w-lw-2,center.x-lw/2+side*(lw/2+8)));
-        const y=Math.max(margins.top+2,Math.min(margins.top+h-lh-2,center.y-lh/2));
-        const candidate={x,y,width:lw,height:lh};
-        const padded={x:x-3,y:y-2,width:lw+6,height:lh+4};
-        const collisions=placed.reduce((sum,other)=>sum+overlap(padded,other),0);
-        const marks=labelObstacles.reduce((sum,other)=>sum+overlap(padded,other),0);
-        const offset=Math.hypot(x+lw/2-anchor.x,y+lh/2-anchor.y);
-        const score=collisions*1000+marks*20+offset+Math.abs(t-.5)*5;
-        if(!best||score<best.score)best={...candidate,score,padded,anchor,collisions};
-      }
-    }
+    const best=placeLabel(item,box);
     label.setAttribute('x',best.x-box.x);label.setAttribute('y',best.y-box.y);
     const crowded=w<500&&best.collisions>0;
     label.classList.toggle('label-crowded',crowded);
-    if(!crowded)placed.push(best.padded);
     const nearest={x:Math.max(best.x,Math.min(best.x+lw,best.anchor.x)),y:Math.max(best.y,Math.min(best.y+lh,best.anchor.y))};
     if(Math.hypot(nearest.x-best.anchor.x,nearest.y-best.anchor.y)>19){
       const guide=node('line',{x1:best.anchor.x,y1:best.anchor.y,x2:nearest.x,y2:nearest.y,stroke:displayColor(item.language),class:'label-guide','data-chart-language':item.language},labels);
@@ -1096,11 +1102,11 @@ function renderInspector({renderRelated=true}={}){
   }
   $('#download-source').onclick=event=>{event.preventDefault();const url=URL.createObjectURL(new Blob([file.code],{type:'text/plain'}));const link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
 }
-function reset(){
+function reset({rankings=false}={}){
   const focus=state.languageFocus;
   pauseYears();
   state.benchmarks=new Set(data.benchmarks.map(b=>b.key));state.languages=new Set(data.languages.map(l=>l.key));
-  state.disabled.clear();state.ellipses=new Set(['mech']);state.view='summary';state.focus='nbody';state.languageFocus=null;
+  state.disabled.clear();state.ellipses=new Set(['mech']);state.view=rankings?'rankings':'summary';state.focus='nbody';state.languageFocus=null;
   state.collapsedFamilies.clear();
   state.traits=emptyTraitFilters();
   state.benchmarkFilters=emptyBenchmarkFilters();
@@ -1200,8 +1206,8 @@ async function start(){
   $('#all-release-years').onclick=()=>{leaveLanguageFocusForSelection();const {min,max}=yearBounds();setReleaseWindow(min,max);};
   $('#play-years').onclick=()=>{leaveLanguageFocusForSelection();playYears();};
   addEventListener('pagehide',pauseYears,{once:true});
-  $('#reset').onclick=reset;
-  $('#reset-rankings').onclick=()=>{const focused=!!state.languageFocus;reset();if(!focused){state.view='rankings';update();}};
+  $('#reset').onclick=()=>reset();
+  $('#reset-rankings').onclick=()=>reset({rankings:true});
   $('#close-inspector').onclick=closeInspector;
   $('#return-language-overview').onclick=()=>{const focus=state.languageFocus;showLanguageOverview(focus.selectionKey,{family:focus.family,restoreProgram:true});};
   $('#overview-compare').onclick=()=>compareOverviewProgram();
@@ -1213,7 +1219,7 @@ async function start(){
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).onchange=event=>{if(event.target.disabled)return;state[key]=event.target.checked;updatePlot();};
   $('#loc-metric').onchange=event=>setLOCMetric(event.target.value);
   $('#chart-axes').onchange=event=>{if(!['means','samples'].includes(event.target.value))return;state.focusMeans=event.target.value==='means';updatePlot();};
-  for(const [id,key] of [['show-samples','sampleMode'],['show-medians','medianMode'],['show-density','densityMode']])$('#'+id).onchange=event=>{layerPresentation(event.target.value);state[key]=event.target.value;updatePlot();};
+  for(const [id,key] of [['show-samples','samples'],['show-medians','medians'],['show-density','density']])$('#'+id).onchange=event=>setLayerModes({[key]:event.target.value});
   document.addEventListener('click',event=>{
     const decade=event.target.closest('[data-release-decade]');if(decade&&!decade.disabled){
       const window=decadeWindow(Number(decade.dataset.releaseDecade),yearBounds());
@@ -1274,7 +1280,7 @@ async function start(){
     if(element.id==='detail-file'){state.detail.file=Number(element.value);renderInspector();}
   });
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&$('#inspector').open)closeInspector();});
-  const chartSizeChanged=()=>Math.max(290,$('#chart').clientWidth)!==renderedChartWidth||(innerWidth<=720)!==renderedChartMobile;
+  const chartSizeChanged=()=>state.view!=='rankings'&&(Math.max(290,$('#chart').clientWidth)!==renderedChartWidth||(innerWidth<=720)!==renderedChartMobile);
   new ResizeObserver(()=>{
     if(!chartSizeChanged()||chartResizeFrame!==null)return;
     chartResizeFrame=requestAnimationFrame(()=>{chartResizeFrame=null;if(chartSizeChanged())renderChart();});
@@ -1283,7 +1289,7 @@ async function start(){
   new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(width!==rankingWidth){rankingWidth=width;requestAnimationFrame(renderMedianRankings);}}).observe($('#median-ranking-cards'));
   window.benchmarkExplorer={getSelection:()=>({benchmarks:[...effectiveBenchmarks()],selectedBenchmarks:[...state.benchmarks],benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(({key})=>[key,[...state.benchmarkFilters[key]]])),languages:[...effectiveLanguages()],selectedLanguages:[...state.languages],traits:Object.fromEntries(traitDimensions.map(({key})=>[key,[...state.traits[key]]])),releaseYearStart:state.releaseYearStart,releaseYear:state.releaseYear,shownReleaseYear:shownReleaseYear(),playbackYear:state.playbackYear,ellipses:[...state.ellipses],disabled:[...state.disabled],view:state.view,locMetric:state.locMetric,languageFocus:state.languageFocus?{keys:[...state.languageFocus.keys],program:state.languageFocus.program,comparison:state.languageFocus.comparison}:null,samples:samplesVisible(),sampleMode:state.sampleMode,medianMode:state.medianMode,densityMode:state.densityMode,focusMeans:state.focusMeans,global:state.global,playing:state.playing}),
     getDensity:()=>structuredClone(currentDensityField()),
-    setLayerModes:({samples=state.sampleMode,medians=state.medianMode,density=state.densityMode}={})=>{for(const mode of [samples,medians,density])layerPresentation(mode);Object.assign(state,{sampleMode:samples,medianMode:medians,densityMode:density});updatePlot();},
+    setLayerModes,
     getMedianRankings:currentRankings,
     getGlobalStatistics:()=>structuredClone(inLanguageView()?currentEntries().filter(e=>focusKeys().has(e.language.key)).map(entry=>({language:entry.language.key,statistics:languageMedianStatistics(entry)})):currentGlobalStatistics()),
     getDomains:()=>({...currentDomain}),
