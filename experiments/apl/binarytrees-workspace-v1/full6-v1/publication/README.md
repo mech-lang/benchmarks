@@ -1,7 +1,11 @@
 # APL tree publication
 
-This additive path admits binary trees after one complete six-process cohort:
-three GNU APL observations and three matched Mech controls at N=21. The compact
+Binary trees was admitted to the catalog on 2026-10-15 after one complete
+six-process cohort: three GNU APL observations and three matched Mech controls
+at N=21. The [independent reconciliation](export-v1/reconciliation.json),
+[publication candidate](export-v1/candidate.json), [preview](preview-target-v1/SUCCESS.json)
+and [guarded apply receipt](apply-target-v1/SUCCESS.json) bind the actual evidence
+and exact catalog changes. The compact
 and optimized labels share the same authored source, setup and three timings.
 The alias adds no native process and makes no optimization claim.
 
@@ -22,6 +26,13 @@ binary trees. Existing programs, samples, source files and failure evidence stay
 unchanged. A new LOC or runtime minimum rejects the import. The APL aggregate
 expands to ten workloads through a recorded history boundary with no rebasing.
 
+The [closed run report](../run-v1/report.json) retains all six observations and
+the [terminal receipt](../run-v1/terminal.json) records their closure. The three
+APL times are 1239.683669375, 1241.905539417 and 1234.105568833 seconds, with a
+median of 1239.683669375 seconds. Admission adds one selected endpoint and two
+inventory forms; it does not add samples for the alias. The apply receipt's
+SHA-256 is `b9510bbde639962d87ccde522d86d1a686c0f66e97c8ce00deb87f8325ac599c`.
+
 ## Sources
 
 - `tools/qualification/apl_workspace_reconcile.py` independently replays the six
@@ -38,10 +49,14 @@ expands to ten workloads through a recorded history boundary with no rebasing.
 - `tools/qualification/test_apl_workspace_publication.py` contains synthetic
   source/count/alias, preservation, minimum, history and rollback regressions.
 
-## Execution prerequisites
+## Validation and reproduction
 
-These sources have not performed an actual publication. Independent source review found no remaining
-concrete blocker in the evidence joins, alias accounting or transaction routing.
+Independent source review found no remaining concrete blocker in the evidence
+joins, alias accounting or transaction routing. Actual reconciliation, export,
+preview and guarded apply completed successfully. The installed catalog,
+language metadata and history match the preview's three prepared digests;
+the saved before/after snapshots and all six measurement leases were checked
+after apply.
 The 15 focused test methods passed on 2026-10-15 UTC, recorded in
 [the initial pure-validation record](../../../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json). The history module now binds the
 exact tested publication leaf at SHA-256
@@ -50,7 +65,6 @@ Its router test no longer replaces that pin in memory. Two added standalone
 loader regressions cover prior-adapter preservation and rejection of a changed
 publication identity; the resulting 17-method suite passed on 2026-10-15 UTC,
 recorded in [the follow-up validation receipt](../../../../shared/follow-up-pure-validation-20261015/validation.json).
-No full-size APL result or chart admission is asserted here.
 
 The actual command inputs must come from the closed N=21 cohort and independent
 source/count/work dispositions. Required inputs are the plan, producer report,
@@ -61,9 +75,9 @@ partial prefix is accepted.
 
 The final 17-method revision passed with the retained Python using `-I -S -B`
 after the timing cohort closed. The receipt records its exact source identities. The
-clean publication repository's normal verification entry point must select this
-additive history module before an actual admission is published; the original
-measurement checkout's frozen verifier and evidence must remain untouched.
+publication repository's verification entry point selects this additive history
+module. The original measurement checkout's frozen verifier and evidence remain
+unchanged.
 
 Run the exporter from the original evidence checkout:
 
@@ -111,7 +125,7 @@ snapshot bytes continue to use the unchanged parent validator. The APL six-slot
 reports, counted sources and new review receipts use their exact raw identities;
 there is no generic compression exemption or receipt-hash substitution.
 
-After the tested history leaf is copied to the publication checkout, its
-`tools/verify_repository.py` must select `normalization_history_apl_trees.py`
-before the new admission is verified. Keep the original evidence checkout's
-verification entry point and the frozen producer/plan chain unchanged.
+The publication checkout's `tools/verify_repository.py` selects
+`normalization_history_apl_trees.py` for this admission and all prior history
+boundaries. Keep the original evidence checkout's verification entry point and
+the frozen producer/plan chain unchanged.

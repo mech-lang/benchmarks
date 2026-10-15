@@ -64,11 +64,8 @@ The [explorer performance audit](docs/explorer-performance.md) describes browser
 payload projection, rendering changes and their validation. Complete measurement
 evidence remains in the canonical catalog.
 
-Pending APL, Julia AOT and Rebol tooling has
-[250 passing pure test methods across 21 scripts](experiments/shared/pure-validation-20261015/README.md),
-with the initial failures and repaired results preserved. These checks do not
-perform native intake or admit new benchmark results; remaining qualification
-work is recorded in [coverage status](docs/status.md).
+See [coverage status](docs/status.md) for published results and remaining
+qualification work.
 
 ## License
 

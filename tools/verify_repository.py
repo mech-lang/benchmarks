@@ -13,8 +13,9 @@ import sys
 
 ROOT = Path(__file__).resolve().parents[1]
 PROGRAM_COLUMNS = ['language', 'benchmark', 'program', 'canonical_loc', 'physical_loc', 'median_seconds',
-                   'sample_sd_seconds', 'sample_count', 'selected_for_chart', 'manifest']
-SAMPLE_COLUMNS = ['language', 'benchmark', 'program', 'run', 'seconds', 'selected_for_chart', 'original_report']
+                   'sample_sd_seconds', 'sample_count', 'selected_for_chart', 'manifest', 'timing_alias_of']
+SAMPLE_COLUMNS = ['language', 'benchmark', 'program', 'run', 'seconds', 'selected_for_chart', 'original_report',
+                  'timing_owner', 'timing_alias_of']
 
 
 def require(condition, message):
@@ -60,6 +61,26 @@ def check_csv(path, columns, expected):
     return len(rows)
 
 
+def check_timing_owner(catalog, key):
+    """Resolve only a canonical explicit alias, independently of the exporter."""
+    program = catalog[key]
+    owner_key = program.get('timing_alias_of')
+    if owner_key is None:
+        return key
+    label = f'Invalid canonical timing alias: {key}'
+    require(type(owner_key) is str and bool(owner_key) and owner_key != key and owner_key in catalog, label)
+    owner = catalog[owner_key]
+    require(program.get('key') == key and owner.get('key') == owner_key
+            and owner.get('timing_alias_of') is None, label)
+    require(type(program.get('native_observations')) is int
+            and program['native_observations'] == 0, label)
+    require('aliased_sample_source' not in program or program['aliased_sample_source'] == owner_key, label)
+    for field in ('language', 'benchmark', 'samples'):
+        require(json.dumps(program.get(field), sort_keys=True, allow_nan=False)
+                == json.dumps(owner.get(field), sort_keys=True, allow_nan=False), f'{label}: {field}')
+    return owner_key
+
+
 def check_migration(root, check_index):
     rows = read_table(root / 'migration/reorganization-paths.tsv',
                       ['original_path', 'current_path', 'git_blob', 'mode'], '\t')
@@ -99,7 +120,7 @@ def check_previous(root, data):
     publication = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(publication)
     normalization_spec = importlib.util.spec_from_file_location(
-        'saved_normalization_history', root / 'tools/normalization_history_v2.py')
+        'saved_normalization_history', root / 'tools/normalization_history_apl_trees.py')
     normalization = importlib.util.module_from_spec(normalization_spec)
     normalization_spec.loader.exec_module(normalization)
     # A rebase may change derived chart coordinates only. All legacy raw-field
@@ -181,10 +202,14 @@ def verify(root, check_index=False):
         require(hashlib.sha256(source['code'].encode('utf-8')).hexdigest() == source['sha256'],
                 f'Dataset source hash mismatch: {key}')
     expected_programs, expected_samples = [], []
+    unique_samples, selected_unique_samples = set(), set()
+    timing_aliases = 0
     manifests, destinations = set(), set()
     source_copies = 0
     for key, p in sorted(catalog.items()):
         require(p.get('key') == key, f'Program key mismatch: {key}')
+        timing_owner = check_timing_owner(catalog, key)
+        timing_aliases += timing_owner != key
         relative = safe_relative(f'programs/{p["language"]}/{p["benchmark"]}/{slug(p["id"])}')
         folded = relative.as_posix().casefold()
         require(folded not in destinations, f'Program directory collision: {relative}')
@@ -223,14 +248,23 @@ def verify(root, check_index=False):
                            'archive_timing_report': data.get('archive_paths', {}).get(p.get('report')), 'sources': sources}
         if publication is not None:
             expected_record['publication_record'] = publication
-        for field in ('timing_measurement', 'timing_correction'):
+        for field in ('timing_measurement', 'timing_correction', 'timing_alias_of',
+                      'source_alias_of', 'aliased_sample_source', 'native_observations',
+                      'distinct_optimization_claimed', 'source_alias_note',
+                      'separate_fresh_samples_required'):
             if field in p:
                 expected_record[field] = p[field]
         require(record == expected_record, f'Exported program manifest changed: {manifest_path}')
         expected_programs.append([p['language'], p['benchmark'], p['id'], p.get('loc'), p.get('physical_loc'),
-                                  p.get('seconds'), sd, len(runs), int(key in data['programs']), manifest_path.as_posix()])
-        expected_samples.extend([p['language'], p['benchmark'], p['id'], n, elapsed, int(key in data['programs']), p.get('report', '')]
-                                for n, elapsed in enumerate(runs, 1))
+                                  p.get('seconds'), sd, len(runs), int(key in data['programs']), manifest_path.as_posix(),
+                                  p.get('timing_alias_of', '')])
+        for n, elapsed in enumerate(runs, 1):
+            expected_samples.append([p['language'], p['benchmark'], p['id'], n, elapsed,
+                                     int(key in data['programs']), p.get('report', ''), timing_owner,
+                                     p.get('timing_alias_of', '')])
+            unique_samples.add((timing_owner, n))
+            if key in data['programs']:
+                selected_unique_samples.add((timing_owner, n))
     actual_manifests = {path.relative_to(root).as_posix() for path in (root / 'programs').rglob('program.json')}
     require(actual_manifests == manifests, 'Exported catalog has missing or stale program manifests')
     program_count = check_csv(root / 'results/current/programs.csv', PROGRAM_COLUMNS, expected_programs)
@@ -240,7 +274,10 @@ def verify(root, check_index=False):
                         'workloads': len(data['benchmarks']), 'programs_in_catalog': len(catalog),
                         'programs_selected_for_chart': len(data['programs']), 'recorded_samples_in_catalog': sample_count,
                         'recorded_samples_selected_for_chart': sum(len(p.get('samples', [])) for p in data['programs'].values()),
-                        'source_files': len(data['files'])}
+                        'source_files': len(data['files']),
+                        'unique_recorded_samples_in_catalog': len(unique_samples),
+                        'unique_recorded_samples_selected_for_chart': len(selected_unique_samples),
+                        'timing_alias_programs': timing_aliases}
     require(read_json(root / 'results/current/summary.json') == expected_summary, 'Exported summary totals differ from the dataset')
     for benchmark in data['benchmarks']:
         expected = {key: benchmark[key] for key in ('key', 'title', 'workload', 'baseline_loc', 'baseline_seconds')}

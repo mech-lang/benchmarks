@@ -59,6 +59,7 @@ The [per-run measurements and browser checks](../site/publications/explorer-perf
 compare build `80f03cc4ba6ce434` with `381120eba12efd76`. Values below are medians
 of three runs on an Apple M1 Mac mini with 8 GiB RAM and Chrome 155. Control rows
 report synchronous event processing; readiness includes loading and initialization.
+Later dataset additions are outside this comparison.
 The evidence also retains elapsed times through two animation-frame callbacks,
 layout counts and individual observations.
 

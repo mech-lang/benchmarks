@@ -4,6 +4,8 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 
 | Benchmark | Program | Canonical LOC | Median seconds | Samples |
 |---|---|---:|---:|---:|
+| binarytrees | [apl-binarytrees-workspace200-compact](binarytrees/apl-binarytrees-workspace200-compact/program.json) | 41 | 1239.68 | 3 |
+| binarytrees | [apl-binarytrees-workspace200-optimized](binarytrees/apl-binarytrees-workspace200-optimized/program.json) | 41 | 1239.68 | 3 |
 | fannkuchredux | [fannkuchredux-apl-compact](fannkuchredux/fannkuchredux-apl-compact/program.json) | 38 | 7813.68 | 3 |
 | fannkuchredux | [fannkuchredux-apl-optimized](fannkuchredux/fannkuchredux-apl-optimized/program.json) | 38 | 7813.68 | 3 |
 | fasta | [fasta-apl-affine-hoisted-optimized-v3](fasta/fasta-apl-affine-hoisted-optimized-v3/program.json) | 60 | 38.7981 | 3 |
