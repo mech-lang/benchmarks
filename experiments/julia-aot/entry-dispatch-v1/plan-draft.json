@@ -1,0 +1,76 @@
+{
+  "schema": "julia-entry-dispatch-draft-v1",
+  "status": "source-draft-tool-intake-and-native-api-validation-pending",
+  "prepared": false,
+  "subject_processes": 1,
+  "automatic_retries": 0,
+  "subject": {
+    "path": "/Users/cim310/mech-lang/benchmarks/benchmarks/clbg/julia-aot-comparison/20261012/.build/official-static-io-safe-link-v3/nbody-safe",
+    "sha256": "86260f83a90db739e82729ce869d21bb8aa747282c9bb8da0ad41a3210770187",
+    "bytes": 8217032,
+    "arguments": ["1"],
+    "stdin": "DEVNULL",
+    "environment_required": {"JULIA_LOAD_CODEGEN_LIB": "0"},
+    "environment_complete": false,
+    "cwd": null,
+    "stdout_oracle": null,
+    "stdout_disposition": "retain exact complete bytes; input-1 correctness is not inferred from the input-1000 oracle"
+  },
+  "retained_runtime": {
+    "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/lib/julia/libjulia-internal.1.13.1.dylib",
+    "sha256": "aaf25ba7ac705b5e0d564e6942da9d158bf59cf387fa9d5dca097a254764d816",
+    "matching_dwarf_path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/lib/julia/libjulia-internal.1.13.1.dylib.dSYM/Contents/Resources/DWARF/libjulia-internal.1.13.1.dylib",
+    "matching_dwarf_sha256": "7e4531ec1dd1bda20af10dd62944a39984b66a94aa6478a675de4185253ec6d4",
+    "matching_header_path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/include/julia/julia.h",
+    "matching_header_sha256": "d6c895a04295260c0ced7979e1ba0d72d447bf6a2bed14a9189a371bd74fbdc8",
+    "file_symbols": "archive/languages/julia-aot/20261012/jobs/runtime-symbols-v1/images/libjulia-internal.1.13.1/symbols.stdout"
+  },
+  "prerequisite": {
+    "path": "experiments/julia-aot/trimmed-native-inspection-v1/static-owner-chain-review-v1.json",
+    "sha256": "f37082756840e3eaa0205a93140e5d73b6b9e65c5121adfe347e29c88962332b"
+  },
+  "trace_source": "experiments/julia-aot/entry-dispatch-v1/trace.py",
+  "owned_process_source": "experiments/julia-aot/entry-dispatch-v1/owned_processes.py",
+  "debugger_client_source": "experiments/julia-aot/entry-dispatch-v1/client.py",
+  "controller_source": "experiments/julia-aot/entry-dispatch-v1/controller.py",
+  "zero_subject_intake_source": "experiments/julia-aot/entry-dispatch-v1/intake_probe.py",
+  "trace_limits": {"events": 512, "hits_per_breakpoint": 64, "stack_frames_per_stop": 12, "single_memory_read_bytes": 4096},
+  "proposed_owner_limits": {"wall_seconds": 120, "normal_exit_group_grace_seconds": 5, "forced_cleanup_grace_seconds": 5, "combined_rss_bytes": 2147483648, "stdout_bytes": 1048576, "stderr_bytes": 1048576, "event_bytes": 4194304},
+  "mutex": {"path": "/tmp/mech-clbg-timing.lock", "inode": 79859134, "hold": "tool and input replay through owned cleanup and final artifact closure"},
+  "capture_sequence": [
+    "After exclusive tool intake, bind exact LLDB, scripting Python, debugserver, their dependencies and selected configuration; disable user init and expression evaluation.",
+    "During separate tool intake, validate module UUIDs, matching DWARF types and file-address APIs without launching the subject. Before the capture, preopen separate target stdout/stderr, debugger logs and durable event output.",
+    "Directly posix_spawn the unchanged executable once with argument 1, DEVNULL, exact file descriptors/environment, START_SUSPENDED and a new process group. Register its PID slot before spawn, then its exact birth/group and kernel-stopped state before debugger creation.",
+    "Launch the exact debugserver as a separate registered direct child using [debugserver, private_unix_socket, --attach=owned_subject_pid]. After endpoint readiness, start the separately registered LLDB client with its exact configuration. Attach only this newly created stopped owned child; never accept an external PID or let LLDB launch an opaque inferior.",
+    "Before the client connects or resumes, create its LLDB target for the exact executable; add the retained runtime and matching DWARF; revalidate UUIDs, architecture, type layout and every file-address breakpoint. Subscribe to target module-load/unload and process events before ConnectRemote. The already owned Julia child remains stopped throughout this setup.",
+    "Record the initial owned launch stop separately; bind its PID, LLDB unique process ID and independently recorded birth identity through Trace.bind_owned_process before resume. Feed only registered breakpoint stops to Trace.stopped with strictly advancing stop IDs. Preserve all module events and unexpected stops; no expression or function evaluation in the inferior.",
+    "Record normal exit and all raw output. On any cap, interruption or unexpected stop, terminate and reap every registered owned process/group without retry, retaining the partial capture.",
+    "Recheck physical inputs, exact raw artifacts, process identities and mutex name/inode before closing the capture. Semantic review remains separate from capture completion."
+  ],
+  "required_positive_witnesses": [
+    "Exactly one main/exported-entry path, native clbg entry, fresh-state constructor and original driver.",
+    "At entry_indirect_call, actual x8 equals the resolved retained native_clbg_entry address; save world values and ABI converter observations rather than assuming the branch.",
+    "Two energy entries around one nbody entry, x1 equal to 1 at nbody entry, and exactly one nbody_decrement stop with x13 equal to 1 before decrement.",
+    "Every interpreter/codegen breakpoint has exactly one resolved location throughout the run; a known native stop calibrates observation. Zero hit counts without these conditions prove nothing.",
+    "Raw cfuncdata and each directly selected CodeInstance snapshot are retained with DWARF field offsets, invoke/specptr/inferred values, and bounded inferred object header bytes."
+  ],
+  "unresolved_before_prepare": [
+    "Exact debugger/debugserver/scripting-runtime physical intake and native API compatibility have not been performed.",
+    "controller.py now wires metadata-only prepare and one-shot owned run to owned_processes.py and client.py, including exact client/config bytes and final input/artifact closure. These sources and their fault cases remain unexecuted. Exact SDK/API compatibility and a separately reviewed physical tool-intake receipt are required. The ordinary single-child observer is insufficient evidence by itself.",
+    "Exact module UUIDs and matching DWARF type visibility must be validated before launch; unresolved addresses or fields must stop preparation.",
+    "Complete environment, working directory and fresh output paths must be made concrete; no shell/default debugger settings are permitted."
+  ],
+  "limits_of_inference": [
+    "A bounded input-1 trace is a diagnostic, not a performance sample or full-size required-work run.",
+    "Generic ABI converter or compile-method lookup hits do not alone establish interpretation or new LLVM code generation.",
+    "A non-null CodeInstance.inferred value does not alone establish retained executable IR: the retained header permits CodeInfo, compressed String, jl_nothing and UInt8 dispositions.",
+    "This capture does not inspect every reachable Method.source, opaque closure or alternate/error path; it cannot alone establish universal IR removal or fallback closure."
+  ],
+  "native_commands_executed": 0,
+  "native_owner_qualified": false,
+  "actual_ir_removal_qualified": false,
+  "fallback_closure_qualified": false,
+  "runtime_aot_proven": false,
+  "timing_qualified": false,
+  "chart_admission": false
+}

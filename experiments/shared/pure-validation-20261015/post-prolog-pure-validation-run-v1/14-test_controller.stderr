@@ -1,0 +1,56 @@
+EFFF
+======================================================================
+ERROR: test_complete_fake_capture_retains_false_semantic_flags (__main__.ControllerClosure.test_complete_fake_capture_retains_false_semantic_flags)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 117, in test_complete_fake_capture_retains_false_semantic_flags
+    self.fake_run()
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 95, in fake_run
+    c.run(plan_path, c.digest(plan_raw), object())
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/controller.py", line 413, in run
+    require(not report['errors'] and not terminal_errors, 'Julia diagnostic did not close successfully')
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/controller.py", line 49, in require
+    raise ValueError(message)
+ValueError: Julia diagnostic did not close successfully
+
+======================================================================
+FAIL: test_failed_normal_and_forced_cleanup_is_not_repeated_a_third_time (__main__.ControllerClosure.test_failed_normal_and_forced_cleanup_is_not_repeated_a_third_time)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 126, in test_failed_normal_and_forced_cleanup_is_not_repeated_a_third_time
+    self.fake_run(cleanup_failure=True)
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 104, in fake_run
+    self.assertEqual(cleanup_calls, [False])
+AssertionError: Lists differ: [True] != [False]
+
+First differing element 0:
+True
+False
+
+- [True]
++ [False]
+
+======================================================================
+FAIL: test_initial_inventory_cannot_adopt_modified_client_configuration (__main__.ControllerClosure.test_initial_inventory_cannot_adopt_modified_client_configuration)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 123, in test_initial_inventory_cannot_adopt_modified_client_configuration
+    self.fake_run(mutation='client-config.json')
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 101, in fake_run
+    self.assertTrue(any('prevalidated' in error['message'] for error in report['errors']))
+AssertionError: False is not true
+
+======================================================================
+FAIL: test_initial_inventory_cannot_adopt_modified_validated_trace (__main__.ControllerClosure.test_initial_inventory_cannot_adopt_modified_validated_trace)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 120, in test_initial_inventory_cannot_adopt_modified_validated_trace
+    self.fake_run(mutation='trace.jsonl')
+  File "/private/tmp/mech-benchmark-completion/experiments/julia-aot/entry-dispatch-v1/test_controller.py", line 101, in fake_run
+    self.assertTrue(any('prevalidated' in error['message'] for error in report['errors']))
+AssertionError: False is not true
+
+----------------------------------------------------------------------
+Ran 4 tests in 0.014s
+
+FAILED (failures=3, errors=1)

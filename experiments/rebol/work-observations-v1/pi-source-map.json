@@ -1,0 +1,102 @@
+{
+  "schema": "rebol-pi-instrumented-source-map-v1",
+  "status": "source-draft-oracle-unrun-native-observation-pending",
+  "original": {
+    "path": "archive/languages/rebol/20261013/drafts/private-v1/sources/pidigits/main.reb",
+    "recorded_sha256": "2278a48451ab7e3e497779365b29a0a1b23818787eda7abcd2e635f08f02e16b",
+    "pin_authority": "experiments/rebol/primitive-fixtures-v1/spec.json",
+    "physical_hash_replayed_here": false
+  },
+  "diagnostic": {
+    "path": "experiments/rebol/work-observations-v1/pidigits.reb",
+    "sha256": null,
+    "native_executed": false,
+    "argument": "27",
+    "sidecar_environment": "MECH_REBOL_PI_OBSERVATION"
+  },
+  "statement_mapping": [
+    {
+      "original_lines": [1, 1],
+      "diagnostic_lines": [1, 1],
+      "disposition": "Diagnostic title only."
+    },
+    {
+      "original_lines": [2, 3],
+      "diagnostic_lines": [2, 3],
+      "disposition": "Load the same retained IO and arithmetic facade files through paths relative to the additive packet."
+    },
+    {
+      "original_lines": [4, 46],
+      "diagnostic_lines": [26, 68],
+      "disposition": "All 43 original lines copied contiguously without recurrence, output, arithmetic or control-flow edits. A bounded source-span diff matched; physical source hashing and native execution remain deferred."
+    },
+    {
+      "original_lines": [15, 16],
+      "diagnostic_lines": [37, 38],
+      "disposition": "Both original quotient assignments remain written and executed through the instrumented facade field. Logged source-line labels derive from consecutive call parity, not a native stack observation."
+    }
+  ],
+  "instrumentation": {
+    "preamble_lines": [5, 24],
+    "saved_original_facade_function_line": 12,
+    "wrapper_lines": [15, 24],
+    "only_forwarding_call_line": 20,
+    "postamble_lines": [70, 81],
+    "changes_original_files": false,
+    "changes_native_extension": false,
+    "recomputes_quotient_in_diagnostic": false,
+    "operand_state_copies": "q, r, t and both actual operands are copied before the original facade call; k and emitted are recorded as integers.",
+    "result_handling": "Copy the full returned binary into the observation, then return the original result value to the recurrence."
+  },
+  "sidecar": {
+    "format": "ASCII TSV with LF terminators and exactly ten integer fields per data row",
+    "first_line": "rebol-pi-floor-observation-v1\t27\n",
+    "second_line": "pair\tsource-line\tq\tr\tt\tk\temitted\tnumerator\tdenominator\tquotient\n",
+    "columns": ["pair", "source-line", "q", "r", "t", "k", "emitted", "numerator", "denominator", "quotient"],
+    "written_after_original_stdout": true,
+    "operands_and_results_truncated": false,
+    "native_ownership_and_size_limits": "The source-draft tools/qualification/rebol_work_observations.py supplies the existing owned observer, a fresh owned sidecar path, exact image/source pins and retained bounded policy. Its actual prepared plan, captures and test execution remain pending."
+  },
+  "output_reference": {
+    "manifest": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+    "manifest_recorded_sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1",
+    "path": "experiments/shared/bounded-corpus-v1/cases/pidigits/n-27/expected.stdout",
+    "recorded_sha256": "ab4264eca722a55e8a6458574e6e607450b978c5f95aedc426ae0615c48cbbba",
+    "bytes": 45,
+    "expected_exit": 0,
+    "expected_stderr_bytes": 0
+  },
+  "oracle_contract": {
+    "initial_state": {"q": 1, "r": 0, "t": 1, "k": 1, "emitted": 0},
+    "parse": "Accept only canonical signed decimal integers (zero or optional minus followed by nonzero leading digit), exactly ten tab-separated fields and complete LF-terminated rows. Reject malformed, missing, repeated, truncated or extra fields/rows.",
+    "pair_order": "Pairs begin at 1 and advance without gaps. Each pair consists of original source lines 15 then 16, with identical q/r/t/k/emitted and denominator t>0.",
+    "operand_equations": ["site15 numerator = 3*q+r", "site16 numerator = 4*q+r", "both denominator = t"],
+    "quotient_check": "Independently compute mathematical floor(numerator/denominator) with unbounded integers for each observed call and require exact equality to its full recorded result.",
+    "equal_branch": "When quotient3 equals quotient4, require digit 0..9, append it, set q'=10*q and r'=10*(r-digit*t), preserve t/k, and increase emitted by 1.",
+    "unequal_branch": "Otherwise set factor=2*k+1, q'=q*k, r'=(2*q+r)*factor, t'=t*factor, k'=k+1, and preserve emitted. Each update uses the prior state.",
+    "state_replay": "The next pair must equal the independently reconstructed next state. Stop only after exactly 27 emitted digits; reject any missing or extra pair.",
+    "unbounded_operand_witness": "Require an actual matched pair with an operand magnitude beyond 2^64-1 in each of its two calls; retain which full values establish that witness.",
+    "stdout": "Reconstruct the 10-digit row/count and final partial-row format from the independently replayed digits, and require it and actual complete stdout to equal the pinned 45-byte N27 reference."
+  },
+  "scope_limits": [
+    "Instrumented facade-call evidence, not an unchanged-main execution or benchmark sample.",
+    "One original facade invocation per observed wrapper call is a reviewed source property; no claim about a count of machine instructions or GMP internal divisions.",
+    "The independent pure integer oracle and twelve synthetic test methods are authored but unrun; no actual trace has been reviewed.",
+    "Actual runtime/source equivalence, native ownership, primitive qualification, raw output review and source pin freezing are separate prerequisites or gates."
+  ],
+  "oracle_source": {
+    "path": "experiments/rebol/work-observations-v1/pi_oracle.py",
+    "tests": "experiments/rebol/work-observations-v1/test_pi_oracle.py",
+    "api": "validate(stdout, stderr, exit_status, trace, expected)",
+    "test_methods": 12,
+    "source_sha256": null,
+    "tests_sha256": null,
+    "imported_or_executed": false,
+    "native_trace_reviewed": false
+  },
+  "source_work_qualified": false,
+  "runtime_source_equivalence_proven": false,
+  "canonical_source_count_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false
+}
