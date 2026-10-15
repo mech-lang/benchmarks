@@ -173,7 +173,7 @@ is 13.5 → 13.4 MiB. After 20 view/layer/reset cycles it is 18.3 → 18.2 MiB,
 with identical DOM-node and listener counts and little growth
 after warmup. This pass does not claim a retained-memory reduction.
 
-Build `7bba6e95588940c0` is
+Build `7bba6e95588940c0` was
 [published and verified](../site/publications/explorer-performance-v2/deployment.json)
 at [mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/). All 36 live
 assets and the final manifest matched on October 15 at 14:05 UTC. The
@@ -181,3 +181,12 @@ assets and the final manifest matched on October 15 at 14:05 UTC. The
 and [fresh mobile browser](../site/publications/explorer-performance-v2/live-browser.json)
 passed with the unchanged dataset, all 2,835 selected runs, Samples Off,
 language pages and resource filters, with no page errors.
+
+Build `caf8560f1e184762` retains these optimizations and renders recorded
+samples as solid dots in each language's color. Its
+[deployment check](../site/publications/sample-dots-v1/deployment.json) matched
+all 36 live assets, and the
+[fresh mobile browser check](../site/publications/sample-dots-v1/live-browser.json)
+confirmed all 2,835 markers were filled, Samples Off removed them, and no page
+errors occurred. The interaction measurements above apply to build
+`7bba6e95588940c0`; they were not repeated for this marker-style change.
