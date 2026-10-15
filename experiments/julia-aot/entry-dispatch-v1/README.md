@@ -57,8 +57,8 @@ The 5 ownership-component test methods passed on 2026-10-15 UTC in
 [the initial pure-validation record](../../shared/pure-validation-20261015/post-prolog-pure-validation-run-v1/report.json); the 4 controller methods
 passed in [the repaired-run record](../../shared/pure-validation-20261015/post-prolog-pure-validation-repaired-v1/report.json). The original
 controller failures remain in the first record. These use fake children and
-small local files, without a debugger or Julia process. Actual preparation and
-native execution remain pending. Exact local
+small local files, without a debugger or Julia process. Preparation of the owned
+diagnostic and its subject execution remain pending. Exact local
 LLDB/debugserver/Python intake remains required. [controller.py](controller.py)
 now provides the source-only `prepare` and `run` entry points; it accepts no
 unreviewed tool discovery or automatic capability probe. [client.py](client.py) contains the bounded
@@ -104,7 +104,8 @@ Failed normal closure escalates to forced cleanup. Each phase has a five-second
 bound, for at most ten additional seconds; the outer owner must reserve both.
 A sampled RSS read may retry at most twice only when the same subject's exact
 birth/group identity shows the permitted controller/tracer parent transition.
-Other kernel failures remain fatal. The authored fault cases have not been run.
+Other kernel failures remain fatal. The pure fault cases cover synthetic
+children; actual three-child ownership remains to be exercised.
 
 Preparation consumes an explicitly pinned JSON intake with schema
 `julia-entry-debugger-tool-intake-v1` and status
@@ -129,14 +130,14 @@ subject to exact receipt and current-tool pin replay; they are not observations
 of the future diagnostic process. Both packets are under
 `archive/languages/julia-aot/20261012/jobs/`.
 
-The concrete missing intake is one no-subject LLDB batch observation of the
+The static intake uses one no-subject LLDB batch observation of the
 required settings, scripting identity, exact modules, CodeInstance DWARF fields
 and retained file-address breakpoints, plus bounded local debugserver interface
 help. The selected command interface must support the private Unix endpoint and
 `--attach` form. A successful prior attach to this Julia executable is not an
 intake prerequisite: the single owned diagnostic is the first test of that
 transport. SDK declarations and existing version/location records can be reused.
-[intake_probe.py](intake_probe.py) is the unexecuted source for that static LLDB
+[intake_probe.py](intake_probe.py) is the source for that static LLDB
 observation. It reuses the exact `Trace` constructor and requires an invalid
 `target.GetProcess()` before and after inspection. It contains no launch,
 connect, attach, resume or target-expression evaluation call. Its JSON preserves
@@ -145,6 +146,17 @@ fields, required layout, module UUID/file addresses and all breakpoint records.
 Process API members are explicitly listed as unexercised; interface presence
 does not qualify the later owned transport. Partial metadata and the error are
 retained on failure. The outer bounded command must propagate `entry`'s status.
+
+The [second tool capture](intake-run-v2/report.json) completed on October 15,
+2026 at 04:07 UTC. Its LLDB process exited zero and retained complete structured
+output: both settings, 27 breakpoint locations, the two expected module UUIDs,
+Python 3.9.6 and the 128-byte CodeInstance layout. Debugserver's no-argument
+usage route retained the Unix-socket attach syntax and exited 1, as expected for
+that invocation; the observer's unsuccessful status remains unchanged. Both
+processes were reaped and their groups were empty. No Julia process was created.
+The first capture's rejected `--help` option and truncated LLDB output remain
+preserved. Physical dependency review and the owned diagnostic are separate
+remaining steps.
 
 The eventual CLI shape, after that intake has actually been reviewed, is:
 
