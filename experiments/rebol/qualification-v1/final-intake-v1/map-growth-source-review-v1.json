@@ -1,0 +1,106 @@
+{
+  "schema": "rebol-map-storage-independent-source-review-v1",
+  "status": "reviewed-source-allocation-and-growth-path",
+  "independent_review": true,
+  "reviewed_at": "2026-10-15T07:38:35.185176+00:00",
+  "main": {
+    "path": "/private/tmp/mech-benchmark-completion/archive/languages/rebol/20261013/drafts/private-v1/sources/knucleotide/main.reb",
+    "sha256": "5c16c9be1685627f47e71ef690f3d7f180b7d34e9ae496e648062b34601a8140"
+  },
+  "runtime": {
+    "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/rebol-comparison/20261013/.build/runtime-v1/runtime/rebol3",
+    "sha256": "27e255625d4d9928f5d726d3f2546fa64ff82a09a2b971cbc3a236a0bbed08a2"
+  },
+  "references": {
+    "observation_review": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/work-observations-v1/remaining-intake-v1/final-bounded-v1/map-only-v1/combined-bounded-work-review-v1.json",
+      "sha256": "3996ceb8569fcbbf813d229ef0fff6b63f5c08ebe6407d2f5b0bd1fec6db9a1f"
+    },
+    "timing_policy": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/full60-v1/POLICY.md",
+      "sha256": "ced3456b5e189b737ec750b2c7b23b3a9aa884be2480c7fa0b726c05b3bba91b"
+    }
+  },
+  "source_files": {
+    "core/t-map.c": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/t-map.c",
+      "sha256": "3b29aeb0b4e68bc0cfeb222b862b50bd0aa28b5e1e29449e1dcb91935d551c5b"
+    },
+    "core/f-blocks.c": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/f-blocks.c",
+      "sha256": "cece8dd5d63a9d7ff320285406284857a127156956643a911f875096d183abde"
+    },
+    "core/m-series.c": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/m-series.c",
+      "sha256": "4962200393e03614a10dcf3a670e4f05e3522e7e61767f90403c381cdf3da821"
+    },
+    "core/n-loop.c": {
+      "path": "/private/tmp/mech-benchmark-completion/experiments/rebol/sdk-generation-v1/work-v1/source/src/core/n-loop.c",
+      "sha256": "139d241bdf57a514f3a3b4348e649b3d182afb5e9c865e86136c708c06ee6294"
+    }
+  },
+  "findings": [
+    {
+      "source": "core/t-map.c",
+      "lines": [
+        136,
+        154
+      ],
+      "finding": "Make_Map creates a block backing store for key/value pairs; the linked hash series is initially absent."
+    },
+    {
+      "source": "core/t-map.c",
+      "lines": [
+        287,
+        380
+      ],
+      "finding": "Find_Entry updates existing values, appends new key/value pairs, and creates or expands the separate hash series as thresholds require."
+    },
+    {
+      "source": "core/f-blocks.c",
+      "lines": [
+        310,
+        359
+      ],
+      "finding": "Append_Value and Append_Val request tail expansion before writing and preserving the terminator."
+    },
+    {
+      "source": "core/m-series.c",
+      "lines": [
+        36,
+        155
+      ],
+      "finding": "Expand_Series uses available space when sufficient; otherwise it allocates larger storage, copies existing values and releases the replaced storage."
+    },
+    {
+      "source": "core/n-loop.c",
+      "lines": [
+        391,
+        395
+      ],
+      "finding": "Map iteration selects the map value series directly."
+    },
+    {
+      "source": "core/n-loop.c",
+      "lines": [
+        462,
+        478
+      ],
+      "finding": "foreach reads the existing key/value slots and skips removed entries; it does not first reflect the complete map into a new block."
+    }
+  ],
+  "observation_scope": "The accepted bounded observation records every entry of all seven actual maps. This source disposition describes the retained allocation and insertion paths, not measured capacity or reallocation events.",
+  "policy_scope": "The full60 policy accepts complete bounded map contents plus source allocation/growth review. The older global dump failed and remains preserved; no successful capacity snapshot is inferred.",
+  "source_growth_path_reviewed": true,
+  "backing_series_capacity_observed": false,
+  "backing_series_identity_observed": false,
+  "full_pointer_identity_observed": false,
+  "hash_bucket_capacities_observed": false,
+  "capacity_growth_trajectory_observed": false,
+  "runtime_source_equivalence_proven": false,
+  "full_size_work_qualified": false,
+  "full_timing_qualified": false,
+  "chart_admission": false,
+  "native_processes_started": 0,
+  "qualification_context_entered": false
+}
