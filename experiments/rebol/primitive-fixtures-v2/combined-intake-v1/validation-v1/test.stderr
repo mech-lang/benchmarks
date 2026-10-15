@@ -1,0 +1,28 @@
+...F..
+======================================================================
+FAIL: test_combined_lease_list_does_not_mutate_outer_owner (__main__.CombinedTests.test_combined_lease_list_does_not_mutate_outer_owner)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/test_rebol_primitive_fixtures_combined.py", line 95, in test_combined_lease_list_does_not_mutate_outer_owner
+    with loaded.held(dict(path=str(combined),sha256=sha(combined)),dict(path=str(review),sha256=sha(review))) as values:self.assertEqual(len(values[4]),8)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/cim310/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_primitive_fixtures_combined.py", line 105, in held
+    e,initial_extension,initial_source=bootstrap(extension_ref,source_ref)
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_primitive_fixtures_combined.py", line 92, in bootstrap
+    raw=f.bootstrap_read(source_ref['path']);require(digest(raw)==source_ref['sha256'],'Source review changed');review=json.loads(raw)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_primitive_fixtures.py", line 50, in bootstrap_read
+    require(path.is_absolute() and path.resolve(strict=True)==path,'Physical intake path required')
+  File "/private/tmp/mech-benchmark-completion/tools/qualification/rebol_primitive_fixtures.py", line 40, in require
+    if not value: raise AssertionError(message)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: Physical intake path required
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.047s
+
+FAILED (failures=1)
