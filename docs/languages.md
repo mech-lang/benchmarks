@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **58 measured execution variants in 52 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **59 measured execution variants in 52 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
@@ -52,7 +52,8 @@ Classification is based on preserved measurement/build records plus primary lang
 | Haskell | GHC native compiler/runtime | AOT | Static | Tracing GC |
 | Java | OpenJDK HotSpot JVM | JIT | Static | Tracing GC |
 | JavaScript (V8) | Node.js / V8 | JIT | Dynamic | Tracing GC |
-| Julia | Julia / LLVM runtime | JIT | Dynamic | Tracing GC |
+| Julia (JIT) | Julia / LLVM runtime | JIT | Dynamic | Tracing GC |
+| Julia (AOT) | Julia / PackageCompiler native runtime | AOT | Dynamic | Tracing GC |
 | K (Growler) | Growler K interpreter | Interpreted | Dynamic | RC |
 | Kotlin (JVM) | Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1 | JIT | Static | Tracing GC |
 | Lua (interpreted) | PUC Lua bytecode interpreter | Interpreted | Dynamic | Tracing GC |

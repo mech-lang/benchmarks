@@ -30,11 +30,11 @@ application code, including module, entry and reset logic, contributes to LOC.
 Build scripts and training workloads are compilation inputs, not scored runtime
 helpers. The existing Julia JIT measurements remain a separate series.
 
+All seventeen profiles are admitted as a separate Julia (AOT) series after 51 full-workload samples and 30 matched Mech controls passed independent reconciliation. Fourteen profiles supply the selected endpoints; all seventeen remain inspectable. The [results](RESULTS.md) include every workload, the FASTA slowdown and the limits of comparisons with retained JIT measurements. Existing measurements and fixed baselines are preserved.
+
 Builds and measurements run serially under the shared benchmark mutex. The
 [builder](../../../tools/build_julia_app.py) retains commands, environments,
-input hashes, compiler logs and owned-process cleanup. Current results under
-`builds/` describe actual compilation status; executable validation and timing
-admission remain separate.
+input hashes, compiler logs and owned-process cleanup. Build receipts under `builds/` describe compilation; bounded validation, full timing and independent reconciliation each retain separate evidence.
 
 References: [PackageCompiler apps](https://julialang.github.io/PackageCompiler.jl/stable/apps.html)
 and [Julia compiler options](https://docs.julialang.org/en/v1/manual/command-line-interface/).

@@ -1,0 +1,259 @@
+{
+  "schema": "julia-fasta-aot-source-performance-review-v1",
+  "scope": "Static review of retained FASTA AOT v1 versus the admitted historical Julia JIT source and producer; no native execution, profiling, compilation, replay, or repository edits.",
+  "status": "No concrete adaptation-caused performance defect established by static evidence.",
+  "source_evidence": {
+    "original": {
+      "path": "/private/tmp/mech-benchmark-publication/programs/julia/fasta/fasta-julia-3/fasta-julia-3.jl",
+      "sha256": "36cf3ba1ad4bf76978c051ad9883ef2f7cdba444858e8b626fbc8c304a8734fd",
+      "bytes": 2277
+    },
+    "adapted": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/packages/fasta-julia-3/src/BenchFastaJulia3.jl",
+      "sha256": "3f27141267f9de58446e1b68ecb1a91cdf28fd6e1883cec969c1d4f23c16f938",
+      "bytes": 2383
+    },
+    "training": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/fasta-julia-3.jl",
+      "sha256": "ea218d619ace6da8fdaf2ec9cf5bff30c2a803c77fc3fa204c73d02ba415bb05",
+      "bytes": 585
+    },
+    "build_recipe": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/build_app.jl",
+      "sha256": "ce67f2ad82d3b54495d02629a7b438ee811e398dd70a7dd7239d8502e5e1f5dc",
+      "bytes": 573
+    },
+    "precompile_trace": {
+      "path": "/private/tmp/jl_packagecompiler_hdDkh7/jl_wT7Bwd",
+      "sha256": "fa4b74ca7812e10b1863d96cde55fcfae16a854afd7cba3cd20580d35f4e1322",
+      "bytes": 990,
+      "statements": [
+        "precompile(Tuple{typeof(Base._str_sizehint), Int32})",
+        "precompile(Tuple{Type{Base.IOContext{IO_t} where IO_t<:IO}, Base.IOStream, Pair{Symbol, Bool}})",
+        "precompile(Tuple{typeof(Base.setindex!), Base.Dict{Tuple{Base.PkgId, String}, Union{Nothing, Tuple{Base.PkgId, String}}}, Tuple{Base.PkgId, String}, Tuple{Base.PkgId, String}})",
+        "precompile(Tuple{typeof(Base.open), Function, String, String})",
+        "precompile(Tuple{Base.var\"#TupleOrBottom##0#TupleOrBottom##1\", Type})",
+        "precompile(Tuple{typeof(Base._any_tuple), Base.var\"#TupleOrBottom##0#TupleOrBottom##1\", Bool, Type, Type})",
+        "precompile(Tuple{typeof(Base._any_tuple), Function, Bool})",
+        "precompile(Tuple{Base.var\"##open#324\", Base.Pairs{Symbol, Union{}, Nothing, NamedTuple{(), Tuple{}}}, typeof(Base.open), Main.var\"#5#6\", String, Vararg{String}})",
+        "precompile(Tuple{typeof(Base.open), String, String})",
+        "precompile(Tuple{typeof(BenchFastaJulia3.perf_fasta), Int64, Base.IOStream})",
+        "precompile(Tuple{Base.RedirectStdStream, Base.IOContext{Base.IOStream}})"
+      ]
+    },
+    "packagecompiler": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/depot/packages/PackageCompiler/6R4fc/src/PackageCompiler.jl",
+      "sha256": "432a35ba27185454c47c3f9809070ae733ea74d6c8f0010f85f7ad9cc316e8a7",
+      "bytes": 82348
+    },
+    "base_iostream": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/iostream.jl",
+      "sha256": "d27e8f793fb2f76f7c7427d5211314a004e0aeb20adbe152877b3f636e9308be",
+      "bytes": 19825
+    },
+    "base_stream": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/share/julia/base/stream.jl",
+      "sha256": "b012cf5da560f39361c1b19a546dfc968d3ed7fd510cd39b13049208c0ff7ad4",
+      "bytes": 52388
+    },
+    "historical_producer": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/retime/run.py",
+      "sha256": "0bb4cb82345dc3d218318bf62e388c0cb6aba553112c40ac3abccc026cbfa2f8",
+      "bytes": 9213
+    },
+    "current_sampler": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/r-apl-uiua-comparison/20261011/run.py",
+      "sha256": "5b2a038cfae4112e9e2eee79c3cd57ccc6a1521812828c47bf28986d6a8e139b",
+      "bytes": 16696
+    }
+  },
+  "measurements": {
+    "current_aot_attempts": [
+      {
+        "evidence": {
+          "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/full81-v1/attempts/043-fasta-julia-3-aot.json",
+          "sha256": "14ab29563a3c6a93b18612fdb4e550b108d0a279f71eecea287f491af8444b02",
+          "bytes": 14924
+        },
+        "seconds": 31.600998083,
+        "command": [
+          "/private/tmp/mech-julia-packagecompiler-builds-v1/fasta-julia-3/bundle/bin/fasta-julia-3",
+          "25000000",
+          "--julia-args",
+          "--startup-file=no",
+          "--history-file=no",
+          "--compile=no"
+        ],
+        "runtime_environment": {
+          "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+          "LC_ALL": "C",
+          "LANG": "C",
+          "JULIA_NUM_THREADS": "8,0",
+          "JULIA_LOAD_CODEGEN_LIB": "0",
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1"
+        },
+        "exit_status": 0,
+        "stdout_bytes": 254166745,
+        "stdout_sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+        "validation": {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        },
+        "stderr": "",
+        "peak_process_group_rss_kib": 263248
+      },
+      {
+        "evidence": {
+          "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/full81-v1/attempts/046-fasta-julia-3-aot.json",
+          "sha256": "83709bb1675dfdc830661a62871d824f6c3ff2140c8118bcdc075901cf6043ae",
+          "bytes": 14924
+        },
+        "seconds": 31.055644917,
+        "command": [
+          "/private/tmp/mech-julia-packagecompiler-builds-v1/fasta-julia-3/bundle/bin/fasta-julia-3",
+          "25000000",
+          "--julia-args",
+          "--startup-file=no",
+          "--history-file=no",
+          "--compile=no"
+        ],
+        "runtime_environment": {
+          "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+          "LC_ALL": "C",
+          "LANG": "C",
+          "JULIA_NUM_THREADS": "8,0",
+          "JULIA_LOAD_CODEGEN_LIB": "0",
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1"
+        },
+        "exit_status": 0,
+        "stdout_bytes": 254166745,
+        "stdout_sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+        "validation": {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        },
+        "stderr": "",
+        "peak_process_group_rss_kib": 263232
+      },
+      {
+        "evidence": {
+          "path": "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/full81-v1/attempts/047-fasta-julia-3-aot.json",
+          "sha256": "c20035cc1a0f73694872b7de4d8246e7e82f7430bd4d1eca4ca530052c3a6a84",
+          "bytes": 14924
+        },
+        "seconds": 31.378397375,
+        "command": [
+          "/private/tmp/mech-julia-packagecompiler-builds-v1/fasta-julia-3/bundle/bin/fasta-julia-3",
+          "25000000",
+          "--julia-args",
+          "--startup-file=no",
+          "--history-file=no",
+          "--compile=no"
+        ],
+        "runtime_environment": {
+          "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+          "LC_ALL": "C",
+          "LANG": "C",
+          "JULIA_NUM_THREADS": "8,0",
+          "JULIA_LOAD_CODEGEN_LIB": "0",
+          "OPENBLAS_NUM_THREADS": "1",
+          "OMP_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1"
+        },
+        "exit_status": 0,
+        "stdout_bytes": 254166745,
+        "stdout_sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+        "validation": {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        },
+        "stderr": "",
+        "peak_process_group_rss_kib": 263440
+      }
+    ],
+    "current_aot_median_seconds": 31.378397375,
+    "historical_jit": {
+      "evidence": {
+        "path": "/private/tmp/mech-benchmark-publication/archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+        "bytes": 7944725
+      },
+      "id": "fasta-julia-3",
+      "source_sha256": "36cf3ba1ad4bf76978c051ad9883ef2f7cdba444858e8b626fbc8c304a8734fd",
+      "command": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/fasta/upstream/fasta-julia-3.jl",
+        "{n}"
+      ],
+      "runtime_environment": {},
+      "samples_seconds": [
+        4.057375166,
+        4.057447334,
+        4.0427235
+      ],
+      "median_seconds": 4.057375166,
+      "sample_validation": [
+        {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        },
+        {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        },
+        {
+          "bytes": 254166745,
+          "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+          "reference_match": true
+        }
+      ]
+    },
+    "observed_aot_to_historical_jit_median": 7.73366920514148,
+    "comparison_limit": "Historical JIT and current AOT were measured in separate cohorts; this ratio describes the retained observations and does not isolate a causal optimization."
+  },
+  "findings": [
+    {
+      "subject": "Adapter delta",
+      "result": "Source diff consists of a module wrapper; perf_fasta formal _n renamed n; top-level argument parsing moved into julia_main; entry resets the existing Int32 seed to 42 and returns Cint-compatible zero. Original generator, lookup, formatting, per-character writes, loop statements, constants, and probability arrays remain unchanged."
+    },
+    {
+      "subject": "Lexical scope and boxing concern",
+      "result": "perf_fasta has no nested function or closure, never reassigns n, and passes 2n/3n/5n directly to top-level repeat_fasta/random_fasta functions. Those functions contain no nested function or closure. The formal rename introduces no captured local apparent in source; no source evidence supports a Core.Box explanation. Original perf_fasta used a non-const global n despite accepting an unused _n formal."
+    },
+    {
+      "subject": "Output path and concrete training signature",
+      "result": "Both historical/current samplers direct child stdout to a regular temporary file. Training redirects stdout to mktemp IOStream. Pinned Base.init_stdio maps UV_FILE to fdio/IOStream. Retained trace explicitly requests precompile(Tuple{typeof(BenchFastaJulia3.perf_fasta), Int64, Base.IOStream}); a missing concrete IOStream training path is not supported by the trace."
+    },
+    {
+      "subject": "Original per-byte IO cost",
+      "result": "repeat_fasta/random_fasta write each sequence character individually in both sources. Base.write(::IOStream,::UInt8) checks writability and uses the stream lock around ios_putc in both cases. This identifies a shared expensive operation, not an adaptation difference or demonstrated cause of the measured regression."
+    },
+    {
+      "subject": "Fresh state and amount of work",
+      "result": "State starts at seed 42 in both processes. cumsum(pr) is nonmutating. All three current full outputs exactly match all retained JIT sample output hashes and byte counts: 254166745 bytes, SHA256 3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa."
+    },
+    {
+      "subject": "Compiler metadata limit",
+      "result": "PackageCompiler consumes traced concrete precompile statements and builds the image with -O3 --compile=all --strip-ir in the retained recipe. The trace records compilation requests, not optimized IR or machine-code performance. Static evidence does not identify a rejected specialization, boxed formal, changed stream class, extra output, or changed random-number kernel."
+    }
+  ],
+  "disposition": {
+    "retain_current_full_measurements": true,
+    "candidate_patch_created": false,
+    "reason": "No source change is justified as a demonstrated fix. Current plan, sources, counts, adaptation receipts, training, controller, and benchmark data remain unchanged. Any future experiment requires a distinct candidate path and separate FASTA evidence; it must preserve v1 results."
+  }
+}

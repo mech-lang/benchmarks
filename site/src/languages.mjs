@@ -1176,5 +1176,27 @@ export const languageMetadata = {
       "https://www.swi-prolog.org/pldoc/man?section=qlf",
       "https://www.swi-prolog.org/pldoc/man?section=gc"
     ]
+  },
+  "julia-aot": {
+    "platform": "runtime",
+    "runtime": "Julia / LLVM; PackageCompiler native application",
+    "execution": [
+      "aot"
+    ],
+    "typing": "dynamic",
+    "style": [
+      "imperative",
+      "functional",
+      "array"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "PackageCompiler applications use a native system image compiled before measurement. Timed processes disable Julia code generation and use --compile=no. The Julia runtime and tracing GC remain; PCRE may use its own regex JIT. Historical Julia JIT measurements are retained separately.",
+    "sources": [
+      "https://julialang.github.io/PackageCompiler.jl/stable/apps.html",
+      "https://docs.julialang.org/en/v1/devdocs/aot/",
+      "https://docs.julialang.org/en/v1/devdocs/gc/"
+    ]
   }
 };
