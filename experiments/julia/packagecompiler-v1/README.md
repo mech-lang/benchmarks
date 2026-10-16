@@ -38,3 +38,5 @@ input hashes, compiler logs and owned-process cleanup. Build receipts under `bui
 
 References: [PackageCompiler apps](https://julialang.github.io/PackageCompiler.jl/stable/apps.html)
 and [Julia compiler options](https://docs.julialang.org/en/v1/manual/command-line-interface/).
+
+The [live publication verification](../../../site/publications/julia-aot-full81-v1/verification-summary.json) binds the benchmark source commit, exact website asset manifest, successful Pages jobs and fresh mobile browser check.
