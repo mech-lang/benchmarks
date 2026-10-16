@@ -314,7 +314,7 @@ const initial=context.harness.derived();
 const originalSampleLayer=element('#chart').querySelectorAll('[data-layer]').find(node=>node.dataset.layer==='samples');
 const initialSampleNodes=element('#chart').querySelectorAll('[data-sample]');
 const initialByKey=new Map(initialSampleNodes.map(node=>[`${node.dataset.program}:${node.dataset.timingRun}`,node]));
-for(const options of [{sampleMode:'off'},{sampleMode:'highlight',densityMode:'highlight'},{densityMode:'dim',medianMode:'off'},{global:true,fast:false},{fast:true,small:false}]){
+for(const options of [{sampleMode:'off'},{sampleMode:'highlight',densityMode:'highlight'},{densityMode:'dim',medianMode:'off'},{global:true}]){
   context.harness.visual(options);
   const next=context.harness.derived();
   assert.equal(next.model,initial.model);assert.equal(next.samples,initial.samples);
@@ -457,7 +457,7 @@ const modes=['off','dim','highlight'];
 let mathCases=0,renderCases=0;
 for(const samples of modes)for(const medians of modes)for(const density of modes)for(const global of [false,true])for(const fast of [false,true])for(const small of [false,true]){
   const state=math.chartLayerState({samples,medians,density,global,fast,small,sampleCount:6,entryCount:3});
-  assert.equal(state.showSamples,samples!=='off');assert.equal(state.showDensity,density!=='off');
+  assert.equal(state.showSamples,samples!=='off'&&(fast||small));assert.equal(state.showDensity,density!=='off'&&(fast||small));
   assert.equal(state.showMedians,medians!=='off'&&(fast||small));assert.equal(state.showGlobal,global&&(fast||small));
   assert.equal(state.globalLayer.opacity,global?1:0);
   assert.equal(state.empty,!(state.showSamples||state.showDensity||state.showMedians||state.showGlobal));mathCases++;
@@ -480,6 +480,49 @@ for(const view of ['summary','benchmark','mech','language'])for(const focusMeans
   if(!expectedDomains.has(key))expectedDomains.set(key,domain);else assert.deepEqual(domain,expectedDomains.get(key),'Layer switches must preserve fixed axes');
   renderCases++;
 }
+// Profile controls select one observation set for dots, program medians and
+// density. Layer Off/Dim/Highlight changes presentation without changing it.
+for(const view of ['summary','benchmark','mech','language'])for(const fast of [false,true])for(const small of [false,true]){
+  let selectedSamples=null,selectedDensity=null;
+  for(const sampleMode of modes)for(const medianMode of modes){
+    context.harness.render({view,fast,small,sampleMode,medianMode,densityMode:'highlight',global:true,
+      languageFocus:view==='language'?{keys:['alpha'],label:'Alpha',variant:'alpha'}:null});
+    const derived=context.harness.derived(),svg=element('#chart');
+    const programs=new Set(derived.entries.flatMap(entry=>entry.inputs.flatMap(input=>
+      [fast?input.fast:null,small?input.small:null].filter(Boolean).map(program=>program.key))));
+    const runs=derived.samples.map(point=>`${point.program.key}:${point.run}`);
+    assert.equal(runs.length,programs.size*3,`${view}: each active endpoint contributes its three runs`);
+    assert.ok(derived.samples.every(point=>programs.has(point.program.key)));
+    if(selectedSamples===null){selectedSamples=derived.samples;selectedDensity=derived.density;}
+    else{assert.equal(JSON.stringify(derived.samples.map(point=>`${point.program.key}:${point.run}`)),JSON.stringify(selectedSamples.map(point=>`${point.program.key}:${point.run}`)));assert.equal(JSON.stringify(derived.density),JSON.stringify(selectedDensity));}
+    assert.equal(derived.density.runs,runs.length,`${view}: density uses the active observation set`);
+    assert.equal(derived.density.programs,programs.size);
+    const visible=svg.querySelectorAll('[data-sample]');
+    assert.equal(visible.length,sampleMode==='off'?0:runs.length);
+    assert.ok(visible.every(mark=>programs.has(mark.dataset.program)));
+    for(const mark of svg.querySelectorAll('[data-profile-median]')){
+      if(mark.dataset.program)assert.ok(programs.has(mark.dataset.program));
+      if(mark.dataset.mean)continue;
+      assert.ok(fast||small);
+    }
+    const heat=svg.querySelectorAll('[data-layer]').find(mark=>mark.dataset.layer==='density');
+    assert.equal(Number(heat.dataset.densityRuns),runs.length);
+  }
+}
+// Revisit the same entries without rebuilding the model: cached profile masks
+// must change observations and density, while re-enabling reuses the first set.
+context.harness.render({view:'summary',fast:true,small:true,sampleMode:'highlight',medianMode:'highlight',densityMode:'highlight',global:false,languageFocus:null});
+const bothProfiles=context.harness.derived();
+context.harness.visual({fast:false});const fewestOnly=context.harness.derived();
+assert.equal(fewestOnly.model,bothProfiles.model);assert.notEqual(fewestOnly.samples,bothProfiles.samples);
+assert.equal(fewestOnly.samples.length,bothProfiles.samples.length/2);assert.equal(fewestOnly.density.runs,fewestOnly.samples.length);
+context.harness.visual({fast:true,small:false});const fastestOnly=context.harness.derived();
+assert.equal(fastestOnly.samples.length,bothProfiles.samples.length/2);
+assert.ok(fastestOnly.samples.every(point=>point.program.key.endsWith('-fast')));
+assert.ok(fewestOnly.samples.every(point=>point.program.key.endsWith('-small')));
+context.harness.visual({fast:false});assert.equal(context.harness.derived().samples.length,0);assert.equal(context.harness.derived().density.runs,0);
+context.harness.visual({fast:true,small:true});assert.equal(context.harness.derived().samples,bothProfiles.samples);
+console.log('Profile selection: samples, medians and density follow the active endpoint union in all four chart views.');
 // Summary data starts in display-name order and advertises that ordering accessibly.
 context.harness.render({view:'summary',languageFocus:null,global:true});context.harness.table();
 const table=element('#mean-table tbody').innerHTML;
@@ -527,6 +570,11 @@ assert.match(element('#language-overview-summary').textContent,/3 programs · 6 
 assert.match(element('#language-timings tbody').innerHTML,/Reuses the 3 runs recorded for/);
 const sampleMarks=()=>element('#chart').querySelectorAll('[data-sample]');
 assert.equal(sampleMarks().length,6);
+context.harness.visual({fast:false,small:true});assert.equal(sampleMarks().length,6,'Independent tied timings stay selected by the shared fewest-LOC endpoint.');
+assert.equal(context.harness.derived().density.runs,6);
+context.harness.visual({fast:false,small:false});assert.equal(sampleMarks().length,0);assert.equal(context.harness.derived().density.runs,0);
+context.harness.visual({fast:true,small:false});assert.equal(sampleMarks().length,6,'The same independent observations also belong to the tied fastest endpoint.');
+context.harness.visual({fast:true,small:true});
 assert.ok(sampleMarks().every(n=>n.dataset.program!==alias.key),'Owner wins even when alias precedes it in the inventory.');
 context.harness.inspect(alias.key);
 assert.match(element('#inspector-body').innerHTML,/Shared recorded timing samples/);
@@ -573,8 +621,13 @@ for(const [key,labels,runs] of [['apl',hasAPLTree?19:17,hasAPLTree?48:45],['uiua
     sampleMode:'dim',medianMode:'off',densityMode:'highlight',global:false});
   context.harness.overview();
   assert.ok(element('#language-overview-summary').textContent.includes(`${labels} programs · ${runs} recorded runs`));
-  assert.equal(sampleMarks().length,runs,`${key} hero shows each actual native observation once.`);
-  assert.equal(context.harness.derived().density.runs,runs);
+  // The retained timing table includes every implementation. The chart's
+  // profiles exclude this measured source, which is neither endpoint.
+  const other=recordedCatalog[key==='apl'?'mandelbrot:mandelbrot-apl-active-v2-optimized':'nbody:nbody-uiua-native-denominator-compact-v3'];
+  assert.equal(other.samples.length,3);
+  assert.equal(sampleMarks().length,runs-other.samples.length,`${key} hero plots each active native observation once.`);
+  assert.ok(sampleMarks().every(mark=>mark.dataset.program!==other.key));
+  assert.equal(context.harness.derived().density.runs,runs-other.samples.length);
 }
 for(const key of ['kotlin','prolog']){
   const programs=Object.values(recordedCatalog).filter(p=>p.language===key&&p.seconds>0);

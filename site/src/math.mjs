@@ -31,9 +31,9 @@ export function rankingDotLayout(rows,{extent,width,gap=14,boundsFor=(_row,x)=>[
 }
 export function chartLayerState({samples='dim',medians='highlight',density='off',fast=true,small=true,global=false,sampleCount=0,entryCount=0}={}){
   const sampleLayer=layerPresentation(samples),medianLayer=layerPresentation(medians),densityLayer=layerPresentation(density),profiles=fast||small;
-  const showSamples=sampleLayer.visible&&sampleCount>0,showMedians=medianLayer.visible&&profiles;
+  const showSamples=sampleLayer.visible&&profiles&&sampleCount>0,showMedians=medianLayer.visible&&profiles;
   const globalLayer=layerPresentation(global?'highlight':'off');
-  const showGlobal=globalLayer.visible&&profiles,showDensity=densityLayer.visible&&sampleCount>0;
+  const showGlobal=globalLayer.visible&&profiles,showDensity=densityLayer.visible&&profiles&&sampleCount>0;
   return {sampleLayer,medianLayer,densityLayer,globalLayer,showSamples,showMedians,showGlobal,showDensity,
     empty:entryCount===0||!(showSamples||showMedians||showGlobal||showDensity)};
 }

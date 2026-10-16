@@ -506,7 +506,7 @@ function update(){
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
 }
 function updatePlot(){
-  // Layer, profile and axis visibility do not change the measured selection.
+  // Profile choices filter chart observations; layer and axis controls change presentation.
   renderChart();renderPlotOptions();
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
 }
@@ -529,9 +529,9 @@ function setLayerModes({samples=state.sampleMode,medians=state.medianMode,densit
 }
 function renderPlotOptions(){
   const samples=$('#show-samples'),medians=$('#show-medians'),density=$('#show-density'),axes=$('#chart-axes');
-  const samplesNote='Actual recorded runs: Off removes dots, Dim shows them faintly, Highlight shows them at full contrast. Independent of medians and density.';
+  const samplesNote='Recorded runs for the selected Fastest and Fewest LOC profiles: Off removes dots, Dim shows them faintly, Highlight shows them at full contrast. Independent of medians and density.';
   const medianNote='Profile summaries, benchmark medians, links, labels and SD. Independent of Samples, Density and Global median & SD.';
-  const densityNote='Density of actual recorded runs, each run weighted equally. Independent of dots, medians, profiles and global overlay.';
+  const densityNote='Density of actual recorded runs in the selected Fastest and Fewest LOC profiles, each run weighted equally. Independent of dot and median visibility and the global overlay.';
   const axesNote='Medians fits source/profile summaries; All samples fits every recorded run and covariance envelope. Changing any layer leaves this range unchanged.';
   samples.disabled=medians.disabled=density.disabled=axes.disabled=false;
   samples.value=state.sampleMode;medians.value=state.medianMode;density.value=state.densityMode;axes.value=state.focusMeans?'means':'samples';
@@ -586,12 +586,21 @@ function currentEntries(){
   return benchmarkEntries;
 }
 function currentSampleInputs(entries=currentEntries()){
-  if(sampleInputsByEntries.has(entries))return sampleInputsByEntries.get(entries);
+  if(!sampleInputsByEntries.has(entries))sampleInputsByEntries.set(entries,new Map());
+  const profiles=sampleInputsByEntries.get(entries),key=(state.fast?1:0)|(state.small?2:0);
+  if(profiles.has(key))return profiles.get(key);
+  // Profile selection chooses the observations; layer contrast only changes
+  // their presentation. Shared endpoints and timing aliases are deduplicated
+  // by recordedSamplePoints before both the dots and density consume them.
   const languageView=inLanguageView(),selectedKeys=focusKeys();
-  const inputs=recordedSamplePoints(entries,{disabled:state.disabled,programsForInput:(input,entry)=>
-    (languageView&&selectedKeys.has(entry.language.key)?benchmarkPrograms(input.benchmark.key,entry.language.key):input.programs)
-      .filter(program=>program.language===entry.language.key&&program.benchmark===input.benchmark.key).map(sampleProgram)});
-  sampleInputsByEntries.set(entries,inputs);
+  const inputs=recordedSamplePoints(entries,{disabled:state.disabled,programsForInput:(input,entry)=>{
+    const endpoints=[state.fast?input.fast:null,state.small?input.small:null].filter(Boolean);
+    const programs=languageView&&selectedKeys.has(entry.language.key)?benchmarkPrograms(input.benchmark.key,entry.language.key):input.programs;
+    return programs.filter(program=>program.language===entry.language.key&&program.benchmark===input.benchmark.key)
+      .map(sampleProgram).filter(program=>endpoints.some(endpoint=>program.key===endpoint.key||
+        program.seconds===endpoint.seconds&&program.loc===endpoint.loc));
+  }});
+  profiles.set(key,inputs);
   return inputs;
 }
 function selectedPlotDomain(){
@@ -678,7 +687,7 @@ function renderChart(){
   }
   const empty=layers.empty;
   $('#empty-state').hidden=!empty;
-  $('#empty-state').textContent=single&&!selectedBenchmarks.has(state.focus)?'Include this benchmark and adjust its category filters to show it on the chart.':!selectedBenchmarks.size?'Select a benchmark or clear its category filters.':entries.length&&!layers.showSamples&&!layers.showMedians&&!layers.showDensity&&!layers.showGlobal?'Enable Global median & SD, or choose Dim or Highlight for Samples, Medians or Density.':state.languages.size&&!allSelection().languages.size?'No enabled languages match this release-year window. Adjust either handle or choose All years.':'No measured comparisons. Enable a language or restore its programs.';
+  $('#empty-state').textContent=single&&!selectedBenchmarks.has(state.focus)?'Include this benchmark and adjust its category filters to show it on the chart.':!selectedBenchmarks.size?'Select a benchmark or clear its category filters.':!state.fast&&!state.small?'Select Fastest or Fewest LOC to show their samples, medians and density.':entries.length&&!layers.showSamples&&!layers.showMedians&&!layers.showDensity&&!layers.showGlobal?'Enable Global median & SD, or choose Dim or Highlight for Samples, Medians or Density.':state.languages.size&&!allSelection().languages.size?'No enabled languages match this release-year window. Adjust either handle or choose All years.':'No measured comparisons. Enable a language or restore its programs.';
   const width=Math.max(290,svg.clientWidth),height=innerWidth<=720?Math.max(330,width*.86):Math.min(690,Math.max(440,width*.59));
   renderedChartWidth=width;renderedChartMobile=innerWidth<=720;
   svg.setAttribute('viewBox',`0 0 ${width} ${height}`);svg.style.aspectRatio=`${width}/${height}`;
