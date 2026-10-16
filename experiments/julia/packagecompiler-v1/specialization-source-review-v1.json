@@ -1,0 +1,327 @@
+{
+  "schema": "julia-packagecompiler-specialization-source-review-v1",
+  "status": "static-source-review-complete",
+  "reviewed_utc": "2026-10-16T00:01:23.578439+00:00",
+  "scope": "All seventeen current adapted application modules and their selected build-time training scripts, compared with the fixed full workload sizes. This is a static source review of input-dependent type specialization; it grants no native or timing qualification.",
+  "inputs": {
+    "source_adaptation": {
+      "path": "experiments/julia/packagecompiler-v1/source-adaptation.json",
+      "sha256": "590ceda2d274cccc86c5ae22eaf9c0216c9ea81c464b2f24dc7ab6fbd73c8ddc"
+    },
+    "source_counts": {
+      "path": "experiments/julia/packagecompiler-v1/source-counts.json",
+      "sha256": "86d319e50c8fa15d7c9b81f431675032134ce37ee52a2f2424bb13eefb6b2ac6"
+    },
+    "training_inputs": {
+      "path": "experiments/julia/packagecompiler-v1/training-inputs.json",
+      "sha256": "dda7648ffdffdc9deccdbdaee5114a0df0cdc9557a7f80c5db479f2fd258d65d"
+    }
+  },
+  "profile_count": 17,
+  "findings": [
+    "No application use of Val(n), n-valued NTuple parameters, StaticArrays dimensions or @generated functions was identified.",
+    "The only fixed-size tuple computations use source constants: N-body widths 3 and 10, Mandelbrot SIMD-style groups of 8, fixed regex pattern/substitution tuples and fixed five-value BigInt initialization tuples.",
+    "Input-sized application arrays have fixed element types and ranks; dimensions, depths, iteration counts, offsets and BigInt magnitudes remain runtime values.",
+    "Selected training scripts populate actual ARGS, open regular input files, redirect standard streams and call the same no-argument julia_main entry. They do not construct a workload-dependent argument type."
+  ],
+  "concrete_specialization_issues_identified": [],
+  "additional_native_cases_requested": false,
+  "source_files_changed": false,
+  "native_executions": 0,
+  "compiler_invocations": 0,
+  "tests_run": 0,
+  "native_qualification_granted": false,
+  "chart_admission": false,
+  "remaining_validation_scope": "Actual full-process runs with disabled Julia code generation and complete-output qualification establish the full workload result; this receipt does not replace them.",
+  "profiles": [
+    {
+      "profile": "binarytrees-julia-3",
+      "workload": "binarytrees",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/binarytrees-julia-3/src/BenchBinarytreesJulia3.jl",
+        "sha256": "f56653776492b315f210ccfc609541d94a9ea1cdb7b63e26060c0f9eb618fec5",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/binarytrees-julia-3.jl",
+        "sha256": "7b5518df3c29bbe732012db70379f6d5f8b5aaa154e0b319d1caa7b2f948e88a"
+      },
+      "selected_case": "n-9",
+      "full_workload_n": 21,
+      "finding": "Node has fixed recursive Union{Node,Nothing} fields; depth and iteration counts are Int values. Results remain Vector{String}; tree depth does not enter a type parameter.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "binarytrees-julia-4",
+      "workload": "binarytrees",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/binarytrees-julia-4/src/BenchBinarytreesJulia4.jl",
+        "sha256": "335eead56c6aceffb6bf23d1059f9e052c6eb95b282c38636a8cee6084816913",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/binarytrees-julia-4.jl",
+        "sha256": "3fd24b7ff571fc205522fbe34111ae3844fe024263c8e02e8414e3b7d58cd203"
+      },
+      "selected_case": "n-9",
+      "full_workload_n": 21,
+      "finding": "Node has the same fixed recursive type at all depths. The retained single-process Distributed reduction captures integer range bounds as values; no depth-valued type or additional worker process is introduced.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "fannkuchredux-julia-1",
+      "workload": "fannkuchredux",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-1/src/BenchFannkuchreduxJulia1.jl",
+        "sha256": "85be75fe488cac5f2aca57899da2080145357392ec84469bc692e9ca05a83e2b",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-1.jl",
+        "sha256": "686f0ee59822ad8d7a419d5beec89abe18781eb26fc8faf791399f83f2ca8ea8"
+      },
+      "selected_case": "n-7",
+      "full_workload_n": 12,
+      "finding": "Permutation state uses ordinary Vector{Int32} arrays with runtime lengths. Input n remains Int; checksums and loop bounds do not become value-parameterized types.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "fannkuchredux-julia-2",
+      "workload": "fannkuchredux",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/fannkuchredux-julia-2/src/BenchFannkuchreduxJulia2.jl",
+        "sha256": "a83fa7261f40c7cc6e4e5417b435a78b9c06bad6b496568a5476144d8c8c3e1b",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/fannkuchredux-julia-2.jl",
+        "sha256": "63278b1a4484e3e2d3d4bb4fbe9e524fc251e7bc31b79cbfa0c8f527131c37bb"
+      },
+      "selected_case": "n-7",
+      "full_workload_n": 12,
+      "finding": "Fannkuch stores n/block size as Int64 and results in Vector{Int32}; Perm stores ordinary Vector{Int8}/Vector{Int32}. Both 7! and 12! fit Int64. Array lengths and permutation bounds remain values; the separate recorded headless thread-pool policy controls thread IDs.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "fasta-julia-3",
+      "workload": "fasta",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/fasta-julia-3/src/BenchFastaJulia3.jl",
+        "sha256": "3f27141267f9de58446e1b68ecb1a91cdf28fd6e1883cec969c1d4f23c16f938",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/fasta-julia-3.jl",
+        "sha256": "ea218d619ace6da8fdaf2ec9cf5bff30c2a803c77fc3fa204c73d02ba415bb05"
+      },
+      "selected_case": "n-1000",
+      "full_workload_n": 25000000,
+      "finding": "Random state is a fixed Ref{Int32}; probability vectors have fixed Float64 element type. Input n changes counts and string/vector lengths, not type parameters or tuple widths.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "knucleotide-julia-1",
+      "workload": "knucleotide",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/knucleotide-julia-1/src/BenchKnucleotideJulia1.jl",
+        "sha256": "b45cb8bc8244bbd53f450ebd7649c35374fcae0cf512d114320d0e5ff668b04c",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/knucleotide-julia-1-v2.jl",
+        "sha256": "24139e08ac9e5fecd75aff1f08c6f833edc719d286d0475f93512ca0ca0ed317"
+      },
+      "selected_case": "clbg-shape",
+      "full_workload_n": 25000000,
+      "finding": "Selected and full input produce String/Vector{Char}; count tables remain Dict{AbstractString,Int} and sorted entries Vector{KNuc}. Sequence length and k-mer lengths remain values.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "knucleotide-julia-6",
+      "workload": "knucleotide",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/knucleotide-julia-6/src/BenchKnucleotideJulia6.jl",
+        "sha256": "6f6f978d2f08d962db0ea032ab7a170411127d7d46d126d06ce7990b5936d89b",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/knucleotide-julia-6.jl",
+        "sha256": "09feb28dc9256fbe3fd5208c727c8aa2efa0dd86d4718d420661028cfabd1ea3"
+      },
+      "selected_case": "clbg-shape",
+      "full_workload_n": 25000000,
+      "finding": "Owned dictionary keys have the two fixed concrete forms NucleotideKey{UInt32} and NucleotideKey{UInt}. The type choice depends on the fixed requested subsequence lengths 3,4,6,12,18, not input length. Both choices execute with the selected CLBG-shape sequence and full sequence. Rolling masks and sequence lengths remain values.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "mandelbrot-julia-1",
+      "workload": "mandelbrot",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/mandelbrot-julia-1/src/BenchMandelbrotJulia1.jl",
+        "sha256": "acb54a59d798207a880f654c7db706a02b62eb417bb6e0463c095505cd46db21",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/mandelbrot-julia-1.jl",
+        "sha256": "7b52d45f257cd325e19995ff5886ecfe4fccd6d883b6bfc028d9d5409b9ba21c"
+      },
+      "selected_case": "n-64",
+      "full_workload_n": 16000,
+      "finding": "Image storage is Array{UInt8,2}: rank and element type are fixed while the two dimension lengths depend on runtime n.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "mandelbrot-julia-7",
+      "workload": "mandelbrot",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/mandelbrot-julia-7/src/BenchMandelbrotJulia7.jl",
+        "sha256": "0dd0d05f2964b8091810cdf6f67e51657f55954d2c9c87173a4ea7c7f8a73c48",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/mandelbrot-julia-7.jl",
+        "sha256": "ebc552ba70dbd80c6955bca17e984d5f92a24146ca55300e65016d2925d4fbf2"
+      },
+      "selected_case": "n-64",
+      "full_workload_n": 16000,
+      "finding": "Every @ntuple width is the source literal 8. Coordinate and output arrays retain ordinary Vector{Float64}/Vector{UInt8} types as n changes from 64 to 16000.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "nbody-julia-5",
+      "workload": "nbody",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/nbody-julia-5/src/BenchNbodyJulia5.jl",
+        "sha256": "c7b19f14dfd9412e2c28156cde784ee1ab8fe218e817a5760f396c35e0d28e12",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/nbody-julia-5.jl",
+        "sha256": "2de1917dae1ee94100fe1b3aa8c000628821385aa8933a6e7ffc4761ed33f581"
+      },
+      "selected_case": "n-1000",
+      "full_workload_n": 50000000,
+      "finding": "Body position/velocity tuples have literal width 3; PAIRS has ten source-fixed body pairs, and every @ntuple width is the literal 10. The system always contains five bodies. Runtime n changes only the advance-loop count.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "pidigits-julia-3",
+      "workload": "pidigits",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/pidigits-julia-3/src/BenchPidigitsJulia3.jl",
+        "sha256": "d88d5fac1a0623b39a63b2798455a6856da95dcc8163404d17fcec83c5c777a2",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/pidigits-julia-3.jl",
+        "sha256": "01384fc3350c7aedaa4194b7b849157a59f0ae8a20ce03380d60f957bf41fe07"
+      },
+      "selected_case": "n-97",
+      "full_workload_n": 10000,
+      "finding": "The initial tuple contains five BigInt values and the GMP Ref type is fixed. Increasing digit count grows GMP-managed integer storage; it does not introduce a different Julia BigInt or n-valued type.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "pidigits-julia-4",
+      "workload": "pidigits",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/pidigits-julia-4/src/BenchPidigitsJulia4.jl",
+        "sha256": "5291fe45a6e54ad5bf26defb426d09170590c006e79781bfc042880899fca959",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/pidigits-julia-4.jl",
+        "sha256": "2b44d3bcedebf8464b93f7aff2ce67ce8a93f7db9673f8591e9c78619bc94d76"
+      },
+      "selected_case": "n-97",
+      "full_workload_n": 10000,
+      "finding": "The initial five-value BigInt tuple and formatting argument counts are fixed. Digit count and BigInt magnitude are runtime values; the selected n=97 also exercises the existing partial-line formatting branch.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "regexredux-julia-1",
+      "workload": "regexredux",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/regexredux-julia-1/src/BenchRegexreduxJulia1.jl",
+        "sha256": "f58f7a45658323a3e09799ac0e38bb68ae3cf2d5c9ed02142ce73c4e942d5127",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/regexredux-julia-1.jl",
+        "sha256": "bce5c77eff0ecb82d47540d1c431dbd78d0cb5fdac4e0c5f04601498732b42d6"
+      },
+      "selected_case": "specified-all-count-alternatives",
+      "full_workload_n": 5000000,
+      "finding": "Pattern collections are ordinary String/Regex vectors; matching reads String data. Longer input changes String size and match counts, not collection type parameters or generated tuple dimensions.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "regexredux-julia-3",
+      "workload": "regexredux",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/regexredux-julia-3/src/BenchRegexreduxJulia3.jl",
+        "sha256": "b3602e0c6248e09f125c1cb6e53072ffeb1f801e1936e820843c5b5945593a98",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/regexredux-julia-3.jl",
+        "sha256": "a87d2ab28667e55bff5920f01ad26ee47034d849f93c458cb48103a75a13b59f"
+      },
+      "selected_case": "specified-all-count-alternatives",
+      "full_workload_n": 5000000,
+      "finding": "The nine-pattern and five-substitution tuple widths are literal source constants. Matching/replacements retain String subjects and the original fixed regex patterns; input length does not enter an application type parameter.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "revcomp-julia-7",
+      "workload": "revcomp",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/revcomp-julia-7/src/BenchRevcompJulia7.jl",
+        "sha256": "cf4be81eae9c923ac493f369e321fd04f373c97aa5dd4c2f51276e6518389389",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/revcomp-julia-7.jl",
+        "sha256": "edc1d9c7caa285a7ea42e1f218b1bb5fcb9e84075dd1d230057fecddc2ec50dd"
+      },
+      "selected_case": "extended-all-iupac",
+      "full_workload_n": 25000000,
+      "finding": "The complement table has fixed UInt8 element type and 256 entries. Read buffers are ordinary Vector{UInt8}; sequence lengths, chunk sizes and seek offsets remain integers.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "revcomp-julia-9",
+      "workload": "revcomp",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/revcomp-julia-9/src/BenchRevcompJulia9.jl",
+        "sha256": "c740d35cdd1e598ac5a365fa735371274ab37471f1ef2bdf126eb588851fed33",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/revcomp-julia-9.jl",
+        "sha256": "a710d2b23803d95cdde8de1403612edba7af16e49d95d4a6497c03cee807d159"
+      },
+      "selected_case": "extended-all-iupac",
+      "full_workload_n": 25000000,
+      "finding": "The complement table and input buffers retain UInt8 vector types. Input size changes reversal indices and vector lengths, not a value-parameterized type.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    },
+    {
+      "profile": "spectralnorm-julia-4",
+      "workload": "spectralnorm",
+      "adapted_source": {
+        "path": "experiments/julia/packagecompiler-v1/packages/spectralnorm-julia-4/src/BenchSpectralnormJulia4.jl",
+        "sha256": "3e08ae21e5382b6aa2026fcb5efc76c39c7dabfd1727c0eb5b2645c58ebbd7cd",
+        "role": "application"
+      },
+      "selected_training": {
+        "path": "experiments/julia/packagecompiler-v1/training/spectralnorm-julia-4.jl",
+        "sha256": "00a6827bdf408681aea7badf21a0a712f5ddc8fd1d745da330f05641ea36fd1a"
+      },
+      "selected_case": "n-100",
+      "full_workload_n": 5500,
+      "finding": "All work vectors remain Vector{Float64}. Matrix order and thread-loop range lengths are Int values; the application contains no n-valued tuple or static matrix type.",
+      "runtime_input_dependent_type_parameter_issue_identified": false
+    }
+  ]
+}

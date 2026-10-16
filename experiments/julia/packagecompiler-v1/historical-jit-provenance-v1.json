@@ -1,0 +1,984 @@
+{
+  "schema": "mech-julia-historical-jit-provenance-v1",
+  "created_at": "2026-10-16T00:00:33.001490+00:00",
+  "purpose": "Support an accurate comparison of fresh PackageCompiler AOT results with retained Julia source-process timings without attributing differences solely to AOT versus JIT.",
+  "scope": {
+    "repository": "/private/tmp/mech-benchmark-publication",
+    "selected_profile_count": 10,
+    "workload_count": 10,
+    "native_processes_launched": 0,
+    "benchmarks_run": 0,
+    "tests_run": 0,
+    "browser_actions": 0,
+    "data_mutated": false,
+    "method": "Read saved JSON and frozen producer source; compute file SHA256 values for the cited evidence and this audit only. No repository helper code or native runtime was imported or executed."
+  },
+  "historical_catalog_snapshot": {
+    "path": "data/benchmarks.json",
+    "sha256": "ef8e20ce6b3061bcbfa53ae734e3eb5d8edc27086193fe4ea941e94e6662749d",
+    "role": "Snapshot identifying the currently retained pre-AOT published medians; not an execution prerequisite or permission to change data."
+  },
+  "summary": {
+    "version": "The local retained series points to Julia 1.13.1. Regex Redux and Pi Digits capture literal local version output. The eight-workload retime captures its executable path and SHA; earlier local reports record 1.13.1, but retime does not repeat the Julia version observation.",
+    "same_builder_executable_pin": "The current AOT Nbody build report and historical eight-workload retime report store exactly the same Julia executable SHA256. This establishes equality of the pinned Julia launcher bytes recorded by those reports, not equivalence of all runtime libraries, sysimages, process policies, or measured sources.",
+    "five_thread_pool_configuration_differences": [
+      "nbody-julia-5",
+      "mandelbrot-julia-7",
+      "knucleotide-julia-6",
+      "spectralnorm-julia-4",
+      "revcomp-julia-7"
+    ],
+    "thread_limit": "These five historical commands capture JULIA_NUM_THREADS=8 without a two-pool CLI request. Fresh AOT requests 8,0 explicitly. The actual historical pool counts and active utilization were not observed, so their equality must not be assumed.",
+    "upstream_notes_not_local": "The julia version 1.11.1 and JULIA_NUM_THREADS=4 strings in upstream_notes describe the original Linux submission. They do not describe these local Apple M3 timing cohorts.",
+    "recommended_comparison_label": "Fresh PackageCompiler AOT versus retained Julia source-process medians",
+    "causal_limit": "The comparison spans separate timing cohorts, different process entry paths, explicit runtime-policy differences, and reviewed source adaptations. A measured difference cannot be attributed solely to AOT versus JIT."
+  },
+  "historical_reports": {
+    "retime": {
+      "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+      "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def",
+      "created_at": "2026-10-08T18:41:16.823605+00:00",
+      "timed_region": "Sequential fresh process through exit, including interpreter/JIT startup and complete stdout to regular file. Builds, tests, hashing and comparisons excluded."
+    },
+    "regexredux": {
+      "path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json",
+      "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
+      "created_at": "2026-10-09T09:05:27.437643+00:00",
+      "timed_region": "Sequential fresh process through exit, full stdout to file; build, warmup, validation outside clock; JIT and startup included"
+    },
+    "pidigits": {
+      "path": "archive/validation/remaining-conformance/signed-division-confirmation.json",
+      "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf",
+      "created_at": "2026-10-09T09:35:48.169896+00:00",
+      "timed_region": "Shuffled sequential fresh processes through exit; full output; startup/JIT included; builds, full warmup and byte comparison excluded"
+    }
+  },
+  "frozen_producers": {
+    "retime": {
+      "sources": [
+        {
+          "path": "archive/validation/retime/run.py",
+          "sha256": "0bb4cb82345dc3d218318bf62e388c0cb6aba553112c40ac3abccc026cbfa2f8",
+          "line_references": {
+            "command_asset_hashes": 60,
+            "copied_toolchains": 64,
+            "captured_environment": 71
+          }
+        },
+        {
+          "path": "archive/comparisons/compact/run.py",
+          "sha256": "6926e288a7b9b59b030c9226227df967aa1d92b3e395789467706e2241d987ae",
+          "line_references": {
+            "inherited_environment_and_explicit_defaults": 19,
+            "argv_expansion": 117,
+            "effective_environment_merge": 125
+          }
+        }
+      ],
+      "binding_scope": "Saved retime producer imports the saved compact runner; this audit reads these files and does not execute them."
+    },
+    "regexredux": {
+      "archive": {
+        "path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.compiler.tar.gz",
+        "sha256": "be7944f7be62f344c925ab901790c8e9c3d745bbf050f6b8aa82cb39c54f4ac2"
+      },
+      "archive_member": {
+        "path": "benchmarks/clbg/run_remaining.py",
+        "sha256": "832fbc684813f84c9be12d9655520795de923857eae2b74ab430e47af75f0d45"
+      },
+      "source_snapshot": {
+        "path": "archive/qualification/platform/records/existing-native-platform-proposal-v1/jobs/history-literal-routes-v4/producer-snapshots/be7944f7be62f344c925ab901790c8e9c3d745bbf050f6b8aa82cb39c54f4ac2/run_remaining.py",
+        "sha256": "832fbc684813f84c9be12d9655520795de923857eae2b74ab430e47af75f0d45"
+      },
+      "snapshot_matches_archive_member": true,
+      "line_references": {
+        "shared_JULIA_runtime_symbol": 21,
+        "version_observer": 53,
+        "timed_Julia_command": 117,
+        "effective_environment_merge": 157
+      },
+      "version_binding": "The same JULIA variable is used by toolchains() for --version and by the selected Julia sample branch for the timed command.",
+      "environment_limit": "The row records runtime_environment={}; the producer merges guard.ENV with it. The compiler archive does not contain compact/run.py, so this audit does not reconstruct an exact complete ambient environment for these two reports."
+    },
+    "pidigits": {
+      "archive": {
+        "path": "archive/validation/remaining-conformance/signed-division-confirmation.compiler.tar.gz",
+        "sha256": "555358b21c362b80c746d65cecbbc9fabbc785bf83f334702e9a3ece297f4395"
+      },
+      "archive_member": {
+        "path": "benchmarks/clbg/run_remaining.py",
+        "sha256": "0000f5da3f591a2ee0e063259ceaa46c38729d3ce86fd5bc1eb451b0e408c45b"
+      },
+      "source_snapshot": {
+        "path": "archive/qualification/platform/records/existing-native-platform-proposal-v1/jobs/history-literal-routes-v4/producer-snapshots/555358b21c362b80c746d65cecbbc9fabbc785bf83f334702e9a3ece297f4395/run_remaining.py",
+        "sha256": "0000f5da3f591a2ee0e063259ceaa46c38729d3ce86fd5bc1eb451b0e408c45b"
+      },
+      "snapshot_matches_archive_member": true,
+      "line_references": {
+        "shared_JULIA_runtime_symbol": 21,
+        "version_observer": 53,
+        "timed_Julia_command": 121,
+        "effective_environment_merge": 164
+      },
+      "version_binding": "The same JULIA variable is used by toolchains() for --version and by the selected Julia sample branch for the timed command.",
+      "environment_limit": "The row records runtime_environment={}; the producer merges guard.ENV with it. The compiler archive does not contain compact/run.py, so this audit does not reconstruct an exact complete ambient environment for these two reports."
+    }
+  },
+  "preceding_local_version_corroboration": [
+    {
+      "benchmark": "nbody",
+      "report": {
+        "path": "archive/workloads/nbody/results/apple-m3-v04-native-optimized-50m.json",
+        "sha256": "6286cc12214a84d83bc453fc27535b05075b5dce82004f80c792145526c6e7b0"
+      },
+      "version_observations": [
+        {
+          "selector": "/toolchain_versions/julia",
+          "value": "julia version 1.13.1"
+        }
+      ],
+      "retime_original_reports_receipt": {
+        "sha256": "6286cc12214a84d83bc453fc27535b05075b5dce82004f80c792145526c6e7b0",
+        "status": "Preserved original measurements; superseded in the new chart by fresh timings"
+      },
+      "limit": "Earlier local report preserved by retime.original_reports; it is corroboration of runtime lineage, not a repeated version observation tied to the retime executable bytes."
+    },
+    {
+      "benchmark": "mandelbrot",
+      "report": {
+        "path": "archive/workloads/mandelbrot/results/apple-m3-revised-corner-16000.json",
+        "sha256": "f619708c76f640e6351d28c925e2384b6b900368adb9ffc284b2691618596fed"
+      },
+      "version_observations": [
+        {
+          "selector": "/toolchain_versions/julia",
+          "value": "julia version 1.13.1"
+        }
+      ],
+      "retime_original_reports_receipt": {
+        "sha256": "f619708c76f640e6351d28c925e2384b6b900368adb9ffc284b2691618596fed",
+        "status": "Preserved original measurements; superseded in the new chart by fresh timings"
+      },
+      "limit": "Earlier local report preserved by retime.original_reports; it is corroboration of runtime lineage, not a repeated version observation tied to the retime executable bytes."
+    },
+    {
+      "benchmark": "knucleotide",
+      "report": {
+        "path": "archive/workloads/knucleotide/results/apple-m3-revised-corner-25000000.json",
+        "sha256": "599a307586a85c73c9714ad28693ed99bb8fcf85b97d0bf142a07f7497dfc384"
+      },
+      "version_observations": [
+        {
+          "selector": "/toolchain_versions/julia",
+          "value": "julia version 1.13.1"
+        }
+      ],
+      "retime_original_reports_receipt": {
+        "sha256": "599a307586a85c73c9714ad28693ed99bb8fcf85b97d0bf142a07f7497dfc384",
+        "status": "Preserved original measurements; superseded in the new chart by fresh timings"
+      },
+      "limit": "Earlier local report preserved by retime.original_reports; it is corroboration of runtime lineage, not a repeated version observation tied to the retime executable bytes."
+    },
+    {
+      "benchmark": "spectralnorm",
+      "report": {
+        "path": "archive/workloads/spectralnorm/results/apple-m3-optimized-5500.json",
+        "sha256": "e6b9d503e9568499f5ffc8479c35462e25424bdb757dc3e2130feb17fea97505"
+      },
+      "version_observations": [
+        {
+          "selector": "/toolchain_versions/julia",
+          "value": "julia version 1.13.1"
+        }
+      ],
+      "retime_original_reports_receipt": {
+        "sha256": "e6b9d503e9568499f5ffc8479c35462e25424bdb757dc3e2130feb17fea97505",
+        "status": "Preserved original measurements; superseded in the new chart by fresh timings"
+      },
+      "limit": "Earlier local report preserved by retime.original_reports; it is corroboration of runtime lineage, not a repeated version observation tied to the retime executable bytes."
+    }
+  ],
+  "retained_fastest_profiles": [
+    {
+      "benchmark": "nbody",
+      "profile": "nbody-julia-5",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/1",
+      "median_seconds": 1.642435958,
+      "samples_seconds": [
+        1.640688292,
+        1.645195541,
+        1.642435958
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--math-mode=ieee",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nbody/upstream/nbody-julia-5.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/nbody-julia-5.jl"
+        ],
+        "sha256": {
+          "upstream/nbody-julia-5.jl": "2def3e7e9910b46cd522b81041e04bbcede2481f69684b683bea605bef598a54"
+        },
+        "physical_lines": 157,
+        "nonblank_noncomment_lines": 90,
+        "normalized_bytes": 2406,
+        "gzip1_bytes": 1106
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": null,
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": false,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": "julia",
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "inherited_environment_overrides": {
+        "JULIA_LLVM_ARGS": "-unroll-threshold=500"
+      },
+      "inherited_environment_override_limit": "The saved retime execute path passes ENV | runtime_environment and does not read environment_overrides. Therefore this inherited JULIA_LLVM_ARGS record does not establish that the override was applied. Complete ambient JULIA_LLVM_ARGS remains unknown because ENV starts from os.environ."
+    },
+    {
+      "benchmark": "mandelbrot",
+      "profile": "mandelbrot-julia-7",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/84",
+      "median_seconds": 0.566924833,
+      "samples_seconds": [
+        0.728558916,
+        0.566924833,
+        0.56363525
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--math-mode=ieee",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/mandelbrot/upstream/mandelbrot-julia-7.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/mandelbrot-julia-7.jl"
+        ],
+        "sha256": "e0eeaf849574af7fb568f48670b99274dc4c50a9f95333760e880e93177aabd4",
+        "physical_lines": 104,
+        "nonblank_noncomment_lines": 59,
+        "normalized_bytes": 1394,
+        "gzip1_bytes": 751
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": null,
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": false,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia threads: 8"
+    },
+    {
+      "benchmark": "knucleotide",
+      "profile": "knucleotide-julia-6",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/165",
+      "median_seconds": 1.597850708,
+      "samples_seconds": [
+        1.580006417,
+        1.597850708,
+        1.618463083
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--math-mode=ieee",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/knucleotide/upstream/knucleotide-julia-6.jl"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/knucleotide-julia-6.jl"
+        ],
+        "sha256": "01d7ad1232e03023a948b959a473e53424d13454e8fbc371a1a05346cf93e58d",
+        "physical_lines": 156,
+        "nonblank_noncomment_lines": 84,
+        "normalized_bytes": 2020,
+        "gzip1_bytes": 934
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": null,
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": false,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia requests 8 threads; histogram tasks"
+    },
+    {
+      "benchmark": "spectralnorm",
+      "profile": "spectralnorm-julia-4",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/193",
+      "median_seconds": 0.349881833,
+      "samples_seconds": [
+        0.361662584,
+        0.349881833,
+        0.334939041
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--math-mode=ieee",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/spectralnorm/upstream/spectralnorm-julia-4.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/spectralnorm-julia-4.jl"
+        ],
+        "sha256": "9756c242275d4f05f8b60c69300ec9699b3dacd6548bde55440b4cb7d7af4d8f",
+        "physical_lines": 67,
+        "nonblank_noncomment_lines": 40,
+        "normalized_bytes": 956,
+        "gzip1_bytes": 521
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": null,
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": false,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia threads"
+    },
+    {
+      "benchmark": "revcomp",
+      "profile": "revcomp-julia-7",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/302",
+      "median_seconds": 0.283163375,
+      "samples_seconds": [
+        0.280015542,
+        0.283163375,
+        0.286333209
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/revcomp/upstream/revcomp-julia-7.jl"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/revcomp-julia-7.jl"
+        ],
+        "sha256": "4161692fd806f0a0169d7d63f385d5dfec6c2fa89d1d16f34b101ebd52a5b03d",
+        "physical_lines": 84,
+        "nonblank_noncomment_lines": 41,
+        "normalized_bytes": 953,
+        "gzip1_bytes": 511
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": null,
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": false,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia source worker policy"
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "profile": "fannkuchredux-julia-2",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/341",
+      "median_seconds": 2.9514915,
+      "samples_seconds": [
+        2.9514915,
+        3.007239,
+        2.950913625
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/fannkuchredux/upstream/fannkuchredux-julia-2.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/fannkuchredux-julia-2.jl"
+        ],
+        "sha256": "b7f7248fb1aac401c04d5a7823fbcd8578069646d68610e9a56ce59447295571",
+        "physical_lines": 175,
+        "nonblank_noncomment_lines": 129,
+        "normalized_bytes": 2536,
+        "gzip1_bytes": 1057
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": "8,0",
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": true,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia source Threads policy"
+    },
+    {
+      "benchmark": "fasta",
+      "profile": "fasta-julia-3",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/424",
+      "median_seconds": 4.057375166,
+      "samples_seconds": [
+        4.057375166,
+        4.057447334,
+        4.0427235
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/fasta/upstream/fasta-julia-3.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/fasta-julia-3.jl"
+        ],
+        "sha256": "36cf3ba1ad4bf76978c051ad9883ef2f7cdba444858e8b626fbc8c304a8734fd",
+        "physical_lines": 93,
+        "nonblank_noncomment_lines": 78,
+        "normalized_bytes": 1808,
+        "gzip1_bytes": 882
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": "8,0",
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": true,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia source Threads policy"
+    },
+    {
+      "benchmark": "binarytrees",
+      "profile": "binarytrees-julia-3",
+      "report": {
+        "path": "archive/validation/retime/results/apple-m3-ac-normal-20261008.json",
+        "sha256": "f0318ba0df5bb95cd694c399bf6e9b62387500762b2a6c19dfa5738e71316def"
+      },
+      "selector": "/programs/460",
+      "median_seconds": 2.085797291,
+      "samples_seconds": [
+        2.095779042,
+        1.956226375,
+        2.085797291
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "--",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/binarytrees/upstream/binarytrees-julia-3.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "paths": [
+          "upstream/binarytrees-julia-3.jl"
+        ],
+        "sha256": "5c3482ad38f73265c4b5016f325cb7eec632cb44deae8a6df5d10f55141ce5a2",
+        "physical_lines": 77,
+        "nonblank_noncomment_lines": 60,
+        "normalized_bytes": 1406,
+        "gzip1_bytes": 629
+      },
+      "version_evidence": {
+        "literal_version": null,
+        "literal_version_selector": null,
+        "producer": "retime",
+        "limit": "No Julia version observation is present in the retime toolchains object."
+      },
+      "thread_request": {
+        "explicit_threads_cli": "8,0",
+        "captured_global_JULIA_NUM_THREADS": "8",
+        "same_explicit_compute_interactive_policy_as_fresh_aot": true,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ],
+      "historical_executable_asset_pin": {
+        "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+        "selector": "/asset_hashes/~1private~1tmp~1mech-clbg-julia~1julia-1.13.1~1bin~1julia"
+      },
+      "captured_global_environment": {
+        "RAYON_NUM_THREADS": "8",
+        "JULIA_NUM_THREADS": "8",
+        "OMP_NUM_THREADS": "8",
+        "OMP_DYNAMIC": "FALSE",
+        "CHPL_RT_NUM_THREADS_PER_LOCALE": "8",
+        "GOMAXPROCS": "8",
+        "OPENBLAS_NUM_THREADS": "1",
+        "PYTHONHASHSEED": "0"
+      },
+      "saved_worker_policy": "Julia source Threads policy"
+    },
+    {
+      "benchmark": "regexredux",
+      "profile": "regexredux-julia-3",
+      "report": {
+        "path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json",
+        "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603"
+      },
+      "selector": "/programs/15",
+      "median_seconds": 1.764936083,
+      "samples_seconds": [
+        1.830817458,
+        1.764936083,
+        1.764657458
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/regexredux/upstream/regexredux-julia-3.jl"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "sha256": "cf0f7188913b4d48f4d15491abf610d6f3cc5d37684a03871a136a87ea26fff2",
+        "physical_lines": 64,
+        "nonblank_noncomment_lines": 45
+      },
+      "version_evidence": {
+        "literal_version": "julia version 1.13.1",
+        "literal_version_selector": "/toolchains/julia",
+        "producer": "regexredux",
+        "limit": "Saved version output is tied by the frozen producer to the same Julia runtime symbol used for timing; the report does not bind the historical runtime bytes."
+      },
+      "thread_request": {
+        "explicit_threads_cli": "8,0",
+        "captured_global_JULIA_NUM_THREADS": null,
+        "same_explicit_compute_interactive_policy_as_fresh_aot": true,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ]
+    },
+    {
+      "benchmark": "pidigits",
+      "profile": "pidigits-julia-3",
+      "report": {
+        "path": "archive/validation/remaining-conformance/signed-division-confirmation.json",
+        "sha256": "9100536b54d5afef70a51121db3b40bb646fe560f63e007939ed27bb2d7f24bf"
+      },
+      "selector": "/programs/12",
+      "median_seconds": 0.399957042,
+      "samples_seconds": [
+        0.399957042,
+        0.397526583,
+        0.399330292,
+        0.400046,
+        0.3998565,
+        0.402663833,
+        0.404838875
+      ],
+      "command_template": [
+        "/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+        "--threads=8,0",
+        "--startup-file=no",
+        "--history-file=no",
+        "-O3",
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/pidigits/upstream/pidigits-julia-3.jl",
+        "{n}"
+      ],
+      "compile_command": null,
+      "runtime_environment_overrides": {},
+      "source_receipt": {
+        "sha256": "d9552c519b2a965e9a092c3658460bf8c6e3402dbcd169a498bcff678014da04",
+        "physical_lines": 70,
+        "nonblank_noncomment_lines": 58
+      },
+      "version_evidence": {
+        "literal_version": "julia version 1.13.1",
+        "literal_version_selector": "/toolchains/julia",
+        "producer": "pidigits",
+        "limit": "Saved version output is tied by the frozen producer to the same Julia runtime symbol used for timing; the report does not bind the historical runtime bytes."
+      },
+      "thread_request": {
+        "explicit_threads_cli": "8,0",
+        "captured_global_JULIA_NUM_THREADS": null,
+        "same_explicit_compute_interactive_policy_as_fresh_aot": true,
+        "actual_active_workers_observed": false,
+        "actual_thread_pool_counts_observed": false
+      },
+      "literal_runtime_mode_observation": null,
+      "limits": [
+        "Saved command is a template or row-level command, not an independently logged expanded argv for every sample.",
+        "No per-sample active worker utilization, loaded-runtime image inventory, or numeric GC policy was captured."
+      ]
+    }
+  ],
+  "fresh_aot_recorded_identity": {
+    "build_report": {
+      "path": "experiments/julia/packagecompiler-v1/builds/nbody-julia-5-v1/report.json",
+      "sha256": "cbe630c4f65b635d642b4536ccbb3731febccefadcd18dbb437bfd9c4d38514d"
+    },
+    "build_status": "built-awaiting-output-validation",
+    "build_julia_command": [
+      "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/bin/julia",
+      "--startup-file=no",
+      "--history-file=no",
+      "--color=no",
+      "--project=/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/toolchain",
+      "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/build_app.jl",
+      "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/packages/nbody-julia-5",
+      "/private/tmp/mech-julia-packagecompiler-builds-v1/nbody-julia-5/bundle",
+      "/private/tmp/mech-benchmark-publication/experiments/julia/packagecompiler-v1/training/nbody-julia-5.jl",
+      "nbody-julia-5"
+    ],
+    "julia_executable_input_pin": {
+      "path": "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/julia-aot-comparison/20261012/.build/packagecompiler-bootstrap-v2/restored-runtime/julia-1.13.1/bin/julia",
+      "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9",
+      "selector": "/input_sha256/~1Users~1cim310~1.codex~1worktrees~1clbg-nbody-v04~1mech~1benchmarks~1clbg~1julia-aot-comparison~120261012~1.build~1packagecompiler-bootstrap-v2~1restored-runtime~1julia-1.13.1~1bin~1julia"
+    },
+    "historical_retime_executable_pin": {
+      "path": "/private/tmp/mech-clbg-julia/julia-1.13.1/bin/julia",
+      "sha256": "81e48f60e1d484c6fb2ea64e7cd3986190ff0bb5d5125b66f51e8d793325e3a9"
+    },
+    "same_executable_sha256": true,
+    "version_evidence": {
+      "bootstrap_report": {
+        "path": "archive/languages/julia-aot/20261012/jobs/packagecompiler-bootstrap-v2/report.json",
+        "sha256": "0756b1108e0cbba480285c7e2ac0a4edfa61a78056bbe4bec0b429909365386c"
+      },
+      "selector": "/julia_version",
+      "literal_version": "julia version 1.13.1",
+      "stdout": {
+        "path": "archive/languages/julia-aot/20261012/jobs/packagecompiler-bootstrap-v2/version/julia-version.stdout",
+        "sha256": "04240e3266a6a8feac8048b9d913ffbe14505ffcec1e738418179c1250bd98b3"
+      },
+      "stdout_text": "julia version 1.13.1\n"
+    },
+    "timing_plan": {
+      "path": "experiments/julia/packagecompiler-v1/full81-draft-v4.json",
+      "sha256": "36786e475ef9bafaea7d81f9b2e641b0d3cc7dda899d1cd5a6aea242d2ba9812",
+      "role": "Metadata-only draft; no timing readiness or completed cohort is inferred from this audit."
+    },
+    "planned_runtime_environment": {
+      "PATH": "/usr/bin:/bin:/usr/sbin:/sbin",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "JULIA_NUM_THREADS": "8,0",
+      "JULIA_LOAD_CODEGEN_LIB": "0",
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "VECLIB_MAXIMUM_THREADS": "1"
+    },
+    "planned_command_example": [
+      "/private/tmp/mech-julia-packagecompiler-builds-v1/regexredux-julia-1/bundle/bin/regexredux-julia-1",
+      "--julia-args",
+      "--startup-file=no",
+      "--history-file=no",
+      "--compile=no"
+    ],
+    "timing_policy": "Fresh direct PackageCompiler executable including process/runtime startup, app image and bundled library loading, full regular-file stdin, all work, complete output and shutdown; Julia code generation disabled by --compile=no and JULIA_LOAD_CODEGEN_LIB=0. JULIA_NUM_THREADS=8,0 fixes eight compute threads and zero interactive threads for every scored process and its separate output validation; application algorithms are unchanged. Offline app compilation/training, harness setup, pin hashing, environment waits and output validation excluded. Existing JIT measurements and fixed baselines are unchanged.",
+    "source_adaptation": {
+      "path": "experiments/julia/packagecompiler-v1/source-adaptation.json",
+      "sha256": "590ceda2d274cccc86c5ae22eaf9c0216c9ea81c464b2f24dc7ab6fbd73c8ddc"
+    },
+    "entry_contract": "Standard function julia_main()::Cint; actual runtime ARGS/stdin/stdout; no source evaluation in the entry.",
+    "profile_revisions": [
+      {
+        "profile": "knucleotide-julia-6",
+        "reason": "Replace global Unsigned hash piracy with an owned key type for ordinary native application startup; preserve the original one-argument xor/shift hash.",
+        "retained_prior_version": {
+          "path": "experiments/julia/packagecompiler-v1/builds/knucleotide-julia-6-v1/retained-source/manifest.json",
+          "sha256": "d5979d8c428db2c2b988d42051aca312b41c12e4df4e9438d442adc1e08a398b"
+        },
+        "previous_adapted_source_sha256": "467964a13a820ba5cbaa459e8e7e33ede300091d1feb40df9f7023f747069627",
+        "current_adapted_source_sha256": "6f6f978d2f08d962db0ea032ab7a170411127d7d46d126d06ce7990b5936d89b",
+        "source_transformation_only": true,
+        "native_executions": 0
+      },
+      {
+        "profile": "regexredux-julia-3",
+        "reason": "Remove the inactive generic PCRE.exec overwrite and package precompile exclusion for ordinary PackageCompiler application compatibility; retain actual pinned-runtime String dispatch unchanged.",
+        "retained_prior_version": {
+          "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/retained-source/manifest.json",
+          "sha256": "04e0e5dcdeb8d54407cc4fbe2d6a5cd95ba3292ed8647ac2be4cfc0bf160277f"
+        },
+        "runtime_dispatch_review": {
+          "path": "experiments/julia/packagecompiler-v1/builds/regexredux-julia-3-v1/source-fix-review.json",
+          "sha256": "a907981c7740e94f0c15b85b8d9a40125d7a75daa9141c8a40032b4dc7d1429f"
+        },
+        "previous_adapted_source_sha256": "2a83eba5251a55cced1b57f514d2494f84866a7600823b90082ff099ae517336",
+        "current_adapted_source_sha256": "b3602e0c6248e09f125c1cb6e53072ffeb1f801e1936e820843c5b5945593a98",
+        "source_transformation_only": true,
+        "native_executions": 0
+      }
+    ],
+    "source_limit": "The AOT applications retain reviewed lineage to the original Julia sources but add standard PackageCompiler entry/module and runtime reset adaptations, including the recorded Knu6 owned-key and Regex3 method-compatibility revisions. Byte-identical measured application sources are not claimed."
+  },
+  "comparison_limits": [
+    "Every retained report describes fresh-process time through exit with full output; Julia startup and JIT work are included and offline compilation is excluded. This common timing boundary does not make the cohorts contemporaneous.",
+    "All ten retained commands include --startup-file=no --history-file=no -O3. Nbody5/Mandelbrot7/Knucleotide6/Spectralnorm4 also request --math-mode=ieee; the other six selected commands do not.",
+    "Historical Fannkuch2/Fasta3/Binarytrees3/Regex3/Pidigits3 explicitly request --threads=8,0. The other five selected commands record only JULIA_NUM_THREADS=8.",
+    "The eight-workload retime explicitly captures OMP_NUM_THREADS=8 and OPENBLAS_NUM_THREADS=1. Fresh AOT runtime policy requests OMP_NUM_THREADS=1, OPENBLAS_NUM_THREADS=1, JULIA_NUM_THREADS=8,0 and JULIA_LOAD_CODEGEN_LIB=0.",
+    "No local runtime upgrade from Julia1.11.1 to1.13.1 is established; the1.11.1 value occurs in copied upstream Linux notes.",
+    "The catalog uses the Julia JIT family for retained source-process timings, while strict row-level execution-mode observations remain incomplete. A saved execution_mode value of julia is not itself a literal JIT-mode observation.",
+    "No AOT benchmark result, chart admission, baseline update, source change or native execution is authorized or performed by this provenance artifact."
+  ]
+}
