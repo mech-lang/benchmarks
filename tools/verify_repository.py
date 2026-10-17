@@ -115,6 +115,12 @@ def check_migration(root, check_index):
 
 
 def check_previous(root, data):
+    # Authorship is a later source-bound annotation. Replay the frozen admission
+    # checks against the original measurement record without rewriting its
+    # publication snapshot or relaxing any of its existing field comparisons.
+    data={**data,**{pool:{key:{field:value for field,value in p.items() if field!='authorship'}
+                         for key,p in data.get(pool,{}).items()}
+                   for pool in ('programs','program_inventory')}}
     previous = read_json(root / 'archive/site/explorer/dist/data.json')
     spec = importlib.util.spec_from_file_location('interpreted_publication', root / 'tools/import_mech_interpreted_rerun.py')
     publication = importlib.util.module_from_spec(spec)
@@ -198,6 +204,16 @@ def verify(root, check_index=False):
     for key, program in data.get('program_inventory', {}).items():
         require(key not in data['programs'] or data['programs'][key] == program, f'Conflicting catalog identity: {key}')
     catalog = {**data['programs'], **data.get('program_inventory', {})}
+    if any('authorship' in p for p in catalog.values()):
+        source_models=read_json(root/'data/source-model-evidence.json')['files']
+        for key,p in catalog.items():
+            a=p.get('authorship',{})
+            require(a.get('schema')=='benchmark-authorship.v1' and a.get('source_sha256')==p['files'],
+                    f'Authorship source binding differs: {key}')
+            expected=[] if a.get('kind')=='upstream' else [row for f in p['files'] for row in source_models.get(f,[])]
+            require(a.get('ai',{}).get('evidence')==expected and
+                    a['ai']['models']==sorted({row['model'] for row in expected}),
+                    f'Authorship model evidence differs: {key}')
     for key, source in data['files'].items():
         require(hashlib.sha256(source['code'].encode('utf-8')).hexdigest() == source['sha256'],
                 f'Dataset source hash mismatch: {key}')
@@ -248,7 +264,7 @@ def verify(root, check_index=False):
                            'archive_timing_report': data.get('archive_paths', {}).get(p.get('report')), 'sources': sources}
         if publication is not None:
             expected_record['publication_record'] = publication
-        for field in ('timing_measurement', 'timing_correction', 'timing_alias_of',
+        for field in ('authorship', 'timing_measurement', 'timing_correction', 'timing_alias_of',
                       'source_alias_of', 'aliased_sample_source', 'native_observations',
                       'distinct_optimization_claimed', 'source_alias_note',
                       'separate_fresh_samples_required'):

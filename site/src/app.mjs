@@ -1145,6 +1145,14 @@ function renderSampleTable(){
   const cell=(r,key)=>{
     if(key==='implementation')return r.implementations.map((p,i)=>`<a class="sample-implementation" data-sample-program="${esc(p.key)}" href="${esc(sampleImplementationLink(p))}">${esc(p.id)}</a>${i?' <small>(shared runs)</small>':''}`).join('<br>');
     if(key==='language_label')return `<button data-open-language="${esc(r.language)}">${esc(r[key])}</button>`;
+    if(key==='authorship'){
+      const refs=r.implementations[0].authorship?.sources?.filter(s=>s.relationship!=='workload')??[];
+      return `${esc(r.authorship)}${refs.length?'<br>'+refs.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · '):''}`;
+    }
+    if(key==='license'){
+      const terms=r.implementations[0].authorship?.license;
+      return terms?.licenses?.length?terms.licenses.filter((l,i,a)=>a.findIndex(x=>x.id===l.id)===i).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.id)}</a>`).join(' + ')+(terms.status==='partial'?'<br><small>Upstream terms unverified</small>':''):esc(r.license);
+    }
     const value=r[key];
     if(value==null)return '—';
     if(['seconds','median_seconds','sd_seconds'].includes(key))return `<span title="${esc(value)}">${Number(value.toPrecision(6))}</span>`;
@@ -1254,6 +1262,17 @@ function programSource(program,key){
 function sourceRoleLabel(role){
   return role==='runtime-support'?' · runtime support':role==='application-helper'?' · application helper':role==='application-launcher'?' · application launcher':'';
 }
+function renderAuthorship(program){
+  const a=program.authorship;if(!a)return '';
+  const ai=a.ai,terms=a.license;
+  const models=ai.status==='not-applicable'?'Upstream submission; no local AI authorship claimed.':
+    ai.models.length?`${ai.models.join(', ')} · exact source-write evidence for ${ai.matched_source_files.length}/${ai.total_source_files} files. These are verified contributors; unverified files may have other contributors.`:
+      'OpenAI Codex · exact model unverified for this retained source revision.';
+  const sourceLinks=a.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a> · ${esc(s.relationship)}</li>`).join('');
+  const licenseLinks=terms.licenses.map(l=>`<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.id)}</a> · ${esc(l.scope)}</li>`).join('');
+  const notices=a.attribution_notices.map(n=>`<li>${esc(n.text)} <small>(${esc(data.files[n.source_sha256]?.name??n.source_sha256)}, line ${n.line})</small></li>`).join('');
+  return `<section class="detail-section source-authorship"><h3>Authorship and license</h3><p><strong>${esc(a.label)}</strong></p><p class="profile-note">${esc(models)}</p>${sourceLinks?`<ul>${sourceLinks}</ul>`:''}<p class="profile-note">Source license evidence: ${esc(terms.status)}. Runtime and external library licenses are separate.</p>${licenseLinks?`<ul>${licenseLinks}</ul>`:''}${terms.unresolved.map(note=>`<p class="profile-note">${esc(note)}</p>`).join('')}${notices?`<details><summary>Original attribution notices</summary><ul>${notices}</ul></details>`:''}</section>`;
+}
 function renderLocAudit(program){
   if(!Array.isArray(program.loc_expansions)||!program.loc_expansions.length)return '';
   if(program.loc_expansion_format!=='source-bound-canonical-owner-audit-v1'&&program.loc_expansions?.some(source=>typeof source.source==='string'&&Array.isArray(source.expansions))){
@@ -1305,7 +1324,7 @@ function renderInspector({renderRelated=true}={}){
   $('#inspector-body').innerHTML=`${aggregate}${navigation}<div class="inspector-controls"><label>Benchmark<select id="detail-benchmark">${available.map(item=>`<option value="${item.key}" ${item.key===b.key?'selected':''}>${esc(item.title)}</option>`).join('')}</select></label><label>Profile<select id="detail-profile"><option value="fast" ${pending?'disabled':''} ${state.detail.kind==='fast'?'selected':''}>Fastest</option><option value="small" ${state.detail.kind==='small'?'selected':''}>Fewest LOC</option></select></label><label class="program-choice">Program<select id="detail-program">${availablePrograms.map(p=>`<option value="${p.key}" ${program.key===p.key?'selected':''}>${esc(p.id)} · ${p.loc} LOC · ${seconds(p.seconds)}</option>`).join('')}</select></label></div>
     ${canonicalProgram?`<label class="inclusion"><input id="include-program" type="checkbox" ${pending||!eligibleForChart(program)||inLanguageView()?'disabled':''} ${pending||!eligibleForChart(program)||state.disabled.has(program.key)?'':'checked'}>Include this program in the speed comparison${inLanguageView()?' · all published programs shown in this view':''}</label>`:'<p class="profile-note">This qualified program is retained in the language overview. The main comparison uses the published fastest and fewest-LOC endpoints.</p>'}<p class="profile-note">${esc(b.workload)}</p>
     <div class="detail-stats"><div class="detail-stat"><strong>${program.loc}</strong><span>canonical source LOC</span></div><div class="detail-stat"><strong>${formattedValue(program)}</strong><span>formatted source LOC</span></div><div class="detail-stat"><strong>${seconds(program.seconds)}</strong><span>${program.timing_alias_of?'shared median time':'median measured time'}</span></div><div class="detail-stat"><strong>${pending?'Not measured':seconds(program.timing_sd)}</strong><span>${program.timing_alias_of?'shared run-to-run SD':'run-to-run SD'}</span></div></div>
-    ${formattedNote}${renderAliasDisclosure(program)}
+    ${formattedNote}${renderAliasDisclosure(program)}${renderAuthorship(program)}
     ${!eligibleForChart(program)?`<p class="profile-note publication-exclusion">Excluded from charts and comparisons. ${esc(program.exclusion_reason??'Publication qualification is incomplete.')} Saved timings and sources remain available for inspection.</p>`:''}
     ${bestComparison}
     ${program.timing_summary?`<p class="profile-note timing-boundary">${esc(program.timing_summary)}</p>`:''}

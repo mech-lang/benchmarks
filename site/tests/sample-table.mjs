@@ -48,6 +48,7 @@ try{
   const initial=await page.evaluate(()=>window.benchmarkExplorer.getSampleData());
   assert.equal(initial.total,3111);assert.equal(initial.filtered.length,3111);
   assert.equal(await page.locator('#sample-data-table tbody tr').count(),100);
+  assert.equal(await page.locator('[data-sort-table="data"]').count(),15);
   assert.equal(await page.locator('.chart-card').isVisible(),false);
   const observed=[];
   while(true){
@@ -72,6 +73,29 @@ try{
   for(const r of json.rows){assert.ok(json.programs[r.program_key]);assert.ok(r.implementation_url.includes('detail.program='));
     assert.ok(r.source_sha256.every(key=>json.files[key]));}
   assert.deepEqual(csv.map(r=>Number(r[headers.indexOf('seconds')])),json.rows.map(r=>r.seconds));checks.push('complete CSV/JSON exports with exact times, links and source bundles');
+  assert.ok(['authorship','ai_model','license','license_status','authorship_details'].every(h=>headers.includes(h)));
+  for(const row of json.rows){assert.ok(row.authorship_details);assert.deepEqual(row.authorship_details.source_sha256,json.programs[row.program_key].files);}
+  const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
+  await page.fill('#sample-data-search',published.implementation);
+  await page.locator('[data-sample-program]').first().click();
+  assert.ok((await page.locator('.source-authorship').textContent()).includes('Published'));
+  assert.ok(await page.locator('.source-authorship a').filter({hasText:'BSD-3-Clause'}).count());
+  assert.ok((await page.locator('.source-authorship').textContent()).includes(published.authorship_details.attribution_notices[0].text));
+  await page.click('#close-inspector');
+  const generated=json.rows.find(r=>r.language_key==='lean4'&&r.authorship_details.ai.models.length);
+  await page.fill('#sample-data-search',generated.implementation);await page.locator('[data-sample-program]').first().click();
+  assert.ok((await page.locator('.source-authorship').textContent()).includes(generated.authorship_details.ai.models[0]));
+  assert.ok(await page.locator('.source-authorship a').filter({hasText:'Apache-2.0'}).count());await page.click('#close-inspector');
+  const partial=json.rows.find(r=>r.license_status==='partial');await page.fill('#sample-data-search',partial.implementation);
+  assert.ok((await page.locator('#sample-data-table tbody td:last-child').first().textContent()).includes('unverified'));
+  await page.fill('#sample-data-search','gpt-6.1-sol');
+  assert.ok(await page.locator('#sample-data-table tbody tr').count());
+  await page.click('[data-sort-table="data"][data-sort-key="authorship"]');
+  const provenanceURL=await page.evaluate(()=>window.benchmarkExplorer.getShareURL()),provenancePage=await open(provenanceURL);
+  assert.equal((await provenancePage.evaluate(()=>window.benchmarkExplorer.getViewState())).tableSort.data.key,'authorship');
+  assert.equal(await provenancePage.locator('#sample-data-search').inputValue(),'gpt-6.1-sol');await provenancePage.close();
+  await page.fill('#sample-data-search','');await page.click('[data-sort-table="data"][data-sort-key="seconds"]');await page.click('[data-sort-table="data"][data-sort-key="seconds"]');
+  checks.push('authorship/model/license columns, export metadata, original author notices, partial licenses and shareable provenance sort');
   const before=await page.evaluate(()=>document.querySelector('#chart').innerHTML);
   let start=Date.now();await page.fill('#sample-data-search','Lean n-body');
   await page.waitForFunction(()=>document.querySelectorAll('#sample-data-table tbody tr').length===9);

@@ -25,7 +25,7 @@ PROGRAM_FIELDS = frozenset({
     'formatted_loc', 'formatted_loc_status', 'formatted_loc_complete',
     'formatted_loc_evidence', 'formatted_x', 'eligible_for_chart', 'exclusion_reason',
     'loc_expansions', 'loc_expansion_format', 'source_url', 'source_link_label',
-    'license_url', 'local_adaptation', 'source_provenance', 'algorithm',
+    'license_url', 'local_adaptation', 'source_provenance', 'algorithm', 'authorship',
     'runtime_policy', 'runtime_support',
     'timing_alias_of', 'source_alias_of', 'aliased_sample_source',
     'native_observations', 'distinct_optimization_claimed', 'source_alias_note',

@@ -14,6 +14,10 @@ The **[Sample data view](https://mech-lang.org/benchmarks/#v=1&view=data)** list
 
 The [methodology](docs/methodology.md) describes timing boundaries, source counting, library use, and comparison rules. [Mech's optimization history](docs/optimizations.md) connects compiler and runtime changes to their measured effects.
 
+[Implementation authorship](docs/authorship.md) distinguishes published sources,
+local AI adaptations and generated programs. The data view and exports include
+verified model IDs, original attribution, license terms and explicit evidence gaps.
+
 ## Repository
 
 | Directory | Contents |
@@ -50,6 +54,8 @@ python3 tools/export_catalog.py
 python3 tools/test_export_catalog.py
 python3 tools/verify_repository.py
 python3 tools/test_build_site.py
+python3 tools/test_authorship.py
+python3 tools/audit_authorship.py --check
 python3 tools/build_site.py
 node site/tests/data_projection.mjs data/benchmarks.json site/public/data.json
 node site/tests/layers.mjs
