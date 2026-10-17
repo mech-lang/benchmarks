@@ -4,6 +4,7 @@ import {benchmarkDimensions,benchmarkTraits,emptyBenchmarkFilters,matchesBenchma
 import {renderRankingCharts} from './rankings.mjs?v=20261013-combined2';
 import {axisData,projectProgram,hasFormattedLOC,formattedText,formattedValue} from './formatted_axis.mjs?v=20261013-combined2';
 import {createLabelPlacer} from './labels.mjs';
+import {encodeView,decodeView} from './view_state.mjs';
 
 const $=selector=>document.querySelector(selector);
 // The same controls live in the desktop sidebar or the phone's modal drawer.
@@ -101,6 +102,68 @@ let currentDomain=null;
 let playbackTimer=null;
 let renderedChartWidth=null,renderedChartMobile=null,chartResizeFrame=null;
 const tableSort={comparison:{key:'language',direction:1},timings:{key:'run',direction:1},implementations:{key:null,direction:1}};
+let viewDefaults=null,restoringView=false,viewLinkQueued=false,pushViewLink=false,lastViewLink=null,viewLinkTimer=null,lastViewWrite=-Infinity;
+function captureView(){
+  const sets=key=>Object.fromEntries(Object.entries(state[key]).map(([key,values])=>[key,[...values]]));
+  const focus=state.languageFocus;
+  return {...Object.fromEntries(['view','focus','locMetric','fast','small','sampleMode','medianMode','densityMode','focusMeans','global','releaseYearStart','releaseYear','playbackYear'].map(key=>[key,state[key]])),
+    ...Object.fromEntries(['benchmarks','languages','ellipses','disabled','collapsedFamilies'].map(key=>[key,[...state[key]]])),
+    traits:sets('traits'),benchmarkFilters:sets('benchmarkFilters'),
+    languageFocus:focus?Object.fromEntries(['selectionKey','family','variant','benchmark','program','comparison','comparisonLanguage','comparisonProgram'].map(key=>[key,focus[key]??null])):null,
+    inspectorOpen:$('#inspector').open,detail:{...state.detail,program:$('#inspector').open?selectedProgram()?.key??null:state.detail.program},
+    tableSort:structuredClone(tableSort),
+    benchmarkExpanded:!$('#benchmark-filter-body').hidden,languageExpanded:!$('#language-filter-body').hidden};
+}
+function writeViewLink({force=false}={}){
+  viewLinkQueued=false;
+  if(!viewDefaults||restoringView)return;
+  const hash=encodeView(captureView(),viewDefaults),push=pushViewLink;
+  if(viewLinkTimer!==null){clearTimeout(viewLinkTimer);viewLinkTimer=null;}
+  if(hash===lastViewLink&&hash===location.hash){pushViewLink=false;return;}
+  // Sliders and playback can change repeatedly. Keep their latest snapshot
+  // without exhausting browsers' History API rate limits. Copy always flushes.
+  const remaining=350-(performance.now()-lastViewWrite);
+  if(!force&&!push&&remaining>0){viewLinkTimer=setTimeout(()=>writeViewLink(),remaining);return;}
+  pushViewLink=false;
+  const url=new URL(location.href);url.hash=hash;
+  history[push?'pushState':'replaceState'](null,'',url);
+  lastViewLink=hash;lastViewWrite=performance.now();
+  $('#copy-view-status').textContent='';$('#view-link-fallback').hidden=true;
+}
+function queueViewLink({push=false}={}){
+  if(!viewDefaults||restoringView)return;
+  pushViewLink ||= push;
+  if(!viewLinkQueued&&(viewLinkTimer===null||push)){viewLinkQueued=true;queueMicrotask(writeViewLink);}
+}
+function restoreViewLink(){
+  if(!viewDefaults)return;
+  const spec={benchmarks:data.benchmarks.map(b=>b.key),languages:data.languages.map(l=>l.key),
+    ellipses:data.languages.map(l=>l.key),disabled:Object.keys(programCatalog),collapsedFamilies:families().map(f=>f.key),
+    families:Object.fromEntries(families().map(f=>[f.key,f.members.map(l=>l.key)])),programs:programCatalog,
+    traits:Object.fromEntries(traitDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
+    benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
+    yearMin:yearBounds().min,yearMax:yearBounds().max,
+    sorts:{comparison:['language','loc','fastest','slope','length','areaFast','areaSmall'],timings:['run','elapsed'],implementations:['','show','program','loc','median']}};
+  const restored=decodeView(location.hash,viewDefaults,spec)??structuredClone(viewDefaults);
+  restoringView=true;clearTimeout(viewLinkTimer);viewLinkTimer=null;pushViewLink=false;closeFilterDrawer();pauseYears();rememberedLanguageView=null;
+  const {inspectorOpen,tableSort:sorts,benchmarkExpanded,languageExpanded,...selection}=restored;
+  Object.assign(state,selection,{playing:false});
+  for(const key of ['benchmarks','languages','ellipses','disabled','collapsedFamilies'])state[key]=new Set(state[key]);
+  for(const key of ['traits','benchmarkFilters'])state[key]=Object.fromEntries(Object.entries(state[key]).map(([key,values])=>[key,new Set(values)]));
+  Object.assign(tableSort,sorts);
+  if(state.languageFocus){
+    const focus=state.languageFocus,group=focus.family?families().find(f=>f.key===focus.selectionKey):null;
+    Object.assign(focus,{keys:group?group.members.map(l=>l.key):[focus.selectionKey],label:group?.label??shortName(focus.selectionKey),
+      origin:null,savedDetail:{...state.detail},savedInspectorOpen:inspectorOpen});
+  }
+  for(const [kind,expanded] of [['benchmark',benchmarkExpanded],['language',languageExpanded]]){
+    $(`#${kind}-filter-body`).hidden=!expanded;$(`#toggle-${kind}-filters`).setAttribute('aria-expanded',expanded);
+  }
+  if(inspectorOpen&&!$('#inspector').open)$('#inspector').show();
+  if(!inspectorOpen&&$('#inspector').open)$('#inspector').close();
+  $('#chart-detail-layout').classList.toggle('inspector-open',inspectorOpen);
+  update();restoringView=false;lastViewLink=location.hash;queueViewLink();
+}
 const esc=text=>String(text).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const ratio=n=>`${summaryNumber(n)}×`;
 const seconds=n=>n==null?'Not measured':`${n.toFixed(n<1?6:n>=100?2:3)} s`;
@@ -163,6 +226,7 @@ function comparisonData(){
   return view;
 }
 function showLanguageOverview(key,{family=false,restoreProgram=false}={}){
+  writeViewLink({force:true});
   closeFilterDrawer();
   pauseYears();
   const group=family?families().find(f=>f.key===key):null;
@@ -189,6 +253,7 @@ function showLanguageOverview(key,{family=false,restoreProgram=false}={}){
     if(!prior.savedInspectorOpen&&$('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
   }
   update();
+  queueViewLink({push:true});
   if(restoreProgram&&savedDetail&&$('#inspector').open)renderInspector();
   $('#language-overview-title').focus({preventScroll:true});
   $('#language-overview').scrollIntoView({block:'start',behavior:'auto'});
@@ -214,6 +279,8 @@ function selectBenchmarkFacet(dimension,option,checked){
   selectBenchmarks(state.benchmarks);
 }
 function selectView(view){
+  writeViewLink({force:true});
+  queueViewLink({push:true});
   if(view==='language'){
     const focus=state.languageFocus;
     if(focus){if(focus.comparison)showLanguageOverview(focus.selectionKey,{family:focus.family});return;}
@@ -296,6 +363,7 @@ function renderLanguageComparisons(){
   $('#language-comparison-table tbody').innerHTML=rows.map(row=>`<tr class="${row.target?'comparison-reference':''}"><th scope="row">${row.target?`${esc(shortName(row.language.key))} · reference`:`<button data-compare-language="${row.language.key}" ${row.loc.benchmarks.length?'':'disabled'} title="Compare ${esc(label)} with ${esc(shortName(row.language.key))} on their shared ${metricName()} workloads">${esc(shortName(row.language.key))}</button>`}</th><td class="ratio">${row.time.ratio==null?'—':ratio(row.time.ratio)}</td><td>${coverage(row.time)}</td><td class="ratio">${row.loc.ratio==null?'—':ratio(row.loc.ratio)}</td><td>${coverage(row.loc)}</td></tr>`).join('');
 }
 function compareOverviewLanguage(key){
+  writeViewLink({force:true});
   const focus=state.languageFocus;if(!focus||key===focus.variant)return;
   const row=languageRelativeComparisons(data,focus.variant,{benchmarks:effectiveBenchmarks(),locData:axisData(data,state.locMetric)}).find(row=>row.language.key===key);
   if(!row?.loc.benchmarks.length)return;
@@ -303,9 +371,10 @@ function compareOverviewLanguage(key){
   state.view='summary';state.benchmarks=new Set(row.loc.benchmarks);state.benchmarkFilters=emptyBenchmarkFilters();state.languages=new Set([focus.variant,key]);
   state.traits=emptyTraitFilters();fullReleaseWindow();state.disabled.clear();state.global=false;
   if($('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
-  update();$('#chart-title').scrollIntoView({block:'start',behavior:'auto'});
+  update();queueViewLink({push:true});$('#chart-title').scrollIntoView({block:'start',behavior:'auto'});
 }
 function compareOverviewProgram(key=null){
+  writeViewLink({force:true});
   const focus=state.languageFocus;if(!focus)return;
   const p=key?catalogProgram(key):null,from=p?.language??focus.variant,b=p?.benchmark??focus.benchmark,to=$('#overview-comparison-language').value;
   if(!language(from)||!language(to)||!benchmark(b))return;
@@ -317,6 +386,7 @@ function compareOverviewProgram(key=null){
   focus.variant=from;focus.benchmark=b;focus.comparisonProgram=p?.key??null;focus.comparisonLanguage=to;
   state.detail=p?{...focus.savedDetail}:{language:from,benchmark:b,kind:'fast',program:null,aggregate:false,file:0};
   focus.comparison=true;state.view='benchmark';state.focus=b;state.benchmarks=new Set([b]);state.benchmarkFilters=emptyBenchmarkFilters();state.languages=new Set([from,to]);
+  queueViewLink({push:true});
   state.traits=emptyTraitFilters();fullReleaseWindow();state.disabled.clear();
   Object.assign(state,{fast:true,small:true,focusMeans:false,global:false});
   if(!selectedProgram()&&$('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
@@ -464,6 +534,7 @@ function sortTable(button){
   }
   $(`[data-sort-table="${table}"][data-sort-key="${key}"]`).focus({preventScroll:true});
   $('#sort-status').textContent=`Sorted ${label} ${sort.direction===1?'ascending':'descending'}.`;
+  queueViewLink();
 }
 
 function node(tag,attributes={},parent){
@@ -525,11 +596,13 @@ function update(){
   $('#focused-benchmark').value=state.focus;
   renderPlotOptions();
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
+  queueViewLink();
 }
 function updatePlot(){
   // Profile choices filter chart observations; layer and axis controls change presentation.
   renderChart();renderPlotOptions();
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
+  queueViewLink();
 }
 function setLayerModes({samples=state.sampleMode,medians=state.medianMode,density=state.densityMode}={}){
   for(const mode of [samples,medians,density])layerPresentation(mode);
@@ -544,6 +617,7 @@ function setLayerModes({samples=state.sampleMode,medians=state.medianMode,densit
     renderedDensityLayer.setAttribute('opacity',layerPresentation(density).opacity);
     renderedDensityLayer.setAttribute('data-layer-mode',density);
     renderPlotOptions();
+    queueViewLink();
     return;
   }
   updatePlot();
@@ -647,6 +721,7 @@ function currentGlobalStatistics(entries=currentEntries()){
   return globalStatisticsByEntries.get(entries);
 }
 function openPoint(info){
+  writeViewLink({force:true});
   closeFilterDrawer();
   const explicit=catalogProgram(info.program);
   state.detail={language:explicit?.language??info.language,benchmark:explicit?.benchmark??info.benchmark??state.focus,kind:info.kind??'fast',
@@ -665,11 +740,13 @@ function openPoint(info){
   }
   clearHoverDetails();
   $('#close-inspector').focus({preventScroll:true});
+  queueViewLink({push:true});
 }
 function closeInspector(){
   $('#inspector').close();
   $('#chart-detail-layout').classList.remove('inspector-open');
   renderChart();
+  queueViewLink();
 }
 function clearHoverDetails(){
   const details=$('#hover-details');
@@ -1131,6 +1208,7 @@ function renderInspector({renderRelated=true}={}){
     if(languageOverviewVisible())renderMedianRankings();
   }
   $('#download-source').onclick=event=>{event.preventDefault();const url=URL.createObjectURL(new Blob([file.code],{type:'text/plain'}));const link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
+  queueViewLink();
 }
 function reset({rankings=false}={}){
   const focus=state.languageFocus;
@@ -1220,8 +1298,17 @@ async function start(){
     const toggle=$(`#toggle-${kind}-filters`),body=$(`#${kind}-filter-body`);
     const setExpanded=value=>{toggle.setAttribute('aria-expanded',value);body.hidden=!value;};
     setExpanded(true);
-    toggle.onclick=()=>setExpanded(body.hidden);
+    toggle.onclick=()=>{setExpanded(body.hidden);queueViewLink();};
   }
+  viewDefaults=captureView();restoreViewLink();
+  let restoreQueued=false;
+  const queueRestore=()=>{if(!restoreQueued&&lastViewLink!==location.hash){restoreQueued=true;queueMicrotask(()=>{restoreQueued=false;restoreViewLink();});}};
+  addEventListener('popstate',queueRestore);addEventListener('hashchange',queueRestore);
+  $('#copy-view-link').onclick=async()=>{
+    writeViewLink({force:true});
+    try{await navigator.clipboard.writeText(location.href);$('#copy-view-status').textContent='Link copied';}
+    catch{const input=$('#view-link-fallback');input.hidden=false;input.value=location.href;input.focus();input.select();$('#copy-view-status').textContent='Copy the selected link';}
+  };
   $('#all-benchmarks').onclick=()=>selectBenchmarks(data.benchmarks.map(b=>b.key),{clearFilters:true});
   $('#no-benchmarks').onclick=()=>selectBenchmarks([],{clearFilters:true});
   $('#clear-benchmark-filters').onclick=()=>selectBenchmarks(state.benchmarks,{clearFilters:true});
@@ -1266,7 +1353,7 @@ async function start(){
     }
     const disclosure=event.target.closest('[data-toggle-family]');if(disclosure){
       const key=disclosure.dataset.toggleFamily;state.collapsedFamilies.has(key)?state.collapsedFamilies.delete(key):state.collapsedFamilies.add(key);
-      renderControls();$(`[data-toggle-family="${key}"]`).focus({preventScroll:true});return;
+      renderControls();queueViewLink();$(`[data-toggle-family="${key}"]`).focus({preventScroll:true});return;
     }
     const sort=event.target.closest('[data-sort-table]');if(sort){sortTable(sort);return;}
     const view=event.target.closest('[data-view]');if(view){selectView(view.dataset.view);return;}
@@ -1278,6 +1365,7 @@ async function start(){
   document.addEventListener('change',event=>{
     const element=event.target;
     if(element.disabled)return;
+    if(element.id==='overview-comparison-language'&&state.languageFocus){state.languageFocus.comparisonLanguage=element.value;queueViewLink();return;}
     if(element.id==='overview-variant'||element.id==='overview-benchmark'){
       const focus=state.languageFocus;if(!focus)return;
       focus[element.id==='overview-variant'?'variant':'benchmark']=element.value;focus.program=null;
@@ -1318,6 +1406,7 @@ async function start(){
   let rankingWidth=-1;
   new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(width!==rankingWidth){rankingWidth=width;requestAnimationFrame(renderMedianRankings);}}).observe($('#median-ranking-cards'));
   window.benchmarkExplorer={getSelection:()=>({benchmarks:[...effectiveBenchmarks()],selectedBenchmarks:[...state.benchmarks],benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(({key})=>[key,[...state.benchmarkFilters[key]]])),languages:[...effectiveLanguages()],selectedLanguages:[...state.languages],traits:Object.fromEntries(traitDimensions.map(({key})=>[key,[...state.traits[key]]])),releaseYearStart:state.releaseYearStart,releaseYear:state.releaseYear,shownReleaseYear:shownReleaseYear(),playbackYear:state.playbackYear,ellipses:[...state.ellipses],disabled:[...state.disabled],view:state.view,locMetric:state.locMetric,languageFocus:state.languageFocus?{keys:[...state.languageFocus.keys],program:state.languageFocus.program,comparison:state.languageFocus.comparison}:null,samples:samplesVisible(),sampleMode:state.sampleMode,medianMode:state.medianMode,densityMode:state.densityMode,focusMeans:state.focusMeans,global:state.global,playing:state.playing}),
+    getViewState:captureView,getShareURL:()=>{writeViewLink({force:true});return location.href;},
     getDensity:()=>structuredClone(currentDensityField()),
     setLayerModes,
     getMedianRankings:currentRankings,
