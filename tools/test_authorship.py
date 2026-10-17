@@ -1,7 +1,9 @@
 """Authorship is evidence metadata, independent of rankings and measurements."""
 import copy,hashlib,importlib.util,json,unittest,sys
 from pathlib import Path
+from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parent))
+import source_lineage
 spec=importlib.util.spec_from_file_location('audit_authorship',Path(__file__).with_name('audit_authorship.py'))
 audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
 
@@ -87,5 +89,34 @@ class Authorship(unittest.TestCase):
                 self.assertTrue((audit.ROOT/license['evidence']).is_file(),license['evidence'])
             self.assertNotIn('/Users/',json.dumps(a));self.assertNotIn('session_id',json.dumps(a))
         self.assertEqual(len(catalog),1013)
+
+    def test_explicit_prolog_predecessors_require_matching_source_bytes(self):
+        data=json.loads((audit.ROOT/'data/benchmarks.json').read_text())
+        parents,_,evidence=audit.lineage(data)
+        self.assertEqual(parents['fasta:prolog-fasta-compact'],['fasta:nim-fasta-compact'])
+        self.assertEqual(parents['fasta:prolog-fasta-optimized'],['fasta:nim-fasta-compact'])
+        self.assertNotIn('binarytrees:prolog-binarytrees-compact',parents)
+        self.assertIn('archive/languages/prolog/20261013/PROVENANCE.md',evidence['fasta:prolog-fasta-compact'])
+        data['programs']['fasta:nim-fasta-compact']['files']=['0'*64]
+        data['program_inventory'].pop('fasta:nim-fasta-compact',None)
+        self.assertNotIn('fasta:prolog-fasta-compact',audit.lineage(data)[0])
+        data=json.loads((audit.ROOT/'data/benchmarks.json').read_text())
+        catalog={**data['program_inventory'],**data['programs']}
+        self.assertEqual(catalog['fasta:prolog-fasta-compact']['authorship']['origin_status'],'unresolved')
+        self.assertIn('local predecessor',catalog['fasta:prolog-fasta-compact']['authorship']['label'])
+        catalog['fasta:prolog-fasta-compact']['files']=['0'*64]
+        self.assertNotIn('fasta:prolog-fasta-compact',audit.lineage(data)[0])
+
+    def test_changed_origin_document_cannot_establish_predecessors(self):
+        data=json.loads((audit.ROOT/'data/benchmarks.json').read_text())
+        original_read=source_lineage.read
+        def changed(path):
+            result=original_read(path)
+            if path=='data/source-predecessor-evidence.json':
+                next(iter(result['programs'].values()))['evidence']['sha256']='0'*64
+            return result
+        with patch.object(source_lineage,'read',side_effect=changed):
+            with self.assertRaisesRegex(ValueError,'Source-predecessor evidence changed'):
+                audit.lineage(data)
 
 if __name__=='__main__':unittest.main()

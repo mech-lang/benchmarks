@@ -49,9 +49,19 @@ def lineage(data):
         detail=p.get('source_provenance_record') or {}
         parent=detail.get('original_program_key') or p.get('original_program_key')
         if parent in catalog:parents[key]=[parent]
-        if p['language']=='c3':
-            nim=f"{p['benchmark']}:nim-{p['benchmark']}-"+('optimized' if 'optimized' in p['id'] else 'compact')
-            if nim in catalog:parents[key]=[nim];evidence[key]=['archive/languages/c3/20261012/PROVENANCE.md']
+    # Both ends of retained translation/consulted-file records must match.
+    # A new implementation never inherits ancestry just from its language,
+    # workload name or reuse of an existing program ID.
+    origin_index='data/source-predecessor-evidence.json'
+    for key,record in read(origin_index)['programs'].items():
+        if key not in catalog or set(catalog[key]['files'])!=set(record['source_sha256']):continue
+        origin=record['evidence']
+        if hashlib.sha256((ROOT/origin['path']).read_bytes()).hexdigest()!=origin['sha256']:
+            raise ValueError('Source-predecessor evidence changed: '+origin['path'])
+        matched=[r['program_key'] for r in record['predecessors'] if r['program_key'] in catalog and
+                 set(catalog[r['program_key']]['files'])==set(r['source_sha256'])]
+        if len(matched)!=len(record['predecessors']):continue
+        parents[key]=matched;evidence.setdefault(key,[]).extend([origin_index,origin['path']])
     # Explicit source comments name the imported file's collection. The retained
     # download receipt pins that particular file, rather than the whole repo.
     downloads=read('archive/languages/crystal/20261012/research/source-downloads.json')

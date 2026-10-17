@@ -32,6 +32,13 @@ cite both files of the pinned official compiler example. Lean's related TypeScri
 programs and the official Lean binary-trees example are references, separately
 from the suite-authored Lean applications.
 
+The [predecessor evidence index](../data/source-predecessor-evidence.json) binds
+the complete source bundles at both ends of 32 documented local relationships.
+These include C3 translations and the six specific compact Nim files named by
+the Prolog origin record, used by twelve measured Prolog profiles. New source
+revisions do not inherit those links automatically. A local predecessor does not
+establish an earlier external origin; unresolved lineage remains flagged.
+
 Every measured source file also has an immutable link and SHA-256 for its retained
 revision. This identifies the measured bytes; it does not establish that the
 retained copy is the earliest publication. Collection directories, workload

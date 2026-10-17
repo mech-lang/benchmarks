@@ -145,7 +145,7 @@ def audit(data,models):
         origins=list(dict.fromkeys(r['label'] for r in impl))
         if kind=='ai-generated':label+=' · Mech suite'
         elif origins:label+=' · '+' / '.join(origins)
-        elif kind=='ai-adapted':label+=' · Benchmarks Game' if p['language'] in ['scala','typescript'] else ' · upstream'
+        elif kind=='ai-adapted':label+=' · Benchmarks Game' if p['language'] in ['scala','typescript'] else ' · local predecessor' if parents.get(key) else ' · upstream'
         matches=[r for f in p['files'] for r in models.get(f,[])] if kind!='upstream' else []
         model_ids=sorted({r['model'] for r in matches});matched_files=sorted({r['source_sha256'] for r in matches})
         ai_status='not-applicable' if kind=='upstream' else 'verified-source-writes' if len(matched_files)==len(p['files']) else 'partial-source-writes' if matches else 'unverified'

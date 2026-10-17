@@ -107,6 +107,24 @@ try{
   assert.ok(recipe.includes('24.19.0')&&recipe.includes('25,000,000')&&recipe.includes('Timed command'));
   await page.click('#close-inspector');
   checks.push('source-bound reproduction exports, specific original source, recorded versions, input and accessible recipe');
+  if(process.env.EXPECTED_LOCAL_PREDECESSORS==='1'){
+    const prolog=json.rows.find(r=>r.implementation==='prolog-fasta-compact');
+    assert.ok(prolog);assert.equal(prolog.authorship_details.origin_status,'unresolved');
+    assert.deepEqual(prolog.authorship_details.parent_programs,['fasta:nim-fasta-compact']);
+    const parent=prolog.authorship_details.parent_sources[0];
+    assert.ok(parent.url.includes('/blob/c95f900435aca5ae51030eabeffae2e5dc9a2fc2/'));
+    assert.ok(prolog.original_sources.some(r=>r.url===parent.url));
+    await page.fill('#sample-data-search',prolog.implementation);
+    const sourceLinks=await page.locator('#sample-data-table tbody tr').first().locator('a').evaluateAll(nodes=>nodes.map(n=>n.href));
+    assert.ok(sourceLinks.includes(parent.url));
+    assert.ok((await page.locator('#sample-data-table tbody tr').first().textContent()).includes('Earlier origin unverified'));
+    await page.locator('[data-sample-program]').first().click();
+    const inspector=await page.locator('.source-authorship').textContent();
+    assert.ok(inspector.includes('local predecessor')&&inspector.includes('Original implementation source not established'));
+    assert.ok((await page.locator('.source-authorship a').evaluateAll(nodes=>nodes.map(n=>n.href))).includes(parent.url));
+    await page.click('#close-inspector');
+    checks.push('hash-bound local predecessors in table, inspector and exports without erasing earlier-origin gaps');
+  }
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);
   await page.locator('[data-sample-program]').first().click();
