@@ -25,6 +25,17 @@ class Reproduction(unittest.TestCase):
             Path(temp,'report.json').write_text(json.dumps({'programs':[dict(id='test',samples_seconds=[9,9,9],command=['wrong'],compile_command=['wrong'])]}))
             r=audit.build(self.fixture('report.json'))['programs']['nbody:test']
             self.assertIsNone(r['command']);self.assertEqual(r['build_commands'],[]);self.assertEqual(r['status'],'gaps')
+    def test_native_compiler_is_not_inferred_from_library_or_source_names(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
+            report=dict(toolchains={'c':'gcc-16 16.2.0','llvm':['Homebrew clang version 22.1.8','Target: arm64-apple-darwin25.2.0']},
+                programs=[dict(id='test',samples_seconds=[1,2,3],command=['./app'],
+                    compile_command=['/opt/llvm/bin/clang-22','-I/opt/gcc/include','nbody-gcc-3.c','-o','app'])])
+            Path(temp,'report.json').write_text(json.dumps(report));data=self.fixture('report.json');data['programs']['nbody:test']['language']='c'
+            r=audit.build(data)['programs']['nbody:test'];self.assertEqual(r['version_label'],'Homebrew clang version 22.1.8')
+            self.assertNotIn('gcc-16',json.dumps(r['versions']))
+    def test_native_gcc_and_gpp_historical_aliases_are_supported(self):
+        self.assertEqual(audit.native_compiler_keys('c',[dict(command=['gcc-16','-include','clang-sdk-compat.h'])]),['gcc','c'])
+        self.assertEqual(audit.native_compiler_keys('cpp',[dict(command=['g++-16','clang-port.cpp'])]),['gpp','cpp','gcc'])
     def test_every_retained_profile_has_source_bound_recipe_or_explicit_gaps(self):
         data=json.loads((audit.ROOT/'data/benchmarks.json').read_text());catalog={**data['program_inventory'],**data['programs']}
         index=json.loads((audit.ROOT/'data/reproducibility.json').read_text())

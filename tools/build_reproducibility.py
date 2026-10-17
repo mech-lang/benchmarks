@@ -56,11 +56,27 @@ def recorded_samples(row):
 
 def version_text(value):
     if isinstance(value,str):return value
+    if isinstance(value,list) and value and all(isinstance(line,str) for line in value):return '\n'.join(value)
     if isinstance(value,dict):
         for key in ['version','version_stdout','version_text','actual_version','stdout']:
             if isinstance(value.get(key),str):return value[key]
         if isinstance(value.get('commit'),str):return 'commit '+value['commit']
     return None
+
+def native_compiler_keys(language,commands):
+    """Identify compilers from executable argv, never library/source filenames."""
+    keys=[]
+    for stage in commands:
+        command=stage['command']
+        vectors=command if isinstance(command,list) and command and isinstance(command[0],list) else [command]
+        for argv in vectors:
+            if not isinstance(argv,list) or not argv or not isinstance(argv[0],str):continue
+            executable=Path(argv[0]).name.lower()
+            if re.fullmatch(r'clang(?:\+\+)?(?:-\d+(?:\.\d+)*)?',executable):aliases=['clang','llvm']
+            elif re.fullmatch(r'(?:gcc|g\+\+)(?:-\d+(?:\.\d+)*)?',executable):aliases=['gpp','cpp','gcc'] if language=='cpp' else ['gcc','c']
+            else:continue
+            keys.extend(alias for alias in aliases if alias not in keys)
+    return keys
 
 def version_label(versions):
     labels=[]
@@ -135,9 +151,8 @@ def build(data):
         aliases={'javascript':['javascript','node'],'cpp':['clang','gcc'],'c':['clang','gcc'],
                  'csharp-aot':['csharp'],'fsharp-aot':['fsharp'],'dart-jit':['dart'],'julia-aot':['julia'],
                  'lisp':['sbcl'],'smalltalk':['smalltalk','pharo'],'k':['k','growler'],'bqn':['bqn','cbqn']}.get(lang,[lang])
-        compile_text=json.dumps(build_commands).lower()
         if lang in ['c','cpp']:
-            aliases=['gcc'] if re.search(r'(gcc|g\+\+)',compile_text) and 'clang' not in compile_text else ['clang'] if 'clang' in compile_text and not re.search(r'(gcc|g\+\+)',compile_text) else []
+            aliases=native_compiler_keys(lang,build_commands)
         for ctx,path in contexts:
             for name in ['toolchains','runtimes','compilers','toolchain_versions']:
                 pool=ctx.get(name,{})
