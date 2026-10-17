@@ -1,0 +1,84 @@
+{
+  "schema": "mech.benchmark-language-plan.v1",
+  "language": {
+    "key": "lean4",
+    "label": "Lean 4",
+    "project": "https://lean-lang.org/",
+    "programming_model": "General-purpose functional programming with dependent types; partial definitions support general recursion.",
+    "references": [
+      "https://lean-lang.org/doc/reference/latest/Definitions/Recursive-Definitions/",
+      "https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/"
+    ]
+  },
+  "status": "QUEUED_NOT_IMPLEMENTED_OR_MEASURED",
+  "execution": {
+    "target": "native-aot",
+    "toolchain_version": null,
+    "plan": "Pin the stable Lean 4 toolchain and build standalone native executables with the standard Lean build tools.",
+    "compilation_outside_timer": true,
+    "timed_scope": [
+      "process startup",
+      "Lean runtime initialization",
+      "argument and input handling",
+      "complete benchmark work",
+      "complete output and flushing",
+      "shutdown"
+    ]
+  },
+  "workloads": [
+    {
+      "benchmark": "binarytrees",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "fasta",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "knucleotide",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "mandelbrot",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "nbody",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "pidigits",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "regexredux",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "revcomp",
+      "status": "QUEUED"
+    },
+    {
+      "benchmark": "spectralnorm",
+      "status": "QUEUED"
+    }
+  ],
+  "qualification": [
+    "Retain idiomatic Lean sources, all authored helpers, compiler/runtime versions, dependency provenance and build commands.",
+    "Validate the complete workload input/output contracts and required algorithmic work, including per-node binary-tree allocations and actual pi digit computation.",
+    "Qualify canonical source counts and document standard-library or external-library use under the shared methodology.",
+    "Run fresh complete-process samples serially after correctness qualification; preserve all existing language measurements.",
+    "Reconcile raw observations and publish only qualified sources, counts and timings."
+  ],
+  "completed": {
+    "implementations": 0,
+    "qualified_workloads": 0,
+    "benchmark_samples": 0,
+    "catalog_admission": false
+  },
+  "methodology": "../../docs/methodology.md"
+}
