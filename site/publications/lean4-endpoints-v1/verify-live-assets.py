@@ -142,7 +142,10 @@ def main():
 
     def verify(item):
         name,expected=item;measured=hashlib.sha256();size=0
-        with request(BASE+urllib.parse.quote(name,safe='')+'?verify='+nonce) as response:
+        # Match start()'s versioned dataset request. An unversioned identity
+        # response can retain the prior dataset for its ten-minute cache TTL.
+        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz') else 'verify='+nonce
+        with request(BASE+urllib.parse.quote(name,safe='')+'?'+query) as response:
             require(response.status==200,'Unexpected live asset status: '+name)
             for chunk in iter(lambda:response.read(1024*1024),b''):
                 size+=len(chunk)
@@ -180,7 +183,8 @@ def main():
         build_version=manifest['version'],build_manifest_sha256=publication['build_manifest_sha256'],
         dataset_sha256=publication['dataset_sha256'],publication_receipt_sha256=digest(publication_raw),
         verified_assets=37,files=files,request_user_agent=USER_AGENT,pipeline=observation['pipeline'],jobs=observation['jobs'],
-        pages_deployment_jobs=internal,live_manifest_rechecked_after_assets=True)
+        pages_deployment_jobs=internal,live_manifest_rechecked_after_assets=True,
+        dataset_requested_with_application_build_version=manifest['version'])
     if inspection_error is not None:receipt['pages_deployment_job_inspection_error']=inspection_error
     output.parent.mkdir(parents=True,exist_ok=True)
     with output.open('x') as stream:json.dump(receipt,stream,indent=2);stream.write('\n')

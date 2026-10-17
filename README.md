@@ -56,6 +56,7 @@ node site/tests/languages.mjs data/benchmarks.json
 node site/tests/publication.mjs
 node site/tests/benchmark_traits.mjs
 node site/tests/density.mjs
+node site/tests/view_state.mjs
 ```
 
 These commands export and check recorded results. Running the benchmarks requires the toolchains and dependencies specified in the measurement reports. Measurements run sequentially, without competing benchmark or compilation jobs.

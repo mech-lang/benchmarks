@@ -17,6 +17,7 @@ const server=createServer(async(req,res)=>{
 });
 if(!live)await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=live??`http://127.0.0.1:${server.address().port}/`;
+const expectedBuild=process.env.EXPECTED_BUILD_VERSION,expectedLeanPrograms=process.env.EXPECTED_LEAN_PROGRAMS;
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
 const rows=[],errors=[];
 const settle=page=>page.evaluate(async()=>{await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));});
@@ -59,8 +60,13 @@ async function roundtrip(page,name,{mobile=false}={}){
   await fresh.close();return url;
 }
 try{
-  const page=await open();await roundtrip(page,'default');
+  const page=await open();
+  const actualBuild=await page.locator('script[type="module"]').getAttribute('src');
+  if(expectedBuild)assert.equal(new URL(actualBuild,base).searchParams.get('v'),expectedBuild,'Expected deployed build');
+  await roundtrip(page,'default');
   await page.locator('[data-open-language="lean4"]').click();
+  const leanSummary=await page.locator('#language-overview-summary').textContent();
+  if(expectedLeanPrograms)assert.match(leanSummary,new RegExp(`\\b${Number(expectedLeanPrograms)} programs\\b`),'Expected measured Lean catalog');
   await page.locator('#no-benchmarks').click();
   await page.locator('[data-benchmark="nbody"]').check();
   await page.locator('[data-benchmark="spectralnorm"]').check();
@@ -142,7 +148,7 @@ try{
   const malformed=await open(base+'#v=1&view=language&language=constructor&family=1&inspect=1&detail.program=__proto__&densityMode=no&traits=__proto__:x');
   assert.equal((await snapshot(malformed)).state.view,'summary');await malformed.close();
   await page.close();assert.deepEqual(errors,[]);
-  const report={schema:'benchmark-view-link-browser-regression.v1',status:'PASSED',url:base,cases:rows,
+  const report={schema:'benchmark-view-link-browser-regression.v1',status:'PASSED',url:base,actual_build:actualBuild,initial_lean_summary:leanSummary,cases:rows,
     checks:['fresh-context round trips','desktop/mobile','reload','language reset','comparison','source/helper selection','filters','layers','axes','years','sorts','empty selections','Back/Forward','clipboard','clipboard fallback','malformed URL validation'],page_errors:errors,benchmark_executions:0};
   if(output)await writeFile(output,JSON.stringify(report,null,2)+'\n');
   console.log(JSON.stringify({status:report.status,cases:rows.length,page_errors:errors}));
