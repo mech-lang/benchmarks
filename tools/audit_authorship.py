@@ -130,7 +130,8 @@ def audit(data,models):
             license_('Apache-2.0','https://github.com/leanprover/lean4/blob/v4.35.0/LICENSE','Referenced Lean compiler benchmark','experiments/lean4/source-provenance-v1.json')
         for f in p['files']:
             if 'The MIT License' in data['files'][f]['code']:
-                license_('MIT',REPO+'/blob/main/programs/'+p['language'],'Bundled source with an MIT notice',data['files'][f]['path'])
+                source_path=data.get('archive_paths',{}).get(data['files'][f]['path'],data['files'][f]['path'])
+                license_('MIT',REPO+'/blob/main/'+source_path,'Bundled source with an MIT notice',source_path)
         if not licenses:unresolved.append('No license evidence recorded for this source bundle')
         if p.get('license_url')=='./benchmarks-game-license.txt':
             license_('BSD-3-Clause',BSD,'Retained upstream application','site/reports/benchmarks-game-license.txt')

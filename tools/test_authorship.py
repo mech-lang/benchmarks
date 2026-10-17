@@ -50,6 +50,8 @@ class Authorship(unittest.TestCase):
             self.assertTrue(set(a['ai']['matched_source_files']).issubset(p['files']))
             for e in a['ai']['evidence']:self.assertIn(e['source_sha256'],p['files'])
             for path in a['evidence']:self.assertTrue((audit.ROOT/path).is_file(),path)
+            for license in a['license']['licenses']:
+                self.assertTrue((audit.ROOT/license['evidence']).is_file(),license['evidence'])
             self.assertNotIn('/Users/',json.dumps(a));self.assertNotIn('session_id',json.dumps(a))
         self.assertEqual(len(catalog),1013)
 
