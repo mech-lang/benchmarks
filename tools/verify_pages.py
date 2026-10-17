@@ -142,10 +142,13 @@ def main():
 
     def verify(item):
         name,expected=item;measured=hashlib.sha256();size=0
-        # Match start()'s versioned dataset request. An unversioned identity
-        # response can retain the prior dataset for its ten-minute cache TTL.
-        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz') else 'verify='+nonce
-        with request(BASE+urllib.parse.quote(name,safe='')+'?'+query) as response:
+        # Match the application's versioned dataset/module/style URLs and its
+        # bare HTML entry point. Other retained reports use a fresh probe.
+        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
+        url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='')+'?'+query
+        try: response=request(url)
+        except Exception as error: raise RuntimeError('Live asset request failed: '+name) from error
+        with response:
             require(response.status==200,'Unexpected live asset status: '+name)
             for chunk in iter(lambda:response.read(1024*1024),b''):
                 size+=len(chunk)
