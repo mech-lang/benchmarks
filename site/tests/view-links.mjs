@@ -72,6 +72,10 @@ try{
   await page.locator('#chart-axes').selectOption('samples');
   const hero=await roundtrip(page,'Lean with two active benchmarks and density/global layers');
   await roundtrip(page,'Same language selection on mobile',{mobile:true});
+  await page.locator('[data-view="summary"]').click();
+  await roundtrip(page,'Summary with a saved language tab and two active benchmarks');
+  await page.locator('[data-view="language"]').click();await settle(page);
+  assert.deepEqual((await snapshot(page)).state.benchmarks,['nbody','spectralnorm']);
   await page.reload();await page.waitForFunction(()=>!!window.benchmarkExplorer);await settle(page);
   assert.equal(new URL(page.url()).hash,new URL(hero).hash,'Reload retains active benchmarks');
   await page.locator('#reset').click();await settle(page);

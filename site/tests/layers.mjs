@@ -48,7 +48,8 @@ const document={querySelector:element,querySelectorAll:()=>[],createComment:()=>
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
-const context=vm.createContext({...math,...formatted,...benchmarkFilters,...labels,document,window:{},innerWidth:1000,
+const context=vm.createContext({...math,...formatted,...benchmarkFilters,...labels,document,window:{addEventListener(){}},innerWidth:1000,innerHeight:900,
+  ResizeObserver:class{observe(){}},requestAnimationFrame:()=>0,
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
   realAxisData:formatted.axisData,realProjectProgram:formatted.projectProgram,

@@ -38,7 +38,11 @@ def replay_counts(path, build, build_path):
         assert sha(file) == unit['sha256'] and unit['physical_loc'] == len(physical)
         assert unit['canonical_loc'] == normalized
         replayed.append(file.name)
-    assert len(replayed) == 10
+    assert len(replayed) == len(set(replayed)) == 10
+    assert set(replayed) == {p.name for p in source.glob('*.lean')}
+    if 'reader_sha256' in counts:
+        assert counts['fixtures_verified'] == 6
+        assert sha(path.parent / 'reader/Reader.lean') == counts['reader_sha256']
     for name, unit in counts['units'].items():
         file = source / name
         assert sha(file) == unit['sha256']
@@ -79,6 +83,16 @@ def main():
         bounded = json.loads(bounded_path.read_text())
         assert sha(bounded_path) == full['bounded_prerequisite']['sha256'] == work['bounded_report_sha256']
         assert bounded['status'] == 'PASSED' and len(bounded['cases']) == 149 and bounded['sources'] == build['sources']
+        assert all(row['valid'] for row in bounded['cases'])
+        assert sha(full_path.parent / 'protocol-controller.py') == full['controller_sha256']
+        provenance = json.loads((full_path.parent / 'variant-controller.json').read_text())
+        assert provenance['protocol_controller_sha256'] == full['controller_sha256']
+        assert provenance['timing_and_output_validation_logic_changed'] is False
+        allowed_inputs = {(254166745,'3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'),
+                          (50833411,'97197f5957a12f8a859ba7edff6d97994daa18afacd77db21fa68c6f2e447e38')}
+        for name, pin in full['input_pins'].items():
+            assert (pin['bytes'],pin['sha256']) in allowed_inputs
+            assert Path(name).stat().st_size == pin['bytes'] and sha(name) == pin['sha256']
         counts, replay = replay_counts(counts_path, build, build_path)
         selected = set(full['binaries'])
         assert len(full['cases']) == full['benchmark_samples'] == 3 * len(selected)
