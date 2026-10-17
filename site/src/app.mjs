@@ -5,6 +5,7 @@ import {renderRankingCharts} from './rankings.mjs?v=20261013-combined2';
 import {axisData,projectProgram,hasFormattedLOC,formattedText,formattedValue} from './formatted_axis.mjs?v=20261013-combined2';
 import {createLabelPlacer} from './labels.mjs';
 import {encodeView,decodeView} from './view_state.mjs';
+import {sampleRows,filterSamples,sortSamples,sampleColumns,exportRows,samplesCSV} from './sample_data.mjs';
 
 const $=selector=>document.querySelector(selector);
 // The same controls live in the desktop sidebar or the phone's modal drawer.
@@ -83,7 +84,7 @@ mobileFilters.addEventListener('change',syncFilterPlacement);
 syncFilterPlacement();
 
 const svgNS='http://www.w3.org/2000/svg';
-let data,model,traits,programCatalog,rememberedLanguageView=null;
+let data,model,traits,programCatalog,rememberedLanguageView=null,sampleDataset=[];
 let languageIndex,benchmarkIndex,familyIndex;
 const programsByBenchmark=new Map(),comparisonViews=new Map(),formattedPrograms=new WeakMap();
 const medianStatistics=new WeakMap(),sampleInputsByEntries=new WeakMap(),globalStatisticsByEntries=new WeakMap();
@@ -93,6 +94,7 @@ const sampleNodes=new Map();
 let renderedSamplePlot=null,renderedDensityLayer=null;
 let benchmarkEntries=null,densityCache=null;
 const state={benchmarks:new Set(),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(),disabled:new Set(),ellipses:new Set(['mech']),
+  dataQuery:'',dataPage:0,dataPageSize:100,dataSelected:[],
   view:'summary',focus:'nbody',locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false,playing:false,collapsedFamilies:new Set(),releaseYearStart:null,releaseYear:null,playbackYear:null,traits:emptyTraitFilters(),languageFocus:null,
   detail:{language:'mech',benchmark:'nbody',kind:'fast',program:null,aggregate:false,file:0}};
 const colors={};
@@ -101,12 +103,12 @@ const domains=new Map();
 let currentDomain=null;
 let playbackTimer=null;
 let renderedChartWidth=null,renderedChartMobile=null,chartResizeFrame=null;
-const tableSort={comparison:{key:'language',direction:1},timings:{key:'run',direction:1},implementations:{key:null,direction:1}};
+const tableSort={data:{key:'language_label',direction:1},comparison:{key:'language',direction:1},timings:{key:'run',direction:1},implementations:{key:null,direction:1}};
 let viewDefaults=null,restoringView=false,viewLinkQueued=false,pushViewLink=false,lastViewLink=null,viewLinkTimer=null,lastViewWrite=-Infinity;
 function captureView(selection=state,inspectorOpen=$('#inspector').open){
   const sets=key=>Object.fromEntries(Object.entries(selection[key]).map(([key,values])=>[key,[...values]]));
   const focus=selection.languageFocus;
-  return {...Object.fromEntries(['view','focus','locMetric','fast','small','sampleMode','medianMode','densityMode','focusMeans','global','releaseYearStart','releaseYear','playbackYear'].map(key=>[key,selection[key]])),
+  return {...Object.fromEntries(['view','focus','locMetric','fast','small','sampleMode','medianMode','densityMode','focusMeans','global','releaseYearStart','releaseYear','playbackYear','dataQuery','dataPage','dataPageSize','dataSelected'].map(key=>[key,key.startsWith('data')?state[key]:selection[key]])),
     ...Object.fromEntries(['benchmarks','languages','ellipses','disabled','collapsedFamilies'].map(key=>[key,[...selection[key]]])),
     traits:sets('traits'),benchmarkFilters:sets('benchmarkFilters'),
     languageFocus:focus?Object.fromEntries(['selectionKey','family','variant','benchmark','program','comparison','comparisonLanguage','comparisonProgram'].map(key=>[key,focus[key]??null])):null,
@@ -155,7 +157,8 @@ function restoreViewLink(){
     traits:Object.fromEntries(traitDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
     benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
     yearMin:yearBounds().min,yearMax:yearBounds().max,
-    sorts:{comparison:['language','loc','fastest','slope','length','areaFast','areaSmall'],timings:['run','elapsed'],implementations:['','show','program','loc','median']}};
+    sampleIDs:sampleDataset.map(r=>r.id),
+    sorts:{data:sampleColumns.map(([key])=>key),comparison:['language','loc','fastest','slope','length','areaFast','areaSmall'],timings:['run','elapsed'],implementations:['','show','program','loc','median']}};
   const restored=decodeView(location.hash,viewDefaults,spec)??structuredClone(viewDefaults);
   restoringView=true;clearTimeout(viewLinkTimer);viewLinkTimer=null;pushViewLink=false;closeFilterDrawer();pauseYears();rememberedLanguageView=null;
   const {inspectorOpen,tableSort:sorts,benchmarkExpanded,languageExpanded}=restored;
@@ -294,14 +297,16 @@ function selectView(view){
     if(rememberedLanguageView){
       closeFilterDrawer();pauseYears();
       const {inspectorOpen,...selection}=rememberedLanguageView;
-      Object.assign(state,selection);
+      const sampleState=Object.fromEntries(['dataQuery','dataPage','dataPageSize','dataSelected'].map(key=>[key,state[key]]));
+      Object.assign(state,selection,sampleState);
       if(inspectorOpen&&!$('#inspector').open){$('#inspector').show();$('#chart-detail-layout').classList.add('inspector-open');}
       if(!inspectorOpen&&$('#inspector').open){$('#inspector').close();$('#chart-detail-layout').classList.remove('inspector-open');}
       update();$('#language-overview-title').focus({preventScroll:true});
     }
     return;
   }
-  const wasLanguage=languageOverviewVisible();leaveLanguageFocusForSelection();
+  const wasLanguage=languageOverviewVisible(),priorFocus=state.languageFocus;leaveLanguageFocusForSelection();
+  if(view==='data'&&priorFocus)state.languages=new Set(priorFocus.keys);
   if(view==='summary'&&wasLanguage){reset();return;}
   if(view==='mech')enterMechView();else state.view=view;
   update();
@@ -535,7 +540,8 @@ function sortTable(button){
   sort.direction=sort.key===key?-sort.direction:1;sort.key=key;
   const inspector=$('#inspector'),scrollTop=inspector.scrollTop;
   const variantScroll=$('.variant-list')?.scrollTop??0;
-  if(table==='comparison')renderTable();else{
+  if(table==='data'){state.dataPage=0;renderSampleTable();}
+  else if(table==='comparison')renderTable();else{
     renderInspector();inspector.scrollTop=scrollTop;
     $('.variant-list').scrollTop=variantScroll;
   }
@@ -568,7 +574,7 @@ function currentRankings(){
   return medianRankings(currentEntries(),{referenceLanguage:languageOverviewVisible()?state.languageFocus.variant:null});
 }
 function renderMedianRankings(){
-  const active=state.view==='rankings'||languageOverviewVisible(),panel=$('#median-rankings');panel.hidden=!active;$('.chart-card').hidden=state.view==='rankings';
+  const active=state.view==='rankings'||languageOverviewVisible(),panel=$('#median-rankings');panel.hidden=!active;$('.chart-card').hidden=['rankings','data'].includes(state.view);
   if(!active)return;
   const rankings=currentRankings(),count=rankings.speed.entries.length,reference=rankings.speed.reference_language;
   const origin=reference===null?'the ratio-coordinate median':shortName(reference);
@@ -583,14 +589,22 @@ function renderMedianRankings(){
 }
 function update(){
   benchmarkEntries=null;
+  syncSampleInspector();
   model=comparison(plotData(),allSelection());
   renderYears();renderControls();
   // The inspector also renders the overview and rankings after selecting its
   // program. Avoid constructing those tables and SVGs twice in one update.
   if($('#inspector').open)renderInspector({renderRelated:false});
   renderLanguageOverview();renderMedianRankings();
-  if(state.view!=='rankings')renderChart();
-  if(state.view!=='rankings'&&!languageOverviewVisible())renderTable();
+  const dataView=state.view==='data';
+  $('#sample-data').hidden=!dataView;
+  for(const selector of ['.loc-metric-control','.axes-control','.year-playback','#formatted-loc-note','.method']){
+    const element=$(selector);
+    if(selector==='#formatted-loc-note')element.hidden=dataView||state.locMetric!=='formatted';else element.hidden=dataView;
+  }
+  if(dataView)renderSampleTable();
+  else if(state.view!=='rankings')renderChart();
+  if(!dataView&&state.view!=='rankings'&&!languageOverviewVisible())renderTable();
   $('#selection-summary').textContent=`${effectiveBenchmarks().size}/${data.benchmarks.length} selected · ${familyCount(model.entries.map(e=>e.language.key))} languages · ${model.entries.length} variants · ${state.disabled.size} hidden`;
   const visible=currentEntries();
   const enabled=effectiveLanguages();
@@ -607,7 +621,7 @@ function update(){
 }
 function updatePlot(){
   // Profile choices filter chart observations; layer and axis controls change presentation.
-  renderChart();renderPlotOptions();
+  if(state.view!=='data')renderChart();renderPlotOptions();
   for(const [id,key] of [['fast-profile','fast'],['small-profile','small'],['show-global','global']])$('#'+id).checked=state[key];
   queueViewLink();
 }
@@ -743,8 +757,9 @@ function openPoint(info){
   if(!$('#inspector').open){
     $('#chart-detail-layout').classList.add('inspector-open');
     $('#inspector').show();
-    renderChart();
+    if(state.view!=='data')renderChart();
   }
+  if(state.view==='data')$('#data-inspector-host').scrollIntoView({block:'nearest'});
   clearHoverDetails();
   $('#close-inspector').focus({preventScroll:true});
   queueViewLink({push:true});
@@ -752,7 +767,7 @@ function openPoint(info){
 function closeInspector(){
   $('#inspector').close();
   $('#chart-detail-layout').classList.remove('inspector-open');
-  renderChart();
+  if(state.view!=='data')renderChart();
   queueViewLink();
 }
 function clearHoverDetails(){
@@ -1100,6 +1115,96 @@ function renderChart(){
   }
   updateHighlight();
 }
+function syncSampleInspector(){
+  const inspector=$('#inspector'),host=state.view==='data'?$('#data-inspector-host'):$('#chart-detail-layout');
+  if(inspector.parentNode!==host)host.append(inspector);
+}
+function currentDataRows(){
+  return sortSamples(filterSamples(sampleDataset,{languages:effectiveLanguages(),benchmarks:effectiveBenchmarks(),
+    disabled:state.disabled,query:state.dataQuery}),tableSort.data);
+}
+function dataBrowsingPrograms(){
+  return [...new Map(currentDataRows().flatMap(r=>r.implementations).map(p=>[p.key,p])).values()];
+}
+function sampleImplementationLink(program){
+  const url=new URL(location.href);url.hash=encodeView({...viewDefaults,view:'data',inspectorOpen:true,
+    detail:{language:program.language,benchmark:program.benchmark,program:program.key,kind:'fast',file:0,aggregate:false}},viewDefaults);
+  return url.href;
+}
+function renderSampleTable(){
+  const rows=currentDataRows(),pages=Math.max(1,Math.ceil(rows.length/state.dataPageSize));
+  state.dataPage=Math.min(state.dataPage,pages-1);
+  const start=state.dataPage*state.dataPageSize,visible=rows.slice(start,start+state.dataPageSize),selected=new Set(state.dataSelected);
+  $('#sample-data-summary').textContent=`${rows.length.toLocaleString()} / ${sampleDataset.length.toLocaleString()} recorded runs · ${new Set(rows.map(r=>r.program)).size.toLocaleString()} measured implementations`;
+  $('#sample-data-search').value=state.dataQuery;$('#sample-page-size').value=String(state.dataPageSize);
+  $('#sample-page-status').textContent=`${rows.length?start+1:0}–${Math.min(start+state.dataPageSize,rows.length)} · Page ${state.dataPage+1} / ${pages}`;
+  for(const button of document.querySelectorAll('[data-sample-page]'))button.disabled=['first','previous'].includes(button.dataset.samplePage)?state.dataPage===0:state.dataPage===pages-1;
+  $('#sample-data-table thead').innerHTML='<tr><th scope="col"><input id="select-sample-page" type="checkbox" aria-label="Select this page"></th>'+sampleColumns.map(([key,label])=>sortHeader('data',key,label)).join('')+'</tr>';
+  const selectPage=$('#select-sample-page'),checked=visible.filter(r=>selected.has(r.id)).length;
+  selectPage.checked=visible.length>0&&checked===visible.length;selectPage.indeterminate=checked>0&&checked<visible.length;selectPage.disabled=!visible.length;
+  const cell=(r,key)=>{
+    if(key==='implementation')return r.implementations.map((p,i)=>`<a class="sample-implementation" data-sample-program="${esc(p.key)}" href="${esc(sampleImplementationLink(p))}">${esc(p.id)}</a>${i?' <small>(shared runs)</small>':''}`).join('<br>');
+    if(key==='language_label')return `<button data-open-language="${esc(r.language)}">${esc(r[key])}</button>`;
+    const value=r[key];
+    if(value==null)return '—';
+    if(['seconds','median_seconds','sd_seconds'].includes(key))return `<span title="${esc(value)}">${Number(value.toPrecision(6))}</span>`;
+    if(key==='time_x_best')return `<span title="${esc(value)}">${Number(value.toPrecision(4))}×</span>`;
+    return esc(value);
+  };
+  $('#sample-data-table tbody').innerHTML=visible.map(r=>`<tr data-sample-id="${esc(r.id)}" class="${selected.has(r.id)?'sample-selected':''}"><td><input type="checkbox" data-select-sample="${esc(r.id)}" aria-label="Select ${esc(r.implementation)} run ${r.run}" ${selected.has(r.id)?'checked':''}></td>${sampleColumns.map(([key])=>`<td class="${typeof r[key]==='number'?'sample-numeric':''}">${cell(r,key)}</td>`).join('')}</tr>`).join('');
+  $('#sample-data-empty').hidden=rows.length>0;
+  $('#sample-selection-count').textContent=`${selected.size.toLocaleString()} selected${selected.size?` · ${rows.filter(r=>selected.has(r.id)).length.toLocaleString()} in current filters`:''}`;
+  $('#clear-selected-samples').disabled=!selected.size;$('#select-filtered-samples').disabled=!rows.length;
+  updateSampleExportButton();
+}
+function updateSampleExportButton(){
+  const scope=$('#sample-export-scope').value;
+  $('#download-samples').disabled=scope==='selected'?!state.dataSelected.length:scope==='filtered'?!currentDataRows().length:false;
+}
+function initSampleTable(){
+  const refresh=()=>{renderSampleTable();queueViewLink();};
+  $('#sample-data-search').oninput=event=>{state.dataQuery=event.target.value;state.dataPage=0;refresh();};
+  $('#sample-page-size').onchange=event=>{state.dataPageSize=Number(event.target.value);state.dataPage=0;refresh();};
+  $('#reset-sample-data').onclick=()=>{
+    pauseYears();fullReleaseWindow();state.languages=new Set(data.languages.map(l=>l.key));state.benchmarks=new Set(data.benchmarks.map(b=>b.key));
+    state.traits=emptyTraitFilters();state.benchmarkFilters=emptyBenchmarkFilters();state.disabled.clear();
+    state.dataQuery='';state.dataPage=0;update();
+  };
+  $('#select-filtered-samples').onclick=()=>{state.dataSelected=[...new Set([...state.dataSelected,...currentDataRows().map(r=>r.id)])];refresh();};
+  $('#clear-selected-samples').onclick=()=>{state.dataSelected=[];refresh();};
+  $('#sample-export-scope').onchange=updateSampleExportButton;
+  $('#download-samples').onclick=()=>{
+    writeViewLink({force:true});
+    const scope=$('#sample-export-scope').value,format=$('#sample-export-format').value,selected=new Set(state.dataSelected);
+    const rows=scope==='all'?sortSamples(sampleDataset,tableSort.data):scope==='selected'?sortSamples(sampleDataset.filter(r=>selected.has(r.id)),tableSort.data):currentDataRows();
+    const records=exportRows(rows,sampleImplementationLink);
+    const programs=Object.fromEntries([...new Map(rows.flatMap(r=>r.implementations).map(p=>[p.key,p]))].map(([key,p])=>{
+      const {samples,sample_details,...metadata}=p;return [key,metadata];
+    }));
+    const content=format==='csv'?samplesCSV(records):JSON.stringify({schema:'benchmark-samples.v1',view_url:location.href,
+      scope,row_count:records.length,protocol:data.protocol,rows:records,programs,
+      languages:data.languages.filter(l=>rows.some(r=>r.language===l.key)),
+      benchmarks:data.benchmarks.filter(b=>rows.some(r=>r.benchmark===b.key)).map(({groups,...metadata})=>metadata),
+      files:Object.fromEntries([...new Set(Object.values(programs).flatMap(p=>p.files))].map(key=>[key,data.files[key]]))},null,2)+'\n';
+    const url=URL.createObjectURL(new Blob([content],{type:format==='csv'?'text/csv;charset=utf-8':'application/json'}));
+    const a=document.createElement('a');a.href=url;a.download=`benchmark-samples-${scope}.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    $('#sample-export-status').textContent=`Exported ${records.length.toLocaleString()} rows`;
+  };
+  document.addEventListener('click',event=>{
+    const program=event.target.closest('[data-sample-program]');
+    if(program&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey&&event.button===0){event.preventDefault();openPoint({program:program.dataset.sampleProgram});return;}
+    const page=event.target.closest('[data-sample-page]');
+    if(page&&!page.disabled){const last=Math.max(0,Math.ceil(currentDataRows().length/state.dataPageSize)-1);
+      state.dataPage=({first:0,previous:state.dataPage-1,next:state.dataPage+1,last})[page.dataset.samplePage];refresh();}
+  });
+  document.addEventListener('change',event=>{
+    const id=event.target.dataset.selectSample,all=event.target.id==='select-sample-page';
+    if(!id&&!all)return;
+    const rows=all?currentDataRows().slice(state.dataPage*state.dataPageSize,(state.dataPage+1)*state.dataPageSize).map(r=>r.id):[id];
+    const selected=new Set(state.dataSelected);for(const key of rows)event.target.checked?selected.add(key):selected.delete(key);
+    state.dataSelected=[...selected];refresh();
+  });
+}
 function renderTable(){
   const entries=sortedRows('comparison',currentEntries().map(entry=>({...entry,metrics:comparisonMetrics(entry)})),(entry,key)=>key==='language'?shortName(entry.language.key):entry.metrics[key]);
   $('#mean-table thead').innerHTML='<tr>'+[
@@ -1192,7 +1297,7 @@ function renderInspector({renderRelated=true}={}){
   const availablePrograms=benchmarkPrograms(b.key,program.language);
   const implementations=sortedRows('implementations',availablePrograms,(item,key)=>({show:state.disabled.has(item.key)?1:0,program:item.id,loc:item.loc,median:item.seconds})[key]);
   const canonicalProgram=group?.programs.includes(program.key)??false;
-  const browsing=state.languageFocus&&focusKeys().has(program.language)?focusPrograms():availablePrograms;
+  const browsing=state.view==='data'?dataBrowsingPrograms():state.languageFocus&&focusKeys().has(program.language)?focusPrograms():availablePrograms;
   const browsingIndex=browsing.findIndex(p=>p.key===program.key);
   const navigation=`<div class="program-navigation"><button class="quiet-button" data-step-program="-1" ${browsingIndex<=0?'disabled':''}>Previous program</button><span>${browsingIndex+1} / ${browsing.length} published programs</span><button class="quiet-button" data-step-program="1" ${browsingIndex>=browsing.length-1?'disabled':''}>Next program</button></div>${state.languageFocus&&focusKeys().has(program.language)?`<button class="inspector-comparison quiet-button" data-compare-program="${program.key}">Compare this benchmark</button>`:`<button class="inspector-comparison quiet-button" data-open-language="${program.language}">Open language overview</button>`}`;
   const bestComparison=pending||!eligibleForChart(program)?'':`<p class="profile-note best-comparison">This program: <strong>${program.seconds.toFixed(6)} s</strong> · <strong>${(program.seconds/b.baseline_seconds).toFixed(3)}× best time</strong>, against this benchmark’s fixed best-time baseline (<strong>${b.baseline_seconds.toFixed(6)} s</strong>).</p>`;
@@ -1295,6 +1400,7 @@ async function start(){
   // Backend aggregates cover the complete qualified inventory, independently
   // of endpoint, LOC metric and visibility selections.
   traits=languageTraits({...data,programs:programCatalog});
+  sampleDataset=sampleRows(data,programCatalog);
   for(const l of data.languages)colors[l.key]=darkColor(l.color);
   const yearSources=[...new Map(data.languages.map(l=>[l.release_name,l])).values()].sort((a,b)=>a.release_year-b.release_year||a.release_name.localeCompare(b.release_name));
   $('#release-year-sources').innerHTML=yearSources.map(l=>`<li><a href="${esc(l.release_source)}" target="_blank" rel="noopener">${esc(l.release_name)} · ${l.release_year}</a><span>${esc(l.release_note)}</span></li>`).join('');
@@ -1318,6 +1424,7 @@ async function start(){
     try{await navigator.clipboard.writeText(location.href);$('#copy-view-status').textContent='Link copied';}
     catch{const input=$('#view-link-fallback');input.hidden=false;input.value=location.href;input.focus();input.select();$('#copy-view-status').textContent='Copy the selected link';}
   };
+  initSampleTable();
   $('#all-benchmarks').onclick=()=>selectBenchmarks(data.benchmarks.map(b=>b.key),{clearFilters:true});
   $('#no-benchmarks').onclick=()=>selectBenchmarks([],{clearFilters:true});
   $('#clear-benchmark-filters').onclick=()=>selectBenchmarks(state.benchmarks,{clearFilters:true});
@@ -1356,7 +1463,7 @@ async function start(){
     const compareLanguage=event.target.closest('[data-compare-language]');if(compareLanguage&&!compareLanguage.disabled){compareOverviewLanguage(compareLanguage.dataset.compareLanguage);return;}
     const compareProgram=event.target.closest('[data-compare-program]');if(compareProgram){compareOverviewProgram(compareProgram.dataset.compareProgram);return;}
     const stepProgram=event.target.closest('[data-step-program]');if(stepProgram&&!stepProgram.disabled){
-      const current=selectedProgram(),browsing=state.languageFocus&&focusKeys().has(current.language)?focusPrograms():benchmarkPrograms(current.benchmark,current.language);
+      const current=selectedProgram(),browsing=state.view==='data'?dataBrowsingPrograms():state.languageFocus&&focusKeys().has(current.language)?focusPrograms():benchmarkPrograms(current.benchmark,current.language);
       const p=browsing[browsing.findIndex(p=>p.key===current.key)+Number(stepProgram.dataset.stepProgram)];
       if(p)openPoint({language:p.language,benchmark:p.benchmark,program:p.key});return;
     }
@@ -1407,7 +1514,7 @@ async function start(){
     if(element.id==='detail-file'){state.detail.file=Number(element.value);renderInspector();}
   });
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&$('#inspector').open)closeInspector();});
-  const chartSizeChanged=()=>state.view!=='rankings'&&(Math.max(290,$('#chart').clientWidth)!==renderedChartWidth||(innerWidth<=720)!==renderedChartMobile);
+  const chartSizeChanged=()=>!['rankings','data'].includes(state.view)&&(Math.max(290,$('#chart').clientWidth)!==renderedChartWidth||(innerWidth<=720)!==renderedChartMobile);
   new ResizeObserver(()=>{
     if(!chartSizeChanged()||chartResizeFrame!==null)return;
     chartResizeFrame=requestAnimationFrame(()=>{chartResizeFrame=null;if(chartSizeChanged())renderChart();});
@@ -1415,6 +1522,7 @@ async function start(){
   let rankingWidth=-1;
   new ResizeObserver(entries=>{const width=entries[0].contentRect.width;if(width!==rankingWidth){rankingWidth=width;requestAnimationFrame(renderMedianRankings);}}).observe($('#median-ranking-cards'));
   window.benchmarkExplorer={getSelection:()=>({benchmarks:[...effectiveBenchmarks()],selectedBenchmarks:[...state.benchmarks],benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(({key})=>[key,[...state.benchmarkFilters[key]]])),languages:[...effectiveLanguages()],selectedLanguages:[...state.languages],traits:Object.fromEntries(traitDimensions.map(({key})=>[key,[...state.traits[key]]])),releaseYearStart:state.releaseYearStart,releaseYear:state.releaseYear,shownReleaseYear:shownReleaseYear(),playbackYear:state.playbackYear,ellipses:[...state.ellipses],disabled:[...state.disabled],view:state.view,locMetric:state.locMetric,languageFocus:state.languageFocus?{keys:[...state.languageFocus.keys],program:state.languageFocus.program,comparison:state.languageFocus.comparison}:null,samples:samplesVisible(),sampleMode:state.sampleMode,medianMode:state.medianMode,densityMode:state.densityMode,focusMeans:state.focusMeans,global:state.global,playing:state.playing}),
+    getSampleData:()=>({total:sampleDataset.length,filtered:currentDataRows().map(r=>r.id),selected:[...state.dataSelected]}),
     getViewState:captureView,getShareURL:()=>{writeViewLink({force:true});return location.href;},
     getDensity:()=>structuredClone(currentDensityField()),
     setLayerModes,

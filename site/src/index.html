@@ -62,6 +62,7 @@
             <button data-view="benchmark" aria-pressed="false">Benchmark</button>
             <button data-view="mech" aria-pressed="false">Mech</button>
             <button data-view="rankings" aria-pressed="false">Rankings</button>
+            <button data-view="data" aria-pressed="false">Sample data</button>
             <button id="language-view-tab" data-view="language" aria-pressed="false" hidden>Language overview</button>
           </div>
           <label class="loc-metric-control">Source metric <select id="loc-metric" aria-label="Source line metric" aria-describedby="formatted-loc-note"><option value="canonical">Canonical LOC</option><option value="formatted">Formatted LOC</option></select></label>
@@ -71,6 +72,18 @@
           <div class="share-view"><button id="copy-view-link" class="quiet-button">Copy link</button><span id="copy-view-status" role="status" aria-live="polite"></span><input id="view-link-fallback" aria-label="Link to this view" readonly hidden></div>
         </div>
         <p id="formatted-loc-note" class="profile-note" hidden>Formatted LOC counts nonblank, noncomment source lines after the language project's formatter. A total is blank until every authored source and helper has qualified output. Chart positions and median rankings require qualified formatted coordinates; incomplete counts are omitted. Original timing measurements, sources and the fixed best-time baseline are preserved.</p>
+        <section id="sample-data" aria-labelledby="sample-data-title" hidden>
+          <div class="sample-data-heading"><div><h2 id="sample-data-title">Recorded samples</h2><p id="sample-data-summary" role="status" aria-live="polite"></p></div><button id="reset-sample-data" class="quiet-button">Show all data</button></div>
+          <p class="control-note">Every retained implementation; sidebar filters apply. Shared runs appear once. Time × best uses each benchmark’s fixed fastest median. Blank cells mean unavailable.</p>
+          <div class="sample-data-tools"><label class="sample-search">Search samples<input id="sample-data-search" type="search" maxlength="500" placeholder="Language, benchmark, program or runtime…"></label><label>Rows per page<select id="sample-page-size"><option>50</option><option selected>100</option><option>250</option></select></label></div>
+          <div class="sample-selection-tools"><button id="select-filtered-samples" class="quiet-button">Select all filtered rows</button><button id="clear-selected-samples" class="quiet-button">Clear selection</button><span id="sample-selection-count" role="status" aria-live="polite"></span></div>
+          <div class="sample-export-tools"><label>Export<select id="sample-export-scope"><option value="all">Entire dataset</option><option value="filtered" selected>Filtered rows</option><option value="selected">Selected rows</option></select></label><label>Format<select id="sample-export-format"><option value="csv">CSV</option><option value="json">JSON + sources</option></select></label><button id="download-samples" class="quiet-button">Download</button><span id="sample-export-status" role="status" aria-live="polite"></span></div>
+          <div id="data-inspector-host"></div>
+          <div class="sample-pagination"><button class="quiet-button" data-sample-page="first" aria-label="First sample page">First</button><button class="quiet-button" data-sample-page="previous" aria-label="Previous sample page">Previous</button><span id="sample-page-status" aria-live="polite"></span><button class="quiet-button" data-sample-page="next" aria-label="Next sample page">Next</button><button class="quiet-button" data-sample-page="last" aria-label="Last sample page">Last</button></div>
+          <div class="sample-data-scroll" tabindex="0" role="region" aria-label="Recorded sample table; scroll horizontally for all columns"><table id="sample-data-table" aria-describedby="sample-data-summary"><thead></thead><tbody></tbody></table></div>
+          <p id="sample-data-empty" class="control-note" hidden>No recorded runs match these filters.</p>
+          <p class="control-note">Exports include every matching row across all pages, full numeric precision, implementation links, source hashes and timing-report references. Individually selected rows stay selected when filters change. JSON also includes the matching source files, program metadata, view URL and measurement protocol.</p>
+        </section>
         <section id="language-overview" class="language-overview" aria-labelledby="language-overview-title" hidden>
           <div class="language-overview-heading"><div><p class="eyebrow">Language explorer</p><h2 id="language-overview-title" tabindex="-1"></h2><p id="language-overview-summary"></p></div><div class="overview-actions"><button id="return-language-overview" class="quiet-button" hidden>Back to language overview</button></div></div>
           <p class="overview-statistics-note">The language chart highlights every published program and recorded run. Overlapping runs share their measured coordinates. Diamonds show coordinate medians across benchmark endpoints; 1σ / 2σ covariance contours describe variation across benchmarks. The table’s SD measures variation between repeated runs of one program. A run can fall below the 1× median baseline.</p>

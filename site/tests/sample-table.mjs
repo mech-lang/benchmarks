@@ -1,0 +1,132 @@
+import assert from 'node:assert/strict';
+import {createServer} from 'node:http';
+import {readFile,stat,writeFile} from 'node:fs/promises';
+import path from 'node:path';
+
+const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??'playwright');
+const root=path.resolve(process.argv[2]??'site/public'),output=process.argv[3];
+const live=process.env.SAMPLE_TABLE_TEST_URL;
+const server=createServer(async(req,res)=>{
+  try{
+    const name=decodeURIComponent(new URL(req.url,'http://localhost').pathname);
+    const file=path.resolve(root,'.'+(name==='/'?'/index.html':name));
+    assert.ok(file.startsWith(root+path.sep)&&(await stat(file)).isFile());
+    res.writeHead(200,{'Content-Type':({'.mjs':'text/javascript','.json':'application/json','.css':'text/css','.html':'text/html'})[path.extname(file)]??'text/plain'});
+    res.end(await readFile(file));
+  }catch{res.writeHead(404);res.end();}
+});
+if(!live)await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
+const base=live??`http://127.0.0.1:${server.address().port}/`;
+const expectedBuild=process.env.EXPECTED_BUILD_VERSION;
+const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
+const errors=[],checks=[],performanceRows=[];
+async function open(url=base,viewport={width:1440,height:1000}){
+  const page=await browser.newPage({viewport,acceptDownloads:true});page.on('pageerror',e=>errors.push(e.message));
+  await page.goto(url);await page.waitForFunction(()=>!!window.benchmarkExplorer);
+  if(expectedBuild)assert.equal(await page.locator('script[type="module"]').getAttribute('src'),`./app.mjs?v=${expectedBuild}`);
+  return page;
+}
+async function exported(page,scope,format){
+  await page.selectOption('#sample-export-scope',scope);await page.selectOption('#sample-export-format',format);
+  const download=page.waitForEvent('download');await page.click('#download-samples');
+  const file=await download;assert.equal(file.suggestedFilename(),`benchmark-samples-${scope}.${format}`);
+  return await readFile(await file.path(),'utf8');
+}
+function parseCSV(text){
+  const result=[];let row=[],value='',quoted=false;
+  for(let i=0;i<text.length;i++){
+    const c=text[i];if(c==='"'){if(quoted&&text[i+1]==='"'){value+='"';i++;}else quoted=!quoted;}
+    else if(c===','&&!quoted){row.push(value);value='';}
+    else if(c==='\r'&&!quoted&&text[i+1]==='\n'){row.push(value);result.push(row);row=[];value='';i++;}
+    else value+=c;
+  }
+  return result;
+}
+try{
+  const page=await open();await page.click('[data-view="data"]');
+  await page.waitForFunction(()=>document.querySelector('#sample-data').hidden===false);
+  const initial=await page.evaluate(()=>window.benchmarkExplorer.getSampleData());
+  assert.equal(initial.total,3111);assert.equal(initial.filtered.length,3111);
+  assert.equal(await page.locator('#sample-data-table tbody tr').count(),100);
+  assert.equal(await page.locator('.chart-card').isVisible(),false);
+  const observed=[];
+  while(true){
+    observed.push(...await page.locator('#sample-data-table tbody tr').evaluateAll(rows=>rows.map(r=>r.dataset.sampleId)));
+    if(await page.locator('[data-sample-page="next"]').isDisabled())break;
+    await page.click('[data-sample-page="next"]');
+  }
+  assert.equal(observed.length,initial.total);assert.equal(new Set(observed).size,initial.total);
+  assert.deepEqual(new Set(observed),new Set(initial.filtered));checks.push('every observation reachable across pages without duplicates');
+  await page.click('[data-sample-page="first"]');
+  await page.click('[data-sort-table="data"][data-sort-key="seconds"]');
+  const ascending=await page.locator('#sample-data-table tbody td:nth-child(6) span').evaluateAll(nodes=>nodes.map(n=>Number(n.title)));
+  assert.ok(ascending.slice(1).every((v,i)=>v>=ascending[i]));
+  await page.click('[data-sort-table="data"][data-sort-key="seconds"]');
+  const descending=await page.locator('#sample-data-table tbody td:nth-child(6) span').evaluateAll(nodes=>nodes.map(n=>Number(n.title)));
+  assert.ok(descending.slice(1).every((v,i)=>v<=descending[i]));checks.push('numeric ascending/descending sorts');
+  const csv=parseCSV(await exported(page,'all','csv')),headers=csv.shift();
+  assert.equal(csv.length,3111);assert.ok(csv.every(r=>r.length===headers.length));
+  assert.equal(new Set(csv.map(r=>r[headers.indexOf('sample_id')])).size,3111);
+  const json=JSON.parse(await exported(page,'all','json'));assert.equal(json.row_count,3111);
+  assert.equal(json.rows.length,3111);assert.equal(Object.keys(json.programs).length,1013);assert.ok(Object.keys(json.files).length>900);
+  for(const r of json.rows){assert.ok(json.programs[r.program_key]);assert.ok(r.implementation_url.includes('detail.program='));
+    assert.ok(r.source_sha256.every(key=>json.files[key]));}
+  assert.deepEqual(csv.map(r=>Number(r[headers.indexOf('seconds')])),json.rows.map(r=>r.seconds));checks.push('complete CSV/JSON exports with exact times, links and source bundles');
+  const before=await page.evaluate(()=>document.querySelector('#chart').innerHTML);
+  let start=Date.now();await page.fill('#sample-data-search','Lean n-body');
+  await page.waitForFunction(()=>document.querySelectorAll('#sample-data-table tbody tr').length===9);
+  performanceRows.push({operation:'filter 3111 observations',wall_ms:Date.now()-start});
+  assert.equal(await page.evaluate(()=>document.querySelector('#chart').innerHTML),before);
+  assert.equal((await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length,9);
+  assert.equal(parseCSV(await exported(page,'all','csv')).length-1,3111);
+  const filtered=JSON.parse(await exported(page,'filtered','json'));assert.equal(filtered.row_count,9);
+  assert.ok(filtered.rows.every(r=>r.language_key==='lean4'&&r.benchmark_key==='nbody'));
+  await page.locator('[data-select-sample]').nth(0).check();await page.locator('[data-select-sample]').nth(2).check();
+  const chosen=(await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).selected;
+  assert.equal(chosen.length,2);assert.deepEqual(new Set(JSON.parse(await exported(page,'selected','json')).rows.map(r=>r.sample_id)),new Set(chosen));
+  await page.fill('#sample-data-search','absent-no-results-xyz');
+  assert.equal(await page.locator('#sample-data-table tbody tr').count(),0);assert.equal(await page.locator('#sample-data-empty').isVisible(),true);
+  assert.equal(JSON.parse(await exported(page,'selected','json')).rows.length,2);
+  await page.selectOption('#sample-export-scope','filtered');assert.equal(await page.locator('#download-samples').isDisabled(),true);
+  checks.push('search, empty state, selection persistence across filters and exact selection exports');
+  await page.fill('#sample-data-search','Lean');await page.selectOption('#sample-page-size','50');
+  await page.click('[data-sample-page="next"]');
+  const url=await page.evaluate(()=>window.benchmarkExplorer.getShareURL());const restored=await open(url);
+  assert.equal(await restored.locator('#sample-data-search').inputValue(),'Lean');
+  assert.equal(await restored.locator('#sample-page-size').inputValue(),'50');
+  const restoredState=await restored.evaluate(()=>window.benchmarkExplorer.getViewState());
+  assert.equal(restoredState.dataPage,1);assert.equal(restoredState.tableSort.data.direction,-1);
+  assert.deepEqual(new Set(restoredState.dataSelected),new Set(chosen));await restored.close();checks.push('fresh-context URL restores query, page, sort and selected rows');
+  await page.click('#reset-sample-data');
+  await page.click('#select-filtered-samples');
+  const allURL=await page.evaluate(()=>window.benchmarkExplorer.getShareURL()),allRestored=await open(allURL);
+  assert.equal((await allRestored.evaluate(()=>window.benchmarkExplorer.getSampleData())).selected.length,3111);await allRestored.close();
+  await page.click('#clear-selected-samples');
+  checks.push('full 3111-row selection survives a fresh browser URL');
+  assert.equal((await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length,3111);
+  await page.fill('#sample-data-search','uiua binary');
+  const alias=page.locator('[data-sample-program="binarytrees:binarytrees-uiua-optimized"]').first();await alias.click();
+  assert.equal(await page.locator('#inspector').isVisible(),true);assert.equal(await page.locator('#detail-program').inputValue(),'binarytrees:binarytrees-uiua-optimized');
+  assert.equal(await page.locator('#source-code').textContent().then(Boolean),true);
+  assert.ok(await page.locator('.timing-alias').isVisible());
+  const sourceURL=await page.evaluate(()=>window.benchmarkExplorer.getShareURL()),fresh=await open(sourceURL);
+  assert.equal(await fresh.locator('#inspector').isVisible(),true);assert.equal(await fresh.locator('#detail-program').inputValue(),'binarytrees:binarytrees-uiua-optimized');
+  await fresh.close();await page.click('#close-inspector');checks.push('timing-alias implementation links and source inspector round trips');
+  await page.click('#reset-sample-data');await page.fill('#sample-data-search','Lean nbody');
+  const link=await page.locator('[data-sample-program]').first().getAttribute('href'),linked=await open(link);
+  assert.equal(await linked.locator('#inspector').isVisible(),true);assert.equal((await linked.evaluate(()=>window.benchmarkExplorer.getViewState())).view,'data');
+  const currentProgram=await linked.locator('#detail-program').inputValue();await linked.click('[data-step-program="1"]');
+  assert.notEqual(await linked.locator('#detail-program').inputValue(),currentProgram);await linked.close();checks.push('standalone source links and cross-implementation previous/next navigation');
+  const mobile=await open(base+'#v=1&view=data',{width:390,height:844});
+  assert.equal(await mobile.locator('#sample-data').isVisible(),true);
+  const overflow=await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false);
+  await mobile.click('#open-filters');await mobile.click('#only-mech');await mobile.click('#close-filters');
+  assert.ok((await mobile.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length<3111);
+  assert.ok((await mobile.locator('#sample-data-table tbody td:nth-child(2)').allTextContents()).every(v=>v.includes('Mech')));
+  await mobile.screenshot({path:'/private/tmp/benchmark-sample-table-mobile.png',fullPage:false});
+  await page.fill('#sample-data-search','Lean');await page.screenshot({path:'/private/tmp/benchmark-sample-table-desktop.png',fullPage:false});
+  await mobile.close();await page.close();checks.push('mobile drawer filtering, horizontal table scrolling and no page overflow');
+  assert.deepEqual(errors,[]);
+  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
+  if(output)await writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
+}finally{await browser.close();if(!live)await new Promise(resolve=>server.close(resolve));}

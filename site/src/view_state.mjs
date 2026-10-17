@@ -1,7 +1,7 @@
 // Versioned, catalog-validated links. Defaults stay compact; empty selections
 // are explicit. URL data never supplies markup, source code or object keys.
 const lists={benchmarks:'benchmarks',languages:'languages',ellipses:'ellipses',disabled:'disabled',collapsedFamilies:'collapsed'};
-const enums={view:['summary','benchmark','mech','rankings','language'],locMetric:['canonical','formatted'],sampleMode:['off','dim','highlight'],medianMode:['off','dim','highlight'],densityMode:['off','dim','highlight']};
+const enums={view:['summary','benchmark','mech','rankings','language','data'],locMetric:['canonical','formatted'],sampleMode:['off','dim','highlight'],medianMode:['off','dim','highlight'],densityMode:['off','dim','highlight']};
 const booleans=['fast','small','focusMeans','global','benchmarkExpanded','languageExpanded'];
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const sorted=values=>[...values].sort();
@@ -35,7 +35,22 @@ export function encodeView(view,defaults){
   }
   for(const [table,sort] of Object.entries(view.tableSort))
     if(!equal(sort,defaults.tableSort[table]))p.set('sort.'+table,`${sort.key??''}:${sort.direction}`);
-  if(view.languageTab&&!focus)p.set('tab',encodeView({...view.languageTab,languageTab:null},defaults).slice(1));
+  if((view.dataQuery??'')!==(defaults.dataQuery??''))p.set('query',view.dataQuery??'');
+  for(const key of ['dataPage','dataPageSize'])if(view[key]!=null)put(key,view[key],defaults[key]);
+  if(!equal(sorted(view.dataSelected??[]),sorted(defaults.dataSelected??[]))){
+    // Group run numbers by stable program key to keep a full selection compact.
+    const groups=new Map();
+    for(const id of sorted(view.dataSelected??[])){
+      const at=id.lastIndexOf('#'),key=id.slice(0,at),run=Number(id.slice(at+1));
+      if(!groups.has(key))groups.set(key,[]);groups.get(key).push(run);
+    }
+    p.set('rows',JSON.stringify([...groups]));
+  }
+  if(view.languageTab&&!focus){
+    const tabDefaults={...defaults};
+    for(const key of ['dataQuery','dataPage','dataPageSize','dataSelected'])if(Object.hasOwn(defaults,key))tabDefaults[key]=view[key];
+    p.set('tab',encodeView({...view.languageTab,languageTab:null},tabDefaults).slice(1));
+  }
   return '#'+p.toString();
 }
 
@@ -94,8 +109,24 @@ export function decodeView(hash,defaults,spec,nested=false){
     const [key,direction]=p.get('sort.'+table).split(':');
     if(keys.includes(key)&&['1','-1'].includes(direction))result.tableSort[table]={key:key||null,direction:Number(direction)};
   }
+  if(Object.hasOwn(defaults,'dataQuery')){
+    if(p.has('query'))result.dataQuery=p.get('query').slice(0,500);
+    for(const key of ['dataPage','dataPageSize']){
+      if(!p.has(key))continue;
+      const value=Number(p.get(key));
+      if(Number.isSafeInteger(value)&&(key==='dataPage'?value>=0&&value<100000:[50,100,250].includes(value)))result[key]=value;
+    }
+    if(p.has('rows'))try{
+      const groups=JSON.parse(p.get('rows')),allowed=new Set(spec.sampleIDs??[]);
+      if(Array.isArray(groups))result.dataSelected=[...new Set(groups.flatMap(group=>
+        Array.isArray(group)&&typeof group[0]==='string'&&Array.isArray(group[1])?
+          group[1].filter(Number.isSafeInteger).map(run=>group[0]+'#'+run).filter(id=>allowed.has(id)):[]))].sort();
+    }catch{/* Malformed row selections leave the catalog defaults intact. */}
+  }
   if(!nested&&!result.languageFocus&&p.has('tab')){
-    const tab=decodeView('#'+p.get('tab'),defaults,spec,true);
+    const tabDefaults={...defaults};
+    for(const key of ['dataQuery','dataPage','dataPageSize','dataSelected'])if(Object.hasOwn(defaults,key))tabDefaults[key]=result[key];
+    const tab=decodeView('#'+p.get('tab'),tabDefaults,spec,true);
     if(tab?.languageFocus)result.languageTab=tab;
   }
   return result;
