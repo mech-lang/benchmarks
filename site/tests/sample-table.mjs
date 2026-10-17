@@ -19,6 +19,7 @@ if(!live)await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=live??`http://127.0.0.1:${server.address().port}/`;
 const expectedBuild=process.env.EXPECTED_BUILD_VERSION;
 const expectedDataset=JSON.parse(await readFile(path.join(root,'build.json'),'utf8')).files['data.json'];
+const expectedReproduction=JSON.parse(await readFile(path.join(root,'build.json'),'utf8')).files['reproduction.json'];
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
 const errors=[],checks=[],performanceRows=[];
 async function open(url=base,viewport={width:1440,height:1000}){
@@ -31,10 +32,14 @@ async function open(url=base,viewport={width:1440,height:1000}){
       const response=await original(...args);
       if(new URL(response.url).pathname.endsWith('/data.json'))window.sampleDatasetDigest=response.clone().arrayBuffer()
         .then(bytes=>crypto.subtle.digest('SHA-256',bytes)).then(hash=>[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join(''));
+      if(new URL(response.url).pathname.endsWith('/reproduction.json'))window.sampleReproductionDigest=response.clone().arrayBuffer()
+        .then(bytes=>crypto.subtle.digest('SHA-256',bytes)).then(hash=>[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join(''));
       return response;
     };
   });
-  await page.goto(url);await page.waitForFunction(()=>!!window.benchmarkExplorer);
+  await page.goto(url);
+  try{await page.waitForFunction(()=>!!window.benchmarkExplorer);}
+  catch(error){throw new Error(JSON.stringify({url,page_errors:errors,load_error:await page.locator('#load-error').textContent()}),{cause:error});}
   assert.equal(await page.evaluate(()=>window.sampleDatasetDigest),expectedDataset,'Exact browser-delivered dataset');
   if(expectedBuild)assert.equal(await page.locator('script[type="module"]').getAttribute('src'),`./app.mjs?v=${expectedBuild}`);
   return page;
@@ -56,12 +61,13 @@ function parseCSV(text){
   return result;
 }
 try{
-  const page=await open();await page.click('[data-view="data"]');
+  const page=await open();assert.equal(await page.evaluate(()=>window.sampleReproductionDigest),undefined,'Ordinary chart does not fetch full reproduction records');await page.click('[data-view="data"]');
   await page.waitForFunction(()=>document.querySelector('#sample-data').hidden===false);
   const initial=await page.evaluate(()=>window.benchmarkExplorer.getSampleData());
   assert.equal(initial.total,3111);assert.equal(initial.filtered.length,3111);
   assert.equal(await page.locator('#sample-data-table tbody tr').count(),100);
-  assert.equal(await page.locator('[data-sort-table="data"]').count(),15);
+  assert.equal(await page.locator('[data-sort-table="data"]').count(),21);
+  assert.equal(await page.locator('[data-view="data"]').textContent(),'Data');
   assert.equal(await page.locator('.chart-card').isVisible(),false);
   const observed=[];
   while(true){
@@ -82,12 +88,25 @@ try{
   assert.equal(csv.length,3111);assert.ok(csv.every(r=>r.length===headers.length));
   assert.equal(new Set(csv.map(r=>r[headers.indexOf('sample_id')])).size,3111);
   const json=JSON.parse(await exported(page,'all','json'));assert.equal(json.row_count,3111);
+  assert.equal(await page.evaluate(()=>window.sampleReproductionDigest),expectedReproduction,'Exact browser-delivered reproduction records');
   assert.equal(json.rows.length,3111);assert.equal(Object.keys(json.programs).length,1013);assert.ok(Object.keys(json.files).length>900);
   for(const r of json.rows){assert.ok(json.programs[r.program_key]);assert.ok(r.implementation_url.includes('detail.program='));
     assert.ok(r.source_sha256.every(key=>json.files[key]));}
   assert.deepEqual(csv.map(r=>Number(r[headers.indexOf('seconds')])),json.rows.map(r=>r.seconds));checks.push('complete CSV/JSON exports with exact times, links and source bundles');
   assert.ok(['authorship','ai_model','license','license_status','authorship_details'].every(h=>headers.includes(h)));
   for(const row of json.rows){assert.ok(row.authorship_details);assert.deepEqual(row.authorship_details.source_sha256,json.programs[row.program_key].files);}
+  for(const row of json.rows){assert.ok(row.reproduction);assert.deepEqual(row.reproduction.source_sha256,row.source_sha256);assert.equal(row.reproduction.replay_verified,false);}
+  assert.ok(['original_sources','toolchain_version','platform','recorded_at','reproduction_status','reproduction'].every(h=>headers.includes(h)));
+  const typed=json.rows.find(r=>r.implementation==='typescript-fasta-v1');
+  assert.ok(typed.original_sources.some(s=>s.url.endsWith('/program/fasta-node-1.html')));
+  assert.ok(typed.toolchain_version.includes('24.19.0'));
+  await page.fill('#sample-data-search',typed.implementation);
+  await page.locator('.sample-reproduction').first().click();
+  assert.equal(await page.locator('#reproduction-details').getAttribute('open'),'');
+  const recipe=await page.locator('.source-reproduction').textContent();
+  assert.ok(recipe.includes('24.19.0')&&recipe.includes('25,000,000')&&recipe.includes('Timed command'));
+  await page.click('#close-inspector');
+  checks.push('source-bound reproduction exports, specific original source, recorded versions, input and accessible recipe');
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);
   await page.locator('[data-sample-program]').first().click();
@@ -100,7 +119,7 @@ try{
   assert.ok((await page.locator('.source-authorship').textContent()).includes(generated.authorship_details.ai.models[0]));
   assert.ok(await page.locator('.source-authorship a').filter({hasText:'Apache-2.0'}).count());await page.click('#close-inspector');
   const partial=json.rows.find(r=>r.license_status==='partial');await page.fill('#sample-data-search',partial.implementation);
-  assert.ok((await page.locator('#sample-data-table tbody td:last-child').first().textContent()).includes('unverified'));
+  assert.ok((await page.locator('#sample-data-table tbody td:nth-child(16)').first().textContent()).includes('unverified'));
   await page.fill('#sample-data-search','gpt-6.1-sol');
   assert.ok(await page.locator('#sample-data-table tbody tr').count());
   await page.click('[data-sort-table="data"][data-sort-key="authorship"]');
@@ -164,6 +183,6 @@ try{
   await page.fill('#sample-data-search','Lean');await page.screenshot({path:'/private/tmp/benchmark-sample-table-desktop.png',fullPage:false});
   await mobile.close();await page.close();checks.push('mobile drawer filtering, horizontal table scrolling and no page overflow');
   assert.deepEqual(errors,[]);
-  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,expected_build:expectedBuild??null,dataset_sha256:expectedDataset,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
+  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,expected_build:expectedBuild??null,dataset_sha256:expectedDataset,reproduction_sha256:expectedReproduction,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
   if(output)await writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser.close();if(!live)await new Promise(resolve=>server.close(resolve));}

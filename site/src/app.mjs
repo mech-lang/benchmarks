@@ -1123,6 +1123,24 @@ function currentDataRows(){
   return sortSamples(filterSamples(sampleDataset,{languages:effectiveLanguages(),benchmarks:effectiveBenchmarks(),
     disabled:state.disabled,query:state.dataQuery}),tableSort.data);
 }
+let reproductionPromise=null,reproductionLoaded=false;
+function ensureReproduction(){
+  if(reproductionLoaded)return Promise.resolve();
+  if(reproductionPromise)return reproductionPromise;
+  const url=new URL('./reproduction.json',import.meta.url);url.search=new URL(import.meta.url).search;
+  reproductionPromise=fetch(url).then(response=>{if(!response.ok)throw new Error('Recorded reproduction details could not be loaded.');return response.json();}).then(index=>{
+    for(const [key,p] of Object.entries(programCatalog)){
+      if(JSON.stringify(index.programs?.[key]?.source_sha256)!==JSON.stringify(p.files))throw new Error('Reproduction source revision does not match the displayed dataset. Reload this page.');
+    }
+    data.reproducibility=index.programs;reproductionLoaded=true;sampleDataset=sampleRows(data,programCatalog);
+    if(state.view==='data')renderSampleTable();
+    if($('#inspector').open){const open=$('#reproduction-details')?.open;renderInspector({renderRelated:false});if(open&&$('#reproduction-details'))$('#reproduction-details').open=true;}
+  }).catch(error=>{reproductionPromise=null;throw error;});
+  return reproductionPromise;
+}
+function requestReproduction(){
+  void ensureReproduction().catch(error=>{const status=$('#sample-export-status');if(status)status.textContent=error.message;const recipe=$('#reproduction-details .recipe-loading');if(recipe)recipe.textContent=error.message;});
+}
 function dataBrowsingPrograms(){
   return [...new Map(currentDataRows().flatMap(r=>r.implementations).map(p=>[p.key,p])).values()];
 }
@@ -1132,6 +1150,7 @@ function sampleImplementationLink(program){
   return url.href;
 }
 function renderSampleTable(){
+  if(!reproductionLoaded)requestReproduction();
   const rows=currentDataRows(),pages=Math.max(1,Math.ceil(rows.length/state.dataPageSize));
   state.dataPage=Math.min(state.dataPage,pages-1);
   const start=state.dataPage*state.dataPageSize,visible=rows.slice(start,start+state.dataPageSize),selected=new Set(state.dataSelected);
@@ -1146,9 +1165,12 @@ function renderSampleTable(){
     if(key==='implementation')return r.implementations.map((p,i)=>`<a class="sample-implementation" data-sample-program="${esc(p.key)}" href="${esc(sampleImplementationLink(p))}">${esc(p.id)}</a>${i?' <small>(shared runs)</small>':''}`).join('<br>');
     if(key==='language_label')return `<button data-open-language="${esc(r.language)}">${esc(r[key])}</button>`;
     if(key==='authorship'){
-      const refs=r.implementations[0].authorship?.sources?.filter(s=>s.relationship!=='workload')??[];
-      return `${esc(r.authorship)}${refs.length?'<br>'+refs.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>`).join(' · '):''}`;
+      return esc(r.authorship);
     }
+    if(key==='original_source')return r.original_sources.length?r.original_sources.map(s=>`<a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a>${s.via_program?`<br><small>via ${esc(s.via_program.split(':').at(-1))}</small>`:''}`).join('<br>')+(r.implementations[0].authorship?.origin_status==='unresolved'?'<br><small>Earlier origin unverified</small>':''):
+      r.implementations[0].authorship?.origin_status==='suite-authored'?`<a href="${esc(r.implementations[0].authorship.retained_sources[0]?.url)}" target="_blank" rel="noopener">Suite authored</a>`:'Not established';
+    if(key==='reproduction_status')return `<a class="sample-reproduction" data-sample-program="${esc(r.program)}" href="${esc(sampleImplementationLink(r.implementations[0]))}">${esc(r.reproduction_status)}</a>`;
+    if(key==='recorded_at')return r.recorded_at?`<time title="${esc(r.recorded_at)}">${esc(r.recorded_at.slice(0,10))}</time>`:'Not recorded';
     if(key==='license'){
       const terms=r.implementations[0].authorship?.license;
       return terms?.licenses?.length?terms.licenses.filter((l,i,a)=>a.findIndex(x=>x.id===l.id)===i).map(l=>`<a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.id)}</a>`).join(' + ')+(terms.status==='partial'?'<br><small>Upstream terms unverified</small>':''):esc(r.license);
@@ -1181,7 +1203,10 @@ function initSampleTable(){
   $('#select-filtered-samples').onclick=()=>{state.dataSelected=[...new Set([...state.dataSelected,...currentDataRows().map(r=>r.id)])];refresh();};
   $('#clear-selected-samples').onclick=()=>{state.dataSelected=[];refresh();};
   $('#sample-export-scope').onchange=updateSampleExportButton;
-  $('#download-samples').onclick=()=>{
+  $('#download-samples').onclick=async()=>{
+    $('#download-samples').disabled=true;
+    try{
+    await ensureReproduction();
     writeViewLink({force:true});
     const scope=$('#sample-export-scope').value,format=$('#sample-export-format').value,selected=new Set(state.dataSelected);
     const rows=scope==='all'?sortSamples(sampleDataset,tableSort.data):scope==='selected'?sortSamples(sampleDataset.filter(r=>selected.has(r.id)),tableSort.data):currentDataRows();
@@ -1197,10 +1222,13 @@ function initSampleTable(){
     const url=URL.createObjectURL(new Blob([content],{type:format==='csv'?'text/csv;charset=utf-8':'application/json'}));
     const a=document.createElement('a');a.href=url;a.download=`benchmark-samples-${scope}.${format}`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
     $('#sample-export-status').textContent=`Exported ${records.length.toLocaleString()} rows`;
+    }catch(error){$('#sample-export-status').textContent=error.message;}
+    finally{updateSampleExportButton();}
   };
   document.addEventListener('click',event=>{
     const program=event.target.closest('[data-sample-program]');
-    if(program&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey&&event.button===0){event.preventDefault();openPoint({program:program.dataset.sampleProgram});return;}
+    if(program&&!event.ctrlKey&&!event.metaKey&&!event.shiftKey&&!event.altKey&&event.button===0){event.preventDefault();openPoint({program:program.dataset.sampleProgram});
+      if(program.classList.contains('sample-reproduction')){const recipe=$('#reproduction-details');if(recipe){recipe.open=true;recipe.scrollIntoView({block:'start'});}}return;}
     const page=event.target.closest('[data-sample-page]');
     if(page&&!page.disabled){const last=Math.max(0,Math.ceil(currentDataRows().length/state.dataPageSize)-1);
       state.dataPage=({first:0,previous:state.dataPage-1,next:state.dataPage+1,last})[page.dataset.samplePage];refresh();}
@@ -1267,11 +1295,20 @@ function renderAuthorship(program){
   const ai=a.ai,terms=a.license;
   const models=ai.status==='not-applicable'?'Upstream submission; no local AI authorship claimed.':
     ai.models.length?`${ai.models.join(', ')} · exact source-write evidence for ${ai.matched_source_files.length}/${ai.total_source_files} files. These are verified contributors; unverified files may have other contributors.`:
-      'OpenAI Codex · exact model unverified for this retained source revision.';
-  const sourceLinks=a.sources.map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a> · ${esc(s.relationship)}</li>`).join('');
+      ai.tool?'OpenAI Codex · exact model unverified for this retained source revision.':'Exact source-write authorship has not been established for this retained revision.';
+  const sourceLinks=[...a.sources,...(a.parent_sources??[])].map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(s.label)}</a> · ${esc(s.relationship)}${s.via_program?` · via ${esc(s.via_program)}`:''}${s.upstream_sha256?`<br><small>Upstream SHA-256: ${esc(s.upstream_sha256)}</small>`:''}</li>`).join('');
   const licenseLinks=terms.licenses.map(l=>`<li><a href="${esc(l.url)}" target="_blank" rel="noopener">${esc(l.id)}</a> · ${esc(l.scope)}</li>`).join('');
   const notices=a.attribution_notices.map(n=>`<li>${esc(n.text)} <small>(${esc(data.files[n.source_sha256]?.name??n.source_sha256)}, line ${n.line})</small></li>`).join('');
-  return `<section class="detail-section source-authorship"><h3>Authorship and license</h3><p><strong>${esc(a.label)}</strong></p><p class="profile-note">${esc(models)}</p>${sourceLinks?`<ul>${sourceLinks}</ul>`:''}<p class="profile-note">Source license evidence: ${esc(terms.status)}. Runtime and external library licenses are separate.</p>${licenseLinks?`<ul>${licenseLinks}</ul>`:''}${terms.unresolved.map(note=>`<p class="profile-note">${esc(note)}</p>`).join('')}${notices?`<details><summary>Original attribution notices</summary><ul>${notices}</ul></details>`:''}</section>`;
+  const retained=(a.retained_sources??[]).map(s=>`<li><a href="${esc(s.url)}" target="_blank" rel="noopener">${esc(data.files[s.source_sha256]?.name??'Retained source')}</a><br><small>SHA-256: ${esc(s.source_sha256)}</small></li>`).join('');
+  return `<section class="detail-section source-authorship"><h3>Authorship and license</h3><p><strong>${esc(a.label)}</strong></p>${(a.origin_gaps??[]).map(gap=>`<p class="profile-note">${esc(gap)}</p>`).join('')}<p class="profile-note">${esc(models)}</p>${sourceLinks?`<ul>${sourceLinks}</ul>`:''}${retained?`<details><summary>Exact measured source revisions</summary><ul>${retained}</ul></details>`:''}<p class="profile-note">Source license evidence: ${esc(terms.status)}. Runtime and external library licenses are separate.</p>${licenseLinks?`<ul>${licenseLinks}</ul>`:''}${terms.unresolved.map(note=>`<p class="profile-note">${esc(note)}</p>`).join('')}${notices?`<details><summary>Original attribution notices</summary><ul>${notices}</ul></details>`:''}</section>`;
+}
+function renderReproduction(program){
+  const r=data.reproducibility?.[program.key];if(!r)return '';
+  if(!r.versions){requestReproduction();return '<section class="detail-section source-reproduction"><details id="reproduction-details"><summary>Reproduce this timing</summary><p class="recipe-loading">Loading recorded reproduction details…</p></details></section>';}
+  const json=value=>esc(JSON.stringify(value,null,2));
+  const versions=r.versions.map(v=>`<li>${esc(v.component)} · ${esc(v.value)}<br><small>${esc(v.scope)}${v.evidence?` · <a href="${esc(v.evidence.url)}" target="_blank" rel="noopener">saved evidence</a> (${esc(v.evidence.field)})`:''}</small></li>`).join('');
+  const commands=r.build_commands.map(c=>`<p>${esc(c.stage.replaceAll('_',' '))}</p><pre>${json(c.command)}</pre>`).join('');
+  return `<section class="detail-section source-reproduction"><details id="reproduction-details"><summary>Reproduce this timing · ${r.missing.length?`${r.missing.length} gaps`:'recorded recipe'}</summary><p>Versions, commands and paths below are historical records. Relocate paths and install the pinned dependencies before running. Clean-machine replay has not been verified.</p>${versions?`<h4>Compiler and runtime versions</h4><ul>${versions}</ul>`:'<p>Exact version not recorded.</p>'}<h4>Input and timing</h4><p>${esc(r.parameters.workload)}</p><p>${esc(typeof r.timing_boundary==='string'?r.timing_boundary:JSON.stringify(r.timing_boundary))}</p><h4>Build and run</h4>${commands||'<p>Build command not recovered.</p>'}<p>Timed command</p><pre>${json(r.command)}</pre><p>Working directory: ${esc(r.cwd??'Not recorded')}</p><h4>Platform and environment</h4><pre>${json({host:r.host,environment:r.environment})}</pre><details><summary>Inputs, dependency pins, compiler identity and output checks</summary><pre>${json({parameters:r.parameters,inputs:r.input_records,dependencies:r.dependencies,compiler_identity:r.compiler_identity,binary_sha256:r.binary_sha256,samples:r.samples,output_validation:r.output_validation})}</pre></details>${r.missing.length?`<h4>Missing information</h4><ul>${r.missing.map(m=>`<li>${esc(m)}</li>`).join('')}</ul>`:''}<h4>Saved reports</h4><ul>${r.evidence.map(e=>`<li><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.path)}</a>${e.field?` · ${esc(e.field)}`:''}<br><small>SHA-256: ${esc(e.sha256)}</small></li>`).join('')}</ul><p><a href="${esc(r.methodology_url)}" target="_blank" rel="noopener">Measurement and validation methodology</a></p></details></section>`;
 }
 function renderLocAudit(program){
   if(!Array.isArray(program.loc_expansions)||!program.loc_expansions.length)return '';
@@ -1324,7 +1361,7 @@ function renderInspector({renderRelated=true}={}){
   $('#inspector-body').innerHTML=`${aggregate}${navigation}<div class="inspector-controls"><label>Benchmark<select id="detail-benchmark">${available.map(item=>`<option value="${item.key}" ${item.key===b.key?'selected':''}>${esc(item.title)}</option>`).join('')}</select></label><label>Profile<select id="detail-profile"><option value="fast" ${pending?'disabled':''} ${state.detail.kind==='fast'?'selected':''}>Fastest</option><option value="small" ${state.detail.kind==='small'?'selected':''}>Fewest LOC</option></select></label><label class="program-choice">Program<select id="detail-program">${availablePrograms.map(p=>`<option value="${p.key}" ${program.key===p.key?'selected':''}>${esc(p.id)} · ${p.loc} LOC · ${seconds(p.seconds)}</option>`).join('')}</select></label></div>
     ${canonicalProgram?`<label class="inclusion"><input id="include-program" type="checkbox" ${pending||!eligibleForChart(program)||inLanguageView()?'disabled':''} ${pending||!eligibleForChart(program)||state.disabled.has(program.key)?'':'checked'}>Include this program in the speed comparison${inLanguageView()?' · all published programs shown in this view':''}</label>`:'<p class="profile-note">This qualified program is retained in the language overview. The main comparison uses the published fastest and fewest-LOC endpoints.</p>'}<p class="profile-note">${esc(b.workload)}</p>
     <div class="detail-stats"><div class="detail-stat"><strong>${program.loc}</strong><span>canonical source LOC</span></div><div class="detail-stat"><strong>${formattedValue(program)}</strong><span>formatted source LOC</span></div><div class="detail-stat"><strong>${seconds(program.seconds)}</strong><span>${program.timing_alias_of?'shared median time':'median measured time'}</span></div><div class="detail-stat"><strong>${pending?'Not measured':seconds(program.timing_sd)}</strong><span>${program.timing_alias_of?'shared run-to-run SD':'run-to-run SD'}</span></div></div>
-    ${formattedNote}${renderAliasDisclosure(program)}${renderAuthorship(program)}
+    ${formattedNote}${renderAliasDisclosure(program)}${renderAuthorship(program)}${renderReproduction(program)}
     ${!eligibleForChart(program)?`<p class="profile-note publication-exclusion">Excluded from charts and comparisons. ${esc(program.exclusion_reason??'Publication qualification is incomplete.')} Saved timings and sources remain available for inspection.</p>`:''}
     ${bestComparison}
     ${program.timing_summary?`<p class="profile-note timing-boundary">${esc(program.timing_summary)}</p>`:''}

@@ -134,6 +134,13 @@ def browser_data(catalog):
     for field in ('programs', 'program_inventory'):
         if field in result:
             result[field] = {key: browser_program(row) for key, row in result[field].items()}
+    reproduction=ROOT/'data/reproducibility.json'
+    if reproduction.exists():
+        index=json.loads(reproduction.read_text())
+        # Fixture builds and other catalogs never inherit unrelated recipes.
+        catalog_programs={**catalog.get('program_inventory',{}),**catalog['programs']}
+        result['reproducibility']={key:pick(row,{'source_sha256','version_label','host','recorded_at','status','missing'}) for key,row in index['programs'].items()
+            if key in catalog_programs and row['source_sha256']==catalog_programs[key]['files']}
     return result
 
 
@@ -147,6 +154,8 @@ def build():
     output = ROOT / 'site/public'
     dataset = ROOT / 'data/benchmarks.json'
     payload = browser_payload(json.loads(dataset.read_bytes()))
+    reproduction=ROOT/'data/reproducibility.json'
+    recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
     inputs = sorted(source.iterdir()) + [Path(__file__)]
     digest = hashlib.sha256()
     for path in inputs:
@@ -157,6 +166,8 @@ def build():
     # versioned asset, even when the canonical input happens to be unchanged.
     digest.update(b'\0data.json\0')
     digest.update(payload)
+    if recipe_payload:
+        digest.update(b'\0reproduction.json\0');digest.update(recipe_payload)
     version = digest.hexdigest()[:16]
     output.mkdir(parents=True, exist_ok=True)
     for path in source.iterdir():
@@ -175,6 +186,9 @@ def build():
     # GitLab Pages negotiates this sidecar for clients accepting gzip. Keep the
     # original JSON for ordinary clients and exact local/browser parity checks.
     (output / 'data.json.gz').write_bytes(gzip.compress(payload, mtime=0))
+    if recipe_payload:
+        (output/'reproduction.json').write_bytes(recipe_payload)
+        (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
     manifest = {'version': version, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in sorted(output.iterdir()) if p.is_file() and p.name != 'build.json'}}
     (output / 'build.json').write_text(json.dumps(manifest, indent=2) + '\n')

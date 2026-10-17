@@ -1,6 +1,7 @@
 """Authorship is evidence metadata, independent of rankings and measurements."""
-import copy,hashlib,importlib.util,json,unittest
+import copy,hashlib,importlib.util,json,unittest,sys
 from pathlib import Path
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 spec=importlib.util.spec_from_file_location('audit_authorship',Path(__file__).with_name('audit_authorship.py'))
 audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
 
@@ -20,13 +21,13 @@ class Authorship(unittest.TestCase):
 
     def test_workload_description_is_not_upstream_authorship_or_bsd_grant(self):
         data=fixture('https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/test.html',True)
-        row=audit.audit(data,{})['test:p'];self.assertEqual(row['kind'],'ai-generated')
+        row=audit.audit(data,{})['test:p'];self.assertEqual(row['kind'],'local-origin-unverified')
         self.assertEqual(row['sources'][0]['relationship'],'workload');self.assertEqual(row['ai']['models'],[])
         self.assertEqual([l['id'] for l in row['license']['licenses']],['Apache-2.0'])
 
     def test_unknown_upstream_license_stays_partial(self):
         row=audit.audit(fixture('https://example.test/source.c',True),{})['test:p']
-        self.assertEqual(row['kind'],'ai-adapted');self.assertEqual(row['license']['status'],'partial')
+        self.assertEqual(row['kind'],'local-origin-unverified');self.assertEqual(row['license']['status'],'partial')
         self.assertTrue(row['license']['unresolved'])
 
     def test_model_is_bound_to_exact_source_not_neighboring_profile(self):
@@ -41,6 +42,33 @@ class Authorship(unittest.TestCase):
     def test_audit_leaves_source_and_measurements_unchanged(self):
         data=fixture(local=True);before=copy.deepcopy(data);audit.audit(data,{})
         self.assertEqual(data,before)
+
+    def test_collection_and_secondary_workload_are_not_original_source(self):
+        data=fixture('https://github.com/example/project/tree/main',True)
+        data['programs']['test:p']['upstream_source_url']='https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/test.html'
+        row=audit.audit(data,{})['test:p']
+        self.assertEqual(row['origin_status'],'unresolved')
+        self.assertEqual([r['relationship'] for r in row['sources']],['source collection','workload'])
+        self.assertNotIn('BSD-3-Clause',[r['id'] for r in row['license']['licenses']])
+
+    def test_specific_translation_lineage_and_retained_source_pins(self):
+        data=json.loads((audit.ROOT/'data/benchmarks.json').read_text());cat={**data['program_inventory'],**data['programs']}
+        ts=cat['fasta:typescript-fasta-v1']['authorship']
+        self.assertTrue(any('/program/fasta-node-1.html' in r['url'] for r in ts['sources']))
+        scala=cat['fasta:scala-fasta-jvm-v1']['authorship']
+        self.assertTrue(any('/program/fasta-graalvmaot-2.html' in r['url'] for r in scala['sources']))
+        crystal=cat['fasta:crystal-fasta-compact']['authorship']
+        self.assertTrue(any('/bench/algorithm/fasta/1.cr' in r['url'] and r.get('upstream_sha256') for r in crystal['sources']))
+        self.assertEqual(cat['nbody:lean4-nbody-native-v1']['authorship']['parent_programs'],['nbody:typescript-nbody-v1'])
+        changed=cat['nbody:nbody-fsharpcore-4-static-output-aot']['authorship']
+        self.assertEqual(changed['kind'],'ai-adapted')
+        self.assertTrue(any(s['url'].endswith('/program/nbody-fsharpcore-4.html') for s in changed['sources']))
+        for p in cat.values():
+            self.assertEqual({s['source_sha256'] for s in p['authorship']['retained_sources']},set(p['files']))
+            for s in p['authorship']['retained_sources']:
+                self.assertIn('/blob/'+audit.SOURCE_REVISION+'/',s['url'])
+            for s in p['authorship']['sources']:
+                if s['relationship']=='implementation':self.assertTrue(audit.exact_source(s['url']),s)
 
     def test_real_inventory_complete_and_evidence_consistent(self):
         data=json.loads((audit.ROOT/'data/benchmarks.json').read_text());catalog={**data.get('program_inventory',{}),**data['programs']}

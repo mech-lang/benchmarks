@@ -10,11 +10,11 @@ The catalog contains 60 execution variants across 53 language families. The suit
 
 Compare runtime and lines of code, inspect programs and their recorded samples, and filter by workload, language, release year, or language characteristics. Chart layers show individual samples, language summaries, density, and global statistics. Ratios use each workload's fixed best recorded baseline.
 
-The **[Sample data view](https://mech-lang.org/benchmarks/#v=1&view=data)** lists every recorded run across the full retained implementation inventory. Sort columns, search, apply the sidebar filters, or select individual rows. Implementation links open source and timing details. Download the entire dataset, filtered rows, or selected rows as CSV or JSON; JSON includes matching source files and program metadata. Exports cover all pages and retain full numeric precision. Shared timing aliases identify the same recorded observations once. Copy link preserves the filters, sort, page, row selection and open source.
+The **[Data view](https://mech-lang.org/benchmarks/#v=1&view=data)** lists every recorded run across the full retained implementation inventory. Sort columns, search, apply the sidebar filters, or select individual rows. Implementation links open source and timing details. Download the entire dataset, filtered rows, or selected rows as CSV or JSON; JSON includes matching source files and program metadata. Exports cover all pages and retain full numeric precision. Shared timing aliases identify the same recorded observations once. Copy link preserves the filters, sort, page, row selection and open source.
 
 The [methodology](docs/methodology.md) describes timing boundaries, source counting, library use, and comparison rules. [Mech's optimization history](docs/optimizations.md) connects compiler and runtime changes to their measured effects.
 
-[Implementation authorship](docs/authorship.md) distinguishes published sources,
+[Reproduction records](docs/reproduction.md) expose recorded versions, build commands, runtime settings, inputs and gaps. [Implementation authorship](docs/authorship.md) distinguishes published sources,
 local AI adaptations and generated programs. The data view and exports include
 verified model IDs, original attribution, license terms and explicit evidence gaps.
 

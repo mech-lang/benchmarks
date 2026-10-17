@@ -17,12 +17,22 @@ export function sampleRows(data,catalog={...data.program_inventory,...data.progr
       ai?.models?.length?ai.models.join(', ')+(ai.status==='partial-source-writes'?' (partial)':''):'Model unverified';
     const terms=p.authorship?.license;
     const license=[...new Set(terms?.licenses?.map(l=>l.id)??[])].join(' + ')+(terms?.status==='partial'?' (partial)':'')||'Unverified';
+    const reproduction=data.reproducibility?.[p.key]??null;
+    const original_sources=(p.authorship?.sources??[]).filter(s=>['implementation','reference implementation'].includes(s.relationship));
+    if(!original_sources.length)original_sources.push(...(p.authorship?.parent_sources??[]));
+    const original_source=original_sources.map(s=>s.url).join(' · ')||(p.authorship?.origin_status==='suite-authored'?'Suite authored':'Not established');
+    const toolchain_version=reproduction?.version_label??'Not recorded';
+    const platform=reproduction?.host?.hardware;
+    const platform_label=typeof platform==='string'?platform:platform?JSON.stringify(platform):'Not recorded';
+    const recorded_at=reproduction?.recorded_at??null;
+    const reproduction_status=reproduction?.status==='recorded-recipe'?'Recorded recipe':`Gaps (${reproduction?.missing?.length??1})`;
     const common={program:p.key,implementation:p.id,language:p.language,language_label:l.label,
       benchmark:p.benchmark,benchmark_label:b.title,workload:b.workload,
       loc:p.loc,formatted_loc:p.formatted_loc_complete===true?p.formatted_loc:null,
       median_seconds:p.seconds,sd_seconds:p.timing_sd??null,execution,runtime,authorship,ai_model,license,
+      original_source,original_sources,toolchain_version,platform_label,recorded_at,reproduction,reproduction_status,
       eligible:p.eligible_for_chart!==false,report:p.report??'',implementations,
-      search:[l.label,l.family,b.title,b.key,b.workload,execution,runtime,authorship,ai_model,license,
+      search:[l.label,l.family,b.title,b.key,b.workload,execution,runtime,authorship,ai_model,license,original_source,toolchain_version,platform_label,recorded_at,reproduction_status,
         ...(p.authorship?.sources??[]).map(r=>r.label),...(p.authorship?.attribution_notices??[]).map(n=>n.text),
         ...implementations.map(p=>p.id)].join(' ').toLocaleLowerCase('en')};
     return p.samples.map((seconds,i)=>({...common,id:p.key+'#'+(i+1),run:i+1,seconds,
@@ -40,7 +50,8 @@ export function filterSamples(rows,{languages,benchmarks,disabled=new Set(),quer
 export const sampleColumns=[['language_label','Language'],['benchmark_label','Benchmark'],['implementation','Implementation'],
   ['run','Run'],['seconds','Seconds'],['time_x_best','Time × best'],['loc','Canonical LOC'],['formatted_loc','Formatted LOC'],
   ['median_seconds','Median (s)'],['sd_seconds','SD (s)'],['execution','Execution'],['runtime','Runtime / toolchain'],
-  ['authorship','Authorship'],['ai_model','AI model'],['license','License']];
+  ['authorship','Authorship'],['ai_model','AI model'],['license','License'],['original_source','Original source'],
+  ['toolchain_version','Versions'],['workload','Input'],['platform_label','Platform'],['recorded_at','Recorded'],['reproduction_status','Reproduce']];
 
 const collator=new Intl.Collator('en',{numeric:true,sensitivity:'base'});
 export function sortSamples(rows,{key='language_label',direction=1}={}){
@@ -61,6 +72,8 @@ export function exportRows(rows,linkFor){
     median_seconds:r.median_seconds,sd_seconds:r.sd_seconds,execution:r.execution,runtime:r.runtime,
     authorship:r.authorship,ai_model:r.ai_model,license:r.license,license_status:r.implementations[0].authorship?.license?.status??'unverified',
     authorship_details:r.implementations[0].authorship??null,
+    original_sources:r.original_sources,toolchain_version:r.toolchain_version,platform:r.platform_label,
+    recorded_at:r.recorded_at,reproduction_status:r.reproduction_status,reproduction:r.reproduction,
     chart_eligible:r.eligible,implementation_url:linkFor(r.implementations[0]),
     timing_aliases:r.implementations.slice(1).map(p=>({program_key:p.key,implementation:p.id,url:linkFor(p),authorship:p.authorship??null})),
     source_sha256:r.implementations[0].files,report:r.report,sample_details:r.details}));
@@ -68,7 +81,8 @@ export function exportRows(rows,linkFor){
 
 const exportColumns=['sample_id','language','language_key','benchmark','benchmark_key','workload','implementation','program_key',
   'run','seconds','time_x_best','canonical_loc','formatted_loc','median_seconds','sd_seconds','execution','runtime',
-  'authorship','ai_model','license','license_status','authorship_details','chart_eligible','implementation_url','timing_aliases','source_sha256','report','sample_details'];
+  'authorship','ai_model','license','license_status','authorship_details','original_sources','toolchain_version','platform',
+  'recorded_at','reproduction_status','reproduction','chart_eligible','implementation_url','timing_aliases','source_sha256','report','sample_details'];
 export function samplesCSV(rows){
   const cell=value=>{
     if(value==null)return '';

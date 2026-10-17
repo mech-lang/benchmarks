@@ -1,7 +1,7 @@
 # Implementation authorship and licenses
 
 Each retained implementation has source-bound `authorship` metadata. The sample
-table shows Authorship, AI model and License columns; all three support sorting
+table shows Original source, Authorship, AI model and License columns; all support sorting
 and text search. CSV and JSON exports include the labels and structured evidence.
 The source inspector retains original contributor notices and links to upstream
 implementations, reference collections and license texts.
@@ -22,6 +22,27 @@ the distinction. Reference implementations are identified separately from the
 measured implementation. Authorship describes implementation provenance and
 AI assistance under human direction; it does not assert exclusive copyright
 ownership by a person or model.
+
+Original-source citations identify specific files or published submission pages.
+Scala and TypeScript translations follow their retained source manifests to the
+actual Java and JavaScript predecessors. C3 records its Nim predecessor. Crystal
+uses the per-profile upstream repository, revision and file path, including
+contributor notices naming additional predecessors. Lean's related TypeScript
+programs and the official Lean binary-trees example are references, separately
+from the suite-authored Lean applications.
+
+Every measured source file also has an immutable link and SHA-256 for its retained
+revision. This identifies the measured bytes; it does not establish that the
+retained copy is the earliest publication. Collection directories, workload
+descriptions and historical mirrors remain distinguished from original sources.
+**Origin unverified** explicitly identifies missing lineage. Missing source
+citations never establish AI originality. A source correction is an adaptation,
+including the F# NativeAOT output changes and platform ports; the original
+contributor remains credited.
+
+`data/source-citation-checks.json` records primary-host response checks, hashes
+and matching retained source bytes where available. Availability is separate from
+authorship: a reachable source link does not establish who first wrote it.
 
 ## Model evidence
 

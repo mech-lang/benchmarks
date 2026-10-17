@@ -144,7 +144,7 @@ def main():
         name,expected=item;measured=hashlib.sha256();size=0
         # Match the application's versioned dataset/module/style URLs and its
         # bare HTML entry point. Other retained reports use a fresh probe.
-        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
+        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
         url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='')+'?'+query
         try: response=request(url)
         except Exception as error: raise RuntimeError('Live asset request failed: '+name) from error
