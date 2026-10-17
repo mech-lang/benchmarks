@@ -36,6 +36,13 @@ class Reproduction(unittest.TestCase):
     def test_native_gcc_and_gpp_historical_aliases_are_supported(self):
         self.assertEqual(audit.native_compiler_keys('c',[dict(command=['gcc-16','-include','clang-sdk-compat.h'])]),['gcc','c'])
         self.assertEqual(audit.native_compiler_keys('cpp',[dict(command=['g++-16','clang-port.cpp'])]),['gpp','cpp','gcc'])
+    def test_cpp_prefers_its_recorded_frontend_to_an_unrelated_gcc_entry(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
+            report=dict(toolchains={'gpp':'g++-15 15.2.0','gcc':'gcc-16 16.2.0'},
+                programs=[dict(id='test',samples_seconds=[1,2,3],command=['./app'],compile_command=['g++-15','app.cpp','-o','app'])])
+            Path(temp,'report.json').write_text(json.dumps(report));data=self.fixture('report.json');data['programs']['nbody:test']['language']='cpp'
+            r=audit.build(data)['programs']['nbody:test'];self.assertEqual(r['version_label'],'g++-15 15.2.0')
+            self.assertEqual(len(r['versions']),1)
     def test_every_retained_profile_has_source_bound_recipe_or_explicit_gaps(self):
         data=json.loads((audit.ROOT/'data/benchmarks.json').read_text());catalog={**data['program_inventory'],**data['programs']}
         index=json.loads((audit.ROOT/'data/reproducibility.json').read_text())

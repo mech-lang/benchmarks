@@ -157,9 +157,15 @@ def build(data):
             for name in ['toolchains','runtimes','compilers','toolchain_versions']:
                 pool=ctx.get(name,{})
                 if isinstance(pool,dict):
+                    seen_native_families=set()
                     for alias in aliases:
-                        if alias in pool:add_version(alias,version_text(pool[alias]),path,'/'+name+'/'+alias,
-                            'retained build provenance; not recaptured during timing' if path==original else 'measurement cohort')
+                        family='gcc' if alias in ['gcc','gpp','c','cpp'] else 'clang' if alias in ['clang','llvm'] else alias
+                        if lang in ['c','cpp'] and family in seen_native_families:continue
+                        text=version_text(pool.get(alias))
+                        if text:
+                            add_version(alias,text,path,'/'+name+'/'+alias,
+                                'retained build provenance; not recaptured during timing' if path==original else 'measurement cohort')
+                            seen_native_families.add(family)
             if lang in ['swift','lean4']:add_version(lang,version_text(ctx.get('compiler')),path,'/compiler')
             if lang=='d':add_version('d',version_text(ctx.get('runtime')),path,'/runtime')
         runtime_receipt=e.get('runtime_receipt') or {}
