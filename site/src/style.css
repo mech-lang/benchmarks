@@ -116,7 +116,8 @@
 .detail-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media(max-width:720px){.loc-metric-control{flex:1 1 100%}.chart-toolbar .loc-metric-control select{width:auto;max-width:100%;flex:1}}
 
-/* Phone filters use one scrollable left drawer; desktop keeps its sidebar. */
+/* Each filter surface scrolls without carrying the gesture into the chart. */
+.workspace>.controls{position:sticky;top:16px;max-height:var(--filter-sidebar-height,calc(100dvh - 190px));min-height:0;overflow-y:auto;overscroll-behavior-y:contain;scrollbar-gutter:stable;padding-inline-end:8px;padding-bottom:16px}
 .mobile-filter-bar{display:none}
 #filter-drawer{position:fixed;inset:0 auto 0 0;margin:0;padding:0;width:min(360px,calc(100% - 36px));max-width:none;height:100vh;height:100dvh;max-height:none;border:0;border-right:1px solid var(--border);background:var(--canvas);color:var(--text);box-shadow:12px 0 40px #0005;overflow:hidden}
 #filter-drawer[open]{display:flex;flex-direction:column;animation:filter-drawer-enter .2s ease-out}
@@ -125,7 +126,7 @@
 .filter-drawer-header h2{font-size:19px}
 #close-filters{min-height:44px;padding:8px 12px;display:flex;align-items:center;gap:12px}
 #close-filters span{font-size:24px;line-height:1}
-#filter-drawer .controls{display:block;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 16px calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));scrollbar-gutter:stable}
+#filter-drawer .controls{display:block;flex:1;min-height:0;overflow-y:auto;overscroll-behavior:contain;padding:18px 16px calc(24px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));scrollbar-gutter:stable}
 #filter-drawer .controls section{min-width:0}
 #filter-drawer .controls section+section{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
 #filter-drawer .control-row,#filter-drawer .trait-choice{min-height:44px}

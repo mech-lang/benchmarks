@@ -11,8 +11,28 @@ const $=selector=>document.querySelector(selector);
 const filterDrawer=$('#filter-drawer'),filterTrigger=$('#open-filters');
 const filterControls=$('.controls'),filterAnchor=document.createComment('desktop filter sidebar');
 const mobileFilters=matchMedia('(max-width:720px)');
-let filterScroll=null,backdropPointer=false;
+let filterScroll=null,backdropPointer=false,filterSizeFrame=null;
 filterControls.before(filterAnchor);
+function sizeFilterSidebar(){
+  filterSizeFrame=null;
+  if(mobileFilters.matches){
+    filterControls.style.removeProperty('--filter-sidebar-height');
+    return;
+  }
+  const top=Math.max(16,filterControls.getBoundingClientRect().top);
+  const height=Math.max(0,Math.floor((window.visualViewport?.height??window.innerHeight)-top-16));
+  const value=`${height}px`;
+  if(filterControls.style.getPropertyValue('--filter-sidebar-height')!==value)
+    filterControls.style.setProperty('--filter-sidebar-height',value);
+}
+function queueFilterSidebarSize(){
+  if(filterSizeFrame===null)filterSizeFrame=requestAnimationFrame(sizeFilterSidebar);
+}
+window.addEventListener('scroll',queueFilterSidebarSize,{passive:true});
+window.addEventListener('resize',queueFilterSidebarSize,{passive:true});
+window.visualViewport?.addEventListener('resize',queueFilterSidebarSize,{passive:true});
+const filterHeadingObserver=new ResizeObserver(queueFilterSidebarSize);
+filterHeadingObserver.observe($('.page-heading'));
 function restoreFilterScroll(){
   filterTrigger.setAttribute('aria-expanded','false');
   if(!filterScroll)return;
@@ -35,6 +55,7 @@ function syncFilterPlacement(){
     closeFilterDrawer();filterAnchor.after(filterControls);
     if(wasOpen)(filterControls.contains(active)?active:$('#toggle-benchmark-filters')).focus({preventScroll:true});
   }
+  queueFilterSidebarSize();
 }
 filterTrigger.addEventListener('click',()=>{
   if(!mobileFilters.matches||filterDrawer.open)return;
