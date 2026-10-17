@@ -63,6 +63,7 @@ def main():
     profiles = []
     intervals = []
     closures = []
+    mutexes = []
     for build_file, counts_file, work_file, full_file in args.cohort:
         build_path, counts_path, work_path, full_path = map(Path, (build_file, counts_file, work_file, full_file))
         build, work, full = [json.loads(path.read_text()) for path in (build_path, work_path, full_path)]
@@ -70,6 +71,8 @@ def main():
         assert full['status'] == 'PASSED' and full['mode'] == 'full' and full['active'] is None and full['sources_unchanged']
         assert work['status'] == 'PASSED_STATIC_AND_BOUNDED_NATIVE_ALLOCATION_CHECK'
         assert build['sources'] == work['sources'] == full['sources']
+        assert full['common_mutex_inode'] == build['common_mutex_inode']
+        mutexes.append(full['common_mutex_inode'])
         assert full['required_work']['sha256'] == sha(work_path)
         assert all(sha(ROOT / path) == digest for path, digest in build['sources'].items())
         bounded_path = Path(full['bounded_prerequisite']['path'])
@@ -85,6 +88,7 @@ def main():
         for benchmark in sorted(selected):
             compiled = build['profiles'][benchmark]
             assert sha(compiled['binary']) == compiled['binary_sha256'] == full['binaries'][benchmark] == bounded['binaries'][benchmark]
+            assert sha(compiled['generated_c']) == compiled['generated_c_sha256']
             rows = [row for row in full['cases'] if row['benchmark'] == benchmark]
             assert len(rows) == 3 and len({row['pid'] for row in rows}) == 3
             for row in rows:
@@ -110,12 +114,14 @@ def main():
     intervals.sort()
     assert all(a[1] <= b[0] for a, b in zip(intervals, intervals[1:]))
     assert len({(p['benchmark'],p['variant']) for p in profiles}) == len(profiles)
+    assert len(set(mutexes)) == 1
     report = dict(schema='lean-optimized-candidate-results.v1', status='FULL_SIZE_SAMPLES_AND_NORMALIZED_LOC_RECONCILED',
         benchmark_samples=len(intervals), profiles=profiles, cohorts=closures, timing_processes_serial=True,
         saved_stream_hashes_recomputed=True, process_records_reconciled=True, source_counts_independently_replayed=True,
         matched_mech_controls=0, existing_other_language_measurements_changed=False, formatted_loc_claimed=False,
         normalization='Native lexical ownership plus independent do-statement expansion, including every authored Lean/C compilation input.',
         global_optimality_claimed=False)
+    report['common_mutex_inode'] = mutexes[0]
     args.output.mkdir(parents=True)
     shutil.copyfile(__file__, args.output / 'producer.py')
     (args.output / 'results.json').write_text(json.dumps(report, indent=2) + '\n')
