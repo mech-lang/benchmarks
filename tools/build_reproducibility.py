@@ -6,6 +6,9 @@ import argparse,collections,hashlib,json,re
 from urllib.parse import quote
 ROOT=Path(__file__).resolve().parents[1]
 REPO='https://github.com/mech-lang/benchmarks'
+# These retained reports identify both source and executable bytes. They can
+# supply build provenance for later timings of that exact executable.
+BINARY_BUILD_REPORTS=('archive/workloads/nbody/results/apple-m3-chapel-tricks-50m.json',)
 
 class Index:
     def __init__(self,data):
@@ -53,6 +56,21 @@ def recorded_samples(row):
         if isinstance(value,list) and value and all(isinstance(n,(int,float)) for n in value):return value
         if isinstance(value,list) and value and all(isinstance(n,dict) and isinstance(n.get('seconds'),(int,float)) for n in value):return [n['seconds'] for n in value]
     return None
+
+def binary_build_contexts(index,profile):
+    binary=profile.get('binary_sha256')
+    if not binary:return []
+    contexts=[]
+    for path in BINARY_BUILD_REPORTS:
+        doc=index.load(path)
+        for selector,row in nodes(doc):
+            if row.get('binary_sha256')!=binary or row.get('language')!=profile['language']:continue
+            source=row.get('source') or {}
+            hashes=set(source.get('sha256',{}).values()) if isinstance(source,dict) and isinstance(source.get('sha256'),dict) else set()
+            if row.get('source_sha256'):hashes.add(row['source_sha256'])
+            if hashes!=set(profile['files']):continue
+            contexts.append((doc,path,selector,row))
+    return contexts
 
 def version_text(value):
     if isinstance(value,str):return value
@@ -126,6 +144,9 @@ def build(data):
         original_receipt=index.receipt(original) if original else None
         if original_receipt and original_receipt['sha256']==original_pin.get('sha256'):
             contexts.append((index.load(original),original))
+        bound_builds=binary_build_contexts(index,p)
+        bound_paths={path for _,path,_,_ in bound_builds}
+        contexts.extend((ctx,path) for ctx,path,_,_ in bound_builds if path not in {path for _,path in contexts})
         command=p.get('command') or first.get('command') or e.get('command') or row.get('command')
         build_commands=[]
         for name in ['generation_command','compile_command','build_command']:
@@ -133,11 +154,14 @@ def build(data):
             if value:build_commands.append(dict(stage=name,command=value))
         for ctx,path in contexts[1:]:
             for selector,node in nodes(ctx):
+                if path in bound_paths and not any(path==bound_path and selector==bound_selector for _,bound_path,bound_selector,_ in bound_builds):continue
                 if node.get('id')==p['id'] or node.get('key')==key:
                     for name in ['generation_command','compile_command','build_command','compile_commands']:
                         value=node.get(name)
                         if value:
                             item=dict(stage=name,command=value)
+                            if path in bound_paths:
+                                item.update(scope='binary-matched build provenance',evidence=index.receipt(path,selector))
                             if item not in build_commands:build_commands.append(item)
                     receipt=index.receipt(path,selector)
                     if receipt and receipt not in evidence:evidence.append(receipt)
@@ -164,10 +188,12 @@ def build(data):
                         text=version_text(pool.get(alias))
                         if text:
                             add_version(alias,text,path,'/'+name+'/'+alias,
+                                'binary-matched build provenance; not recaptured during timing' if path in bound_paths else
                                 'retained build provenance; not recaptured during timing' if path==original else 'measurement cohort')
                             seen_native_families.add(family)
             if lang in ['swift','lean4']:add_version(lang,version_text(ctx.get('compiler')),path,'/compiler')
             if lang=='d':add_version('d',version_text(ctx.get('runtime')),path,'/runtime')
+            if lang=='rust' and ctx is doc and row:add_version('rust',version_text(ctx.get('rustc')),path,'/rustc')
         runtime_receipt=e.get('runtime_receipt') or {}
         if 'version' in (runtime_receipt.get('field') or '').lower():
             add_version(lang,runtime_receipt.get('value'),runtime_receipt.get('report'),runtime_receipt.get('field'),'source-bound runtime receipt')
@@ -181,7 +207,10 @@ def build(data):
         if lang=='matlab' and version_text(doc.get('runtime_policy')):
             add_version(lang,doc['runtime_policy'],report,'/runtime_policy','measurement cohort policy')
         # Compiler snapshots are identities even when no release string exists.
-        compiler_identity={name:doc[name] for name in ['compiler_sha256','compiler_snapshot','compiler_source_commit','array_source_commit','source_commit'] if doc.get(name)}
+        report_compiler_context={name:doc[name] for name in ['compiler_sha256','compiler_snapshot','compiler_source_commit','array_source_commit','source_commit'] if doc.get(name)}
+        # Mixed-language reports often pin Mech's development compiler. Those
+        # pins are report context, not the compiler identity of every competitor.
+        compiler_identity=report_compiler_context.copy() if lang.startswith('mech') else {}
         # Match build receipts by executable hash, not by a neighboring version
         # number or a source filename shared by successive builds.
         if lang=='julia-aot':
@@ -229,7 +258,9 @@ def build(data):
         parameters=dict(workload=benchmarks[p['benchmark']]['workload'],n=first.get('workload_n') or doc.get('full_workload_n') or doc.get('steps') or doc.get('full_steps'))
         missing=[]
         if not versions:missing.append('Exact compiler/runtime release string not recorded in the indexed cohort evidence.')
-        elif all(v['scope'].startswith('retained build provenance') for v in versions):missing.append('Compiler release comes from the pinned original build report; its version was not recaptured in the timing cohort.')
+        elif all(v['scope'].endswith('not recaptured during timing') for v in versions):
+            missing.append('Compiler release comes from retained build evidence; its version was not recaptured in the timing cohort.' if any(v['scope'].startswith('binary-matched') for v in versions) else
+                'Compiler release comes from the pinned original build report; its version was not recaptured in the timing cohort.')
         if not command:missing.append('Timed command not recovered.')
         if not build_commands and p.get('execution_mode')=='aot':missing.append('Complete AOT build command not recovered.')
         if not hardware:missing.append('Cohort-specific hardware/OS record not recovered; suite methodology identifies Apple M3 macOS.')
@@ -250,6 +281,8 @@ def build(data):
             binary_sha256=p.get('binary_sha256') or row.get('binary_sha256') or (e.get('executable') or e.get('historical_executable') or {}).get('sha256'),evidence=evidence,
             status='gaps' if missing else 'recorded-recipe',missing=missing,
             replay_verified=False,methodology_url=REPO+'/blob/main/docs/methodology.md')
+        if report_compiler_context and not lang.startswith('mech'):
+            records[key]['report_compiler_context']=dict(scope='Report-wide metadata; not established as this implementation\'s compiler identity.',metadata=report_compiler_context)
     return dict(schema='benchmark-reproduction-index.v1',source_revision=SOURCE_REVISION,programs=records,
                 summary=dict(programs=len(records),version_strings=sum(bool(r['versions']) for r in records.values()),
                              statuses=dict(collections.Counter(r['status'] for r in records.values()))))

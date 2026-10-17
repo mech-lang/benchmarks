@@ -75,6 +75,20 @@ def lineage(data):
             local=ROOT/'archive/languages/crystal/20261012/research'/r['path']
             references.setdefault(key,[]).append(dict(url=r['url'],relationship='implementation',
                 upstream_sha256=hashlib.sha256(local.read_bytes()).hexdigest(),evidence='archive/languages/crystal/20261012/research/source-downloads.json'))
+    # Pony's retained research names both files of the official example.
+    pony_profiles=read('archive/languages/pony/20261012/profiles.json')['profiles']
+    for row in pony_profiles:
+        if row['benchmark']!='mandelbrot':continue
+        key='mandelbrot:'+row['id']
+        source=ROOT/'archive/languages/pony/20261012'/row['source']
+        if key not in catalog or hashlib.sha256(source.read_bytes()).hexdigest() not in catalog[key]['files']:continue
+        for upstream,filename in [('official-mandel-main.pony','main.pony'),('official-mandel-worker.pony','mandelbrot.pony')]:
+            path=ROOT/'archive/languages/pony/20261012/upstream'/upstream
+            references.setdefault(key,[]).append(dict(
+                url='https://github.com/ponylang/ponyc/blob/85eb7c6a9a6b2a9433f70e9d4bc2f152509d30b4/examples/benchmarks/mandelbrot/'+filename,
+                relationship='implementation',upstream_sha256=hashlib.sha256(path.read_bytes()).hexdigest(),
+                evidence='archive/languages/pony/20261012/PROVENANCE.md'))
+        evidence.setdefault(key,[]).append('archive/validation/loc-normalization/20261012/PONY-RESEARCH.md')
     # Lean explicitly records related TypeScript sources and the upstream Lean
     # benchmark as references, without claiming downloaded Lean applications.
     lean=read('experiments/lean4/source-provenance-v1.json')

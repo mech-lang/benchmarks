@@ -25,6 +25,14 @@ class Reproduction(unittest.TestCase):
             Path(temp,'report.json').write_text(json.dumps({'programs':[dict(id='test',samples_seconds=[9,9,9],command=['wrong'],compile_command=['wrong'])]}))
             r=audit.build(self.fixture('report.json'))['programs']['nbody:test']
             self.assertIsNone(r['command']);self.assertEqual(r['build_commands'],[]);self.assertEqual(r['status'],'gaps')
+    def test_direct_rustc_capture_requires_the_matching_timed_profile(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
+            report=dict(rustc={'version':'rustc 1.96.0-nightly'},programs=[dict(id='test',samples_seconds=[1,2,3])])
+            Path(temp,'report.json').write_text(json.dumps(report));data=self.fixture('report.json')
+            r=audit.build(data)['programs']['nbody:test'];self.assertEqual(r['version_label'],'rustc 1.96.0-nightly')
+            report['programs'][0]['samples_seconds']=[9,9,9]
+            Path(temp,'report.json').write_text(json.dumps(report))
+            self.assertEqual(audit.build(data)['programs']['nbody:test']['versions'],[])
     def test_native_compiler_is_not_inferred_from_library_or_source_names(self):
         with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
             report=dict(toolchains={'c':'gcc-16 16.2.0','llvm':['Homebrew clang version 22.1.8','Target: arm64-apple-darwin25.2.0']},
@@ -43,6 +51,33 @@ class Reproduction(unittest.TestCase):
             Path(temp,'report.json').write_text(json.dumps(report));data=self.fixture('report.json');data['programs']['nbody:test']['language']='cpp'
             r=audit.build(data)['programs']['nbody:test'];self.assertEqual(r['version_label'],'g++-15 15.2.0')
             self.assertEqual(len(r['versions']),1)
+    def test_mixed_report_does_not_assign_mech_compiler_to_competitors(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
+            snapshot=dict(base_commit='b'*40,path='mech-compiler.tar.gz',sha256='c'*64)
+            report=dict(compiler_snapshot=snapshot,programs=[dict(id='test',samples_seconds=[1,2,3])])
+            Path(temp,'report.json').write_text(json.dumps(report));data=self.fixture('report.json')
+            r=audit.build(data)['programs']['nbody:test']
+            self.assertEqual(r['compiler_identity'],{});self.assertEqual(r['versions'],[])
+            self.assertEqual(r['report_compiler_context']['metadata']['compiler_snapshot'],snapshot)
+            data['programs']['nbody:test']['language']='mech'
+            r=audit.build(data)['programs']['nbody:test']
+            self.assertEqual(r['compiler_identity']['compiler_snapshot'],snapshot)
+            self.assertNotIn('report_compiler_context',r)
+    def test_earlier_version_requires_both_executable_and_source_identity(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)),patch.object(audit,'BINARY_BUILD_REPORTS',('earlier.json',)):
+            Path(temp,'report.json').write_text(json.dumps({'programs':[dict(id='test',samples_seconds=[1,2,3])]}))
+            prior=dict(id='test',language='rust',binary_sha256='b'*64,source={'sha256':{'app.rs':'a'*64}},compile_command=['rustc','-O','app.rs'])
+            Path(temp,'earlier.json').write_text(json.dumps(dict(toolchain_versions={'rust':'rustc 1.96.0'},programs=[prior])))
+            data=self.fixture('report.json');data['programs']['nbody:test']['binary_sha256']='b'*64
+            r=audit.build(data)['programs']['nbody:test']
+            self.assertEqual(r['version_label'],'rustc 1.96.0')
+            self.assertIn('binary-matched build provenance',r['versions'][0]['scope'])
+            self.assertEqual(r['build_commands'][0]['command'],prior['compile_command'])
+            self.assertIn('not recaptured',r['missing'][0])
+            for field,value in [('binary_sha256','c'*64),('files',['c'*64])]:
+                wrong=copy.deepcopy(data);wrong['programs']['nbody:test'][field]=value
+                r=audit.build(wrong)['programs']['nbody:test']
+                self.assertEqual(r['versions'],[]);self.assertEqual(r['build_commands'],[])
     def test_every_retained_profile_has_source_bound_recipe_or_explicit_gaps(self):
         data=json.loads((audit.ROOT/'data/benchmarks.json').read_text());catalog={**data['program_inventory'],**data['programs']}
         index=json.loads((audit.ROOT/'data/reproducibility.json').read_text())

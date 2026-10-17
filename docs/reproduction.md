@@ -53,4 +53,9 @@ recovery. No benchmark executions are performed when building this index.
 `data/reproducibility.json`; `--check` detects stale records. Extraction matches
 measurement rows by implementation identity and exact sample arrays. Build
 receipts for Julia applications and optimized Lean programs are matched by
-executable hash. `python3 tools/test_reproducibility.py` verifies those boundaries.
+executable hash. Additional retained native build reports supply versions only
+when both the executable hash and complete source-hash set match; their scope
+states that the version was not recaptured during timing. Report-wide Mech
+compiler snapshots remain report context for competitor rows and are not labeled
+as those implementations' compiler identities.
+`python3 tools/test_reproducibility.py` verifies those boundaries.

@@ -160,6 +160,9 @@ def audit(data,models):
                 license_('BSD-3-Clause',BSD,'Retained upstream benchmark source','site/reports/benchmarks-game-license.txt')
             elif 'hanabi1224/Programming-Language-Benchmarks' in u:
                 license_('MIT',MIT_NOTICE,'Upstream repository; per-file notices retained','archive/comparisons/zig-odin-roc-elm-comparison/20261010/upstream/hanabi/LICENSE')
+            elif 'github.com/ponylang/ponyc/blob/85eb7c6a9a6b2a9433f70e9d4bc2f152509d30b4/' in u:
+                license_('BSD-2-Clause','https://github.com/ponylang/ponyc/blob/85eb7c6a9a6b2a9433f70e9d4bc2f152509d30b4/LICENSE',
+                    'Referenced official Pony compiler example','site/reports/ponyc-license.txt')
             else:unresolved.append('Upstream license not established: '+r['label'])
         if p['language'] in ['scala','typescript']:
             license_('BSD-3-Clause',BSD,'Translated upstream application','experiments/'+p['language']+'/source-v1/LICENSE.benchmarksgame')

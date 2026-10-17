@@ -27,7 +27,8 @@ Original-source citations identify specific files or published submission pages.
 Scala and TypeScript translations follow their retained source manifests to the
 actual Java and JavaScript predecessors. C3 records its Nim predecessor. Crystal
 uses the per-profile upstream repository, revision and file path, including
-contributor notices naming additional predecessors. Lean's related TypeScript
+contributor notices naming additional predecessors. Pony's Mandelbrot entries
+cite both files of the pinned official compiler example. Lean's related TypeScript
 programs and the official Lean binary-trees example are references, separately
 from the suite-authored Lean applications.
 
@@ -69,6 +70,8 @@ Upstream source retains its applicable terms, including the Benchmarks Game's
 [revised BSD license](https://benchmarksgame-team.pages.debian.net/benchmarksgame/license.html)
 and the retained Programming Language Benchmarks
 [MIT notice](../site/reports/programming-language-benchmarks-license.txt).
+The referenced official Pony example retains its
+[BSD-2-Clause notice](../site/reports/ponyc-license.txt) at the cited source revision.
 Original notices and bundled source with separate terms remain inspectable.
 
 **Identified** means the recorded source terms are identified. **Partial** means

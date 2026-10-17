@@ -59,6 +59,11 @@ class Authorship(unittest.TestCase):
         self.assertTrue(any('/program/fasta-graalvmaot-2.html' in r['url'] for r in scala['sources']))
         crystal=cat['fasta:crystal-fasta-compact']['authorship']
         self.assertTrue(any('/bench/algorithm/fasta/1.cr' in r['url'] and r.get('upstream_sha256') for r in crystal['sources']))
+        pony=cat['mandelbrot:pony-mandelbrot-compact']['authorship']
+        self.assertTrue(any('/mandelbrot/main.pony' in r['url'] and r.get('upstream_sha256') for r in pony['sources']))
+        self.assertTrue(any('/mandelbrot/mandelbrot.pony' in r['url'] and r.get('upstream_sha256') for r in pony['sources']))
+        self.assertEqual(pony['origin_status'],'cited')
+        self.assertIn('BSD-2-Clause',[r['id'] for r in pony['license']['licenses']])
         self.assertEqual(cat['nbody:lean4-nbody-native-v1']['authorship']['parent_programs'],['nbody:typescript-nbody-v1'])
         changed=cat['nbody:nbody-fsharpcore-4-static-output-aot']['authorship']
         self.assertEqual(changed['kind'],'ai-adapted')
