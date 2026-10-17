@@ -1,0 +1,71 @@
+{
+  "schema": "lean-required-work-review.v1",
+  "status": "PASSED_STATIC_AND_BOUNDED_NATIVE_ALLOCATION_CHECK",
+  "sources": {
+    "experiments/lean4/optimization-v1/build-concise-v1/source/revcomp.lean": "83c63f1968b7e7b15078ab7d8dfb5663df9419865c22839a6ba56c5fae6d9ae8",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/knucleotide.lean": "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/Format.c": "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/fasta.lean": "11e733b0fc105d63ad2796a9cc7a841158907607eb3cdc1318dc913ec0c0c5c8",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/nbody.lean": "225cda480b5955f098ac3c65c2823565bfdeb00f99f11ee8d03757687997fde3",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/binarytrees.lean": "37c5cacf2a55d3d29508c243b85642f52cda415ec7f248106ec69bc2c13cffff",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/pidigits.lean": "955909290c1f738af044d78843356661c9b854109d1fb614af3fc3b7785ea532",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/regexredux.lean": "0466c6444a340c5b06cecc230d6fc2055eba5a6fa4f633738cf88ad49b2d244e",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/spectralnorm.lean": "4ebb7b5d6d058d19405dc5c43f044a6518b59829284c7f3c0bdf3f5f991241e0",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/mandelbrot.lean": "4dc9807e0fadb7bc15b3ff86a74585e1568952c675ef068324de0fc2f398dc0e",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/fannkuchredux.lean": "243853074499673a192757e2f76b1829105abcb567ac8140ff3099d0a7250b56",
+    "experiments/lean4/optimization-v1/build-concise-v1/source/Regex.c": "80243f1810f082f0d66f510196f20965bfbbe8c5ed693293320ad13370b17f21"
+  },
+  "build_report": "experiments/lean4/optimization-v1/build-concise-v1/report.json",
+  "build_report_sha256": "5eb522170124d78e7c2e88870d5e852bafada10c0cbf79679a418629390ca8e7",
+  "bounded_report_sha256": "79a75dc9df07a69abae59058ae32abaeda5cd2521bbc50b783bf4858c46b4f28",
+  "controller_sha256": "dd411d6827c79caa04ff6173ee1008405e3e81eafcb6e90d904ee4c6fa6656ef",
+  "benchmark_measurements": 0,
+  "commands": [
+    {
+      "command": [
+        "/private/tmp/mech-lean4-toolchain/lean-4.35.0-darwin_aarch64/bin/leanc",
+        "-O3",
+        "-DNDEBUG",
+        "-fno-fast-math",
+        "-ffp-contract=off",
+        "-mmacosx-version-min=14.4",
+        "-isysroot",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+        "-isystem",
+        "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/optimization-v1/work-concise-v1/binarytrees",
+        "/private/tmp/mech-benchmark-publication/experiments/lean4/optimization-v1/work-concise-v1/binarytrees-counted.c"
+      ],
+      "exit_code": 0
+    }
+  ],
+  "binarytrees": {
+    "size": 9,
+    "diagnostic_source_sha256": "7eeaf698e7df884940cc7fe652b58a4ef107a5f392c989108aba7462684e0e3c",
+    "diagnostic_binary_sha256": "41433215667c166d68e58e769aeadb817548f07b4fadb7fcb9248cab0dda65b5",
+    "production_binary_sha256": "72b2ada1f50c382e82ff130a5d62bf9b1792885eebf7ed1afe6f9d81a65eb366",
+    "stdout_sha256": "fc6ca49b3987467168c413810504d644350f21504f5a51ed658e9f879832ddaf",
+    "stderr_sha256": "3b2de1f2e087cd4aea4abd515d92762d7146b4447fbe1315a50df1e1387bb74c",
+    "complete_output_matches_reference": true,
+    "observed": {
+      "node_allocations": 51550
+    },
+    "diagnostic_is_timed_binary": false,
+    "expected_node_allocations": 51550,
+    "allocation_sites": "Two dynamic node allocations, including every leaf; no shared node or subtree.",
+    "lifetime_review": "Generated main consumes and decrements the stretch root before creating the long root. The long root remains live across task creation and ordered joins, then is checked and decremented. The manyTrees recurrence checks and decrements each temporary root before recurring."
+  },
+  "pidigits": {
+    "independent_extraction_division_calls": [
+      "v___x_71_ = lean_int_ediv(v___x_70_, v_fst_31_);",
+      "v___x_75_ = lean_int_ediv(v___x_74_, v_fst_31_);"
+    ],
+    "review": "Separate 3*q+r and 4*q+r runtime divisions precede agreement testing and emission; arbitrary Int spigot state remains in Lean."
+  },
+  "fannkuchredux": {
+    "review": "Retained serial carry enumeration visits permutations in benchmark order; each permutation executes prefix flips and contributes checksum and maximum. Bounded n=0..8 outputs match references."
+  },
+  "other_workloads": "All application algorithms remain in Lean. Mandelbrot computes every pixel with up to 50 strict Float iterations; spectral norm computes 40 matrix-vector products; N-body performs all pair updates and time steps. FASTA, parsing, nucleotide rolling counts and reverse complement perform complete required input/output work. C supplies only generic fixed-point formatting and generic PCRE2 compile/next-match leaves, counted in normalized LOC.",
+  "production_binaries_unchanged": true
+}
