@@ -125,6 +125,21 @@ try{
     await page.click('#close-inspector');
     checks.push('hash-bound local predecessors in table, inspector and exports without erasing earlier-origin gaps');
   }
+  if(process.env.EXPECTED_MOJO_LINEAGE==='1'){
+    const mojo=json.rows.find(r=>r.implementation==='mojo-spectralnorm-small');
+    assert.ok(mojo);assert.equal(mojo.authorship_details.origin_status,'cited');
+    assert.equal(mojo.license_status,'partial');
+    const upstream=mojo.original_sources.find(r=>r.url.includes('faster-python-bench/blob/')&&r.url.endsWith('/spectral_norm.mojo'));
+    assert.ok(upstream?.upstream_sha256);
+    const earlier=mojo.original_sources.find(r=>r.url.endsWith('/program/spectralnorm-python3-6.html'));
+    assert.equal(earlier?.via_source,upstream.url);
+    await page.fill('#sample-data-search',mojo.implementation);await page.locator('[data-sample-program]').first().click();
+    const links=await page.locator('.source-authorship a').evaluateAll(nodes=>nodes.map(n=>n.href));
+    assert.ok(links.includes(upstream.url)&&links.includes(earlier.url));
+    assert.ok((await page.locator('.source-authorship').textContent()).includes('Upstream license not established'));
+    await page.click('#close-inspector');
+    checks.push('specific Mojo source and earlier Python reference preserved with unresolved upstream license');
+  }
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);
   await page.locator('[data-sample-program]').first().click();

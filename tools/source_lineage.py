@@ -62,6 +62,24 @@ def lineage(data):
                  set(catalog[r['program_key']]['files'])==set(r['source_sha256'])]
         if len(matched)!=len(record['predecessors']):continue
         parents[key]=matched;evidence.setdefault(key,[]).extend([origin_index,origin['path']])
+        for upstream in record.get('external_sources',[]):
+            if not any(upstream.get(kind) for kind in ['upstream_source','declared_in_source']):
+                raise ValueError('External predecessor lacks retained evidence: '+key)
+            item={k:v for k,v in upstream.items() if k in ['url','relationship','via_source']}
+            for proof_kind in ['upstream_source','declared_in_source']:
+                proof=upstream.get(proof_kind)
+                if not proof:continue
+                path=ROOT/proof['path'];raw=path.read_bytes()
+                if hashlib.sha256(raw).hexdigest()!=proof['sha256']:
+                    raise ValueError('Retained upstream evidence changed: '+proof['path'])
+                if proof_kind=='declared_in_source':
+                    marker=upstream.get('source_marker')
+                    if not isinstance(marker,str) or marker not in raw.decode():
+                        raise ValueError('Upstream source declaration missing: '+proof['path'])
+                if proof_kind=='upstream_source':item['upstream_sha256']=proof['sha256']
+                else:item['declaration_evidence']=proof
+                item['evidence']=proof['path'];evidence[key].append(proof['path'])
+            references.setdefault(key,[]).append(item)
     # Explicit source comments name the imported file's collection. The retained
     # download receipt pins that particular file, rather than the whole repo.
     downloads=read('archive/languages/crystal/20261012/research/source-downloads.json')

@@ -39,6 +39,13 @@ the Prolog origin record, used by twelve measured Prolog profiles. New source
 revisions do not inherit those links automatically. A local predecessor does not
 establish an earlier external origin; unresolved lineage remains flagged.
 
+The same index records three source-bound Mojo adaptations: both N-body forms
+cite the pinned SIMD implementation from `mojo-rust-python-perf`, and the scalar
+spectral-norm form cites `faster-python-bench`. Its retained source explicitly
+credits Benchmarks Game's Python #6 program, which is linked as the earlier
+reference. The optimized spectral-norm form does not inherit this citation.
+License terms for the two Mojo repositories remain unverified.
+
 Every measured source file also has an immutable link and SHA-256 for its retained
 revision. This identifies the measured bytes; it does not establish that the
 retained copy is the earliest publication. Collection directories, workload
@@ -51,6 +58,8 @@ contributor remains credited.
 `data/source-citation-checks.json` records primary-host response checks, hashes
 and matching retained source bytes where available. Availability is separate from
 authorship: a reachable source link does not establish who first wrote it.
+Each citation records its check date; `--missing-only` checks new or previously
+unavailable citations without redating earlier successful checks.
 
 ## Model evidence
 

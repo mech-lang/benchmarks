@@ -119,4 +119,15 @@ class Authorship(unittest.TestCase):
             with self.assertRaisesRegex(ValueError,'Source-predecessor evidence changed'):
                 audit.lineage(data)
 
+    def test_specific_mojo_sources_preserve_declared_earlier_reference(self):
+        data=json.loads((audit.ROOT/'data/benchmarks.json').read_text())
+        _,references,_=audit.lineage(data)
+        nbody=references['nbody:mojo-nbody-compact']
+        self.assertTrue(any(r['url'].endswith('/n_body_mojo/n_body.mojo') and r['upstream_sha256'] for r in nbody))
+        spectral=references['spectralnorm:mojo-spectralnorm-small']
+        earlier=next(r for r in spectral if r['url'].endswith('/program/spectralnorm-python3-6.html'))
+        self.assertIn('spectral_norm.mojo',earlier['via_source'])
+        self.assertIn('declaration_evidence',earlier);self.assertNotIn('upstream_sha256',earlier)
+        self.assertNotIn('spectralnorm:mojo-spectralnorm',references)
+
 if __name__=='__main__':unittest.main()
