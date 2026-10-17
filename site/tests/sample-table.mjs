@@ -18,11 +18,24 @@ const server=createServer(async(req,res)=>{
 if(!live)await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));
 const base=live??`http://127.0.0.1:${server.address().port}/`;
 const expectedBuild=process.env.EXPECTED_BUILD_VERSION;
+const expectedDataset=JSON.parse(await readFile(path.join(root,'build.json'),'utf8')).files['data.json'];
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
 const errors=[],checks=[],performanceRows=[];
 async function open(url=base,viewport={width:1440,height:1000}){
   const page=await browser.newPage({viewport,acceptDownloads:true});page.on('pageerror',e=>errors.push(e.message));
+  // Hash the actual fetch stream in-page. Chrome's inspector body cache can
+  // evict this 10 MB response before its ordinary JSON parsing has completed.
+  await page.addInitScript(()=>{
+    const original=window.fetch.bind(window);
+    window.fetch=async(...args)=>{
+      const response=await original(...args);
+      if(new URL(response.url).pathname.endsWith('/data.json'))window.sampleDatasetDigest=response.clone().arrayBuffer()
+        .then(bytes=>crypto.subtle.digest('SHA-256',bytes)).then(hash=>[...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,'0')).join(''));
+      return response;
+    };
+  });
   await page.goto(url);await page.waitForFunction(()=>!!window.benchmarkExplorer);
+  assert.equal(await page.evaluate(()=>window.sampleDatasetDigest),expectedDataset,'Exact browser-delivered dataset');
   if(expectedBuild)assert.equal(await page.locator('script[type="module"]').getAttribute('src'),`./app.mjs?v=${expectedBuild}`);
   return page;
 }
@@ -151,6 +164,6 @@ try{
   await page.fill('#sample-data-search','Lean');await page.screenshot({path:'/private/tmp/benchmark-sample-table-desktop.png',fullPage:false});
   await mobile.close();await page.close();checks.push('mobile drawer filtering, horizontal table scrolling and no page overflow');
   assert.deepEqual(errors,[]);
-  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
+  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,expected_build:expectedBuild??null,dataset_sha256:expectedDataset,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
   if(output)await writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser.close();if(!live)await new Promise(resolve=>server.close(resolve));}
