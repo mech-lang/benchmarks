@@ -1210,7 +1210,7 @@ function renderInspector({renderRelated=true}={}){
   $('#download-source').onclick=event=>{event.preventDefault();const url=URL.createObjectURL(new Blob([file.code],{type:'text/plain'}));const link=document.createElement('a');link.href=url;link.download=file.name;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);};
   queueViewLink();
 }
-function reset({rankings=false}={}){
+function reset({rankings=false,render=true}={}){
   const focus=state.languageFocus;
   pauseYears();
   state.benchmarks=new Set(data.benchmarks.map(b=>b.key));state.languages=new Set(data.languages.map(l=>l.key));
@@ -1220,7 +1220,7 @@ function reset({rankings=false}={}){
   state.benchmarkFilters=emptyBenchmarkFilters();
   Object.assign(state,{locMetric:'canonical',fast:true,small:true,sampleMode:'dim',medianMode:'highlight',densityMode:'off',focusMeans:true,global:false});fullReleaseWindow();
   if(focus){state.languageFocus={...focus,program:null,savedDetail:null,savedInspectorOpen:false};showLanguageOverview(focus.selectionKey,{family:focus.family});}
-  else update();
+  else if(render)update();
 }
 function setLOCMetric(metric){
   if(!['canonical','formatted'].includes(metric))throw new Error('Unknown LOC metric.');
@@ -1293,7 +1293,9 @@ async function start(){
   $('#release-year-sources').innerHTML=yearSources.map(l=>`<li><a href="${esc(l.release_source)}" target="_blank" rel="noopener">${esc(l.release_name)} · ${l.release_year}</a><span>${esc(l.release_note)}</span></li>`).join('');
   $('#release-decades').innerHTML=Array.from({length:8},(_,index)=>1950+index*10).map(decade=>`<button data-release-decade="${decade}" aria-pressed="false">${decade}s</button>`).join('');
   $('#focused-benchmark').innerHTML=data.benchmarks.map(b=>`<option value="${b.key}">${esc(b.title)}</option>`).join('');
-  reset();registerTools();
+  // Restore before the first render, avoiding an expensive default chart and
+  // a flash of unrelated data when opening a shared language or ranking view.
+  reset({render:false});registerTools();
   for(const kind of ['benchmark','language']){
     const toggle=$(`#toggle-${kind}-filters`),body=$(`#${kind}-filter-body`);
     const setExpanded=value=>{toggle.setAttribute('aria-expanded',value);body.hidden=!value;};
