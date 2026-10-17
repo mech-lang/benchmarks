@@ -24,6 +24,7 @@ const normalize=view=>{
   for(const key of ['benchmarks','languages','ellipses','disabled','collapsedFamilies'])view[key].sort();
   for(const category of ['traits','benchmarkFilters'])for(const values of Object.values(view[category]))values.sort();
   if(!view.inspectorOpen)delete view.detail;
+  if(view.languageTab)normalize(view.languageTab);
   return view;
 };
 const snapshot=async page=>({state:normalize(await page.evaluate(()=>window.benchmarkExplorer.getViewState())),
@@ -34,6 +35,7 @@ const snapshot=async page=>({state:normalize(await page.evaluate(()=>window.benc
     sourceFile:document.querySelector('#inspector').open?document.querySelector('#detail-file')?.value:null,
     samples:document.querySelector('.chart-card').hidden?null:document.querySelectorAll('#chart [data-sample]').length,
     rankings:document.querySelector('#median-rankings').hidden?null:document.querySelector('#median-rankings-summary').textContent,
+    languageTab:document.querySelector('#language-view-tab').hidden?null:document.querySelector('#language-view-tab').textContent,
     domain:document.querySelector('.chart-card').hidden?null:window.benchmarkExplorer.getDomains()}))});
 async function open(url=base,viewport={width:1280,height:900}){
   const page=await browser.newPage({viewport});page.on('pageerror',error=>errors.push(error.message));
@@ -47,6 +49,12 @@ async function roundtrip(page,name,{mobile=false}={}){
   assert.deepEqual(await snapshot(fresh),before,name+' restores in a fresh browser context');
   assert.equal(new URL(fresh.url()).hash,new URL(url).hash,name+' canonical URL');
   assert.ok(await fresh.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'No horizontal page overflow');
+  if(before.state.languageTab){
+    await fresh.locator('[data-view="language"]').click();await settle(fresh);
+    const tab=normalize(await fresh.evaluate(()=>window.benchmarkExplorer.getViewState()));
+    assert.equal(tab.languageFocus.selectionKey,before.state.languageTab.languageFocus.selectionKey,'Saved language tab remains usable');
+    assert.deepEqual(tab.benchmarks,before.state.languageTab.benchmarks,'Saved tab keeps its benchmark selection');
+  }
   rows.push({name,url,view:before.state.view,language:before.state.languageFocus?.selectionKey??null,benchmarks:before.state.benchmarks,inspectorOpen:before.state.inspectorOpen});
   await fresh.close();return url;
 }

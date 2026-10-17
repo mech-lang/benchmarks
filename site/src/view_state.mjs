@@ -35,10 +35,11 @@ export function encodeView(view,defaults){
   }
   for(const [table,sort] of Object.entries(view.tableSort))
     if(!equal(sort,defaults.tableSort[table]))p.set('sort.'+table,`${sort.key??''}:${sort.direction}`);
+  if(view.languageTab&&!focus)p.set('tab',encodeView({...view.languageTab,languageTab:null},defaults).slice(1));
   return '#'+p.toString();
 }
 
-export function decodeView(hash,defaults,spec){
+export function decodeView(hash,defaults,spec,nested=false){
   const p=new URLSearchParams(hash.replace(/^#/,''));
   if(p.get('v')!=='1'||hash.length>100000)return null;
   const result=structuredClone(defaults);
@@ -92,6 +93,10 @@ export function decodeView(hash,defaults,spec){
   for(const [table,keys] of Object.entries(spec.sorts))if(p.has('sort.'+table)){
     const [key,direction]=p.get('sort.'+table).split(':');
     if(keys.includes(key)&&['1','-1'].includes(direction))result.tableSort[table]={key:key||null,direction:Number(direction)};
+  }
+  if(!nested&&!result.languageFocus&&p.has('tab')){
+    const tab=decodeView('#'+p.get('tab'),defaults,spec,true);
+    if(tab?.languageFocus)result.languageTab=tab;
   }
   return result;
 }

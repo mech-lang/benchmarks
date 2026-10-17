@@ -103,16 +103,28 @@ let playbackTimer=null;
 let renderedChartWidth=null,renderedChartMobile=null,chartResizeFrame=null;
 const tableSort={comparison:{key:'language',direction:1},timings:{key:'run',direction:1},implementations:{key:null,direction:1}};
 let viewDefaults=null,restoringView=false,viewLinkQueued=false,pushViewLink=false,lastViewLink=null,viewLinkTimer=null,lastViewWrite=-Infinity;
-function captureView(){
-  const sets=key=>Object.fromEntries(Object.entries(state[key]).map(([key,values])=>[key,[...values]]));
-  const focus=state.languageFocus;
-  return {...Object.fromEntries(['view','focus','locMetric','fast','small','sampleMode','medianMode','densityMode','focusMeans','global','releaseYearStart','releaseYear','playbackYear'].map(key=>[key,state[key]])),
-    ...Object.fromEntries(['benchmarks','languages','ellipses','disabled','collapsedFamilies'].map(key=>[key,[...state[key]]])),
+function captureView(selection=state,inspectorOpen=$('#inspector').open){
+  const sets=key=>Object.fromEntries(Object.entries(selection[key]).map(([key,values])=>[key,[...values]]));
+  const focus=selection.languageFocus;
+  return {...Object.fromEntries(['view','focus','locMetric','fast','small','sampleMode','medianMode','densityMode','focusMeans','global','releaseYearStart','releaseYear','playbackYear'].map(key=>[key,selection[key]])),
+    ...Object.fromEntries(['benchmarks','languages','ellipses','disabled','collapsedFamilies'].map(key=>[key,[...selection[key]]])),
     traits:sets('traits'),benchmarkFilters:sets('benchmarkFilters'),
     languageFocus:focus?Object.fromEntries(['selectionKey','family','variant','benchmark','program','comparison','comparisonLanguage','comparisonProgram'].map(key=>[key,focus[key]??null])):null,
-    inspectorOpen:$('#inspector').open,detail:{...state.detail,program:$('#inspector').open?selectedProgram()?.key??null:state.detail.program},
+    inspectorOpen,detail:{...selection.detail,program:inspectorOpen?(selection===state?selectedProgram()?.key:selection.detail.program??focus?.program)??null:selection.detail.program},
     tableSort:structuredClone(tableSort),
-    benchmarkExpanded:!$('#benchmark-filter-body').hidden,languageExpanded:!$('#language-filter-body').hidden};
+    benchmarkExpanded:!$('#benchmark-filter-body').hidden,languageExpanded:!$('#language-filter-body').hidden,
+    languageTab:selection===state&&!focus&&rememberedLanguageView?captureView(rememberedLanguageView,rememberedLanguageView.inspectorOpen):null};
+}
+function inflateView(view){
+  const {tableSort:sorts,benchmarkExpanded,languageExpanded,languageTab,...selection}=view;
+  for(const key of ['benchmarks','languages','ellipses','disabled','collapsedFamilies'])selection[key]=new Set(selection[key]);
+  for(const key of ['traits','benchmarkFilters'])selection[key]=Object.fromEntries(Object.entries(selection[key]).map(([key,values])=>[key,new Set(values)]));
+  if(selection.languageFocus){
+    const focus=selection.languageFocus,group=focus.family?families().find(f=>f.key===focus.selectionKey):null;
+    Object.assign(focus,{keys:group?group.members.map(l=>l.key):[focus.selectionKey],label:group?.label??shortName(focus.selectionKey),
+      origin:null,savedDetail:{...selection.detail},savedInspectorOpen:selection.inspectorOpen});
+  }
+  return selection;
 }
 function writeViewLink({force=false}={}){
   viewLinkQueued=false;
@@ -138,7 +150,7 @@ function queueViewLink({push=false}={}){
 function restoreViewLink(){
   if(!viewDefaults)return;
   const spec={benchmarks:data.benchmarks.map(b=>b.key),languages:data.languages.map(l=>l.key),
-    ellipses:data.languages.map(l=>l.key),disabled:Object.keys(programCatalog),collapsedFamilies:families().map(f=>f.key),
+    ellipses:data.languages.map(l=>l.key),disabled:Object.keys(data.programs),collapsedFamilies:families().map(f=>f.key),
     families:Object.fromEntries(families().map(f=>[f.key,f.members.map(l=>l.key)])),programs:programCatalog,
     traits:Object.fromEntries(traitDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
     benchmarkFilters:Object.fromEntries(benchmarkDimensions.map(d=>[d.key,d.options.map(o=>o.key)])),
@@ -146,16 +158,11 @@ function restoreViewLink(){
     sorts:{comparison:['language','loc','fastest','slope','length','areaFast','areaSmall'],timings:['run','elapsed'],implementations:['','show','program','loc','median']}};
   const restored=decodeView(location.hash,viewDefaults,spec)??structuredClone(viewDefaults);
   restoringView=true;clearTimeout(viewLinkTimer);viewLinkTimer=null;pushViewLink=false;closeFilterDrawer();pauseYears();rememberedLanguageView=null;
-  const {inspectorOpen,tableSort:sorts,benchmarkExpanded,languageExpanded,...selection}=restored;
+  const {inspectorOpen,tableSort:sorts,benchmarkExpanded,languageExpanded}=restored;
+  const {inspectorOpen:ignored,...selection}=inflateView(restored);
   Object.assign(state,selection,{playing:false});
-  for(const key of ['benchmarks','languages','ellipses','disabled','collapsedFamilies'])state[key]=new Set(state[key]);
-  for(const key of ['traits','benchmarkFilters'])state[key]=Object.fromEntries(Object.entries(state[key]).map(([key,values])=>[key,new Set(values)]));
   Object.assign(tableSort,sorts);
-  if(state.languageFocus){
-    const focus=state.languageFocus,group=focus.family?families().find(f=>f.key===focus.selectionKey):null;
-    Object.assign(focus,{keys:group?group.members.map(l=>l.key):[focus.selectionKey],label:group?.label??shortName(focus.selectionKey),
-      origin:null,savedDetail:{...state.detail},savedInspectorOpen:inspectorOpen});
-  }
+  if(restored.languageTab)rememberedLanguageView=inflateView(restored.languageTab);
   for(const [kind,expanded] of [['benchmark',benchmarkExpanded],['language',languageExpanded]]){
     $(`#${kind}-filter-body`).hidden=!expanded;$(`#toggle-${kind}-filters`).setAttribute('aria-expanded',expanded);
   }
