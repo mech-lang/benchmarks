@@ -33,6 +33,7 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Julia (AOT)](julia-aot/)
 - [K (Growler)](k/)
 - [Kotlin (JVM)](kotlin/)
+- [Lean 4 (AOT)](lean4/)
 - [Lua (interpreted)](lua/)
 - [LuaJIT](luajit/)
 - [MATLAB](matlab/)

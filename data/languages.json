@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "audited_on": "2026-10-16",
-  "scope": "59 measured variants; all classifications explicit.",
+  "scope": "60 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2900,6 +2900,53 @@
         }
       ],
       "evidence_scope": "Exact retained application source, native image/bundle, build and validation receipts, serial full fresh-process observations and independent reconciliation. Numeric GC configuration is not claimed."
+    },
+    "lean4": {
+      "schema": "lean4-publication-runtime-metadata.v1",
+      "key": "lean4",
+      "family": "lean4",
+      "label": "Lean 4 (AOT)",
+      "platform": "native",
+      "runtime": "Lean 4.35.0 / C backend / Clang 23.1.0",
+      "execution": [
+        "aot"
+      ],
+      "typing": "static",
+      "style": [
+        "functional",
+        "imperative"
+      ],
+      "memory": [
+        "rc"
+      ],
+      "note": "Lean 4 native executables use reference counting and copy-on-write arrays. Tasks parallelize binary trees, spectral norm and Mandelbrot. Samples include startup, input, complete work/output and shutdown. General C leaves supply fixed-point formatting and PCRE2 compile/next-match results; application traversal, counts and replacements remain Lean.",
+      "sources": [
+        "https://lean-lang.org/doc/reference/latest/",
+        "https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/",
+        "https://lean-lang.org/doc/reference/latest/releases/v4.0.0-m1/"
+      ],
+      "release_year": 2021,
+      "release_name": "Lean 4 first public milestone",
+      "release_source": "https://lean-lang.org/doc/reference/latest/releases/v4.0.0-m1/",
+      "release_note": "This series measures Lean 4, whose first public milestone was released January 4, 2021. Stable 4.0.0 followed September 8, 2023. Earlier Lean generations are not measured here.",
+      "runtime_policy": "Official Lean 4.35.0 arm64 release; standard native Task pool; strict floating point with contraction disabled; builds outside timing.",
+      "memory_policy": "Lean reference counting and copy-on-write; PCRE2 objects have Lean external-object finalizers.",
+      "evidence_scope": "Pinned source, toolchain, builds, executable hashes and load commands. Per-process loaded-image inventories were not captured.",
+      "toolchain_evidence": "experiments/lean4/toolchain-v1.json",
+      "timing_evidence": "experiments/lean4/results-v1.json",
+      "source_count_evidence": "experiments/lean4/source-counts-v1/qualification-v4/qualified-counts.json",
+      "runtime_publication_metadata_qualified": true,
+      "observed_in_each_timed_process": false,
+      "actual_loaded_image_inventory_observed": false,
+      "formatted_loc_qualified": false,
+      "matched_mech_controls": 0,
+      "displayed_program_count": 10,
+      "measurement_basis": [
+        {
+          "path": "experiments/lean4/results-v1.json",
+          "sha256": "9f47135a57edebe2caed5746f8a00b942e01733552a7ac61918048ace9c257b2"
+        }
+      ]
     }
   }
 }

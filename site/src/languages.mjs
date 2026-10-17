@@ -1198,5 +1198,26 @@ export const languageMetadata = {
       "https://docs.julialang.org/en/v1/devdocs/aot/",
       "https://docs.julialang.org/en/v1/devdocs/gc/"
     ]
+  },
+  "lean4": {
+    "platform": "native",
+    "runtime": "Lean 4.35.0 / C backend / Clang 23.1.0",
+    "execution": [
+      "aot"
+    ],
+    "typing": "static",
+    "style": [
+      "functional",
+      "imperative"
+    ],
+    "memory": [
+      "rc"
+    ],
+    "note": "Lean 4 native executables use reference counting and copy-on-write arrays. Tasks parallelize binary trees, spectral norm and Mandelbrot. Samples include startup, input, complete work/output and shutdown. General C leaves supply fixed-point formatting and PCRE2 compile/next-match results; application traversal, counts and replacements remain Lean.",
+    "sources": [
+      "https://lean-lang.org/doc/reference/latest/",
+      "https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/",
+      "https://lean-lang.org/doc/reference/latest/releases/v4.0.0-m1/"
+    ]
   }
 };

@@ -56,6 +56,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | Julia (AOT) | Julia / PackageCompiler native runtime | AOT | Dynamic | Tracing GC |
 | K (Growler) | Growler K interpreter | Interpreted | Dynamic | RC |
 | Kotlin (JVM) | Kotlin 2.4.21 / Eclipse Temurin HotSpot 25.0.4.1+1 | JIT | Static | Tracing GC |
+| Lean 4 (AOT) | Lean 4.35.0 native C backend / Clang 23.1.0 | AOT | Static, dependent types | Reference counting |
 | Lua (interpreted) | PUC Lua bytecode interpreter | Interpreted | Dynamic | Tracing GC |
 | LuaJIT | LuaJIT | JIT | Dynamic | Tracing GC |
 | MATLAB | MATLAB native runtime / JIT | JIT | Dynamic | RC, Cycles |
