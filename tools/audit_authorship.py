@@ -189,9 +189,11 @@ def audit(data,models):
             if check:
                 r['citation_check']={k:v for k,v in check.items() if k in ['status','body_sha256','normalized_source_sha256','matching_retained_source_sha256','retrieved_url']}
                 r['citation_check']['evidence']='data/source-citation-checks.json'
-        retained=[{'source_sha256':sha,'url':REPO+'/blob/'+SOURCE_REVISION+'/'+retained_path(data,sha)} for sha in p['files']] if data.get('archive_paths') is not None else []
+        retained_revision=p.get('retained_source_revision',SOURCE_REVISION)
+        if not re.fullmatch('[0-9a-f]{40}',retained_revision):raise ValueError('Invalid retained-source revision: '+key)
+        retained=[{'source_sha256':sha,'url':REPO+'/blob/'+retained_revision+'/'+retained_path(data,sha)} for sha in p['files']] if data.get('archive_paths') is not None else []
         parent_sources=[{'program_key':parent,'label':catalog[parent]['id'],'source_sha256':sha,
-                         'url':REPO+'/blob/'+SOURCE_REVISION+'/'+retained_path(data,sha),'relationship':'local predecessor'}
+                         'url':REPO+'/blob/'+catalog[parent].get('retained_source_revision',SOURCE_REVISION)+'/'+retained_path(data,sha),'relationship':'local predecessor'}
                         for parent in parents.get(key,[]) for sha in catalog[parent]['files']] if data.get('archive_paths') is not None else []
         records[key]={'schema':'benchmark-authorship.v1','kind':kind,'label':label,'source_sha256':source_identity(p),
             'origin_status':'unresolved' if gaps else 'suite-authored' if explicit_new else 'cited',

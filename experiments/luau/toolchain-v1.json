@@ -1,0 +1,94 @@
+{
+  "schema": "luau-retained-toolchain.v1",
+  "release": "0.743",
+  "revision": "9d7748a4f324213a18cb8283fa2a77c330225fa0",
+  "repository": "https://github.com/luau-lang/luau",
+  "compiler": {
+    "path": "/usr/bin/c++",
+    "sha256": "3e7d30871a9740446f33a907b14d28f10ebe6d4e1c146a4c0788308f573a6609",
+    "version": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin25.2.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n"
+  },
+  "sdk": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+  "dependencies": {
+    "GMP": {
+      "version": "6.3.0",
+      "header": "/opt/homebrew/opt/gmp/include/gmp.h",
+      "header_sha256": "ba08e6d76e0945a858d6e3384eb1fbc1b8100799052cf4ab5c10befe6ee99ebc"
+    },
+    "PCRE2": {
+      "version": "10.49",
+      "header": "/opt/homebrew/opt/pcre2/include/pcre2.h",
+      "header_sha256": "19756397bb6c402d43f74ba827c55acd26c21d078eead9ed5d49f582e4c506d8"
+    }
+  },
+  "build_evidence": {
+    "path": "experiments/luau/build-v2/report.json",
+    "sha256": "38ecb4c52cf8f29fd033d62a9fb44c4ff27d350ab0818ef58cea881d61835d96"
+  },
+  "binaries": {
+    "luau-host": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-host",
+      "sha256": "6aa8091f8f24959e5f57d39b4309defb28e1b44c1487e95a67ba2d45c0c48878"
+    },
+    "luau-regex": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-regex",
+      "sha256": "f9415e5553d06d611d334f935d1c19b3b818f3de6195d241cb04cb4c879539d5"
+    },
+    "luau-bigint": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-bigint",
+      "sha256": "22353f900fa8a3757c8e3e04a7ea47df33ebeffc2f03c3f7642bd7364f0154de"
+    },
+    "luau-source-reader": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-source-reader",
+      "sha256": "06f61a84676f9cb3895a0fe2e7c6f1165172f1bb6ec2b3f21b73f0ce600eb3e8"
+    },
+    "luau/luau": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau/luau",
+      "sha256": "d9fa4fbcfcb0814d2b63eea3a139e3db19af19542e1143619316b03e8648dd0c"
+    },
+    "luau/luau-compile": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau/luau-compile",
+      "sha256": "5651aa8941a19ff152c2976099d8957f7d9f456334534064f9315a9ac3bb3377"
+    }
+  },
+  "rebuild_commands": [
+    [
+      "git",
+      "clone",
+      "https://github.com/luau-lang/luau.git",
+      "/private/tmp/mech-luau-toolchain-0.743"
+    ],
+    [
+      "git",
+      "-C",
+      "/private/tmp/mech-luau-toolchain-0.743",
+      "checkout",
+      "9d7748a4f324213a18cb8283fa2a77c330225fa0"
+    ],
+    [
+      "/opt/homebrew/bin/cmake",
+      "-S",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/source-v1",
+      "-B",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DLUAU_SOURCE=/private/tmp/mech-luau-toolchain-0.743",
+      "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG -fno-fast-math -ffp-contract=off"
+    ],
+    [
+      "/opt/homebrew/bin/cmake",
+      "--build",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1",
+      "--parallel",
+      "4",
+      "--target",
+      "luau-host",
+      "luau-regex",
+      "luau-bigint",
+      "luau-source-reader",
+      "Luau.Repl.CLI",
+      "Luau.Compile.CLI"
+    ]
+  ],
+  "observed_at": "2026-10-18T15:29:00.842246+00:00"
+}

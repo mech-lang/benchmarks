@@ -9,7 +9,7 @@ export const traitDimensions = [
   {key:'execution',label:'Execution',note:'Native AOT, native JIT, or interpretation in the measured variant. A series may contain more than one mode.',options:[
     {key:'aot',label:'AOT'}, {key:'jit',label:'JIT'}, {key:'interpreted',label:'Interpreted'}]},
   {key:'typing',label:'Typing',options:[
-    {key:'static',label:'Static'}, {key:'dynamic',label:'Dynamic'}]},
+    {key:'static',label:'Static'}, {key:'dynamic',label:'Dynamic'}, {key:'gradual',label:'Gradual'}]},
   {key:'style',label:'Paradigm',note:'Established language styles; a language may support several.',options:[
     {key:'imperative',label:'Imperative'}, {key:'object',label:'Object-oriented'},
     {key:'functional',label:'Functional'}, {key:'logic',label:'Logic'}, {key:'array',label:'Array'},

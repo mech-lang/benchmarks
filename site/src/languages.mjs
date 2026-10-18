@@ -1219,5 +1219,49 @@ export const languageMetadata = {
       "https://lean-lang.org/doc/reference/latest/Elaboration-and-Compilation/",
       "https://lean-lang.org/doc/reference/latest/releases/v4.0.0-m1/"
     ]
+  },
+  "luau": {
+    "platform": "runtime",
+    "runtime": "Luau 0.743 bytecode interpreter",
+    "execution": [
+      "interpreted"
+    ],
+    "typing": "gradual",
+    "style": [
+      "imperative",
+      "functional",
+      "object"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Gradual types with a separate optional static checker and dynamic runtime checks. Standard Luau incremental tracing GC. All authored embedding and native-library binding source is counted; native benchmark algorithms are absent from the host.",
+    "sources": [
+      "https://luau.org/performance/",
+      "https://luau.org/sandbox/",
+      "https://luau.org/typecheck/"
+    ]
+  },
+  "luau-jit": {
+    "platform": "runtime",
+    "runtime": "Luau 0.743 arm64 native JIT with VM fallback",
+    "execution": [
+      "jit"
+    ],
+    "typing": "gradual",
+    "style": [
+      "imperative",
+      "functional",
+      "object"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "Gradual types with a separate optional static checker and dynamic runtime checks. Standard Luau incremental tracing GC. All authored embedding and native-library binding source is counted; native benchmark algorithms are absent from the host.",
+    "sources": [
+      "https://luau.org/performance/",
+      "https://luau.org/sandbox/",
+      "https://luau.org/typecheck/"
+    ]
   }
 };

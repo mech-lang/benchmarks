@@ -1,6 +1,6 @@
 {
   "schema": "luau-serial-execution.v1",
-  "status": "RUNNING",
+  "status": "PASSED",
   "mode": "full",
   "started_utc": "2026-10-18T14:56:56.088751+00:00",
   "toolchain": {
@@ -2224,14 +2224,86 @@
         "competing_processes_before": [],
         "after": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n"
       }
+    },
+    {
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-host",
+        "--vm",
+        "/private/tmp/mech-benchmark-publication/experiments/luau/source-v1/fannkuchredux.luau",
+        "12"
+      ],
+      "started_utc": "2026-10-18T15:24:28.706500+00:00",
+      "stdin": "/dev/null",
+      "pid": 93209,
+      "exit_code": 0,
+      "elapsed_seconds": 189.039936375,
+      "user_seconds": 188.656167,
+      "system_seconds": 0.324104,
+      "maximum_rss_bytes": 2834432,
+      "timed_out": false,
+      "finished_utc": "2026-10-18T15:27:37.746402+00:00",
+      "stdout": {
+        "path": "experiments/luau/full-v1/059-fannkuchredux-full-3-vm/stdout.bin",
+        "bytes": 29,
+        "sha256": "4265a65135c506a68d90d6474003fb9030b7ee244a06c046bd89b3932a28ce20"
+      },
+      "stderr": {
+        "path": "experiments/luau/full-v1/059-fannkuchredux-full-3-vm/stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "benchmark": "fannkuchredux",
+      "case": "full-3",
+      "execution_mode": "vm",
+      "valid": true,
+      "power": {
+        "before": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+        "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n",
+        "competing_processes_before": [],
+        "after": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n"
+      }
+    },
+    {
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1/luau-host",
+        "--jit",
+        "/private/tmp/mech-benchmark-publication/experiments/luau/source-v1/fannkuchredux.luau",
+        "12"
+      ],
+      "started_utc": "2026-10-18T15:27:37.826619+00:00",
+      "stdin": "/dev/null",
+      "pid": 93380,
+      "exit_code": 0,
+      "elapsed_seconds": 58.122826917,
+      "user_seconds": 57.999615,
+      "system_seconds": 0.107488,
+      "maximum_rss_bytes": 3604480,
+      "timed_out": false,
+      "finished_utc": "2026-10-18T15:28:35.949841+00:00",
+      "stdout": {
+        "path": "experiments/luau/full-v1/060-fannkuchredux-full-3-jit/stdout.bin",
+        "bytes": 29,
+        "sha256": "4265a65135c506a68d90d6474003fb9030b7ee244a06c046bd89b3932a28ce20"
+      },
+      "stderr": {
+        "path": "experiments/luau/full-v1/060-fannkuchredux-full-3-jit/stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "benchmark": "fannkuchredux",
+      "case": "full-3",
+      "execution_mode": "jit",
+      "valid": true,
+      "power": {
+        "before": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+        "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n",
+        "competing_processes_before": [],
+        "after": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n"
+      }
     }
   ],
-  "active": {
-    "benchmark": "fannkuchredux",
-    "case": "full-3",
-    "execution_mode": "vm"
-  },
-  "benchmark_samples": 58,
+  "active": null,
+  "benchmark_samples": 60,
   "chart_admission": false,
   "timing_processes_serial": true,
   "timing_boundary": "Fresh process: host and VM startup, source read and -O2 bytecode compilation, optional native JIT, arguments/input, all work/output, flushing and shutdown. Runtime builds and output comparisons excluded.",
@@ -2264,5 +2336,7 @@
       "mtime_ns": 1792239891144253881
     }
   },
-  "common_mutex_inode": 82961857
+  "common_mutex_inode": 82961857,
+  "finished_utc": "2026-10-18T15:28:35.968031+00:00",
+  "sources_unchanged": true
 }

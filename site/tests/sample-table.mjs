@@ -20,6 +20,10 @@ const base=live??`http://127.0.0.1:${server.address().port}/`;
 const expectedBuild=process.env.EXPECTED_BUILD_VERSION;
 const expectedDataset=JSON.parse(await readFile(path.join(root,'build.json'),'utf8')).files['data.json'];
 const expectedReproduction=JSON.parse(await readFile(path.join(root,'build.json'),'utf8')).files['reproduction.json'];
+const expectedData=JSON.parse(await readFile(path.join(root,'data.json'),'utf8'));
+const expectedCatalog={...expectedData.program_inventory,...expectedData.programs};
+const expectedPrograms=Object.keys(expectedCatalog).length;
+const expectedObservations=Object.values(expectedCatalog).filter(p=>!p.timing_alias_of).reduce((n,p)=>n+p.samples.length,0);
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
 const errors=[],checks=[],performanceRows=[];
 async function open(url=base,viewport={width:1440,height:1000}){
@@ -64,7 +68,7 @@ try{
   const page=await open();assert.equal(await page.evaluate(()=>window.sampleReproductionDigest),undefined,'Ordinary chart does not fetch full reproduction records');await page.click('[data-view="data"]');
   await page.waitForFunction(()=>document.querySelector('#sample-data').hidden===false);
   const initial=await page.evaluate(()=>window.benchmarkExplorer.getSampleData());
-  assert.equal(initial.total,3111);assert.equal(initial.filtered.length,3111);
+  assert.equal(initial.total,expectedObservations);assert.equal(initial.filtered.length,expectedObservations);
   assert.equal(await page.locator('#sample-data-table tbody tr').count(),100);
   assert.equal(await page.locator('[data-sort-table="data"]').count(),21);
   assert.equal(await page.locator('[data-view="data"]').textContent(),'Data');
@@ -85,11 +89,11 @@ try{
   const descending=await page.locator('#sample-data-table tbody td:nth-child(6) span').evaluateAll(nodes=>nodes.map(n=>Number(n.title)));
   assert.ok(descending.slice(1).every((v,i)=>v<=descending[i]));checks.push('numeric ascending/descending sorts');
   const csv=parseCSV(await exported(page,'all','csv')),headers=csv.shift();
-  assert.equal(csv.length,3111);assert.ok(csv.every(r=>r.length===headers.length));
-  assert.equal(new Set(csv.map(r=>r[headers.indexOf('sample_id')])).size,3111);
-  const json=JSON.parse(await exported(page,'all','json'));assert.equal(json.row_count,3111);
+  assert.equal(csv.length,expectedObservations);assert.ok(csv.every(r=>r.length===headers.length));
+  assert.equal(new Set(csv.map(r=>r[headers.indexOf('sample_id')])).size,expectedObservations);
+  const json=JSON.parse(await exported(page,'all','json'));assert.equal(json.row_count,expectedObservations);
   assert.equal(await page.evaluate(()=>window.sampleReproductionDigest),expectedReproduction,'Exact browser-delivered reproduction records');
-  assert.equal(json.rows.length,3111);assert.equal(Object.keys(json.programs).length,1013);assert.ok(Object.keys(json.files).length>900);
+  assert.equal(json.rows.length,expectedObservations);assert.equal(Object.keys(json.programs).length,expectedPrograms);assert.ok(Object.keys(json.files).length>900);
   for(const r of json.rows){assert.ok(json.programs[r.program_key]);assert.ok(r.implementation_url.includes('detail.program='));
     assert.ok(r.source_sha256.every(key=>json.files[key]));}
   assert.deepEqual(csv.map(r=>Number(r[headers.indexOf('seconds')])),json.rows.map(r=>r.seconds));checks.push('complete CSV/JSON exports with exact times, links and source bundles');
@@ -140,6 +144,26 @@ try{
     await page.click('#close-inspector');
     checks.push('specific Mojo source and earlier Python reference preserved with unresolved upstream license');
   }
+  if(process.env.EXPECTED_LUAU_PROGRAMS){
+    const programs=Object.values(json.programs).filter(p=>['luau','luau-jit'].includes(p.language));
+    assert.equal(programs.length,Number(process.env.EXPECTED_LUAU_PROGRAMS));
+    for(const language of ['luau','luau-jit']){
+      const rows=json.rows.filter(r=>r.language_key===language);
+      assert.equal(new Set(rows.map(r=>r.benchmark_key)).size,10);
+      assert.equal(rows.length,33);
+      assert.ok(rows.every(r=>r.toolchain_version.includes('0.743')));
+      assert.ok(rows.every(r=>r.authorship_details.kind==='ai-adapted'));
+      assert.ok(rows.every(r=>r.original_sources.some(s=>s.url.includes('/program/')&&s.url.includes('-lua-'))));
+      assert.ok(rows.every(r=>r.source_sha256.some(s=>json.files[s].name==='Host.cpp')));
+    }
+    const guarded=json.rows.find(r=>r.implementation==='luau-jit-revcomp-guarded-v1');
+    await page.fill('#sample-data-search',guarded.implementation);
+    await page.locator('[data-sample-program]').first().click();
+    assert.ok((await page.locator('.source-authorship').textContent()).includes('AI adapted'));
+    assert.ok((await page.locator('.source-authorship a').evaluateAll(nodes=>nodes.map(n=>n.href))).some(url=>url.includes('/program/revcomp-lua-2.html')));
+    await page.click('#close-inspector');
+    checks.push('both Luau modes retain ten workloads, complete samples, original Lua citations, runtime version and counted host source');
+  }
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);
   await page.locator('[data-sample-program]').first().click();
@@ -164,10 +188,10 @@ try{
   const before=await page.evaluate(()=>document.querySelector('#chart').innerHTML);
   let start=Date.now();await page.fill('#sample-data-search','Lean n-body');
   await page.waitForFunction(()=>document.querySelectorAll('#sample-data-table tbody tr').length===9);
-  performanceRows.push({operation:'filter 3111 observations',wall_ms:Date.now()-start});
+  performanceRows.push({operation:`filter ${expectedObservations} observations`,wall_ms:Date.now()-start});
   assert.equal(await page.evaluate(()=>document.querySelector('#chart').innerHTML),before);
   assert.equal((await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length,9);
-  assert.equal(parseCSV(await exported(page,'all','csv')).length-1,3111);
+  assert.equal(parseCSV(await exported(page,'all','csv')).length-1,expectedObservations);
   const filtered=JSON.parse(await exported(page,'filtered','json'));assert.equal(filtered.row_count,9);
   assert.ok(filtered.rows.every(r=>r.language_key==='lean4'&&r.benchmark_key==='nbody'));
   await page.locator('[data-select-sample]').nth(0).check();await page.locator('[data-select-sample]').nth(2).check();
@@ -189,10 +213,10 @@ try{
   await page.click('#reset-sample-data');
   await page.click('#select-filtered-samples');
   const allURL=await page.evaluate(()=>window.benchmarkExplorer.getShareURL()),allRestored=await open(allURL);
-  assert.equal((await allRestored.evaluate(()=>window.benchmarkExplorer.getSampleData())).selected.length,3111);await allRestored.close();
+  assert.equal((await allRestored.evaluate(()=>window.benchmarkExplorer.getSampleData())).selected.length,expectedObservations);await allRestored.close();
   await page.click('#clear-selected-samples');
-  checks.push('full 3111-row selection survives a fresh browser URL');
-  assert.equal((await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length,3111);
+  checks.push(`full ${expectedObservations}-row selection survives a fresh browser URL`);
+  assert.equal((await page.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length,expectedObservations);
   await page.fill('#sample-data-search','uiua binary');
   const alias=page.locator('[data-sample-program="binarytrees:binarytrees-uiua-optimized"]').first();await alias.click();
   assert.equal(await page.locator('#inspector').isVisible(),true);assert.equal(await page.locator('#detail-program').inputValue(),'binarytrees:binarytrees-uiua-optimized');
@@ -210,12 +234,12 @@ try{
   assert.equal(await mobile.locator('#sample-data').isVisible(),true);
   const overflow=await mobile.evaluate(()=>document.documentElement.scrollWidth>innerWidth+1);assert.equal(overflow,false);
   await mobile.click('#open-filters');await mobile.click('#only-mech');await mobile.click('#close-filters');
-  assert.ok((await mobile.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length<3111);
+  assert.ok((await mobile.evaluate(()=>window.benchmarkExplorer.getSampleData())).filtered.length<expectedObservations);
   assert.ok((await mobile.locator('#sample-data-table tbody td:nth-child(2)').allTextContents()).every(v=>v.includes('Mech')));
   await mobile.screenshot({path:'/private/tmp/benchmark-sample-table-mobile.png',fullPage:false});
   await page.fill('#sample-data-search','Lean');await page.screenshot({path:'/private/tmp/benchmark-sample-table-desktop.png',fullPage:false});
   await mobile.close();await page.close();checks.push('mobile drawer filtering, horizontal table scrolling and no page overflow');
   assert.deepEqual(errors,[]);
-  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,expected_build:expectedBuild??null,dataset_sha256:expectedDataset,reproduction_sha256:expectedReproduction,checks,observations:3111,performance:performanceRows,page_errors:errors,benchmark_executions:0};
+  const report={schema:'benchmark-sample-table-browser.v1',status:'PASSED',url:base,expected_build:expectedBuild??null,dataset_sha256:expectedDataset,reproduction_sha256:expectedReproduction,checks,observations:expectedObservations,performance:performanceRows,page_errors:errors,benchmark_executions:0};
   if(output)await writeFile(output,JSON.stringify(report,null,2)+'\n');console.log(JSON.stringify(report));
 }finally{await browser.close();if(!live)await new Promise(resolve=>server.close(resolve));}

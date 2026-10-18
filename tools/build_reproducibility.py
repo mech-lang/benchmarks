@@ -99,7 +99,8 @@ def native_compiler_keys(language,commands):
 def version_label(versions):
     labels=[]
     names={'csharp':'.NET SDK','fsharp':'.NET SDK','csharp-aot':'.NET SDK','fsharp-aot':'.NET SDK','lean4':'Lean',
-           'haskell':'GHC','ocaml':'OCaml','smalltalk':'Pharo','pharo':'Pharo','bqn':'CBQN','k':'Growler'}
+           'haskell':'GHC','ocaml':'OCaml','smalltalk':'Pharo','pharo':'Pharo','bqn':'CBQN','k':'Growler',
+           'luau':'Luau','luau-jit':'Luau'}
     for version in versions:
         value=re.split(r';| · ',version['value'].splitlines()[0])[0]
         if re.match(r'^(?:\d|commit )',value):value=names.get(version['component'],version['component'])+' '+value
@@ -273,7 +274,7 @@ def build(data):
         # machine replay. Existing absolute paths are retained exactly as evidence.
         records[key]=dict(schema='benchmark-reproduction.v1',source_sha256=p['files'],
             version_label=version_label(versions),versions=versions,
-            compiler_identity=compiler_identity,source_revision=SOURCE_REVISION,command=command,build_commands=build_commands,
+            compiler_identity=compiler_identity,source_revision=p.get('retained_source_revision',SOURCE_REVISION),command=command,build_commands=build_commands,
             cwd=p.get('cwd') or first.get('cwd') or row.get('cwd'),environment=environment,parameters=parameters,
             input_records=input_records,dependencies=dependencies,host=host,timing_boundary=boundary,
             samples=sample_input,output_validation=p.get('full_output_validation') or row.get('correctness_full') or row.get('full_validation') or row.get('sample_validation'),

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "audited_on": "2026-10-16",
-  "scope": "60 measured variants; all classifications explicit.",
+  "scope": "62 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -2949,6 +2949,84 @@
         {
           "path": "experiments/lean4/optimization-v1/reconciled-v1/results.json",
           "sha256": "10f636b2ae007842f040071e7a090e1c4c238100cba62e2a1fea9211786ff718"
+        }
+      ]
+    },
+    "luau": {
+      "family": "luau",
+      "release_year": 2019,
+      "release_name": "Luau VM released on Roblox",
+      "release_source": "https://luau.org/news/2019-11-11-luau-recap-november-2019/",
+      "release_note": "The 2019 team recap records the new Luau implementation already deployed; open-source publication followed in 2021.",
+      "platform": "runtime",
+      "typing": "gradual",
+      "style": [
+        "imperative",
+        "functional",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Gradual types with a separate optional static checker and dynamic runtime checks. Standard Luau incremental tracing GC. All authored embedding and native-library binding source is counted; native benchmark algorithms are absent from the host.",
+      "sources": [
+        "https://luau.org/performance/",
+        "https://luau.org/sandbox/",
+        "https://luau.org/typecheck/"
+      ],
+      "runtime_policy": "Luau 0.743 at 9d7748a4f324213a18cb8283fa2a77c330225fa0, source -O2 and type info level 1, one process/one VM; runtime build excluded, per-process source compilation included.",
+      "memory_policy": "Standard Luau incremental tracing collector, default configuration; GMP/PCRE2 allocations belong to the declared foreign libraries.",
+      "evidence_scope": "Pinned official source, retained runtime build and executable hashes, exact measured commands and output checks; no claim of execution in Roblox or of native AOT compilation.",
+      "key": "luau",
+      "label": "Luau (interpreted)",
+      "execution": [
+        "interpreted"
+      ],
+      "runtime": "Luau 0.743 bytecode interpreter",
+      "displayed_program_count": 11,
+      "measurement_basis": [
+        {
+          "path": "experiments/luau/results-v1.json",
+          "sha256": "73f2418483231d1e2fe071b20cd0871b1cec6bacf99bfe2b2e8fd632021a5013"
+        }
+      ]
+    },
+    "luau-jit": {
+      "family": "luau",
+      "release_year": 2019,
+      "release_name": "Luau VM released on Roblox",
+      "release_source": "https://luau.org/news/2019-11-11-luau-recap-november-2019/",
+      "release_note": "The 2019 team recap records the new Luau implementation already deployed; open-source publication followed in 2021.",
+      "platform": "runtime",
+      "typing": "gradual",
+      "style": [
+        "imperative",
+        "functional",
+        "object"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "Gradual types with a separate optional static checker and dynamic runtime checks. Standard Luau incremental tracing GC. All authored embedding and native-library binding source is counted; native benchmark algorithms are absent from the host.",
+      "sources": [
+        "https://luau.org/performance/",
+        "https://luau.org/sandbox/",
+        "https://luau.org/typecheck/"
+      ],
+      "runtime_policy": "Luau 0.743 at 9d7748a4f324213a18cb8283fa2a77c330225fa0, source -O2 and type info level 1, one process/one VM; runtime build excluded, per-process source compilation included.",
+      "memory_policy": "Standard Luau incremental tracing collector, default configuration; GMP/PCRE2 allocations belong to the declared foreign libraries.",
+      "evidence_scope": "Pinned official source, retained runtime build and executable hashes, exact measured commands and output checks; no claim of execution in Roblox or of native AOT compilation.",
+      "key": "luau-jit",
+      "label": "Luau (JIT)",
+      "execution": [
+        "jit"
+      ],
+      "runtime": "Luau 0.743 arm64 native JIT with VM fallback",
+      "displayed_program_count": 11,
+      "measurement_basis": [
+        {
+          "path": "experiments/luau/results-v1.json",
+          "sha256": "73f2418483231d1e2fe071b20cd0871b1cec6bacf99bfe2b2e8fd632021a5013"
         }
       ]
     }

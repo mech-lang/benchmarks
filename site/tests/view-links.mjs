@@ -64,6 +64,19 @@ try{
   const actualBuild=await page.locator('script[type="module"]').getAttribute('src');
   if(expectedBuild)assert.equal(new URL(actualBuild,base).searchParams.get('v'),expectedBuild,'Expected deployed build');
   await roundtrip(page,'default');
+  if(process.env.EXPECTED_LUAU_PROGRAMS){
+    for(const [key,mobile] of [['luau',false],['luau-jit',true]]){
+      const luau=await open(base+'#v=1&view=language&language='+key+'&variant='+key,mobile?{width:390,height:844}:undefined);
+      const summary=await luau.locator('#language-overview-summary').textContent();
+      assert.match(summary,/10\/10 selected benchmarks/);
+      assert.match(summary,new RegExp(`\\b${Number(process.env.EXPECTED_LUAU_PROGRAMS)/2} programs\\b`));
+      assert.match(summary,/33 recorded runs/);
+      await roundtrip(luau,key+' complete language page',{mobile});
+      await luau.locator('#reset').click();await settle(luau);
+      assert.equal((await snapshot(luau)).state.view,'language');
+      await luau.close();
+    }
+  }
   await page.locator('[data-open-language="lean4"]').click();
   const leanSummary=await page.locator('#language-overview-summary').textContent();
   if(expectedLeanPrograms)assert.match(leanSummary,new RegExp(`\\b${Number(expectedLeanPrograms)} programs\\b`),'Expected measured Lean catalog');

@@ -36,6 +36,8 @@ Exact measured source bundles, organized by language variant, workload, then pro
 - [Lean 4 (AOT)](lean4/)
 - [Lua (interpreted)](lua/)
 - [LuaJIT](luajit/)
+- [Luau (interpreted)](luau/)
+- [Luau (JIT)](luau-jit/)
 - [MATLAB](matlab/)
 - [Mech (AOT)](mech/)
 - [Mech (interpreted)](mech-resident/)

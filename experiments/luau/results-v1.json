@@ -1,0 +1,357 @@
+{
+  "schema": "luau-full-workload-results.v1",
+  "status": "SIXTY_FULL_SIZE_SAMPLES_RECONCILED",
+  "language": "Luau",
+  "toolchains": {
+    "luau": {
+      "version": "Luau 0.743",
+      "revision": "9d7748a4f324213a18cb8283fa2a77c330225fa0"
+    },
+    "luau-jit": {
+      "version": "Luau 0.743",
+      "revision": "9d7748a4f324213a18cb8283fa2a77c330225fa0"
+    }
+  },
+  "hardware": {
+    "cpu": "Apple M3",
+    "model": "Mac15,13",
+    "memory_bytes": "17179869184",
+    "logical_cpus": "8"
+  },
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56",
+  "host_context_observed_at": "2026-10-18T15:29:00.842618+00:00",
+  "sdk": "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk",
+  "source_commit": "b2707700861f673fc5b9f0cdae64ae4a0f8f8724",
+  "timing_boundary": "Fresh process: host and VM startup, source read and -O2 bytecode compilation, optional native JIT, arguments/input, all work/output, flushing and shutdown. Runtime builds and output comparisons excluded.",
+  "input_pins": {
+    "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n25000000.fasta": {
+      "bytes": 254166745,
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "mtime_ns": 1792239807229266715
+    },
+    "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta": {
+      "bytes": 50833411,
+      "sha256": "97197f5957a12f8a859ba7edff6d97994daa18afacd77db21fa68c6f2e447e38",
+      "mtime_ns": 1792239891144253881
+    }
+  },
+  "inputs": {
+    "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n25000000.fasta": {
+      "bytes": 254166745,
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "mtime_ns": 1792239807229266715
+    },
+    "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta": {
+      "bytes": 50833411,
+      "sha256": "97197f5957a12f8a859ba7edff6d97994daa18afacd77db21fa68c6f2e447e38",
+      "mtime_ns": 1792239891144253881
+    }
+  },
+  "library_pins": {
+    "gmp": {
+      "path": "/opt/homebrew/opt/gmp/lib/libgmp.a",
+      "sha256": "fccf1c432536e354b59c075c91daae74b9190f753604fb95f0bfa120c51b5695"
+    },
+    "pcre2": {
+      "path": "/opt/homebrew/opt/pcre2/lib/libpcre2-8.a",
+      "sha256": "b44a9a8256af1dd7e18ed2b9f7456877d2c7b9808641515f38dc55c39b1921d2"
+    }
+  },
+  "libraries": {
+    "GMP": {
+      "version": "6.3.0",
+      "header": "/opt/homebrew/opt/gmp/include/gmp.h",
+      "header_sha256": "ba08e6d76e0945a858d6e3384eb1fbc1b8100799052cf4ab5c10befe6ee99ebc"
+    },
+    "PCRE2": {
+      "version": "10.49",
+      "header": "/opt/homebrew/opt/pcre2/include/pcre2.h",
+      "header_sha256": "19756397bb6c402d43f74ba827c55acd26c21d078eead9ed5d49f582e4c506d8"
+    }
+  },
+  "rebuild_commands": [
+    [
+      "git",
+      "clone",
+      "https://github.com/luau-lang/luau.git",
+      "/private/tmp/mech-luau-toolchain-0.743"
+    ],
+    [
+      "git",
+      "-C",
+      "/private/tmp/mech-luau-toolchain-0.743",
+      "checkout",
+      "9d7748a4f324213a18cb8283fa2a77c330225fa0"
+    ],
+    [
+      "/opt/homebrew/bin/cmake",
+      "-S",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/source-v1",
+      "-B",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1",
+      "-DCMAKE_BUILD_TYPE=Release",
+      "-DLUAU_SOURCE=/private/tmp/mech-luau-toolchain-0.743",
+      "-DCMAKE_CXX_FLAGS_RELEASE=-O3 -DNDEBUG -fno-fast-math -ffp-contract=off"
+    ],
+    [
+      "/opt/homebrew/bin/cmake",
+      "--build",
+      "/private/tmp/mech-benchmark-publication/experiments/luau/.build/native-v1",
+      "--parallel",
+      "4",
+      "--target",
+      "luau-host",
+      "luau-regex",
+      "luau-bigint",
+      "luau-source-reader",
+      "Luau.Repl.CLI",
+      "Luau.Compile.CLI"
+    ]
+  ],
+  "support_files": {
+    "toolchain": {
+      "path": "experiments/luau/toolchain-v1.json",
+      "sha256": "441282a51d71bdaa21026bacf56ba9638842b5caf5b1acc78bcf20f6c1d84e20"
+    }
+  },
+  "report": {
+    "path": "experiments/luau/full-v1/report.json",
+    "sha256": "34dd96e8706717552ed77c11f7fca3a4174531f7251d53d9db35c4dbb55b25c4"
+  },
+  "samples_per_workload_and_mode": 3,
+  "benchmark_samples": 60,
+  "matched_mech_controls": 0,
+  "all_full_outputs_validated": true,
+  "all_saved_stream_hashes_recomputed": true,
+  "all_process_records_reconciled": true,
+  "sources_and_binaries_unchanged": true,
+  "timing_processes_serial": true,
+  "existing_other_language_measurements_changed": false,
+  "results": {
+    "luau": {
+      "regexredux": {
+        "samples_seconds": [
+          2.298589042,
+          2.274929458,
+          2.2710265
+        ],
+        "median_seconds": 2.274929458,
+        "sample_sd_seconds": 0.014914772976843006,
+        "minimum_seconds": 2.2710265,
+        "maximum_seconds": 2.298589042
+      },
+      "revcomp": {
+        "samples_seconds": [
+          22.16385275,
+          22.318537875,
+          22.493094958
+        ],
+        "median_seconds": 22.318537875,
+        "sample_sd_seconds": 0.1647210240833725,
+        "minimum_seconds": 22.16385275,
+        "maximum_seconds": 22.493094958
+      },
+      "pidigits": {
+        "samples_seconds": [
+          0.777714583,
+          0.774663875,
+          0.788724041
+        ],
+        "median_seconds": 0.777714583,
+        "sample_sd_seconds": 0.0073959814843668845,
+        "minimum_seconds": 0.774663875,
+        "maximum_seconds": 0.788724041
+      },
+      "spectralnorm": {
+        "samples_seconds": [
+          13.526415834,
+          14.333407792,
+          14.765150625
+        ],
+        "median_seconds": 14.333407792,
+        "sample_sd_seconds": 0.6287688733492558,
+        "minimum_seconds": 13.526415834,
+        "maximum_seconds": 14.765150625
+      },
+      "mandelbrot": {
+        "samples_seconds": [
+          142.705938291,
+          142.525188709,
+          146.215407292
+        ],
+        "median_seconds": 142.705938291,
+        "sample_sd_seconds": 2.080334759547602,
+        "minimum_seconds": 142.525188709,
+        "maximum_seconds": 146.215407292
+      },
+      "fasta": {
+        "samples_seconds": [
+          4.662000167,
+          4.679801291,
+          4.683769916
+        ],
+        "median_seconds": 4.679801291,
+        "sample_sd_seconds": 0.01159419374498135,
+        "minimum_seconds": 4.662000167,
+        "maximum_seconds": 4.683769916
+      },
+      "knucleotide": {
+        "samples_seconds": [
+          20.386899416,
+          22.989683459,
+          23.449955083
+        ],
+        "median_seconds": 22.989683459,
+        "sample_sd_seconds": 1.6516983563136782,
+        "minimum_seconds": 20.386899416,
+        "maximum_seconds": 23.449955083
+      },
+      "binarytrees": {
+        "samples_seconds": [
+          36.610645041,
+          36.452591916,
+          36.186243042
+        ],
+        "median_seconds": 36.452591916,
+        "sample_sd_seconds": 0.21449147992345616,
+        "minimum_seconds": 36.186243042,
+        "maximum_seconds": 36.610645041
+      },
+      "nbody": {
+        "samples_seconds": [
+          34.365121125,
+          34.266608,
+          34.145839209
+        ],
+        "median_seconds": 34.266608,
+        "sample_sd_seconds": 0.10982903028609067,
+        "minimum_seconds": 34.145839209,
+        "maximum_seconds": 34.365121125
+      },
+      "fannkuchredux": {
+        "samples_seconds": [
+          191.66622275,
+          189.403015333,
+          189.039936375
+        ],
+        "median_seconds": 189.403015333,
+        "sample_sd_seconds": 1.4231019093056791,
+        "minimum_seconds": 189.039936375,
+        "maximum_seconds": 191.66622275
+      }
+    },
+    "luau-jit": {
+      "regexredux": {
+        "samples_seconds": [
+          2.259750167,
+          2.270952417,
+          2.269787208
+        ],
+        "median_seconds": 2.269787208,
+        "sample_sd_seconds": 0.006158873126255392,
+        "minimum_seconds": 2.259750167,
+        "maximum_seconds": 2.270952417
+      },
+      "revcomp": {
+        "samples_seconds": [
+          18.7505985,
+          18.933388209,
+          18.916204334
+        ],
+        "median_seconds": 18.916204334,
+        "sample_sd_seconds": 0.10093946662163145,
+        "minimum_seconds": 18.7505985,
+        "maximum_seconds": 18.933388209
+      },
+      "pidigits": {
+        "samples_seconds": [
+          0.796509542,
+          0.775044542,
+          0.77917825
+        ],
+        "median_seconds": 0.77917825,
+        "sample_sd_seconds": 0.011388645289779734,
+        "minimum_seconds": 0.775044542,
+        "maximum_seconds": 0.796509542
+      },
+      "spectralnorm": {
+        "samples_seconds": [
+          3.071601666,
+          2.132032792,
+          3.939592583
+        ],
+        "median_seconds": 3.071601666,
+        "sample_sd_seconds": 0.9040160672451286,
+        "minimum_seconds": 2.132032792,
+        "maximum_seconds": 3.939592583
+      },
+      "mandelbrot": {
+        "samples_seconds": [
+          23.537808875,
+          23.370235333,
+          21.307965
+        ],
+        "median_seconds": 23.370235333,
+        "sample_sd_seconds": 1.241856374225389,
+        "minimum_seconds": 21.307965,
+        "maximum_seconds": 23.537808875
+      },
+      "fasta": {
+        "samples_seconds": [
+          2.474810584,
+          2.46948175,
+          2.464932458
+        ],
+        "median_seconds": 2.46948175,
+        "sample_sd_seconds": 0.004944186868985703,
+        "minimum_seconds": 2.464932458,
+        "maximum_seconds": 2.474810584
+      },
+      "knucleotide": {
+        "samples_seconds": [
+          12.146475209,
+          12.014017209,
+          12.763131875
+        ],
+        "median_seconds": 12.146475209,
+        "sample_sd_seconds": 0.39978814145797353,
+        "minimum_seconds": 12.014017209,
+        "maximum_seconds": 12.763131875
+      },
+      "binarytrees": {
+        "samples_seconds": [
+          27.775408958,
+          28.118593125,
+          27.923387333
+        ],
+        "median_seconds": 27.923387333,
+        "sample_sd_seconds": 0.17213283299895274,
+        "minimum_seconds": 27.775408958,
+        "maximum_seconds": 28.118593125
+      },
+      "nbody": {
+        "samples_seconds": [
+          11.113957792,
+          11.373970541,
+          11.093648666
+        ],
+        "median_seconds": 11.113957792,
+        "sample_sd_seconds": 0.15631135800325816,
+        "minimum_seconds": 11.093648666,
+        "maximum_seconds": 11.373970541
+      },
+      "fannkuchredux": {
+        "samples_seconds": [
+          58.236321583,
+          57.689804167,
+          58.122826917
+        ],
+        "median_seconds": 58.122826917,
+        "sample_sd_seconds": 0.2884068385745303,
+        "minimum_seconds": 57.689804167,
+        "maximum_seconds": 58.236321583
+      }
+    }
+  },
+  "chart_admission": false
+}

@@ -1,12 +1,12 @@
 # Language classification
 
-The catalog explicitly defines all **59 measured execution variants in 52 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **62 measured execution variants in 54 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
 | Runtime / toolchain | Measured engine or compiler family: native toolchains, JVM, .NET, BEAM, Node.js/V8, or another identified language runtime |
 | Execution | Native AOT, native JIT, or interpretation; mixed cohorts may have more than one mode |
-| Typing | The language's primary static or dynamic type-checking model |
+| Typing | The language's static, dynamic or gradual typing model |
 | Paradigm | Established language styles, with intentional overlap: imperative, object-oriented, functional, logic, array, reactive/dataflow |
 | Memory | Standard models in the measured language/runtime: manual allocation, ownership/RAII, reference counting, tracing GC, cycle collection |
 
@@ -18,6 +18,7 @@ Key distinctions:
 - **C# and F# include .NET JIT and NativeAOT.** NativeAOT remains part of .NET and retains runtime/GC support.
 - **Elm, JavaScript and TypeScript run on Node.js/V8.** Elm and TypeScript remain statically typed. Their JavaScript output executes under V8's JIT; compilation to JavaScript does not make measured execution native AOT. TypeScript samples include fresh Node startup, script loading, runtime compilation and shutdown; offline TypeScript compilation is excluded.
 - **Ruby uses YJIT. PHP has both modes:** fourteen selected profiles request tracing JIT and one explicitly disables it. **R's JIT produces interpreted bytecode.** SBCL saved cores and Racket CS native modules were precompiled before timing.
+- **Luau has separate interpreter and native-JIT series.** Both use Luau 0.743 with source optimization level 2; source compilation and optional arm64 code generation happen inside each measured process. Luau uses gradual typing and incremental tracing GC. The retained host exposes arguments, stdio and general PCRE2/GMP primitives; its authored source counts with each application. [Luau performance](https://luau.org/performance/) and [sandbox documentation](https://luau.org/sandbox/) describe the runtime model.
 - **Manual allocation and ownership/RAII are independent.** C/C3/Zig/Odin use explicit allocation; Rust uses ownership and standard RC types; Chapel has separate owned/shared/unmanaged strategies.
 - **RC, tracing GC, and cycle collection are independent.** CPython/PHP combine RC and cycle collection. Nim's measured ORC uses RC plus trial-deletion cycle collection, not a global tracing collector. BEAM tracing heaps coexist with reference-counted large binaries.
 
@@ -59,6 +60,8 @@ Classification is based on preserved measurement/build records plus primary lang
 | Lean 4 (AOT) | Lean 4.35.0 native C backend / Clang 23.1.0 | AOT | Static, dependent types | Reference counting |
 | Lua (interpreted) | PUC Lua bytecode interpreter | Interpreted | Dynamic | Tracing GC |
 | LuaJIT | LuaJIT | JIT | Dynamic | Tracing GC |
+| Luau (interpreted) | Luau 0.743 bytecode interpreter | Interpreted | Gradual | Tracing GC |
+| Luau (JIT) | Luau 0.743 arm64 native JIT with VM fallback | JIT | Gradual | Tracing GC |
 | MATLAB | MATLAB native runtime / JIT | JIT | Dynamic | RC, Cycles |
 | Mech (AOT) | Mech native AOT compiler/runtime | AOT | Static | Ownership/RAII, RC |
 | Mech (interpreted) | Mech typed interpreter | Interpreted | Static | Ownership/RAII, RC |

@@ -27,6 +27,15 @@ assert.ok(traits.get('c').memory.has('manual'));
 assert.ok(!traits.get('c').memory.has('owned'));
 assert.ok(traits.get('rust').memory.has('owned'));
 assert.ok(!traits.get('rust').memory.has('manual'));
+if(traits.has('luau')){
+ assert.ok(traits.get('luau').typing.has('gradual'));
+ assert.ok(traits.get('luau').execution.has('interpreted'));
+ assert.ok(!traits.get('luau').execution.has('jit'));
+ assert.ok(traits.get('luau-jit').execution.has('jit'));
+ assert.ok(traits.get('luau-jit').typing.has('gradual'));
+ const gradual=emptyTraitFilters();gradual.typing.add('gradual');
+ assert.deepEqual([...filterLanguageKeys(new Set(traits.keys()),traits,gradual)].sort(),['luau','luau-jit']);
+}
 assert.ok(traits.get('nim').memory.has('cycles'));
 assert.ok(!traits.get('nim').memory.has('gc'));
 assert.ok(traits.get('php').execution.has('jit')&&traits.get('php').execution.has('interpreted'));
