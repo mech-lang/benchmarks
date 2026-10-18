@@ -1,0 +1,73 @@
+{
+  "schema": "luau-required-work-review.v1",
+  "status": "PASSED",
+  "sources": {
+    "experiments/luau/source-v1/Bigint.cpp": "69dcfe810981abfa07656501dcef8823c4bc63708113a389b5bf1d06643aa9ce",
+    "experiments/luau/source-v1/Host.cpp": "c8c840e94aec1789e30acc0084e56807cc0dec6db886f2b190a7c93d69a4c614",
+    "experiments/luau/source-v1/Regex.cpp": "1d619d8c9985b37c5631236ca303eb2616aaf0cebd645488d4d66fd8a567e3b6",
+    "experiments/luau/source-v1/binarytrees.luau": "302461dcede02275d447a1575888caf803842842fdd07e99f53590cad8f8210e",
+    "experiments/luau/source-v1/fannkuchredux.luau": "9c1d92989320b0d75cc66f67bda7cb7e0ef084fcb03719bbffbc827db98fc631",
+    "experiments/luau/source-v1/fasta.luau": "179a413a1d55ea7b5479315a8b1b237d18da575da7e00d1b0a67097338d93876",
+    "experiments/luau/source-v1/knucleotide.luau": "8429656a5d40550ff7a0dc1577fc72be8f162e840e72d6956fc5a24faf2f4179",
+    "experiments/luau/source-v1/mandelbrot.luau": "c011349861dff63a98c007a0906a220dc558da808dc4e10a37098add162b8696",
+    "experiments/luau/source-v1/nbody.luau": "6e6c6071faa14126c91f5886b6c63b69f37b1f90b14193e1f6a5225faaa6dd5d",
+    "experiments/luau/source-v1/pidigits.luau": "30d5cfbd368d9e1ff55bad05b5b182056696e768563584336186896d1b18a860",
+    "experiments/luau/source-v1/regexredux.luau": "3129fc89b9c5b3793314a75624179dcfcbba0b4ef962756d2cd63560810678b8",
+    "experiments/luau/source-v1/revcomp.luau": "0a55cc9be2ad0f9f6365f3981e8d5a84656461e53baaee22863b18d96b7932a0",
+    "experiments/luau/source-v1/spectralnorm.luau": "4c71e35ac7915e5d64fd3216d63de7dd71d156bd5931eda5373b87601e833743"
+  },
+  "checks": {
+    "binarytrees": "Each recursive invocation returns a fresh Luau table, including leaves. Stretch tree is scoped and discarded; long-lived root stays live until final recursive check. Bounded identity witness verifies 16,384 distinct real nodes in each mode.",
+    "fannkuchredux": "Mike Pall permutation generation and prefix flipping compute both alternating checksum and maximum. Small N=0,1,2 guards are outside the measured N=12 path. The outer-loop witness visits all 40,320 N=8 permutations in each mode.",
+    "fasta": "All required 2N/3N/5N bases are generated. The random generator advances once per base with seed carried between random records; lookup tables implement the prescribed probabilities. Header, newline and remainder behavior passed the shared cases.",
+    "knucleotide": "Exact THREE token, stopping at next record, comments and CR/LF handling are retained. Histograms traverse all width-1/2 windows; each query traverses all overlapping windows with exact base-4 keys up to 36 bits, below double integer precision.",
+    "mandelbrot": "Every prescribed pixel iterates the escape recurrence up to 50 times; PBM row padding and tail widths passed exact bounded outputs. No image/result lookup is present.",
+    "nbody": "Five prescribed bodies, momentum offset, all ten pair interactions per step, position updates and two energy computations remain in Luau with 64-bit numeric arithmetic.",
+    "pidigits": "Unbounded sequential spigot computes independent floor extractions at 3 and 4 before emission. GMP bindings expose only general integer construction/arithmetic/conversion; there is no native digit or spigot operation.",
+    "regexredux": "Luau orchestrates input cleaning, all nine nonoverlapping counts and the five ordered replacements. PCRE2 bindings expose only general compile/find/replace operations, with compilation inside each fresh process.",
+    "revcomp": "Luau handles records, comments, case-insensitive IUPAC mapping, reverse traversal, output wrapping and invalid-byte rejection. No host reverse-complement or table translation operation is present.",
+    "spectralnorm": "Luau evaluates the coefficient function and all matrix/vector products for ten AtAv pairs, with independent result arrays and the prescribed final quotient and square root."
+  },
+  "witnesses": [
+    {
+      "benchmark": "binarytrees",
+      "execution_mode": "vm",
+      "witness": "experiments/luau/required-work-v2/binarytrees-witness.luau",
+      "witness_sha256": "7dce748554424cf1e81f66eedb2ff6cbc5a595be2fd4eff180977ea9ae2addd2",
+      "process": "experiments/luau/required-work-v2/binarytrees-vm/process.json",
+      "process_sha256": "f7766a2932da2a4f4ae01a03175e597065a28016675ddb646de6996860b13cd4",
+      "output": "16384 distinct allocated nodes; both retained roots and distinct leaves verified\n"
+    },
+    {
+      "benchmark": "binarytrees",
+      "execution_mode": "jit",
+      "witness": "experiments/luau/required-work-v2/binarytrees-witness.luau",
+      "witness_sha256": "7dce748554424cf1e81f66eedb2ff6cbc5a595be2fd4eff180977ea9ae2addd2",
+      "process": "experiments/luau/required-work-v2/binarytrees-jit/process.json",
+      "process_sha256": "7a12be6f511e01bf3fc6426335fc0002962296e5b0b1f252a47c330c48a647af",
+      "output": "16384 distinct allocated nodes; both retained roots and distinct leaves verified\n"
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "execution_mode": "vm",
+      "witness": "experiments/luau/required-work-v2/fannkuchredux-witness.luau",
+      "witness_sha256": "8d946498614680cc5c72f7ac3a5fef98fb48b2f1bfd16cc42f9e4a7b699ec651",
+      "process": "experiments/luau/required-work-v2/fannkuchredux-vm/process.json",
+      "process_sha256": "e7fdc2e5e3c54fe19ede963750375c221c6d1bbd1bb10c8d2fb64f09c96cf000",
+      "output": "40320 permutations visited; checksum 1616 and maximum 22 verified\n"
+    },
+    {
+      "benchmark": "fannkuchredux",
+      "execution_mode": "jit",
+      "witness": "experiments/luau/required-work-v2/fannkuchredux-witness.luau",
+      "witness_sha256": "8d946498614680cc5c72f7ac3a5fef98fb48b2f1bfd16cc42f9e4a7b699ec651",
+      "process": "experiments/luau/required-work-v2/fannkuchredux-jit/process.json",
+      "process_sha256": "6177473eac8d8228e6e55d51ee0c95b4e2eb87ec03694073a82725d22d62b048",
+      "output": "40320 permutations visited; checksum 1616 and maximum 22 verified\n"
+    }
+  ],
+  "shared_bounded_report": "experiments/luau/bounded-v1/report.json",
+  "scope": "Static source review plus bounded native/VM witnesses; diagnostic elapsed times are not benchmark samples.",
+  "benchmark_samples": 0,
+  "chart_admission": false
+}

@@ -1,0 +1,58 @@
+{
+  "schema": "benchmark-language-plan.v1",
+  "language": {
+    "key": "luau",
+    "label": "Luau",
+    "family": "luau",
+    "project": "https://luau.org/",
+    "first_public_release_year": 2019,
+    "references": [
+      "https://luau.org/performance/",
+      "https://luau.org/sandbox/",
+      "https://github.com/luau-lang/luau/releases/tag/0.743"
+    ]
+  },
+  "status": "QUALIFIED_AWAITING_FULL_MEASUREMENTS",
+  "toolchain": {
+    "release": "0.743",
+    "revision": "9d7748a4f324213a18cb8283fa2a77c330225fa0",
+    "source": "https://github.com/luau-lang/luau",
+    "target": "arm64-apple-darwin",
+    "optimization_level": 2,
+    "execution_modes": [
+      "interpreted",
+      "jit"
+    ]
+  },
+  "workloads": [
+    "binarytrees",
+    "fannkuchredux",
+    "fasta",
+    "knucleotide",
+    "mandelbrot",
+    "nbody",
+    "pidigits",
+    "regexredux",
+    "revcomp",
+    "spectralnorm"
+  ],
+  "qualification": {
+    "implementations": "Preserve specific upstream sources, attribution and licenses; adapt to the suite's exact workload contracts using idiomatic Luau.",
+    "host_interface": "The standalone Luau VM omits operating-system I/O. Any authored embedding and general library bindings must be retained, disclosed and counted according to their source roles. Benchmark algorithms remain in Luau.",
+    "correctness": "Run the shared bounded corpus in both execution modes, validate full outputs, and inspect required algorithmic work before admitting timings.",
+    "source_size": "Count normalized source units including all authored application helpers and meaningful directives; preserve any unsupported formatted-LOC metric as unavailable.",
+    "timing": "Three fresh complete-process samples per admitted program and execution mode, with startup, source/bytecode loading, execution-time compilation, input, complete computation/output and shutdown included. Runtime build is outside the interval.",
+    "contention": "Use the shared timing mutex; run measurements sequentially with no simultaneous compilation or competing benchmark jobs.",
+    "preservation": "Existing timings, source bytes, exclusions and baselines remain unchanged unless a separately qualified normalization update is required.",
+    "admission": "Only measured, validated full-size programs enter the plotted catalog; no estimates or placeholder timings."
+  },
+  "benchmark_samples": 0,
+  "chart_admission": false,
+  "methodology": "../../docs/methodology.md",
+  "qualification_evidence": {
+    "build": "build-v2/report.json",
+    "bounded": "bounded-v1/report.json",
+    "required_work": "required-work-v2/review.json",
+    "source_counts": "source-counts-v1/qualified-v1/qualified-counts.json"
+  }
+}

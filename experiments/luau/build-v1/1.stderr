@@ -1,0 +1,13 @@
+ld: warning: ignoring duplicate libraries: 'luau/libLuau.VM.a'
+/private/tmp/mech-benchmark-publication/experiments/luau/source-v1/Regex.cpp:26:36: error: no matching function for call to 'lua_newuserdatadtor'
+    auto* re = static_cast<Regex*>(lua_newuserdatadtor(L, sizeof(Regex), [](void* p)
+                                   ^~~~~~~~~~~~~~~~~~~
+/private/tmp/mech-luau-toolchain-0.743/VM/include/lua.h:221:15: note: candidate function not viable: no known conversion from '(lambda at /private/tmp/mech-benchmark-publication/experiments/luau/source-v1/Regex.cpp:26:74)' to 'lua_Destructor' (aka 'void (*)(lua_State *, void *)') for 3rd argument
+LUA_API void* lua_newuserdatadtor(lua_State* L, size_t sz, lua_Destructor dtor);
+              ^
+1 error generated.
+make[3]: *** [CMakeFiles/luau-regex.dir/Regex.cpp.o] Error 1
+make[3]: *** Waiting for unfinished jobs....
+make[2]: *** [CMakeFiles/luau-regex.dir/all] Error 2
+make[1]: *** [CMakeFiles/luau-regex.dir/rule] Error 2
+make: *** [luau-regex] Error 2
