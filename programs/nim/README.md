@@ -17,7 +17,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | nbody | [nim-nbody-compact](nbody/nim-nbody-compact/program.json) | 97 | 1.57208 | 3 |
 | nbody | [nim-nbody-optimized](nbody/nim-nbody-optimized/program.json) | 101 | 1.52731 | 3 |
 | pidigits | [nim-pidigits-compact](pidigits/nim-pidigits-compact/program.json) | 30 | 43.3934 | 3 |
-| pidigits | [nim-pidigits-optimized](pidigits/nim-pidigits-optimized/program.json) | 84 | 0.433501 | 3 |
+| pidigits | [nim-pidigits-optimized](pidigits/nim-pidigits-optimized/program.json) | 61 | 0.433501 | 3 |
 | regexredux | [nim-regexredux-compact](regexredux/nim-regexredux-compact/program.json) | 28 | 6.40109 | 3 |
 | regexredux | [nim-regexredux-optimized](regexredux/nim-regexredux-optimized/program.json) | 52 | 2.99774 | 3 |
 | revcomp | [nim-revcomp-compact](revcomp/nim-revcomp-compact/program.json) | 22 | 1.60283 | 3 |

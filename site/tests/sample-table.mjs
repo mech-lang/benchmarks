@@ -161,8 +161,28 @@ try{
     await page.locator('[data-sample-program]').first().click();
     assert.ok((await page.locator('.source-authorship').textContent()).includes('AI adapted'));
     assert.ok((await page.locator('.source-authorship a').evaluateAll(nodes=>nodes.map(n=>n.href))).some(url=>url.includes('/program/revcomp-lua-2.html')));
+    if(guarded.source_accounting){
+      assert.equal(guarded.canonical_loc,52);
+      assert.equal(guarded.source_accounting.previous_loc,160);
+      assert.ok((await page.locator('.source-accounting').textContent()).includes('108 normalized LOC'));
+      await page.selectOption('#detail-file','1');
+      assert.ok((await page.locator('#source-code').textContent()).includes('Luau::compile'));
+      assert.ok((await page.locator('#detail-file option:checked').textContent()).includes('support (excluded)'));
+    }
     await page.click('#close-inspector');
-    checks.push('both Luau modes retain ten workloads, complete samples, original Lua citations, runtime version and counted host source');
+    checks.push('both Luau modes retain ten workloads, samples, attribution, versions and inspectable host with corrected application LOC');
+  }
+  if(json.programs['pidigits:pidigits-rust-3']?.source_accounting){
+    const rust=json.rows.find(r=>r.program_key==='pidigits:pidigits-rust-3');
+    assert.equal(rust.canonical_loc,82);
+    assert.equal(rust.source_accounting.previous_loc,175);
+    await page.fill('#sample-data-search',rust.implementation);
+    await page.locator('[data-sample-program]').first().click();
+    const accounting=await page.locator('.source-accounting').textContent();
+    assert.ok(accounting.includes('82 application LOC')&&accounting.includes('97–199'));
+    assert.ok((await page.locator('#source-code').textContent()).includes('extract_digit'));
+    await page.click('#close-inspector');
+    checks.push('embedded Rust GMP wrapper is separated while source and workload helpers remain available');
   }
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);

@@ -39,6 +39,11 @@ def analyze(root=ROOT):
     root = Path(root)
     raw = (root / 'data/benchmarks.json').read_bytes()
     data = json.loads(raw)
+    if 'source_accounting' in data:
+        import source_accounting
+        data = source_accounting.historical_catalog(root, data)
+        import gzip
+        raw = gzip.decompress((root / source_accounting.PACKET / 'before.json.gz').read_bytes())
     review = json.loads((root / 'data/source-size-review.json').read_text())
     if review['catalog_sha256'] != sha(raw):
         raise ValueError('Review is bound to a different catalog; review new source changes first')

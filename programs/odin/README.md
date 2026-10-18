@@ -14,8 +14,8 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-odin-1-faithful](mandelbrot/mandelbrot-odin-1-faithful/program.json) | 65 | 2.213 | 3 |
 | nbody | [nbody-odin-1-faithful](nbody/nbody-odin-1-faithful/program.json) | 110 | 1.84305 | 3 |
 | nbody | [nbody-odin-1-i-faithful](nbody/nbody-odin-1-i-faithful/program.json) | 156 | 1.82713 | 3 |
-| pidigits | [pidigits-odin-gmp](pidigits/pidigits-odin-gmp/program.json) | 67 | 0.550815 | 3 |
-| regexredux | [regexredux-odin-jit-pcre2](regexredux/regexredux-odin-jit-pcre2/program.json) | 101 | 1.89571 | 3 |
+| pidigits | [pidigits-odin-gmp](pidigits/pidigits-odin-gmp/program.json) | 52 | 0.550815 | 3 |
+| regexredux | [regexredux-odin-jit-pcre2](regexredux/regexredux-odin-jit-pcre2/program.json) | 40 | 1.89571 | 3 |
 | regexredux | [regexredux-odin-stdlib](regexredux/regexredux-odin-stdlib/program.json) | 62 | 25.7016 | 3 |
 | revcomp | [revcomp-odin-compact](revcomp/revcomp-odin-compact/program.json) | 71 | 0.384478 | 3 |
 | spectralnorm | [spectralnorm-odin-1-faithful](spectralnorm/spectralnorm-odin-1-faithful/program.json) | 51 | 0.743546 | 3 |

@@ -15,7 +15,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-fpascal-5-native](mandelbrot/mandelbrot-fpascal-5-native/program.json) | 103 | 1.82854 | 3 |
 | nbody | [nbody-fpascal-1-faithful](nbody/nbody-fpascal-1-faithful/program.json) | 125 | 2.18391 | 3 |
 | pidigits | [pidigits-fpascal-3](pidigits/pidigits-fpascal-3/program.json) | 55 | 0.294968 | 3 |
-| regexredux | [regexredux-pascal-pcre2](regexredux/regexredux-pascal-pcre2/program.json) | 103 | 11.3648 | 3 |
+| regexredux | [regexredux-pascal-pcre2](regexredux/regexredux-pascal-pcre2/program.json) | 34 | 11.3648 | 3 |
 | revcomp | [revcomp-fpascal-2](revcomp/revcomp-fpascal-2/program.json) | 94 | 0.660343 | 3 |
 | spectralnorm | [spectralnorm-fpascal-1](spectralnorm/spectralnorm-fpascal-1/program.json) | 49 | 0.96156 | 3 |
 | spectralnorm | [spectralnorm-fpascal-2-native](spectralnorm/spectralnorm-fpascal-2-native/program.json) | 70 | 0.449656 | 3 |

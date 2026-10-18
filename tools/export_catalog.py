@@ -121,7 +121,7 @@ def export(root=ROOT):
                   'sources': sources}
         if publication is not None:
             record['publication_record'] = publication
-        for field in ('authorship', 'timing_measurement', 'timing_correction', 'timing_alias_of',
+        for field in ('source_accounting', 'authorship', 'timing_measurement', 'timing_correction', 'timing_alias_of',
                       'source_alias_of', 'aliased_sample_source', 'native_observations',
                       'distinct_optimization_claimed', 'source_alias_note',
                       'separate_fresh_samples_required'):

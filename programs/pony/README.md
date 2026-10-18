@@ -16,8 +16,8 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [pony-mandelbrot-optimized](mandelbrot/pony-mandelbrot-optimized/program.json) | 83 | 3.51447 | 3 |
 | nbody | [pony-nbody-compact](nbody/pony-nbody-compact/program.json) | 171 | 4.08887 | 3 |
 | nbody | [pony-nbody-optimized](nbody/pony-nbody-optimized/program.json) | 171 | 4.1473 | 3 |
-| pidigits | [pony-pidigits-compact](pidigits/pony-pidigits-compact/program.json) | 56 | 1.89302 | 3 |
-| pidigits | [pony-pidigits-optimized](pidigits/pony-pidigits-optimized/program.json) | 58 | 3.6315 | 3 |
+| pidigits | [pony-pidigits-compact](pidigits/pony-pidigits-compact/program.json) | 51 | 1.89302 | 3 |
+| pidigits | [pony-pidigits-optimized](pidigits/pony-pidigits-optimized/program.json) | 53 | 3.6315 | 3 |
 | regexredux | [pony-regexredux-compact](regexredux/pony-regexredux-compact/program.json) | 152 | 5.04415 | 3 |
 | regexredux | [pony-regexredux-optimized](regexredux/pony-regexredux-optimized/program.json) | 154 | 2.45071 | 3 |
 | revcomp | [pony-revcomp-compact](revcomp/pony-revcomp-compact/program.json) | 117 | 7.22772 | 3 |

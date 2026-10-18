@@ -14,7 +14,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-julia-1-aot](mandelbrot/mandelbrot-julia-1-aot/program.json) | 38 | 10.7091 | 3 |
 | mandelbrot | [mandelbrot-julia-7-aot](mandelbrot/mandelbrot-julia-7-aot/program.json) | 59 | 0.503199 | 3 |
 | nbody | [nbody-julia-5-aot](nbody/nbody-julia-5-aot/program.json) | 96 | 1.52134 | 3 |
-| pidigits | [pidigits-julia-3-aot](pidigits/pidigits-julia-3-aot/program.json) | 57 | 0.387272 | 3 |
+| pidigits | [pidigits-julia-3-aot](pidigits/pidigits-julia-3-aot/program.json) | 53 | 0.387272 | 3 |
 | pidigits | [pidigits-julia-4-aot](pidigits/pidigits-julia-4-aot/program.json) | 60 | 0.720199 | 3 |
 | regexredux | [regexredux-julia-1-aot](regexredux/regexredux-julia-1-aot/program.json) | 45 | 2.4136 | 3 |
 | regexredux | [regexredux-julia-3-aot](regexredux/regexredux-julia-3-aot/program.json) | 44 | 1.72865 | 3 |

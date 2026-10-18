@@ -14,10 +14,10 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-python3-3](mandelbrot/mandelbrot-python3-3/program.json) | 32 | 279.653 | 3 |
 | mandelbrot | [mandelbrot-python3-5-fork](mandelbrot/mandelbrot-python3-5-fork/program.json) | 33 | 84.2795 | 3 |
 | nbody | [nbody-python3-1](nbody/nbody-python3-1/program.json) | 89 | 150.12 | 3 |
-| pidigits | [pidigits-python3-3](pidigits/pidigits-python3-3/program.json) | 52 | 0.440624 | 3 |
+| pidigits | [pidigits-python3-3](pidigits/pidigits-python3-3/program.json) | 46 | 0.440624 | 3 |
 | pidigits | [pidigits-python3-4](pidigits/pidigits-python3-4/program.json) | 43 | 4.14883 | 3 |
 | regexredux | [regexredux-python3-1](regexredux/regexredux-python3-1/program.json) | 37 | 3.95744 | 3 |
-| regexredux | [regexredux-python3-2](regexredux/regexredux-python3-2/program.json) | 118 | 0.849047 | 3 |
+| regexredux | [regexredux-python3-2](regexredux/regexredux-python3-2/program.json) | 102 | 0.849047 | 3 |
 | revcomp | [revcomp-python3-4](revcomp/revcomp-python3-4/program.json) | 15 | 1.12941 | 3 |
 | revcomp | [revcomp-python3-5](revcomp/revcomp-python3-5/program.json) | 88 | 0.462434 | 3 |
 | spectralnorm | [spectralnorm-python3-4](spectralnorm/spectralnorm-python3-4/program.json) | 36 | 30.2452 | 3 |

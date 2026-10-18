@@ -18,7 +18,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | nbody | [nbody-ghc-2](nbody/nbody-ghc-2/program.json) | 166 | 1.91118 | 3 |
 | pidigits | [pidigits-ghc-3](pidigits/pidigits-ghc-3/program.json) | 11 | 0.710718 | 3 |
 | pidigits | [pidigits-ghc-6](pidigits/pidigits-ghc-6/program.json) | 18 | 0.504417 | 3 |
-| regexredux | [regexredux-ghc-3](regexredux/regexredux-ghc-3/program.json) | 199 | 0.723615 | 3 |
+| regexredux | [regexredux-ghc-3](regexredux/regexredux-ghc-3/program.json) | 112 | 0.723615 | 3 |
 | revcomp | [revcomp-ghc-2](revcomp/revcomp-ghc-2/program.json) | 59 | 0.684352 | 3 |
 | revcomp | [revcomp-ghc-4](revcomp/revcomp-ghc-4/program.json) | 69 | 0.334077 | 3 |
 | spectralnorm | [spectralnorm-ghc-2](spectralnorm/spectralnorm-ghc-2/program.json) | 22 | 4.82053 | 3 |

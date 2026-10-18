@@ -14,10 +14,10 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-julia-1](mandelbrot/mandelbrot-julia-1/program.json) | 33 | 10.8041 | 3 |
 | mandelbrot | [mandelbrot-julia-7](mandelbrot/mandelbrot-julia-7/program.json) | 59 | 0.566925 | 3 |
 | nbody | [nbody-julia-5](nbody/nbody-julia-5/program.json) | 90 | 1.64244 | 3 |
-| pidigits | [pidigits-julia-3](pidigits/pidigits-julia-3/program.json) | 58 | 0.399957 | 7 |
+| pidigits | [pidigits-julia-3](pidigits/pidigits-julia-3/program.json) | 48 | 0.399957 | 7 |
 | pidigits | [pidigits-julia-4](pidigits/pidigits-julia-4/program.json) | 52 | 0.902622 | 3 |
 | regexredux | [regexredux-julia-1](regexredux/regexredux-julia-1/program.json) | 40 | 2.95428 | 3 |
-| regexredux | [regexredux-julia-3](regexredux/regexredux-julia-3/program.json) | 45 | 1.76494 | 3 |
+| regexredux | [regexredux-julia-3](regexredux/regexredux-julia-3/program.json) | 38 | 1.76494 | 3 |
 | revcomp | [revcomp-julia-7](revcomp/revcomp-julia-7/program.json) | 41 | 0.283163 | 3 |
 | revcomp | [revcomp-julia-9](revcomp/revcomp-julia-9/program.json) | 36 | 0.287481 | 3 |
 | spectralnorm | [spectralnorm-julia-4](spectralnorm/spectralnorm-julia-4/program.json) | 40 | 0.349882 | 3 |

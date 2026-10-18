@@ -14,7 +14,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-fsharpcore-6-arm64-faithful-jit](mandelbrot/mandelbrot-fsharpcore-6-arm64-faithful-jit/program.json) | 63 | 1.29583 | 3 |
 | nbody | [nbody-fsharpcore-4-jit](nbody/nbody-fsharpcore-4-jit/program.json) | 99 | 2.55557 | 3 |
 | nbody | [nbody-fsharpcore-6-arm64-faithful-jit](nbody/nbody-fsharpcore-6-arm64-faithful-jit/program.json) | 111 | 1.86422 | 3 |
-| pidigits | [pidigits-fsharpcore-6-arm64-faithful-jit](pidigits/pidigits-fsharpcore-6-arm64-faithful-jit/program.json) | 80 | 0.325947 | 3 |
+| pidigits | [pidigits-fsharpcore-6-arm64-faithful-jit](pidigits/pidigits-fsharpcore-6-arm64-faithful-jit/program.json) | 57 | 0.325947 | 3 |
 | regexredux | [regexredux-fsharpcore-2-jit](regexredux/regexredux-fsharpcore-2-jit/program.json) | 24 | 2.57262 | 3 |
 | regexredux | [regexredux-fsharpcore-6-jit](regexredux/regexredux-fsharpcore-6-jit/program.json) | 50 | 0.71443 | 3 |
 | revcomp | [revcomp-fsharpcore-1-jit](revcomp/revcomp-fsharpcore-1-jit/program.json) | 45 | 15.093 | 3 |

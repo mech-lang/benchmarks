@@ -12,10 +12,10 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-lua-1](mandelbrot/mandelbrot-lua-1/program.json) | 22 | 146.537 | 3 |
 | mandelbrot | [mandelbrot-lua-6](mandelbrot/mandelbrot-lua-6/program.json) | 61 | 38.0379 | 3 |
 | nbody | [nbody-lua-4](nbody/nbody-lua-4/program.json) | 107 | 68.6633 | 3 |
-| pidigits | [lua-listed-1](pidigits/lua-listed-1/program.json) | 280 | 0.461363 | 3 |
-| pidigits | [lua-listed-5](pidigits/lua-listed-5/program.json) | 295 | 0.569993 | 3 |
-| pidigits | [lua-listed-6](pidigits/lua-listed-6/program.json) | 281 | 0.343833 | 3 |
-| pidigits | [lua-listed-7](pidigits/lua-listed-7/program.json) | 275 | 0.887403 | 3 |
+| pidigits | [lua-listed-1](pidigits/lua-listed-1/program.json) | 62 | 0.461363 | 3 |
+| pidigits | [lua-listed-5](pidigits/lua-listed-5/program.json) | 77 | 0.569993 | 3 |
+| pidigits | [lua-listed-6](pidigits/lua-listed-6/program.json) | 63 | 0.343833 | 3 |
+| pidigits | [lua-listed-7](pidigits/lua-listed-7/program.json) | 57 | 0.887403 | 3 |
 | regexredux | [regexredux-lua-1](regexredux/regexredux-lua-1/program.json) | 38 | 2.0446 | 3 |
 | revcomp | [revcomp-lua-2](revcomp/revcomp-lua-2/program.json) | 34 | 5.06656 | 3 |
 | spectralnorm | [spectralnorm-lua-1](spectralnorm/spectralnorm-lua-1/program.json) | 33 | 40.2565 | 3 |

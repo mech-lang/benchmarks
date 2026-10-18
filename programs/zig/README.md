@@ -14,9 +14,9 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-zig-1-faithful](mandelbrot/mandelbrot-zig-1-faithful/program.json) | 102 | 2.24879 | 3 |
 | nbody | [nbody-zig-2-faithful](nbody/nbody-zig-2-faithful/program.json) | 117 | 1.00652 | 7 |
 | nbody | [nbody-zig-3-faithful](nbody/nbody-zig-3-faithful/program.json) | 116 | 1.07513 | 3 |
-| pidigits | [pidigits-zig-gmp](pidigits/pidigits-zig-gmp/program.json) | 66 | 0.548138 | 3 |
-| regexredux | [regexredux-zig-compact-pcre2](regexredux/regexredux-zig-compact-pcre2/program.json) | 101 | 11.0481 | 3 |
-| regexredux | [regexredux-zig-jit-pcre2](regexredux/regexredux-zig-jit-pcre2/program.json) | 102 | 1.7588 | 3 |
+| pidigits | [pidigits-zig-gmp](pidigits/pidigits-zig-gmp/program.json) | 56 | 0.548138 | 3 |
+| regexredux | [regexredux-zig-compact-pcre2](regexredux/regexredux-zig-compact-pcre2/program.json) | 42 | 11.0481 | 3 |
+| regexredux | [regexredux-zig-jit-pcre2](regexredux/regexredux-zig-jit-pcre2/program.json) | 41 | 1.7588 | 3 |
 | revcomp | [revcomp-zig-table](revcomp/revcomp-zig-table/program.json) | 66 | 0.301399 | 3 |
 | spectralnorm | [spectralnorm-zig-1-faithful](spectralnorm/spectralnorm-zig-1-faithful/program.json) | 76 | 0.760719 | 3 |
 | spectralnorm | [spectralnorm-zig-2-m-faithful](spectralnorm/spectralnorm-zig-2-m-faithful/program.json) | 113 | 0.106528 | 3 |

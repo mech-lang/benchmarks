@@ -25,14 +25,27 @@ A profile's elapsed time is the median of its saved samples, usually three, with
 
 Mech interpreted uses a fresh whole-process cohort, including parsing and preparation, for every sample, median, standard deviation and chart coordinate. Internal preparation and execution measurements are retained as diagnostic phases only. A phase measurement cannot replace a whole-process observation in the language comparison. Historical interpreter optimization studies compare matching phases within their own cohorts; their execution-only figures do not supply the current rankings.
 
-Canonical LOC counts nonblank, noncomment application source, with packed independent statements/assignments expanded and meaningful compiler pragmas counted. This is not compressed source size. Formatting-based LOC is an optional separately supported metric; missing formatter evidence is not replaced by guessed counts. Source roles distinguish application code from general runtime support.
+Application LOC counts nonblank, noncomment workload source, using the retained
+normalization rules for independent statements/assignments and meaningful
+compiler pragmas. Workload algorithms, domain-specific parsing and output
+construction count. Reusable process hosts, generic library bindings and general
+libraries are excluded, including reviewed sections embedded in an application
+file. Authored general libraries remain identified separately from third-party
+dependencies; naming a workload executor as a library cannot remove its source
+cost. Compiler-generated C, runtime implementations and installed libraries are
+outside application LOC for every language, including Mech.
 
-The [source-size accounting audit](source-size-audit.md) identifies inconsistent
-treatment of reusable hosts, bindings and authored general libraries across
-language cohorts, including embedded bindings within application files. These
-are known limitations of the current LOC comparison. The audit preserves the
-published counts and timings while documenting the source roles and normalized
-splits needed for a consistent revised metric.
+The [source-size correction](source-size-correction.md) applies this boundary to
+the cases identified by the [earlier audit](source-size-audit.md). Original source
+bytes, historical totals, count evidence and timings remain available. Source
+inspection and exports disclose corrected application counts, previous totals
+and excluded support. These are winners among measured implementations, not
+proofs of minimum possible source size. Remaining unreviewed inline helpers and
+historical normalization limitations are not represented as independently
+recertified whole-language grammars.
+
+Formatted LOC uses the same application boundary with separately qualified native
+formatter counts. Missing formatter evidence is not replaced by guessed counts.
 
 ## Chart calculations
 

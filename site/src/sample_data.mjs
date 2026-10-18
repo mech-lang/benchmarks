@@ -48,7 +48,7 @@ export function filterSamples(rows,{languages,benchmarks,disabled=new Set(),quer
 }
 
 export const sampleColumns=[['language_label','Language'],['benchmark_label','Benchmark'],['implementation','Implementation'],
-  ['run','Run'],['seconds','Seconds'],['time_x_best','Time × best'],['loc','Canonical LOC'],['formatted_loc','Formatted LOC'],
+  ['run','Run'],['seconds','Seconds'],['time_x_best','Time × best'],['loc','Application LOC'],['formatted_loc','Formatted LOC'],
   ['median_seconds','Median (s)'],['sd_seconds','SD (s)'],['execution','Execution'],['runtime','Runtime / toolchain'],
   ['authorship','Authorship'],['ai_model','AI model'],['license','License'],['original_source','Original source'],
   ['toolchain_version','Versions'],['workload','Input'],['platform_label','Platform'],['recorded_at','Recorded'],['reproduction_status','Reproduce']];
@@ -69,6 +69,7 @@ export function exportRows(rows,linkFor){
     benchmark:r.benchmark_label,benchmark_key:r.benchmark,workload:r.workload,
     implementation:r.implementation,program_key:r.program,run:r.run,seconds:r.seconds,
     time_x_best:r.time_x_best,canonical_loc:r.loc,formatted_loc:r.formatted_loc,
+    source_accounting:r.implementations[0].source_accounting??null,
     median_seconds:r.median_seconds,sd_seconds:r.sd_seconds,execution:r.execution,runtime:r.runtime,
     authorship:r.authorship,ai_model:r.ai_model,license:r.license,license_status:r.implementations[0].authorship?.license?.status??'unverified',
     authorship_details:r.implementations[0].authorship??null,
@@ -80,7 +81,7 @@ export function exportRows(rows,linkFor){
 }
 
 const exportColumns=['sample_id','language','language_key','benchmark','benchmark_key','workload','implementation','program_key',
-  'run','seconds','time_x_best','canonical_loc','formatted_loc','median_seconds','sd_seconds','execution','runtime',
+  'run','seconds','time_x_best','canonical_loc','formatted_loc','source_accounting','median_seconds','sd_seconds','execution','runtime',
   'authorship','ai_model','license','license_status','authorship_details','original_sources','toolchain_version','platform',
   'recorded_at','reproduction_status','reproduction','chart_eligible','implementation_url','timing_aliases','source_sha256','report','sample_details'];
 export function samplesCSV(rows){

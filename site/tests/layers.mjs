@@ -644,25 +644,31 @@ let helperLinks=0;
 for(const program of pony){
   const audit=context.harness.locAudit(program);
   assert.doesNotMatch(audit,/undefined|\[object Object\]/);
-  assert.match(audit,/canonical LOC/);
-  for(const source of program.loc_expansions){
-    for(const entry of source.expansions)assert.ok(audit.includes(`Line ${entry.line} · ${entry.units} canonical LOC`));
+  if(program.source_accounting){
+    assert.match(audit,/application LOC/);
+    assert.ok(audit.includes(`Previous count: ${program.source_accounting.previous_loc} LOC`));
+    assert.ok(audit.includes('aliases.pony')&&audit.includes('5 normalized LOC'));
+  }else{
+    assert.match(audit,/canonical LOC/);
+    for(const source of program.loc_expansions){
+      for(const entry of source.expansions)assert.ok(audit.includes(`Line ${entry.line} · ${entry.units} canonical LOC`));
+    }
   }
   for(const key of program.files){
     const source=context.harness.programSource(program,key);
     assert.equal(source.role,program.file_roles[key].role);
     assert.equal(decodeURI(source.source_url),recorded.repository.url+'/blob/main/'+program.file_roles[key].source_path);
-    if(source.role==='application-helper'){
+    if(source.role==='application-helper'||source.role==='runtime-support'){
       helperLinks++;
       assert.notEqual(source.source_url,program.source_url);
-      assert.match(audit,/application helper/);
+      assert.match(audit,source.role==='runtime-support'?/support excluded/:/application helper/);
       assert.ok(source.loc_note);
     }
   }
 }
 assert.equal(helperLinks,2);
-// Every newly admitted Elixir form exposes its counted application, helper and
-// launcher, including the source aliases retained outside selected endpoints.
+// Elixir retains every source while separating reusable support and launcher
+// from both normalized and formatted application LOC, including source aliases.
 const elixir=Object.values(recorded.program_inventory).filter(program=>program.language==='elixir');
 assert.equal(elixir.length,20);
 for(const program of elixir){
@@ -670,7 +676,9 @@ for(const program of elixir){
   assert.equal(program.eligible_for_chart,true);
   assert.equal(program.formatted_loc_status,'qualified');
   assert.deepEqual(program.files.map(key=>program.file_roles[key].role),
-    ['application','application-helper','application-launcher']);
+    ['application','runtime-support','runtime-support']);
+  assert.equal(program.loc+62,program.source_accounting.previous_loc);
+  assert.equal(program.formatted_loc+69,program.source_accounting.previous_formatted_loc);
   for(const key of program.files){
     const source=context.harness.programSource(program,key);
     assert.equal(source.role,program.file_roles[key].role);
@@ -679,8 +687,8 @@ for(const program of elixir){
   context.harness.inspect(program.key);
   const detail=element('#inspector-body').innerHTML;
   assert.doesNotMatch(detail,/undefined|\[object Object\]/);
-  assert.match(detail,/application helper/);
-  assert.match(detail,/application launcher/);
+  assert.match(detail,/support \(excluded\)/);
+  assert.match(detail,/62 normalized LOC/);
   assert.match(detail,/3 samples/);
   assert.match(detail,/best-comparison/);
 }

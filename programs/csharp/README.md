@@ -16,9 +16,9 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-csharpcore-7-jit](mandelbrot/mandelbrot-csharpcore-7-jit/program.json) | 67 | 0.671872 | 3 |
 | nbody | [nbody-csharpcore-0-jit](nbody/nbody-csharpcore-0-jit/program.json) | 87 | 1.88626 | 3 |
 | nbody | [nbody-csharpcore-6-arm64-faithful-jit](nbody/nbody-csharpcore-6-arm64-faithful-jit/program.json) | 165 | 1.73604 | 3 |
-| pidigits | [pidigits-csharpcore-6-arm64-faithful-jit](pidigits/pidigits-csharpcore-6-arm64-faithful-jit/program.json) | 119 | 0.323749 | 3 |
+| pidigits | [pidigits-csharpcore-6-arm64-faithful-jit](pidigits/pidigits-csharpcore-6-arm64-faithful-jit/program.json) | 82 | 0.323749 | 3 |
 | pidigits | [pidigits-csharpcore-7-jit](pidigits/pidigits-csharpcore-7-jit/program.json) | 62 | 4.28754 | 3 |
-| regexredux | [regexredux-csharpcore-2-arm64-faithful-jit](regexredux/regexredux-csharpcore-2-arm64-faithful-jit/program.json) | 140 | 0.697474 | 3 |
+| regexredux | [regexredux-csharpcore-2-arm64-faithful-jit](regexredux/regexredux-csharpcore-2-arm64-faithful-jit/program.json) | 56 | 0.697474 | 3 |
 | regexredux | [regexredux-csharpcore-5-jit](regexredux/regexredux-csharpcore-5-jit/program.json) | 53 | 0.724733 | 3 |
 | revcomp | [revcomp-csharpcore-3-jit](revcomp/revcomp-csharpcore-3-jit/program.json) | 99 | 1.03857 | 3 |
 | revcomp | [revcomp-csharpcore-9-arm64-faithful-jit](revcomp/revcomp-csharpcore-9-arm64-faithful-jit/program.json) | 284 | 0.098118 | 3 |

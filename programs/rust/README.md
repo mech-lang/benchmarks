@@ -15,7 +15,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-rust-7](mandelbrot/mandelbrot-rust-7/program.json) | 59 | 0.472046 | 3 |
 | nbody | [nbody-rust-1](nbody/nbody-rust-1/program.json) | 133 | 1.66645 | 3 |
 | nbody | [rust-3](nbody/rust-3/program.json) | 196 | 1.08796 | 7 |
-| pidigits | [pidigits-rust-3](pidigits/pidigits-rust-3/program.json) | 175 | 0.303086 | 7 |
+| pidigits | [pidigits-rust-3](pidigits/pidigits-rust-3/program.json) | 82 | 0.303086 | 7 |
 | pidigits | [pidigits-rust-4](pidigits/pidigits-rust-4/program.json) | 97 | 0.491783 | 3 |
 | regexredux | [regexredux-rust-3](regexredux/regexredux-rust-3/program.json) | 43 | 0.489083 | 3 |
 | regexredux | [regexredux-rust-6](regexredux/regexredux-rust-6/program.json) | 77 | 0.469501 | 7 |

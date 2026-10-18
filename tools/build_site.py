@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 BROWSER_FIELDS = frozenset({
     'schema', 'schema_version', 'languages', 'benchmarks', 'programs',
     'program_inventory', 'files', 'repository', 'archive_paths', 'protocol',
-    'reference_summary',
+    'reference_summary', 'source_accounting',
 })
 PROGRAM_FIELDS = frozenset({
     'key', 'id', 'benchmark', 'language', 'loc', 'physical_loc', 'x', 'y',
@@ -29,11 +29,13 @@ PROGRAM_FIELDS = frozenset({
     'runtime_policy', 'runtime_support',
     'timing_alias_of', 'source_alias_of', 'aliased_sample_source',
     'native_observations', 'distinct_optimization_claimed', 'source_alias_note',
-    'separate_fresh_samples_required',
+    'separate_fresh_samples_required', 'source_accounting',
 })
 FILE_ROLE_FIELDS = frozenset({
     'role', 'source_path', 'name', 'path', 'code', 'sha256', 'physical_loc',
-    'normalized_loc', 'loc_note', 'source_url',
+    'normalized_loc', 'loc_note', 'source_url', 'support_category',
+    'included_in_application_loc', 'bundle_normalized_loc', 'support_normalized_loc',
+    'support_line_ranges',
 })
 
 

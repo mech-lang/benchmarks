@@ -14,7 +14,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [mandelbrot-fsharpcore-6-arm64-faithful-aot](mandelbrot/mandelbrot-fsharpcore-6-arm64-faithful-aot/program.json) | 63 | 1.18182 | 3 |
 | nbody | [nbody-fsharpcore-4-static-output-aot](nbody/nbody-fsharpcore-4-static-output-aot/program.json) | 99 | 2.4849 | 3 |
 | nbody | [nbody-fsharpcore-6-arm64-faithful-static-output-aot](nbody/nbody-fsharpcore-6-arm64-faithful-static-output-aot/program.json) | 111 | 1.82611 | 3 |
-| pidigits | [pidigits-fsharpcore-6-arm64-faithful-aot](pidigits/pidigits-fsharpcore-6-arm64-faithful-aot/program.json) | 80 | 0.309286 | 3 |
+| pidigits | [pidigits-fsharpcore-6-arm64-faithful-aot](pidigits/pidigits-fsharpcore-6-arm64-faithful-aot/program.json) | 57 | 0.309286 | 3 |
 | regexredux | [regexredux-fsharpcore-2-static-output-aot](regexredux/regexredux-fsharpcore-2-static-output-aot/program.json) | 24 | 5.10497 | 3 |
 | regexredux | [regexredux-fsharpcore-6-static-output-aot](regexredux/regexredux-fsharpcore-6-static-output-aot/program.json) | 50 | 1.20648 | 3 |
 | revcomp | [revcomp-fsharpcore-1-aot](revcomp/revcomp-fsharpcore-1-aot/program.json) | 45 | 14.9511 | 3 |

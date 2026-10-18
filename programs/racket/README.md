@@ -17,7 +17,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | nbody | [nbody-racket-1](nbody/nbody-racket-1/program.json) | 123 | 15.6125 | 3 |
 | nbody | [nbody-racket-2](nbody/nbody-racket-2/program.json) | 135 | 3.55056 | 3 |
 | pidigits | [pidigits-racket-1](pidigits/pidigits-racket-1/program.json) | 33 | 3.39549 | 3 |
-| pidigits | [pidigits-racket-2-faithful](pidigits/pidigits-racket-2-faithful/program.json) | 87 | 0.652686 | 3 |
+| pidigits | [pidigits-racket-2-faithful](pidigits/pidigits-racket-2-faithful/program.json) | 43 | 0.652686 | 3 |
 | regexredux | [regexredux-racket-1](regexredux/regexredux-racket-1/program.json) | 27 | 8.74095 | 3 |
 | regexredux | [regexredux-racket-2](regexredux/regexredux-racket-2/program.json) | 48 | 4.64957 | 3 |
 | revcomp | [revcomp-racket-1](revcomp/revcomp-racket-1/program.json) | 50 | 6.09215 | 3 |

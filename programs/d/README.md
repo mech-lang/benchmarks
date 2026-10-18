@@ -16,7 +16,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [d-parallel-array-eight](mandelbrot/d-parallel-array-eight/program.json) | 62 | 0.448045 | 3 |
 | nbody | [d-unrolled](nbody/d-unrolled/program.json) | 51 | 1.16909 | 3 |
 | pidigits | [d-compact](pidigits/d-compact/program.json) | 29 | 3.13624 | 3 |
-| pidigits | [d-fast](pidigits/d-fast/program.json) | 63 | 0.287968 | 3 |
+| pidigits | [d-fast](pidigits/d-fast/program.json) | 44 | 0.287968 | 3 |
 | regexredux | [regexredux-d-compact](regexredux/regexredux-d-compact/program.json) | 12 | 1.7579 | 3 |
 | regexredux | [regexredux-d-published-3](regexredux/regexredux-d-published-3/program.json) | 58 | 0.695072 | 3 |
 | revcomp | [revcomp-d-compact](revcomp/revcomp-d-compact/program.json) | 20 | 8.29035 | 3 |

@@ -115,6 +115,11 @@ def check_migration(root, check_index):
 
 
 def check_previous(root, data):
+    accounting_spec = importlib.util.spec_from_file_location(
+        'saved_source_accounting', root / 'tools/source_accounting.py')
+    accounting = importlib.util.module_from_spec(accounting_spec)
+    accounting_spec.loader.exec_module(accounting)
+    data = accounting.historical_catalog(root, data)
     # Authorship is a later source-bound annotation. Replay the frozen admission
     # checks against the original measurement record without rewriting its
     # publication snapshot or relaxing any of its existing field comparisons.
@@ -264,7 +269,7 @@ def verify(root, check_index=False):
                            'archive_timing_report': data.get('archive_paths', {}).get(p.get('report')), 'sources': sources}
         if publication is not None:
             expected_record['publication_record'] = publication
-        for field in ('authorship', 'timing_measurement', 'timing_correction', 'timing_alias_of',
+        for field in ('source_accounting', 'authorship', 'timing_measurement', 'timing_correction', 'timing_alias_of',
                       'source_alias_of', 'aliased_sample_source', 'native_observations',
                       'distinct_optimization_claimed', 'source_alias_note',
                       'separate_fresh_samples_required'):

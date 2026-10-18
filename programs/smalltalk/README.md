@@ -13,7 +13,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | nbody | [nbody-smalltalk-published-1](nbody/nbody-smalltalk-published-1/program.json) | 174 | 60.7208 | 3 |
 | pidigits | [pidigits-smalltalk-compact](pidigits/pidigits-smalltalk-compact/program.json) | 35 | 4.22675 | 3 |
 | pidigits | [pidigits-smalltalk-published-1](pidigits/pidigits-smalltalk-published-1/program.json) | 75 | 3.93061 | 3 |
-| regexredux | [regexredux-smalltalk-pcre2](regexredux/regexredux-smalltalk-pcre2/program.json) | 143 | 2.86112 | 3 |
+| regexredux | [regexredux-smalltalk-pcre2](regexredux/regexredux-smalltalk-pcre2/program.json) | 65 | 2.86112 | 3 |
 | regexredux | [regexredux-smalltalk-regex](regexredux/regexredux-smalltalk-regex/program.json) | 51 | 524.228 | 3 |
 | revcomp | [revcomp-smalltalk-streaming](revcomp/revcomp-smalltalk-streaming/program.json) | 45 | 12.0469 | 3 |
 | spectralnorm | [spectralnorm-smalltalk-recurrence](spectralnorm/spectralnorm-smalltalk-recurrence/program.json) | 36 | 12.8801 | 3 |

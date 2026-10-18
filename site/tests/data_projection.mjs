@@ -34,7 +34,7 @@ if(process.argv.length!==4)throw new Error('Usage: node site/tests/data_projecti
 const original=JSON.parse(fs.readFileSync(process.argv[2],'utf8'));
 const projected=JSON.parse(fs.readFileSync(process.argv[3],'utf8'));
 const oldInspector=rendererFor(original),newInspector=rendererFor(projected);
-for(const field of ['schema','schema_version','languages','benchmarks','files','repository','archive_paths','protocol','reference_summary']){
+for(const field of ['schema','schema_version','languages','benchmarks','files','repository','archive_paths','protocol','reference_summary','source_accounting']){
   assert.equal(Object.hasOwn(projected,field),Object.hasOwn(original,field),field);
   assert.deepEqual(projected[field],original[field],field);
 }
@@ -44,8 +44,9 @@ const displayedFields=['key','id','benchmark','language','loc','physical_loc','x
   'formatted_loc_complete','formatted_x','eligible_for_chart','exclusion_reason','loc_expansion_format',
   'source_url','source_link_label','license_url','local_adaptation','source_provenance','runtime_policy','runtime_support',
   'timing_alias_of','source_alias_of','aliased_sample_source','native_observations','distinct_optimization_claimed',
-  'source_alias_note','separate_fresh_samples_required'];
-const fileFields=['name','path','code','sha256','role','physical_loc','normalized_loc','loc_note','source_url'];
+  'source_alias_note','separate_fresh_samples_required','source_accounting'];
+const fileFields=['name','path','code','sha256','role','physical_loc','normalized_loc','loc_note','source_url',
+  'support_category','included_in_application_loc','bundle_normalized_loc','support_normalized_loc','support_line_ranges'];
 let rowCount=0,sampleCount=0,auditCases=0,sourceCases=0;
 for(const pool of ['programs','program_inventory']){
   assert.equal(Object.hasOwn(projected,pool),Object.hasOwn(original,pool),pool);
