@@ -27,6 +27,13 @@ Mech interpreted uses a fresh whole-process cohort, including parsing and prepar
 
 Canonical LOC counts nonblank, noncomment application source, with packed independent statements/assignments expanded and meaningful compiler pragmas counted. This is not compressed source size. Formatting-based LOC is an optional separately supported metric; missing formatter evidence is not replaced by guessed counts. Source roles distinguish application code from general runtime support.
 
+The [source-size accounting audit](source-size-audit.md) identifies inconsistent
+treatment of reusable hosts, bindings and authored general libraries across
+language cohorts, including embedded bindings within application files. These
+are known limitations of the current LOC comparison. The audit preserves the
+published counts and timings while documenting the source roles and normalized
+splits needed for a consistent revised metric.
+
 ## Chart calculations
 
 For each workload and language variant, the fastest endpoint is the available profile with the lowest median elapsed time, breaking exact ties by LOC. The smallest endpoint has the lowest LOC, breaking ties by time. They may be the same program. Endpoints are winners within the retained measured candidate pool, not claims of universal optimality.

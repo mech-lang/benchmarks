@@ -1,0 +1,587 @@
+{
+  "schema": "benchmark-source-size-review.v1",
+  "status": "FINDINGS_ONLY_NO_METRIC_CHANGE",
+  "catalog_sha256": "de23a95e07862ae440d283f6028c9b0e35f56ef79b530680b472b5860c2e2fc6",
+  "catalog_commit": "27e5d66be348e8fad2111e6e7d67bbe89a3d02bc",
+  "review_date": "2026-10-18",
+  "review_method": "Source-content inspection of every attached non-primary/support source, with targeted embedded-binding inspection. Third-party library dependency identity is distinguished from authored helper implementations.",
+  "scope_limitations": [
+    "This is a source-accounting audit, not a revalidation of compiler/runtime implementations or stopwatch results.",
+    "Embedded sections are evidence ranges, not newly qualified normalized LOC splits.",
+    "Single-file sources were screened for native-binding indicators; absence of a match is not a semantic proof that every helper is workload-specific.",
+    "Generated compiler outputs and installed dependencies outside source bundles are not counted or recertified."
+  ],
+  "support_units": {
+    "3adce52a2aea05cc00ee13e011655749f5a03bc81d37a4ee8eb13c14f227e58c": {
+      "category": "configuration",
+      "recommended_accounting": "disclose-configuration",
+      "reason": "APL workspace system-limit assignment. This is a runtime setting, not benchmark computation; retain the current meaningful-directive convention pending a consistent settings policy."
+    },
+    "06d9fac57b6ded281284cee43b949df39e6158432fd14b3937f43fb273944b12": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "BQN GMP/PCRE2 bindings and process parallel-map wrapper. Callbacks remain in the application; no benchmark patterns or nucleotide logic."
+    },
+    "3246275bfd0148b9dfa874907bda1f3142612142ab6cf1b17a70da9c19ce4187": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Shared C GMP, PCRE2, khash and process bindings. Regex count/substitute are general services parameterized by pattern and subject; no prescribed benchmark patterns or spigot recurrence."
+    },
+    "1975203b07f2cdd300b86536e6726883dfa917935d4bcbd1070db4a25bf3f564": {
+      "category": "general-io-or-container",
+      "recommended_accounting": "separate-support",
+      "reason": "C3 growing byte buffer, append/reserve, read-all and output routines. No FASTA record selection, DNA encoding or benchmark constants."
+    },
+    "dda78c3cd35ca445d4f83da2be99327335f829ad7a7fd91a77c3e7e12b57736e": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "C3 GMP ABI types and primitive declarations; no digit recurrence."
+    },
+    "2b46f2f3be49a5910a5c3c2b77d905b767ffc0ff108da92589854852694f53a5": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "C3 PCRE2 ABI declarations; no benchmark patterns or orchestration."
+    },
+    "acff1f78af8233552d720d90d5ae971d64a12b5cddf9b98830d1539eda3a5248": {
+      "category": "general-concurrency",
+      "recommended_accounting": "separate-support",
+      "reason": "C3 thread create/join wrapper around the standard library; workload callbacks are application code."
+    },
+    "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446": {
+      "category": "general-io-or-concurrency",
+      "recommended_accounting": "separate-support",
+      "reason": "Clojure argument parsing, byte-preserving input, locale-stable formatting and bounded executor/join service. Entire shared module is charged to every profile, including unused services."
+    },
+    "bdad2389d437fd4c69122e5d25b3065412b4bca0c272631667283273392ba8ff": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Elixir one-line process launcher calls the application with System.argv()."
+    },
+    "c9fbb60888c46fb50195245761a411716f1256145af367e03a23f70aea270e89": {
+      "category": "general-io-and-formatting",
+      "recommended_accounting": "separate-support",
+      "reason": "Elixir argument validation, generic indices, binary input/output, line splitting and fixed-point rounding. No benchmark kernel; entire module is charged to all profiles."
+    },
+    "e8775fd5c317dd4e8fa12ad84099259d35fe53a2d92299e69fd4795e9e938330": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Elm Node port host supplies argv/stdin and writes byte-preserving output. Does not compute benchmark results."
+    },
+    "90f96ba31a5dc721a3dfd4571d478cded9779069df3dc14064047b43f6e6fbc1": {
+      "category": "dependency-configuration",
+      "recommended_accounting": "retain-dependency-exclusion",
+      "reason": "Elm package and source-directory manifest; no application logic."
+    },
+    "7b13bc13bd760401d46db9dfb209c5ccb252b403de288dcc7dd3061a1e07708a": {
+      "category": "authored-general-library",
+      "recommended_accounting": "separate-authored-library",
+      "reason": "Futhark signed arbitrary-precision limb arithmetic with general division, growth and conversion. Substantial authored numerical implementation, not an installed standard dependency; excluded today. No spigot recurrence or fixed precision from the benchmark input."
+    },
+    "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d": {
+      "category": "authored-general-library",
+      "recommended_accounting": "separate-authored-library",
+      "reason": "Futhark generic decimal/fixed formatting, uppercase and caller-selected line wrapping. No benchmark constants; excluded today."
+    },
+    "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Futhark generic CLI/stdin/stdout and context/array ABI host; main entry receives n and input bytes."
+    },
+    "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf": {
+      "category": "authored-general-library",
+      "recommended_accounting": "separate-authored-library",
+      "reason": "Futhark growing open-addressed integer map with generic get/put/increment/reserve services. No nucleotide encoding or window histogram workflow."
+    },
+    "e2e210be516999df38defd6ee473d8b80746b66818e6de048d41d5670bacffe4": {
+      "category": "authored-general-library",
+      "recommended_accounting": "separate-authored-library",
+      "reason": "Futhark byte-regex parser/search/count/substitute implementation, including a general equal-width pattern optimization. Limited documented regex feature set; no nine benchmark patterns. This is an authored regex library, not merely ABI glue."
+    },
+    "34c68812594ab7472e7a2318e0ce22b8eae5b176465ce4dc85a19021d197a6eb": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Gleam typed bindings for binary I/O, formatting, slicing, conversion and arithmetic primitives."
+    },
+    "c4c84235a88dcc32e07619e4eb66281fa913cf9d0f699207e14c08eafa892c39": {
+      "category": "general-io-and-formatting",
+      "recommended_accounting": "separate-support",
+      "reason": "Erlang binary input/output, argv, decimal formatting and byte/list conversions for Gleam."
+    },
+    "90ead9d59bbb9d8e67939150689f07c0434ccb7e4a3791c3aedabd828d6f6d75": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Gleam typed generic task start/join declarations; callback work remains in Gleam."
+    },
+    "b47c516b69611d273427d7e4e2f602234a71d291991d49cd7a1ecf82f4a9cf64": {
+      "category": "general-concurrency",
+      "recommended_accounting": "separate-support",
+      "reason": "Erlang monitored spawn/join with caller-supplied callback, result ownership and failure propagation."
+    },
+    "0508f86384f2b4d16ad1097be0cd9ed9cb1109ef7d91830c2819b4325fe2a9b6": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Gleam opaque reference type and erlang:make_ref declaration. Used for allocation identity, not a native tree executor."
+    },
+    "f87c88358391a1718ab616b82bb6eebf41f74d3165a76d334ceb04918e8d4320": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Gleam typed regex compile and one indexed search bindings."
+    },
+    "9e20cd3bd0c8ed478dbc6cde80d97e68bb2777787346a46c270fd3bb23921fcb": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Erlang OTP re compile/search wrappers returning match span or failure; no benchmark patterns."
+    },
+    "ba95e660c20543288d70602f8788b5cab5666a6e5a05b5a0e8d51315210e1190": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Erlang launcher invokes benchmark:main and handles exit/error status."
+    },
+    "6cad61050801b44135b9669faf52268e100a5ab857029146d7b18319b07aa64c": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Gleam typed tuple-backed vector construction, conversion, get and set."
+    },
+    "254720031185286ffff0ec91c8a49d63ca70f3a1ed865173ec657a5545406661": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Erlang tuple get/set implementing zero-based vector access for Gleam."
+    },
+    "5cae2f96a6e8feeeb253a3c03ab7838e539b60bba9d574938e7488b0e6d51601": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "K GMP/map/regex bindings and generic capped process map. Application callbacks retain benchmark work."
+    },
+    "3d8c5d6be74d4745b830ac77b05793a2cf5a32544d5314fda8b1dda874da5c66": {
+      "category": "general-io-and-formatting",
+      "recommended_accounting": "separate-support",
+      "reason": "Kotlin argument validation, Latin-1 bytes/text, I/O, fixed formatting and line splitting. Entire shared module is charged to every profile."
+    },
+    "316669c9da08e0fe7f6c0ef0409537ecaa73dbedeb353e27b525c927fc53d54e": {
+      "category": "general-io-and-formatting",
+      "recommended_accounting": "separate-support",
+      "reason": "Lean common argument parsing, read-all, write/flush and fixed-format declaration. Earlier profiles charge all helpers even when unused; later concise/fast profiles removed this module."
+    },
+    "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Lean C snprintf fixed-point formatting wrapper; no numerical benchmark computation."
+    },
+    "80243f1810f082f0d66f510196f20965bfbbe8c5ed693293320ad13370b17f21": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Lean C PCRE2 compile and next-match span wrappers; prescribed counts and ordered substitutions remain in Lean."
+    },
+    "ae50244bd96f7961201a40780c2dfeab4bb193fc0e2da2184c37753469ef4e6c": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Lua GMP compatibility module exposes published mutable and immutable arithmetic APIs. No digit-generation recurrence. Entire 218-normalized-line module is charged to each of four pi profiles."
+    },
+    "69dcfe810981abfa07656501dcef8823c4bc63708113a389b5bf1d06643aa9ce": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Luau GMP primitive bindings and allocation/finalization; digit spigot remains in Luau."
+    },
+    "c8c840e94aec1789e30acc0084e56807cc0dec6db886f2b190a7c93d69a4c614": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Shared Luau VM/JIT launcher, argv and binary read/write host; charged in full to all 22 profiles."
+    },
+    "1d619d8c9985b37c5631236ca303eb2616aaf0cebd645488d4d66fd8a567e3b6": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Luau PCRE2 compile/find/substitute binding, without prescribed patterns or workflow."
+    },
+    "a517cc4d3838fc6a44c8075fa044701a2f87aa8d9169cd19d67718ae6effb084": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "MATLAB shell wrapper only preserves stdin on descriptor 3 and execs the process."
+    },
+    "7138aab40685a0e2d053bcded452f0d90b5b39f6658647930b31bae14ad3c5d6": {
+      "category": "general-io-and-formatting",
+      "recommended_accounting": "separate-support",
+      "reason": "Mojo general byte I/O, numeric formatting, caller-selected line wrapping and opaque compiler-barrier primitive; no benchmark kernel."
+    },
+    "0137eef4dfeb3ecc4064417b21e914571a988ed1d29effa6cc2a957b4fc4e8ec": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Mojo GMP primitives and owned BigInt operator/conversion wrapper; no digit recurrence."
+    },
+    "4582c7fd4b98f61339ce677bb1daa7a45a53075b112a494a335525c4bda72074": {
+      "category": "third-party-library",
+      "recommended_accounting": "retain-dependency-exclusion",
+      "reason": "Retained MIT-licensed khash header by Attractive Chaos; generic map dependency. License/header inspection and library API structure, not a new implementation audit."
+    },
+    "e5c39f5ccc4544a0e5454af1edbd64c8e82381f80b6770d2e6d8eb03f463712a": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Mojo C GMP, PCRE2, map and process services plus scalar compiler barrier. All receive ordinary operation inputs; no prescribed patterns, DNA workflow or spigot recurrence."
+    },
+    "40750de800d27df0ca79c00d7850e7f3d9ed83416947b82c14c8f1d1295714cf": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Mojo owned Apache APR pool bindings; tree construction and checks remain application code."
+    },
+    "708ab2b2a0d43cb8583a0d1a1a7b5d2d09f069dc117d49d90335363b4c93b8ec": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Mojo PCRE2 compile/count/global substitution and buffer ownership wrappers."
+    },
+    "dea810818fdf05ea629c48e01a5ef5280b37e6c5270752f40bbddde0e9f48b20": {
+      "category": "authored-general-library",
+      "recommended_accounting": "separate-authored-library",
+      "reason": "Mojo growing open-addressed UIntMap implementation with generic get/set/increment. Substantial authored data structure excluded today; not a preinstalled dependency."
+    },
+    "adad6363f378372c1f54b8382193a70c8e142565589bb2511ba6567838f8b3e4": {
+      "category": "general-library-binding",
+      "recommended_accounting": "separate-support",
+      "reason": "Nim compatibility aliases/templates over pinned public nim-gmp declarations. No digit recurrence."
+    },
+    "deccab60eac37f744832561ce145afb6bec0abce21a10c04298c7d668094bfbe": {
+      "category": "test-compatibility",
+      "recommended_accounting": "separate-support",
+      "reason": "Pony legacy test-package aliases for a library dependency. No arithmetic, application behavior or benchmark kernel."
+    },
+    "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3": {
+      "category": "host",
+      "recommended_accounting": "separate-support",
+      "reason": "Prolog argument validation and process wrapper for stream encoding, failure handling, flushing and halt."
+    },
+    "efb32920c4c8c42ff5c1d6d3a521b9c2a0fc93d06a6f1e994e00c80d39f61b19": {
+      "category": "workload-specific-mixed",
+      "recommended_accounting": "retain-workload-sections",
+      "reason": "Prolog record helper mixes generic line/string assembly with FASTA header/comment recognition and literal >THREE selection. The domain-specific sections must remain application LOC; do not subtract the whole module."
+    },
+    "6c0550452025470f73b5e94146ce441843db80c625d0762f2565ceaf06cf0487": {
+      "category": "dependency-configuration",
+      "recommended_accounting": "retain-dependency-exclusion",
+      "reason": "Swift GMP header module map; no authored arithmetic implementation."
+    }
+  },
+  "embedded_units": {
+    "108c654c465eeb94081b33375e474cf59596fdfd4358a5ff17e6b94a63708c00": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 9,
+          "end": 225
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Fortran pcre2_mod contains ABI declarations and a generic growing-string replacement implementation. Benchmark pattern tables and workflow start in the subsequent program; their LOC must stay."
+    },
+    "da838e66bc5b2f9ce67e7b2dc2d290e783dae31c685496bc53d27786e99a4c56": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 25,
+          "end": 158
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Haskell PCRE2 imports/types, growable string and generic replace service precede main. Keep prescribed patterns, workload scheduling and nine-count/five-substitution orchestration in main."
+    },
+    "a1b3ea84469b638814d6fd2ca7d115df51fd547694a302a5ce3ef1ed6ff0f8a9": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 2,
+          "end": 78
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Smalltalk BenchmarkPCRE class implements general PCRE2 bindings, ownership, counting and replacement. BenchmarksGame owns workload constants and orchestration."
+    },
+    "6a40234e7a025ff8eabd43dd855460f3d11d36cd6dd88b61101a639f4a032004": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 23,
+          "end": 57
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Python ctypes PCRE2 result-type setup and generic replace service. Worker tasks and benchmark workflow contain additional interleaved binding operations; listed range is an example, not an exhaustive partition."
+    },
+    "a5e9734cd31f06a454ac4d2ed11bb249e8be236ea84eead9cf4677d8fe99679c": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 137,
+          "end": 185
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "C# GMP layout and P/Invoke class. ExtractDigit and the recurrence remain application logic despite using GMP."
+    },
+    "4d4a9abfb13ab40f4d75269cf00e472cb73be9ea96359377d84e8920b4820466": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 75,
+          "end": 166
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "C# Pcre class implements general compile/match/replace and native declarations. Workload tables and orchestration remain outside the class."
+    },
+    "1668f9258a1b81868a3d4b0d6a6e282af8f2b182d1d2281bf0bc85dfe4729a53": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 97,
+          "end": 199
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Rust Mpz ownership/arithmetic/comparison wrapper and raw GMP ABI. Context recurrence/iterator before this section remains application code."
+    },
+    "0b3d2bdd6e8486b1a901a81941eb661cad6e140d920ce50fd0a91561dd62ca6d": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 23,
+          "end": 59
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Ada GMP ABI types, primitive declarations and putchar import. Package Print_String before this range is output-format specific; recurrence/extraction after it must stay."
+    },
+    "0d5186ec1f9005eb594f930f5979c4816b3c2d05702d636171dadbb3b1fa3128": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 15,
+          "end": 85
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Ada PCRE2 types/declarations and generic Pattern/Count/Substitute functions. Prescribed variants and replacements begin at line 86 and must stay."
+    },
+    "54d63497939574cee5c4b9e8ca2ff2d7f24da671eb0478c0b04263e069bd091d": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 9,
+          "end": 40
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "F# GMP representation and P/Invoke declarations; digit recurrence and custom output counter remain application code."
+    },
+    "53468cf617ab77aa79dd83b3958ca2a7e5461ddb4a184b2bf43fc6b6ee407d36": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 9,
+          "end": 86
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Fortran GMP module holds representation and primitive ABI declarations. Digit extraction/recurrence follows in the application program."
+    },
+    "cbbc9d52f745ba2e051d0de6e6160ba6ebeaaab0947301e97bdd22cae7cdfb00": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 10,
+          "end": 53
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Fortran APR interface/error callback module. Tree representation, actual node allocation, construction, checks and pool lifetimes in later modules remain application logic."
+    },
+    "327a318cecc4faf5d3c6d1a12e633b3c48359d8e39ec3b4798c987e89f61177a": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 14,
+          "end": 55
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Racket GMP ABI and generic arithmetic syntax transformer. Spigot-specific compose macros inside digits are application code and must stay."
+    },
+    "4ac5b12b52aedd5c4cb794d1b685ecbd09e8f5a601f2d441e3b5f45fa316ed4b": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 17,
+          "end": 28
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Python ctypes GMP loading, return type and mpz representation. Allocated state, extract/next/eliminate helpers implement the workload and must stay."
+    },
+    "376714974cc38e30b3eadb87afe6a642d814a9ac588339b10c7a5cced8501f5f": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 5,
+          "end": 18
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Odin GMP foreign ABI and integer representation; main contains digit recurrence."
+    },
+    "15107e77101e23891864f4674f2fdb8240ff482a17d9ec1e8f3b0ed09b136bfb": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 4,
+          "end": 63
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Odin PCRE2 ABI, compile/find/destroy and generic read/substitute services before main. Prescribed counts/substitution pipeline remains application code."
+    },
+    "bb8450c3a75eb95152bee5190eaace8d980795ec41e2a50dc7ece6f8158e6e15": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 5,
+          "end": 51
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Pascal PCRE2 declarations and generic compile/count/substitute services. Meaningful compiler/link directives and workload pattern arrays require separate treatment."
+    },
+    "51606bc251c3ccf08e683fb03a6e8f32a6c014bd67604cdc6d19d0261c151898": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 3,
+          "end": 56
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Zig byte input, PCRE2 ABI/Regex object and generic substitution before main. Workload arrays, count loops and ordered replacements remain application code."
+    },
+    "8599b5da94a1718c563e22527f94e0853dc50c61f37ac1824b6061a34873a8c8": {
+      "category": "embedded-general-library",
+      "evidence_line_ranges": [
+        {
+          "start": 3,
+          "end": 57
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Zig JIT variant of generic I/O/PCRE2/Regex/substitution helpers before main; native JIT call differs. Workload logic remains in main."
+    },
+    "5a95d65236c8be8cfb4c1c52cc3a344b655e7631e133697d96aabb55bd38f490": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 3,
+          "end": 12
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Zig GMP representation/declarations. Main owns state lifetime and complete digit recurrence."
+    },
+    "adad16c89fa4163f68c2fc3242d9f73b100ef4a441a42468b8d987bc38549b4a": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 7,
+          "end": 25
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "D GMP representation and extern(C) declarations. The local extract helper in main is benchmark-specific and must stay."
+    },
+    "cf0f7188913b4d48f4d15491abf610d6f3cc5d37684a03871a136a87ea26fff2": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 10,
+          "end": 16
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Julia replacement of Base.PCRE.exec selects native PCRE2 JIT for a generic match operation; workload patterns and orchestration follow."
+    },
+    "d9552c519b2a965e9a092c3658460bf8c6e3402dbcd169a498bcff678014da04": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 13,
+          "end": 16
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Julia adds three generic in-place GMP wrappers. next!, extract! and produce! are spigot-specific and must stay."
+    },
+    "d88d5fac1a0623b39a63b2798455a6856da95dcc8163404d17fcec83c5c777a2": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 15,
+          "end": 18
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Julia AOT retains the same generic GMP wrapper section inside its module; julia_main and workload logic remain application code."
+    },
+    "aa50bc0d5de178ef377fbf0741affa7eef61fc9f9fa3a0762a77f82c703261e4": {
+      "category": "embedded-general-binding",
+      "evidence_line_ranges": [
+        {
+          "start": 309,
+          "end": 379
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Ada Apache_Runtime and Pools packages declare/wrap general APR operations. Earlier tree construction and node storage code remain application logic."
+    },
+    "1900605f666ecbce7087abdb8e0d7cb690ce0b1a30653f3812bd995e39caf8d7": {
+      "category": "direct-library-use",
+      "evidence_line_ranges": [
+        {
+          "start": 7,
+          "end": 7
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Swift imports GMP via an excluded module map, then calls its primitives from application state/recurrence code. No separate handwritten GMP wrapper to subtract from this source."
+    },
+    "58617c2b8c6a369a817222059b3bb5b7c2c633b1c59376a487611400ccbbe858": {
+      "category": "direct-library-use",
+      "evidence_line_ranges": [
+        {
+          "start": 8,
+          "end": 8
+        }
+      ],
+      "range_coverage": "examples; not a complete normalized source partition",
+      "normalized_support_loc": null,
+      "reason": "Chapel imports ordinary IO and CTypes. That import alone is not evidence of a hidden adapter; DNA complement tables and chunk processing are application logic."
+    }
+  }
+}

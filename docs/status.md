@@ -1,5 +1,12 @@
 # Benchmark coverage
 
+The [source-size accounting audit](source-size-audit.md) documents inconsistent
+inclusion of reusable hosts, bindings and authored general libraries. It covers
+all 1,035 source profiles, reviews every attached support unit and identifies
+additional embedded bindings. The findings preserve the published LOC and timing
+values; revised source-size rankings require consistent role boundaries and
+qualified normalized splits.
+
 The current catalog contains **62 execution variants across 54 language families**, **10 workloads**, and **976 selected timed program profiles**. The source inventory retains **1,035 profiles** across **959 source files**, including fifty-nine measured candidates that are not selected endpoints. Sixty-one execution variants cover the complete suite. The catalog retains **3,189 sample entries representing 3,177 distinct recorded runs**; **3,012 runs belong to selected profiles**. Four program labels explicitly share another program’s measurements.
 
 Luau 0.743 is admitted for all ten workloads in separate interpreted and arm64 native-JIT series. Twenty-two retained candidates have sixty-six serial, fresh complete-process observations, with all full outputs validated. All 420 bounded cases and four node-allocation/permutation witnesses passed. Normalized LOC includes all authored C++ embedding and general-library bindings. Original Lua submissions, consulted Lean references, source hashes, licenses, toolchain/dependency versions and timed commands are retained. The [primary admission](../experiments/luau/catalog-admission-v2/receipt.json) and [guarded-error admission](../experiments/luau/catalog-guarded-admission-v2/receipt.json) preserve earlier observations and chart baselines. The guarded reverse-complement form is 2.14× faster interpreted and 2.49× faster with the JIT at two additional normalized source units; its smaller predecessor remains available. The update is live as build `358a442b433b2f90`, website commit `5863365586cde84f0910cbc9ed3f4f5742eb1821`. The [deployment receipt](../site/publications/luau-v1/deployment.json) verifies the successful pipeline, Pages jobs, all 41 assets and the final manifest. All fourteen [live Data/export scenarios](../site/publications/luau-v1/live-browser.json) and thirteen [live shared-view scenarios](../site/publications/luau-v1/live-view-links.json), including both Luau language pages on desktop/mobile, passed with no page errors.

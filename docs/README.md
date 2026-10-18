@@ -2,6 +2,7 @@
 
 - [Dataset coverage](status.md)
 - [Measurement and comparison methodology](methodology.md)
+- [Source-size accounting audit](source-size-audit.md)
 - [Reproduction records and exports](reproduction.md)
 - [Original sources, authorship and licenses](authorship.md)
 - [Language classification audit](languages.md)
