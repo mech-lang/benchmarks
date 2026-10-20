@@ -17,8 +17,9 @@ The four-worker policy of the retained parallel Fannkuch submission and the eigh
 Reproduction:
 
 ```sh
-python3 tools/qualification/ruby_jit_run.py --mode bounded --output experiments/ruby-jit/bounded-replay
-python3 tools/qualification/ruby_jit_run.py --mode full --bounded-report experiments/ruby-jit/bounded-replay/report.json --output experiments/ruby-jit/full-replay
+python3 tools/qualification/ruby_jit_run.py --mode prepare --plan experiments/ruby-jit/.build/replay-plan.json
+python3 tools/qualification/ruby_jit_run.py --mode bounded --plan experiments/ruby-jit/.build/replay-plan.json --output experiments/ruby-jit/bounded-replay
+python3 tools/qualification/ruby_jit_run.py --mode full --plan experiments/ruby-jit/.build/replay-plan.json --bounded-report experiments/ruby-jit/bounded-replay/report.json --output experiments/ruby-jit/full-replay
 ```
 
-The plan is tied to the recorded executable, sources and controller. A different runtime requires a newly reviewed plan. A stopped measurement can resume with the same arguments plus `--resume`; completed samples are retained.
+The fresh plan binds commands to the replay checkout and installed executable; the original plan retains the exact measurement paths. Full-size input files must first be reconstructed at the recorded input paths and checked against their recorded size and SHA-256. The reconciled input records include the FASTA generation commands, which run outside subject timing. The plan is tied to the executable, sources and controller. A stopped measurement can resume with the same arguments plus `--resume`; completed samples are retained. If the installed executable does not match a historical YJIT digest, the replay measures YJIT afresh for that profile too.
