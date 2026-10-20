@@ -1,6 +1,6 @@
 # Language classification
 
-The catalog explicitly defines all **62 measured execution variants in 54 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
+The catalog explicitly defines all **63 measured execution variants in 54 language families**. The browser reads declarative metadata for each variant. AOT/JIT variants of one language remain in the same language family.
 
 | Facet | Meaning |
 | --- | --- |
@@ -17,8 +17,8 @@ Key distinctions:
 - **Java, Clojure, Kotlin and Scala are JVM/JIT.** All 17 selected Java commands invoke OpenJDK `java` and record JIT execution. GraalVM NativeAOT identifies their upstream source submissions. Kotlin and Scala run retained JVM classes on HotSpot with G1; JVM startup, class loading and runtime compilation are included in every sample.
 - **C# and F# include .NET JIT and NativeAOT.** NativeAOT remains part of .NET and retains runtime/GC support.
 - **Elm, JavaScript and TypeScript run on Node.js/V8.** Elm and TypeScript remain statically typed. Their JavaScript output executes under V8's JIT; compilation to JavaScript does not make measured execution native AOT. TypeScript samples include fresh Node startup, script loading, runtime compilation and shutdown; offline TypeScript compilation is excluded.
-- **Ruby uses YJIT. PHP has both modes:** fourteen selected profiles request tracing JIT and one explicitly disables it. **R's JIT produces interpreted bytecode.** SBCL saved cores and Racket CS native modules were precompiled before timing.
-- **Luau has separate interpreter and native-JIT series.** Both use Luau 0.743 with source optimization level 2; source compilation and optional arm64 code generation happen inside each measured process. Luau uses gradual typing and incremental tracing GC. The retained host exposes arguments, stdio and general PCRE2/GMP primitives; its authored source counts with each application. [Luau performance](https://luau.org/performance/) and [sandbox documentation](https://luau.org/sandbox/) describe the runtime model.
+- **Ruby has separate YJIT and ZJIT series.** Both include startup and compilation; cold methods may remain interpreted with default thresholds. The compact Fannkuch follow-up records first-call YJIT compilation separately. **PHP has both modes:** fourteen selected profiles request tracing JIT and one explicitly disables it. **R's JIT produces interpreted bytecode.** SBCL saved cores and Racket CS native modules were precompiled before timing.
+- **Luau has separate interpreter and native-JIT series.** Both use Luau 0.743 with source optimization level 2; source compilation and optional arm64 code generation happen inside each measured process. Luau uses gradual typing and incremental tracing GC. The retained host exposes arguments, stdio and general PCRE2/GMP primitives; reusable embedding and general-library bindings are excluded from application LOC and remain inspectable. [Luau performance](https://luau.org/performance/) and [sandbox documentation](https://luau.org/sandbox/) describe the runtime model.
 - **Manual allocation and ownership/RAII are independent.** C/C3/Zig/Odin use explicit allocation; Rust uses ownership and standard RC types; Chapel has separate owned/shared/unmanaged strategies.
 - **RC, tracing GC, and cycle collection are independent.** CPython/PHP combine RC and cycle collection. Nim's measured ORC uses RC plus trial-deletion cycle collection, not a global tracing collector. BEAM tracing heaps coexist with reference-counted large binaries.
 
@@ -80,6 +80,7 @@ Classification is based on preserved measurement/build records plus primary lang
 | Racket | Racket CS / Chez precompiled native modules | AOT | Dynamic | Tracing GC |
 | Roc | Roc LLVM alpha4 compiler/runtime | AOT | Static | RC |
 | Ruby (YJIT) | CRuby / YJIT | JIT | Dynamic | Tracing GC |
+| Ruby (ZJIT) | CRuby / ZJIT | JIT | Dynamic | Tracing GC |
 | Rust | rustc / LLVM | AOT | Static | Ownership/RAII, RC |
 | Scala (JVM) | Scala 3.10.0 / Eclipse Temurin HotSpot 25.0.4.1+1 | JIT | Static | Tracing GC |
 | Smalltalk (Pharo) | Pharo Cog/Spur VM | JIT | Dynamic | Tracing GC |

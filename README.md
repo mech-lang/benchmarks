@@ -4,7 +4,7 @@ A benchmark suite comparing execution time and source size across programming la
 
 **[Explore the benchmarks](https://mech-lang.org/benchmarks/)**
 
-The catalog contains 62 execution variants across 54 language families. The suite covers ten workloads: binary trees, fannkuch-redux, FASTA, k-nucleotide, Mandelbrot, N-body, pi digits, regex-redux, reverse complement, and spectral norm. Implementations span interpreted, JIT-compiled, and ahead-of-time compiled execution. Results include individual timing samples, source hashes, output validation, and measurement provenance.
+The catalog contains 63 execution variants across 54 language families. The suite covers ten workloads: binary trees, fannkuch-redux, FASTA, k-nucleotide, Mandelbrot, N-body, pi digits, regex-redux, reverse complement, and spectral norm. Implementations span interpreted, JIT-compiled, and ahead-of-time compiled execution. Results include individual timing samples, source hashes, output validation, and measurement provenance.
 
 ## Explore the results
 

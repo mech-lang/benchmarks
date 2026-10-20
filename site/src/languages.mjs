@@ -241,7 +241,7 @@ export const languageMetadata = {
     "memory": [
       "gc"
     ],
-    "note": "All 19 selected saved commands explicitly enable --yjit; the old interpreted language-group membership was stale.",
+    "note": "All selected commands enable --yjit. Default and first-call compilation policies are recorded per profile; historical measurements retain their original samples.",
     "sources": [
       "https://docs.ruby-lang.org/en/master/yjit/yjit_md.html",
       "https://docs.ruby-lang.org/en/master/GC.html"
@@ -1262,6 +1262,27 @@ export const languageMetadata = {
       "https://luau.org/performance/",
       "https://luau.org/sandbox/",
       "https://luau.org/typecheck/"
+    ]
+  },
+  "ruby-zjit": {
+    "platform": "runtime",
+    "runtime": "CRuby / ZJIT",
+    "execution": [
+      "jit"
+    ],
+    "typing": "dynamic",
+    "style": [
+      "imperative",
+      "object",
+      "functional"
+    ],
+    "memory": [
+      "gc"
+    ],
+    "note": "All 19 unchanged submissions measured explicitly with --zjit; the same CRuby binary, full workloads and worker policies are used for YJIT comparison.",
+    "sources": [
+      "https://docs.ruby-lang.org/en/4.0/jit/zjit_md.html",
+      "https://docs.ruby-lang.org/en/4.0/GC.html"
     ]
   }
 };

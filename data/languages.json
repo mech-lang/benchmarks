@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "audited_on": "2026-10-16",
-  "scope": "62 measured variants; all classifications explicit.",
+  "audited_on": "2026-10-20",
+  "scope": "63 measured variants; all classifications explicit.",
   "semantics": {
     "platform": "Runtime/toolchain family, not host OS or instruction set. Specific implementation in runtime.",
     "execution": "Native AOT, native JIT, or interpretation for this measured variant. Several modes may occur across profiles.",
@@ -577,7 +577,7 @@
       "memory": [
         "gc"
       ],
-      "note": "All 19 selected saved commands explicitly enable --yjit; the old interpreted language-group membership was stale.",
+      "note": "All selected commands enable --yjit. Default and first-call compilation policies are recorded per profile; historical measurements retain their original samples.",
       "sources": [
         "https://docs.ruby-lang.org/en/master/yjit/yjit_md.html",
         "https://docs.ruby-lang.org/en/master/GC.html"
@@ -606,10 +606,14 @@
           "sha256": "656d00e73b15a28a273718440aaaabee5d52c53c9ce4e842bd3f6bb52f09e603",
           "status": "saved-report-read",
           "archive_path": "archive/workloads/regexredux/results/apple-m3-ac-normal-20261009.json"
+        },
+        {
+          "path": "experiments/ruby-jit/results-v1.json",
+          "sha256": "c1dd051f47c74d6d5d63f4df68cd4a5f7302ea896260491349aa9f7c14833801"
         }
       ],
       "runtime_policy": null,
-      "displayed_program_count": 19,
+      "displayed_program_count": 23,
       "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
     },
     "perl": {
@@ -3029,6 +3033,39 @@
           "sha256": "73f2418483231d1e2fe071b20cd0871b1cec6bacf99bfe2b2e8fd632021a5013"
         }
       ]
+    },
+    "ruby-zjit": {
+      "key": "ruby-zjit",
+      "label": "Ruby (ZJIT)",
+      "family": "ruby",
+      "platform": "runtime",
+      "runtime": "CRuby / ZJIT",
+      "execution": [
+        "jit"
+      ],
+      "typing": "dynamic",
+      "style": [
+        "imperative",
+        "object",
+        "functional"
+      ],
+      "memory": [
+        "gc"
+      ],
+      "note": "All 19 unchanged submissions measured explicitly with --zjit; the same CRuby binary, full workloads and worker policies are used for YJIT comparison.",
+      "sources": [
+        "https://docs.ruby-lang.org/en/4.0/jit/zjit_md.html",
+        "https://docs.ruby-lang.org/en/4.0/GC.html"
+      ],
+      "measurement_basis": [
+        {
+          "path": "experiments/ruby-jit/results-v1.json",
+          "sha256": "c1dd051f47c74d6d5d63f4df68cd4a5f7302ea896260491349aa9f7c14833801"
+        }
+      ],
+      "runtime_policy": null,
+      "displayed_program_count": 19,
+      "evidence_scope": "Saved runner/build facts establish implementation and execution. Official language/runtime documentation establishes typing, paradigms, and standard memory models. Historical exact flags and binaries are not claimed to have been reverified."
     }
   }
 }
