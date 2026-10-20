@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import {createServer} from 'node:http';
 import {readFile,stat,writeFile} from 'node:fs/promises';
 import path from 'node:path';
+import {sampleColumns} from '../src/sample_data.mjs';
 
 const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??'playwright');
 const root=path.resolve(process.argv[2]??'site/public'),output=process.argv[3];
@@ -70,7 +71,7 @@ try{
   const initial=await page.evaluate(()=>window.benchmarkExplorer.getSampleData());
   assert.equal(initial.total,expectedObservations);assert.equal(initial.filtered.length,expectedObservations);
   assert.equal(await page.locator('#sample-data-table tbody tr').count(),100);
-  assert.equal(await page.locator('[data-sort-table="data"]').count(),21);
+  assert.equal(await page.locator('[data-sort-table="data"]').count(),sampleColumns.length);
   assert.equal(await page.locator('[data-view="data"]').textContent(),'Data');
   assert.equal(await page.locator('.chart-card').isVisible(),false);
   const observed=[];
@@ -97,6 +98,22 @@ try{
   for(const r of json.rows){assert.ok(json.programs[r.program_key]);assert.ok(r.implementation_url.includes('detail.program='));
     assert.ok(r.source_sha256.every(key=>json.files[key]));}
   assert.deepEqual(csv.map(r=>Number(r[headers.indexOf('seconds')])),json.rows.map(r=>r.seconds));checks.push('complete CSV/JSON exports with exact times, links and source bundles');
+  assert.ok(['normalized_application_loc','normalized_loc_rule','normalized_loc_status','qualified_formatted_loc',
+    'application_utf8_bytes','application_gzip_bytes','application_cl100k_base_tokens',
+    'submitted_utf8_bytes','submitted_gzip_bytes','submitted_cl100k_base_tokens',
+    'excluded_support_utf8_bytes','source_metrics','source_metric_definitions'].every(h=>headers.includes(h)));
+  assert.equal(json.source_metrics.catalog_sha256,expectedData.source_metrics.catalog_sha256);
+  assert.equal(json.source_metrics.report_sha256,expectedData.source_metrics.report_sha256);
+  for(const row of json.rows){
+    const metrics=json.programs[row.program_key].source_metrics;
+    assert.equal(row.normalized_application_loc,row.canonical_loc);
+    assert.equal(row.normalized_loc_rule,metrics.retained_application_loc.metric);
+    assert.equal(row.qualified_formatted_loc,metrics.canonical_formatted_loc.value);
+    for(const scope of ['application','submitted','excluded_support'])for(const metric of ['utf8_bytes','gzip_bytes','cl100k_base_tokens'])
+      assert.equal(row[scope+'_'+metric],metrics[scope][metric]);
+    assert.deepEqual(row.source_metrics,metrics);
+  }
+  checks.push('bound source scopes, qualified formatted gaps and retained normalized rules in CSV/JSON');
   assert.ok(['authorship','ai_model','license','license_status','authorship_details'].every(h=>headers.includes(h)));
   for(const row of json.rows){assert.ok(row.authorship_details);assert.deepEqual(row.authorship_details.source_sha256,json.programs[row.program_key].files);}
   for(const row of json.rows){assert.ok(row.reproduction);assert.deepEqual(row.reproduction.source_sha256,row.source_sha256);assert.equal(row.reproduction.replay_verified,false);}

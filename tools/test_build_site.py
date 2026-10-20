@@ -8,6 +8,7 @@ from pathlib import Path
 import tempfile
 import unittest
 from unittest.mock import patch
+import source_metrics
 
 spec = importlib.util.spec_from_file_location('site_builder', Path(__file__).with_name('build_site.py'))
 builder = importlib.util.module_from_spec(spec)
@@ -61,7 +62,71 @@ def alias_fixture():
     return catalog
 
 
+def bound_fixture():
+    catalog = fixture()
+    source = catalog['files'].pop('source')
+    digest = hashlib.sha256(source['code'].encode()).hexdigest()
+    source['sha256'] = digest
+    catalog['files'][digest] = source
+    for pool in ('programs', 'program_inventory'):
+        for row in catalog[pool].values():
+            row['files'] = [digest]
+            row['file_roles'][digest] = row['file_roles'].pop('source')
+    return catalog
+
+
+def measured_fixture(catalog, raw=None):
+    raw = raw if raw is not None else json.dumps(catalog).encode()
+    return raw, source_metrics.build_report(catalog, raw, include_audit=False)
+
+
 class BrowserProjection(unittest.TestCase):
+    def test_bound_metrics_preserve_source_partition_counts_and_catalog(self):
+        catalog = bound_fixture()
+        before = copy.deepcopy(catalog)
+        raw, metrics = measured_fixture(catalog)
+        projected = builder.browser_data(catalog, source_metrics=metrics, catalog_raw=raw)
+        self.assertEqual(catalog, before)
+        self.assertEqual(projected['programs']['b:first']['source_metrics'], metrics['profiles']['b:first'])
+        self.assertEqual(projected['source_metrics']['catalog_sha256'], hashlib.sha256(raw).hexdigest())
+        self.assertEqual(projected['source_metrics']['uniform_logical_loc']['status'], 'unavailable')
+        self.assertIsNone(projected['programs']['b:first']['source_metrics']['application']['cl100k_base_tokens'])
+
+    def test_bound_metrics_fail_closed_on_catalog_tool_profile_and_partition_changes(self):
+        catalog = bound_fixture()
+        raw, metrics = measured_fixture(catalog)
+        mutations = [
+            lambda m: m.update(catalog_sha256='0'*64),
+            lambda m: m.update(tool_sha256='0'*64),
+            lambda m: m['profiles'].pop('b:second'),
+            lambda m: m['profiles']['b:first']['files'][0].update(application_line_ranges=[]),
+            lambda m: m['profiles']['b:first']['application'].update(utf8_bytes=999),
+            lambda m: m['profiles']['b:first']['retained_application_loc'].update(status='uniform-logical-loc'),
+            lambda m: m['profiles']['b:first']['canonical_formatted_loc'].update(value=2),
+            lambda m: m['profiles']['b:first']['files'][0]['application'].update(cl100k_base_tokens=42),
+        ]
+        for mutate in mutations:
+            changed = copy.deepcopy(metrics); mutate(changed)
+            with self.assertRaisesRegex(ValueError, 'Invalid source metrics'):
+                builder.browser_data(catalog, source_metrics=changed, catalog_raw=raw)
+        with self.assertRaisesRegex(ValueError, 'Exact catalog bytes'):
+            builder.browser_data(catalog, source_metrics=metrics)
+
+    def test_rebound_catalog_cannot_hide_changed_source_bytes_or_support_roles(self):
+        for change in ('code', 'role', 'range', 'displayed-code', 'displayed-sha'):
+            catalog = bound_fixture()
+            raw, metrics = measured_fixture(catalog)
+            digest = catalog['programs']['b:first']['files'][0]
+            if change == 'code': catalog['files'][digest]['code'] += 'changed\n'
+            if change == 'role': catalog['programs']['b:first']['file_roles'][digest]['role'] = 'runtime-support'
+            if change == 'range': catalog['programs']['b:first']['file_roles'][digest]['support_line_ranges'] = [{'start': 1, 'end': 1}]
+            if change == 'displayed-code': catalog['programs']['b:first']['file_roles'][digest]['code'] = 'different displayed bytes\n'
+            if change == 'displayed-sha': catalog['programs']['b:first']['file_roles'][digest]['sha256'] = '0'*64
+            raw = json.dumps(catalog).encode()
+            metrics['catalog_sha256'] = hashlib.sha256(raw).hexdigest()
+            with self.assertRaisesRegex(ValueError, 'Invalid source metrics'):
+                builder.browser_data(catalog, source_metrics=metrics, catalog_raw=raw)
+
     def test_explicit_timing_alias_fields_and_order_are_preserved(self):
         catalog = alias_fixture()
         before = copy.deepcopy(catalog)
@@ -194,14 +259,17 @@ class BrowserProjection(unittest.TestCase):
     def test_build_keeps_catalog_bytes_and_binds_actual_payload(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
-            for name in ('site/src', 'site/reports', 'data'):
+            for name in ('site/src', 'site/reports', 'data', 'tools', 'experiments/source-metrics/v1'):
                 (root/name).mkdir(parents=True)
             (root/'site/src/index.html').write_text('<script src="./app.mjs"></script>')
             (root/'site/src/app.mjs').write_text("import './math.mjs';\n")
             (root/'site/src/math.mjs').write_text('export const identity=1;\n')
             (root/'site/reports/method.txt').write_text('retained report\n')
-            original = json.dumps(fixture(), indent=2).encode()
+            (root/'tools/source_metrics.py').write_bytes(Path(source_metrics.__file__).read_bytes())
+            original = json.dumps(bound_fixture(), indent=2).encode()
             (root/'data/benchmarks.json').write_bytes(original)
+            _, metrics = measured_fixture(json.loads(original), original)
+            (root/builder.SOURCE_METRICS_PATH).write_text(json.dumps(metrics))
             implementation = root/'builder.py'
             implementation.write_text('reviewed transformation revision 1\n')
             with patch.object(builder, 'ROOT', root), patch.object(builder, '__file__', str(implementation)):
@@ -209,7 +277,8 @@ class BrowserProjection(unittest.TestCase):
                 first = json.loads((root/'site/public/build.json').read_bytes())
                 payload = (root/'site/public/data.json').read_bytes()
                 compressed = (root/'site/public/data.json.gz').read_bytes()
-                self.assertEqual(payload, builder.browser_payload(json.loads(original)))
+                self.assertEqual(payload, builder.browser_payload(json.loads(original), catalog_raw=original,
+                    source_metrics=metrics, metrics_raw=(root/builder.SOURCE_METRICS_PATH).read_bytes()))
                 self.assertEqual(gzip.decompress(compressed), payload)
                 self.assertEqual(compressed, gzip.compress(payload, mtime=0))
                 self.assertEqual(first['files']['data.json'], hashlib.sha256(payload).hexdigest())
@@ -222,9 +291,13 @@ class BrowserProjection(unittest.TestCase):
                 builder.build()
                 second = json.loads((root/'site/public/build.json').read_bytes())
                 self.assertNotEqual(first['version'], second['version'])
-                changed = fixture()
+                changed = bound_fixture()
                 changed['programs']['b:first']['samples'][0] = 0.25
                 (root/'data/benchmarks.json').write_text(json.dumps(changed))
+                with self.assertRaisesRegex(ValueError, 'catalog SHA-256 differs'):
+                    builder.build()
+                _, metrics = measured_fixture(changed, (root/'data/benchmarks.json').read_bytes())
+                (root/builder.SOURCE_METRICS_PATH).write_text(json.dumps(metrics))
                 builder.build()
                 third = json.loads((root/'site/public/build.json').read_bytes())
                 self.assertNotEqual(second['version'], third['version'])

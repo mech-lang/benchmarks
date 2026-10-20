@@ -6,8 +6,10 @@ import hashlib
 import json
 import re
 import shutil
+from source_metrics import canonical, metadata_for, partition_text, totals
 
 ROOT = Path(__file__).resolve().parents[1]
+SOURCE_METRICS_PATH = Path('experiments/source-metrics/v1/metrics.json')
 
 # The canonical catalog also contains admission ledgers and producer closures.
 # The explorer reads this view; the complete recorded catalog remains in data/.
@@ -18,7 +20,7 @@ BROWSER_FIELDS = frozenset({
     'reference_summary', 'source_accounting',
 })
 PROGRAM_FIELDS = frozenset({
-    'key', 'id', 'benchmark', 'language', 'loc', 'physical_loc', 'x', 'y',
+    'key', 'id', 'benchmark', 'language', 'loc', 'loc_metric', 'physical_loc', 'x', 'y',
     'seconds', 'samples', 'timing_sd', 'timing_summary', 'sample_details',
     'files', 'file_roles', 'report', 'report_sha256', 'source_report', 'loc_report',
     'binary_sha256', 'runtime_arguments', 'command', 'execution_mode', 'measured_backend',
@@ -119,7 +121,90 @@ def validate_timing_aliases(catalog):
                     fail(key, field + ' differs from owner')
 
 
-def browser_data(catalog):
+def bind_source_metrics(catalog, catalog_raw, report, report_raw=None):
+    """Fail closed on stale source/count evidence without recomputing BPE.
+
+    Validate exact catalog/tool bindings and every source partition against the
+    current retained source text, roles and line ranges. The report owns gzip
+    and tokenizer measurements; their method pins and report digest are emitted
+    with the browser view. No compiler, tokenizer or benchmark is launched.
+    """
+    def fail(detail):
+        raise ValueError('Invalid source metrics: ' + detail)
+    sha = lambda raw: hashlib.sha256(raw).hexdigest()
+    if report.get('schema') != 'benchmark-source-metrics.v1':
+        fail('unsupported schema')
+    if report.get('catalog_sha256') != sha(catalog_raw) or json.loads(catalog_raw) != catalog:
+        fail('catalog SHA-256 differs; regenerate the bound report')
+    tool = ROOT/'tools/source_metrics.py'
+    if not tool.is_file() or report.get('tool_sha256') != sha(tool.read_bytes()):
+        fail('measurement tool SHA-256 differs; regenerate the bound report')
+    programs = {**catalog.get('program_inventory', {}), **catalog['programs']}
+    if set(report.get('profiles', {})) != set(programs):
+        fail('profile set differs')
+    tokenized = report.get('tokenizer', {}).get('status') == 'available'
+    for key, program in programs.items():
+        profile = report['profiles'][key]
+        if (profile.get('key') != key or profile.get('language') != program['language']
+                or profile.get('benchmark') != program['benchmark']):
+            fail(key + ': identity differs')
+        retained = profile.get('retained_application_loc', {})
+        if (retained.get('value') != program['loc']
+                or retained.get('metric') != program.get('loc_metric', 'unspecified-legacy')
+                or retained.get('status') != 'retained-not-uniformly-recertified'):
+            fail(key + ': retained LOC qualification differs')
+        formatted = profile.get('canonical_formatted_loc', {})
+        complete = program.get('formatted_loc_complete') is True
+        evidence = program.get('formatted_loc_evidence')
+        if (formatted.get('complete') is not complete
+                or formatted.get('value') != (program.get('formatted_loc') if complete else None)
+                or formatted.get('status') != program.get('formatted_loc_status', 'unavailable')
+                or formatted.get('evidence_sha256') != (sha(canonical(evidence)) if evidence else None)):
+            fail(key + ': formatter qualification differs')
+        units = profile.get('files', [])
+        if [unit.get('source_sha256') for unit in units] != program['files']:
+            fail(key + ': source bundle differs')
+        for digest, unit in zip(program['files'], units):
+            source = catalog['files'][digest]
+            text = source['code']
+            if sha(text.encode('utf-8')) != digest or source.get('sha256', digest) != digest:
+                fail(key + ': retained source SHA-256 differs')
+            metadata, role, included = metadata_for(program, digest, source)
+            if metadata.get('code', text) != text or metadata.get('sha256', digest) != digest:
+                fail(key + ': displayed per-file source override differs from bound source')
+            spans = metadata.get('support_line_ranges', [])
+            application, excluded, selected = partition_text(text, spans) if included else ('', text, [])
+            if (unit.get('role') != role or unit.get('included_in_application') is not included
+                    or unit.get('application_line_ranges') != selected
+                    or unit.get('embedded_support_line_ranges') != spans):
+                fail(key + ': application/source partition differs')
+            for scope, fragment in [('submitted', text), ('application', application), ('excluded_support', excluded)]:
+                measured = unit.get(scope, {})
+                raw = fragment.encode('utf-8')
+                if any(measured.get(field) != value for field, value in {
+                    'sha256': sha(raw), 'utf8_bytes': len(raw),
+                    'unicode_codepoints': len(fragment), 'physical_lines': len(fragment.splitlines()),
+                }.items()):
+                    fail(key + ': ' + scope + ' source metrics differ')
+                if (type(measured.get('gzip_bytes')) is not int or measured['gzip_bytes'] < 0
+                        or not re.fullmatch('[0-9a-f]{64}', str(measured.get('gzip_sha256')))):
+                    fail(key + ': invalid gzip evidence')
+                tokens = measured.get('cl100k_base_tokens')
+                if (tokenized and (type(tokens) is not int or tokens < 0)) or (not tokenized and tokens is not None):
+                    fail(key + ': tokenizer availability/count differs')
+        for scope in ('submitted', 'application', 'excluded_support'):
+            if profile.get(scope) != totals(units, scope):
+                fail(key + ': ' + scope + ' totals differ from measured files')
+    metadata = {name: report[name] for name in (
+        'schema', 'catalog_sha256', 'tool_sha256', 'source_boundary_policy',
+        'scope_definition', 'compression', 'tokenizer', 'uniform_logical_loc',
+        'language_lexical_tokens') if name in report}
+    metadata['report_path'] = SOURCE_METRICS_PATH.as_posix()
+    metadata['report_sha256'] = sha(report_raw if report_raw is not None else canonical(report))
+    return metadata, report['profiles']
+
+
+def browser_data(catalog, *, source_metrics=None, catalog_raw=None, metrics_raw=None):
     """Project the recorded catalog without mutating or recomputing observations.
 
     Both ordered program maps remain intact: their order drives source browsing.
@@ -136,6 +221,13 @@ def browser_data(catalog):
     for field in ('programs', 'program_inventory'):
         if field in result:
             result[field] = {key: browser_program(row) for key, row in result[field].items()}
+    if source_metrics is not None:
+        if catalog_raw is None:
+            raise ValueError('Exact catalog bytes are required to bind source metrics')
+        result['source_metrics'], profiles = bind_source_metrics(catalog, catalog_raw, source_metrics, metrics_raw)
+        for pool in ('programs', 'program_inventory'):
+            for key, row in result.get(pool, {}).items():
+                row['source_metrics'] = profiles[key]
     reproduction=ROOT/'data/reproducibility.json'
     if reproduction.exists():
         index=json.loads(reproduction.read_text())
@@ -146,8 +238,8 @@ def browser_data(catalog):
     return result
 
 
-def browser_payload(catalog):
-    return (json.dumps(browser_data(catalog), ensure_ascii=False, allow_nan=False,
+def browser_payload(catalog, **bindings):
+    return (json.dumps(browser_data(catalog, **bindings), ensure_ascii=False, allow_nan=False,
                        separators=(',', ':')) + '\n').encode('utf-8')
 
 
@@ -155,7 +247,10 @@ def build():
     source = ROOT / 'site/src'
     output = ROOT / 'site/public'
     dataset = ROOT / 'data/benchmarks.json'
-    payload = browser_payload(json.loads(dataset.read_bytes()))
+    catalog_raw = dataset.read_bytes()
+    metrics_raw = (ROOT/SOURCE_METRICS_PATH).read_bytes()
+    payload = browser_payload(json.loads(catalog_raw), catalog_raw=catalog_raw,
+                              source_metrics=json.loads(metrics_raw), metrics_raw=metrics_raw)
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
     inputs = sorted(source.iterdir()) + [Path(__file__)]

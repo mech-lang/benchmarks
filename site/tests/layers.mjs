@@ -684,9 +684,9 @@ for(const program of pony){
     assert.ok(audit.includes(`Previous count: ${program.source_accounting.previous_loc} LOC`));
     assert.ok(audit.includes('aliases.pony')&&audit.includes('5 normalized LOC'));
   }else{
-    assert.match(audit,/canonical LOC/);
+    assert.match(audit,/normalized LOC \(retained rules\)/);
     for(const source of program.loc_expansions){
-      for(const entry of source.expansions)assert.ok(audit.includes(`Line ${entry.line} · ${entry.units} canonical LOC`));
+      for(const entry of source.expansions)assert.ok(audit.includes(`Line ${entry.line} · ${entry.units} normalized LOC (retained rules)`));
     }
   }
   for(const key of program.files){
