@@ -31,6 +31,7 @@ def reconcile(root=ROOT):
     report = json.loads(report_path.read_text())
     assert report['status'] == 'PASSED' and report['active'] is None
     assert report['plan_sha256'] == sha(root/'experiments/ruby-jit/plan-v1.json')
+    assert sha(root/'experiments/ruby-jit/controller-v1.py') == plan['controller_sha256']
     assert len(report['cases']) == 66 and all(c['valid'] for c in report['cases'])
     by_key = {p['key']:p for p in plan['profiles']}
     for row in report['cases']:
@@ -79,20 +80,34 @@ def reconcile(root=ROOT):
         samples = [r['elapsed_seconds'] for r in rows]
         identity = p['id'] + '-zjit'
         programs.append(dict(id=identity, key=p['benchmark']+':'+identity,
-            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,
+            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,jit='zjit',
             source_sha256=p['source_sha256'], loc=p['loc'], samples_seconds=samples,
             median_seconds=statistics.median(samples), sample_sd_seconds=statistics.stdev(samples),
             yjit_samples_seconds=yjit_samples, yjit_median_seconds=statistics.median(yjit_samples),
             yjit_basis=yjit_basis, zjit_over_yjit=statistics.median(samples)/statistics.median(yjit_samples),
             command=rows[0]['command'], runtime_environment=rows[0]['environment'],
             sample_execution_metadata=rows))
+    controls=[]
+    for p in plan['profiles']:
+        if p['historical_yjit']['reusable']:
+            continue
+        rows=[c for c in report['cases'] if c['key']==p['key'] and c['jit']=='yjit']
+        samples=[c['elapsed_seconds'] for c in rows]
+        identity=p['id']+'-yjit-v1'
+        controls.append(dict(id=identity,key=p['benchmark']+':'+identity,original_program_key=p['key'],
+            benchmark=p['benchmark'],language='ruby',jit='yjit',source_sha256=p['source_sha256'],loc=p['loc'],
+            samples_seconds=samples,median_seconds=statistics.median(samples),sample_sd_seconds=statistics.stdev(samples),
+            command=rows[0]['command'],runtime_environment=rows[0]['environment'],sample_execution_metadata=rows))
+    assert len(controls)==3
     results = dict(schema='ruby-jit-results.v1', status='RECONCILED',
-        programs=programs, new_zjit_samples=57, fresh_yjit_samples=9,
+        programs=programs,yjit_controls=controls,new_zjit_samples=57, fresh_yjit_samples=9,
         reused_yjit_profiles=16, historical_data_preserved=True,
         plan=pin(root,'experiments/ruby-jit/plan-v1.json'),
         producer_report=pin(root,'experiments/ruby-jit/full-v1/report.json'),
-        toolchains={LANG:dict(version=plan['runtime']['probes']['zjit']['description'],
-                              path=plan['runtime']['path'],sha256=plan['runtime']['sha256'])},
+        measurement_controller=pin(root,'experiments/ruby-jit/controller-v1.py'),
+        toolchains={key:dict(version=plan['runtime']['probes'][mode]['description'],
+                              path=plan['runtime']['path'],sha256=plan['runtime']['sha256'])
+                    for key,mode in [('ruby','yjit'),(LANG,'zjit')]},
         hardware=plan['host'], os=plan['host']['os'], required_power=dict(source='AC Power',low_power_mode=0),
         inputs=copy.deepcopy(report['inputs']),workloads=plan['full_workloads'],timing_boundary=plan['timing_boundary'],
         runtime_details=plan['runtime'])
@@ -110,24 +125,26 @@ def append_catalog(before, root=ROOT):
     root = Path(root)
     plan = json.loads((root/'experiments/ruby-jit/plan-v1.json').read_text())
     results = json.loads((root/'experiments/ruby-jit/results-v1.json').read_text())
-    assert results['status'] == 'RECONCILED' and len(results['programs']) == 19
+    assert results['status'] == 'RECONCILED' and len(results['programs']) == 19 and len(results['yjit_controls'])==3
     assert results['plan'] == pin(root,'experiments/ruby-jit/plan-v1.json')
     assert results['producer_report'] == pin(root,'experiments/ruby-jit/full-v1/report.json')
     report = json.loads((root/'experiments/ruby-jit/full-v1/report.json').read_text())
     assert report['status'] == 'PASSED' and len(report['cases']) == 66
     evidence = {name:pin(root,path) for name,path in dict(
         plan='experiments/ruby-jit/plan-v1.json',results='experiments/ruby-jit/results-v1.json',
-        full='experiments/ruby-jit/full-v1/report.json',bounded='experiments/ruby-jit/bounded-v2/report.json').items()}
+        full='experiments/ruby-jit/full-v1/report.json',bounded='experiments/ruby-jit/bounded-v2/report.json',
+        controller='experiments/ruby-jit/controller-v1.py').items()}
     data = copy.deepcopy(before)
     assert LANG not in {l['key'] for l in before['languages']}
     catalog = {**before.get('program_inventory',{}),**before['programs']}
     appended = []
-    for r in results['programs']:
+    for r in results['programs']+results['yjit_controls']:
+        mode=r['jit'];language=r['language'];label='CRuby / '+mode.upper()
         parent = catalog[r['original_program_key']]
         assert parent['language'] == 'ruby' and parent['files'] == [r['source_sha256']]
         assert r['loc'] == parent['loc'] and len(r['samples_seconds']) == 3
         assert r['median_seconds'] == statistics.median(r['samples_seconds'])
-        measured = [c for c in report['cases'] if c['key'] == parent['key'] and c['jit'] == 'zjit']
+        measured = [c for c in report['cases'] if c['key'] == parent['key'] and c['jit'] == mode]
         assert len(measured) == 3 and all(c['valid'] and c['exit_code'] == 0 and not c['timed_out'] for c in measured)
         assert [c['elapsed_seconds'] for c in measured] == r['samples_seconds']
         assert measured == r['sample_execution_metadata']
@@ -136,7 +153,7 @@ def append_catalog(before, root=ROOT):
         row = copy.deepcopy(parent)
         for field in ['publication_record','timing_measurement','timing_correction','aliased_sample_source']:
             row.pop(field,None)
-        row.update(key=r['key'],id=r['id'],receipt_key=r['id'],language=LANG,seconds=r['median_seconds'],
+        row.update(key=r['key'],id=r['id'],receipt_key=r['id'],language=language,seconds=r['median_seconds'],
             samples=r['samples_seconds'],timing_sd=r['sample_sd_seconds'],
             y=r['median_seconds']/bench['baseline_seconds'],
             report=evidence['results']['path'],report_sha256=evidence['results']['sha256'],
@@ -145,37 +162,53 @@ def append_catalog(before, root=ROOT):
             sample_execution_metadata=r['sample_execution_metadata'],
             native_observations=3,source_alias_of=parent['key'],timing_alias_of=None,
             distinct_optimization_claimed=False,
-            source_alias_note='Exact retained Ruby submission, measured separately with ZJIT. Application LOC, source attribution and worker policy are unchanged.',
+            source_alias_note='Exact retained Ruby submission, measured separately with '+mode.upper()+'. Application LOC, source attribution and worker policy are unchanged.',
             timing_boundary=plan['timing_boundary'],
-            timing_summary='Three fresh complete-process ZJIT samples. YJIT comparisons identify historical executable-matched samples or fresh samples explicitly.',
+            timing_summary='Three fresh complete-process '+mode.upper()+' samples. Historical observations retain their original dates; this is a runtime/cohort measurement, not a source optimization.',
             full_output_validation=dict(all_three_samples_passed=True,evidence=evidence['full']),
             chart_admission=dict(historical_reports_unchanged=True,**evidence),
-            measured_backend=dict(key=LANG,execution='jit',label='CRuby / ZJIT',verified=True,
+            measured_backend=dict(key=language,execution='jit',label=label,verified=True,
                 evidence=dict(verified=True,report=evidence['results']['path'],report_sha256=evidence['results']['sha256'],
                     command=r['command'],source_sha256=parent['files'],
                     runtime_receipt=dict(verified=True,report=evidence['results']['path'],report_sha256=evidence['results']['sha256'],
-                                         field='/toolchains/ruby-zjit/version',value=results['toolchains'][LANG]['version'],value_encoding='literal-saved-string'))))
+                                         field='/toolchains/'+language+'/version',value=results['toolchains'][language]['version'],value_encoding='literal-saved-string'))))
         row.pop('authorship',None)
         data['programs'][r['key']] = data['program_inventory'][r['key']] = row
         appended.append(r['key'])
-    for bench in data['benchmarks']:
-        candidates = [data['programs'][key] for key in appended if data['programs'][key]['benchmark'] == bench['key']]
+    def endpoints(group,candidates):
         fast = min(candidates,key=lambda p:(p['seconds'],p['loc'],p['key']))
         small = min(candidates,key=lambda p:(p['loc'],p['seconds'],p['key']))
         formatted = [p for p in candidates if p.get('formatted_loc_complete') is True]
-        bench['groups'].append(dict(language=LANG,label='Ruby (ZJIT)',fast=fast['key'],small=small['key'],
-            programs=[p['key'] for p in candidates],
+        group.update(fast=fast['key'],small=small['key'],programs=[p['key'] for p in candidates],
             formatted_fast=min(formatted,key=lambda p:(p['seconds'],p['formatted_loc'],p['key']))['key'] if formatted else None,
-            formatted_small=min(formatted,key=lambda p:(p['formatted_loc'],p['seconds'],p['key']))['key'] if formatted else None))
+            formatted_small=min(formatted,key=lambda p:(p['formatted_loc'],p['seconds'],p['key']))['key'] if formatted else None)
+    for bench in data['benchmarks']:
+        candidates = [data['programs'][key] for key in appended
+                      if data['programs'][key]['benchmark']==bench['key'] and data['programs'][key]['language']==LANG]
+        group=dict(language=LANG,label='Ruby (ZJIT)');endpoints(group,candidates);bench['groups'].append(group)
+        fresh=[data['programs'][key] for key in appended
+               if data['programs'][key]['benchmark']==bench['key'] and data['programs'][key]['language']=='ruby']
+        if fresh:
+            group=next(g for g in bench['groups'] if g['language']=='ruby')
+            endpoints(group,[data['programs'][key] for key in group['programs']]+fresh)
     language = copy.deepcopy(next(l for l in before['languages'] if l['key']=='ruby'))
     language.update(key=LANG,label='Ruby (ZJIT)',runtime='CRuby / ZJIT',color='#db7193',
         coverage_note='10/10 full workloads; 19 unchanged submissions; three complete-process samples each.',
         classification_note='CRuby method JIT selected explicitly with --zjit; YJIT disabled. Same source and worker policies as the retained YJIT cohort.')
     data['languages'].append(language)
+    next(l for l in data['languages'] if l['key']=='ruby')['classification_note']='All selected saved commands explicitly enable --yjit. Historical profiles and three fresh measurement cohorts retain their own samples.'
     for group in data['language_groups']:
         if 'ruby' in group['languages']:
             group['languages'].append(LANG)
     for section,prefix in [('reference_summary',''),('formatted_reference_summary','formatted_')]:
+        for existing in data[section]:
+            if existing['lang']!='ruby':continue
+            old_groups=[g for b in data['benchmarks'] for g in b['groups'] if g['language']=='ruby']
+            for kind in ['fast','small']:
+                selected=[data['programs'][g[prefix+kind]] for g in old_groups if g.get(prefix+kind)]
+                if selected:
+                    existing[kind]=dict(x=statistics.geometric_mean(p['formatted_x' if prefix else 'x'] for p in selected),
+                                        y=statistics.geometric_mean(p['y'] for p in selected))
         groups = [g for b in data['benchmarks'] for g in b['groups'] if g['language']==LANG]
         summary = dict(lang=LANG,label='Ruby (ZJIT)',measured_benchmarks=[b['key'] for b in data['benchmarks']])
         for kind in ['fast','small']:
@@ -189,7 +222,8 @@ def append_catalog(before, root=ROOT):
     for ref in evidence.values():
         data['archive_paths'][ref['path']] = ref['path']
     data['ruby_zjit_audit'] = dict(schema='ruby-zjit-catalog-extension.v1',appended_programs=appended,
-        evidence=evidence,new_observations=57,source_files_added=0,old_profiles_unchanged=True)
+        evidence=evidence,new_observations=66,new_zjit_observations=57,fresh_yjit_observations=9,
+        source_files_added=0,old_profiles_unchanged=True)
     from audit_authorship import audit
     models = json.loads((root/'data/source-model-evidence.json').read_text())['files']
     authorship = audit(data,models)
@@ -260,15 +294,19 @@ def main():
             sources=['https://docs.ruby-lang.org/en/4.0/jit/zjit_md.html','https://docs.ruby-lang.org/en/4.0/GC.html'],
             measurement_basis=[pin(ROOT,'experiments/ruby-jit/results-v1.json')],displayed_program_count=19)
         languages['languages'][LANG]=metadata
+        yjit=languages['languages']['ruby']
+        yjit.update(note=next(l for l in after['languages'] if l['key']=='ruby')['classification_note'],displayed_program_count=22)
+        yjit['measurement_basis'].append(pin(ROOT,'experiments/ruby-jit/results-v1.json'))
         languages['scope']=f'{len(after["languages"])} measured variants; all classifications explicit.'
         module_path=ROOT/'site/src/languages.mjs';module=module_path.read_text()
         match=re.fullmatch(r'(\s*//[^\n]*\nexport const languageMetadata = )(\{.*\})(;\s*)',module,re.S)
         assert match
         values=json.loads(match[2]);values[LANG]={k:metadata[k] for k in ['platform','runtime','execution','typing','style','memory','note','sources']}
+        values['ruby']['note']=yjit['note']
         module_path.write_text(match[1]+json.dumps(values,indent=2)+match[3])
         languages_path.write_text(json.dumps(languages,indent=2)+'\n')
         path.write_text(json.dumps(after,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
-        print('Added 19 ZJIT profiles; all previous profiles, source bytes, samples and baselines unchanged')
+        print('Added 19 ZJIT and 3 fresh YJIT profiles; all previous profiles, source bytes, samples and baselines unchanged')
 
 
 if __name__=='__main__':main()

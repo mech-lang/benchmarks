@@ -21,13 +21,33 @@ class RubyPublication(unittest.TestCase):
     def test_previous_results_and_sources_are_exact(self):
         self.assertEqual(self.current['files'],self.previous['files'])
         for pool in ['programs','program_inventory']:
-            self.assertEqual(len(self.current[pool])-len(self.previous[pool]),19)
+            self.assertEqual(len(self.current[pool])-len(self.previous[pool]),22)
             for key,p in self.previous[pool].items():
                 self.assertEqual(self.current[pool][key],p,key)
         for old,new in zip(self.previous['benchmarks'],self.current['benchmarks']):
-            self.assertEqual(dict(new,groups=[g for g in new['groups'] if g['language']!='ruby-zjit']),old)
+            original_ruby=next(g for g in old['groups'] if g['language']=='ruby')
+            current_ruby=next(g for g in new['groups'] if g['language']=='ruby')
+            self.assertEqual(current_ruby['programs'][:len(original_ruby['programs'])],original_ruby['programs'])
+            groups=[original_ruby if g['language']=='ruby' else g for g in new['groups'] if g['language']!='ruby-zjit']
+            self.assertEqual(dict(new,groups=groups),old)
         for section in ['languages','reference_summary','formatted_reference_summary']:
-            self.assertEqual(self.current[section][:len(self.previous[section])],self.previous[section])
+            old=self.previous[section];current=copy.deepcopy(self.current[section][:len(old)])
+            for i,row in enumerate(current):
+                if row.get('key',row.get('lang'))=='ruby':
+                    allowed=['classification_note'] if section=='languages' else ['fast','small']
+                    for field in allowed:
+                        row[field]=old[i][field]
+            self.assertEqual(current,old)
+
+    def test_fresh_yjit_observations_are_in_the_dataset(self):
+        rows=[p for k,p in self.current['programs'].items() if k not in self.previous['programs'] and p['language']=='ruby']
+        self.assertEqual(len(rows),3)
+        self.assertEqual(sum(len(p['samples']) for p in rows),9)
+        for p in rows:
+            self.assertEqual(p['native_observations'],3)
+            self.assertIsNone(p['timing_alias_of'])
+            self.assertTrue(all('--yjit' in r['command'] and '--zjit' not in r['command'] and r['valid']
+                                for r in p['sample_execution_metadata']))
 
     def test_zjit_has_independent_process_samples_and_unchanged_loc(self):
         rows=[p for p in self.current['programs'].values() if p['language']=='ruby-zjit']
