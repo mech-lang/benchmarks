@@ -80,7 +80,7 @@ def reconcile(root=ROOT):
         samples = [r['elapsed_seconds'] for r in rows]
         identity = p['id'] + '-zjit'
         programs.append(dict(id=identity, key=p['benchmark']+':'+identity,
-            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,jit='zjit',
+            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,jit='zjit',n=plan['full_workloads'][p['benchmark']][0],
             source_sha256=p['source_sha256'], loc=p['loc'], samples_seconds=samples,
             median_seconds=statistics.median(samples), sample_sd_seconds=statistics.stdev(samples),
             yjit_samples_seconds=yjit_samples, yjit_median_seconds=statistics.median(yjit_samples),
@@ -95,7 +95,7 @@ def reconcile(root=ROOT):
         samples=[c['elapsed_seconds'] for c in rows]
         identity=p['id']+'-yjit-v1'
         controls.append(dict(id=identity,key=p['benchmark']+':'+identity,original_program_key=p['key'],
-            benchmark=p['benchmark'],language='ruby',jit='yjit',source_sha256=p['source_sha256'],loc=p['loc'],
+            benchmark=p['benchmark'],language='ruby',jit='yjit',n=plan['full_workloads'][p['benchmark']][0],source_sha256=p['source_sha256'],loc=p['loc'],
             samples_seconds=samples,median_seconds=statistics.median(samples),sample_sd_seconds=statistics.stdev(samples),
             command=rows[0]['command'],runtime_environment=rows[0]['environment'],sample_execution_metadata=rows))
     assert len(controls)==3
