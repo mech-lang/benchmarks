@@ -8136,10 +8136,11 @@
           "language": "bqn",
           "label": "BQN (CBQN)",
           "programs": [
-            "fasta:array-bqn-faithful"
+            "fasta:array-bqn-faithful",
+            "fasta:array-bqn-bins"
           ],
-          "fast": "fasta:array-bqn-faithful",
-          "small": "fasta:array-bqn-faithful",
+          "fast": "fasta:array-bqn-bins",
+          "small": "fasta:array-bqn-bins",
           "formatted_fast": null,
           "formatted_small": null
         },
@@ -619033,6 +619034,459 @@
           "scope": "New local changes only; inherited terms remain unresolved."
         }
       }
+    },
+    "fasta:array-bqn-bins": {
+      "key": "fasta:array-bqn-bins",
+      "id": "array-bqn-bins",
+      "benchmark": "fasta",
+      "language": "bqn",
+      "loc": 24,
+      "seconds": 10.348042625,
+      "samples": [
+        10.155231542,
+        10.348042625,
+        10.381222792
+      ],
+      "timing_sd": 0.1220307900260861,
+      "files": [
+        "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+      ],
+      "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+      "source_report": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+      "measurement_status": "measured",
+      "algorithm": {
+        "strict": true,
+        "status": "required-work-reviewed",
+        "native_benchmark_kernel": false,
+        "reason": "Every one of200,000,000 naive LCG updates and original floating division/probability value remains. Bins performs native floating binary search; no scaling, integer cutoff, cached period or state-to-letter table. Empty records preserve the seed.",
+        "full_work": {
+          "n": 25000000,
+          "random_nucleotides": 200000000,
+          "lcg_updates": 200000000
+        },
+        "evidence": {
+          "path": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+          "sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab"
+        }
+      },
+      "physical_loc": 24,
+      "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+      "loc_metric": "assignment-normalized",
+      "source_provenance": "Suite-authored floating-Bins/empty-record adaptation of retained faithful BQN FASTA; predecessor origin and inherited terms remain unresolved.",
+      "runtime_policy": "CBQN commit c893d3e7828899a50150df03ad33c9052fa51d3c; exact uninstrumented rebuilt release; single-process source; ordinary f64 Bins primitive",
+      "x": 1.5,
+      "y": 19.120788779104085,
+      "formatted_loc": null,
+      "formatted_loc_status": "pending",
+      "formatted_loc_complete": false,
+      "formatted_loc_evidence": {},
+      "formatted_x": null,
+      "receipt_key": "array-bqn-bins",
+      "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+      "loc_report": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+        "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+        "25000000"
+      ],
+      "runtime_arguments": [
+        "25000000"
+      ],
+      "build_command": [
+        "/usr/bin/make",
+        "o3",
+        "REPLXX=0",
+        "FFI=1",
+        "j=2",
+        "notui=1",
+        "CC=/opt/homebrew/opt/llvm@22/bin/clang-22",
+        "CCFLAGS=-mcpu=apple-m3 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/opt/homebrew/opt/libffi/include",
+        "lf=-L/opt/homebrew/opt/libffi/lib -Wl,-rpath,/opt/homebrew/opt/libffi/lib"
+      ],
+      "build_cwd": "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN",
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "execution_mode": "interpreter",
+      "binary_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+      "native_observations": 3,
+      "timing_alias_of": null,
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:29:28.489548+00:00",
+          "stdin": "/dev/null",
+          "pid": 85471,
+          "exit_code": 0,
+          "elapsed_seconds": 10.155231542,
+          "user_seconds": 9.961115,
+          "system_seconds": 0.15409699999999998,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:29:38.645156+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 1,
+          "case": "full-1",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:29:49.739060+00:00",
+          "stdin": "/dev/null",
+          "pid": 85498,
+          "exit_code": 0,
+          "elapsed_seconds": 10.348042625,
+          "user_seconds": 10.158422,
+          "system_seconds": 0.152546,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:30:00.087428+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 2,
+          "case": "full-2",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:30:00.230099+00:00",
+          "stdin": "/dev/null",
+          "pid": 85520,
+          "exit_code": 0,
+          "elapsed_seconds": 10.381222792,
+          "user_seconds": 10.193305,
+          "system_seconds": 0.14993399999999998,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:30:10.611677+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 3,
+          "case": "full-3",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        }
+      ],
+      "original_program_key": "fasta:array-bqn-faithful",
+      "retained_source_revision": "e8c5182fe380402c042e312730a0703e47f1f3ee",
+      "local_adaptation": true,
+      "distinct_optimization_claimed": true,
+      "source_provenance_record": {
+        "kind": "suite-authored-optimization",
+        "original_program_key": "fasta:array-bqn-faithful",
+        "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+        "admission": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+        },
+        "origin_status": "inherited-unresolved",
+        "author_context": {
+          "tool": "OpenAI Codex",
+          "model_family": "Codex GPT-6",
+          "exact_model": null,
+          "status": "developer-identity-family-only",
+          "original_predecessor_authorship": "unresolved"
+        }
+      },
+      "runtime_support": "Existing CBQN runtime only; no application imports, FFI helper or benchmark executor.",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC"
+      },
+      "timing_boundary": "Fresh BQN process through exit, including startup, argv parsing, all naive LCG updates, floating probability searches, complete formatting/output and shutdown; excludes hashing, qualification and power checks.",
+      "timing_summary": "Three matched whole-process observations; modest approximately4% gain in this cohort. All samples retained; no major or global optimality claim. Large full stdout is local-only; archived proof uses native raw hash/length records.",
+      "source_accounting": {
+        "policy": "application-loc-v1",
+        "application_loc": 24,
+        "physical_loc": 24,
+        "evidence": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+        "review_sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab",
+        "qualification": "Root-approved exact-source24/24 extension of retained BQN physical-plus-packed-statements rule; no native parser certificate.",
+        "files": []
+      },
+      "file_roles": {
+        "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5": {
+          "role": "application",
+          "included_in_application_loc": true,
+          "normalized_loc": 24,
+          "physical_loc": 24
+        }
+      },
+      "full_output_validation": {
+        "all_three_samples_passed": true,
+        "evidence": {
+          "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+          "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+        },
+        "archive_scope": "Recorded complete native hash/length; full stdout bytes are not durable artifacts."
+      },
+      "chart_admission": {
+        "historical_reports_unchanged": true,
+        "importer": {
+          "path": "tools/qualification/import_bqn_fasta.py",
+          "sha256": "3f904f3a0c390dd8998a876ae21b245637532e1c7a22da22db21589a73dbfbc5"
+        },
+        "shared_helpers": {
+          "path": "tools/qualification/import_bqn_knucleotide.py",
+          "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+        },
+        "producer_plan": {
+          "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+          "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+        },
+        "source_proposal": {
+          "path": "experiments/bqn/fasta-bins-v1/plan.json",
+          "sha256": "80e55c9904d3f227c4fcecf7fe65b462c28336b536e403f1338a2319075d9f60"
+        },
+        "controller": {
+          "path": "experiments/bqn/fasta-bins-v1/run_serial.py",
+          "sha256": "ece6a617df537f09ce566d08e49f583bca035c5e5ebd0b4194fac52cf4e3e4d6"
+        },
+        "process_controller": {
+          "path": "tools/qualification/lean_run.py",
+          "sha256": "313418c88aae0de3c86a98566c6138bbaeeb697830da99c9cc1ad5c7be0737ec"
+        },
+        "frozen_review": {
+          "path": "experiments/bqn/fasta-bins-v1/REVIEW.md",
+          "sha256": "6853d6ca2fa9e4abaebe7c148bd95620c019c3bed8a54c2a57bccc2d7cc54a8d"
+        },
+        "instructions": {
+          "path": "experiments/bqn/fasta-bins-v1/RUNNER.md",
+          "sha256": "1752e4ecabc8ca737cef45f57ce626dce21a80e6ece62d54ec6f173fd1e9654d"
+        },
+        "ownership": {
+          "path": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+          "sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab"
+        },
+        "lookup": {
+          "path": "experiments/bqn/fasta-bins-v1/tests/lookup-equivalence.bqn",
+          "sha256": "e03cca27d7ac020614f83e9c8c6cf0f256f0de7b700ae1d9495f8675d92943ce"
+        },
+        "corpus": {
+          "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+          "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+        },
+        "runtime_build": {
+          "path": "experiments/bqn/optimization-v1/release-build.json",
+          "sha256": "6d336345d4bdf2d28283dc9a8f2f63f988eb1b17bc531005e3ba6c91a011784a"
+        },
+        "bounded": {
+          "path": "experiments/bqn/fasta-bins-v1/bounded-v1/report.json",
+          "sha256": "bb46a9f8a3532b36937670759c7e832d49d78d00c77c221bfdb9d8c1b35cb826"
+        },
+        "full": {
+          "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+          "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+        },
+        "plan": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+          "sha256": "66d931d936b1582ecd67f8f389574bd471d4655c812462408ff8d605119fb2c8"
+        },
+        "results": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+        }
+      },
+      "measured_backend": {
+        "key": "bqn",
+        "execution": "interpreter",
+        "label": "BQN (CBQN)",
+        "verified": true,
+        "evidence": {
+          "verified": true,
+          "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "source_sha256": [
+            "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+          ],
+          "runtime_receipt": {
+            "verified": true,
+            "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+            "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+            "field": "/toolchains/bqn/version",
+            "value": "CBQN on commit c893d3e7828899a50150df03ad33c9052fa51d3c\nbuilt with FFI, singeli AARCH64",
+            "value_encoding": "literal-saved-string"
+          }
+        }
+      },
+      "authorship": {
+        "schema": "benchmark-authorship.v1",
+        "kind": "ai-adapted",
+        "label": "AI adapted \u00b7 retained faithful predecessor",
+        "source_sha256": [
+          "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+        ],
+        "origin_status": "unresolved",
+        "origin_gaps": [
+          "Original implementation source not established; a workload description or collection is not an original-source citation."
+        ],
+        "retained_sources": [
+          {
+            "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+            "url": "https://github.com/mech-lang/benchmarks/blob/e8c5182fe380402c042e312730a0703e47f1f3ee/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn"
+          }
+        ],
+        "parent_programs": [
+          "fasta:array-bqn-faithful"
+        ],
+        "parent_sources": [
+          {
+            "program_key": "fasta:array-bqn-faithful",
+            "relationship": "local predecessor",
+            "source_sha256": "531d039ae5f9aa34f9db35e4df9efc723dc64098e3b1828c7b4fba972e35085e",
+            "url": "https://github.com/mech-lang/benchmarks/blob/c95f900435aca5ae51030eabeffae2e5dc9a2fc2/archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn"
+          }
+        ],
+        "sources": [],
+        "attribution_notices": [],
+        "ai": {
+          "tool": "OpenAI Codex",
+          "models": [],
+          "model_family": "Codex GPT-6",
+          "exact_model": null,
+          "status": "family-identified-exact-model-unverified",
+          "matched_source_files": [
+            "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+          ],
+          "total_source_files": 1,
+          "evidence": [
+            {
+              "path": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+              "sha256": "66d931d936b1582ecd67f8f389574bd471d4655c812462408ff8d605119fb2c8"
+            },
+            {
+              "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+              "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+            }
+          ]
+        },
+        "license": {
+          "status": "unverified",
+          "licenses": [],
+          "unresolved": [
+            "No license evidence recorded for this source bundle",
+            "Source lineage incomplete; additional upstream terms may apply."
+          ]
+        },
+        "evidence": [
+          "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+          "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json"
+        ],
+        "local_change_license": {
+          "status": "suite-license",
+          "id": "Apache-2.0",
+          "evidence": "LICENSE",
+          "scope": "New local changes only; inherited terms remain unresolved."
+        }
+      }
     }
   },
   "files": {
@@ -626295,6 +626749,13 @@
       "archive_path": "experiments/bqn/spectral-sum-v1/sources/row-sum.bqn",
       "sha256": "5366d80b35f49fd6aecdf3ffd1144c285a5b6df7d01be366d5012f3290a835c9",
       "code": "# Four separately defined functions, with coefficients evaluated in every multiply.\nn \u2190 \u2022ParseFloat\u2291\u2022args\nA \u2190 {1\u00f71+\ud835\udd68+0.5\u00d7(\ud835\udd68+\ud835\udd69)\u00d71+\ud835\udd68+\ud835\udd69}\nAv \u2190 {v\u2190\ud835\udd69 \u22c4 {\u2022math.Sum v\u00d7\ud835\udd69 A \u2195\u2260v}\u00a8\u2195\u2260v}\nAtv \u2190 {v\u2190\ud835\udd69 \u22c4 {\u2022math.Sum v\u00d7(\u2195\u2260v) A \ud835\udd69}\u00a8\u2195\u2260v}\nAtAv \u2190 Atv\u2218Av\nv \u2190 AtAv\u235f19 n\u294a1\nu \u2190 AtAv v\nr \u2190 \u221a(+\u00b4u\u00d7v)\u00f7+\u00b4v\u00d7v\n\u2022Out {\u00af9(\u2193\u223e'.'\u223e\u2191)\u2022Repr\u230a0.5+1e9\u00d7\ud835\udd69} r\n"
+    },
+    "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5": {
+      "name": "bins-empty-safe.bqn",
+      "path": "experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+      "archive_path": "experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+      "sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+      "code": "# CLBG LCG, inverse cumulative probabilities, and 60-column FASTA output.\nn \u2190 \u2022ParseFloat\u2291\u2022args\nseed \u2190 42\nalu \u2190 \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\"\nWrap \u2190 {\n  full \u2190 60\u00d7\u230a(\u2260\ud835\udd69)\u00f760\n  rows \u2190 (full\u00f760)\u203f60\u294afull\u2191\ud835\udd69\n  \u2022term.OutRaw \u294a{\ud835\udd69\u223e@+10}\u02d8rows\n  {0<\u2260\ud835\udd69?\u2022Out \ud835\udd69;@} full\u2193\ud835\udd69\n  @\n}\nRand \u2190 {139968|29573+3877\u00d7\ud835\udd68}\nRandom \u2190 {alphabet\u203fprobabilities\u203fsize:\n  r \u2190 seed Rand` size\u294a0\n  seed \u21a9 {0<\u2260\ud835\udd69? \u00af1\u2291\ud835\udd69; seed} r\n  cumulative \u2190 +`probabilities\n  indices \u2190 cumulative \u234b r\u00f7139968\n  Wrap indices\u228falphabet\n}\n\u2022Out \">ONE Homo sapiens alu\"\nWrap (2\u00d7n)\u294aalu\n\u2022Out \">TWO IUB ambiguity codes\"\nRandom \u27e8\"acgtBDHKMNRSVWY\",0.27\u203f0.12\u203f0.12\u203f0.27\u223e11\u294a0.02,3\u00d7n\u27e9\n\u2022Out \">THREE Homo sapiens frequency\"\nRandom \u27e8\"acgt\",0.3029549426680\u203f0.1979883004921\u203f0.1975473066391\u203f0.3015094502008,5\u00d7n\u27e9\n"
     }
   },
   "exclusions": [
@@ -627568,11 +628029,11 @@
       "label": "BQN (CBQN)",
       "fast": {
         "x": 1.9888321659649744,
-        "y": 17.524545328205757
+        "y": 17.452208394453322
       },
       "small": {
         "x": 1.870558721721271,
-        "y": 20.816445696907046
+        "y": 20.730520622952938
       }
     },
     {
@@ -1333231,6 +1333692,459 @@
           "scope": "New local changes only; inherited terms remain unresolved."
         }
       }
+    },
+    "fasta:array-bqn-bins": {
+      "key": "fasta:array-bqn-bins",
+      "id": "array-bqn-bins",
+      "benchmark": "fasta",
+      "language": "bqn",
+      "loc": 24,
+      "seconds": 10.348042625,
+      "samples": [
+        10.155231542,
+        10.348042625,
+        10.381222792
+      ],
+      "timing_sd": 0.1220307900260861,
+      "files": [
+        "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+      ],
+      "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+      "source_report": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+      "measurement_status": "measured",
+      "algorithm": {
+        "strict": true,
+        "status": "required-work-reviewed",
+        "native_benchmark_kernel": false,
+        "reason": "Every one of200,000,000 naive LCG updates and original floating division/probability value remains. Bins performs native floating binary search; no scaling, integer cutoff, cached period or state-to-letter table. Empty records preserve the seed.",
+        "full_work": {
+          "n": 25000000,
+          "random_nucleotides": 200000000,
+          "lcg_updates": 200000000
+        },
+        "evidence": {
+          "path": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+          "sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab"
+        }
+      },
+      "physical_loc": 24,
+      "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+      "loc_metric": "assignment-normalized",
+      "source_provenance": "Suite-authored floating-Bins/empty-record adaptation of retained faithful BQN FASTA; predecessor origin and inherited terms remain unresolved.",
+      "runtime_policy": "CBQN commit c893d3e7828899a50150df03ad33c9052fa51d3c; exact uninstrumented rebuilt release; single-process source; ordinary f64 Bins primitive",
+      "x": 1.5,
+      "y": 19.120788779104085,
+      "formatted_loc": null,
+      "formatted_loc_status": "pending",
+      "formatted_loc_complete": false,
+      "formatted_loc_evidence": {},
+      "formatted_x": null,
+      "receipt_key": "array-bqn-bins",
+      "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+      "loc_report": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+        "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+        "25000000"
+      ],
+      "runtime_arguments": [
+        "25000000"
+      ],
+      "build_command": [
+        "/usr/bin/make",
+        "o3",
+        "REPLXX=0",
+        "FFI=1",
+        "j=2",
+        "notui=1",
+        "CC=/opt/homebrew/opt/llvm@22/bin/clang-22",
+        "CCFLAGS=-mcpu=apple-m3 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk -I/opt/homebrew/opt/libffi/include",
+        "lf=-L/opt/homebrew/opt/libffi/lib -Wl,-rpath,/opt/homebrew/opt/libffi/lib"
+      ],
+      "build_cwd": "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN",
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "execution_mode": "interpreter",
+      "binary_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+      "native_observations": 3,
+      "timing_alias_of": null,
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:29:28.489548+00:00",
+          "stdin": "/dev/null",
+          "pid": 85471,
+          "exit_code": 0,
+          "elapsed_seconds": 10.155231542,
+          "user_seconds": 9.961115,
+          "system_seconds": 0.15409699999999998,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:29:38.645156+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 1,
+          "case": "full-1",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:29:49.739060+00:00",
+          "stdin": "/dev/null",
+          "pid": 85498,
+          "exit_code": 0,
+          "elapsed_seconds": 10.348042625,
+          "user_seconds": 10.158422,
+          "system_seconds": 0.152546,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:30:00.087428+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 2,
+          "case": "full-2",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "started_utc": "2026-10-20T19:30:00.230099+00:00",
+          "stdin": "/dev/null",
+          "pid": 85520,
+          "exit_code": 0,
+          "elapsed_seconds": 10.381222792,
+          "user_seconds": 10.193305,
+          "system_seconds": 0.14993399999999998,
+          "maximum_rss_bytes": 1904574464,
+          "timed_out": false,
+          "finished_utc": "2026-10-20T19:30:10.611677+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stdout.bin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "source": "bins-empty-safe",
+          "n": 25000000,
+          "sample": 3,
+          "case": "full-3",
+          "qualification_valid": true,
+          "output_valid": true,
+          "known_control_failure": false,
+          "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+          "runtime_sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+            "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+          },
+          "producer_plan": {
+            "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+            "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+          }
+        }
+      ],
+      "original_program_key": "fasta:array-bqn-faithful",
+      "retained_source_revision": "e8c5182fe380402c042e312730a0703e47f1f3ee",
+      "local_adaptation": true,
+      "distinct_optimization_claimed": true,
+      "source_provenance_record": {
+        "kind": "suite-authored-optimization",
+        "original_program_key": "fasta:array-bqn-faithful",
+        "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+        "admission": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+        },
+        "origin_status": "inherited-unresolved",
+        "author_context": {
+          "tool": "OpenAI Codex",
+          "model_family": "Codex GPT-6",
+          "exact_model": null,
+          "status": "developer-identity-family-only",
+          "original_predecessor_authorship": "unresolved"
+        }
+      },
+      "runtime_support": "Existing CBQN runtime only; no application imports, FFI helper or benchmark executor.",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC"
+      },
+      "timing_boundary": "Fresh BQN process through exit, including startup, argv parsing, all naive LCG updates, floating probability searches, complete formatting/output and shutdown; excludes hashing, qualification and power checks.",
+      "timing_summary": "Three matched whole-process observations; modest approximately4% gain in this cohort. All samples retained; no major or global optimality claim. Large full stdout is local-only; archived proof uses native raw hash/length records.",
+      "source_accounting": {
+        "policy": "application-loc-v1",
+        "application_loc": 24,
+        "physical_loc": 24,
+        "evidence": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+        "review_sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab",
+        "qualification": "Root-approved exact-source24/24 extension of retained BQN physical-plus-packed-statements rule; no native parser certificate.",
+        "files": []
+      },
+      "file_roles": {
+        "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5": {
+          "role": "application",
+          "included_in_application_loc": true,
+          "normalized_loc": 24,
+          "physical_loc": 24
+        }
+      },
+      "full_output_validation": {
+        "all_three_samples_passed": true,
+        "evidence": {
+          "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+          "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+        },
+        "archive_scope": "Recorded complete native hash/length; full stdout bytes are not durable artifacts."
+      },
+      "chart_admission": {
+        "historical_reports_unchanged": true,
+        "importer": {
+          "path": "tools/qualification/import_bqn_fasta.py",
+          "sha256": "3f904f3a0c390dd8998a876ae21b245637532e1c7a22da22db21589a73dbfbc5"
+        },
+        "shared_helpers": {
+          "path": "tools/qualification/import_bqn_knucleotide.py",
+          "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+        },
+        "producer_plan": {
+          "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+          "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+        },
+        "source_proposal": {
+          "path": "experiments/bqn/fasta-bins-v1/plan.json",
+          "sha256": "80e55c9904d3f227c4fcecf7fe65b462c28336b536e403f1338a2319075d9f60"
+        },
+        "controller": {
+          "path": "experiments/bqn/fasta-bins-v1/run_serial.py",
+          "sha256": "ece6a617df537f09ce566d08e49f583bca035c5e5ebd0b4194fac52cf4e3e4d6"
+        },
+        "process_controller": {
+          "path": "tools/qualification/lean_run.py",
+          "sha256": "313418c88aae0de3c86a98566c6138bbaeeb697830da99c9cc1ad5c7be0737ec"
+        },
+        "frozen_review": {
+          "path": "experiments/bqn/fasta-bins-v1/REVIEW.md",
+          "sha256": "6853d6ca2fa9e4abaebe7c148bd95620c019c3bed8a54c2a57bccc2d7cc54a8d"
+        },
+        "instructions": {
+          "path": "experiments/bqn/fasta-bins-v1/RUNNER.md",
+          "sha256": "1752e4ecabc8ca737cef45f57ce626dce21a80e6ece62d54ec6f173fd1e9654d"
+        },
+        "ownership": {
+          "path": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+          "sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab"
+        },
+        "lookup": {
+          "path": "experiments/bqn/fasta-bins-v1/tests/lookup-equivalence.bqn",
+          "sha256": "e03cca27d7ac020614f83e9c8c6cf0f256f0de7b700ae1d9495f8675d92943ce"
+        },
+        "corpus": {
+          "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+          "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+        },
+        "runtime_build": {
+          "path": "experiments/bqn/optimization-v1/release-build.json",
+          "sha256": "6d336345d4bdf2d28283dc9a8f2f63f988eb1b17bc531005e3ba6c91a011784a"
+        },
+        "bounded": {
+          "path": "experiments/bqn/fasta-bins-v1/bounded-v1/report.json",
+          "sha256": "bb46a9f8a3532b36937670759c7e832d49d78d00c77c221bfdb9d8c1b35cb826"
+        },
+        "full": {
+          "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+          "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+        },
+        "plan": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+          "sha256": "66d931d936b1582ecd67f8f389574bd471d4655c812462408ff8d605119fb2c8"
+        },
+        "results": {
+          "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+        }
+      },
+      "measured_backend": {
+        "key": "bqn",
+        "execution": "interpreter",
+        "label": "BQN (CBQN)",
+        "verified": true,
+        "evidence": {
+          "verified": true,
+          "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/optimization-v1/.build/CBQN/BQN",
+            "/private/tmp/mech-benchmark-publication/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+            "25000000"
+          ],
+          "source_sha256": [
+            "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+          ],
+          "runtime_receipt": {
+            "verified": true,
+            "report": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+            "report_sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a",
+            "field": "/toolchains/bqn/version",
+            "value": "CBQN on commit c893d3e7828899a50150df03ad33c9052fa51d3c\nbuilt with FFI, singeli AARCH64",
+            "value_encoding": "literal-saved-string"
+          }
+        }
+      },
+      "authorship": {
+        "schema": "benchmark-authorship.v1",
+        "kind": "ai-adapted",
+        "label": "AI adapted \u00b7 retained faithful predecessor",
+        "source_sha256": [
+          "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+        ],
+        "origin_status": "unresolved",
+        "origin_gaps": [
+          "Original implementation source not established; a workload description or collection is not an original-source citation."
+        ],
+        "retained_sources": [
+          {
+            "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+            "url": "https://github.com/mech-lang/benchmarks/blob/e8c5182fe380402c042e312730a0703e47f1f3ee/experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn"
+          }
+        ],
+        "parent_programs": [
+          "fasta:array-bqn-faithful"
+        ],
+        "parent_sources": [
+          {
+            "program_key": "fasta:array-bqn-faithful",
+            "relationship": "local predecessor",
+            "source_sha256": "531d039ae5f9aa34f9db35e4df9efc723dc64098e3b1828c7b4fba972e35085e",
+            "url": "https://github.com/mech-lang/benchmarks/blob/c95f900435aca5ae51030eabeffae2e5dc9a2fc2/archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn"
+          }
+        ],
+        "sources": [],
+        "attribution_notices": [],
+        "ai": {
+          "tool": "OpenAI Codex",
+          "models": [],
+          "model_family": "Codex GPT-6",
+          "exact_model": null,
+          "status": "family-identified-exact-model-unverified",
+          "matched_source_files": [
+            "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5"
+          ],
+          "total_source_files": 1,
+          "evidence": [
+            {
+              "path": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+              "sha256": "66d931d936b1582ecd67f8f389574bd471d4655c812462408ff8d605119fb2c8"
+            },
+            {
+              "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+              "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+            }
+          ]
+        },
+        "license": {
+          "status": "unverified",
+          "licenses": [],
+          "unresolved": [
+            "No license evidence recorded for this source bundle",
+            "Source lineage incomplete; additional upstream terms may apply."
+          ]
+        },
+        "evidence": [
+          "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+          "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+          "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json"
+        ],
+        "local_change_license": {
+          "status": "suite-license",
+          "id": "Apache-2.0",
+          "evidence": "LICENSE",
+          "scope": "New local changes only; inherited terms remain unresolved."
+        }
+      }
     }
   },
   "formatted_reference_summary": [
@@ -1336361,7 +1337275,228 @@
     "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-5/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-5/expected.stdout",
     "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-5/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-5/stdin.bin",
     "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/expected.stdout",
-    "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/stdin.bin"
+    "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/spectralnorm/n-9/stdin.bin",
+    "tools/qualification/import_bqn_fasta.py": "tools/qualification/import_bqn_fasta.py",
+    "experiments/bqn/fasta-bins-v1/execution-plan.json": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+    "experiments/bqn/fasta-bins-v1/plan.json": "experiments/bqn/fasta-bins-v1/plan.json",
+    "experiments/bqn/fasta-bins-v1/run_serial.py": "experiments/bqn/fasta-bins-v1/run_serial.py",
+    "experiments/bqn/fasta-bins-v1/REVIEW.md": "experiments/bqn/fasta-bins-v1/REVIEW.md",
+    "experiments/bqn/fasta-bins-v1/RUNNER.md": "experiments/bqn/fasta-bins-v1/RUNNER.md",
+    "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+    "experiments/bqn/fasta-bins-v1/tests/lookup-equivalence.bqn": "experiments/bqn/fasta-bins-v1/tests/lookup-equivalence.bqn",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/report.json": "experiments/bqn/fasta-bins-v1/bounded-v1/report.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+    "experiments/bqn/fasta-bins-v1/admission-v1/plan.json": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+    "experiments/bqn/fasta-bins-v1/admission-v1/results.json": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+    "archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn": "archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/controllers/lean_run.py": "experiments/bqn/fasta-bins-v1/bounded-v1/controllers/lean_run.py",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/controllers/run_serial.py": "experiments/bqn/fasta-bins-v1/bounded-v1/controllers/run_serial.py",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/execution-plan.json": "experiments/bqn/fasta-bins-v1/bounded-v1/execution-plan.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/exhaustive-lookup/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-0-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-1000-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-19-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-2-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-20000-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-21-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-287-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-29-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-30-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-31-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-574-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-59-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-60-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-empty-safe/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-bins-only/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/stdout.bin": "experiments/bqn/fasta-bins-v1/bounded-v1/n-61-parent-faithful/stdout.bin",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/sources/bins-empty-safe.bqn": "experiments/bqn/fasta-bins-v1/bounded-v1/sources/bins-empty-safe.bqn",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/sources/bins-only.bqn": "experiments/bqn/fasta-bins-v1/bounded-v1/sources/bins-only.bqn",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/sources/parent-faithful.bqn": "experiments/bqn/fasta-bins-v1/bounded-v1/sources/parent-faithful.bqn",
+    "experiments/bqn/fasta-bins-v1/bounded-v1/tests/lookup-equivalence.bqn": "experiments/bqn/fasta-bins-v1/bounded-v1/tests/lookup-equivalence.bqn",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/controllers/lean_run.py": "experiments/bqn/fasta-bins-v1/full-matched-v1/controllers/lean_run.py",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/controllers/run_serial.py": "experiments/bqn/fasta-bins-v1/full-matched-v1/controllers/run_serial.py",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/execution-plan.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/execution-plan.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-1-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-2-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-bins-empty-safe/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-parent-faithful/process.json": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-parent-faithful/process.json",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-parent-faithful/stderr.bin": "experiments/bqn/fasta-bins-v1/full-matched-v1/full-3-parent-faithful/stderr.bin",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/bins-empty-safe.bqn": "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/bins-empty-safe.bqn",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/bins-only.bqn": "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/bins-only.bqn",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/parent-faithful.bqn": "experiments/bqn/fasta-bins-v1/full-matched-v1/sources/parent-faithful.bqn",
+    "experiments/bqn/fasta-bins-v1/full-matched-v1/tests/lookup-equivalence.bqn": "experiments/bqn/fasta-bins-v1/full-matched-v1/tests/lookup-equivalence.bqn",
+    "experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn": "experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+    "experiments/bqn/fasta-bins-v1/sources/bins-only.bqn": "experiments/bqn/fasta-bins-v1/sources/bins-only.bqn",
+    "experiments/bqn/fasta-bins-v1/sources/parent-faithful.bqn": "experiments/bqn/fasta-bins-v1/sources/parent-faithful.bqn",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-0/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-0/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-0/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-0/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-1/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-1/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-1/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-1/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-1000/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-1000/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-1000/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-1000/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-19/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-19/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-19/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-19/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-2/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-2/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-2/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-2/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-20/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-20/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-20/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-20/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-20000/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-20000/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-20000/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-20000/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-21/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-21/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-21/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-21/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-287/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-287/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-287/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-287/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-29/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-29/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-29/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-29/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-30/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-30/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-30/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-30/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-31/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-31/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-31/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-31/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-574/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-574/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-574/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-574/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-59/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-59/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-59/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-59/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-60/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-60/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-60/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-60/stdin.bin",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-61/expected.stdout": "experiments/shared/bounded-corpus-v1/cases/fasta/n-61/expected.stdout",
+    "experiments/shared/bounded-corpus-v1/cases/fasta/n-61/stdin.bin": "experiments/shared/bounded-corpus-v1/cases/fasta/n-61/stdin.bin"
   },
   "repository": {
     "url": "https://github.com/mech-lang/benchmarks",
@@ -1400629,6 +1401764,83 @@
       }
     },
     "measured_at": "2026-10-20T19:07:57.100410+00:00",
+    "new_observations": 3,
+    "source_files_added": 1,
+    "old_profiles_unchanged": true,
+    "old_baselines_unchanged": true
+  },
+  "bqn_fasta_audit": {
+    "schema": "bqn-fasta-catalog-extension.v1",
+    "appended_programs": [
+      "fasta:array-bqn-bins"
+    ],
+    "evidence": {
+      "importer": {
+        "path": "tools/qualification/import_bqn_fasta.py",
+        "sha256": "3f904f3a0c390dd8998a876ae21b245637532e1c7a22da22db21589a73dbfbc5"
+      },
+      "shared_helpers": {
+        "path": "tools/qualification/import_bqn_knucleotide.py",
+        "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+      },
+      "producer_plan": {
+        "path": "experiments/bqn/fasta-bins-v1/execution-plan.json",
+        "sha256": "67e357fa37949ae635c5f81e5571edff0632c89b35c7ed1d3792fab39400390f"
+      },
+      "source_proposal": {
+        "path": "experiments/bqn/fasta-bins-v1/plan.json",
+        "sha256": "80e55c9904d3f227c4fcecf7fe65b462c28336b536e403f1338a2319075d9f60"
+      },
+      "controller": {
+        "path": "experiments/bqn/fasta-bins-v1/run_serial.py",
+        "sha256": "ece6a617df537f09ce566d08e49f583bca035c5e5ebd0b4194fac52cf4e3e4d6"
+      },
+      "process_controller": {
+        "path": "tools/qualification/lean_run.py",
+        "sha256": "313418c88aae0de3c86a98566c6138bbaeeb697830da99c9cc1ad5c7be0737ec"
+      },
+      "frozen_review": {
+        "path": "experiments/bqn/fasta-bins-v1/REVIEW.md",
+        "sha256": "6853d6ca2fa9e4abaebe7c148bd95620c019c3bed8a54c2a57bccc2d7cc54a8d"
+      },
+      "instructions": {
+        "path": "experiments/bqn/fasta-bins-v1/RUNNER.md",
+        "sha256": "1752e4ecabc8ca737cef45f57ce626dce21a80e6ece62d54ec6f173fd1e9654d"
+      },
+      "ownership": {
+        "path": "experiments/bqn/fasta-bins-v1/source-ownership-v1/bins-empty-safe-counts.json",
+        "sha256": "e84b1b2472743ecdcbb0ceabe7a87a8acb312d95eef7c2537dbdef5629c8e1ab"
+      },
+      "lookup": {
+        "path": "experiments/bqn/fasta-bins-v1/tests/lookup-equivalence.bqn",
+        "sha256": "e03cca27d7ac020614f83e9c8c6cf0f256f0de7b700ae1d9495f8675d92943ce"
+      },
+      "corpus": {
+        "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+        "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+      },
+      "runtime_build": {
+        "path": "experiments/bqn/optimization-v1/release-build.json",
+        "sha256": "6d336345d4bdf2d28283dc9a8f2f63f988eb1b17bc531005e3ba6c91a011784a"
+      },
+      "bounded": {
+        "path": "experiments/bqn/fasta-bins-v1/bounded-v1/report.json",
+        "sha256": "bb46a9f8a3532b36937670759c7e832d49d78d00c77c221bfdb9d8c1b35cb826"
+      },
+      "full": {
+        "path": "experiments/bqn/fasta-bins-v1/full-matched-v1/report.json",
+        "sha256": "928491b6b871e270b37272f7d51be5403e4f92727676c4e3c5431eb63dd94ffd"
+      },
+      "plan": {
+        "path": "experiments/bqn/fasta-bins-v1/admission-v1/plan.json",
+        "sha256": "66d931d936b1582ecd67f8f389574bd471d4655c812462408ff8d605119fb2c8"
+      },
+      "results": {
+        "path": "experiments/bqn/fasta-bins-v1/admission-v1/results.json",
+        "sha256": "e5d8f107b462d5cb6ee9c09dcbe88e21f32e92878bd00b7e891aa4695353216a"
+      }
+    },
+    "measured_at": "2026-10-20T19:30:21.766501+00:00",
     "new_observations": 3,
     "source_files_added": 1,
     "old_profiles_unchanged": true,

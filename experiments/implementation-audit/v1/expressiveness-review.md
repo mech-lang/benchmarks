@@ -7,11 +7,11 @@ count, formatter result, parser acceptance, correctness qualification, timing, o
 change to the generated inventory. Candidate changes below are questions to test
 in separately authorized experiments.
 
-The snapshot is the [1,063-profile inventory](inventory.json), bound to
+The snapshot is the [1,064-profile inventory](inventory.json), bound to
 `data/benchmarks.json` SHA-256
-`fda00e2cd7e1274edf977a1f14989f6bc9178ab95c9c3f56507e3893bf5b98de`.
+`6e793a3a6aea002c9aed0d161c2f7fec36757146c68229c5c49e073f7afaaa3b`.
 The inventory file itself has SHA-256
-`703c8006b71b2e380b6d0fdc80c00e293ba425aba09aeafd55e3293d41e7744a`.
+`3c6788d5c6295347d09a1f3904fcc109fa926718875ba246a14d3ad467a1d56a`.
 Later admissions require a new inventory snapshot; the numbers here do not
 automatically cover their sources.
 

@@ -26,6 +26,7 @@ ADMISSION_EXTENSIONS = {
     "bqn_knucleotide_audit": ("bqn-knucleotide-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "nim_knucleotide_audit": ("nim-knucleotide-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "bqn_spectral_audit": ("bqn-spectral-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
+    "bqn_fasta_audit": ("bqn-fasta-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "matlab_regex_case_audit": ("matlab-regex-catalog-extension.v1", "archived-correctness-correction", "archived-complete-process-observations; no-new-native-run-by-intake"),
 }
 

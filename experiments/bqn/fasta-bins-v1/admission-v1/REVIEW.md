@@ -1,0 +1,15 @@
+# Additive FASTA Bins intake
+
+The exact complete candidate is `fasta:array-bqn-bins`, source SHA-256 `62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5`, present at immutable source revision `e8c5182fe380402c042e312730a0703e47f1f3ee`. Root independently approved its retained24 normalized /24 physical source ledger. The source changes only floating cumulative lookup and the empty-state seed guard; original source and observations remain intact.
+
+All16 candidate cases pass complete independent output checks. The separately retained lookup test compares the two selection forms for all139,968 normalized LCG states and both probability vectors, plus equality/duplicate/empty cases. The original and minimal Bins controls retain their observed n0 failure; their two incomplete outputs are explicitly marked known control failures, not candidate passes. All positive controls pass.
+
+Matched full samples are parent10.45349625,10.782258209,10.872851416 seconds and complete Bins10.155231542,10.348042625,10.381222792 seconds. The medians are10.782258209 and10.348042625: approximately1.042×, a modest roughly4% elapsed-time reduction. All candidate observations are below all parent observations, but three samples are not a confidence interval or global optimality proof. The change does not establish which internal operation dominates total time.
+
+`tools/qualification/import_bqn_fasta.py` validates the pinned execution/source proposals, exact source derivations, approved owner ledger, release/runtime dependency receipt, controller/test/source snapshots, complete shuffled round coverage, strict recorded-root paths, every raw process receipt, power gates and all saved aggregates. Native code is never launched by intake. Local preparation additionally rehashes the six full stdout files.
+
+The six254,166,745-byte full stdout files are local-only and are deliberately excluded from durable artifact references. Archive replay verifies their complete byte-count/SHA-256 records against the pinned original native process reports and independent full reference; it does **not** claim to rehash absent full bytes. Every bounded stream, lookup stream, full stderr and raw process receipt remains required and is rehashed. The17 offline tests include a complete copied-evidence replay without the runtime or six large stdout files, and reject missing raw records or bounded streams.
+
+The preview is an additive candidate extension. It preserves every older profile/source/sample and all chart baselines; reselects BQN FASTA fast/small endpoints from the expanded retained pool; leaves formatted evidence pending; and keeps historical native `chart_admission=false` records unchanged. The parent’s unresolved origin and inherited license uncertainty remain explicit. Known current local adaptation is attributed only to its documented model family, with no invented exact model.
+
+Root owns guarded application and later narrow accounting/authorship hooks. No apply or hook change is performed by this packet preparation. `prepared.json` is only a reviewable before/after artifact; no evidence receipt depends on committing it.

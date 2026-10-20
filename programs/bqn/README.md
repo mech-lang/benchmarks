@@ -6,6 +6,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 |---|---|---:|---:|---:|
 | binarytrees | [array-bqn-faithful](binarytrees/array-bqn-faithful/program.json) | 16 | 30.1465 | 3 |
 | fannkuchredux | [array-bqn-faithful](fannkuchredux/array-bqn-faithful/program.json) | 50 | 164.855 | 3 |
+| fasta | [array-bqn-bins](fasta/array-bqn-bins/program.json) | 24 | 10.348 | 3 |
 | fasta | [array-bqn-faithful](fasta/array-bqn-faithful/program.json) | 24 | 10.785 | 3 |
 | knucleotide | [array-bqn-faithful](knucleotide/array-bqn-faithful/program.json) | 39 | 11.942 | 3 |
 | knucleotide | [array-bqn-occurrence-frame](knucleotide/array-bqn-occurrence-frame/program.json) | 48 | 3.54816 | 3 |

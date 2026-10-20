@@ -1,8 +1,8 @@
 # Complementary source measurements
 
 [The additive report](../experiments/source-metrics/v1/metrics.json) and
-[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,063 retained
-profiles, covering 964 distinct source files and 63 execution variants. The
+[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,064 retained
+profiles, covering 965 distinct source files and 63 execution variants. The
 report preserves the saved canonical catalog, source bytes, timings and
 coordinates. The chart offers separate source-size projections described below.
 Profiles remain separate records even when execution modes
@@ -19,7 +19,7 @@ several measures and expose gaps in the existing normalization rules.
 | Field | Definition and practical limits |
 | --- | --- |
 | `retained_application_loc` | The catalog's existing nonblank, noncomment application count, with its recorded metric and evidence. Cohort rules differ; copying the count does not recertify it as uniform logical LOC. |
-| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 60 profiles have complete evidence; 832 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
+| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 60 profiles have complete evidence; 833 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
 | `utf8_bytes` | Exact UTF-8 text size, including comments, indentation, blank lines, BOM and retained line endings. A Unicode glyph can take multiple bytes. |
 | `unicode_codepoints` | Python Unicode string length, including comments/whitespace. This is neither grapheme count nor visual width, and no Unicode normalization is applied. |
 | `physical_lines` | All rows in the selected text, including blank/comment rows, using Python `splitlines`. This differs deliberately from retained noncomment `physical_loc`. |
@@ -66,7 +66,7 @@ details and exports. These text measures include comments and whitespace;
 BPE retains the vocabulary and Unicode biases described below.
 
 The regenerated report includes the separately admitted BQN nucleotide, Nim
-nucleotide, corrected MATLAB regex and BQN spectral-sum source/count receipts.
+nucleotide, corrected MATLAB regex, BQN spectral-sum and BQN FASTA Bins source/count receipts.
 Their exact-source retained counts do not certify a uniform native ownership
 grammar. In this catalog, 248 profiles have attached or embedded excluded
 support. Source partitions and report/catalog hashes are regenerated and bound
@@ -100,7 +100,7 @@ probe follows the retained Mech matrix notation. Passing a positive control
 does not certify all strings, interpolation, macros, nested control or
 multiline literals in that language.
 
-The existing labels span 679 `statement-normalized`, 62
+The existing labels span 679 `statement-normalized`, 63
 `assignment-normalized`, 29 `canonical-source-units` and 293
 `unspecified-legacy` profiles. These labels are provenance, not equivalent
 language-grammar certificates. BQN/K's retained review applies explicit

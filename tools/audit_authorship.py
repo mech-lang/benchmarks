@@ -220,6 +220,9 @@ def audit(data,models):
         if key=='spectralnorm:array-bqn-native-sum':
             from qualification.import_bqn_spectral import bound_authorship
             records[key]=bound_authorship(data,p,ROOT)
+        if key=='fasta:array-bqn-bins':
+            from qualification.import_bqn_fasta import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

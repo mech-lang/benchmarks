@@ -13,6 +13,7 @@ FAMILY_ADMISSIONS={
     'knucleotide:array-bqn-occurrence-frame':'qualification.import_bqn_knucleotide',
     'knucleotide:nim-knucleotide-preencoded-v1':'qualification.import_nim_knucleotide',
     'spectralnorm:array-bqn-native-sum':'qualification.import_bqn_spectral',
+    'fasta:array-bqn-bins':'qualification.import_bqn_fasta',
 }
 
 def fixture(url=None,local=None):

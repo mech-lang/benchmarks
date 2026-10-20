@@ -15,7 +15,7 @@ class FamilyAuthorship(unittest.TestCase):
     def test_known_family_is_bound_to_exact_application_and_admission(self):
         keys = ['knucleotide:array-bqn-occurrence-frame',
                 'knucleotide:nim-knucleotide-preencoded-v1',
-                'spectralnorm:array-bqn-native-sum']
+                'spectralnorm:array-bqn-native-sum', 'fasta:array-bqn-bins']
         for key in keys:
             row = self.data['programs'][key]
             check_model_evidence(ROOT, self.data, key, row, self.models)

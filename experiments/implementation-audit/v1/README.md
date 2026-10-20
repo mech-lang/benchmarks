@@ -48,6 +48,7 @@ New admissions have statuses distinct from static candidate suggestions:
 | BQN k-nucleotide `array-bqn-occurrence-frame` | [Fresh matched measurements and full-work witness](../../bqn/optimization-v1/admission-v1/results.json); 48 retained-rule application LOC / 43 physical LOC |
 | Nim k-nucleotide `nim-knucleotide-preencoded-v1` | [Fresh matched measurements and source/standard-library work review](../../nim/optimization-v1/admission-v1/results.json); 72 retained-rule application LOC / 64 physical LOC |
 | BQN spectral norm `array-bqn-native-sum` | [Fresh matched measurements and source-required work](../../bqn/spectral-sum-v1/admission-v1/results.json); 13 retained-rule application LOC / 9 physical LOC |
+| BQN FASTA `array-bqn-bins` | [Fresh matched measurements and exhaustive lookup checks](../../bqn/fasta-bins-v1/admission-v1/results.json); modest4% median reduction,24 retained-rule application / physical LOC; full-output archive limits disclosed |
 | MATLAB regex `matlab-case-compact`, `matlab-case-optimized` | [Archived correctness correction and six complete-process observations](../../matlab/optimization-v1/admission-v1/results.json); 16 / 19 application LOC respectively, with matching physical LOC; intake adds no native run |
 
 Only catalog-bound admissions receive these statuses; an experiment or prepared
@@ -68,7 +69,7 @@ language. Generic Ruby worker modules have an unapplied
 ## Ownership and protection
 
 The following table is the **frozen initial 1,058-profile snapshot**, before the
-five admissions above. Current counts and the exact catalog hash are generated
+six admissions above. Current counts and the exact catalog hash are generated
 in `inventory.json` under `summary` and `canonical_input`.
 
 | Classification | Profiles | Evidence rule |
@@ -239,6 +240,10 @@ each have **two profile labels but one distinct retained source bundle**. Their
 saved observations remain distinct where actually measured, and their alias
 labels do not count as evidence of two optimized designs. Exact candidate counts
 and hashes are available for every workload/language pool.
+
+The [remaining expressiveness review queue](expressiveness-review.md) inventories
+all other local/derived language pools, distinguishes aliases from separate designs,
+and records concrete boundary and normalization questions.
 
 ## Candidate acceptance checklist
 

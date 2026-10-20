@@ -212,6 +212,7 @@ def check_model_evidence(root, data, key, program, source_models):
         'knucleotide:array-bqn-occurrence-frame': 'import_bqn_knucleotide',
         'knucleotide:nim-knucleotide-preencoded-v1': 'import_nim_knucleotide',
         'spectralnorm:array-bqn-native-sum': 'import_bqn_spectral',
+        'fasta:array-bqn-bins': 'import_bqn_fasta',
     }
     if key in bound:
         module = importlib.import_module('qualification.' + bound[key])
@@ -220,7 +221,7 @@ def check_model_evidence(root, data, key, program, source_models):
         return
     # No missing archived event, unsupported status or shared model family can
     # establish a historical write. This exact comparison remains unchanged
-    # for every program outside the three source-bound additions above.
+    # for every program outside the source-bound additions above.
     expected = [] if authorship.get('kind') == 'upstream' else [
         row for digest in program['files'] for row in source_models.get(digest, [])]
     require(authorship.get('ai', {}).get('evidence') == expected
