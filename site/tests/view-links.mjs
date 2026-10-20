@@ -78,7 +78,8 @@ try{
     }
   }
   if(process.env.EXPECTED_ZJIT_PROGRAMS){
-    const zjit=await open(base+'#v=1&view=language&language=ruby&variant=ruby-zjit');
+    const zjit=await open(base+'#v=1&view=language&language=ruby-zjit&variant=ruby-zjit');
+    assert.equal((await snapshot(zjit)).state.languageFocus.variant,'ruby-zjit');
     const summary=await zjit.locator('#language-overview-summary').textContent();
     assert.match(summary,/10\/10 selected benchmarks/);
     assert.match(summary,new RegExp(`\\b${process.env.EXPECTED_ZJIT_PROGRAMS} programs\\b`));

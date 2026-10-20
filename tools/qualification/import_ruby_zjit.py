@@ -94,7 +94,14 @@ def reconcile(root=ROOT):
         toolchains={LANG:dict(version=plan['runtime']['probes']['zjit']['description'],
                               path=plan['runtime']['path'],sha256=plan['runtime']['sha256'])},
         hardware=plan['host'], os=plan['host']['os'], required_power=dict(source='AC Power',low_power_mode=0),
-        inputs=report['inputs'],workloads=plan['full_workloads'],timing_boundary=plan['timing_boundary'])
+        inputs=copy.deepcopy(report['inputs']),workloads=plan['full_workloads'],timing_boundary=plan['timing_boundary'],
+        runtime_details=plan['runtime'])
+    fasta = next(p for p in plan['profiles'] if p['id']=='fasta-ruby-2')
+    for path, value in results['inputs'].items():
+        n=5000000 if Path(path).name=='n5000000.fasta' else 25000000
+        value['reconstruction']=dict(command=[plan['runtime']['path']]+[
+            '--yjit' if a=='{jit}' else str(n) if a=='{n}' else a for a in fasta['argv']],
+            stdout=path,note='Reconstruct the pinned FASTA input; generation is outside subject timing.')
     return results
 
 

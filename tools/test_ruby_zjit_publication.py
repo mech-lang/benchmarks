@@ -12,6 +12,8 @@ class RubyPublication(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.current=json.loads((ROOT/'data/benchmarks.json').read_text())
+        if 'ruby_zjit_audit' not in cls.current:
+            raise unittest.SkipTest('The full ZJIT cohort has not been admitted yet')
         cls.original=json.loads(gzip.decompress((ROOT/PACKET/'before.json.gz').read_bytes()))
         cls.previous,_=transform(cls.original,json.loads((ROOT/'data/source-size-review.json').read_text()),
                                   json.loads((ROOT/PACKET/'partitions.json').read_text()))
@@ -22,6 +24,10 @@ class RubyPublication(unittest.TestCase):
             self.assertEqual(len(self.current[pool])-len(self.previous[pool]),19)
             for key,p in self.previous[pool].items():
                 self.assertEqual(self.current[pool][key],p,key)
+        for old,new in zip(self.previous['benchmarks'],self.current['benchmarks']):
+            self.assertEqual(dict(new,groups=[g for g in new['groups'] if g['language']!='ruby-zjit']),old)
+        for section in ['languages','reference_summary','formatted_reference_summary']:
+            self.assertEqual(self.current[section][:len(self.previous[section])],self.previous[section])
 
     def test_zjit_has_independent_process_samples_and_unchanged_loc(self):
         rows=[p for p in self.current['programs'].values() if p['language']=='ruby-zjit']
