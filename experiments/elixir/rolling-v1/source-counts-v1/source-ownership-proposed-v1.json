@@ -1,0 +1,5585 @@
+{
+  "schema": "elixir-rolling-retained-source-review.v1",
+  "status": "NATIVE-REPLAY-AWAITING-INDEPENDENT-OWNER-REVIEW",
+  "controller": {
+    "path": "experiments/elixir/rolling-v1/source-counts-v1/replay.py",
+    "sha256": "eff06f6300fae6236037bf526fa80660668ddb366adec17afcb558543a2c4d61"
+  },
+  "native_capture": {
+    "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/report.json",
+    "sha256": "5afa994257402a97909c1cb2b57a894bc169fd23960ef1b1f0b07e3da9a08051"
+  },
+  "plan": {
+    "path": "experiments/elixir/rolling-v1/source-counts-v1/plan-v1.json",
+    "sha256": "ddf182062aeb211d9b263b82fbd93be5c93a6a510a408edb6e20f90339d74729"
+  },
+  "counter": {
+    "path": "tools/qualification/elixir_source_units.py",
+    "sha256": "d1070e8f38fdebdfe2523c918bfb4367958667f34bf3c77efb6d6725544dc07f"
+  },
+  "frontend": {
+    "path": "experiments/elixir/source-counts-v1/read_sources.exs",
+    "sha256": "b2f2102e16ed2213eaf012704952c5bda9da116fb7af736363664eda321e0b3b"
+  },
+  "qualified_predecessor": {
+    "path": "experiments/elixir/source-units-v1/qualified-source-counts.json",
+    "sha256": "1fd0401a8dc46a70268beb6dd2a287b7725e74b9a4a0d33d4c6e92d8ff1df755"
+  },
+  "rule_version": "canonical-source-units-20261012-approved-rule-v2",
+  "grammar": "elixir-native-position-owners-v1",
+  "application_policy": "application-loc-v1",
+  "files": {
+    "parent-main": {
+      "source_sha256": "325d3d1992f3fcd2128973802904dd842659c34d20d48ff8ffa73a21620f863c",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parent-main/source.exs",
+        "sha256": "325d3d1992f3fcd2128973802904dd842659c34d20d48ff8ffa73a21620f863c"
+      },
+      "native_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parent-main/ast.json",
+        "sha256": "f2817022b4804f3b66124a4b5c6a9d5c9cf9ff57476c72a9481c895b24c3ebaf"
+      },
+      "formatted_source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parent-main/formatted.exs",
+        "sha256": "22d86dfaeaa83490f87383248dbb6b8964badb69f14bc81ec6dac13865f98ca6"
+      },
+      "formatted_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parent-main/formatted-ast.json",
+        "sha256": "c7ad3c177e7d5c6ad41f9ec150e223e6c09d4579548c85e684a407003a32877b"
+      },
+      "role": "application",
+      "included_in_application_loc": true,
+      "observed_retained_rule_loc": 47,
+      "observed_physical_loc": 39,
+      "observed_formatted_physical_loc": 50,
+      "diagnostics": [],
+      "formatted_diagnostics": [],
+      "line_ledger": [
+        {
+          "line": 1,
+          "source_text": "defmodule Clbg.Main do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 0,
+              "end": 22,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 2,
+          "source_text": "  alias Clbg.Support, as: S",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 3,
+          "source_text": "  @queries [\"GGT\", \"GGTA\", \"GGTATT\", \"GGTATTTTAATT\", \"GGTATTTTAATTTATAGT\"]",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 4,
+          "source_text": "  defp header_name(line) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 128,
+              "end": 153,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 5,
+          "source_text": "    line |> binary_part(1, byte_size(line) - 1) |> :binary.split([\" \", \"\\t\"]) |> hd()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 6,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 242,
+              "end": 245,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 7,
+          "source_text": "  defp sequence([], _selected, out), do: out |> Enum.reverse() |> IO.iodata_to_binary()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 8,
+          "source_text": "  defp sequence([<<\">\", _rest::binary>> = line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 336,
+              "end": 408,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 9,
+          "source_text": "    if selected, do: sequence([], false, out), else: sequence(lines, header_name(line) == \"THREE\", out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 10,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 515,
+              "end": 518,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 11,
+          "source_text": "  defp sequence([line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 521,
+              "end": 568,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 12,
+          "source_text": "    if selected and line != \"\" and :binary.at(line, 0) != ?; do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 573,
+              "end": 632,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 13,
+          "source_text": "      upper = for <<code <- line>>, into: <<>> do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 639,
+              "end": 682,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 14,
+          "source_text": "        code = if code >= ?a and code <= ?z, do: code - 32, else: code",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 15,
+          "source_text": "        if code not in [?A, ?C, ?G, ?T], do: raise(ArgumentError, \"Unsupported nucleotide\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 16,
+          "source_text": "        <<code>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 17,
+          "source_text": "      end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 869,
+              "end": 872,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 18,
+          "source_text": "      sequence(lines, selected, [upper | out])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 19,
+          "source_text": "    else",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "branch",
+              "start": 924,
+              "end": 928,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 20,
+          "source_text": "      sequence(lines, selected, out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 21,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 970,
+              "end": 973,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 22,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 976,
+              "end": 979,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 23,
+          "source_text": "  defp count(sequence, k, offset, counts) when offset + k > byte_size(sequence), do: counts",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 24,
+          "source_text": "  defp count(sequence, k, offset, counts) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1074,
+              "end": 1116,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 25,
+          "source_text": "    key = binary_part(sequence, offset, k)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 26,
+          "source_text": "    count(sequence, k, offset + 1, Map.update(counts, key, 1, fn value -> value + 1 end))",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1164,
+              "end": 1233,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1244,
+              "end": 1247,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1247,
+              "end": 1249,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1233,
+              "end": 1244,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 27,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1252,
+              "end": 1255,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 28,
+          "source_text": "  def main(_arguments) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1258,
+              "end": 1281,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 29,
+          "source_text": "    dna = S.input() |> S.lines() |> sequence(false, [])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 30,
+          "source_text": "    maps = Map.new([1, 2, 3, 4, 6, 12, 18], fn k -> {k, count(dna, k, 0, %{})} end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1342,
+              "end": 1389,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1417,
+              "end": 1420,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1420,
+              "end": 1421,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1389,
+              "end": 1417,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 31,
+          "source_text": "    frequencies = for k <- [1, 2] do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1426,
+              "end": 1458,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 32,
+          "source_text": "      ordered = maps[k] |> Enum.sort(fn {ka, va}, {kb, vb} -> va > vb or (va == vb and ka < kb) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1465,
+              "end": 1520,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1555,
+              "end": 1558,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1558,
+              "end": 1559,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1520,
+              "end": 1555,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 33,
+          "source_text": "      total = max(0, byte_size(dna) - k + 1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 34,
+          "source_text": "      [Enum.map(ordered, fn {key, amount} -> [key, \" \", S.fixed(100.0 * amount / total, 3), \"\\n\"] end), \"\\n\"]",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1611,
+              "end": 1649,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1703,
+              "end": 1706,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1706,
+              "end": 1708,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1649,
+              "end": 1703,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            },
+            {
+              "start": 1708,
+              "end": 1715,
+              "units": 0,
+              "assignments": [],
+              "reason": "same-native-expression-scalar-continuation"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 35,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1719,
+              "end": 1722,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 36,
+          "source_text": "    queries = for query <- @queries, do: \"#{Map.get(maps[byte_size(query)], query, 0)}\\t#{query}\\n\"",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 37,
+          "source_text": "    S.write([frequencies, queries])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 38,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1861,
+              "end": 1864,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 39,
+          "source_text": "end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1865,
+              "end": 1868,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        }
+      ],
+      "canonical_events": [
+        {
+          "kind": "header",
+          "start": 0,
+          "end": 22,
+          "units": 1,
+          "owner": "defmodule"
+        },
+        {
+          "kind": "header",
+          "start": 128,
+          "end": 153,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 242,
+          "end": 245,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 336,
+          "end": 408,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 515,
+          "end": 518,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 521,
+          "end": 568,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 573,
+          "end": 632,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "header",
+          "start": 639,
+          "end": 682,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 869,
+          "end": 872,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "branch",
+          "start": 924,
+          "end": 928,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 970,
+          "end": 973,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 976,
+          "end": 979,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1074,
+          "end": 1116,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1164,
+          "end": 1233,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1244,
+          "end": 1247,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1247,
+          "end": 1249,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1252,
+          "end": 1255,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1258,
+          "end": 1281,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 1342,
+          "end": 1389,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1417,
+          "end": 1420,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1420,
+          "end": 1421,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "header",
+          "start": 1426,
+          "end": 1458,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "header",
+          "start": 1465,
+          "end": 1520,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1555,
+          "end": 1558,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1558,
+          "end": 1559,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "header",
+          "start": 1611,
+          "end": 1649,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1703,
+          "end": 1706,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1706,
+          "end": 1708,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1719,
+          "end": 1722,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 1861,
+          "end": 1864,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 1865,
+          "end": 1868,
+          "units": 1,
+          "owner": "defmodule"
+        }
+      ],
+      "expression_continuations": [
+        {
+          "start": 872,
+          "end": 879,
+          "expression_start": 639,
+          "close": 869
+        },
+        {
+          "start": 973,
+          "end": 976,
+          "expression_start": 573,
+          "close": 970
+        },
+        {
+          "start": 1247,
+          "end": 1252,
+          "expression_start": 1164,
+          "close": 1244
+        },
+        {
+          "start": 1420,
+          "end": 1426,
+          "expression_start": 1342,
+          "close": 1417
+        },
+        {
+          "start": 1558,
+          "end": 1566,
+          "expression_start": 1465,
+          "close": 1555
+        },
+        {
+          "start": 1706,
+          "end": 1719,
+          "expression_start": 1611,
+          "close": 1703
+        },
+        {
+          "start": 1722,
+          "end": 1727,
+          "expression_start": 1426,
+          "close": 1719
+        }
+      ]
+    },
+    "serial-main": {
+      "source_sha256": "c42abaa7c1e04edfea27e2965e70e8d40a1a79294dd1fbc23e74f9b26e62968f",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/serial-main/source.exs",
+        "sha256": "c42abaa7c1e04edfea27e2965e70e8d40a1a79294dd1fbc23e74f9b26e62968f"
+      },
+      "native_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/serial-main/ast.json",
+        "sha256": "370722e616d02d613056085c9822ccccdda89ef31594f81816a7cea4351ab019"
+      },
+      "formatted_source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/serial-main/formatted.exs",
+        "sha256": "734eb08a48622eca689766d93899c259d0f492d8e7febaf299fe0bd7d936acd6"
+      },
+      "formatted_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/serial-main/formatted-ast.json",
+        "sha256": "2f1ba8919c0bf8156a8e970f1fb92d66b68c1dea81f95e27247bddd0980bbcb5"
+      },
+      "role": "application",
+      "included_in_application_loc": true,
+      "observed_retained_rule_loc": 81,
+      "observed_physical_loc": 67,
+      "observed_formatted_physical_loc": 74,
+      "diagnostics": [],
+      "formatted_diagnostics": [],
+      "line_ledger": [
+        {
+          "line": 1,
+          "source_text": "defmodule Clbg.Main do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 0,
+              "end": 22,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 2,
+          "source_text": "  import Bitwise",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 3,
+          "source_text": "  alias Clbg.Support, as: S",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 4,
+          "source_text": "  @queries [\"GGT\", \"GGTA\", \"GGTATT\", \"GGTATTTTAATT\", \"GGTATTTTAATTTATAGT\"]",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 5,
+          "source_text": "  @widths [1, 2, 3, 4, 6, 12, 18]",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 6,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 7,
+          "source_text": "  defp digit(code) when code in [?A, ?a], do: 0",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 8,
+          "source_text": "  defp digit(code) when code in [?C, ?c], do: 1",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 9,
+          "source_text": "  defp digit(code) when code in [?G, ?g], do: 2",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 10,
+          "source_text": "  defp digit(code) when code in [?T, ?t], do: 3",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 11,
+          "source_text": "  defp digit(_code), do: raise(ArgumentError, \"Unsupported nucleotide\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 12,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 13,
+          "source_text": "  defp header_name(line) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 445,
+              "end": 470,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 14,
+          "source_text": "    line |> binary_part(1, byte_size(line) - 1) |> :binary.split([\" \", \"\\t\"]) |> hd()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 15,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 559,
+              "end": 562,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 16,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 17,
+          "source_text": "  defp sequence([], _selected, out), do: out |> Enum.reverse() |> IO.iodata_to_binary()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 18,
+          "source_text": "  defp sequence([<<\">\", _rest::binary>> = line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 654,
+              "end": 726,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 19,
+          "source_text": "    if selected, do: sequence([], false, out), else: sequence(lines, header_name(line) == \"THREE\", out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 20,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 833,
+              "end": 836,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 21,
+          "source_text": "  defp sequence([line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 839,
+              "end": 886,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 22,
+          "source_text": "    if selected and line != \"\" and :binary.at(line, 0) != ?; do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 891,
+              "end": 950,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 23,
+          "source_text": "      encoded = for <<code <- line>>, into: <<>>, do: <<digit(code)>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 24,
+          "source_text": "      sequence(lines, selected, [encoded | out])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 25,
+          "source_text": "    else",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "branch",
+              "start": 1074,
+              "end": 1078,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 26,
+          "source_text": "      sequence(lines, selected, out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 27,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1120,
+              "end": 1123,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 28,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1126,
+              "end": 1129,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 29,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 30,
+          "source_text": "  defp prefix(binary, 0, key), do: {binary, key}",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 31,
+          "source_text": "  defp prefix(<<>>, _remaining, _key), do: :short",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 32,
+          "source_text": "  defp prefix(<<base, rest::binary>>, remaining, key) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1232,
+              "end": 1286,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 33,
+          "source_text": "    prefix(rest, remaining - 1, (key <<< 2) ||| base)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 34,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1343,
+              "end": 1346,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 35,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 36,
+          "source_text": "  defp count(<<>>, _mask, _key, counts), do: counts",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 37,
+          "source_text": "  defp count(<<base, rest::binary>>, mask, key, counts) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1402,
+              "end": 1458,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 38,
+          "source_text": "    next = ((key <<< 2) ||| base) &&& mask",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 39,
+          "source_text": "    updated = Map.update(counts, next, 1, fn value -> value + 1 end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1506,
+              "end": 1555,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1566,
+              "end": 1569,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1569,
+              "end": 1570,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1555,
+              "end": 1566,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 40,
+          "source_text": "    count(rest, mask, next, updated)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 41,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1610,
+              "end": 1613,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 42,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 43,
+          "source_text": "  defp histogram(dna, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1617,
+              "end": 1646,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 44,
+          "source_text": "    case prefix(dna, width - 1, 0) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1651,
+              "end": 1684,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 45,
+          "source_text": "      :short -> %{}",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1691,
+              "end": 1700,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1700,
+              "end": 1705,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 46,
+          "source_text": "      {rest, key} -> count(rest, (1 <<< (2 * width)) - 1, key, %{})",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1711,
+              "end": 1725,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1725,
+              "end": 1773,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 47,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1777,
+              "end": 1780,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 48,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1783,
+              "end": 1786,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 49,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 50,
+          "source_text": "  defp pack(query) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1790,
+              "end": 1809,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 51,
+          "source_text": "    Enum.reduce(:binary.bin_to_list(query), 0, fn code, key -> (key <<< 2) ||| digit(code) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1814,
+              "end": 1872,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1901,
+              "end": 1904,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1904,
+              "end": 1905,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1872,
+              "end": 1901,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 52,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1908,
+              "end": 1911,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 53,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 54,
+          "source_text": "  defp decode(key, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1915,
+              "end": 1941,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 55,
+          "source_text": "    for shift <- (width - 1)..0//-1, into: <<>> do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1946,
+              "end": 1992,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 56,
+          "source_text": "      <<:binary.at(\"ACGT\", (key >>> (2 * shift)) &&& 3)>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 57,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2055,
+              "end": 2058,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 58,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2061,
+              "end": 2064,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 59,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 60,
+          "source_text": "  defp result(dna, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2068,
+              "end": 2094,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 61,
+          "source_text": "    counts = histogram(dna, width)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 62,
+          "source_text": "    if width <= 2 do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2134,
+              "end": 2150,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 63,
+          "source_text": "      ordered = Enum.sort(counts, fn {ka, va}, {kb, vb} -> va > vb or (va == vb and ka < kb) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2157,
+              "end": 2209,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2244,
+              "end": 2247,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2247,
+              "end": 2248,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2209,
+              "end": 2244,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 64,
+          "source_text": "      total = max(0, byte_size(dna) - width + 1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 65,
+          "source_text": "      [Enum.map(ordered, fn {key, amount} -> [decode(key, width), \" \", S.fixed(100.0 * amount / total, 3), \"\\n\"] end), \"\\n\"]",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2304,
+              "end": 2342,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2411,
+              "end": 2414,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2414,
+              "end": 2416,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2342,
+              "end": 2411,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            },
+            {
+              "start": 2416,
+              "end": 2423,
+              "units": 0,
+              "assignments": [],
+              "reason": "same-native-expression-scalar-continuation"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 66,
+          "source_text": "    else",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "branch",
+              "start": 2427,
+              "end": 2431,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 67,
+          "source_text": "      query = Enum.find(@queries, fn query -> byte_size(query) == width end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2438,
+              "end": 2477,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2504,
+              "end": 2507,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2507,
+              "end": 2508,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2477,
+              "end": 2504,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 68,
+          "source_text": "      \"#{Map.get(counts, pack(query), 0)}\\t#{query}\\n\"",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 69,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2568,
+              "end": 2571,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 70,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2574,
+              "end": 2577,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 71,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 72,
+          "source_text": "  def main(_arguments) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2581,
+              "end": 2604,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 73,
+          "source_text": "    dna = S.input() |> S.lines() |> sequence(false, [])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 74,
+          "source_text": "    output = Enum.map(@widths, fn width -> result(dna, width) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2665,
+              "end": 2703,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2723,
+              "end": 2726,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2726,
+              "end": 2727,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2703,
+              "end": 2723,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 75,
+          "source_text": "    S.write(output)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 76,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2750,
+              "end": 2753,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 77,
+          "source_text": "end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2754,
+              "end": 2757,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        }
+      ],
+      "canonical_events": [
+        {
+          "kind": "header",
+          "start": 0,
+          "end": 22,
+          "units": 1,
+          "owner": "defmodule"
+        },
+        {
+          "kind": "header",
+          "start": 445,
+          "end": 470,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 559,
+          "end": 562,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 654,
+          "end": 726,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 833,
+          "end": 836,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 839,
+          "end": 886,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 891,
+          "end": 950,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "branch",
+          "start": 1074,
+          "end": 1078,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 1120,
+          "end": 1123,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 1126,
+          "end": 1129,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1232,
+          "end": 1286,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 1343,
+          "end": 1346,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1402,
+          "end": 1458,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1506,
+          "end": 1555,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1566,
+          "end": 1569,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1569,
+          "end": 1570,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1610,
+          "end": 1613,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1617,
+          "end": 1646,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1651,
+          "end": 1684,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "header",
+          "start": 1691,
+          "end": 1700,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 1711,
+          "end": 1725,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1777,
+          "end": 1780,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "close",
+          "start": 1783,
+          "end": 1786,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1790,
+          "end": 1809,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1814,
+          "end": 1872,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1901,
+          "end": 1904,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1904,
+          "end": 1905,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1908,
+          "end": 1911,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1915,
+          "end": 1941,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1946,
+          "end": 1992,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 2055,
+          "end": 2058,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 2061,
+          "end": 2064,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2068,
+          "end": 2094,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2134,
+          "end": 2150,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "header",
+          "start": 2157,
+          "end": 2209,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2244,
+          "end": 2247,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2247,
+          "end": 2248,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "header",
+          "start": 2304,
+          "end": 2342,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2411,
+          "end": 2414,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2414,
+          "end": 2416,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "branch",
+          "start": 2427,
+          "end": 2431,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "header",
+          "start": 2438,
+          "end": 2477,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2504,
+          "end": 2507,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2507,
+          "end": 2508,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 2568,
+          "end": 2571,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 2574,
+          "end": 2577,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2581,
+          "end": 2604,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 2665,
+          "end": 2703,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2723,
+          "end": 2726,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2726,
+          "end": 2727,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 2750,
+          "end": 2753,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 2754,
+          "end": 2757,
+          "units": 1,
+          "owner": "defmodule"
+        }
+      ],
+      "expression_continuations": [
+        {
+          "start": 1123,
+          "end": 1126,
+          "expression_start": 891,
+          "close": 1120
+        },
+        {
+          "start": 1569,
+          "end": 1575,
+          "expression_start": 1506,
+          "close": 1566
+        },
+        {
+          "start": 1780,
+          "end": 1783,
+          "expression_start": 1651,
+          "close": 1777
+        },
+        {
+          "start": 1904,
+          "end": 1908,
+          "expression_start": 1814,
+          "close": 1901
+        },
+        {
+          "start": 2058,
+          "end": 2061,
+          "expression_start": 1946,
+          "close": 2055
+        },
+        {
+          "start": 2247,
+          "end": 2255,
+          "expression_start": 2157,
+          "close": 2244
+        },
+        {
+          "start": 2414,
+          "end": 2427,
+          "expression_start": 2304,
+          "close": 2411
+        },
+        {
+          "start": 2507,
+          "end": 2515,
+          "expression_start": 2438,
+          "close": 2504
+        },
+        {
+          "start": 2571,
+          "end": 2574,
+          "expression_start": 2134,
+          "close": 2568
+        },
+        {
+          "start": 2726,
+          "end": 2732,
+          "expression_start": 2665,
+          "close": 2723
+        }
+      ]
+    },
+    "parallel-main": {
+      "source_sha256": "b5e24735c6f0494c0d61fca1ec713011b9a689b3c7dc70c23d4adca4441adddb",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parallel-main/source.exs",
+        "sha256": "b5e24735c6f0494c0d61fca1ec713011b9a689b3c7dc70c23d4adca4441adddb"
+      },
+      "native_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parallel-main/ast.json",
+        "sha256": "a689e067ba701356506e3f1af9251b125cd4f15b4c338ffe241e7a69d1aaacc6"
+      },
+      "formatted_source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parallel-main/formatted.exs",
+        "sha256": "e6b73b8d37effc07e1b50c3d4c58e73608df118a992af53e80c24c78b624a85b"
+      },
+      "formatted_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parallel-main/formatted-ast.json",
+        "sha256": "31cefaadcdd2bb29777c52e43f963df596258e47f032d6a7ad140b83a146b7be"
+      },
+      "role": "application",
+      "included_in_application_loc": true,
+      "observed_retained_rule_loc": null,
+      "observed_physical_loc": 71,
+      "observed_formatted_physical_loc": 81,
+      "diagnostics": [
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2665,
+          "line": 74,
+          "column": 5
+        },
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2746,
+          "line": 76,
+          "column": 59
+        },
+        {
+          "kind": "non-scalar-expression-continuation-needs-review",
+          "offset": 2749,
+          "line": 76,
+          "column": 62
+        }
+      ],
+      "formatted_diagnostics": [
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2718,
+          "line": 88,
+          "column": 5
+        },
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2799,
+          "line": 90,
+          "column": 59
+        },
+        {
+          "kind": "non-scalar-expression-continuation-needs-review",
+          "offset": 2802,
+          "line": 90,
+          "column": 62
+        }
+      ],
+      "line_ledger": [
+        {
+          "line": 1,
+          "source_text": "defmodule Clbg.Main do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 0,
+              "end": 22,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 2,
+          "source_text": "  import Bitwise",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 3,
+          "source_text": "  alias Clbg.Support, as: S",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 4,
+          "source_text": "  @queries [\"GGT\", \"GGTA\", \"GGTATT\", \"GGTATTTTAATT\", \"GGTATTTTAATTTATAGT\"]",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 5,
+          "source_text": "  @widths [1, 2, 3, 4, 6, 12, 18]",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 6,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 7,
+          "source_text": "  defp digit(code) when code in [?A, ?a], do: 0",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 8,
+          "source_text": "  defp digit(code) when code in [?C, ?c], do: 1",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 9,
+          "source_text": "  defp digit(code) when code in [?G, ?g], do: 2",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 10,
+          "source_text": "  defp digit(code) when code in [?T, ?t], do: 3",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 11,
+          "source_text": "  defp digit(_code), do: raise(ArgumentError, \"Unsupported nucleotide\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 12,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 13,
+          "source_text": "  defp header_name(line) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 445,
+              "end": 470,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 14,
+          "source_text": "    line |> binary_part(1, byte_size(line) - 1) |> :binary.split([\" \", \"\\t\"]) |> hd()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 15,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 559,
+              "end": 562,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 16,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 17,
+          "source_text": "  defp sequence([], _selected, out), do: out |> Enum.reverse() |> IO.iodata_to_binary()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 18,
+          "source_text": "  defp sequence([<<\">\", _rest::binary>> = line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 654,
+              "end": 726,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 19,
+          "source_text": "    if selected, do: sequence([], false, out), else: sequence(lines, header_name(line) == \"THREE\", out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 20,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 833,
+              "end": 836,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 21,
+          "source_text": "  defp sequence([line | lines], selected, out) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 839,
+              "end": 886,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 22,
+          "source_text": "    if selected and line != \"\" and :binary.at(line, 0) != ?; do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 891,
+              "end": 950,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 23,
+          "source_text": "      encoded = for <<code <- line>>, into: <<>>, do: <<digit(code)>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 24,
+          "source_text": "      sequence(lines, selected, [encoded | out])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 25,
+          "source_text": "    else",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "branch",
+              "start": 1074,
+              "end": 1078,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 26,
+          "source_text": "      sequence(lines, selected, out)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 27,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1120,
+              "end": 1123,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 28,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1126,
+              "end": 1129,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 29,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 30,
+          "source_text": "  defp prefix(binary, 0, key), do: {binary, key}",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 31,
+          "source_text": "  defp prefix(<<>>, _remaining, _key), do: :short",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 32,
+          "source_text": "  defp prefix(<<base, rest::binary>>, remaining, key) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1232,
+              "end": 1286,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 33,
+          "source_text": "    prefix(rest, remaining - 1, (key <<< 2) ||| base)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 34,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1343,
+              "end": 1346,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 35,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 36,
+          "source_text": "  defp count(<<>>, _mask, _key, counts), do: counts",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 37,
+          "source_text": "  defp count(<<base, rest::binary>>, mask, key, counts) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1402,
+              "end": 1458,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 38,
+          "source_text": "    next = ((key <<< 2) ||| base) &&& mask",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 39,
+          "source_text": "    updated = Map.update(counts, next, 1, fn value -> value + 1 end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1506,
+              "end": 1555,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1566,
+              "end": 1569,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1569,
+              "end": 1570,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1555,
+              "end": 1566,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 40,
+          "source_text": "    count(rest, mask, next, updated)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 41,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1610,
+              "end": 1613,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 42,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 43,
+          "source_text": "  defp histogram(dna, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1617,
+              "end": 1646,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 44,
+          "source_text": "    case prefix(dna, width - 1, 0) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1651,
+              "end": 1684,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 45,
+          "source_text": "      :short -> %{}",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1691,
+              "end": 1700,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1700,
+              "end": 1705,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 46,
+          "source_text": "      {rest, key} -> count(rest, (1 <<< (2 * width)) - 1, key, %{})",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1711,
+              "end": 1725,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1725,
+              "end": 1773,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 47,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1777,
+              "end": 1780,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 48,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1783,
+              "end": 1786,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 49,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 50,
+          "source_text": "  defp pack(query) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1790,
+              "end": 1809,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 51,
+          "source_text": "    Enum.reduce(:binary.bin_to_list(query), 0, fn code, key -> (key <<< 2) ||| digit(code) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1814,
+              "end": 1872,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 1901,
+              "end": 1904,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 1904,
+              "end": 1905,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 1872,
+              "end": 1901,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 52,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1908,
+              "end": 1911,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 53,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 54,
+          "source_text": "  defp decode(key, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1915,
+              "end": 1941,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 55,
+          "source_text": "    for shift <- (width - 1)..0//-1, into: <<>> do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1946,
+              "end": 1992,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 56,
+          "source_text": "      <<:binary.at(\"ACGT\", (key >>> (2 * shift)) &&& 3)>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 57,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2055,
+              "end": 2058,
+              "units": 1,
+              "owner": "for"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 58,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2061,
+              "end": 2064,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 59,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 60,
+          "source_text": "  defp result(dna, width) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2068,
+              "end": 2094,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 61,
+          "source_text": "    counts = histogram(dna, width)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 62,
+          "source_text": "    if width <= 2 do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2134,
+              "end": 2150,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 63,
+          "source_text": "      ordered = Enum.sort(counts, fn {ka, va}, {kb, vb} -> va > vb or (va == vb and ka < kb) end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2157,
+              "end": 2209,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2244,
+              "end": 2247,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2247,
+              "end": 2248,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2209,
+              "end": 2244,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 64,
+          "source_text": "      total = max(0, byte_size(dna) - width + 1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 65,
+          "source_text": "      [Enum.map(ordered, fn {key, amount} -> [decode(key, width), \" \", S.fixed(100.0 * amount / total, 3), \"\\n\"] end), \"\\n\"]",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2304,
+              "end": 2342,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2411,
+              "end": 2414,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2414,
+              "end": 2416,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2342,
+              "end": 2411,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            },
+            {
+              "start": 2416,
+              "end": 2423,
+              "units": 0,
+              "assignments": [],
+              "reason": "same-native-expression-scalar-continuation"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 66,
+          "source_text": "    else",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "branch",
+              "start": 2427,
+              "end": 2431,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 67,
+          "source_text": "      query = Enum.find(@queries, fn query -> byte_size(query) == width end)",
+          "significant": true,
+          "retained_rule_units": 3,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2438,
+              "end": 2477,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "close",
+              "start": 2504,
+              "end": 2507,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2507,
+              "end": 2508,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2477,
+              "end": 2504,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 68,
+          "source_text": "      \"#{Map.get(counts, pack(query), 0)}\\t#{query}\\n\"",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 69,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2568,
+              "end": 2571,
+              "units": 1,
+              "owner": "if"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 70,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2574,
+              "end": 2577,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 71,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 72,
+          "source_text": "  def main(_arguments) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2581,
+              "end": 2604,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 73,
+          "source_text": "    dna = S.input() |> S.lines() |> sequence(false, [])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 74,
+          "source_text": "    output =",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 2665,
+              "end": 2726,
+              "units": 1,
+              "owner": "arrow-clause"
+            },
+            {
+              "kind": "header",
+              "start": 2665,
+              "end": 2851,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 75,
+          "source_text": "      @widths",
+          "significant": true,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 76,
+          "source_text": "      |> Task.async_stream(fn width -> result(dna, width) end,",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2746,
+              "end": 2749,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2749,
+              "end": 2750,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 77,
+          "source_text": "        max_concurrency: 7, ordered: true, timeout: :infinity)",
+          "significant": true,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 78,
+          "source_text": "      |> Enum.map(fn {:ok, result} -> result end)",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2859,
+              "end": 2862,
+              "units": 1,
+              "owner": "fn"
+            },
+            {
+              "kind": "structural-suffix",
+              "start": 2862,
+              "end": 2863,
+              "units": 0,
+              "owner": "argument-or-data-suffix"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 2851,
+              "end": 2859,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 79,
+          "source_text": "    S.write(output)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 80,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2886,
+              "end": 2889,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 81,
+          "source_text": "end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2890,
+              "end": 2893,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        }
+      ],
+      "canonical_events": [
+        {
+          "kind": "header",
+          "start": 0,
+          "end": 22,
+          "units": 1,
+          "owner": "defmodule"
+        },
+        {
+          "kind": "header",
+          "start": 445,
+          "end": 470,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 559,
+          "end": 562,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 654,
+          "end": 726,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 833,
+          "end": 836,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 839,
+          "end": 886,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 891,
+          "end": 950,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "branch",
+          "start": 1074,
+          "end": 1078,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 1120,
+          "end": 1123,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 1126,
+          "end": 1129,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1232,
+          "end": 1286,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 1343,
+          "end": 1346,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1402,
+          "end": 1458,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1506,
+          "end": 1555,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1566,
+          "end": 1569,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1569,
+          "end": 1570,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1610,
+          "end": 1613,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1617,
+          "end": 1646,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1651,
+          "end": 1684,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "header",
+          "start": 1691,
+          "end": 1700,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 1711,
+          "end": 1725,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1777,
+          "end": 1780,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "close",
+          "start": 1783,
+          "end": 1786,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1790,
+          "end": 1809,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1814,
+          "end": 1872,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 1901,
+          "end": 1904,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 1904,
+          "end": 1905,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 1908,
+          "end": 1911,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1915,
+          "end": 1941,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 1946,
+          "end": 1992,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 2055,
+          "end": 2058,
+          "units": 1,
+          "owner": "for"
+        },
+        {
+          "kind": "close",
+          "start": 2061,
+          "end": 2064,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2068,
+          "end": 2094,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2134,
+          "end": 2150,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "header",
+          "start": 2157,
+          "end": 2209,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2244,
+          "end": 2247,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2247,
+          "end": 2248,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "header",
+          "start": 2304,
+          "end": 2342,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2411,
+          "end": 2414,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2414,
+          "end": 2416,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "branch",
+          "start": 2427,
+          "end": 2431,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "header",
+          "start": 2438,
+          "end": 2477,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2504,
+          "end": 2507,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2507,
+          "end": 2508,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 2568,
+          "end": 2571,
+          "units": 1,
+          "owner": "if"
+        },
+        {
+          "kind": "close",
+          "start": 2574,
+          "end": 2577,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 2581,
+          "end": 2604,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 2665,
+          "end": 2726,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 2665,
+          "end": 2851,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 2746,
+          "end": 2749,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2749,
+          "end": 2750,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 2859,
+          "end": 2862,
+          "units": 1,
+          "owner": "fn"
+        },
+        {
+          "kind": "structural-suffix",
+          "start": 2862,
+          "end": 2863,
+          "units": 0,
+          "owner": "argument-or-data-suffix"
+        },
+        {
+          "kind": "close",
+          "start": 2886,
+          "end": 2889,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 2890,
+          "end": 2893,
+          "units": 1,
+          "owner": "defmodule"
+        }
+      ],
+      "expression_continuations": [
+        {
+          "start": 1123,
+          "end": 1126,
+          "expression_start": 891,
+          "close": 1120
+        },
+        {
+          "start": 1569,
+          "end": 1575,
+          "expression_start": 1506,
+          "close": 1566
+        },
+        {
+          "start": 1780,
+          "end": 1783,
+          "expression_start": 1651,
+          "close": 1777
+        },
+        {
+          "start": 1904,
+          "end": 1908,
+          "expression_start": 1814,
+          "close": 1901
+        },
+        {
+          "start": 2058,
+          "end": 2061,
+          "expression_start": 1946,
+          "close": 2055
+        },
+        {
+          "start": 2247,
+          "end": 2255,
+          "expression_start": 2157,
+          "close": 2244
+        },
+        {
+          "start": 2414,
+          "end": 2427,
+          "expression_start": 2304,
+          "close": 2411
+        },
+        {
+          "start": 2507,
+          "end": 2515,
+          "expression_start": 2438,
+          "close": 2504
+        },
+        {
+          "start": 2571,
+          "end": 2574,
+          "expression_start": 2134,
+          "close": 2568
+        },
+        {
+          "start": 2749,
+          "end": 2868,
+          "expression_start": 2665,
+          "close": 2746
+        },
+        {
+          "start": 2862,
+          "end": 2868,
+          "expression_start": 2665,
+          "close": 2859
+        }
+      ]
+    },
+    "support": {
+      "source_sha256": "c9fbb60888c46fb50195245761a411716f1256145af367e03a23f70aea270e89",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/support/source.exs",
+        "sha256": "c9fbb60888c46fb50195245761a411716f1256145af367e03a23f70aea270e89"
+      },
+      "native_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/support/ast.json",
+        "sha256": "7b18a26c4f08dda73a804b7bccdc430d06a5138a269f8abadae838cf6fa092c4"
+      },
+      "formatted_source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/support/formatted.exs",
+        "sha256": "5a214143021400b67f93d35fd14f57213325978cdc9e71dbbc58d152368d0be7"
+      },
+      "formatted_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/support/formatted-ast.json",
+        "sha256": "83a2202964732d500463a0cfc454897ed02c8671d9a3deed142a08dbf80bb30d"
+      },
+      "role": "runtime-support",
+      "included_in_application_loc": false,
+      "observed_retained_rule_loc": 61,
+      "observed_physical_loc": 53,
+      "observed_formatted_physical_loc": 68,
+      "diagnostics": [],
+      "formatted_diagnostics": [],
+      "line_ledger": [
+        {
+          "line": 1,
+          "source_text": "defmodule Clbg.Support do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 0,
+              "end": 25,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 2,
+          "source_text": "  import Bitwise",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 3,
+          "source_text": "",
+          "significant": false,
+          "retained_rule_units": 0,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 4,
+          "source_text": "  def size(arguments, fallback) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 46,
+              "end": 78,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 5,
+          "source_text": "    n = case arguments do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 83,
+              "end": 104,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 6,
+          "source_text": "      [] -> fallback",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 111,
+              "end": 116,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 116,
+              "end": 126,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 7,
+          "source_text": "      [text] -> String.to_integer(text)",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 132,
+              "end": 141,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 141,
+              "end": 166,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 8,
+          "source_text": "      _ -> raise ArgumentError, \"One size argument required\"",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 172,
+              "end": 176,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 176,
+              "end": 227,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 9,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 231,
+              "end": 234,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 10,
+          "source_text": "    if n < 0, do: raise(ArgumentError, \"Negative size\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 11,
+          "source_text": "    n",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 12,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 299,
+              "end": 302,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 13,
+          "source_text": "  def indices(0), do: []",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 14,
+          "source_text": "  def indices(n) when n > 0, do: 0..(n - 1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 15,
+          "source_text": "  defp configure do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 374,
+              "end": 391,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 16,
+          "source_text": "    :ok = :io.setopts(:standard_io, binary: true, encoding: :latin1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 17,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 463,
+              "end": 466,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 18,
+          "source_text": "  def input do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 469,
+              "end": 481,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 19,
+          "source_text": "    configure()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 20,
+          "source_text": "    read([])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 21,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 513,
+              "end": 516,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 22,
+          "source_text": "  defp read(parts) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 519,
+              "end": 538,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 23,
+          "source_text": "    case IO.binread(:stdio, 65_536) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 543,
+              "end": 577,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 24,
+          "source_text": "      :eof -> parts |> Enum.reverse() |> IO.iodata_to_binary()",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 584,
+              "end": 591,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 591,
+              "end": 641,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 25,
+          "source_text": "      {:error, reason} -> raise \"Input error: #{inspect(reason)}\"",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 647,
+              "end": 666,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 666,
+              "end": 707,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 26,
+          "source_text": "      bytes when is_binary(bytes) -> read([bytes | parts])",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 713,
+              "end": 743,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 743,
+              "end": 766,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 27,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 770,
+              "end": 773,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 28,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 776,
+              "end": 779,
+              "units": 1,
+              "owner": "defp"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 29,
+          "source_text": "  def write(data) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 782,
+              "end": 800,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 30,
+          "source_text": "    configure()",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 31,
+          "source_text": "    case IO.binwrite(:stdio, data) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 821,
+              "end": 854,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 32,
+          "source_text": "      :ok -> :ok",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 861,
+              "end": 867,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 867,
+              "end": 872,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 33,
+          "source_text": "      {:error, reason} -> raise \"Output error: #{inspect(reason)}\"",
+          "significant": true,
+          "retained_rule_units": 2,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 878,
+              "end": 897,
+              "units": 1,
+              "owner": "arrow-clause"
+            }
+          ],
+          "residual_statements": [
+            {
+              "start": 897,
+              "end": 939,
+              "units": 1,
+              "assignments": [],
+              "reason": "independent-statement-or-preserved-physical-row"
+            }
+          ],
+          "fallback": null
+        },
+        {
+          "line": 34,
+          "source_text": "    end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 943,
+              "end": 946,
+              "units": 1,
+              "owner": "case"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 35,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 949,
+              "end": 952,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 36,
+          "source_text": "  def lines(bytes) do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 955,
+              "end": 974,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 37,
+          "source_text": "    bytes |> :binary.replace(\"\\r\\n\", \"\\n\", [:global]) |> :binary.replace(\"\\r\", \"\\n\", [:global]) |> :binary.split(\"\\n\", [:global])",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 38,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 1107,
+              "end": 1110,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 39,
+          "source_text": "  defp power10(0), do: 1",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 40,
+          "source_text": "  defp power10(n), do: 10 * power10(n - 1)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 41,
+          "source_text": "  def fixed(value, digits) when is_float(value) and is_integer(digits) and digits >= 0 and digits <= 18 do",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "header",
+              "start": 1181,
+              "end": 1285,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 42,
+          "source_text": "    <<sign::1, exponent::11, fraction::52>> = <<value::float-64>>",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 43,
+          "source_text": "    if exponent == 2047, do: raise(ArgumentError, \"Nonfinite value\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 44,
+          "source_text": "    {mantissa, shift} = if exponent == 0, do: {fraction, -1074}, else: {(1 <<< 52) + fraction, exponent - 1075}",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 45,
+          "source_text": "    scaled = mantissa * power10(digits)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 46,
+          "source_text": "    {numerator, denominator} = if shift >= 0, do: {scaled <<< shift, 1}, else: {scaled, 1 <<< (-shift)}",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 47,
+          "source_text": "    quotient = div(numerator, denominator)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 48,
+          "source_text": "    remainder = rem(numerator, denominator)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 49,
+          "source_text": "    rounded = if 2 * remainder > denominator or (2 * remainder == denominator and rem(quotient, 2) == 1), do: quotient + 1, else: quotient",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 50,
+          "source_text": "    text = rounded |> Integer.to_string() |> String.pad_leading(digits + 1, \"0\")",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 51,
+          "source_text": "    decimal = if digits == 0, do: text, else: binary_part(text, 0, byte_size(text) - digits) <> \".\" <> binary_part(text, byte_size(text) - digits, digits)",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 52,
+          "source_text": "    if sign == 1, do: \"-\" <> decimal, else: decimal",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        },
+        {
+          "line": 53,
+          "source_text": "  end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2193,
+              "end": 2196,
+              "units": 1,
+              "owner": "def"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        },
+        {
+          "line": 54,
+          "source_text": "end",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [
+            {
+              "kind": "close",
+              "start": 2197,
+              "end": 2200,
+              "units": 1,
+              "owner": "defmodule"
+            }
+          ],
+          "residual_statements": [],
+          "fallback": null
+        }
+      ],
+      "canonical_events": [
+        {
+          "kind": "header",
+          "start": 0,
+          "end": 25,
+          "units": 1,
+          "owner": "defmodule"
+        },
+        {
+          "kind": "header",
+          "start": 46,
+          "end": 78,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 83,
+          "end": 104,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "header",
+          "start": 111,
+          "end": 116,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 132,
+          "end": 141,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 172,
+          "end": 176,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 231,
+          "end": 234,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "close",
+          "start": 299,
+          "end": 302,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 374,
+          "end": 391,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "close",
+          "start": 463,
+          "end": 466,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 469,
+          "end": 481,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 513,
+          "end": 516,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 519,
+          "end": 538,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 543,
+          "end": 577,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "header",
+          "start": 584,
+          "end": 591,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 647,
+          "end": 666,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 713,
+          "end": 743,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 770,
+          "end": 773,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "close",
+          "start": 776,
+          "end": 779,
+          "units": 1,
+          "owner": "defp"
+        },
+        {
+          "kind": "header",
+          "start": 782,
+          "end": 800,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 821,
+          "end": 854,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "header",
+          "start": 861,
+          "end": 867,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "header",
+          "start": 878,
+          "end": 897,
+          "units": 1,
+          "owner": "arrow-clause"
+        },
+        {
+          "kind": "close",
+          "start": 943,
+          "end": 946,
+          "units": 1,
+          "owner": "case"
+        },
+        {
+          "kind": "close",
+          "start": 949,
+          "end": 952,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 955,
+          "end": 974,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 1107,
+          "end": 1110,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "header",
+          "start": 1181,
+          "end": 1285,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 2193,
+          "end": 2196,
+          "units": 1,
+          "owner": "def"
+        },
+        {
+          "kind": "close",
+          "start": 2197,
+          "end": 2200,
+          "units": 1,
+          "owner": "defmodule"
+        }
+      ],
+      "expression_continuations": [
+        {
+          "start": 234,
+          "end": 239,
+          "expression_start": 83,
+          "close": 231
+        },
+        {
+          "start": 773,
+          "end": 776,
+          "expression_start": 543,
+          "close": 770
+        },
+        {
+          "start": 946,
+          "end": 949,
+          "expression_start": 821,
+          "close": 943
+        }
+      ]
+    },
+    "runner": {
+      "source_sha256": "bdad2389d437fd4c69122e5d25b3065412b4bca0c272631667283273392ba8ff",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/runner/source.exs",
+        "sha256": "bdad2389d437fd4c69122e5d25b3065412b4bca0c272631667283273392ba8ff"
+      },
+      "native_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/runner/ast.json",
+        "sha256": "4787de8146e82d59b6ce211faf3aeae3d70a20e898f8abf82c82a18dd7026bbb"
+      },
+      "formatted_source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/runner/formatted.exs",
+        "sha256": "bdad2389d437fd4c69122e5d25b3065412b4bca0c272631667283273392ba8ff"
+      },
+      "formatted_ast": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/runner/formatted-ast.json",
+        "sha256": "4787de8146e82d59b6ce211faf3aeae3d70a20e898f8abf82c82a18dd7026bbb"
+      },
+      "role": "runtime-support",
+      "included_in_application_loc": false,
+      "observed_retained_rule_loc": 1,
+      "observed_physical_loc": 1,
+      "observed_formatted_physical_loc": 1,
+      "diagnostics": [],
+      "formatted_diagnostics": [],
+      "line_ledger": [
+        {
+          "line": 1,
+          "source_text": "Clbg.Main.main(System.argv())",
+          "significant": true,
+          "retained_rule_units": 1,
+          "retained_rule_owners": [],
+          "residual_statements": [],
+          "fallback": "preserved-significant-physical-row"
+        }
+      ],
+      "canonical_events": [],
+      "expression_continuations": []
+    }
+  },
+  "profiles": [
+    {
+      "id": "serial",
+      "source_sha256": "c42abaa7c1e04edfea27e2965e70e8d40a1a79294dd1fbc23e74f9b26e62968f",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/serial-main/source.exs",
+        "sha256": "c42abaa7c1e04edfea27e2965e70e8d40a1a79294dd1fbc23e74f9b26e62968f"
+      },
+      "application_loc": null,
+      "physical_loc": null,
+      "formatted_loc": null,
+      "independent_review_approved": false,
+      "retained_rule_proposed_loc": 81,
+      "candidate_physical_loc": 67,
+      "candidate_formatted_application_loc": 74,
+      "application_files": [
+        "serial-main"
+      ],
+      "excluded_support_files": [
+        "support",
+        "runner"
+      ],
+      "excluded_support_loc": 62,
+      "excluded_support_physical_loc": 54,
+      "whole_bundle_retained_rule_loc": 143,
+      "whole_bundle_physical_loc": 121,
+      "diagnostics": [],
+      "formatted_diagnostics": [],
+      "uniform_logical_loc": null,
+      "uniform_logical_grammar_qualified": false
+    },
+    {
+      "id": "parallel",
+      "source_sha256": "b5e24735c6f0494c0d61fca1ec713011b9a689b3c7dc70c23d4adca4441adddb",
+      "source": {
+        "path": "experiments/elixir/rolling-v1/source-counts-v1/run-v1/reader/parallel-main/source.exs",
+        "sha256": "b5e24735c6f0494c0d61fca1ec713011b9a689b3c7dc70c23d4adca4441adddb"
+      },
+      "application_loc": null,
+      "physical_loc": null,
+      "formatted_loc": null,
+      "independent_review_approved": false,
+      "retained_rule_proposed_loc": null,
+      "candidate_physical_loc": 71,
+      "candidate_formatted_application_loc": 81,
+      "application_files": [
+        "parallel-main"
+      ],
+      "excluded_support_files": [
+        "support",
+        "runner"
+      ],
+      "excluded_support_loc": 62,
+      "excluded_support_physical_loc": 54,
+      "whole_bundle_retained_rule_loc": null,
+      "whole_bundle_physical_loc": 125,
+      "diagnostics": [
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2665,
+          "line": 74,
+          "column": 5
+        },
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2746,
+          "line": 76,
+          "column": 59
+        },
+        {
+          "kind": "non-scalar-expression-continuation-needs-review",
+          "offset": 2749,
+          "line": 76,
+          "column": 62
+        }
+      ],
+      "formatted_diagnostics": [
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2718,
+          "line": 88,
+          "column": 5
+        },
+        {
+          "kind": "overlapping-native-owner-spans",
+          "offset": 2799,
+          "line": 90,
+          "column": 59
+        },
+        {
+          "kind": "non-scalar-expression-continuation-needs-review",
+          "offset": 2802,
+          "line": 90,
+          "column": 62
+        }
+      ],
+      "uniform_logical_loc": null,
+      "uniform_logical_grammar_qualified": false
+    }
+  ],
+  "controls": [
+    {
+      "id": "parent-main",
+      "historical_id": "elixir-knucleotide-optimized--application",
+      "exact_counter_result": true,
+      "exact_native_artifact_bytes": true,
+      "exact_canonical_events": true,
+      "exact_expansions": true,
+      "original_normalized_loc": 47,
+      "original_physical_loc": 39,
+      "formatted_physical_loc": 50
+    },
+    {
+      "id": "support",
+      "historical_id": "elixir-knucleotide-optimized--application-helper",
+      "exact_counter_result": true,
+      "exact_native_artifact_bytes": true,
+      "exact_canonical_events": true,
+      "exact_expansions": true,
+      "original_normalized_loc": 61,
+      "original_physical_loc": 53,
+      "formatted_physical_loc": 68
+    },
+    {
+      "id": "runner",
+      "historical_id": "elixir-knucleotide-optimized--application-launcher",
+      "exact_counter_result": true,
+      "exact_native_artifact_bytes": true,
+      "exact_canonical_events": true,
+      "exact_expansions": true,
+      "original_normalized_loc": 1,
+      "original_physical_loc": 1,
+      "formatted_physical_loc": 1
+    }
+  ],
+  "retained_fixture_expectations_passed": true,
+  "parser_functions_unchanged": true,
+  "counter_constants_unchanged": true,
+  "frozen_files_edited": false,
+  "boundary": {
+    "parent_current_application": [
+      47,
+      39
+    ],
+    "parent_historical_whole_bundle": [
+      109,
+      93
+    ],
+    "excluded_generic_support": [
+      62,
+      54
+    ],
+    "policy": {
+      "path": "docs/methodology.md",
+      "sha256": "d6a6a3396d705b343805416564dc7215836b2b2fd91417acaa3d5e5d8053ac5d"
+    },
+    "parent_manifest": {
+      "path": "programs/elixir/knucleotide/elixir-knucleotide-optimized/program.json",
+      "sha256": "5111bcf6fc854789abbc1c22ada2cc6b7f2a21b350a35b5962f70d9aab813fe8"
+    },
+    "note": "The original source-count qualification counted complete bundles. The published application policy subsequently excluded the unchanged general helper61/53 and launcher1/1. Only each rolling main is proposed for application LOC; all benchmark parsing/counting/format construction functions remain inside that main. Existing frozen native/pilot packet prose is clarified here without changing it."
+  },
+  "retained_policy_limit": "This replays the already-qualified retained Elixir owner policy, including written closers and retained data/expression continuation rows. It does not certify logical-source-owners uniform-axis semantics or claim a newly qualified whole-language frontend.",
+  "source_evaluations": 0,
+  "subject_recompilations": 0,
+  "subject_main_invocations": 0,
+  "canonical_loc_qualified": false,
+  "formatted_loc_qualified": false,
+  "uniform_logical_axis_qualified": false,
+  "chart_admission": false
+}
