@@ -134,7 +134,9 @@ def append_catalog(before, root=ROOT):
         bench = next(b for b in data['benchmarks'] if b['key'] == r['benchmark'])
         assert r['median_seconds'] >= bench['baseline_seconds'], 'New best time needs a normalization review'
         row = copy.deepcopy(parent)
-        row.update(key=r['key'],id=r['id'],language=LANG,seconds=r['median_seconds'],
+        for field in ['publication_record','timing_measurement','timing_correction','aliased_sample_source']:
+            row.pop(field,None)
+        row.update(key=r['key'],id=r['id'],receipt_key=r['id'],language=LANG,seconds=r['median_seconds'],
             samples=r['samples_seconds'],timing_sd=r['sample_sd_seconds'],
             y=r['median_seconds']/bench['baseline_seconds'],
             report=evidence['results']['path'],report_sha256=evidence['results']['sha256'],
