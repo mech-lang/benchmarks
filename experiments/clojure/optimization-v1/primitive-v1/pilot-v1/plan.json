@@ -1,0 +1,191 @@
+{
+  "schema": "clojure-nbody-primitive-optimization-plan.v1",
+  "status": "source-reviewed-awaiting-primitive-build-and-bounded-qualification",
+  "chart_admission": false,
+  "qualification_complete": false,
+  "new_observations": 0,
+  "compiler_or_subject_executions": 0,
+  "parent": {
+    "program": "nbody:clojure-nbody-compact",
+    "source": {
+      "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+      "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+    },
+    "support": {
+      "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+      "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+    },
+    "application_loc": 109,
+    "physical_loc": 49,
+    "saved_seconds": 165.364857875,
+    "saved_samples": [
+      158.278659625,
+      165.364857875,
+      165.4170845
+    ],
+    "saved_report_path": "clojure-comparison/20261012/studies/full-v1/nbody/report.json",
+    "report_path_is_legacy": true,
+    "raw_process_evidence": "data/benchmarks.json#/programs/nbody:clojure-nbody-compact/sample_execution_metadata"
+  },
+  "historical_optimized_context": {
+    "program": "nbody:clojure-nbody-optimized",
+    "source_sha256": "e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881",
+    "saved_seconds": 207.674197292,
+    "saved_samples": [
+      202.789440208,
+      207.674197292,
+      208.238374291
+    ],
+    "application_loc": 121,
+    "physical_loc": 56,
+    "reason_not_selected_as_parent": "Two-pass descriptors and scratch arrays are already slower in the saved cohort"
+  },
+  "candidates": [
+    {
+      "id": "scalar-updates",
+      "namespace": "clbg.nbody.scalar-updates",
+      "source": {
+        "path": "experiments/clojure/optimization-v1/sources/clbg/nbody/scalar_updates.clj",
+        "sha256": "0117d4c395ab2a9ad0a2bb4d119b53c6023ec476f77e2e334ead1f10ee81e113"
+      },
+      "proposed_application_loc": 111,
+      "physical_loc": 52,
+      "compiled": false,
+      "qualified": false,
+      "measured": false,
+      "generated_main_class": "clbg.nbody.scalar_updates"
+    },
+    {
+      "id": "primitive-updates",
+      "namespace": "clbg.nbody.primitive-updates",
+      "generated_main_class": "clbg.nbody.primitive_updates",
+      "source": {
+        "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+        "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+      },
+      "proposed_application_loc": 111,
+      "physical_loc": 52,
+      "compiled": false,
+      "qualified": false,
+      "measured": false
+    }
+  ],
+  "evidence": {
+    "provenance": {
+      "path": "archive/languages/clojure/20261012/PROVENANCE.md",
+      "sha256": "4f342de63be2cbaebad6557ceb1f1d0fb6be6a9bb4866d56a5676931d644d364"
+    },
+    "bounded_corpus": {
+      "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+      "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+    },
+    "parent_source_ownership": {
+      "path": "experiments/clojure/optimization-v1/source-ownership.json",
+      "sha256": "d8c4e4bfcc38deab0ebe26c74c3776cba158796ee6d94a47fd72cf161b193a93"
+    },
+    "prior_source_deltas": {
+      "path": "experiments/clojure/optimization-v1/source-deltas.json",
+      "sha256": "f9fd7dc524bf8ee70922ea1f65fa49e5e64e3603bc2e4c6de02cb68b9fcb64fa"
+    },
+    "prior_runtime_restoration": {
+      "path": "experiments/clojure/optimization-v1/runtime-restoration.json",
+      "sha256": "60b8870316d6537370017107857890537eaf5ac02abacc3d3633b34c80dcc777"
+    }
+  },
+  "author_context": {
+    "tool": "OpenAI Codex",
+    "model_family": "Codex GPT-6",
+    "exact_model": null,
+    "evidence": "Current developer identity provides family only; earlier predecessor original author/model and inherited terms remain unresolved"
+  },
+  "required_work": {
+    "status": "source-reviewed-proposal-no-executed-witness",
+    "steps": 50000000,
+    "pair_order": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "pair_interactions": 500000000,
+    "pair_square_roots": 500000000,
+    "pair_divisions": 500000000,
+    "velocity_stores": 3000000000,
+    "position_stores": 750000000,
+    "additional_work": "Canonical initialization; offset momentum; before/after energies; full flushed output",
+    "numeric_rule": "Preserve source expression grouping, pair order, velocity store order and delayed positions; no unchecked or fast math"
+  },
+  "future_execution_plan": {
+    "status": "not-authorized-by-source-only-packet",
+    "common_mutex": "/tmp/mech-clbg-timing.lock",
+    "build": "Pinned restored JVM; exact parent and two isolated candidates; compile clbg.support and one main with direct-linking true; retain all class hashes/warnings/source inventory",
+    "diagnostic": "Inspect real javap bytecode and parent under identical options; any warn-on-boxed build remains separate and untimed",
+    "bounded_n": [
+      0,
+      1,
+      2,
+      10,
+      1000,
+      10000
+    ],
+    "additional_reference_n": [
+      3,
+      7,
+      31,
+      1001
+    ],
+    "bounded_state_witness": "Source-instrumented twins only; exact ordered interactions and per-step primitive state against original parent; never time twins",
+    "full_n": 50000000,
+    "rounds": 3,
+    "order": "Seeded shuffled sequential fresh processes; retain every observation and full power/resource/process-group evidence",
+    "expected_full_stdout": "-0.169075164\n-0.169059907\n",
+    "timing_boundary": "JVM launch, class loading, HotSpot compilation, all sequential steps, energy computations, GC, output flush and process exit",
+    "selection": "Lowest qualified retained median only; no global optimality claim",
+    "admission": "Requires independent exact-source count approval and separate guarded append; preserve old observations and source"
+  },
+  "initial_catalog_context_only": {
+    "path": "data/benchmarks.json",
+    "sha256": "fda00e2cd7e1274edf977a1f14989f6bc9178ab95c9c3f56507e3893bf5b98de"
+  },
+  "prior_source_packet": {
+    "path": "experiments/clojure/optimization-v1/plan.json",
+    "sha256": "2d8834b7b8b17aae125cc3e44e7b6c1caabd8d51a58a8c338e9bb10ae96014ae"
+  },
+  "primitive_change": "Replace all seven advance-body aset-double call sites with ordinary aset on already hinted double[] locals, retaining scalar update order and the position loop. Momentum and energy remain unchanged."
+}
