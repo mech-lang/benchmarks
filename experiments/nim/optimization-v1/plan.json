@@ -1,0 +1,208 @@
+{
+  "schema": "nim-optimization-plan.v1",
+  "status": "source-prepared-not-compiled-or-run",
+  "benchmark": "knucleotide",
+  "parent_program_key": "knucleotide:nim-knucleotide-optimized",
+  "candidate": {
+    "path": "experiments/nim/optimization-v1/sources/knucleotide-mgetorput.nim",
+    "sha256": "7ece7878152461f837d85045c8e5a91c7dcfa2d0adc5bd912abd1168fecee60d",
+    "change": "Use the standard Table mutable-value API mgetOrPut(key, 0_i64).inc for every existing rolling-window update.",
+    "exact_unified_diff": "--- archive/languages/nim/20261012/qualification/private-v4/source-snapshot/sources/knucleotide/optimized.nim\n+++ experiments/nim/optimization-v1/sources/knucleotide-mgetorput.nim\n@@ -32,7 +32,7 @@\n   for index, value in job.sequence[]:\n     key = ((key shl 2) or code(value)) and mask\n     if index + 1 >= job.width:\n-      job.output[][key] = job.output[].getOrDefault(key) + 1\n+      job.output[].mgetOrPut(key, 0'i64).inc\n \n proc decode(key: uint64, width: int): string =\n   result = newString(width)\n"
+  },
+  "parent_source": {
+    "path": "archive/languages/nim/20261012/qualification/private-v4/source-snapshot/sources/knucleotide/optimized.nim",
+    "sha256": "9b5a250702745e4ade2bd0488444aa6a4c393c198da57be7fedd7bd8b04732a8",
+    "classification": "derived-adapted",
+    "original_lineage_status": "unresolved",
+    "no_inference_from_missing_citations": true,
+    "provenance_document": "archive/languages/nim/20261012/qualification/private-v4/source-snapshot/PROVENANCE.md",
+    "provenance_document_sha256": "b0d05521b06e64cc1113d606ff2c3ce89307308c649ec409123a4cad574131c7",
+    "retained_program_metadata": "programs/nim/knucleotide/nim-knucleotide-optimized/program.json",
+    "retained_program_metadata_sha256": "47fcc3d8b32d1aa1fcfab87a60a3ad1b73ad47387fb209eb3b1e71a719b377b9",
+    "authorship": {
+      "schema": "benchmark-authorship.v1",
+      "kind": "local-origin-unverified",
+      "label": "Local \u00b7 origin unverified",
+      "source_sha256": [
+        "9b5a250702745e4ade2bd0488444aa6a4c393c198da57be7fedd7bd8b04732a8"
+      ],
+      "origin_status": "unresolved",
+      "origin_gaps": [
+        "Original implementation source not established; a workload description or collection is not an original-source citation."
+      ],
+      "retained_sources": [
+        {
+          "source_sha256": "9b5a250702745e4ade2bd0488444aa6a4c393c198da57be7fedd7bd8b04732a8",
+          "url": "https://github.com/mech-lang/benchmarks/blob/c95f900435aca5ae51030eabeffae2e5dc9a2fc2/archive/languages/nim/20261012/qualification/private-v4/source-snapshot/sources/knucleotide/optimized.nim"
+        }
+      ],
+      "parent_programs": [],
+      "parent_sources": [],
+      "sources": [
+        {
+          "label": "Benchmarks Game",
+          "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+          "relationship": "workload"
+        },
+        {
+          "label": "Nim Benchmarks Game",
+          "url": "https://github.com/def-/nim-benchmarksgame/tree/466e4b8dcc9d70a6e619c6145db92dbd4f921e63",
+          "relationship": "source collection"
+        },
+        {
+          "label": "Programming Language Benchmarks",
+          "url": "https://github.com/hanabi1224/Programming-Language-Benchmarks/tree/ad18b203dd1769724f4eea94fc3ac1e99f6593e0/bench/algorithm",
+          "relationship": "source collection"
+        }
+      ],
+      "attribution_notices": [],
+      "ai": {
+        "tool": null,
+        "models": [],
+        "status": "unverified",
+        "matched_source_files": [],
+        "total_source_files": 1,
+        "evidence": []
+      },
+      "license": {
+        "status": "partial",
+        "licenses": [
+          {
+            "id": "Apache-2.0",
+            "url": "https://github.com/mech-lang/benchmarks/blob/main/LICENSE",
+            "scope": "Suite-authored source and local changes only",
+            "evidence": "LICENSE"
+          }
+        ],
+        "unresolved": [
+          "Source lineage incomplete; additional upstream terms may apply."
+        ]
+      },
+      "evidence": [
+        "archive/languages/nim/20261012/PROVENANCE.md"
+      ]
+    }
+  },
+  "parent_measurement": {
+    "original_report_reference": "nim-comparison/20261012/studies/full-v6/knucleotide/report.json",
+    "archive_timing_report": null,
+    "report_file_retained_in_checkout": false,
+    "evidence_note": "The report reference is retained verbatim in program.json and inventory.json; that original full-v6 report file is not present in this publication checkout. Do not invent a report hash or reuse its samples for this new candidate.",
+    "samples_seconds": [
+      3.96818325,
+      3.585653417,
+      3.58470525
+    ],
+    "median_seconds": 3.585653417,
+    "inventory_path": "experiments/implementation-audit/v1/inventory.json",
+    "inventory_sha256_at_preparation": "6216dc3c98177e3cdb3d67a6e251a7cacbd2d665b8a690f96ae8b1380c72a925"
+  },
+  "parent_build": {
+    "path": "archive/languages/nim/20261012/qualification/private-v4/builds/nim-knucleotide-optimized/build.json",
+    "sha256": "f228caaa7b4c885aafa75a415cd42428d6542d802cf2a724f58dd01beaef0c9c",
+    "exact_command": [
+      "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/nim/nim-2.2.12/bin/nim",
+      "c",
+      "--skipUserCfg:on",
+      "--skipParentCfg:on",
+      "--skipProjCfg:on",
+      "-d:release",
+      "--mm:orc",
+      "--threads:on",
+      "--parallelBuild:1",
+      "--cc:clang",
+      "--clang.exe:/opt/homebrew/Cellar/llvm@22/22.1.8/bin/clang-22",
+      "--clang.linkerexe:/opt/homebrew/Cellar/llvm@22/22.1.8/bin/clang-22",
+      "--lib:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/nim/nim-2.2.12/lib",
+      "--path:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/bigints/bigints-3b5a106b88ec1baa904a059a1430c8335d885075/src",
+      "--path:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/nim-gmp/nim-gmp-4e9a6a05bfc274abd02a241f2d7c9162b2300191/src",
+      "--nimcache:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/cache/nim-knucleotide-optimized",
+      "--out:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/bin/nim-knucleotide-optimized",
+      "--passC:-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk",
+      "--passL:-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk",
+      "--passC:-mmacosx-version-min=14.4",
+      "--passL:-mmacosx-version-min=14.4",
+      "--passC:-ffp-contract=off",
+      "--passC:-I/opt/homebrew/Cellar/pcre/8.45/include",
+      "--passC:-I/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "--passL:-L/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "--passL:/opt/homebrew/Cellar/pcre/8.45/lib/libpcre.1.dylib",
+      "--passL:/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/qualification/private-v4/source-snapshot/sources/knucleotide/optimized.nim"
+    ],
+    "runtime_policy": {
+      "runtime_arguments": [
+        "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/bin/nim-knucleotide-optimized",
+        "{n}"
+      ],
+      "execution_mode": "aot",
+      "runtime_policy": "Nim 2.2.12 C backend / Clang 22.1.8, native macOS ARM64",
+      "runtime_support": "Nim standard growing Tables, strings/IO, ordinary native threads and ORC; all seven complete maps and every window update remain authored work."
+    },
+    "compiler": "Nim 2.2.12 C backend / Clang 22.1.8",
+    "compile_flags": [
+      "--skipUserCfg:on",
+      "--skipParentCfg:on",
+      "--skipProjCfg:on",
+      "-d:release",
+      "--mm:orc",
+      "--threads:on",
+      "--parallelBuild:1",
+      "--cc:clang",
+      "--clang.exe:/opt/homebrew/Cellar/llvm@22/22.1.8/bin/clang-22",
+      "--clang.linkerexe:/opt/homebrew/Cellar/llvm@22/22.1.8/bin/clang-22",
+      "--lib:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/nim/nim-2.2.12/lib",
+      "--path:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/bigints/bigints-3b5a106b88ec1baa904a059a1430c8335d885075/src",
+      "--path:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/nim-gmp/nim-gmp-4e9a6a05bfc274abd02a241f2d7c9162b2300191/src",
+      "--nimcache:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/cache/nim-knucleotide-optimized",
+      "--out:/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/nim-comparison/20261012/.build/private-v4/bin/nim-knucleotide-optimized",
+      "--passC:-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk",
+      "--passL:-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk",
+      "--passC:-mmacosx-version-min=14.4",
+      "--passL:-mmacosx-version-min=14.4",
+      "--passC:-ffp-contract=off",
+      "--passC:-I/opt/homebrew/Cellar/pcre/8.45/include",
+      "--passC:-I/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "--passL:-L/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "--passL:/opt/homebrew/Cellar/pcre/8.45/lib/libpcre.1.dylib",
+      "--passL:/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib"
+    ],
+    "rebuild_note": "Keep the saved flag set for the first matched comparison; relocate compiler/lib/package/cache/output/source paths to the new isolated checkout. The saved MacOSX14.4 SDK path must be resolved to an actually installed compatible SDK by the sole timing runner. Compare original and candidate under the same resolved command. No CPU-target flag is added by this candidate."
+  },
+  "required_work": {
+    "ordinary_growing_library_table": "std/tables Table[uint64,int64], initTable() default; no presizing",
+    "widths": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      12,
+      18
+    ],
+    "updates": "Every overlapping window at each width still calls the mutable counter API; unchanged rolling packed keys, seven worker threads, parsing, sorting, output.",
+    "explicitly_not_changed": [
+      "input parser",
+      "key encoding",
+      "partitioning",
+      "table initialization",
+      "query extraction",
+      "compiler flags"
+    ]
+  },
+  "primary_references": [
+    {
+      "url": "https://nim-lang.org/docs/tables.html",
+      "supports": "mgetOrPut returns a mutable value; documented counter idiom supports .inc."
+    },
+    {
+      "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+      "supports": "All seven key lengths, real growing default library hash-table updates."
+    }
+  ],
+  "validation_plan": [
+    "Static one-line diff and original/candidate source hashes are recorded; no Nim compile or run performed by preparation agent.",
+    "Sole runner should compile the exact original and candidate with a matched pinned toolchain and validate all canonical/edge outputs before serial timing under the shared mutex."
+  ],
+  "canonical_catalog_changed": false
+}
