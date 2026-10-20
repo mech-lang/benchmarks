@@ -21,7 +21,7 @@ class RubyPublication(unittest.TestCase):
     def test_previous_results_and_sources_are_exact(self):
         self.assertEqual(self.current['files'],self.previous['files'])
         for pool in ['programs','program_inventory']:
-            self.assertEqual(len(self.current[pool])-len(self.previous[pool]),22)
+            self.assertEqual(len(self.current[pool])-len(self.previous[pool]),23)
             for key,p in self.previous[pool].items():
                 self.assertEqual(self.current[pool][key],p,key)
         for old,new in zip(self.previous['benchmarks'],self.current['benchmarks']):
@@ -41,13 +41,23 @@ class RubyPublication(unittest.TestCase):
 
     def test_fresh_yjit_observations_are_in_the_dataset(self):
         rows=[p for k,p in self.current['programs'].items() if k not in self.previous['programs'] and p['language']=='ruby']
-        self.assertEqual(len(rows),3)
-        self.assertEqual(sum(len(p['samples']) for p in rows),9)
+        self.assertEqual(len(rows),4)
+        self.assertEqual(sum(len(p['samples']) for p in rows),12)
         for p in rows:
             self.assertEqual(p['native_observations'],3)
             self.assertIsNone(p['timing_alias_of'])
             self.assertTrue(all('--yjit' in r['command'] and '--zjit' not in r['command'] and r['valid']
                                 for r in p['sample_execution_metadata']))
+
+    def test_first_call_uses_unchanged_source_and_no_diagnostic_wrapper(self):
+        p=self.current['programs']['fannkuchredux:fannkuchredux-ruby-8-yjit-first-call-v1']
+        old=self.previous['programs'][p['source_alias_of']]
+        self.assertEqual((p['files'],p['loc']),(old['files'],old['loc']))
+        self.assertIn('--yjit-call-threshold=1',p['command'])
+        self.assertNotIn('-r',p['command'])
+        self.assertFalse(any('--yjit-log' in a or 'inspect.rb' in a for a in p['command']))
+        self.assertTrue(all(c['command']==p['command'] for c in p['sample_execution_metadata']))
+        self.assertEqual(p['full_output_validation']['evidence']['path'],'experiments/ruby-jit/first-call-v1/report.json')
 
     def test_zjit_has_independent_process_samples_and_unchanged_loc(self):
         rows=[p for p in self.current['programs'].values() if p['language']=='ruby-zjit']

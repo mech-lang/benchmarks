@@ -29,9 +29,11 @@ def prepare(path):
     data = json.loads((ROOT / 'data/benchmarks.json').read_text())
     reproduction = json.loads((ROOT / 'data/reproducibility.json').read_text())
     catalog = {**data.get('program_inventory', {}), **data['programs']}
+    original_plan = HERE / 'plan-v1.json'
+    original_keys = {p['key'] for p in json.loads(original_plan.read_text())['profiles']} if original_plan.exists() else None
     profiles = []
     for key, p in catalog.items():
-        if p['language'] != 'ruby':
+        if p['language'] != 'ruby' or (original_keys is not None and key not in original_keys):
             continue
         r = reproduction['programs'][key]
         assert len(p['files']) == 1 and '--yjit' in r['command']

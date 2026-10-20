@@ -80,7 +80,7 @@ def reconcile(root=ROOT):
         samples = [r['elapsed_seconds'] for r in rows]
         identity = p['id'] + '-zjit'
         programs.append(dict(id=identity, key=p['benchmark']+':'+identity,
-            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,jit='zjit',n=plan['full_workloads'][p['benchmark']][0],
+            original_program_key=p['key'], benchmark=p['benchmark'], language=LANG,jit='zjit',policy='default',n=plan['full_workloads'][p['benchmark']][0],
             source_sha256=p['source_sha256'], loc=p['loc'], samples_seconds=samples,
             median_seconds=statistics.median(samples), sample_sd_seconds=statistics.stdev(samples),
             yjit_samples_seconds=yjit_samples, yjit_median_seconds=statistics.median(yjit_samples),
@@ -95,17 +95,42 @@ def reconcile(root=ROOT):
         samples=[c['elapsed_seconds'] for c in rows]
         identity=p['id']+'-yjit-v1'
         controls.append(dict(id=identity,key=p['benchmark']+':'+identity,original_program_key=p['key'],
-            benchmark=p['benchmark'],language='ruby',jit='yjit',n=plan['full_workloads'][p['benchmark']][0],source_sha256=p['source_sha256'],loc=p['loc'],
+            benchmark=p['benchmark'],language='ruby',jit='yjit',policy='default',n=plan['full_workloads'][p['benchmark']][0],source_sha256=p['source_sha256'],loc=p['loc'],
             samples_seconds=samples,median_seconds=statistics.median(samples),sample_sd_seconds=statistics.stdev(samples),
             command=rows[0]['command'],runtime_environment=rows[0]['environment'],sample_execution_metadata=rows))
     assert len(controls)==3
-    results = dict(schema='ruby-jit-results.v1', status='RECONCILED',
-        programs=programs,yjit_controls=controls,new_zjit_samples=57, fresh_yjit_samples=9,
+    first_path=root/'experiments/ruby-jit/first-call-v1/report.json'
+    first=json.loads(first_path.read_text())
+    assert first['status']=='PASSED' and len(first['cases'])==3
+    parent=by_key[first['original_program_key']]
+    assert parent['id']=='fannkuchredux-ruby-8' and first['source_sha256']==parent['source_sha256']
+    assert first['runtime_sha256']==plan['runtime']['sha256']
+    assert first['controller_sha256']==sha(root/'tools/qualification/ruby_jit_first_call.py')
+    expected=[plan['runtime']['path']]+['--yjit' if a=='{jit}' else '12' if a=='{n}' else a for a in parent['argv']]
+    expected.insert(2,'--yjit-call-threshold=1')
+    assert first['command']==expected
+    for c in first['cases']:
+        assert c['valid'] and c['exit_code']==0 and not c['timed_out'] and c['n']==12 and c['command']==expected
+        directory=root/Path(c['stdout']['path']).parent
+        assert json.loads((directory/'process.json').read_text())==c
+        assert c['stdout']['sha256']==sha(directory/'stdout.bin')==plan['full_workloads']['fannkuchredux'][2]
+        assert c['stdout']['bytes']==(directory/'stdout.bin').stat().st_size==plan['full_workloads']['fannkuchredux'][1]
+        assert c['stderr']['bytes']==0 and 'AC Power' in c['power']['after']
+    samples=[c['elapsed_seconds'] for c in first['cases']]
+    identity=parent['id']+'-yjit-first-call-v1'
+    first_program=dict(id=identity,key='fannkuchredux:'+identity,original_program_key=parent['key'],
+        benchmark='fannkuchredux',language='ruby',jit='yjit',policy='first-call',n=12,
+        source_sha256=parent['source_sha256'],loc=parent['loc'],samples_seconds=samples,
+        median_seconds=statistics.median(samples),sample_sd_seconds=statistics.stdev(samples),
+        command=expected,runtime_environment=parent['environment'],sample_execution_metadata=first['cases'])
+    results = dict(schema='ruby-jit-results.v1', status='RECONCILED',recorded_at=first['finished_utc'],
+        programs=programs,yjit_controls=controls,first_call_program=first_program,new_zjit_samples=57, fresh_yjit_samples=12,
         reused_yjit_profiles=16, historical_data_preserved=True,
         plan=pin(root,'experiments/ruby-jit/plan-v1.json'),
         producer_report=pin(root,'experiments/ruby-jit/full-v1/report.json'),
         measurement_controller=pin(root,'experiments/ruby-jit/controller-v1.py'),
         continuation=pin(root,'experiments/ruby-jit/continuation-v1.json'),
+        first_call_report=pin(root,'experiments/ruby-jit/first-call-v1/report.json'),
         toolchains={key:dict(version=plan['runtime']['probes'][mode]['description'],
                               path=plan['runtime']['path'],sha256=plan['runtime']['sha256'])
                     for key,mode in [('ruby','yjit'),(LANG,'zjit')]},
@@ -137,23 +162,28 @@ def append_catalog(before, root=ROOT):
     assert results['status'] == 'RECONCILED' and len(results['programs']) == 19 and len(results['yjit_controls'])==3
     assert results['plan'] == pin(root,'experiments/ruby-jit/plan-v1.json')
     assert results['producer_report'] == pin(root,'experiments/ruby-jit/full-v1/report.json')
+    assert results['first_call_report'] == pin(root,'experiments/ruby-jit/first-call-v1/report.json')
     report = json.loads((root/'experiments/ruby-jit/full-v1/report.json').read_text())
     assert report['status'] == 'PASSED' and len(report['cases']) == 66
     evidence = {name:pin(root,path) for name,path in dict(
         plan='experiments/ruby-jit/plan-v1.json',results='experiments/ruby-jit/results-v1.json',
         full='experiments/ruby-jit/full-v1/report.json',bounded='experiments/ruby-jit/bounded-v2/report.json',
-        controller='experiments/ruby-jit/controller-v1.py',continuation='experiments/ruby-jit/continuation-v1.json').items()}
+        controller='experiments/ruby-jit/controller-v1.py',continuation='experiments/ruby-jit/continuation-v1.json',
+        first_call='experiments/ruby-jit/first-call-v1/report.json',
+        policy='experiments/ruby-jit/engine-policy-v1/diagnostics/report.json').items()}
     data = copy.deepcopy(before)
     assert LANG not in {l['key'] for l in before['languages']}
     catalog = {**before.get('program_inventory',{}),**before['programs']}
     appended = []
-    for r in results['programs']+results['yjit_controls']:
+    for r in results['programs']+results['yjit_controls']+[results['first_call_program']]:
         mode=r['jit'];language=r['language'];label='CRuby / '+mode.upper()
         parent = catalog[r['original_program_key']]
         assert parent['language'] == 'ruby' and parent['files'] == [r['source_sha256']]
         assert r['loc'] == parent['loc'] and len(r['samples_seconds']) == 3
         assert r['median_seconds'] == statistics.median(r['samples_seconds'])
-        measured = [c for c in report['cases'] if c['key'] == parent['key'] and c['jit'] == mode]
+        producer=json.loads((root/results['first_call_report']['path']).read_text()) if r['policy']=='first-call' else report
+        assert producer['status']=='PASSED'
+        measured = [c for c in producer['cases'] if c['key'] == parent['key'] and c['jit'] == mode]
         assert len(measured) == 3 and all(c['valid'] and c['exit_code'] == 0 and not c['timed_out'] for c in measured)
         assert [c['elapsed_seconds'] for c in measured] == r['samples_seconds']
         assert measured == r['sample_execution_metadata']
@@ -173,10 +203,10 @@ def append_catalog(before, root=ROOT):
             distinct_optimization_claimed=False,
             source_alias_note='Exact retained Ruby submission, measured separately with '+mode.upper()+'. Application LOC, source attribution and worker policy are unchanged.',
             timing_boundary=plan['timing_boundary'],
-            runtime_policy=mode.upper()+' default compilation thresholds; original worker policy '+str(parent.get('runtime_policy') or 'unchanged'),
-            runtime_evidence_scope='Enabled engine and command flags verified. Per-method compilation coverage was not measured; cold methods may remain interpreted.',
+            runtime_policy=mode.upper()+(' first-call compilation (--yjit-call-threshold=1)' if r['policy']=='first-call' else ' default compilation thresholds')+'; original worker policy '+str(parent.get('runtime_policy') or 'unchanged'),
+            runtime_evidence_scope=('A separate compilation log confirms the kernel compiles with first-call settings; canonical processes contain no diagnostic preload or logging.' if r['policy']=='first-call' else 'Enabled engine and command flags verified. Per-method compilation coverage was not measured; cold methods may remain interpreted.'),
             timing_summary='Three fresh complete-process '+mode.upper()+' samples. Historical observations retain their original dates; this is a runtime/cohort measurement, not a source optimization.',
-            full_output_validation=dict(all_three_samples_passed=True,evidence=evidence['full']),
+            full_output_validation=dict(all_three_samples_passed=True,evidence=evidence['first_call'] if r['policy']=='first-call' else evidence['full']),
             chart_admission=dict(historical_reports_unchanged=True,**evidence),
             measured_backend=dict(key=language,execution='jit',label=label,verified=True,
                 evidence=dict(verified=True,report=evidence['results']['path'],report_sha256=evidence['results']['sha256'],
@@ -207,7 +237,7 @@ def append_catalog(before, root=ROOT):
         coverage_note='10/10 full workloads; 19 unchanged submissions; three complete-process samples each.',
         classification_note='CRuby method JIT selected explicitly with --zjit; YJIT disabled. Same source and worker policies as the retained YJIT cohort.')
     data['languages'].append(language)
-    next(l for l in data['languages'] if l['key']=='ruby')['classification_note']='All selected saved commands explicitly enable --yjit. Historical profiles and three fresh measurement cohorts retain their own samples.'
+    next(l for l in data['languages'] if l['key']=='ruby')['classification_note']='All selected commands enable --yjit. Default and first-call compilation policies are recorded per profile; historical measurements retain their original samples.'
     for group in data['language_groups']:
         if 'ruby' in group['languages']:
             group['languages'].append(LANG)
@@ -233,7 +263,7 @@ def append_catalog(before, root=ROOT):
     for ref in evidence.values():
         data['archive_paths'][ref['path']] = ref['path']
     data['ruby_zjit_audit'] = dict(schema='ruby-zjit-catalog-extension.v1',appended_programs=appended,
-        evidence=evidence,new_observations=66,new_zjit_observations=57,fresh_yjit_observations=9,
+        evidence=evidence,measured_at=results['recorded_at'],new_observations=69,new_zjit_observations=57,fresh_yjit_observations=12,
         source_files_added=0,old_profiles_unchanged=True)
     from audit_authorship import audit
     models = json.loads((root/'data/source-model-evidence.json').read_text())['files']
@@ -282,6 +312,25 @@ def write_summary(results, root=ROOT):
         '(../experiments/ruby-jit/full-v1/report.json), and [reconciled observations]'
         '(../experiments/ruby-jit/results-v1.json) retain commands, versions, environment, '
         'input/output digests, individual samples, power checks and source identities.',''])
+    first=results['first_call_program']
+    baseline=next(r for r in rows if r['original_program_key']==first['original_program_key'])
+    lines.extend(['## First-call YJIT','',
+        'The compact Fannkuch function is called once. Its default-policy compilation logs '
+        'contain no kernel compilation entry; the first-call logs contain that function. '
+        'The follow-up uses only `--yjit-call-threshold=1`, with no source changes, warm-up '
+        'launcher, diagnostic preload or logging in the measured process. Startup and '
+        'compilation remain inside every sample.','',
+        '| Same source | Application LOC | Default YJIT (s) | First-call YJIT (s) | Speedup |',
+        '| --- | ---: | ---: | ---: | ---: |',
+        f'| fannkuchredux-ruby-8 | {first["loc"]} | {baseline["yjit_median_seconds"]:.1f} | '
+        f'{first["median_seconds"]:.1f} | {baseline["yjit_median_seconds"]/first["median_seconds"]:.2f}× |','',
+        'The three full-size first-call observations are retained separately from every '
+        'historical/default observation. The website selects the fastest qualified measured '
+        'configuration for each endpoint. The opening comparison table reports default policies; '
+        'the first-call follow-up is a separate configuration. '
+        'The N=10 policy diagnostics are not chart observations or full-size estimates. '
+        'Forced, zero-profile first-call ZJIT was slower in that diagnostic, and no full-size '
+        'timing for that setting is claimed.',''])
     (root/'docs/ruby-jit.md').write_text('\n'.join(lines))
 
 
@@ -294,7 +343,7 @@ def main():
         result=reconcile()
         (HERE/'results-v1.json').write_text(json.dumps(result,indent=2)+'\n')
         write_summary(result)
-        print('Reconciled 57 ZJIT and 9 fresh YJIT complete-process samples')
+        print('Reconciled 57 ZJIT and 12 fresh YJIT complete-process samples')
     if args.apply:
         path=ROOT/'data/benchmarks.json';before=json.loads(path.read_text())
         after=append_catalog(before)
@@ -306,9 +355,10 @@ def main():
             measurement_basis=[pin(ROOT,'experiments/ruby-jit/results-v1.json')],displayed_program_count=19)
         languages['languages'][LANG]=metadata
         yjit=languages['languages']['ruby']
-        yjit.update(note=next(l for l in after['languages'] if l['key']=='ruby')['classification_note'],displayed_program_count=22)
+        yjit.update(note=next(l for l in after['languages'] if l['key']=='ruby')['classification_note'],displayed_program_count=23)
         yjit['measurement_basis'].append(pin(ROOT,'experiments/ruby-jit/results-v1.json'))
         languages['scope']=f'{len(after["languages"])} measured variants; all classifications explicit.'
+        languages['audited_on']=json.loads((HERE/'results-v1.json').read_text())['recorded_at'][:10]
         module_path=ROOT/'site/src/languages.mjs';module=module_path.read_text()
         match=re.fullmatch(r'(\s*//[^\n]*\nexport const languageMetadata = )(\{.*\})(;\s*)',module,re.S)
         assert match
@@ -317,7 +367,7 @@ def main():
         module_path.write_text(match[1]+json.dumps(values,indent=2)+match[3])
         languages_path.write_text(json.dumps(languages,indent=2)+'\n')
         path.write_text(json.dumps(after,ensure_ascii=False,indent=2,allow_nan=False)+'\n')
-        print('Added 19 ZJIT and 3 fresh YJIT profiles; all previous profiles, source bytes, samples and baselines unchanged')
+        print('Added 19 ZJIT and 4 fresh YJIT profiles; all previous profiles, source bytes, samples and baselines unchanged')
 
 
 if __name__=='__main__':main()

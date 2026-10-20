@@ -78,7 +78,8 @@ try{
     }
   }
   if(process.env.EXPECTED_ZJIT_PROGRAMS){
-    for(const [key,programs,runs] of [['ruby',Number(process.env.EXPECTED_RUBY_PROGRAMS??22),66],['ruby-zjit',Number(process.env.EXPECTED_ZJIT_PROGRAMS),57]]){
+    for(const [key,programs] of [['ruby',Number(process.env.EXPECTED_RUBY_PROGRAMS??23)],['ruby-zjit',Number(process.env.EXPECTED_ZJIT_PROGRAMS)]]){
+      const runs=programs*3;
       const ruby=await open(base+'#v=1&view=language&language='+key+'&variant='+key);
       assert.equal((await snapshot(ruby)).state.languageFocus.variant,key);
       const summary=await ruby.locator('#language-overview-summary').textContent();
