@@ -91,7 +91,7 @@ const medianStatistics=new WeakMap(),sampleInputsByEntries=new WeakMap(),globalS
 // One node per recorded program/run, shared across views and LOC metrics.
 // The finite catalog bounds this cache; records contain no model or handlers.
 const sampleNodes=new Map();
-let renderedSamplePlot=null,renderedDensityLayer=null;
+let renderedSamplePlot=null,renderedDensityLayer=null,disposeChartHover=null;
 let benchmarkEntries=null,densityCache=null;
 const state={benchmarks:new Set(),benchmarkFilters:emptyBenchmarkFilters(),languages:new Set(),disabled:new Set(),ellipses:new Set(['mech']),
   dataQuery:'',dataPage:0,dataPageSize:100,dataSelected:[],
@@ -588,6 +588,7 @@ function renderMedianRankings(){
   renderRankingCharts({container:$('#median-ranking-cards'),rankings,labelFor:shortName,colorFor:displayColor,onOpenLanguage:showLanguageOverview,locTitle:state.locMetric==='formatted'?'Formatted LOC':'Application LOC'});
 }
 function update(){
+  if(state.view==='data'||state.view==='rankings'){disposeChartHover?.();disposeChartHover=null;}
   benchmarkEntries=null;
   syncSampleInspector();
   model=comparison(plotData(),allSelection());
@@ -772,21 +773,26 @@ function closeInspector(){
 }
 function clearHoverDetails(){
   const details=$('#hover-details');
-  details.textContent='Hover a point or line for details.';
-  details.classList.remove('active');
+  const message='Hover a point or line for details.';
+  if(details.textContent!==message)details.textContent=message;
+  if(details.classList.contains('active'))details.classList.remove('active');
 }
 function showHoverDetails(description){
   const details=$('#hover-details');
   if(details.textContent!==description)details.textContent=description;
-  details.classList.add('active');
+  if(!details.classList.contains('active'))details.classList.add('active');
 }
 function renderChart(){
+  disposeChartHover?.();disposeChartHover=null;
   // The Rankings tab has no visible scatter plot. Rebuild it when that view
   // is shown again, including any selection changes made while it was hidden.
   if(state.view==='rankings')return;
   // Cached circles must not keep a retired plot, its handlers or its sibling
   // SVG tree alive. They are attached only to the current visible sample layer.
-  if(renderedSamplePlot){renderedSamplePlot.replaceChildren();renderedSamplePlot=null;}
+  if(renderedSamplePlot){
+    for(const group of renderedSamplePlot.children)group.replaceChildren();
+    renderedSamplePlot.replaceChildren();renderedSamplePlot=null;
+  }
   const svg=$('#chart');svg.replaceChildren();renderedDensityLayer=null;
   const languageView=inLanguageView(),selectedKeys=focusKeys();
   svg.classList.remove('median-focus');
@@ -864,7 +870,7 @@ function renderChart(){
   text(svg,'Time / fastest median · log₂',0,0,{class:'axis-title','text-anchor':'middle',transform:`translate(${innerWidth<=720?14:19} ${margins.top+h/2}) rotate(-90)`});
   if(empty)return;
   const plot=node('g',{'clip-path':'url(#plot-clip)'},svg);
-  const samplePlot=node('g',{'data-layer':'samples','data-layer-mode':state.sampleMode,opacity:layers.sampleLayer.opacity},plot);
+  const samplePlot=node('g',{'data-layer':'samples','data-layer-mode':state.sampleMode,opacity:layers.sampleLayer.opacity,style:'--chart-opacity:1'},plot);
   renderedSamplePlot=samplePlot;
   const sampleRecords=new Map();
   const medianPlot=node('g',{'data-layer':'medians','data-layer-mode':state.medianMode,opacity:layers.medianLayer.opacity},plot);
@@ -886,40 +892,64 @@ function renderChart(){
   const lineLabels=[],labelObstacles=[],hitPoints=[],hitLines=[];
   const piecesByLanguage=new Map();
   let chartPieces=[];
-  let hoveredLanguage=null,focusedLanguage=null,highlightedLanguage;
+  let pointerHover=null,focusHover=null,highlightedLanguage,hoverFrame=null,hoverDisposed=false;
+  const hoverRegions=new Map();
+  const toggle=(piece,name,on)=>{if(piece.classList.contains(name)!==on)piece.classList.toggle(name,on);};
   function updateHighlight(){
-    const key=hoveredLanguage??focusedLanguage;
+    const key=pointerHover?.language??focusHover?.language??null;
     if(key===highlightedLanguage)return;
     const previous=highlightedLanguage;
     highlightedLanguage=key;
     if(key)svg.dataset.highlightLanguage=key;else delete svg.dataset.highlightLanguage;
     // A child cannot brighten above its layer's Dim opacity. Lift only an
     // already-visible sample layer during hover/focus; restore it on exit.
-    samplePlot.setAttribute('opacity',key&&layers.showSamples?1:layers.sampleLayer.opacity);
+    if(Boolean(previous)!==Boolean(key)){
+      samplePlot.setAttribute('opacity',key&&layers.showSamples?1:layers.sampleLayer.opacity);
+      // One inherited value replaces a style write to every recorded run.
+      samplePlot.style.setProperty('--chart-opacity',key?layers.sampleLayer.opacity:1);
+    }
     hoverSpreads.replaceChildren();
     if(layers.showMedians&&key&&!single&&!state.ellipses.has(key)){
-      const entry=entries.find(item=>item.language.key===key);
-      if(entry)for(const sigma of [2,1])for(const kind of visibleKinds){
-        const region=(sigma===2?entry.spread2:entry.spread)[kind];
-        if(region)drawSpread({entry,kind,region,sigma},hoverSpreads,true);
+      if(!hoverRegions.has(key)){
+        const regions=[],entry=entries.find(item=>item.language.key===key);
+        if(entry)for(const sigma of [2,1])for(const kind of visibleKinds){
+          const region=(sigma===2?entry.spread2:entry.spread)[kind];
+          if(region)regions.push(drawSpread({entry,kind,region,sigma},null,true));
+        }
+        hoverRegions.set(key,regions);
       }
+      for(const region of hoverRegions.get(key))hoverSpreads.append(region);
     }
     // Once hover is active, only the old and new languages change. The node
     // index is built once per render, outside pointer/focus handlers.
     const pieces=previous&&key?[...(piecesByLanguage.get(previous)??[]),...(piecesByLanguage.get(key)??[])]:chartPieces;
     for(const {piece,language:pieceLanguage,sample,crowded} of pieces){
       const selected=key?pieceLanguage===key:languageView&&selectedKeys.has(pieceLanguage);
-      if(sample&&!(previous&&key))piece.style.setProperty('--chart-opacity',key?layers.sampleLayer.opacity:1);
-      piece.classList.toggle('chart-dimmed',(!!key||languageView)&&!selected);
-      piece.classList.toggle('sample-highlighted',selected&&sample);
-      if(crowded)piece.classList.toggle('label-revealed',selected);
+      toggle(piece,'chart-dimmed',(!!key||languageView)&&!selected);
+      if(sample)toggle(piece,'sample-highlighted',selected);
+      if(crowded)toggle(piece,'label-revealed',selected);
     }
   }
+  let pendingPointer=null;
+  function flushHover(){
+    hoverFrame=null;
+    if(hoverDisposed)return;
+    // Resolve only the final pointer position, before changing SVG styles.
+    pointerHover=pendingPointer?.resolve(pendingPointer.event)??null;
+    updateHighlight();
+    const active=pointerHover??focusHover;
+    if(active)showHoverDetails(active.description);else clearHoverDetails();
+  }
+  function queueHover(){if(!hoverDisposed&&hoverFrame===null)hoverFrame=requestAnimationFrame(flushHover);}
   function highlightPointer(event,key,description){
     if(event.pointerType==='touch')return;
-    hoveredLanguage=key;updateHighlight();showHoverDetails(description);
+    pendingPointer={resolve:typeof key==='function'?key:()=>({language:key,description}),event:{clientX:event.clientX,clientY:event.clientY}};
+    queueHover();
   }
-  function clearHover(){hoveredLanguage=null;updateHighlight();clearHoverDetails();}
+  function clearHover(){pendingPointer=null;queueHover();}
+  function focusHighlight(language,description){focusHover={language,description};queueHover();}
+  function clearFocus(){focusHover=null;queueHover();}
+  disposeChartHover=()=>{hoverDisposed=true;if(hoverFrame!==null)cancelAnimationFrame(hoverFrame);hoverFrame=null;pendingPointer=pointerHover=focusHover=null;};
   svg.onpointerleave=clearHover;
   function pointerPosition(event){
     const transform=svg.getScreenCTM();if(!transform)return null;
@@ -950,7 +980,7 @@ function renderChart(){
   }
   function drawSpread({entry,kind,region,sigma},parent=medianPlot,hover=false){
     const d=region.boundary.map((p,i)=>`${i?'L':'M'}${X(p.x)},${Y(p.y)}`).join(' ')+'Z';
-    node('path',{d,fill:displayColor(entry.language.key),'fill-opacity':sigma===2?(kind==='fast'?.035:.018):(kind==='fast'?.10:.05),
+    return node('path',{d,fill:displayColor(entry.language.key),'fill-opacity':sigma===2?(kind==='fast'?.035:.018):(kind==='fast'?.10:.05),
       stroke:displayColor(entry.language.key),'stroke-opacity':sigma===2?.3:.6,'stroke-width':sigma===2?.9:1.2,
       'stroke-dasharray':sigma===2?'2 5':kind==='small'?'5 4':lineDash(entry.language.key),class:'spread-area',
       'clip-path':languageView?null:'url(#baseline-clip)',
@@ -979,11 +1009,11 @@ function renderChart(){
     // marker layer instead of whichever SVG element happens to be on top.
     mark.addEventListener('click',event=>openPoint(closestMarker(event,hit).info));
     mark.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openPoint(info);}});
-    const hover=event=>{const nearest=closestMarker(event,hit);highlightPointer(event,nearest.info.language,nearest.description);};
+    const hover=event=>highlightPointer(event,position=>{const nearest=closestMarker(position,hit);return {language:nearest.info.language,description:nearest.description};});
     mark.addEventListener('pointerenter',hover);mark.addEventListener('pointermove',hover);
     mark.addEventListener('pointerleave',clearHover);
-    mark.addEventListener('focus',()=>{focusedLanguage=entry.language.key;updateHighlight();showHoverDetails(description);});
-    mark.addEventListener('blur',()=>{focusedLanguage=null;updateHighlight();clearHoverDetails();});
+    mark.addEventListener('focus',()=>focusHighlight(entry.language.key,description));
+    mark.addEventListener('blur',clearFocus);
     return mark;
   }
   function pair(entry,fast,small,{mean=false,faint=false,benchmarkKey=null,label=null}={}){
@@ -997,7 +1027,7 @@ function renderChart(){
         description:`${label??shortName(entry.language.key)}\nFastest: ${ratio(fast.x)} LOC · ${ratio(fast.y)} time\nFewest LOC: ${ratio(small.x)} LOC · ${ratio(small.y)} time`};
       hitLines.push(hit);
       const target=node('line',{...geometry,class:'connector-hit','data-chart-language':entry.language.key,'data-connector-mean':mean},connectorHits);
-      const hover=event=>{const nearest=closestLine(event,hit);highlightPointer(event,nearest.language,nearest.description);};
+      const hover=event=>highlightPointer(event,position=>{const nearest=closestLine(position,hit);return {language:nearest.language,description:nearest.description};});
       target.addEventListener('pointerenter',hover);target.addEventListener('pointermove',hover);target.addEventListener('pointerleave',clearHover);
     }
     if(state.small&&(!state.fast||!same(fast,small)))marker(small,entry,'small',{faint,mean,program:mean?null:small,benchmarkKey});
@@ -1008,15 +1038,23 @@ function renderChart(){
     }
   }
   // Recorded runs supply the background cloud. Keep summary endpoints in Medians.
+  const sampleGroups=[];
+  let sampleGroup=null;
   for(const point of rawSamples){
     const {program,entry,benchmark:inputBenchmark,run:runNumber,elapsed}=point;
+    // Group consecutive runs without changing their SVG paint/hit-test order.
+    // Highlighting a language then updates its groups, rather than every dot.
+    if(sampleGroup?.dataset.sampleLanguage!==program.language){
+      sampleGroup=node('g',{class:'sample-language','data-sample-language':program.language},samplePlot);
+      sampleGroups.push({piece:sampleGroup,language:program.language,sample:true,crowded:false});
+    }
     // Runs share the program's actual source coordinate; no jitter or invented values.
     if(!sampleNodes.has(program.key))sampleNodes.set(program.key,new Map());
     const programNodes=sampleNodes.get(program.key);
     if(!programNodes.has(runNumber))programNodes.set(runNumber,{node:node('circle',{
       r:2.4,'stroke-width':1.15,class:'timing-run','data-sample':'true',
       'data-chart-language':program.language,'data-program':program.key,'data-timing-run':runNumber,
-      'data-run-seconds':elapsed,'data-observation-source':timingOwner(program),style:'--chart-opacity:1',tabindex:0,role:'button'})});
+      'data-run-seconds':elapsed,'data-observation-source':timingOwner(program),tabindex:0,role:'button'})});
     const cached=programNodes.get(runNumber),run=cached.node,x=X(point.x),y=Y(point.y),color=displayColor(entry.language.key);
     if(cached.x!==x){run.setAttribute('cx',x);cached.x=x;}
     if(cached.y!==y){run.setAttribute('cy',y);cached.y=y;}
@@ -1028,7 +1066,7 @@ function renderChart(){
       run.setAttribute('data-ratio-y',point.y);cached.ratioY=point.y;cached.loc=program.loc;
     }
     sampleRecords.set(run,{point,description:cached.description});
-    samplePlot.append(run);
+    sampleGroup.append(run);
   }
   // Each new layer owns its current records and handlers. Reused circles carry
   // no callbacks from earlier selections, and Off attaches no sample circles.
@@ -1037,10 +1075,10 @@ function renderChart(){
   const hoverSample=event=>{const record=sampleFor(event);if(record)highlightPointer(event,record.point.program.language,record.description);};
   samplePlot.addEventListener('click',event=>{const record=sampleFor(event);if(record)inspectSample(record);});
   samplePlot.addEventListener('keydown',event=>{const record=sampleFor(event);if(record&&(event.key==='Enter'||event.key===' ')){event.preventDefault();inspectSample(record);}});
-  samplePlot.addEventListener('pointerover',hoverSample);samplePlot.addEventListener('pointermove',hoverSample);
+  samplePlot.addEventListener('pointerover',hoverSample);
   samplePlot.addEventListener('pointerout',event=>{if(sampleFor(event))clearHover();});
-  samplePlot.addEventListener('focusin',event=>{const record=sampleFor(event);if(record){focusedLanguage=record.point.program.language;updateHighlight();showHoverDetails(record.description);}});
-  samplePlot.addEventListener('focusout',event=>{if(sampleFor(event)){focusedLanguage=null;updateHighlight();clearHoverDetails();}});
+  samplePlot.addEventListener('focusin',event=>{const record=sampleFor(event);if(record)focusHighlight(record.point.program.language,record.description);});
+  samplePlot.addEventListener('focusout',event=>{if(sampleFor(event))clearFocus();});
   if(layers.showMedians&&(languageView||selectedComparison)){
     const seenPrograms=new Set();
     for(const {program,entry} of sampleInputs){
@@ -1066,10 +1104,10 @@ function renderChart(){
       stroke:'#151b21','stroke-width':2,tabindex:0,role:'img','aria-label':description.replaceAll('\n',', ')},globalPlot);
     text(globalPlot,`${entry?`${entry.language.variant_label??chartName(entry.language.key)} · `:''}${kind==='fast'?'Fastest':'Fewest LOC'} median`,x+12,y-12,{class:'median-label',fill:color});
     labelObstacles.push({x:x-size-3,y:y-size-3,width:2*size+6,height:2*size+6});
-    const hover=event=>{if(entry)highlightPointer(event,entry.language.key,description);else{clearHover();showHoverDetails(description);}};
-    mark.addEventListener('pointerenter',hover);mark.addEventListener('pointermove',hover);mark.addEventListener('pointerleave',clearHover);
-    mark.addEventListener('focus',()=>{focusedLanguage=entry?.language.key??null;updateHighlight();showHoverDetails(description);});
-    mark.addEventListener('blur',()=>{focusedLanguage=null;updateHighlight();clearHoverDetails();});
+    const hover=event=>highlightPointer(event,entry?.language.key??null,description);
+    mark.addEventListener('pointerenter',hover);mark.addEventListener('pointerleave',clearHover);
+    mark.addEventListener('focus',()=>focusHighlight(entry?.language.key??null,description));
+    mark.addEventListener('blur',clearFocus);
   }
   // Label only the visible profiles, not their faint benchmark samples. Prefer
   // a nearby offset along the line and avoid covering another label or marker.
@@ -1083,7 +1121,7 @@ function renderChart(){
     const activate=()=>item.benchmark?openPoint({language:item.language,benchmark:item.benchmark}):showLanguageOverview(item.language);
     label.addEventListener('click',activate);label.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();activate();}});
     label.addEventListener('pointerenter',event=>highlightPointer(event,item.language,item.benchmark?`${shortName(item.language)} · ${benchmark(item.benchmark).title}\nClick to inspect its programs.`:`${shortName(item.language)}\nClick for all timings, programs and comparisons.`));label.addEventListener('pointerleave',clearHover);
-    label.addEventListener('focus',()=>{focusedLanguage=item.language;updateHighlight();showHoverDetails(item.benchmark?`${shortName(item.language)} · ${benchmark(item.benchmark).title}\nPress Enter to inspect its programs.`:`${shortName(item.language)}\nPress Enter for all timings, programs and comparisons.`);});label.addEventListener('blur',()=>{focusedLanguage=null;updateHighlight();clearHoverDetails();});
+    label.addEventListener('focus',()=>focusHighlight(item.language,item.benchmark?`${shortName(item.language)} · ${benchmark(item.benchmark).title}\nPress Enter to inspect its programs.`:`${shortName(item.language)}\nPress Enter for all timings, programs and comparisons.`));label.addEventListener('blur',clearFocus);
     pendingLabels.push({item,label});
   }
   // Attach all text, measure it together, then position it. Alternating each
@@ -1108,7 +1146,7 @@ function renderChart(){
     const counts=shapes.map(s=>s.region.n),min=Math.min(...counts),max=Math.max(...counts);
     text(svg,`${new Set(shapes.map(s=>s.entry.language.key)).size} language spread${new Set(shapes.map(s=>s.entry.language.key)).size===1?'':'s'} · n = ${min===max?min:`${min}–${max}`}`,margins.left,16,{class:'chart-symbol-legend'});
   }
-  chartPieces=[...plot.querySelectorAll('[data-chart-language]')].map(piece=>({piece,language:piece.dataset.chartLanguage,sample:piece.classList.contains('timing-run'),crowded:piece.classList.contains('label-crowded')}));
+  chartPieces=[...sampleGroups,...[...plot.querySelectorAll('[data-chart-language]')].filter(piece=>!piece.classList.contains('timing-run')).map(piece=>({piece,language:piece.dataset.chartLanguage,sample:false,crowded:piece.classList.contains('label-crowded')}))];
   for(const item of chartPieces){
     if(!piecesByLanguage.has(item.language))piecesByLanguage.set(item.language,[]);
     piecesByLanguage.get(item.language).push(item);

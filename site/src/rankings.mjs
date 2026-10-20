@@ -104,12 +104,13 @@ export function renderRankingCharts({container,rankings,labelFor,colorFor,onOpen
       labelNode.setAttribute('text-anchor',labelPositioned.anchor);labelNode.setAttribute('dominant-baseline','central');
       labelNode.setAttribute('aria-hidden','true');labelNode.removeAttribute('visibility');mark.append(labelNode);
       const show=()=>{
+        if(selectedLanguage===language)return;
         selectedLanguage=language;languageButton.disabled=false;languageButton.textContent=label;
         languageButton.style.color=color;
         values.textContent=`${summaryNumber(row.value)}× best · ${distance}${partial}`;
       };
       const open=()=>onOpenLanguage(language);
-      mark.addEventListener('pointerenter',show);mark.addEventListener('pointermove',show);mark.addEventListener('focus',show);
+      mark.addEventListener('pointerenter',show);mark.addEventListener('focus',show);
       mark.addEventListener('click',open);
       mark.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();open();}});
     }

@@ -190,3 +190,49 @@ all 36 live assets, and the
 confirmed all 2,835 markers were filled, Samples Off removed them, and no page
 errors occurred. The interaction measurements above apply to build
 `7bba6e95588940c0`; they were not repeated for this marker-style change.
+
+## Rollover and highlighting
+
+Build `f360c8bf40c2e010` batches pointer changes into one animation-frame update.
+Leaving one dot for another no longer clears and reapplies the whole chart
+between events. Consecutive sample nodes share language groups, so highlighting
+changes those groups and an inherited contrast value instead of rewriting each
+run. Paint order and coordinates are preserved.
+
+Hit testing resolves the final pointer position once per frame, before SVG
+style writes. Hover covariance paths are reused within a render. Opacity changes
+are immediate; thousands of concurrent opacity transitions are removed. Repeated
+readouts are skipped in both scatter and ranking charts. Replacing or hiding the
+chart cancels pending hover work; pointer exit restores keyboard focus and its
+readout.
+
+The [matched measurements](../site/publications/chart-hover-v1/comparison.json)
+use the same 3,024 default-chart dots, unchanged dataset/reproduction payloads,
+Chrome 155.0.8059.85 and serial contexts on the same Mac. Each configuration
+has three repetitions. Mobile uses a 390 px viewport with simulated 4× CPU
+slowdown, rather than a physical phone.
+
+| Native pointer sweep, 70 moves | Before | After | Less renderer work |
+| --- | ---: | ---: | ---: |
+| Desktop, 1,280 px | 3,995 ms | 301 ms | 92% |
+| Mobile layout, 4× slowdown | 7,061 ms | 914 ms | 87% |
+
+These are total Chrome renderer task times for each sweep, including deferred
+hover and style/layout work. They are not per-event response times or frame-rate
+guarantees. Raw [before](../site/publications/chart-hover-v1/before.json) and
+[after](../site/publications/chart-hover-v1/after.json) records retain every
+observation, frame interval, long task, mutation count and CPU setting. The
+[profiling harness](../site/tests/hover-performance.mjs) also includes deliberately
+dense dispatch bursts: 200 within-language transitions fall from about 2.5 million
+chart mutations to about 400 when first entering a language. Once highlighted,
+200 transitions within that language produce zero chart mutations. A 200-move
+marker burst performs one coordinate-transform lookup instead of 201.
+
+The [browser regression](../site/publications/chart-hover-v1/behavior-after.json)
+covers desktop/mobile median and sample hover, keyboard focus, Samples Off,
+independent density/global layers, language-page restoration, retired callbacks,
+native pointer input and selection of the exact clicked implementation. The
+[control](../site/publications/chart-hover-v1/behavior-before.json) provides 38
+settled states for exact comparison of geometry, paint, domains, readouts and
+selections. Independent layer tests retain 432 renderer cases. No language
+benchmark, source, LOC or timing observation changes.

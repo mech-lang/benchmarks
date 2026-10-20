@@ -125,6 +125,7 @@ for(viewportWidth of [240,320,640,1200]){
       for(const prior of lanes.get(y)??[])assert.ok(span[0]>=prior[1]+12||prior[0]>=span[1]+12,'Same-row labels and dots overlap.');
       lanes.set(y,[...(lanes.get(y)??[]),span]);
       mark.listeners.focus();mark.listeners.click();
+      assert.equal(mark.listeners.pointermove,undefined,'Moving inside a ranking mark must not repeat readout writes.');
       assert.equal(opened.at(-1),String(id));
       let prevented=false;mark.listeners.keydown({key:'Enter',preventDefault(){prevented=true;}});assert.ok(prevented);
     }

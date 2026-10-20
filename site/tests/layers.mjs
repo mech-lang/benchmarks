@@ -6,6 +6,10 @@ import * as formatted from '../src/formatted_axis.mjs';
 import * as benchmarkFilters from '../src/benchmark_traits.mjs';
 import * as labels from '../src/labels.mjs';
 
+let nextFrame=0,autoFrames=true;
+const frames=new Map();
+const flushFrames=()=>{const queued=[...frames.values()];frames.clear();for(const run of queued)run(0);};
+
 // Exercise the real SVG renderer with a small DOM adapter; no browser or benchmark workers.
 class Element {
   constructor(tag='div') {
@@ -32,9 +36,11 @@ class Element {
     dispatch(type,bubbling.has(type));
     const related={pointerenter:'pointerover',pointerleave:'pointerout',focus:'focusin',blur:'focusout'}[type];
     if(related)dispatch(related,true);
+    if(autoFrames)flushFrames();
     return value;
   }
   getScreenCTM(){return null;}
+  getBoundingClientRect(){return {top:0,left:0,width:this.clientWidth,height:400};}
   before(){} after(){} focus(){} scrollIntoView(){}
   closest(){return this.parentNode??this;}
   contains(node){return node===this||this.children.some(child=>child.contains(node));}
@@ -43,13 +49,15 @@ class Element {
 }
 const elements=new Map();
 const element=selector=>{if(!elements.has(selector))elements.set(selector,new Element(selector));return elements.get(selector);};
+const sampleClass=(node,name)=>node.parentNode.classList.contains(name);
+const inheritedStyle=(node,name)=>{for(let current=node;current;current=current.parentNode){const value=current.style.getPropertyValue(name);if(value)return value;}return '';};
 const document={querySelector:element,querySelectorAll:()=>[],createComment:()=>new Element('comment'),createElementNS:(_,tag)=>new Element(tag),
   documentElement:new Element('html'),body:new Element('body'),activeElement:null};
 const source=fs.readFileSync(new URL('../src/app.mjs',import.meta.url),'utf8');
 const html=fs.readFileSync(new URL('../src/index.html',import.meta.url),'utf8');
 const css=fs.readFileSync(new URL('../src/style.css',import.meta.url),'utf8');
-const context=vm.createContext({...math,...formatted,...benchmarkFilters,...labels,document,window:{addEventListener(){}},innerWidth:1000,innerHeight:900,
-  ResizeObserver:class{observe(){}},requestAnimationFrame:()=>0,
+const context=vm.createContext({...math,...formatted,...benchmarkFilters,...labels,document,window:{addEventListener(){},innerHeight:900},innerWidth:1000,innerHeight:900,
+  ResizeObserver:class{observe(){}},requestAnimationFrame:run=>{const id=++nextFrame;frames.set(id,run);return id;},cancelAnimationFrame:id=>frames.delete(id),
   matchMedia:()=>({matches:false,addEventListener(){}}),emptyTraitFilters:()=>({}),filterLanguageKeys:keys=>new Set(keys),
   axisData:data=>data,projectProgram:program=>program,console,Set,Map,
   realAxisData:formatted.axisData,realProjectProgram:formatted.projectProgram,
@@ -215,7 +223,7 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
   const mark=view==='language'?svg.querySelectorAll('[data-median-language]').find(node=>node.dataset.medianLanguage==='alpha'):
     svg.querySelectorAll('[data-profile-median]').find(node=>node.dataset.chartLanguage==='alpha');
   assert.ok(mark,'Both the profile median and hero coordinate median are interactive.');
-  const baseline=samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]);
+  const baseline=samples.map(node=>[sampleClass(node,'chart-dimmed'),sampleClass(node,'sample-highlighted')]);
   const positions=samples.map(node=>[node.getAttribute('cx'),node.getAttribute('cy')]);
   const baseOpacity=math.layerPresentation(sampleMode).opacity;
   for(const [enter,leave] of [['pointerenter','pointerleave'],['focus','blur']]){
@@ -224,9 +232,9 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
     assert.equal(Number(layer.getAttribute('opacity')),sampleMode==='off'?0:1);
     assert.equal(svg.querySelectorAll('[data-sample]').length,samples.length,'Hover cannot reveal Off samples or create points.');
     for(const node of samples){
-      assert.equal(node.classList.contains('sample-highlighted'),node.dataset.chartLanguage==='alpha');
-      assert.equal(node.classList.contains('chart-dimmed'),node.dataset.chartLanguage!=='alpha');
-      assert.equal(node.style.getPropertyValue('--chart-opacity'),String(baseOpacity));
+      assert.equal(sampleClass(node,'sample-highlighted'),node.dataset.chartLanguage==='alpha');
+      assert.equal(sampleClass(node,'chart-dimmed'),node.dataset.chartLanguage!=='alpha');
+      assert.equal(inheritedStyle(node,'--chart-opacity'),String(baseOpacity));
     }
     assert.match(element('#hover-details').textContent,/Alpha/);
     for(const spread of svg.querySelectorAll('[data-hover-spread]')){
@@ -238,7 +246,7 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
     mark.emit(leave);
     assert.equal(svg.dataset.highlightLanguage,undefined);
     assert.equal(Number(layer.getAttribute('opacity')),baseOpacity);
-    assert.deepEqual(samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]),baseline);
+    assert.deepEqual(samples.map(node=>[sampleClass(node,'chart-dimmed'),sampleClass(node,'sample-highlighted')]),baseline);
     assert.equal(context.harness.selection().sampleMode,sampleMode);
   }
   mark.emit('pointerenter',{pointerType:'touch'});
@@ -248,13 +256,40 @@ for(const view of ['summary','language'])for(const sampleMode of ['off','dim','h
   const other=svg.querySelectorAll('[data-profile-median]').find(node=>node.dataset.chartLanguage==='beta');
   mark.emit('focus');other.emit('pointerenter');
   for(const node of samples){
-    assert.equal(node.classList.contains('sample-highlighted'),node.dataset.chartLanguage==='beta');
-    assert.equal(node.classList.contains('chart-dimmed'),node.dataset.chartLanguage!=='beta');
+    assert.equal(sampleClass(node,'sample-highlighted'),node.dataset.chartLanguage==='beta');
+    assert.equal(sampleClass(node,'chart-dimmed'),node.dataset.chartLanguage!=='beta');
   }
   other.emit('pointerleave');assert.equal(svg.dataset.highlightLanguage,'alpha');
   mark.emit('blur');
-  assert.deepEqual(samples.map(node=>[node.classList.contains('chart-dimmed'),node.classList.contains('sample-highlighted')]),baseline);
+  assert.deepEqual(samples.map(node=>[sampleClass(node,'chart-dimmed'),sampleClass(node,'sample-highlighted')]),baseline);
 }
+
+// A pointer burst publishes the final target once. Leaving one point for a
+// second point in the same frame must not clear/dim the whole chart between.
+context.harness.render({view:'summary',sampleMode:'dim',languageFocus:null});
+const hoverChart=element('#chart'),hoverSamples=hoverChart.querySelectorAll('[data-sample]');
+const alphaSamples=hoverSamples.filter(n=>n.dataset.chartLanguage==='alpha');
+const betaMark=hoverChart.querySelectorAll('[data-profile-median]').find(n=>n.dataset.chartLanguage==='beta');
+betaMark.emit('focus');autoFrames=false;
+for(let i=0;i<200;i++){
+  alphaSamples[i%alphaSamples.length].emit('pointerout');
+  alphaSamples[(i+1)%alphaSamples.length].emit('pointerover');
+}
+assert.equal(frames.size,1,'Only one hover callback is queued per animation frame.');
+assert.equal(hoverChart.dataset.highlightLanguage,'beta','The burst does no synchronous highlight writes.');
+flushFrames();assert.equal(hoverChart.dataset.highlightLanguage,'alpha');
+assert.equal(frames.size,0);
+alphaSamples[0].emit('pointerout');flushFrames();
+assert.equal(hoverChart.dataset.highlightLanguage,'beta','Keyboard focus survives pointer exit.');
+assert.match(element('#hover-details').textContent,/beta/i,'Restored focus also restores its readout.');
+alphaSamples[0].emit('pointerover');assert.equal(frames.size,1);
+context.harness.render({sampleMode:'off'});
+assert.equal(frames.size,0,'Replacing the plot cancels its pending hover callback.');
+betaMark.emit('blur');betaMark.emit('pointerenter');
+assert.equal(frames.size,0,'Late events from a retired marker cannot restart its hover queue.');
+flushFrames();assert.equal(hoverChart.dataset.highlightLanguage,undefined);
+assert.equal(hoverChart.querySelectorAll('[data-sample]').length,0);
+autoFrames=true;
 const facetFixture=structuredClone(fixture),names={b1:'binarytrees',b2:'nbody'};
 for(const b of facetFixture.benchmarks)b.key=names[b.key];
 for(const p of Object.values(facetFixture.programs))p.benchmark=names[p.benchmark];

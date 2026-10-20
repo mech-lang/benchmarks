@@ -1,0 +1,40 @@
+{
+  "schema": "chart-hover-validation.v1",
+  "status": "LOCAL_VERIFIED",
+  "baseline_commit": "b764a4a2e45abb0b0e30c95fdcc1fc76658332b3",
+  "build_version": "f360c8bf40c2e010",
+  "asset_count": 41,
+  "matched_settled_states": 38,
+  "browser_states_and_input_checks": 42,
+  "local_shared_view_cases": 15,
+  "local_data_checks": 13,
+  "distinct_runs": 3246,
+  "layer_combinations": 216,
+  "layer_renderer_cases": 432,
+  "ranking_marks_checked": 440,
+  "build_unit_tests": 12,
+  "steady_same_language_chart_mutations": 0,
+  "steady_ranking_readout_mutations": 0,
+  "data_and_compressed_payloads_unchanged": true,
+  "benchmark_sources_and_all_records_unchanged": true,
+  "benchmark_executions": 0,
+  "page_errors": [],
+  "source_sha256": {
+    "site/src/app.mjs": "1e471976f4751fdf5435fa47642408686eb3408d4509d7f6d3729492ee935ab2",
+    "site/src/style.css": "e7275b5bcdb4908eca44fa4a26e35a43d0d046e7d218030f26b29f031b1f29a8",
+    "site/src/rankings.mjs": "9ab5918ffff2f40a4e2839f9d773211178344d12c337999bfed90e4404fb84c1",
+    "site/tests/hover-performance.mjs": "8944f768821c196f833cd20707d2b30bfbf11a160194ee416fd884f77818e65f",
+    "site/tests/hover-behavior.mjs": "41f88304623fc93d47c1b1493e73e24fc7b2292e31faebea535b39441e2c8826",
+    "site/tests/layers.mjs": "e021788ccf887a7af0a53bb9265f2926c405ceb28f1d7c39d97b9dec31c702b7",
+    "site/tests/rankings.mjs": "c78afa8a8b0027f2d51fc2892fccf66fc89514fbde8b8e31c11262005b1373a4"
+  },
+  "commands": [
+    "node site/tests/layers.mjs",
+    "node site/tests/rankings.mjs",
+    "python3 -m unittest discover -s tools -p test_build_site.py",
+    "node site/tests/hover-performance.mjs ASSET_DIRECTORY FRESH_REPORT",
+    "node site/tests/hover-behavior.mjs ASSET_DIRECTORY FRESH_REPORT",
+    "node site/tests/view-links.mjs site/public FRESH_REPORT",
+    "node site/tests/sample-table.mjs site/public FRESH_REPORT"
+  ]
+}
