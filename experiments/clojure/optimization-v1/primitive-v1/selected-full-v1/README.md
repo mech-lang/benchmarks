@@ -1,5 +1,9 @@
 # Preselected full-size Clojure comparison
 
+Execution is complete; the measured results and limits are recorded in
+[../README.md](../README.md). The pre-run selection below remains distinct from
+the observations.
+
 Prepared before full-size execution. No subject, compiler, test or timing was
 started while preparing this separate runner/plan. All earlier sources,
 controllers, plans, bounded records, state proof and pilot records are unchanged.
@@ -37,13 +41,13 @@ runner SHA-256 is
 The original three-source execution-plan SHA remains
 `cb43a5a01cfafa8c441e0c9ee8a13d1abcfe84cc1b14f3ff247bc74f96c92195`.
 
-Root can first verify metadata and prerequisites without starting a subject:
+Verify metadata and prerequisites without starting a subject:
 
 ```
 python3 experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run_selected_full.py --check-only
 ```
 
-Root owns the full invocation:
+Run the complete comparison serially in a fresh output directory:
 
 ```
 python3 experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run_selected_full.py --output experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run-v1 --timeout 600
@@ -61,7 +65,7 @@ Full output must retain both complete finite energy lines under the established
 1e-8 tolerance and the complete 26-byte stream; exact byte equality is also
 recorded. Failures remain in their exclusive output directory and stop the run.
 The report retains all samples, medians and sample standard deviations. The
-plan also binds root's separate exact-source approval of **111 application LOC /
+plan also binds the separate exact-source approval of **111 application LOC /
 52 physical LOC** under the retained owner convention. This establishes neither a
 uniform logical grammar nor formatted LOC. Full-work source review and any
 append/publication remain separate gates; `chart_admission` remains false here.
