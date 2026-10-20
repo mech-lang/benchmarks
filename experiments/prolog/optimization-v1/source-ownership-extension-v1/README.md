@@ -1,0 +1,9 @@
+# Exact-source owner extension proposal
+
+This is an **unapproved** manual retained-policy extension for the exact eight-block spectral source, SHA `bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5`. [proposal.json](proposal.json) contains the complete line ledger, proposed128normalized/87physical count, exact native library metadata, source/QLF/WAM/bounded proof pins and a source-specific constructed-goal flow review. Application LOC is null and independent approval is false.
+
+The unchanged V5 projection remains null. It does not select these standard-library imports or implement this module-sensitive goal-list proof. This proposal does not modify V5, reinterpret that failed projection as successful, or claim native grammar qualification. It offers a separately inspectable retained-rule extension, requiring independent approval before any source-size admission.
+
+The proposed accounting retains written definitions, arithmetic bindings, constructors, calls, controls and explicit written closers. It counts every new row/block/helper as application. It treats the two concurrent calls as meta-call headers plus written closes, append as ordinary library calls, and univ as ordinary data-construction calls. These interpretations are explicit review decisions, supported by exact native metadata and actual bounded worker/work evidence rather than inferred from a library filename.
+
+The extra specialized code trades32additional proposed retained units against the parent's96. It does not become shorter because it calls a native library, and no excluded authored benchmark helper supplies the row loops. Standard SWI library sources remain pinned unmodified runtime dependencies. Any later native parser adapter or wider library support needs its own qualification; approval of this exact ledger would not establish it.

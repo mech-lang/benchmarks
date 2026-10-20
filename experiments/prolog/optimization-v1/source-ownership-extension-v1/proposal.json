@@ -1,0 +1,1589 @@
+{
+  "schema": "prolog-spectral-exact-source-owner-extension-proposal.v1",
+  "status": "unapproved-exact-source-retained-policy-extension",
+  "source": "experiments/prolog/optimization-v1/source-v1/sources/spectralnorm/blocks8-specialized.pl",
+  "source_sha256": "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5",
+  "source_revision": "612fb31e030be207779c03cddb00a16af56f0173",
+  "application_loc": null,
+  "physical_loc": 87,
+  "retained_rule_proposed_loc": 128,
+  "independent_review_approved": false,
+  "native_grammar_qualification_claimed": false,
+  "current_native_v5_normalized_loc": null,
+  "policy": "canonical-source-units-20261012-approved-rule-v2; exact-source library/constructed-goal ownership extension proposed only",
+  "scope": "This exact source and byte-identical compiled input only. No general Prolog-library, dynamic-goal or formatter support is certified.",
+  "evidence": {
+    "source_proposal": {
+      "path": "experiments/prolog/optimization-v1/source-ownership-proposed.json",
+      "sha256": "e5057d895e2dc64c6a5b816734e653d093037230c154a7f92dfd27b47bfce2f9"
+    },
+    "native_builds": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/build-native-v3/report.json",
+      "sha256": "c4536958d8302ae2a89b8af5f269a73c6515e0ac6380a11d724155ecb459113a"
+    },
+    "native_runtime_metadata": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/build-native-v3/runtime-probe/stdout.bin",
+      "sha256": "1c8040a336ab34c6cd69eae25131e3cea47a2b554b563019e5523b8ccfc8b366"
+    },
+    "current_v5_projection": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/completed-v2/owners-blocks8-specialized.json",
+      "sha256": "59e1205dfa77d362fbf880a07a0aa17394672c87587acf6f2a401390149a0a26"
+    },
+    "bounded_native_completion": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/completed-v2/report.json",
+      "sha256": "2814b60bf5ac6326ec758175e492ca0a8d3ec4e00b5be9bfa2eca2b1f7207b01"
+    },
+    "compiled_input": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input/sources/spectralnorm/blocks8-specialized.pl",
+      "sha256": "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5"
+    },
+    "native_qlf": {
+      "path": "experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input/sources/spectralnorm/blocks8-specialized.qlf",
+      "sha256": "3ce31bd6ece1ba78e99add3ffcc49405b86c3014d9416c4a5140b54d86d737bc"
+    }
+  },
+  "native_library_metadata": {
+    "thread": {
+      "native_predicate_metadata": {
+        "arity": 3,
+        "file": "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/thread.pl",
+        "meta_predicate": "concurrent(+,:,+)",
+        "module": "thread",
+        "name": "concurrent"
+      },
+      "source_path": "experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/thread.pl",
+      "source_sha256": "bf007d4752f446205dfda66ffc3638d5a8c977fdb802a58073836e3a1167a217"
+    },
+    "lists": {
+      "native_predicate_metadata": {
+        "arity": 2,
+        "file": "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/lists.pl",
+        "meta_predicate": "none",
+        "module": "lists",
+        "name": "append"
+      },
+      "source_path": "experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/Resources/swipl/library/lists.pl",
+      "source_sha256": "386f3c5f1ee00bc79103cc12628d6ad83b6141e1bf3fdbf41e7bf6b579e902ce"
+    }
+  },
+  "univ_native_metadata": {
+    "arity": 2,
+    "file": "builtin",
+    "meta_predicate": "none",
+    "module": "system",
+    "name": "=.."
+  },
+  "owner_extensions": [
+    {
+      "construct": "use_module(library(thread),[concurrent/3]) and use_module(library(lists),[append/2])",
+      "units_each": 1,
+      "reason": "Each ordinary import directive has one written directive owner; exports/import-list rows are structural as for the retained use_module helper directive."
+    },
+    {
+      "construct": "concurrent(8,Goals,[])",
+      "units_each": 2,
+      "occurrences": 2,
+      "reason": "One meta-call header and one explicit written meta close, proposed consistently with retained call/catch owners. Native concurrent(+,:,+) marks a module-sensitive goal list, not a single closure. The list-flow proof below is source-specific and is not implemented by unchangedV5."
+    },
+    {
+      "construct": "append(Chunks,Values)",
+      "units_each": 1,
+      "occurrences": 2,
+      "reason": "Ordinary independently maintained library function; native metadata has no meta_predicate, so no additional executable syntax is hidden in its list-data arguments."
+    },
+    {
+      "construct": "Goal=..[Row,First,End,N,Input,Values] and Output=..[vector|Values]",
+      "units_each": 1,
+      "occurrences": 3,
+      "reason": "One ordinary builtin call per written univ construction. Both lists contain data/variable fields; Row is supplied only by the two literal specialized row-block names. No generated application body or extra callback statement is invented."
+    }
+  ],
+  "exact_goal_flow": [
+    "apply/3 passes literal row_block_forward to block_goals/6; apply_transpose/3 passes literal row_block_transpose. No other Row value reaches this helper in the complete exact source.",
+    "block_goals/6 creates exactly8 goal terms using that row predicate, ground integer boundaries/N, complete ground Input and one independent fresh Values result. The written constructor, recursion and both row-block definitions are all application-owned in the ledger.",
+    "Pinned concurrent/3 executes module-qualified goals copied to workers and unifies returned variable lists by jobID. Its generic loop is excluded standard library, just as the retained policy excludes other unmodified vendor internals; no application work is moved into authored support.",
+    "row_block_forward/5 and row_block_transpose/5 bodies invoke the separately written specialized scalar row predicates. All row and coefficient arithmetic remains application source and is counted.",
+    "Bounded native geometry/work evidence establishes exactly8 goals, ground inputs, independent ordered outputs, all40products and40N\u00b2coefficient calls for the tested cases. This confirms usage of the library, not a universal AST grammar certificate."
+  ],
+  "written_closers": "Retained written clause periods count1, explicit control/meta closes count1; ordinary call delimiters add0. Blank/comment rows add0.",
+  "derivation": {
+    "retained_parent_normalized": 96,
+    "replaced_parent_row_rows_apply_units": 36,
+    "new_specialized_scalar_rows": 24,
+    "new_two_row_block_definitions": 18,
+    "new_block_goals_definition": 10,
+    "new_apply_and_transpose": 14,
+    "new_imports": 2,
+    "proposed_total": "96-36+24+18+10+14+2=128"
+  },
+  "line_ledger": [
+    {
+      "line": 1,
+      "source_text": ":- module(clbg_spectralnorm_blocks8, [main/0]).",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "directive-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 2,
+      "source_text": ":- use_module('../../support/clbg_io').",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "directive-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 2
+    },
+    {
+      "line": 3,
+      "source_text": ":- use_module(library(thread), [concurrent/3]).",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "directive-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 4,
+      "source_text": ":- use_module(library(lists), [append/2]).",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "directive-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 5,
+      "source_text": ":- initialization(clbg_io:run(clbg_spectralnorm_blocks8:main), main).",
+      "significant": true,
+      "retained_rule_units": 6,
+      "retained_rule_owners": [
+        {
+          "kind": "directive-header",
+          "units": 1
+        },
+        {
+          "kind": "meta-call-header",
+          "units": 0
+        },
+        {
+          "kind": "meta-call-header",
+          "units": 1
+        },
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-meta-close",
+          "units": 1
+        },
+        {
+          "kind": "written-meta-close",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "namespace-only-owner-inheritance",
+      "parent_line": 3
+    },
+    {
+      "line": 6,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 7,
+      "source_text": "coefficient(I, J, Value) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 5
+    },
+    {
+      "line": 8,
+      "source_text": "    Sum is I + J,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 6
+    },
+    {
+      "line": 9,
+      "source_text": "    Denominator is (Sum * (Sum + 1)) div 2 + I + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 7
+    },
+    {
+      "line": 10,
+      "source_text": "    Value is 1.0 / Denominator.",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 8
+    },
+    {
+      "line": 11,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 12,
+      "source_text": "fill(Index, N, Vector) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 10
+    },
+    {
+      "line": 13,
+      "source_text": "    (   Index =< N",
+      "significant": true,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [
+        {
+          "kind": "comparison",
+          "units": 0
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 11
+    },
+    {
+      "line": 14,
+      "source_text": "    ->  arg(Index, Vector, 1.0),",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "control-header",
+          "units": 1
+        },
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 12
+    },
+    {
+      "line": 15,
+      "source_text": "        Next is Index + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 13
+    },
+    {
+      "line": 16,
+      "source_text": "        fill(Next, N, Vector)",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 14
+    },
+    {
+      "line": 17,
+      "source_text": "    ;   true",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "branch-header",
+          "units": 1
+        },
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 15
+    },
+    {
+      "line": 18,
+      "source_text": "    ).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "written-control-close",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 77
+    },
+    {
+      "line": 19,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 20,
+      "source_text": "row_forward(J, N, _, _, Accumulator, Accumulator) :- J >= N, !.",
+      "significant": true,
+      "retained_rule_units": 4,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "comparison",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 21,
+      "source_text": "row_forward(J, N, I, Input, Accumulator, Sum) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 22,
+      "source_text": "    coefficient(I, J, A),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 23,
+      "source_text": "    Position is J + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 24
+    },
+    {
+      "line": 24,
+      "source_text": "    arg(Position, Input, Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 25
+    },
+    {
+      "line": 25,
+      "source_text": "    NextAccumulator is Accumulator + (A * Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 26,
+      "source_text": "    NextJ is J + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 28
+    },
+    {
+      "line": 27,
+      "source_text": "    row_forward(NextJ, N, I, Input, NextAccumulator, Sum).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 28,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 29,
+      "source_text": "row_transpose(J, N, _, _, Accumulator, Accumulator) :- J >= N, !.",
+      "significant": true,
+      "retained_rule_units": 4,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "comparison",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 30,
+      "source_text": "row_transpose(J, N, I, Input, Accumulator, Sum) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 31,
+      "source_text": "    coefficient(J, I, A),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 32,
+      "source_text": "    Position is J + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 24
+    },
+    {
+      "line": 33,
+      "source_text": "    arg(Position, Input, Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 25
+    },
+    {
+      "line": 34,
+      "source_text": "    NextAccumulator is Accumulator + (A * Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 35,
+      "source_text": "    NextJ is J + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 28
+    },
+    {
+      "line": 36,
+      "source_text": "    row_transpose(NextJ, N, I, Input, NextAccumulator, Sum).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 37,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 38,
+      "source_text": "row_block_forward(I, End, _, _, []) :- I >= End, !.",
+      "significant": true,
+      "retained_rule_units": 4,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "comparison",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 39,
+      "source_text": "row_block_forward(I, End, N, Input, [Value|Values]) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 40,
+      "source_text": "    row_forward(0, N, I, Input, 0.0, Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 41,
+      "source_text": "    NextI is I + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 36
+    },
+    {
+      "line": 42,
+      "source_text": "    row_block_forward(NextI, End, N, Input, Values).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 43,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 44,
+      "source_text": "row_block_transpose(I, End, _, _, []) :- I >= End, !.",
+      "significant": true,
+      "retained_rule_units": 4,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "comparison",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 45,
+      "source_text": "row_block_transpose(I, End, N, Input, [Value|Values]) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 46,
+      "source_text": "    row_transpose(0, N, I, Input, 0.0, Value),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 47,
+      "source_text": "    NextI is I + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 36
+    },
+    {
+      "line": 48,
+      "source_text": "    row_block_transpose(NextI, End, N, Input, Values).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 49,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 50,
+      "source_text": "block_goals(8, _, _, _, [], []) :- !.",
+      "significant": true,
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 51,
+      "source_text": "block_goals(Block, N, Row, Input, [Goal|Goals], [Values|Chunks]) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 52,
+      "source_text": "    NextBlock is Block + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 53,
+      "source_text": "    First is (Block * N) div 8,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 54,
+      "source_text": "    End is (NextBlock * N) div 8,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 55,
+      "source_text": "    Goal =.. [Row, First, End, N, Input, Values],",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 56,
+      "source_text": "    block_goals(NextBlock, N, Row, Input, Goals, Chunks).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 57,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 58,
+      "source_text": "apply(Input, N, Output) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 39
+    },
+    {
+      "line": 59,
+      "source_text": "    block_goals(0, N, row_block_forward, Input, Goals, Chunks),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 60,
+      "source_text": "    concurrent(8, Goals, []),",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "meta-call-header",
+          "units": 1
+        },
+        {
+          "kind": "written-meta-close",
+          "units": 1
+        }
+      ],
+      "evidence": "tentative-dynamic-goal-list-meta-owner-not-native-certified"
+    },
+    {
+      "line": 61,
+      "source_text": "    append(Chunks, Values),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 62,
+      "source_text": "    Output =.. [vector|Values].",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 63,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 64,
+      "source_text": "apply_transpose(Input, N, Output) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 43
+    },
+    {
+      "line": 65,
+      "source_text": "    block_goals(0, N, row_block_transpose, Input, Goals, Chunks),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 66,
+      "source_text": "    concurrent(8, Goals, []),",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "meta-call-header",
+          "units": 1
+        },
+        {
+          "kind": "written-meta-close",
+          "units": 1
+        }
+      ],
+      "evidence": "tentative-dynamic-goal-list-meta-owner-not-native-certified"
+    },
+    {
+      "line": 67,
+      "source_text": "    append(Chunks, Values),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 68,
+      "source_text": "    Output =.. [vector|Values].",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "manual-proposed-owner-application"
+    },
+    {
+      "line": 69,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 70,
+      "source_text": "apply_ata(Input, N, Output) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 47
+    },
+    {
+      "line": 71,
+      "source_text": "    apply(Input, N, Intermediate),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 48
+    },
+    {
+      "line": 72,
+      "source_text": "    apply_transpose(Intermediate, N, Output).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 49
+    },
+    {
+      "line": 73,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 74,
+      "source_text": "power(0, U, V, _, U, V) :- !.",
+      "significant": true,
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 51
+    },
+    {
+      "line": 75,
+      "source_text": "power(Iterations, Input, _, N, U, V) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 52
+    },
+    {
+      "line": 76,
+      "source_text": "    apply_ata(Input, N, NextV),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 53
+    },
+    {
+      "line": 77,
+      "source_text": "    apply_ata(NextV, N, NextU),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 54
+    },
+    {
+      "line": 78,
+      "source_text": "    Remaining is Iterations - 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 55
+    },
+    {
+      "line": 79,
+      "source_text": "    power(Remaining, NextU, NextV, N, U, V).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 56
+    },
+    {
+      "line": 80,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 81,
+      "source_text": "dots(Index, N, _, _, UV, VV, UV, VV) :- Index > N, !.",
+      "significant": true,
+      "retained_rule_units": 4,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        },
+        {
+          "kind": "comparison",
+          "units": 1
+        },
+        {
+          "kind": "cut",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 58
+    },
+    {
+      "line": 82,
+      "source_text": "dots(Index, N, U, V, UV0, VV0, UV, VV) :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 59
+    },
+    {
+      "line": 83,
+      "source_text": "    arg(Index, U, UI),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 60
+    },
+    {
+      "line": 84,
+      "source_text": "    arg(Index, V, VI),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 61
+    },
+    {
+      "line": 85,
+      "source_text": "    UV1 is UV0 + UI * VI,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 62
+    },
+    {
+      "line": 86,
+      "source_text": "    VV1 is VV0 + VI * VI,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 63
+    },
+    {
+      "line": 87,
+      "source_text": "    Next is Index + 1,",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 64
+    },
+    {
+      "line": 88,
+      "source_text": "    dots(Next, N, U, V, UV1, VV1, UV, VV).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 65
+    },
+    {
+      "line": 89,
+      "source_text": "",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "evidence": "blank"
+    },
+    {
+      "line": 90,
+      "source_text": "main :-",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "clause-dispatch-header",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 67
+    },
+    {
+      "line": 91,
+      "source_text": "    size(N),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 68
+    },
+    {
+      "line": 92,
+      "source_text": "    (   N =:= 0",
+      "significant": true,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [
+        {
+          "kind": "comparison",
+          "units": 0
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 69
+    },
+    {
+      "line": 93,
+      "source_text": "    ->  format('0.000000000~n', [])",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "control-header",
+          "units": 1
+        },
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 70
+    },
+    {
+      "line": 94,
+      "source_text": "    ;   functor(Seed, vector, N),",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "branch-header",
+          "units": 1
+        },
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 71
+    },
+    {
+      "line": 95,
+      "source_text": "        fill(1, N, Seed),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 72
+    },
+    {
+      "line": 96,
+      "source_text": "        power(10, Seed, Seed, N, U, V),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 73
+    },
+    {
+      "line": 97,
+      "source_text": "        dots(1, N, U, V, 0.0, 0.0, UV, VV),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 74
+    },
+    {
+      "line": 98,
+      "source_text": "        Norm is sqrt(UV / VV),",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "arithmetic-binding",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 75
+    },
+    {
+      "line": 99,
+      "source_text": "        format('~9f~n', [Norm])",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        {
+          "kind": "call",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 76
+    },
+    {
+      "line": 100,
+      "source_text": "    ).",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        {
+          "kind": "written-control-close",
+          "units": 1
+        },
+        {
+          "kind": "written-clause-close",
+          "units": 1
+        }
+      ],
+      "evidence": "exact-line-owner-inheritance",
+      "parent_line": 77
+    }
+  ],
+  "approval_requirements": [
+    "Inspect every written owner and exact source hash, including the concurrent meta-close interpretation.",
+    "Review module-sensitive list construction/flow against pinned library and native metadata; retain the currentV5null as historical evidence.",
+    "Approve only a manual exact-source retained-policy extension. Do not change frozen V5 code or claim native grammar/whole-language qualification.",
+    "Any later admission must separately bind completed full measurements, original-source authorship/roles and this approved exact-source count."
+  ]
+}
