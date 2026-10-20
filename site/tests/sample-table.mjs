@@ -196,11 +196,23 @@ try{
     await page.fill('#sample-data-search',rust.implementation);
     await page.locator('[data-sample-program]').first().click();
     const accounting=await page.locator('.source-accounting').textContent();
-    assert.ok(accounting.includes('82 application LOC')&&accounting.includes('97–199'));
+    assert.ok(accounting.includes('82 normalized application LOC')&&accounting.includes('97–199'));
     assert.ok((await page.locator('#source-code').textContent()).includes('extract_digit'));
     await page.click('#close-inspector');
     checks.push('embedded Rust GMP wrapper is separated while source and workload helpers remain available');
   }
+  for(const [key,loc] of [['nbody:clojure-nbody-compact-hot-aset-v1',109],['spectralnorm:prolog-spectralnorm-blocks8-v1',128]]){
+    const rows=json.rows.filter(r=>r.program_key===key);if(!rows.length)continue;
+    assert.equal(rows.length,3);assert.ok(rows.every(r=>r.canonical_loc===loc));
+    await page.fill('#sample-data-search',rows[0].implementation);
+    await page.locator('[data-sample-program]').first().click();
+    const accounting=await page.locator('.source-accounting').textContent();
+    assert.ok(accounting.includes(`${loc} normalized application LOC`));
+    assert.ok(!accounting.includes('undefined'),'An independently counted new source has no previous LOC to display.');
+    if(key.startsWith('nbody:'))assert.ok((await page.locator('.logical-source-units').textContent()).includes('63 application logical units'));
+    await page.click('#close-inspector');
+  }
+  checks.push('new compact Clojure and parallel Prolog profiles retain three independent observations and qualified source-count displays');
   const published=json.rows.find(r=>r.language_key==='c'&&r.authorship_details.kind==='upstream');
   await page.fill('#sample-data-search',published.implementation);
   await page.locator('[data-sample-program]').first().click();
@@ -213,7 +225,7 @@ try{
   assert.ok((await page.locator('.source-authorship').textContent()).includes(generated.authorship_details.ai.models[0]));
   assert.ok(await page.locator('.source-authorship a').filter({hasText:'Apache-2.0'}).count());await page.click('#close-inspector');
   const partial=json.rows.find(r=>r.license_status==='partial');await page.fill('#sample-data-search',partial.implementation);
-  assert.ok((await page.locator('#sample-data-table tbody td:nth-child(16)').first().textContent()).includes('unverified'));
+  assert.ok((await page.locator('#sample-data-table tbody .sample-column-license').first().textContent()).includes('unverified'));
   await page.fill('#sample-data-search','gpt-6.1-sol');
   assert.ok(await page.locator('#sample-data-table tbody tr').count());
   await page.click('[data-sort-table="data"][data-sort-key="authorship"]');

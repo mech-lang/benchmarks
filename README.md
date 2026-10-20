@@ -24,7 +24,7 @@ retained qualified candidates; further improvements remain possible.
 submitted bytes, deterministic gzip size and pinned BPE token counts alongside
 retained application LOC, qualified formatted LOC and qualified logical units.
 The six chart options keep unavailable counts blank. Native logical-source
-qualification covers 73 exact programs under the separate
+qualification covers 74 exact programs under the separate
 [Python/Julia](experiments/source-normalization/v2/README.md) and
 [Clojure](experiments/source-normalization/clojure-v1/README.md) owner policies;
 other source families await equivalent checks. Each measure has explicit limits.

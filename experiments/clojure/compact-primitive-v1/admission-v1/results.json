@@ -1,0 +1,1876 @@
+{
+  "schema": "clojure-compact-admission-results.v1",
+  "status": "RECONCILED",
+  "plan": {
+    "path": "experiments/clojure/compact-primitive-v1/admission-v1/plan.json",
+    "sha256": "e84bb1c5ef107cdcc4a302720f7d557c25403ff9715b1fc800d571e11db0edc9"
+  },
+  "evidence": {
+    "foundation": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/execution-plan.json",
+      "sha256": "d01f6b3a93d04c3589a81beca46baf8cca3b0f24d4df06589ae2745a6fa6ac3f"
+    },
+    "runtime": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/runtime-build.json",
+      "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+    },
+    "builds": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/builds.json",
+      "sha256": "f8151bcdeb5e3c9c69af7dca0d7816563b822e95949f2693d2df70688a437e65"
+    },
+    "state": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-report.json",
+      "sha256": "8b13f887b5c126a84a0163e2efd8517cc6f6cb2584bd016f578940d77985529d"
+    },
+    "bounded": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/report.json",
+      "sha256": "2dcb1d8e59ab4434ee28d47491ee3f86abf945e8064bb3f9b7253dfe2c8624c1"
+    },
+    "pilot": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/report.json",
+      "sha256": "ec1df186a8a64626ddd6ff0e6b12be2eb0d65911b37d695ec732e42190632d47"
+    },
+    "selected_plan": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+      "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+    },
+    "full": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+      "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+    },
+    "ownership": {
+      "path": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+      "sha256": "81173c609ae02211f4cb3c16d312520d395921d73bc1a8570a516ee4e41c87d7"
+    },
+    "importer": {
+      "path": "tools/qualification/import_clojure_compact.py",
+      "sha256": "f155bb93986b16722fc35d62f704a9916a257237ef47a6ac124aa5fd7365c913"
+    },
+    "shared_helpers": {
+      "path": "tools/qualification/import_bqn_knucleotide.py",
+      "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+    }
+  },
+  "programs": [
+    {
+      "key": "nbody:clojure-nbody-compact-hot-aset-v1",
+      "id": "clojure-nbody-compact-hot-aset-v1",
+      "source_sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05",
+      "loc": 109,
+      "physical_loc": 49,
+      "samples_seconds": [
+        22.092492166,
+        22.217027958,
+        22.303277375
+      ],
+      "median_seconds": 22.217027958,
+      "sample_sd_seconds": 0.10597053816594601,
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clbg.nbody.compact_hot_aset",
+        "50000000"
+      ],
+      "build_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/packages-build-v1/compact-hot-aset/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/packages-build-v1/compact-hot-aset/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clojure.main",
+        "-e",
+        "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.compact-hot-aset))"
+      ],
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+            "-XX:ActiveProcessorCount=8",
+            "-Xms64m",
+            "-Xmx8g",
+            "-XX:+UseG1GC",
+            "-cp",
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+            "clbg.nbody.compact_hot_aset",
+            "50000000"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication",
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+            "CLASSPATH": "",
+            "JAVA_TOOL_OPTIONS": "",
+            "JDK_JAVA_OPTIONS": "",
+            "_JAVA_OPTIONS": "",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "stdin": "/dev/null",
+          "started_utc": "2026-10-20T20:35:24.168556+00:00",
+          "common_mutex_inode": 82961857,
+          "common_mutex_inherited": true,
+          "timeout_seconds": 600,
+          "pid": 97367,
+          "pgid": 97367,
+          "exit_code": 0,
+          "timed_out": false,
+          "elapsed_seconds": 22.092492166,
+          "user_seconds": 22.289224,
+          "system_seconds": 0.43027499999999996,
+          "maximum_rss_bytes": 589676544,
+          "finished_utc": "2026-10-20T20:35:46.261465+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-compact-hot-aset/stdout.bin",
+            "bytes": 26,
+            "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-compact-hot-aset/stderr.bin",
+            "bytes": 91,
+            "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+          },
+          "remaining_process_group": [],
+          "source": "compact-hot-aset",
+          "n": 50000000,
+          "sample": 1,
+          "case": "full-1",
+          "output_valid": true,
+          "exact_reference_bytes": true,
+          "source_sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+            "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+          },
+          "producer_plan": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+            "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+            "-XX:ActiveProcessorCount=8",
+            "-Xms64m",
+            "-Xmx8g",
+            "-XX:+UseG1GC",
+            "-cp",
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+            "clbg.nbody.compact_hot_aset",
+            "50000000"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication",
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+            "CLASSPATH": "",
+            "JAVA_TOOL_OPTIONS": "",
+            "JDK_JAVA_OPTIONS": "",
+            "_JAVA_OPTIONS": "",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "stdin": "/dev/null",
+          "started_utc": "2026-10-20T20:35:49.801268+00:00",
+          "common_mutex_inode": 82961857,
+          "common_mutex_inherited": true,
+          "timeout_seconds": 600,
+          "pid": 97460,
+          "pgid": 97460,
+          "exit_code": 0,
+          "timed_out": false,
+          "elapsed_seconds": 22.217027958,
+          "user_seconds": 22.425692,
+          "system_seconds": 0.41604599999999997,
+          "maximum_rss_bytes": 567721984,
+          "finished_utc": "2026-10-20T20:36:12.018744+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-compact-hot-aset/stdout.bin",
+            "bytes": 26,
+            "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-compact-hot-aset/stderr.bin",
+            "bytes": 91,
+            "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+          },
+          "remaining_process_group": [],
+          "source": "compact-hot-aset",
+          "n": 50000000,
+          "sample": 2,
+          "case": "full-2",
+          "output_valid": true,
+          "exact_reference_bytes": true,
+          "source_sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+            "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+          },
+          "producer_plan": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+            "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+          }
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+            "-XX:ActiveProcessorCount=8",
+            "-Xms64m",
+            "-Xmx8g",
+            "-XX:+UseG1GC",
+            "-cp",
+            "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+            "clbg.nbody.compact_hot_aset",
+            "50000000"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication",
+          "environment": {
+            "PATH": "/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+            "CLASSPATH": "",
+            "JAVA_TOOL_OPTIONS": "",
+            "JDK_JAVA_OPTIONS": "",
+            "_JAVA_OPTIONS": "",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "stdin": "/dev/null",
+          "started_utc": "2026-10-20T20:36:12.436435+00:00",
+          "common_mutex_inode": 82961857,
+          "common_mutex_inherited": true,
+          "timeout_seconds": 600,
+          "pid": 97500,
+          "pgid": 97500,
+          "exit_code": 0,
+          "timed_out": false,
+          "elapsed_seconds": 22.303277375,
+          "user_seconds": 22.532507,
+          "system_seconds": 0.40918099999999996,
+          "maximum_rss_bytes": 569114624,
+          "finished_utc": "2026-10-20T20:36:34.740112+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-compact-hot-aset/stdout.bin",
+            "bytes": 26,
+            "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-compact-hot-aset/stderr.bin",
+            "bytes": 91,
+            "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+          },
+          "remaining_process_group": [],
+          "source": "compact-hot-aset",
+          "n": 50000000,
+          "sample": 3,
+          "case": "full-3",
+          "output_valid": true,
+          "exact_reference_bytes": true,
+          "source_sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05",
+          "power_before": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "power_after": {
+            "battery": "Now drawing from 'AC Power'\n -InternalBattery-0 (id=22937699)\t100%; charged; 0:00 remaining present: true\n",
+            "settings": "Battery Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         2\n womp                 0\n networkoversleep     0\n sleep                1\n lessbright           1\n tcpkeepalive         1\n disksleep            10\nAC Power:\n Sleep On Power Button 1\n lowpowermode         0\n standby              1\n ttyskeepawake        1\n hibernatemode        3\n powernap             1\n hibernatefile        /var/vm/sleepimage\n displaysleep         10\n womp                 1\n networkoversleep     0\n sleep                0\n tcpkeepalive         1\n disksleep            10\n"
+          },
+          "producer_report": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+            "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+          },
+          "producer_plan": {
+            "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+            "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+          }
+        }
+      ]
+    }
+  ],
+  "recorded_at": "2026-10-20T20:36:38.091481+00:00",
+  "recorded_execution_root": "/private/tmp/mech-benchmark-publication",
+  "author_context": {
+    "tool": "OpenAI Codex",
+    "model_family": "Codex GPT-6",
+    "exact_model": null,
+    "status": "developer-identity-family-only",
+    "original_predecessor_authorship": "unresolved"
+  },
+  "matched_candidate_medians": {
+    "primitive-control": 2.689588458,
+    "compact-hot-aset": 22.217027958
+  },
+  "matched_control_program": "nbody:clojure-nbody-primitive-updates-v1",
+  "candidate_time_over_matched_control": 8.260381952457056,
+  "comparison_scope": "The compact candidate is slower than the freshly matched primitive control. No matched speedup against the earlier cohort near 165 seconds is claimed; existing fast-profile observations are unchanged.",
+  "source_count_review": {
+    "schema": "clojure-compact-retained-source-review.v1",
+    "status": "independently-reviewed-exact-source-retained-policy-extension",
+    "source": {
+      "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+      "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+    },
+    "application_loc": 109,
+    "physical_loc": 49,
+    "independent_review_approved": true,
+    "proposal": {
+      "path": "experiments/clojure/compact-primitive-v1/source-ownership-proposed.json",
+      "sha256": "a43844e1b9f89f20f7e23810a568ae2f20e459ddfdcb8fdbc2b06924290140bc"
+    },
+    "parent": {
+      "program": "nbody:clojure-nbody-compact",
+      "source": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      },
+      "support": {
+        "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+        "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+      },
+      "application_loc": 109,
+      "physical_loc": 49,
+      "saved_seconds": 165.364857875,
+      "saved_samples": [
+        158.278659625,
+        165.364857875,
+        165.4170845
+      ],
+      "saved_report_path": "clojure-comparison/20261012/studies/full-v1/nbody/report.json",
+      "report_path_is_legacy": true,
+      "raw_process_evidence": "data/benchmarks.json#/programs/nbody:clojure-nbody-compact/sample_execution_metadata"
+    },
+    "line_ledger": [
+      {
+        "line": 1,
+        "text": "(ns clbg.nbody.compact-hot-aset (:require [clbg.support :as s]) (:gen-class))",
+        "retained_rule_proposed_units": 4,
+        "parent_line": 1,
+        "reason": "same-owners-namespace-only"
+      },
+      {
+        "line": 2,
+        "text": "(def solar-mass (* 4.0 Math/PI Math/PI))",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 2,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 3,
+        "text": "(def days-per-year 365.24)",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 3,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 4,
+        "text": "(defn bodies []",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 4,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 5,
+        "text": "  (object-array",
+        "retained_rule_proposed_units": 6,
+        "parent_line": 5,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 6,
+        "text": "    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])",
+        "retained_rule_proposed_units": 0,
+        "parent_line": 6,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 7,
+        "text": "     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])",
+        "retained_rule_proposed_units": 0,
+        "parent_line": 7,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 8,
+        "text": "     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])",
+        "retained_rule_proposed_units": 0,
+        "parent_line": 8,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 9,
+        "text": "     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])",
+        "retained_rule_proposed_units": 0,
+        "parent_line": 9,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 10,
+        "text": "     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 10,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 11,
+        "text": "(defn offset-momentum [^objects bodies]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 11,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 12,
+        "text": "  (dotimes [axis 3]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 12,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 13,
+        "text": "    (let [momentum (loop [index 0 total 0.0]",
+        "retained_rule_proposed_units": 4,
+        "parent_line": 13,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 14,
+        "text": "                     (if (= index 5) total",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 14,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 15,
+        "text": "                       (let [^doubles body (aget bodies index)]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 15,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 16,
+        "text": "                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]",
+        "retained_rule_proposed_units": 4,
+        "parent_line": 16,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 17,
+        "text": "      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))",
+        "retained_rule_proposed_units": 4,
+        "parent_line": 17,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 18,
+        "text": "(defn energy [^objects bodies]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 18,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 19,
+        "text": "  (loop [i 0 total 0.0]",
+        "retained_rule_proposed_units": 3,
+        "parent_line": 19,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 20,
+        "text": "    (if (= i 5) total",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 20,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 21,
+        "text": "      (let [^doubles a (aget bodies i)",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 21,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 22,
+        "text": "            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 22,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 23,
+        "text": "            potential (loop [j (inc i) sum 0.0]",
+        "retained_rule_proposed_units": 3,
+        "parent_line": 23,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 24,
+        "text": "                        (if (= j 5) sum",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 24,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 25,
+        "text": "                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 25,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 26,
+        "text": "                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]",
+        "retained_rule_proposed_units": 4,
+        "parent_line": 26,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 27,
+        "text": "        (recur (inc i) (+ total kinetic potential))))))",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 27,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 28,
+        "text": "(defn advance [^objects bodies]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 28,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 29,
+        "text": "  (dotimes [i 5]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 29,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 30,
+        "text": "    (let [^doubles a (aget bodies i)]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 30,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 31,
+        "text": "      (loop [j (inc i)]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 31,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 32,
+        "text": "        (when (< j 5)",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 32,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 33,
+        "text": "          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 33,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 34,
+        "text": "                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 34,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 35,
+        "text": "            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 35,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 36,
+        "text": "              (aset a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 36,
+        "reason": "same-owners-typed-operation-substitution"
+      },
+      {
+        "line": 37,
+        "text": "              (aset b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))",
+        "retained_rule_proposed_units": 3,
+        "parent_line": 37,
+        "reason": "same-owners-typed-operation-substitution"
+      },
+      {
+        "line": 38,
+        "text": "          (recur (inc j))))))",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 38,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 39,
+        "text": "  (dotimes [i 5]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 39,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 40,
+        "text": "    (let [^doubles body (aget bodies i)]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 40,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 41,
+        "text": "      (dotimes [axis 3]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 41,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 42,
+        "text": "        (aset body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 42,
+        "reason": "same-owners-typed-operation-substitution"
+      },
+      {
+        "line": 43,
+        "text": "(defn -main [& arguments]",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 43,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 44,
+        "text": "  (let [n (s/argument arguments 1000) system (bodies)]",
+        "retained_rule_proposed_units": 3,
+        "parent_line": 44,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 45,
+        "text": "    (offset-momentum system)",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 45,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 46,
+        "text": "    (s/printf \"%.9f\\n\" (energy system))",
+        "retained_rule_proposed_units": 1,
+        "parent_line": 46,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 47,
+        "text": "    (loop [step 0]",
+        "retained_rule_proposed_units": 2,
+        "parent_line": 47,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 48,
+        "text": "      (when (< step n) (advance system) (recur (inc step))))",
+        "retained_rule_proposed_units": 5,
+        "parent_line": 48,
+        "reason": "exact-parent-owner-units"
+      },
+      {
+        "line": 49,
+        "text": "    (s/printf \"%.9f\\n\" (energy system))))",
+        "retained_rule_proposed_units": 3,
+        "parent_line": 49,
+        "reason": "exact-parent-owner-units"
+      }
+    ],
+    "source_change": "Namespace only, plus exactly three advance aset-double-to-aset replacements; momentum and all original loop/vector structure unchanged.",
+    "native_grammar_replay_claimed": false,
+    "retained_policy": "Exact-owner extension of retained Clojure grammar-v3; no new native parser or uniform logical-unit claim.",
+    "separate_logical_policy": {
+      "policy": "logical-source-owners.clojure-v1",
+      "application_units": 63,
+      "evidence": {
+        "path": "experiments/clojure/compact-primitive-v1/source-owner-v1/qualification.json",
+        "sha256": "48ea213a06b46d3d6fa54216473cf6991f9897c4865453144d66f6b42048e9f4"
+      }
+    },
+    "scope": "Exact source only; retained grammar-v3 owner inheritance is separate from native logical-owner qualification and formatter lines."
+  },
+  "logical_source_count_status": "separate-supplemental-proof-needs-explicit-binder-extension",
+  "required_work": {
+    "status": "source-reviewed-proposal-no-executed-witness",
+    "steps": 50000000,
+    "pair_order": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "pair_interactions": 500000000,
+    "pair_square_roots": 500000000,
+    "pair_divisions": 500000000,
+    "velocity_stores": 3000000000,
+    "position_stores": 750000000,
+    "additional_work": "Canonical initialization; offset momentum; before/after energies; full flushed output",
+    "numeric_rule": "Preserve source expression grouping, pair order, velocity store order and delayed positions; no unchecked or fast math"
+  },
+  "timing_boundary": "Fresh JVM launch, class loading and HotSpot JIT, all steps and both energy computations, GC, complete stdout/flush and process exit; excludes hashing/reference generation/power checks.",
+  "runtime_environment": {
+    "PATH": "/usr/bin:/bin",
+    "LC_ALL": "C",
+    "LANG": "C",
+    "TZ": "UTC",
+    "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+    "CLASSPATH": "",
+    "JAVA_TOOL_OPTIONS": "",
+    "JDK_JAVA_OPTIONS": "",
+    "_JAVA_OPTIONS": "",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "bytecode_observations": {
+    "parent": {
+      "evidence": {
+        "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-parent/stdout.bin",
+        "sha256": "d663977cefc6e604d767e0fd2250a93f2abbebe54f43eb630fd0ed884d3bd69e"
+      },
+      "typed_array_store_sites": 0,
+      "double_boxing_sites": 8,
+      "tuple_construction_sites": 4
+    },
+    "primitive-control": {
+      "evidence": {
+        "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-primitive-control/stdout.bin",
+        "sha256": "762eb486302c28f8469f2ef3f58491980f4a0b46d5e49216a43d98dc45e316c2"
+      },
+      "typed_array_store_sites": 7,
+      "double_boxing_sites": 0,
+      "tuple_construction_sites": 0
+    },
+    "compact-hot-aset": {
+      "evidence": {
+        "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-compact-hot-aset/stdout.bin",
+        "sha256": "7bdb3288ddfc3339d78a56785066b8e15ee7e39b5c0a2732eef50e6380f2a298"
+      },
+      "typed_array_store_sites": 5,
+      "double_boxing_sites": 3,
+      "tuple_construction_sites": 4
+    }
+  },
+  "bytecode_limit": "Static instruction sites, not dynamic allocation counts; no claim that HotSpot retains or eliminates every boxed value/vector.",
+  "statistics_policy": "Sample arrays and medians match exactly. The producer standard deviation is retained exactly and checked against recomputation with relative tolerance 1e-14 and no absolute tolerance, allowing Python rounding differences.",
+  "toolchains": {
+    "clojure": {
+      "version": "Clojure 1.12.6; Temurin 25.0.4.1+1 ARM64; spec.alpha 0.5.238; core.specs.alpha 0.4.74"
+    }
+  },
+  "archive_replay_limit": "Archived replay verifies retained runtime/class manifests, source and full streams; ignored binary rehashing happens only during local-artifact preparation.",
+  "historical_data_preserved": true,
+  "new_observations": 3,
+  "selection": "Retain the qualified compact candidate despite its slower matched control. Its own three full observations are independent; earlier cohorts and the existing fast profile remain unchanged.",
+  "artifacts": [
+    {
+      "path": "archive/languages/c3/20261012/revisions/private-v1/references.py",
+      "sha256": "6ba2d8d70f23ac04f2bd24e73356f14a1c3a046da35f25e936332b10a7cba1f3"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/bytecode-observations.json",
+      "sha256": "267e02c105ef7ba8f6ff0f62ca7f976912c690949013779b9402d4979deb04dc"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-all-aset/process.json",
+      "sha256": "1c40bc76b5c732bc8478b400ab3f8996f7a94ac2bf7a20a51d9d977ba3fd2751"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-all-aset/stderr.bin",
+      "sha256": "5faeb236ab1f291ef89d2046b39fc3c6ab7296440cad5f09316663c9fe5f56a9"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-all-aset/stdout.bin",
+      "sha256": "f5a82b22d18b53bb1852e7914eec5c697b0f65ee0100f3daec5ea863d8e3b0e1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/process.json",
+      "sha256": "9300fd0cdf394ab90e3f225e2164b6992627bce957e33b8abec012ee0fd66fc2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/stdout.bin",
+      "sha256": "a6bbd79304a5421a8550947bddac86a7b735667ac9a81a9bed35a1867f50cbc1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/process.json",
+      "sha256": "ddc088c37899bd35e72beaef08d3b3da500e486cfd2ac7e267bf065625f1421b"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/stdout.bin",
+      "sha256": "cde37bc9118046575bc5b796bb67a3bf273628b541c29c95397ede34d5db3a80"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/process.json",
+      "sha256": "66a2a3ef19f8748caa8a6b896209a1733b8f702dde60f65e4e719f078d0bd098"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/stdout.bin",
+      "sha256": "623a9f855b79cbfd31e32bb0b504c5217f33c54406922a22127eb80af22aada8"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/process.json",
+      "sha256": "f8de4dd35dcda9c0d13f777e4604104f93207b084189ff6b50949dd76be7da4f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/stdout.bin",
+      "sha256": "7bdb3288ddfc3339d78a56785066b8e15ee7e39b5c0a2732eef50e6380f2a298"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/process.json",
+      "sha256": "91eb09a7ba366eab7c82b28a26af5d5731afce7d57891e70e3f2c718026ca668"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/stdout.bin",
+      "sha256": "d663977cefc6e604d767e0fd2250a93f2abbebe54f43eb630fd0ed884d3bd69e"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/process.json",
+      "sha256": "7ba12ca833a0b37dcb70244c3030f20fd5528d1a36ae47463d412ed1d3996f24"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/stdout.bin",
+      "sha256": "762eb486302c28f8469f2ef3f58491980f4a0b46d5e49216a43d98dc45e316c2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/process.json",
+      "sha256": "1aab610eddb2c744a215c708eddc4a2e559aadc90a04e2caad47d3ea24515415"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/stdout.bin",
+      "sha256": "54f1f9514628551b41b2901d7abc022b15b0c3b7853f2ba0de5676634228cd1d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/process.json",
+      "sha256": "61255b7fb4ef82b3c2f0d26ac127ed4d059219510f5f144d8dd0f2e91a468d62"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/stdout.bin",
+      "sha256": "d1dce7fff241b5bbf583a8590bdceb6c795c93d209f607b079e758ffb61564bf"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/process.json",
+      "sha256": "cc346a3664bb57ded3fb3e2623727ce431d2bcc430a78ffa90895a5fe24e094b"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/stdout.bin",
+      "sha256": "f90f4cc7629183d0b78e38882816899af483fc59ebba01ef1f379888d0c9433e"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/report.json",
+      "sha256": "61a1b6fb45671f1e46b0c18c2261b42e884dfd0aa7e5172ec8611e7d70bbd001"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-compact-hot-aset/process.json",
+      "sha256": "e31e92a8b9b83d326cdf36155e56183e720e7c054b5d94a19f38374ca4974045"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "34bc4d4151edc6b41bc68a7fe45586dd7470bf3a202be66a5e760a00f47f4580"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-parent/process.json",
+      "sha256": "cea74391fd3dd538c66659ba21c8596c68d5c93c699cc45aed0c400ee7e37cc8"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-parent/stdout.bin",
+      "sha256": "34bc4d4151edc6b41bc68a7fe45586dd7470bf3a202be66a5e760a00f47f4580"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-primitive-control/process.json",
+      "sha256": "bce7024629a79ae2bf9bd9d9b2024f803da3bbf79bd1dbcb223b0516039529b1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-0-round-1-primitive-control/stdout.bin",
+      "sha256": "34bc4d4151edc6b41bc68a7fe45586dd7470bf3a202be66a5e760a00f47f4580"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-compact-hot-aset/process.json",
+      "sha256": "ba4df0af63eef71358f396d04b990fde7bf644328e5d0b90ef4419455ac96288"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "d1aaedf80cee1d942f4934b9e887185b58c4c2d6ca5bee063bd50bd21984b8d2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-parent/process.json",
+      "sha256": "5a476370dec6cd22dd20b597af786c907a01e4507bb243ccc3bb384871248613"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-parent/stdout.bin",
+      "sha256": "d1aaedf80cee1d942f4934b9e887185b58c4c2d6ca5bee063bd50bd21984b8d2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-primitive-control/process.json",
+      "sha256": "b0465104437f7ed071584e8e4670878fe46f6d87e0e1520c200c4b34e8e24573"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1-round-1-primitive-control/stdout.bin",
+      "sha256": "d1aaedf80cee1d942f4934b9e887185b58c4c2d6ca5bee063bd50bd21984b8d2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-compact-hot-aset/process.json",
+      "sha256": "83a75a6e628dd42dd48d9c84df168b4149a93d23b6f06a3074cce456017072e0"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "b185a8e2643eaaa1267075de26dd31ef64eae0949b7d4330bf0f0fdf03cc93c5"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-parent/process.json",
+      "sha256": "742bb7c2aca6e45ecafd58ce75f5847e8ab044e2a106ac998dc918b3d049a8ac"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-parent/stdout.bin",
+      "sha256": "b185a8e2643eaaa1267075de26dd31ef64eae0949b7d4330bf0f0fdf03cc93c5"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-primitive-control/process.json",
+      "sha256": "bd56b6344ad4b0936255fbc3033f61ee224f7cd8d2c6a1f0e040edbd5268e5a0"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10-round-1-primitive-control/stdout.bin",
+      "sha256": "b185a8e2643eaaa1267075de26dd31ef64eae0949b7d4330bf0f0fdf03cc93c5"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-compact-hot-aset/process.json",
+      "sha256": "784162013b6e81054dd8315f5d00405dda7d7c5a139cd85a45647f8f4d95fec8"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "76de83d6d51a74f82828547423f516e7815cfe8cfea6290a2831aa173f806de7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-parent/process.json",
+      "sha256": "1127179ab022f2e9d4b0e5838261acf445039dad89b6ecfa2f0e7d484c929456"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-parent/stdout.bin",
+      "sha256": "76de83d6d51a74f82828547423f516e7815cfe8cfea6290a2831aa173f806de7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-primitive-control/process.json",
+      "sha256": "80c5b6be770cb084a9a52559e57fe240acd2c02c01cd8c3637ec93d02abc01cc"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1000-round-1-primitive-control/stdout.bin",
+      "sha256": "76de83d6d51a74f82828547423f516e7815cfe8cfea6290a2831aa173f806de7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-compact-hot-aset/process.json",
+      "sha256": "7b8e31ddd54f3653ee5cb5b7d2d36957bc3af6061aa6c791b636576bed48faf0"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "f4188900db92329603b17d928ada6fdbbf2c21f29c056e0e86df82d010d74648"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-parent/process.json",
+      "sha256": "a10758143c9bcb0ef8a6bf847702f2e170cf2a8281ec53a0200bd21fec47b037"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-parent/stdout.bin",
+      "sha256": "f4188900db92329603b17d928ada6fdbbf2c21f29c056e0e86df82d010d74648"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-primitive-control/process.json",
+      "sha256": "61b40b3197370b4a07efff731ac8c1419f1c4d89728880067e54ddcb6d2fb7a1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-10000-round-1-primitive-control/stdout.bin",
+      "sha256": "f4188900db92329603b17d928ada6fdbbf2c21f29c056e0e86df82d010d74648"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-compact-hot-aset/process.json",
+      "sha256": "c40f474be81a68e2c3ca7ad79e7bcead799957dc166b8ce396bd0100d0f15682"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "a31e8b20702a8588175b616777541f70ad4ab85043ac3950a96849a2cc5bb816"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-parent/process.json",
+      "sha256": "f049d63349d9ed4e75146d645522168bb15e2bb14d2e99336c72d12491332ed6"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-parent/stdout.bin",
+      "sha256": "a31e8b20702a8588175b616777541f70ad4ab85043ac3950a96849a2cc5bb816"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-primitive-control/process.json",
+      "sha256": "00fb6f247669349138df4f56e8d635200d14f436e9c304bc0a07f47b1383b6df"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-1001-round-1-primitive-control/stdout.bin",
+      "sha256": "a31e8b20702a8588175b616777541f70ad4ab85043ac3950a96849a2cc5bb816"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-compact-hot-aset/process.json",
+      "sha256": "cf0e4e0fa5a12dcaef37091ba04bdc503bbbe8411fe9f45861369afb878d9b3c"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "00ec6101b633ed9827e030241c6e423e8e57068a51535ba1802270d77f95fbee"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-parent/process.json",
+      "sha256": "6047acb55ebc47cf69314e8e7c286959d6cee2756c82479a4a0b1db332a11ff4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-parent/stdout.bin",
+      "sha256": "00ec6101b633ed9827e030241c6e423e8e57068a51535ba1802270d77f95fbee"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-primitive-control/process.json",
+      "sha256": "b7dba4c65de1ad32596fa861e4fdfd96739bda3e5ef4e25fa2760129399ec61a"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-2-round-1-primitive-control/stdout.bin",
+      "sha256": "00ec6101b633ed9827e030241c6e423e8e57068a51535ba1802270d77f95fbee"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-compact-hot-aset/process.json",
+      "sha256": "4d1600dbeec7a980feca3d3dd4df449fafb2cb9c9e2d116cf0624203fce5ca2f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "90d9340c85a90236e6dbab0a41ead0a7e4abd6c341e55af25a2e0a38a3f7c038"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-parent/process.json",
+      "sha256": "f90ac00b99cc0591b75b88b1024f1afc4900b20b9813b6b8b7b8e41e40e81d02"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-parent/stdout.bin",
+      "sha256": "90d9340c85a90236e6dbab0a41ead0a7e4abd6c341e55af25a2e0a38a3f7c038"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-primitive-control/process.json",
+      "sha256": "ae342510d39e35a6f07b17d305adbd99dd937b8c41c6bdb3f0bd9d49c33a961b"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-3-round-1-primitive-control/stdout.bin",
+      "sha256": "90d9340c85a90236e6dbab0a41ead0a7e4abd6c341e55af25a2e0a38a3f7c038"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-compact-hot-aset/process.json",
+      "sha256": "ab78f25da3c682139815ea3c3032c779e4e5c4c626784ddc6a3dc2aa63a105f6"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "86b2de0ec0d771f328daf7dfd1e3f606ed3000dfeb376746f895d3c8b957d2a7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-parent/process.json",
+      "sha256": "4d9d64be9cb87b48d7f528f647fa96e7d7bc2042da6cacf6dd6c65f149a2daec"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-parent/stdout.bin",
+      "sha256": "86b2de0ec0d771f328daf7dfd1e3f606ed3000dfeb376746f895d3c8b957d2a7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-primitive-control/process.json",
+      "sha256": "d106d143e524c95a2d8e2d0431bade9f737791b111f828ede3784e2477df4ee3"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-31-round-1-primitive-control/stdout.bin",
+      "sha256": "86b2de0ec0d771f328daf7dfd1e3f606ed3000dfeb376746f895d3c8b957d2a7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-compact-hot-aset/process.json",
+      "sha256": "e602e57e5aedbd9ab6656e52116e36b2f48404c4715d2587b1fd2d1f2b52d9d7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "4863d65677b0cfd061c28c6ffbc44ec222bf571839a3dee3c2c4c1ad8b0b77f4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-parent/process.json",
+      "sha256": "db159eebd286219c2daf7e36db4b5e557e1a99cb46e7dc733dcd80fd086bb847"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-parent/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-parent/stdout.bin",
+      "sha256": "4863d65677b0cfd061c28c6ffbc44ec222bf571839a3dee3c2c4c1ad8b0b77f4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-primitive-control/process.json",
+      "sha256": "8b54b8e74d233aa0535a171e3f14fe736fb9dfd19b5d1d832c8a0a445f8101d4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/n-7-round-1-primitive-control/stdout.bin",
+      "sha256": "4863d65677b0cfd061c28c6ffbc44ec222bf571839a3dee3c2c4c1ad8b0b77f4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-0.stdout",
+      "sha256": "34bc4d4151edc6b41bc68a7fe45586dd7470bf3a202be66a5e760a00f47f4580"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-1.stdout",
+      "sha256": "d1aaedf80cee1d942f4934b9e887185b58c4c2d6ca5bee063bd50bd21984b8d2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-10.stdout",
+      "sha256": "b185a8e2643eaaa1267075de26dd31ef64eae0949b7d4330bf0f0fdf03cc93c5"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-1000.stdout",
+      "sha256": "76de83d6d51a74f82828547423f516e7815cfe8cfea6290a2831aa173f806de7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-10000.stdout",
+      "sha256": "f4188900db92329603b17d928ada6fdbbf2c21f29c056e0e86df82d010d74648"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-1001.stdout",
+      "sha256": "a31e8b20702a8588175b616777541f70ad4ab85043ac3950a96849a2cc5bb816"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-2.stdout",
+      "sha256": "00ec6101b633ed9827e030241c6e423e8e57068a51535ba1802270d77f95fbee"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-3.stdout",
+      "sha256": "90d9340c85a90236e6dbab0a41ead0a7e4abd6c341e55af25a2e0a38a3f7c038"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-31.stdout",
+      "sha256": "86b2de0ec0d771f328daf7dfd1e3f606ed3000dfeb376746f895d3c8b957d2a7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/references/n-7.stdout",
+      "sha256": "4863d65677b0cfd061c28c6ffbc44ec222bf571839a3dee3c2c4c1ad8b0b77f4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/report.json",
+      "sha256": "2dcb1d8e59ab4434ee28d47491ee3f86abf945e8064bb3f9b7253dfe2c8624c1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-compact-hot-aset/process.json",
+      "sha256": "4f83d8c8ffc5d18336b8bd1db5010875f4dad7c8ca6865f41b70e6bc1ec616f9"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-compact-hot-aset/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-compact-hot-aset/stdout.bin",
+      "sha256": "a6bbd79304a5421a8550947bddac86a7b735667ac9a81a9bed35a1867f50cbc1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-parent/process.json",
+      "sha256": "198813eab1fbeb7f6e0aa554513e73a37f561e69f878df12f5fce682758fbc90"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-parent/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-parent/stdout.bin",
+      "sha256": "cde37bc9118046575bc5b796bb67a3bf273628b541c29c95397ede34d5db3a80"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-primitive-control/process.json",
+      "sha256": "ba4d50964e172f58522dfc7c7c71805926f2a81f58fda05a6d5747f1ea327aa7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-primitive-control/stderr.bin",
+      "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/compile-primitive-control/stdout.bin",
+      "sha256": "623a9f855b79cbfd31e32bb0b504c5217f33c54406922a22127eb80af22aada8"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/controllers/build_candidates.py",
+      "sha256": "8c16e33979368b3810f9c8f7fb6b25e9efec5fafdf006dd1168784aaaf053cb2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/controllers/run_serial.py",
+      "sha256": "82413d45d24fbff1921be28e7d9e5d40405e1dc11763676e97e9a927248de330"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-compact-hot-aset/process.json",
+      "sha256": "7565558ed968e3c27a915a54103e4a54584e85813ff1a1de359f94deb5839c74"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-compact-hot-aset/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-compact-hot-aset/stdout.bin",
+      "sha256": "7bdb3288ddfc3339d78a56785066b8e15ee7e39b5c0a2732eef50e6380f2a298"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-parent/process.json",
+      "sha256": "509ca3f5afaf72cba946d9cf7d5823a441ea6e1573a8b4b03c7c89f653d6d2f5"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-parent/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-parent/stdout.bin",
+      "sha256": "d663977cefc6e604d767e0fd2250a93f2abbebe54f43eb630fd0ed884d3bd69e"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-primitive-control/process.json",
+      "sha256": "ccbdf6ca6ef8e843ea4b62a3be1c77a45acd91d174eeab4c3d3659af026aa98f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-primitive-control/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-advance-primitive-control/stdout.bin",
+      "sha256": "762eb486302c28f8469f2ef3f58491980f4a0b46d5e49216a43d98dc45e316c2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-compact-hot-aset/process.json",
+      "sha256": "ec683576932fcc1972ca1f30b07028a88c5f820c6c15c0028e02e5331adc5836"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-compact-hot-aset/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-compact-hot-aset/stdout.bin",
+      "sha256": "54f1f9514628551b41b2901d7abc022b15b0c3b7853f2ba0de5676634228cd1d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-parent/process.json",
+      "sha256": "c952ccd7adb8ce63990961ce9e585a685bcf4f1541869e01911e5fd8afd7033b"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-parent/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-parent/stdout.bin",
+      "sha256": "d1dce7fff241b5bbf583a8590bdceb6c795c93d209f607b079e758ffb61564bf"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-primitive-control/process.json",
+      "sha256": "8f35fc3232d5f1ee804b2787711863e4b2f4033272048c47e54dc185bc4f1b29"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-primitive-control/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build-v1/javap-momentum-primitive-control/stdout.bin",
+      "sha256": "f90f4cc7629183d0b78e38882816899af483fc59ebba01ef1f379888d0c9433e"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/build_candidates.py",
+      "sha256": "8c16e33979368b3810f9c8f7fb6b25e9efec5fafdf006dd1168784aaaf053cb2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/builds.json",
+      "sha256": "f8151bcdeb5e3c9c69af7dca0d7816563b822e95949f2693d2df70688a437e65"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/execution-plan.json",
+      "sha256": "d01f6b3a93d04c3589a81beca46baf8cca3b0f24d4df06589ae2745a6fa6ac3f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-compact-hot-aset/process.json",
+      "sha256": "085979e69dd5c543f8953f5d6be01b160fd44f703182255f242fc43d43bbc96d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-compact-hot-aset/stdout.bin",
+      "sha256": "3fb938822f2b87322baee13eea59620bab076cca553f7e01214dbc674bd09387"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-primitive-control/process.json",
+      "sha256": "011605b162d2554f07c994a19f871565564a9d720908e6d0d14a633a3ff53dc9"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/n-1000000-round-1-primitive-control/stdout.bin",
+      "sha256": "3fb938822f2b87322baee13eea59620bab076cca553f7e01214dbc674bd09387"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/report.json",
+      "sha256": "ec1df186a8a64626ddd6ff0e6b12be2eb0d65911b37d695ec732e42190632d47"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/plan.json",
+      "sha256": "575b11ff182224ae2d7e4649cb020b74bc9cd568873152efa8c055f4d80b8a4e"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/run_serial.py",
+      "sha256": "82413d45d24fbff1921be28e7d9e5d40405e1dc11763676e97e9a927248de330"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/run_state_probe.py",
+      "sha256": "b5dc16a37a4cd0ae2c629a948fb9875d8e0689f23ad7cd48883c164693bf1b6a"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/runtime-build.json",
+      "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/controllers/run_selected_full.py",
+      "sha256": "2343f03c4f26a5d4afd7dfad8ad95d34e07328103d7892830bb5797747a76984"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/controllers/run_serial.py",
+      "sha256": "82413d45d24fbff1921be28e7d9e5d40405e1dc11763676e97e9a927248de330"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+      "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-compact-hot-aset/process.json",
+      "sha256": "0c1e56909424eb470877e87dc3a374bdd81e6b801712d182e2653b6b09492e36"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-compact-hot-aset/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-primitive-control/process.json",
+      "sha256": "4c892c9fc9ae807dcce1c1abfb1dd474db656032f477b94ae31c7f28001828c0"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-1-primitive-control/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-compact-hot-aset/process.json",
+      "sha256": "b4c64027900575ad2248273303da3459f5af77ba9d70fa241660195afd96e0f1"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-compact-hot-aset/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-primitive-control/process.json",
+      "sha256": "398524f893c7f8eded34ca53d65622f0bf2a911fb8e09dd6d402cad3a7cb4544"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-2-primitive-control/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-compact-hot-aset/process.json",
+      "sha256": "0bc43fea09ec7ad0f0a24e28ec19704164b2c70863f9961f74a2bc794ba0e5f3"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-compact-hot-aset/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-compact-hot-aset/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-primitive-control/process.json",
+      "sha256": "0663606aaf33caf850fa6e0e153e6cc60ac18aa5a81fc7adbbb428f5d411b49f"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-primitive-control/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/round-3-primitive-control/stdout.bin",
+      "sha256": "3e6c9ef9d26cfe312a4cd8e1b81b3f671b88fbce84de543e8c23c206a942504d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/sources/compact-hot-aset.clj",
+      "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/sources/parent.clj",
+      "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/sources/primitive-control.clj",
+      "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/sources/support.clj",
+      "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+      "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/run_selected_full.py",
+      "sha256": "2343f03c4f26a5d4afd7dfad8ad95d34e07328103d7892830bb5797747a76984"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/source-ownership-proposed.json",
+      "sha256": "4ed861f105d82ba0a5983c71d7352348041bb263ebd4f7c582f1da26e2291daf"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-report.json",
+      "sha256": "8b13f887b5c126a84a0163e2efd8517cc6f6cb2584bd016f578940d77985529d"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-v1/process/process.json",
+      "sha256": "b7724c8caaf8b0cdacb04c9eb0a2224696024fd97d2cac21411eaf0614a137cb"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-v1/process/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-v1/process/stdout.bin",
+      "sha256": "dab4eb8c66f6e984ed79d8b2a5b6f3028e52d178aa6c969f149245102742e8be"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state_probe.clj",
+      "sha256": "a0d84605e59eb9044561bbf42b15b7596dd65a762c39210fd1f293e617e452ae"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+      "sha256": "81173c609ae02211f4cb3c16d312520d395921d73bc1a8570a516ee4e41c87d7"
+    },
+    {
+      "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+      "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-clojure/process.json",
+      "sha256": "80fc018cbe85798088968ec413f112d171bd7c807d67a61ca817e390063d5284"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-clojure/stderr.bin",
+      "sha256": "fa945e9b8c3b64e2b42b8025d71c68c30fd7115de6d65b54db5417a42e241097"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-clojure/stdout.bin",
+      "sha256": "d8de2141a543ca490e8ec5878e6f6ca07c66232245463bb7048ac96c96c4491a"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-java/process.json",
+      "sha256": "616204c4fe4a08a1c119d35ae7e60073c9dcfba5629d3a8b46fad710761c0db1"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-java/stderr.bin",
+      "sha256": "b8ec6a144d3a9c1c770be224b6f66abc4e049aa6b4ea9d8ad8922e8fe9968a41"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-java/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javac/process.json",
+      "sha256": "e0523189aa543af91db937f8d812821f469747424230074ab2de425075f943cd"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javac/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javac/stdout.bin",
+      "sha256": "e363f8e03b49957921f029b1c2561410f555887c871907e627980343b70e1e28"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javap/process.json",
+      "sha256": "ca16f2b92918bf0f60234834039a0ddf48feaf125b09aa15970a51b0c1a9ce4c"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javap/stderr.bin",
+      "sha256": "8e474876ea87f65d91eeb807b4fd86cc727499d4fe47bc3f8d215f0ac99f60e7"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-javap/stdout.bin",
+      "sha256": "a3ef4124b3daa971bb8db118527d6ff41871bb42908f5cb4b994f82a1bb9d862"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-properties/process.json",
+      "sha256": "6ccd282101b767736743c8df5346646d7aa83eee5acaec88c63c2da075c7a16c"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-properties/stderr.bin",
+      "sha256": "54a01e5e6c1bbb3e495c08a154a36599ade17c8455c8c27041203b14dba54036"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/identity-properties/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-architecture/process.json",
+      "sha256": "cc90f428c8f042bd670c1b114368533f8c4c090fab7857c9480ad8b736e022bf"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-architecture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-architecture/stdout.bin",
+      "sha256": "c1669e1d8edca98769c37d494b76442a1d6e5ffffd7b4da1fb63aef8ebaf6f01"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-linked/process.json",
+      "sha256": "f60458ff63732c7a34d34923ec7ea259cb606c14c5aad5a1a3a30978388f9735"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-linked/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/java-linked/stdout.bin",
+      "sha256": "ea6ba19774e6618d87733a7a98afacb877ee5b6dc4ffa8ba767c998db413c630"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-architecture/process.json",
+      "sha256": "470761310624fb057664f37dd3d365cb99b68522c0d7776bfaf5adccb045c08a"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-architecture/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-architecture/stdout.bin",
+      "sha256": "c1669e1d8edca98769c37d494b76442a1d6e5ffffd7b4da1fb63aef8ebaf6f01"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-linked/process.json",
+      "sha256": "d9d29f2753bb43b79bef3ea942d433b9e2d4cee033d1a3a7e9512c0208805153"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-linked/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/build-v1/libjvm-linked/stdout.bin",
+      "sha256": "07f32a8824a79c61e3b8de6d36359977b7644049832acbc591843cdcbc5b2cb7"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json",
+      "sha256": "89e695f8c980441c922f8158ce8f0806242dc32db882d3dfaf557ed96f608d14"
+    },
+    {
+      "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+      "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+      "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-0/expected.stdout",
+      "sha256": "34bc4d4151edc6b41bc68a7fe45586dd7470bf3a202be66a5e760a00f47f4580"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-0/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-1/expected.stdout",
+      "sha256": "d1aaedf80cee1d942f4934b9e887185b58c4c2d6ca5bee063bd50bd21984b8d2"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-1/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-10/expected.stdout",
+      "sha256": "b185a8e2643eaaa1267075de26dd31ef64eae0949b7d4330bf0f0fdf03cc93c5"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-10/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-1000/expected.stdout",
+      "sha256": "76de83d6d51a74f82828547423f516e7815cfe8cfea6290a2831aa173f806de7"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-1000/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-10000/expected.stdout",
+      "sha256": "f4188900db92329603b17d928ada6fdbbf2c21f29c056e0e86df82d010d74648"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-10000/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-2/expected.stdout",
+      "sha256": "00ec6101b633ed9827e030241c6e423e8e57068a51535ba1802270d77f95fbee"
+    },
+    {
+      "path": "experiments/shared/bounded-corpus-v1/cases/nbody/n-2/stdin.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+      "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+    },
+    {
+      "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+      "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+    },
+    {
+      "path": "tools/qualification/import_bqn_knucleotide.py",
+      "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+    },
+    {
+      "path": "tools/qualification/import_clojure_compact.py",
+      "sha256": "f155bb93986b16722fc35d62f704a9916a257237ef47a6ac124aa5fd7365c913"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "schema": "owned-implementation-audit.v1",
   "canonical_input": {
     "path": "data/benchmarks.json",
-    "sha256": "82630b33a8739c7a749245f3058ddf56e4b65b7cac8f81b9789d3865ecf58d02"
+    "sha256": "7b8d39d6963bc9b87e68e80ba17aea2f3edc2defae69b620c19f4af362a20835"
   },
   "policy": {
     "scope": "All retained database profiles; original upstream submissions protected; priority languages affect review order, not ownership classification.",
@@ -18,26 +18,29 @@
     "unchanged_identity_limit": "CLBG citation matching permits CRLF normalization and trimming only; declared-unmodified assertions are labeled separately."
   },
   "summary": {
-    "profiles": 1065,
+    "profiles": 1067,
     "classifications": {
-      "derived-adapted": 597,
+      "derived-adapted": 599,
       "unchanged-upstream": 351,
       "suite-authored": 71,
       "unknown": 46
     },
     "source_protected_profiles": 351,
     "source_review_statuses": {
-      "source-and-idiom-reviewed; candidate-alternatives-not-measured": 271,
-      "not-yet-source-performance-reviewed": 734,
+      "source-and-idiom-reviewed; candidate-alternatives-not-measured": 270,
+      "not-yet-source-performance-reviewed": 711,
+      "static-source-and-idiom-reviewed; candidate-alternatives-not-measured": 21,
       "source-and-compiler-idioms-reviewed; compiler-alternatives-not-newly-measured": 44,
-      "new-speed-candidate-work-qualified-and-measured; further-search-open": 5,
-      "source-reviewed-against-qualified-measured-alternative; further-search-open": 7,
-      "confirmed-required-work-policy-exclusion; historical-measurements-retained": 2,
+      "new-speed-candidate-work-qualified-and-measured; further-search-open": 6,
+      "source-reviewed-against-qualified-measured-alternative; further-search-open": 8,
+      "confirmed-required-work-policy-exclusion; historical-measurements-retained": 4,
+      "new-expressiveness-candidate-work-qualified-and-measured; further-search-open": 1,
       "corrected-source-work-qualified-with-archived-measurements; further-search-open": 2
     },
-    "admitted_candidates": 7,
+    "admitted_candidates": 9,
     "admission_purposes": {
-      "source-speed-candidate": 5,
+      "source-speed-candidate": 6,
+      "source-expressiveness-candidate": 1,
       "archived-correctness-correction": 2
     },
     "separately_scoped_compiler_review_profiles": 44,
@@ -209,21 +212,12 @@
     },
     {
       "language": "prolog",
-      "profiles": 20,
+      "profiles": 21,
       "classifications": {
-        "derived-adapted": 20
+        "derived-adapted": 21
       },
       "protected_upstream_profiles": 0,
       "largest_owned_or_unknown_fast_endpoint_gaps": [
-        {
-          "program": "spectralnorm:prolog-spectralnorm-compact",
-          "time_x_mech": 2084.4901572799777,
-          "loc_x_mech_fast": 8.0,
-          "observed_sample_ratio_envelope": [
-            2041.7580116224221,
-            2106.539002920338
-          ]
-        },
         {
           "program": "mandelbrot:prolog-mandelbrot-compact",
           "time_x_mech": 1845.272052669076,
@@ -240,6 +234,15 @@
           "observed_sample_ratio_envelope": [
             1058.8077216664472,
             1069.2605818020218
+          ]
+        },
+        {
+          "program": "fannkuchredux:prolog-fannkuchredux-optimized",
+          "time_x_mech": 509.78283114775724,
+          "loc_x_mech_fast": 2.135593220338983,
+          "observed_sample_ratio_envelope": [
+            496.3813485312181,
+            512.5279974659371
           ]
         }
       ]
@@ -331,9 +334,9 @@
     },
     {
       "language": "clojure",
-      "profiles": 21,
+      "profiles": 22,
       "classifications": {
-        "derived-adapted": 21
+        "derived-adapted": 22
       },
       "protected_upstream_profiles": 0,
       "largest_owned_or_unknown_fast_endpoint_gaps": [
@@ -639,9 +642,9 @@
     "regexredux:nim-regexredux-optimized",
     "spectralnorm:nim-spectralnorm-optimized",
     "revcomp:nim-revcomp-optimized",
-    "spectralnorm:prolog-spectralnorm-compact",
     "mandelbrot:prolog-mandelbrot-compact",
     "knucleotide:prolog-knucleotide-optimized",
+    "fannkuchredux:prolog-fannkuchredux-optimized",
     "fannkuchredux:fannkuchredux-apl-compact",
     "binarytrees:apl-workspace200-compact",
     "knucleotide:knucleotide-apl-v2-optimized",
@@ -10228,12 +10231,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "22e0ee3eaf9a51150551bbcc0dc46b97577bbd02d547481e0d85547d0960add2"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "22e0ee3eaf9a51150551bbcc0dc46b97577bbd02d547481e0d85547d0960add2"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -10390,12 +10411,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "37c5cacf2a55d3d29508c243b85642f52cda415ec7f248106ec69bc2c13cffff"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "37c5cacf2a55d3d29508c243b85642f52cda415ec7f248106ec69bc2c13cffff"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -23119,12 +23158,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "243853074499673a192757e2f76b1829105abcb567ac8140ff3099d0a7250b56"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "243853074499673a192757e2f76b1829105abcb567ac8140ff3099d0a7250b56"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -23256,12 +23313,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "c1f2a999c5061d73fbd4bd89e67db3d5b2a546afb44c0098c0fb1bd52157e3d0"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "c1f2a999c5061d73fbd4bd89e67db3d5b2a546afb44c0098c0fb1bd52157e3d0"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -23405,12 +23480,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "470794d8d3d26ed06adb64dadf7ce97c203de93207a448d8fba67225b107465f"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "470794d8d3d26ed06adb64dadf7ce97c203de93207a448d8fba67225b107465f"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -36175,12 +36268,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "d30b5ddaf146ce8388ad91fbd691ca9a8c1c066b90fc25bce7e3033f8c8a2f31"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "d30b5ddaf146ce8388ad91fbd691ca9a8c1c066b90fc25bce7e3033f8c8a2f31"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -36339,12 +36450,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "11e733b0fc105d63ad2796a9cc7a841158907607eb3cdc1318dc913ec0c0c5c8"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "11e733b0fc105d63ad2796a9cc7a841158907607eb3cdc1318dc913ec0c0c5c8"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -50035,11 +50164,8 @@
     "knucleotide:lean4-knucleotide-native-v1": {
       "language": "lean4",
       "benchmark": "knucleotide",
-      "published_program": true,
-      "endpoint_roles": [
-        "fast",
-        "small"
-      ],
+      "published_program": false,
+      "endpoint_roles": [],
       "user_requested_priority_language": false,
       "separately_requested_compiler_review": false,
       "priority_language_order": null,
@@ -50064,12 +50190,53 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "confirmed-required-work-policy-exclusion; historical-measurements-retained",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "experiments/lean4/library-map-review-v1/review.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "e3aa2ec057ae485f939062523f90e5427cf214cfc5c36a8e090a4e5ecd7a2e3a"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "e3aa2ec057ae485f939062523f90e5427cf214cfc5c36a8e090a4e5ecd7a2e3a"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
+        "eligibility_correction": {
+          "schema": "benchmark-eligibility-correction.v1",
+          "eligible_for_chart": false,
+          "reason": "dense-and-query-only-counting-omits-library-map-work",
+          "evidence": {
+            "review": {
+              "path": "experiments/lean4/library-map-review-v1/review.json",
+              "sha256": "c447a09ed5760790301f2abebaa956a03c0442c88e55cfb1638bf8cae95ea52b"
+            },
+            "controller": {
+              "path": "tools/qualification/apply_lean4_knucleotide_eligibility.py",
+              "sha256": "d9efd1c1b545e9401a753263a9b71049b50ab56aef85209a41e92b00799eafdb"
+            }
+          },
+          "source_sha256": [
+            "e3aa2ec057ae485f939062523f90e5427cf214cfc5c36a8e090a4e5ecd7a2e3a",
+            "316669c9da08e0fe7f6c0ef0409537ecaa73dbedeb353e27b525c927fc53d54e",
+            "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000"
+          ],
+          "historical_measurement_preserved": true,
+          "historical_work_assertion_preserved": true
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -50184,7 +50351,7 @@
     "knucleotide:lean4-knucleotide-optimized-v1": {
       "language": "lean4",
       "benchmark": "knucleotide",
-      "published_program": true,
+      "published_program": false,
       "endpoint_roles": [],
       "user_requested_priority_language": false,
       "separately_requested_compiler_review": false,
@@ -50210,12 +50377,52 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "confirmed-required-work-policy-exclusion; historical-measurements-retained",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "experiments/lean4/library-map-review-v1/review.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
+        "eligibility_correction": {
+          "schema": "benchmark-eligibility-correction.v1",
+          "eligible_for_chart": false,
+          "reason": "dense-and-query-only-counting-omits-library-map-work",
+          "evidence": {
+            "review": {
+              "path": "experiments/lean4/library-map-review-v1/review.json",
+              "sha256": "c447a09ed5760790301f2abebaa956a03c0442c88e55cfb1638bf8cae95ea52b"
+            },
+            "controller": {
+              "path": "tools/qualification/apply_lean4_knucleotide_eligibility.py",
+              "sha256": "d9efd1c1b545e9401a753263a9b71049b50ab56aef85209a41e92b00799eafdb"
+            }
+          },
+          "source_sha256": [
+            "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0",
+            "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000"
+          ],
+          "historical_measurement_preserved": true,
+          "historical_work_assertion_preserved": true
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -51466,9 +51673,7 @@
       "language": "nim",
       "benchmark": "knucleotide",
       "published_program": true,
-      "endpoint_roles": [
-        "formatted_fast"
-      ],
+      "endpoint_roles": [],
       "user_requested_priority_language": true,
       "separately_requested_compiler_review": false,
       "priority_language_order": 3,
@@ -51753,7 +51958,8 @@
       "benchmark": "knucleotide",
       "published_program": true,
       "endpoint_roles": [
-        "fast"
+        "fast",
+        "formatted_fast"
       ],
       "user_requested_priority_language": true,
       "separately_requested_compiler_review": false,
@@ -56159,12 +56365,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "4dc9807e0fadb7bc15b3ff86a74585e1568952c675ef068324de0fc2f398dc0e"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "4dc9807e0fadb7bc15b3ff86a74585e1568952c675ef068324de0fc2f398dc0e"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -56294,12 +56518,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "bde5c2c94308778097ad25c25ab847f5b46ce5d8dedabbf203556e82f4ae963f"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "bde5c2c94308778097ad25c25ab847f5b46ce5d8dedabbf203556e82f4ae963f"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -56441,12 +56683,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "99d1ca436eea51646be4a86fd5336684b89e972792fb5e059224c5217cb4f927"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "99d1ca436eea51646be4a86fd5336684b89e972792fb5e059224c5217cb4f927"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -67788,9 +68048,7 @@
       "language": "clojure",
       "benchmark": "nbody",
       "published_program": true,
-      "endpoint_roles": [
-        "small"
-      ],
+      "endpoint_roles": [],
       "user_requested_priority_language": true,
       "separately_requested_compiler_review": false,
       "priority_language_order": 8,
@@ -67827,7 +68085,8 @@
         ],
         "evidence": [
           "experiments/implementation-audit/v1/clojure-review.md",
-          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json"
+          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+          "experiments/clojure/compact-primitive-v1/admission-v1/results.json"
         ],
         "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
@@ -67901,22 +68160,90 @@
             },
             "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
             "global_optimality_proven": false
+          },
+          {
+            "admitted_program": "nbody:clojure-nbody-compact-hot-aset-v1",
+            "catalog_extension": "clojure_compact_audit",
+            "purpose": "source-expressiveness-candidate",
+            "observation_origin": "fresh-complete-process-observations",
+            "predecessor_program": "nbody:clojure-nbody-compact",
+            "admitted_application_sha256": [
+              "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+            ],
+            "source_count_review": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+            "evidence": {
+              "bounded": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/report.json",
+                "sha256": "2dcb1d8e59ab4434ee28d47491ee3f86abf945e8064bb3f9b7253dfe2c8624c1"
+              },
+              "builds": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/builds.json",
+                "sha256": "f8151bcdeb5e3c9c69af7dca0d7816563b822e95949f2693d2df70688a437e65"
+              },
+              "foundation": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/execution-plan.json",
+                "sha256": "d01f6b3a93d04c3589a81beca46baf8cca3b0f24d4df06589ae2745a6fa6ac3f"
+              },
+              "full": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+                "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+              },
+              "importer": {
+                "path": "tools/qualification/import_clojure_compact.py",
+                "sha256": "f155bb93986b16722fc35d62f704a9916a257237ef47a6ac124aa5fd7365c913"
+              },
+              "ownership": {
+                "path": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+                "sha256": "81173c609ae02211f4cb3c16d312520d395921d73bc1a8570a516ee4e41c87d7"
+              },
+              "pilot": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/report.json",
+                "sha256": "ec1df186a8a64626ddd6ff0e6b12be2eb0d65911b37d695ec732e42190632d47"
+              },
+              "plan": {
+                "path": "experiments/clojure/compact-primitive-v1/admission-v1/plan.json",
+                "sha256": "e84bb1c5ef107cdcc4a302720f7d557c25403ff9715b1fc800d571e11db0edc9"
+              },
+              "results": {
+                "path": "experiments/clojure/compact-primitive-v1/admission-v1/results.json",
+                "sha256": "6d1b1f28b3fc16e72bead82d6e283997cdf2ac0cbc33c5e13fc0643ef8b615dd"
+              },
+              "runtime": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/runtime-build.json",
+                "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+              },
+              "selected_plan": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+                "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+              },
+              "shared_helpers": {
+                "path": "tools/qualification/import_bqn_knucleotide.py",
+                "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+              },
+              "state": {
+                "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-report.json",
+                "sha256": "8b13f887b5c126a84a0163e2efd8517cc6f6cb2584bd016f578940d77985529d"
+              }
+            },
+            "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+            "global_optimality_proven": false
           }
         ],
         "qualification_note": "Predecessor source/timings retained; corrected or optimized child qualification does not transfer to this profile.",
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 3,
-        "distinct_source_bundles": 3,
+        "retained_catalog_candidate_profiles": 4,
+        "distinct_source_bundles": 4,
         "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
         "lowest_retained_median_seconds": 2.661471542,
-        "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
+        "fewest_retained_loc_program": "nbody:clojure-nbody-compact-hot-aset-v1",
         "fewest_retained_loc": 109,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
         "admitted_candidate_programs": [
-          "nbody:clojure-nbody-primitive-updates-v1"
+          "nbody:clojure-nbody-primitive-updates-v1",
+          "nbody:clojure-nbody-compact-hot-aset-v1"
         ],
         "global_optimality_proven": false
       },
@@ -67978,6 +68305,225 @@
         }
       ]
     },
+    "nbody:clojure-nbody-compact-hot-aset-v1": {
+      "language": "clojure",
+      "benchmark": "nbody",
+      "published_program": true,
+      "endpoint_roles": [
+        "small"
+      ],
+      "user_requested_priority_language": true,
+      "separately_requested_compiler_review": false,
+      "priority_language_order": 8,
+      "ownership": {
+        "classification": "derived-adapted",
+        "reason": "Documented local changes or translation with retained upstream/reference implementation or predecessor lineage.",
+        "preserve_upstream_source": false,
+        "upstream_identity": "not-established",
+        "original_lineage_status": "unresolved",
+        "origin_gaps": [
+          "Original implementation source not established; a workload description or collection is not an original-source citation."
+        ],
+        "existing_authorship_kind": "ai-adapted",
+        "existing_ai_evidence_status": "family-identified-exact-model-unverified",
+        "existing_ai_models": [],
+        "ai_authorship_inferred": false,
+        "parent_programs": [
+          "nbody:clojure-nbody-compact"
+        ],
+        "sources": [],
+        "evidence": [
+          "experiments/clojure/compact-primitive-v1/admission-v1/plan.json",
+          "experiments/clojure/compact-primitive-v1/admission-v1/results.json",
+          "experiments/clojure/compact-primitive-v1/source-ownership-approved.json"
+        ],
+        "retained_source_assertion": "Suite-authored adaptation using typed aset while retaining the compact Clojure pair, axis and vector structure; predecessor origin and inherited terms remain unresolved."
+      },
+      "audit": {
+        "status": "new-expressiveness-candidate-work-qualified-and-measured; further-search-open",
+        "findings": [],
+        "candidate_work": [],
+        "evidence": [
+          "experiments/implementation-audit/v1/clojure-review.md",
+          "experiments/clojure/compact-primitive-v1/admission-v1/results.json",
+          "experiments/clojure/compact-primitive-v1/source-ownership-approved.json"
+        ],
+        "expressiveness_status": "new-exact-source-count-reviewed; uniform-logical-normalization-pending",
+        "runtime_configuration_status": "matched-runtime-source-comparison-retained",
+        "source_sha256_reviewed": [
+          "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+        ],
+        "admission": {
+          "catalog_extension": "clojure_compact_audit",
+          "purpose": "source-expressiveness-candidate",
+          "observation_origin": "fresh-complete-process-observations",
+          "predecessor_program": "nbody:clojure-nbody-compact",
+          "admitted_application_sha256": [
+            "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+          ],
+          "source_count_review": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+          "evidence": {
+            "bounded": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/bounded-v1/report.json",
+              "sha256": "2dcb1d8e59ab4434ee28d47491ee3f86abf945e8064bb3f9b7253dfe2c8624c1"
+            },
+            "builds": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/builds.json",
+              "sha256": "f8151bcdeb5e3c9c69af7dca0d7816563b822e95949f2693d2df70688a437e65"
+            },
+            "foundation": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/execution-plan.json",
+              "sha256": "d01f6b3a93d04c3589a81beca46baf8cca3b0f24d4df06589ae2745a6fa6ac3f"
+            },
+            "full": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/full-v1/report.json",
+              "sha256": "49eeeabf6d73b10f4a354d49db5def45ba7266c50ba970edbc8116365f48c7ad"
+            },
+            "importer": {
+              "path": "tools/qualification/import_clojure_compact.py",
+              "sha256": "f155bb93986b16722fc35d62f704a9916a257237ef47a6ac124aa5fd7365c913"
+            },
+            "ownership": {
+              "path": "experiments/clojure/compact-primitive-v1/source-ownership-approved.json",
+              "sha256": "81173c609ae02211f4cb3c16d312520d395921d73bc1a8570a516ee4e41c87d7"
+            },
+            "pilot": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/pilot-v1/report.json",
+              "sha256": "ec1df186a8a64626ddd6ff0e6b12be2eb0d65911b37d695ec732e42190632d47"
+            },
+            "plan": {
+              "path": "experiments/clojure/compact-primitive-v1/admission-v1/plan.json",
+              "sha256": "e84bb1c5ef107cdcc4a302720f7d557c25403ff9715b1fc800d571e11db0edc9"
+            },
+            "results": {
+              "path": "experiments/clojure/compact-primitive-v1/admission-v1/results.json",
+              "sha256": "6d1b1f28b3fc16e72bead82d6e283997cdf2ac0cbc33c5e13fc0643ef8b615dd"
+            },
+            "runtime": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/runtime-build.json",
+              "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+            },
+            "selected_plan": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/selected-full-v1/plan.json",
+              "sha256": "afd6d6aa7718f11af1f1d0055e3fc70f6bea6d929756c2b04da6a2a31c2ea906"
+            },
+            "shared_helpers": {
+              "path": "tools/qualification/import_bqn_knucleotide.py",
+              "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+            },
+            "state": {
+              "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/state-probe-report.json",
+              "sha256": "8b13f887b5c126a84a0163e2efd8517cc6f6cb2584bd016f578940d77985529d"
+            }
+          },
+          "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+          "global_optimality_proven": false
+        },
+        "scope": "user-requested-priority; source-and-runtime-review"
+      },
+      "candidate_comparison": {
+        "retained_catalog_candidate_profiles": 4,
+        "distinct_source_bundles": 4,
+        "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
+        "lowest_retained_median_seconds": 2.661471542,
+        "fewest_retained_loc_program": "nbody:clojure-nbody-compact-hot-aset-v1",
+        "fewest_retained_loc": 109,
+        "published_fast_matches_lowest_retained_median": true,
+        "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
+        "admitted_candidate_programs": [
+          "nbody:clojure-nbody-primitive-updates-v1",
+          "nbody:clojure-nbody-compact-hot-aset-v1"
+        ],
+        "global_optimality_proven": false
+      },
+      "performance": {
+        "seconds": 22.217027958,
+        "samples": [
+          22.092492166,
+          22.217027958,
+          22.303277375
+        ],
+        "sample_count": 3,
+        "loc": 109,
+        "mech_fast_program": "nbody:pairwise-mass-tails",
+        "mech_seconds": 1.039486459,
+        "mech_loc": 25,
+        "time_x_mech": 21.373080683872576,
+        "loc_x_mech_fast": 4.36,
+        "report": "experiments/clojure/compact-primitive-v1/admission-v1/results.json",
+        "mech_report": "nbody/experiments/20261011-shared-products/replication-50m.json",
+        "timing_alias_of": null,
+        "comparison_scope": "descriptive medians of retained cohorts; not a new paired experiment",
+        "observed_sample_ratio_envelope": [
+          21.200391195121323,
+          21.66101211988628
+        ],
+        "observed_samples_all_slower_than_mech": true,
+        "loc_x_mech_small": 5.45,
+        "mech_small_program": "nbody:compact-baseline",
+        "median_matches_saved_samples": true
+      },
+      "runtime_configuration": {
+        "build_command": [
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+          "-XX:ActiveProcessorCount=8",
+          "-Xms64m",
+          "-Xmx8g",
+          "-XX:+UseG1GC",
+          "-cp",
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/packages-build-v1/compact-hot-aset/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/packages-build-v1/compact-hot-aset/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+          "clojure.main",
+          "-e",
+          "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.compact-hot-aset))"
+        ],
+        "command": [
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+          "-XX:ActiveProcessorCount=8",
+          "-Xms64m",
+          "-Xmx8g",
+          "-XX:+UseG1GC",
+          "-cp",
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/hot-only-v2/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+          "clbg.nbody.compact_hot_aset",
+          "50000000"
+        ],
+        "execution_mode": "jvm-aot-classes-jit",
+        "runtime_arguments": [
+          "50000000"
+        ],
+        "runtime_environment": {
+          "CLASSPATH": "",
+          "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+          "JAVA_TOOL_OPTIONS": "",
+          "JDK_JAVA_OPTIONS": "",
+          "LANG": "C",
+          "LC_ALL": "C",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "PATH": "/usr/bin:/bin",
+          "TZ": "UTC",
+          "VECLIB_MAXIMUM_THREADS": "1",
+          "_JAVA_OPTIONS": ""
+        },
+        "runtime_policy": "Clojure 1.12.6; Temurin 25.0.4.1+1 ARM64; direct-linking classes, fresh HotSpot JVM; ActiveProcessorCount=8 Xms64m Xmx8g G1GC",
+        "runtime_sha256": "83c9c5310d044e7c4262432854eb1bc5f49763d7c1e9971777a646c91b96c06d",
+        "runtime_support": "Unchanged generic clbg.support; no foreign n-body kernel or new workload helper."
+      },
+      "source_bundle": [
+        {
+          "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05",
+          "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+          "role": "application",
+          "included_in_application_loc": true
+        },
+        {
+          "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "path": "clojure-comparison/20261012/.build/private-v1/packages/clojure-binarytrees-compact/support/clbg/support.clj",
+          "role": "runtime-support",
+          "included_in_application_loc": false
+        }
+      ]
+    },
     "nbody:clojure-nbody-optimized": {
       "language": "clojure",
       "benchmark": "nbody",
@@ -68021,16 +68567,17 @@
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 3,
-        "distinct_source_bundles": 3,
+        "retained_catalog_candidate_profiles": 4,
+        "distinct_source_bundles": 4,
         "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
         "lowest_retained_median_seconds": 2.661471542,
-        "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
+        "fewest_retained_loc_program": "nbody:clojure-nbody-compact-hot-aset-v1",
         "fewest_retained_loc": 109,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
         "admitted_candidate_programs": [
-          "nbody:clojure-nbody-primitive-updates-v1"
+          "nbody:clojure-nbody-primitive-updates-v1",
+          "nbody:clojure-nbody-compact-hot-aset-v1"
         ],
         "global_optimality_proven": false
       },
@@ -68209,16 +68756,17 @@
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 3,
-        "distinct_source_bundles": 3,
+        "retained_catalog_candidate_profiles": 4,
+        "distinct_source_bundles": 4,
         "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
         "lowest_retained_median_seconds": 2.661471542,
-        "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
+        "fewest_retained_loc_program": "nbody:clojure-nbody-compact-hot-aset-v1",
         "fewest_retained_loc": 109,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
         "admitted_candidate_programs": [
-          "nbody:clojure-nbody-primitive-updates-v1"
+          "nbody:clojure-nbody-primitive-updates-v1",
+          "nbody:clojure-nbody-compact-hot-aset-v1"
         ],
         "global_optimality_proven": false
       },
@@ -70364,12 +70912,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "225cda480b5955f098ac3c65c2823565bfdeb00f99f11ee8d03757687997fde3"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "225cda480b5955f098ac3c65c2823565bfdeb00f99f11ee8d03757687997fde3"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -70524,12 +71090,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "2c1161aa2e2640d92ff230ca1daf1924cbf9051542e50a913769b3dc7c8013bd"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "2c1161aa2e2640d92ff230ca1daf1924cbf9051542e50a913769b3dc7c8013bd"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -70692,12 +71276,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "1ed1a1a662844116ae9b86ea590ab203e7bca5d2a16346f5c761bf9a39d6c57c"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "1ed1a1a662844116ae9b86ea590ab203e7bca5d2a16346f5c761bf9a39d6c57c"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -82817,12 +83419,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "d62dbb2131ecbc9ce7d3992a5e83a253b79ca8ce816df8eb22557571821d7f74"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "d62dbb2131ecbc9ce7d3992a5e83a253b79ca8ce816df8eb22557571821d7f74"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -82962,12 +83582,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "955909290c1f738af044d78843356661c9b854109d1fb614af3fc3b7785ea532"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "955909290c1f738af044d78843356661c9b854109d1fb614af3fc3b7785ea532"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -94787,12 +95425,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "7c459f6bc218eeaad815bbebf3cd0362bf2ec5b1ca0c043781a2b32e8038040c"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "7c459f6bc218eeaad815bbebf3cd0362bf2ec5b1ca0c043781a2b32e8038040c"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -94937,12 +95593,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "0466c6444a340c5b06cecc230d6fc2055eba5a6fa4f633738cf88ad49b2d244e"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "0466c6444a340c5b06cecc230d6fc2055eba5a6fa4f633738cf88ad49b2d244e"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -107705,12 +108379,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "8da6c1182e7bffe67c315252934fe692299073ce55b15e5c488f7a7cabf0bd06"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "8da6c1182e7bffe67c315252934fe692299073ce55b15e5c488f7a7cabf0bd06"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -107849,12 +108541,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "83c63f1968b7e7b15078ab7d8dfb5663df9419865c22839a6ba56c5fae6d9ae8"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "83c63f1968b7e7b15078ab7d8dfb5663df9419865c22839a6ba56c5fae6d9ae8"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -121092,12 +121802,30 @@
         "retained_source_assertion": "Authored Lean application and all authored shared compilation units, including C interoperability leaves, count in canonical LOC. Native Lean parser and Clang token positions retain expansion evidence. Formatted LOC is unavailable."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "3ee691cdf86d4b262e26bdce7d6fe52e523a0968ed2e2eb2744248d076d7e137"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "3ee691cdf86d4b262e26bdce7d6fe52e523a0968ed2e2eb2744248d076d7e137"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -121242,12 +121970,30 @@
         "retained_source_assertion": "Locally authored Lean candidate. Normalized LOC includes every authored Lean/C compilation input; native lexical ownership and independent statement expansion are replayed. General libraries and generated compiler output are excluded. No global optimality claim."
       },
       "audit": {
-        "status": "not-yet-source-performance-reviewed",
+        "status": "static-source-and-idiom-reviewed; candidate-alternatives-not-measured",
         "findings": [],
         "candidate_work": [],
-        "evidence": [],
-        "expressiveness_status": "not-yet-idiom-reviewed; retained source counts only",
+        "evidence": [
+          "experiments/implementation-audit/v1/lean4-review.md",
+          "experiments/implementation-audit/v1/lean4-source-review-proposal.json"
+        ],
+        "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
+        "source_sha256_reviewed": [
+          "a46df1de9384458dfedd33d61f8ac540a5bedeecdf35b2a61d06667b91ee3337"
+        ],
+        "source_review_binding": {
+          "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+          "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+          "review_path": "experiments/implementation-audit/v1/lean4-review.md",
+          "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+          "scope": "exact-listed-profile-and-application-support-sources; static-review-only",
+          "source_sha256_reviewed": [
+            "a46df1de9384458dfedd33d61f8ac540a5bedeecdf35b2a61d06667b91ee3337"
+          ],
+          "source_count_approval": false,
+          "candidate_execution": false
+        },
         "scope": "database-wide-authored-derived-or-unknown-review-queue"
       },
       "candidate_comparison": {
@@ -123189,12 +123935,261 @@
         }
       ]
     },
+    "spectralnorm:prolog-spectralnorm-blocks8-v1": {
+      "language": "prolog",
+      "benchmark": "spectralnorm",
+      "published_program": true,
+      "endpoint_roles": [
+        "fast"
+      ],
+      "user_requested_priority_language": true,
+      "separately_requested_compiler_review": false,
+      "priority_language_order": 4,
+      "ownership": {
+        "classification": "derived-adapted",
+        "reason": "Documented local changes or translation with retained upstream/reference implementation or predecessor lineage.",
+        "preserve_upstream_source": false,
+        "upstream_identity": "not-established",
+        "original_lineage_status": "unresolved",
+        "origin_gaps": [
+          "Original implementation source not established; a workload description or collection is not an original-source citation."
+        ],
+        "existing_authorship_kind": "ai-adapted",
+        "existing_ai_evidence_status": "family-identified-exact-model-unverified",
+        "existing_ai_models": [],
+        "ai_authorship_inferred": false,
+        "parent_programs": [
+          "spectralnorm:prolog-spectralnorm-compact"
+        ],
+        "sources": [],
+        "evidence": [
+          "experiments/prolog/optimization-v1/admission-v1/plan.json",
+          "experiments/prolog/optimization-v1/admission-v1/results.json",
+          "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json"
+        ],
+        "retained_source_assertion": "Suite-authored eight-block specialization of the retained derived Prolog spectral source; inherited predecessor origin and terms remain unresolved."
+      },
+      "audit": {
+        "status": "new-speed-candidate-work-qualified-and-measured; further-search-open",
+        "findings": [],
+        "candidate_work": [],
+        "evidence": [
+          "experiments/implementation-audit/v1/prolog-review.md",
+          "experiments/prolog/optimization-v1/admission-v1/results.json",
+          "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json"
+        ],
+        "expressiveness_status": "new-exact-source-count-reviewed; uniform-logical-normalization-pending",
+        "runtime_configuration_status": "matched-runtime-source-comparison-retained",
+        "source_sha256_reviewed": [
+          "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5"
+        ],
+        "admission": {
+          "catalog_extension": "prolog_spectral_audit",
+          "purpose": "source-speed-candidate",
+          "observation_origin": "fresh-complete-process-observations",
+          "predecessor_program": "spectralnorm:prolog-spectralnorm-compact",
+          "admitted_application_sha256": [
+            "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5"
+          ],
+          "source_count_review": "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json",
+          "evidence": {
+            "bounded": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/completed-v2/report.json",
+              "sha256": "2814b60bf5ac6326ec758175e492ca0a8d3ec4e00b5be9bfa2eca2b1f7207b01"
+            },
+            "builds": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/build-native-v3/report.json",
+              "sha256": "c4536958d8302ae2a89b8af5f269a73c6515e0ac6380a11d724155ecb459113a"
+            },
+            "controller": {
+              "path": "experiments/prolog/optimization-v1/full-selected-v1/run_full.py",
+              "sha256": "df1d7c3f64b3f72dc4c50bf7c181c1ffd426d4e44b473d615bf759309dd8bf34"
+            },
+            "corpus": {
+              "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+              "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+            },
+            "foundation": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/execution-plan-v3.json",
+              "sha256": "bf3de3c515794adb0a35440385bad385eb56f32d8326460699bb3a0ad47aa669"
+            },
+            "full": {
+              "path": "experiments/prolog/optimization-v1/full-selected-v1/full-v1/report.json",
+              "sha256": "6817f95f1e6a6c0aa2cc93e4746f4d6e9f79449f851e65a80ea5ab4ecbe3f87d"
+            },
+            "importer": {
+              "path": "tools/qualification/import_prolog_spectral.py",
+              "sha256": "901e5084b51fe4a39126654ac4b3a779eea478afd24c38d449bcd167c206870e"
+            },
+            "ownership": {
+              "path": "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json",
+              "sha256": "55d933c57612f5c46cbd42e0ad74aeb83b2c44896e2a032d84dac931087c0e1f"
+            },
+            "ownership_proposal": {
+              "path": "experiments/prolog/optimization-v1/source-ownership-extension-v1/proposal.json",
+              "sha256": "1bc6420ceb59be096bc31729dd8e073395e6012e7c4c5f94173645782614adee"
+            },
+            "pilot": {
+              "path": "experiments/prolog/optimization-v1/pilot-700-v1/pilot-v1/report.json",
+              "sha256": "b01458f60a0b5bee4c6bccb47278f7b1062367a701ecde18052e9f50b00ed9c9"
+            },
+            "pilot_controller": {
+              "path": "experiments/prolog/optimization-v1/pilot-700-v1/run_pilot.py",
+              "sha256": "8f554f3278e49dd27665e3f03b821783f19b99cebd099e02d42e39ee5e8df3b5"
+            },
+            "pilot_plan": {
+              "path": "experiments/prolog/optimization-v1/pilot-700-v1/plan.json",
+              "sha256": "c9d368e2a1db0aecd190fd238cf17d101b044eae485872756a676a5ee89c7bc4"
+            },
+            "plan": {
+              "path": "experiments/prolog/optimization-v1/admission-v1/plan.json",
+              "sha256": "c9f2178fb979ca801ebed062aca4b51a5199b1417cac10397afcb8d9b77f5616"
+            },
+            "process": {
+              "path": "experiments/prolog/optimization-v1/full-selected-v1/process.py",
+              "sha256": "34e7b16fa6853af99e35faedb893c4eb21425c1a09df62dd4d65ca6526a1130e"
+            },
+            "producer_plan": {
+              "path": "experiments/prolog/optimization-v1/full-selected-v1/plan.json",
+              "sha256": "4a31caf0bd6d106d01329baf4f5aff3ca7d314235ac398e491f87eb9c8c2d4de"
+            },
+            "results": {
+              "path": "experiments/prolog/optimization-v1/admission-v1/results.json",
+              "sha256": "93967fd2822b0209f85f9a01dbceb290aa3ab0982c2fd98419a460d01c71c6dc"
+            },
+            "runtime": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/runtime-v3/restoration-report.json",
+              "sha256": "0ea9ebf53eda13048d29e60083a1fe3ec39f0d550d4152525293733fb9ca49ed"
+            },
+            "runtime_artifacts": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/runtime-v3/artifacts.json",
+              "sha256": "8fbbc193a650abfea343917fa32d680555138af21e6ea1e8cc5574d103b97647"
+            },
+            "shared_helpers": {
+              "path": "tools/qualification/import_bqn_knucleotide.py",
+              "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+            },
+            "source_review": {
+              "path": "experiments/prolog/optimization-v1/qualification-v1/README.md",
+              "sha256": "f9a522019920261d6d1544c026f9fe915fb28e2128899c9a7fdf3cad02c0cfba"
+            }
+          },
+          "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+          "global_optimality_proven": false
+        },
+        "scope": "user-requested-priority; source-and-runtime-review"
+      },
+      "candidate_comparison": {
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 2,
+        "lowest_retained_median_program": "spectralnorm:prolog-spectralnorm-blocks8-v1",
+        "lowest_retained_median_seconds": 34.515944833,
+        "fewest_retained_loc_program": "spectralnorm:prolog-spectralnorm-compact",
+        "fewest_retained_loc": 96,
+        "published_fast_matches_lowest_retained_median": true,
+        "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
+        "admitted_candidate_programs": [
+          "spectralnorm:prolog-spectralnorm-blocks8-v1"
+        ],
+        "global_optimality_proven": false
+      },
+      "performance": {
+        "seconds": 34.515944833,
+        "samples": [
+          34.493370375,
+          34.515944833,
+          37.083872042
+        ],
+        "sample_count": 3,
+        "loc": 128,
+        "mech_fast_program": "spectralnorm:mech-integer-simd1-u4-r4-p8-g8",
+        "mech_seconds": 0.086075292,
+        "mech_loc": 12,
+        "time_x_mech": 400.99712741026775,
+        "loc_x_mech_fast": 10.666666666666666,
+        "report": "experiments/prolog/optimization-v1/admission-v1/results.json",
+        "mech_report": "additional-languages/20261009-full-suite/results/timings.json",
+        "timing_alias_of": null,
+        "comparison_scope": "descriptive medians of retained cohorts; not a new paired experiment",
+        "observed_sample_ratio_envelope": [
+          393.84123522895715,
+          433.84049476986075
+        ],
+        "observed_samples_all_slower_than_mech": true,
+        "loc_x_mech_small": 10.666666666666666,
+        "mech_small_program": "spectralnorm:mech-integer-simd1-u4-r4-p8-g8",
+        "median_matches_saved_samples": true
+      },
+      "runtime_configuration": {
+        "build_command": [
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/MacOS/swipl",
+          "-q",
+          "-O",
+          "-f",
+          "none",
+          "--stack-limit=8g",
+          "-l",
+          "/private/tmp/mech-benchmark-publication/archive/languages/prolog/20261013/revisions/prepare-success-halt-v1/tools/prepare_qlf.pl",
+          "-g",
+          "clbg_prepare:main",
+          "--",
+          "compile",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input/sources/spectralnorm/blocks8-specialized.pl",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-native-v3/blocks8-specialized/application-compile.json",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-native-v3/blocks8-specialized/application-compile.wam",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input"
+        ],
+        "command": [
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/MacOS/swipl",
+          "-q",
+          "-O",
+          "-f",
+          "none",
+          "--stack-limit=8g",
+          "-l",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input/support/clbg_io.qlf",
+          "-s",
+          "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/qualification-v1/build-v3/blocks8-specialized/input/sources/spectralnorm/blocks8-specialized.qlf",
+          "-g",
+          "clbg_io:run(clbg_spectralnorm_blocks8:main)",
+          "--",
+          "5500"
+        ],
+        "execution_mode": "interpreter",
+        "runtime_arguments": [
+          "5500"
+        ],
+        "runtime_environment": {
+          "LANG": "C",
+          "LC_ALL": "C",
+          "PATH": "/usr/bin:/bin",
+          "SWI_HOME_DIR": "/private/tmp/mech-benchmark-publication/experiments/prolog/optimization-v1/.build/runtime-attempt-v2/arm64-app/SWI-Prolog.app/Contents/Resources/swipl",
+          "TZ": "UTC"
+        },
+        "runtime_policy": "Exact retained SWI-Prolog 10.0.2 ARM64 bytecode VM; -q -O -f none --stack-limit=8g; default GC/unbounded integers; ordinary concurrent(8,Goals,[])",
+        "runtime_sha256": "554814b1da7c0c30595adafb758145e42a6134c696b47c8870d359008246443e",
+        "runtime_support": "Pinned unmodified SWI thread/lists libraries and unchanged generic CLI support. All coefficient, row, block and goal-construction helpers are application source."
+      },
+      "source_bundle": [
+        {
+          "sha256": "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5",
+          "path": "experiments/prolog/optimization-v1/source-v1/sources/spectralnorm/blocks8-specialized.pl",
+          "role": "application",
+          "included_in_application_loc": true
+        },
+        {
+          "sha256": "bc6361457988de3b8d7dbce526bf738f0268e96e1c7bb59c35bb4798c71ebdb3",
+          "path": "archive/languages/prolog/20261013/qualification/prepare-success-halt-v1/builds/prolog-regexredux-compact/input/support/clbg_io.pl",
+          "role": "runtime-support",
+          "included_in_application_loc": false
+        }
+      ]
+    },
     "spectralnorm:prolog-spectralnorm-compact": {
       "language": "prolog",
       "benchmark": "spectralnorm",
       "published_program": true,
       "endpoint_roles": [
-        "fast",
         "small"
       ],
       "user_requested_priority_language": true,
@@ -123223,7 +124218,7 @@
         "retained_source_assertion": "Exact retained compiler input and all authored helpers; source work and canonical owners independently qualified."
       },
       "audit": {
-        "status": "source-and-idiom-reviewed; candidate-alternatives-not-measured",
+        "status": "source-reviewed-against-qualified-measured-alternative; further-search-open",
         "findings": [
           "The inner recursive row predicate tests transpose and calls coefficient for every matrix element; vectors use ordinary compound terms and arg/3."
         ],
@@ -123234,25 +124229,126 @@
           "Review whether conventional tail-recursive numeric predicates can express the same work with fewer intermediate bindings; source aliases are not independent optimization strategies."
         ],
         "evidence": [
-          "experiments/implementation-audit/v1/prolog-review.md"
+          "experiments/implementation-audit/v1/prolog-review.md",
+          "experiments/prolog/optimization-v1/admission-v1/results.json"
         ],
         "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
         "source_sha256_reviewed": [
           "1d868f9e772820b1b2e7a3c68e82f142b6704357f6fa1249ef3e828e78c02fda"
         ],
+        "related_admissions": [
+          {
+            "admitted_program": "spectralnorm:prolog-spectralnorm-blocks8-v1",
+            "catalog_extension": "prolog_spectral_audit",
+            "purpose": "source-speed-candidate",
+            "observation_origin": "fresh-complete-process-observations",
+            "predecessor_program": "spectralnorm:prolog-spectralnorm-compact",
+            "admitted_application_sha256": [
+              "bc2223d1fa22aed05a7ea4da9904a88a701c6d0972749ced5f0e106fc9685ba5"
+            ],
+            "source_count_review": "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json",
+            "evidence": {
+              "bounded": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/completed-v2/report.json",
+                "sha256": "2814b60bf5ac6326ec758175e492ca0a8d3ec4e00b5be9bfa2eca2b1f7207b01"
+              },
+              "builds": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/build-native-v3/report.json",
+                "sha256": "c4536958d8302ae2a89b8af5f269a73c6515e0ac6380a11d724155ecb459113a"
+              },
+              "controller": {
+                "path": "experiments/prolog/optimization-v1/full-selected-v1/run_full.py",
+                "sha256": "df1d7c3f64b3f72dc4c50bf7c181c1ffd426d4e44b473d615bf759309dd8bf34"
+              },
+              "corpus": {
+                "path": "experiments/shared/bounded-corpus-v1/cases/manifest.json",
+                "sha256": "92767a167dafd97745361221cd5a9fe04a2388ba6be7f591756f6153ab3895f1"
+              },
+              "foundation": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/execution-plan-v3.json",
+                "sha256": "bf3de3c515794adb0a35440385bad385eb56f32d8326460699bb3a0ad47aa669"
+              },
+              "full": {
+                "path": "experiments/prolog/optimization-v1/full-selected-v1/full-v1/report.json",
+                "sha256": "6817f95f1e6a6c0aa2cc93e4746f4d6e9f79449f851e65a80ea5ab4ecbe3f87d"
+              },
+              "importer": {
+                "path": "tools/qualification/import_prolog_spectral.py",
+                "sha256": "901e5084b51fe4a39126654ac4b3a779eea478afd24c38d449bcd167c206870e"
+              },
+              "ownership": {
+                "path": "experiments/prolog/optimization-v1/source-ownership-extension-v1/approved.json",
+                "sha256": "55d933c57612f5c46cbd42e0ad74aeb83b2c44896e2a032d84dac931087c0e1f"
+              },
+              "ownership_proposal": {
+                "path": "experiments/prolog/optimization-v1/source-ownership-extension-v1/proposal.json",
+                "sha256": "1bc6420ceb59be096bc31729dd8e073395e6012e7c4c5f94173645782614adee"
+              },
+              "pilot": {
+                "path": "experiments/prolog/optimization-v1/pilot-700-v1/pilot-v1/report.json",
+                "sha256": "b01458f60a0b5bee4c6bccb47278f7b1062367a701ecde18052e9f50b00ed9c9"
+              },
+              "pilot_controller": {
+                "path": "experiments/prolog/optimization-v1/pilot-700-v1/run_pilot.py",
+                "sha256": "8f554f3278e49dd27665e3f03b821783f19b99cebd099e02d42e39ee5e8df3b5"
+              },
+              "pilot_plan": {
+                "path": "experiments/prolog/optimization-v1/pilot-700-v1/plan.json",
+                "sha256": "c9d368e2a1db0aecd190fd238cf17d101b044eae485872756a676a5ee89c7bc4"
+              },
+              "plan": {
+                "path": "experiments/prolog/optimization-v1/admission-v1/plan.json",
+                "sha256": "c9f2178fb979ca801ebed062aca4b51a5199b1417cac10397afcb8d9b77f5616"
+              },
+              "process": {
+                "path": "experiments/prolog/optimization-v1/full-selected-v1/process.py",
+                "sha256": "34e7b16fa6853af99e35faedb893c4eb21425c1a09df62dd4d65ca6526a1130e"
+              },
+              "producer_plan": {
+                "path": "experiments/prolog/optimization-v1/full-selected-v1/plan.json",
+                "sha256": "4a31caf0bd6d106d01329baf4f5aff3ca7d314235ac398e491f87eb9c8c2d4de"
+              },
+              "results": {
+                "path": "experiments/prolog/optimization-v1/admission-v1/results.json",
+                "sha256": "93967fd2822b0209f85f9a01dbceb290aa3ab0982c2fd98419a460d01c71c6dc"
+              },
+              "runtime": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/runtime-v3/restoration-report.json",
+                "sha256": "0ea9ebf53eda13048d29e60083a1fe3ec39f0d550d4152525293733fb9ca49ed"
+              },
+              "runtime_artifacts": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/runtime-v3/artifacts.json",
+                "sha256": "8fbbc193a650abfea343917fa32d680555138af21e6ea1e8cc5574d103b97647"
+              },
+              "shared_helpers": {
+                "path": "tools/qualification/import_bqn_knucleotide.py",
+                "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+              },
+              "source_review": {
+                "path": "experiments/prolog/optimization-v1/qualification-v1/README.md",
+                "sha256": "f9a522019920261d6d1544c026f9fe915fb28e2128899c9a7fdf3cad02c0cfba"
+              }
+            },
+            "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+            "global_optimality_proven": false
+          }
+        ],
+        "qualification_note": "Predecessor source/timings retained; corrected or optimized child qualification does not transfer to this profile.",
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 2,
-        "distinct_source_bundles": 1,
-        "lowest_retained_median_program": "spectralnorm:prolog-spectralnorm-compact",
-        "lowest_retained_median_seconds": 179.423098959,
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 2,
+        "lowest_retained_median_program": "spectralnorm:prolog-spectralnorm-blocks8-v1",
+        "lowest_retained_median_seconds": 34.515944833,
         "fewest_retained_loc_program": "spectralnorm:prolog-spectralnorm-compact",
         "fewest_retained_loc": 96,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
-        "admitted_candidate_programs": [],
+        "admitted_candidate_programs": [
+          "spectralnorm:prolog-spectralnorm-blocks8-v1"
+        ],
         "global_optimality_proven": false
       },
       "performance": {
@@ -123412,15 +124508,17 @@
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 2,
-        "distinct_source_bundles": 1,
-        "lowest_retained_median_program": "spectralnorm:prolog-spectralnorm-compact",
-        "lowest_retained_median_seconds": 179.423098959,
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 2,
+        "lowest_retained_median_program": "spectralnorm:prolog-spectralnorm-blocks8-v1",
+        "lowest_retained_median_seconds": 34.515944833,
         "fewest_retained_loc_program": "spectralnorm:prolog-spectralnorm-compact",
         "fewest_retained_loc": 96,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
-        "admitted_candidate_programs": [],
+        "admitted_candidate_programs": [
+          "spectralnorm:prolog-spectralnorm-blocks8-v1"
+        ],
         "global_optimality_proven": false
       },
       "performance": {

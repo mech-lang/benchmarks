@@ -20,6 +20,14 @@ PRIORITY = ["bqn", "matlab", "nim", "prolog", "apl", "smalltalk", "ruby",
 DEEP_REVIEWS = {language: f"experiments/implementation-audit/v1/{language}-review.md"
                 for language in PRIORITY}
 DEEP_REVIEWS["ruby-zjit"] = DEEP_REVIEWS["ruby"]
+DEEP_REVIEWS["lean4"] = "experiments/implementation-audit/v1/lean4-review.md"
+EXACT_SOURCE_REVIEWS = {
+    "lean4": {
+        "path": "experiments/implementation-audit/v1/lean4-source-review-proposal.json",
+        "sha256": "ffb28792cf304ed40661d642ad6e2b14263b25d5bb42f8a557e2fc0328fbdd5a",
+        "review_sha256": "53a89d767a3c531d6b354b8e9af2f1375a3674ca37e4469f0c103131d9abca39",
+    },
+}
 COMPILER_REVIEWS = {language: "experiments/implementation-audit/v1/mech-review.md"
                     for language in ("mech", "mech-jit", "mech-resident")}
 ADMISSION_EXTENSIONS = {
@@ -28,6 +36,8 @@ ADMISSION_EXTENSIONS = {
     "bqn_spectral_audit": ("bqn-spectral-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "bqn_fasta_audit": ("bqn-fasta-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "clojure_nbody_audit": ("clojure-nbody-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
+    "clojure_compact_audit": ("clojure-compact-catalog-extension.v1", "source-expressiveness-candidate", "fresh-complete-process-observations"),
+    "prolog_spectral_audit": ("prolog-spectral-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "matlab_regex_case_audit": ("matlab-regex-catalog-extension.v1", "archived-correctness-correction", "archived-complete-process-observations; no-new-native-run-by-intake"),
 }
 
@@ -171,6 +181,53 @@ def application_shas(program):
             if program.get("file_roles", {}).get(sha, {}).get("included_in_application_loc") is not False]
 
 
+def exact_source_reviews(languages, root=ROOT):
+    """Load reviewed source inventories, without extending a review to new sources."""
+    result = {}
+    for language in set(languages).intersection(EXACT_SOURCE_REVIEWS):
+        reference = EXACT_SOURCE_REVIEWS[language]
+        raw = (root / reference["path"]).read_bytes()
+        if digest(raw) != reference["sha256"]:
+            raise ValueError("Exact source-review proposal identity differs: " + language)
+        proposal = json.loads(raw)
+        review = proposal["review"]
+        if (proposal.get("schema") != "owned-language-source-review-proposal.v1"
+                or proposal.get("language") != language
+                or proposal.get("status") != "proposed-source-review-binding-only"
+                or review.get("path") != DEEP_REVIEWS[language]
+                or review.get("sha256") != reference["review_sha256"]
+                or digest((root / review["path"]).read_bytes()) != review["sha256"]
+                or proposal.get("qualification", {}).get("source_count_approval") is not False
+                or proposal.get("qualification", {}).get("native_execution") is not False):
+            raise ValueError("Exact static source-review scope differs: " + language)
+        result[language] = (proposal, reference)
+    return result
+
+
+def bound_static_review(program, source_reviews):
+    """Return a compact reference only for the exact listed key and source boundary."""
+    if program["language"] not in source_reviews:
+        return None
+    proposal, reference = source_reviews[program["language"]]
+    reviewed = proposal["profiles"].get(program["key"])
+    if reviewed is None or reviewed["benchmark"] != program["benchmark"]:
+        return None
+    parts = reviewed["sources"]
+    expected_application = [p["source_sha256"] for p in parts if p["included_in_application"]]
+    if (program["files"] != [p["source_sha256"] for p in parts]
+            or application_shas(program) != expected_application):
+        return None
+    for part in parts:
+        role = program.get("file_roles", {}).get(part["source_sha256"], {}).get("role", "application")
+        if role != part["role"]:
+            return None
+    return dict(path=reference["path"], sha256=reference["sha256"],
+                review_path=proposal["review"]["path"], review_sha256=proposal["review"]["sha256"],
+                scope="exact-listed-profile-and-application-support-sources; static-review-only",
+                source_sha256_reviewed=expected_application, source_count_approval=False,
+                candidate_execution=False)
+
+
 def classify(program):
     """Separate ownership from AI attribution and unchanged-source protection."""
     authored = program.get("authorship", {})
@@ -300,6 +357,7 @@ def admission_reviews(data, catalog):
 
 def make_inventory(data, canonical_sha256):
     catalog = {**data.get("program_inventory", {}), **data["programs"]}
+    source_reviews = exact_source_reviews(p["language"] for p in catalog.values())
     pools = defaultdict(list)
     for program in catalog.values():
         pools[program["benchmark"], program["language"]].append(program)
@@ -334,11 +392,17 @@ def make_inventory(data, canonical_sha256):
             "recorded-runtime-fields-inventoried; independent-configuration-review-pending")
         if key in STATIC_REVIEWS:
             review["source_sha256_reviewed"] = application_shas(program)
-        if program["language"] in DEEP_REVIEWS:
-            review["status"] = "source-and-idiom-reviewed; candidate-alternatives-not-measured"
+        bound_review = bound_static_review(program, source_reviews)
+        if (program["language"] in DEEP_REVIEWS
+                and (program["language"] not in EXACT_SOURCE_REVIEWS or bound_review is not None)):
+            review["status"] = ("static-source-and-idiom-reviewed; candidate-alternatives-not-measured"
+                                if bound_review else "source-and-idiom-reviewed; candidate-alternatives-not-measured")
             review["expressiveness_status"] = "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted"
             review["source_sha256_reviewed"] = application_shas(program)
             review["evidence"] = [*review.get("evidence", []), DEEP_REVIEWS[program["language"]]]
+            if bound_review:
+                review["source_review_binding"] = bound_review
+                review["evidence"].append(bound_review["path"])
         if program["language"] in COMPILER_REVIEWS:
             review["status"] = "source-and-compiler-idioms-reviewed; compiler-alternatives-not-newly-measured"
             review["expressiveness_status"] = "application-host-boundaries-and-source-alternatives-reviewed; no-new-count-assigned"
@@ -355,6 +419,8 @@ def make_inventory(data, canonical_sha256):
             review["status"] = (
                 "corrected-source-work-qualified-with-archived-measurements; further-search-open"
                 if admission["purpose"] == "archived-correctness-correction" else
+                "new-expressiveness-candidate-work-qualified-and-measured; further-search-open"
+                if admission["purpose"] == "source-expressiveness-candidate" else
                 "new-speed-candidate-work-qualified-and-measured; further-search-open")
             review["expressiveness_status"] = "new-exact-source-count-reviewed; uniform-logical-normalization-pending"
             review["runtime_configuration_status"] = (
@@ -364,7 +430,9 @@ def make_inventory(data, canonical_sha256):
             review["admission"] = admission
             review["evidence"] = [*review.get("evidence", []), program["report"], program["source_accounting"]["evidence"]]
         if (program.get("eligible_for_chart") is False
-                and program.get("eligibility_correction", {}).get("reason") == "suite-local-custom-hash-table"):
+                and program.get("eligibility_correction", {}).get("reason") in {
+                    "suite-local-custom-hash-table",
+                    "dense-and-query-only-counting-omits-library-map-work"}):
             review["status"] = "confirmed-required-work-policy-exclusion; historical-measurements-retained"
             review["eligibility_correction"] = program["eligibility_correction"]
             review["evidence"] = [*review.get("evidence", []), program["eligibility_correction"]["evidence"]["review"]["path"]]

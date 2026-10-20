@@ -1,0 +1,20 @@
+{
+  "schema": "nim-native-formatter-preservation-fixtures.v1",
+  "status": "prepared-not-executed",
+  "cases": [
+    {"id": "packed-statements", "left": "let x=1; let y=2\n", "right": "let x = 1\nlet y = 2\n", "ast_equal": true, "tokens_equal": false, "note": "A semicolon is a real native token; an explicit separator-removal allowance would need separate review. The exact captured workload had no token delta."},
+    {"id": "matrix-wrapping", "left": "let x=[[1,2],[3,4]]\n", "right": "let x = [\n  [1,2],\n  [3,4]\n]\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "indentation-binding-change", "left": "if true:\n  discard 1\n  discard 2\n", "right": "if true:\n  discard 1\ndiscard 2\n", "ast_equal": false, "tokens_equal": true},
+    {"id": "integer-change", "left": "let x=1\n", "right": "let x=2\n", "ast_equal": false, "tokens_equal": false},
+    {"id": "string-punctuation", "left": "let x=\"# ; #[ not a comment ]#\"\n", "right": "let x = \"# ; #[ not a comment ]#\"\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "raw-string-punctuation", "left": "let x=r\"# ; [literal]\"\n", "right": "let x = r\"# ; [literal]\"\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "raw-string-newline-rejected", "left": "let x=r\"# ; \\\n\"\n", "right": "let x = r\"# ; \\\n\"\n", "accepted": false},
+    {"id": "triple-string", "left": "let x=\"\"\"a\n# literal data\nb\"\"\"\n", "right": "let x = \"\"\"a\n# literal data\nb\"\"\"\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "pragma", "left": "proc f(): int {.noSideEffect.} = 1\n", "right": "proc f(): int {.noSideEffect.} = 2\n", "ast_equal": false, "tokens_equal": false},
+    {"id": "unicode-string", "left": "let x=\"λ⍳\"\n", "right": "let x = \"λ⍳\"\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "nested-comment", "left": "#[ outer #[ inner ]# end ]#\nlet x=1\n", "right": "#[ outer #[ inner ]# end ]#\nlet x = 1\n", "ast_equal": true, "tokens_equal": true},
+    {"id": "source-filter", "left": "#? stdtmpl\nlet x=1\n", "right": "#? stdtmpl\nlet x=1\n", "accepted": false},
+    {"id": "syntax-error", "left": "let x = [\n", "right": "let x = [\n", "accepted": false}
+  ],
+  "execution": "Separate future common-lock fixture window only; no claims of native acceptance until captured. Raw failed processes must be retained."
+}

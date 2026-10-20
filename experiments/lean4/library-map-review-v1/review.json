@@ -1,0 +1,267 @@
+{
+  "schema": "lean4-knucleotide-policy-review.v1",
+  "reviewed_at": "2026-10-20",
+  "status": "confirmed-exact-source-policy-violation",
+  "applied": false,
+  "observed_catalog_sha256": "407c199bf327178185209659b6a63ff76b5f11714c3ea0ccefcee9364a946d31",
+  "rule": {
+    "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+    "snapshot": "experiments/futhark/library-map-review-v1/primary/knucleotide-description.html",
+    "snapshot_sha256": "6dcfc56947203ac9094241f3a84b39a6e19770819a0b9e55a0d25d036df3f7d2",
+    "same_contract_as": "experiments/futhark/library-map-review-v1/review.json",
+    "lines": {
+      "existing_library_table": [
+        34,
+        40
+      ],
+      "small_default_growth": [
+        49,
+        49
+      ],
+      "all_seven_widths": [
+        50,
+        53
+      ]
+    },
+    "requirement": "Use an existing built-in/library hash table to accumulate every overlapping key by lookup/update, growing from a small default, for all seven widths. Output agreement alone does not satisfy required algorithmic work.",
+    "historical_wording_not_established": true
+  },
+  "decision": {
+    "eligible_for_chart": false,
+    "reason": "Dense direct-index counts at widths1/2 and query-only rolling scans at widths3/4/6/12/18 omit the required existing-library hash-table accumulation.",
+    "no_eligible_fallback": true,
+    "eligible_workloads_after": 9,
+    "historically_measured_workloads": 10,
+    "total_workloads": 10
+  },
+  "profiles": [
+    {
+      "key": "knucleotide:lean4-knucleotide-native-v1",
+      "source_sha256": [
+        "e3aa2ec057ae485f939062523f90e5427cf214cfc5c36a8e090a4e5ecd7a2e3a",
+        "316669c9da08e0fe7f6c0ef0409537ecaa73dbedeb353e27b525c927fc53d54e",
+        "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000"
+      ],
+      "profile_sha256": "db4eb9d4d747793b1cf0ed50847a66f51274ac1b1092879ab7269669a20c9191",
+      "pool_membership": {
+        "programs": true,
+        "program_inventory": true
+      },
+      "origin_status": "suite-authored",
+      "application_loc": 81,
+      "physical_loc": 76,
+      "median_seconds": 6.74196675,
+      "samples_seconds": [
+        6.74196675,
+        6.729994583,
+        6.743664625
+      ],
+      "source_findings": {
+        "dense_histogram_lines": [
+          35,
+          43
+        ],
+        "query_only_lines": [
+          65,
+          75
+        ],
+        "seven_width_dispatch_lines": [
+          77,
+          83
+        ],
+        "all_widths": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          12,
+          18
+        ],
+        "dense_only_widths": [
+          1,
+          2
+        ],
+        "query_only_widths": [
+          3,
+          4,
+          6,
+          12,
+          18
+        ],
+        "hash_table_construction": false,
+        "library_hash_lookup_update": false,
+        "small_default_table_growth": false
+      }
+    },
+    {
+      "key": "knucleotide:lean4-knucleotide-optimized-v1",
+      "source_sha256": [
+        "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0",
+        "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000"
+      ],
+      "profile_sha256": "b12d8cef54afd8f0d9fb7ebe507b893cad8997aafcec0788ea6a600b444bd628",
+      "pool_membership": {
+        "programs": true,
+        "program_inventory": true
+      },
+      "origin_status": "suite-authored",
+      "application_loc": 83,
+      "physical_loc": 78,
+      "median_seconds": 6.785259833,
+      "samples_seconds": [
+        7.213901,
+        6.785259833,
+        6.781808625
+      ],
+      "source_findings": {
+        "dense_histogram_lines": [
+          38,
+          46
+        ],
+        "query_only_lines": [
+          68,
+          78
+        ],
+        "seven_width_dispatch_lines": [
+          80,
+          86
+        ],
+        "all_widths": [
+          1,
+          2,
+          3,
+          4,
+          6,
+          12,
+          18
+        ],
+        "dense_only_widths": [
+          1,
+          2
+        ],
+        "query_only_widths": [
+          3,
+          4,
+          6,
+          12,
+          18
+        ],
+        "hash_table_construction": false,
+        "library_hash_lookup_update": false,
+        "small_default_table_growth": false
+      }
+    }
+  ],
+  "protected_upstream_affected": false,
+  "provenance": "Both exact retained profiles are suite-authored in current authorship metadata; the retained source-provenance record describes local applications. No unchanged upstream profile is included. Existing AI/model assertions are preserved, not inferred or expanded.",
+  "historical_claim_conflicts": [
+    {
+      "path": "experiments/lean4/required-work-v1/review.json",
+      "field": "other_workloads",
+      "finding": "The broad assertion that nucleotide counts perform complete required work does not establish library map accumulation and conflicts with exact dense/query-only source."
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/work-fast-v5/review.json",
+      "field": "other_workloads",
+      "finding": "The complete-required-input/output-work assertion does not witness per-key hash-table operations for any of the seven widths."
+    },
+    {
+      "path": "experiments/lean4/plan-v1.json",
+      "field": "completed.qualified_workloads",
+      "finding": "The historical ten-workload qualification remains evidence of the earlier decision; this narrow additive policy correction reduces current eligible coverage to nine."
+    }
+  ],
+  "immutability": {
+    "source_bytes_changed": false,
+    "source_counts_changed": false,
+    "timing_observations_changed": false,
+    "historical_work_assertions_erased": false,
+    "support_roles_changed": false,
+    "new_language_execution": false,
+    "new_measurements": 0
+  },
+  "artifacts": [
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/knucleotide-description.html",
+      "sha256": "6dcfc56947203ac9094241f3a84b39a6e19770819a0b9e55a0d25d036df3f7d2",
+      "bytes": 5934
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/review.json",
+      "sha256": "e0bd4d21b5d0c46e4fff59f53b1fde392ca0a159edea35f3bcc6271cedeaf82a",
+      "bytes": 13430
+    },
+    {
+      "path": "experiments/lean4/source-v1/knucleotide.lean",
+      "sha256": "e3aa2ec057ae485f939062523f90e5427cf214cfc5c36a8e090a4e5ecd7a2e3a",
+      "bytes": 3021
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/build-fast-v5/source/knucleotide.lean",
+      "sha256": "e2cb4dc950de63f0cb3ceded840eda8057c71a8307d82fe80e6928a3d9bb33c0",
+      "bytes": 3127
+    },
+    {
+      "path": "experiments/lean4/source-v1/Common.lean",
+      "sha256": "316669c9da08e0fe7f6c0ef0409537ecaa73dbedeb353e27b525c927fc53d54e",
+      "bytes": 598
+    },
+    {
+      "path": "experiments/lean4/source-v1/Format.c",
+      "sha256": "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000",
+      "bytes": 351
+    },
+    {
+      "path": "experiments/lean4/source-provenance-v1.json",
+      "sha256": "388492386eb953aa815cb7f7501d65247bdadf2651aae2f5a4a50bd1e606c5d3",
+      "bytes": 1540
+    },
+    {
+      "path": "experiments/lean4/toolchain-v1.json",
+      "sha256": "4866f8d03ba5d87e486a326859b14e0e897b41fb34c196abc9ba9ed6649cae4e",
+      "bytes": 1466
+    },
+    {
+      "path": "experiments/lean4/required-work-v1/review.json",
+      "sha256": "8069b8764b8b8f83e99e06b960513c502f1f55b9df663b29cf016c5a37b08c36",
+      "bytes": 3527
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/work-fast-v5/review.json",
+      "sha256": "3e60f846503d350389e9b24c575096ec6fc533cb42bd85f182880914135248e1",
+      "bytes": 8222
+    },
+    {
+      "path": "experiments/lean4/source-counts-v1/qualification-v4/qualified-counts.json",
+      "sha256": "8882bba006fd59883460ed63127247d2a7af49c581c2e68bfc866241db1c6fdd",
+      "bytes": 17863
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/counts-fast-v5/qualified-counts.json",
+      "sha256": "fbc52b7f9d2a654369d0ab37c82ef8d0f07ecc90f127c46c0cff980d58515090",
+      "bytes": 20332
+    },
+    {
+      "path": "experiments/lean4/results-v1.json",
+      "sha256": "9f47135a57edebe2caed5746f8a00b942e01733552a7ac61918048ace9c257b2",
+      "bytes": 4187
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/reconciled-v1/results.json",
+      "sha256": "10f636b2ae007842f040071e7a090e1c4c238100cba62e2a1fea9211786ff718",
+      "bytes": 15901
+    },
+    {
+      "path": "experiments/lean4/plan-v1.json",
+      "sha256": "92be4c466bfeee86e1efa649c0ea3c0b2a1fdd18fd2d0404ea0993213f059d8c",
+      "bytes": 3513
+    },
+    {
+      "path": "experiments/lean4/optimization-v1/plan.json",
+      "sha256": "f600b0af4644a30b9ea1ca74fa549779d6f1ecf20ab23a027cbdf72303760ce0",
+      "bytes": 7010
+    }
+  ],
+  "source_review_scope": "Exact two application sources and Common/Format support; no native execution or new count/formatter/whole-language qualification."
+}

@@ -22,5 +22,6 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | regexredux | [prolog-regexredux-optimized](regexredux/prolog-regexredux-optimized/program.json) | 49 | 19.5023 | 3 |
 | revcomp | [prolog-revcomp-linear-compact](revcomp/prolog-revcomp-linear-compact/program.json) | 242 | 70.4258 | 3 |
 | revcomp | [prolog-revcomp-linear-optimized](revcomp/prolog-revcomp-linear-optimized/program.json) | 242 | 70.8311 | 3 |
+| spectralnorm | [prolog-spectralnorm-blocks8-v1](spectralnorm/prolog-spectralnorm-blocks8-v1/program.json) | 128 | 34.5159 | 3 |
 | spectralnorm | [prolog-spectralnorm-compact](spectralnorm/prolog-spectralnorm-compact/program.json) | 96 | 179.423 | 3 |
 | spectralnorm | [prolog-spectralnorm-optimized](spectralnorm/prolog-spectralnorm-optimized/program.json) | 96 | 179.806 | 3 |

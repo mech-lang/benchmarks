@@ -1,10 +1,12 @@
 # Native formatter expansion: source-only plan
 
-This packet prepares a **later, separate formatted-source qualification**. It has
-run no formatter, compiler, language parser, benchmark or application. Counts,
-outputs and preservation receipts for new work are explicitly unavailable. It
-changes none of the catalog, publication assets, retained LOC, logical-owner
-policies, source partitions or timing samples.
+This packet prepares a **later, separate formatted-source qualification**. Its
+initial plans were generated without running a formatter, compiler, language
+parser, benchmark or application; their new-count/output fields remain null.
+A later explicitly scheduled [Nim capture](nim-run-v1/README.md) now retains
+native formatter/idempotence/parser/token evidence with an observed count of
+66, pending review. It changes none of the catalog, publication assets, retained
+LOC, logical-owner policies, source partitions or timing samples.
 
 [The deterministic preparer](prepare.py) produces [the Nim plan](nim-plan.json)
 and [the Clojure plan](clojure-plan.json) from the exact current catalog. Plans pin
@@ -15,11 +17,16 @@ runtime/configuration artifacts. Re-running it is a read/hash operation only:
 python3 experiments/source-formatting/v1/prepare.py
 ```
 
+That command records the original preparation procedure. The v1 plans are now
+sealed inputs to the Nim capture/replay; do not regenerate them in place after
+the catalog changes. Prepare a fresh packet/version for a later source cohort.
+
 The prepared catalog contains 1,065 profiles. Nim has **21 profiles / 22 attached
 source units** (34,219 UTF-8 bytes), including twenty already qualified formatter
 profiles and one newly admitted nucleotide candidate. Clojure has **21 profiles /
 22 attached source units** (41,446 bytes), none with admitted formatter totals.
-These are source inventories, not new timing observations.
+These are source inventories, not new timing observations. The initial plans are
+inputs to qualification, not reports of the subsequent native capture.
 
 ## Nim: the immediate additional target
 

@@ -226,6 +226,12 @@ def audit(data,models):
         if key=='nbody:clojure-nbody-primitive-updates-v1':
             from qualification.import_clojure_nbody import bound_authorship
             records[key]=bound_authorship(data,p,ROOT)
+        if key=='nbody:clojure-nbody-compact-hot-aset-v1':
+            from qualification.import_clojure_compact import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
+        if key=='spectralnorm:prolog-spectralnorm-blocks8-v1':
+            from qualification.import_prolog_spectral import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

@@ -16,7 +16,9 @@ class FamilyAuthorship(unittest.TestCase):
         keys = ['knucleotide:array-bqn-occurrence-frame',
                 'knucleotide:nim-knucleotide-preencoded-v1',
                 'spectralnorm:array-bqn-native-sum', 'fasta:array-bqn-bins',
-                'nbody:clojure-nbody-primitive-updates-v1']
+                'nbody:clojure-nbody-primitive-updates-v1',
+                'nbody:clojure-nbody-compact-hot-aset-v1',
+                'spectralnorm:prolog-spectralnorm-blocks8-v1']
         for key in keys:
             row = self.data['programs'][key]
             check_model_evidence(ROOT, self.data, key, row, self.models)

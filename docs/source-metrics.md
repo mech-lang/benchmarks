@@ -1,8 +1,8 @@
 # Complementary source measurements
 
 [The additive report](../experiments/source-metrics/v1/metrics.json) and
-[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,065 retained
-profiles, covering 966 distinct source files and 63 execution variants. The
+[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,067 retained
+profiles, covering 968 distinct source files and 63 execution variants. The
 report preserves the saved canonical catalog, source bytes, timings and
 coordinates. The chart offers separate source-size projections described below.
 Profiles remain separate records even when execution modes
@@ -19,7 +19,7 @@ several measures and expose gaps in the existing normalization rules.
 | Field | Definition and practical limits |
 | --- | --- |
 | `retained_application_loc` | The catalog's existing nonblank, noncomment application count, with its recorded metric and evidence. Cohort rules differ; copying the count does not recertify it as uniform logical LOC. |
-| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 60 profiles have complete evidence; 834 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
+| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 61 profiles have complete evidence; 835 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
 | `utf8_bytes` | Exact UTF-8 text size, including comments, indentation, blank lines, BOM and retained line endings. A Unicode glyph can take multiple bytes. |
 | `unicode_codepoints` | Python Unicode string length, including comments/whitespace. This is neither grapheme count nor visual width, and no Unicode normalization is applied. |
 | `physical_lines` | All rows in the selected text, including blank/comment rows, using Python `splitlines`. This differs deliberately from retained noncomment `physical_loc`. |
@@ -164,8 +164,10 @@ now records native statement ownership, source coverage and paired packing/liter
 wrapping evidence for 52 exact Python/Julia/JIT-AOT profiles. It is an additive
 qualified subset, kept separate from the full-cohort retained counts. The separate
 [Clojure v1 qualification](../experiments/source-normalization/clojure-v1/README.md)
-adds 21 exact profiles with native-reader-bound source owners. The browser's
-**Qualified logical units · partial coverage** option exposes these 73 profiles,
+adds 21 exact profiles with native-reader-bound source owners. An explicitly
+reviewed [compact-source extension](../experiments/source-normalization/clojure-extensions/v1/README.md)
+adds one further Clojure profile without altering that original proof. The browser's
+**Qualified logical units · partial coverage** option exposes these 74 profiles,
 with blank counts elsewhere. Each source records its versioned policy and proof
 references; Python/Julia v2 and Clojure v1 remain distinct reviewed conventions.
 This option uses a fixed per-workload minimum over eligible, qualified timed
@@ -174,6 +176,23 @@ details and CSV/JSON exports include the count and policy. The browser payload
 contains compact counts/hashes, not native syntax trees. Its parser/rule limits
 and unsupported forms remain explicit; it does not
 certify the remaining syntax families or authorize a uniform ranking.
+
+The two measured Clojure n-body alternatives illustrate why the measures remain
+separate. Both counts use the same application/support partition:
+
+| Candidate | Retained LOC | Physical code lines | Logical units | UTF-8 bytes | gzip bytes | BPE tokens |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Explicit primitive updates | 111 | 52 | 66 | 3,546 | 1,185 | 1,225 |
+| Compact typed setters | 109 | 49 | 63 | 3,385 | 1,186 | 1,166 |
+
+The compact candidate is smaller under the written-source and token measures,
+while independently compressing to one byte more. That compression difference
+is tiny, but demonstrates that gzip can reverse the ordering. In their fresh
+matched full-process comparison, the compact version takes 22.22 s versus
+2.69 s for the primitive control. Source-size and runtime objectives therefore
+retain separate candidate selections; no single score establishes the most
+expressive or fastest possible program. See the
+[comparison and evidence](../experiments/clojure/compact-primitive-v1/MEASURED.md).
 
 ## Tokenizer pins and bias
 

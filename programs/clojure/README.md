@@ -15,6 +15,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | mandelbrot | [clojure-mandelbrot-compact](mandelbrot/clojure-mandelbrot-compact/program.json) | 53 | 13.367 | 3 |
 | mandelbrot | [clojure-mandelbrot-optimized](mandelbrot/clojure-mandelbrot-optimized/program.json) | 69 | 3.44804 | 3 |
 | nbody | [clojure-nbody-compact](nbody/clojure-nbody-compact/program.json) | 109 | 165.365 | 3 |
+| nbody | [clojure-nbody-compact-hot-aset-v1](nbody/clojure-nbody-compact-hot-aset-v1/program.json) | 109 | 22.217 | 3 |
 | nbody | [clojure-nbody-optimized](nbody/clojure-nbody-optimized/program.json) | 121 | 207.674 | 3 |
 | nbody | [clojure-nbody-primitive-updates-v1](nbody/clojure-nbody-primitive-updates-v1/program.json) | 111 | 2.66147 | 3 |
 | pidigits | [clojure-pidigits-compact](pidigits/clojure-pidigits-compact/program.json) | 48 | 4.18508 | 3 |

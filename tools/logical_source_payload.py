@@ -7,6 +7,7 @@ from pathlib import Path
 import hashlib
 import json
 from source_metrics import metadata_for
+from clojure_logical_extensions import bind as bind_clojure_extension
 
 ROOT = Path(__file__).resolve().parents[1]
 V2 = Path('experiments/source-normalization/v2/qualification.json')
@@ -112,11 +113,17 @@ def bind(catalog, catalog_raw, reports, root=ROOT):
         evidence_path='experiments/source-normalization/v2/README.md')
 
     clj, inputs, review, policy = (docs[name] for name in ('clojure', 'inputs', 'review', 'policy'))
+    extension = bind_clojure_extension(catalog, catalog_raw, root)
     require(clj.get('schema') == 'clojure-logical-source-qualification.v1' and clj.get('policy') == CLOJURE_POLICY
             and clj.get('status') == 'native-qualified-exact-source-subset' and clj.get('canonical_changed') is False,
             'Clojure report status differs')
-    require(inputs.get('catalog_sha256') == digest and inputs.get('policy') == CLOJURE_POLICY
+    require(inputs.get('policy') == CLOJURE_POLICY
             and clj.get('inputs_sha256') == sha(reports['inputs']), 'Clojure input/catalog drift')
+    if inputs.get('catalog_sha256') != digest:
+        require(extension is not None and extension.get('catalog_sha256') == digest
+                and extension.get('base_inputs_sha256') == sha(reports['inputs'])
+                and extension.get('base_report_sha256') == sha(reports['clojure'])
+                and extension.get('base_review_sha256') == sha(reports['review']), 'Clojure narrow current source projection missing')
     require(review.get('decision') == 'qualified-exact-source-subset' and policy.get('id') == CLOJURE_POLICY, 'Clojure policy review missing')
     approved = review['approved_source_scope']
     require(approved.get('policy') == CLOJURE_POLICY and approved.get('policy_sha256') == sha(reports['policy'])
@@ -127,9 +134,12 @@ def bind(catalog, catalog_raw, reports, root=ROOT):
             and approved.get('source_proof_sha256') == sha(encoded(clj['outcomes'])), 'Clojure reviewed source proof drift')
     require(review['current_projection'].get('report_sha256') == sha(reports['clojure'])
             and review['current_projection'].get('inputs_sha256') == sha(reports['inputs']), 'Clojure reviewed projection drift')
-    expected = {key for key, row in programs.items() if row['language'] == 'clojure'}
+    current = {key for key, row in programs.items() if row['language'] == 'clojure'}
+    expected = set(inputs['programs'])
     require(set(clj['programs']) == set(inputs['programs']) == expected
             and review['current_projection'].get('programs') == sorted(expected), 'Clojure profile coverage differs')
+    require(current == expected | set(extension['profiles'] if extension else {})
+            and not expected.intersection(extension['profiles'] if extension else {}), 'Clojure exact old/new profile inventory differs')
     for key in sorted(expected):
         row, qualified = programs[key], clj['programs'][key]
         require(qualified.get('status') == 'native-qualified-exact-source-subset' and qualified.get('retained_loc') == row['loc']
@@ -158,12 +168,22 @@ def bind(catalog, catalog_raw, reports, root=ROOT):
                 == [application, submitted, excluded], 'Clojure scoped totals differ')
         profiles[key] = dict(status='qualified', application=application, submitted=submitted, excluded_support=excluded,
                              policy=CLOJURE_POLICY, sources=sources)
+        if extension:
+            projected = extension['base_profiles'].get(key, {})
+            require(projected.get('files') == qualified['files'] and projected.get('retained_loc') == qualified['retained_loc']
+                    and [projected.get(field) for field in ('application', 'submitted', 'excluded_support')] == [application, submitted, excluded],
+                    'Clojure sealed base/current scope projection differs')
+    if extension:
+        profiles.update(extension['profiles'])
     policies[CLOJURE_POLICY] = dict(id=CLOJURE_POLICY, report_path=(CLOJURE/'qualification.json').as_posix(),
         report_sha256=sha(reports['clojure']), policy_path=(CLOJURE/'policy.json').as_posix(), policy_sha256=sha(reports['policy']),
         independent_review_path=(CLOJURE/'independent-review.json').as_posix(), independent_review_sha256=sha(reports['review']),
         definition='Native-reader-bound Clojure written form owners; conditional expressions remain expressions, explicit blocks remain visible.',
         native_parsers='Clojure1.12.6 + tools.reader1.6.0; read-eval disabled; no source execution/macroexpand.',
         scope='Application, submitted and excluded-support logical units.', evidence_path=(CLOJURE/'README.md').as_posix())
+    if extension:
+        policies[CLOJURE_POLICY]['source_extensions'] = dict(proof=extension['extension_proof'], independent_review=extension['extension_review'],
+            profiles=sorted(extension['profiles']), projection_path='experiments/source-normalization/clojure-extensions/v1/projection.json')
     metadata = dict(schema='browser-qualified-logical-source-units.v1', catalog_sha256=digest, partial_coverage=True,
         generic_language_certificate=False, default_status='unavailable', policies=policies,
         coverage=dict(qualified_profiles=len(profiles), retained_profiles=len(programs),

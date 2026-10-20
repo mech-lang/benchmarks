@@ -34,6 +34,10 @@ other profiles explicitly remain `not-yet-source-performance-reviewed`.
 Source review identifies actual designs, policy issues and concrete alternatives;
 it does not certify that proposed alternatives run correctly or improve speed.
 
+The later [Lean4 source review](lean4-review.md) also covers all ten workloads,
+including its required-work exclusion below. It separates ordinary language and
+library opportunities from unverified compiler or allocation hypotheses.
+
 The separately requested [Mech source/compiler review](mech-review.md) covers
 all ten workloads across 44 AOT, JIT and fresh interpreted profiles, including
 shared source aliases. It examines general compiler lowering, application/host
@@ -48,8 +52,10 @@ New admissions have statuses distinct from static candidate suggestions:
 | BQN k-nucleotide `array-bqn-occurrence-frame` | [Fresh matched measurements and full-work witness](../../bqn/optimization-v1/admission-v1/results.json); 48 retained-rule application LOC / 43 physical LOC |
 | Nim k-nucleotide `nim-knucleotide-preencoded-v1` | [Fresh matched measurements and source/standard-library work review](../../nim/optimization-v1/admission-v1/results.json); 72 retained-rule application LOC / 64 physical LOC |
 | BQN spectral norm `array-bqn-native-sum` | [Fresh matched measurements and source-required work](../../bqn/spectral-sum-v1/admission-v1/results.json); 13 retained-rule application LOC / 9 physical LOC |
-| BQN FASTA `array-bqn-bins` | [Fresh matched measurements and exhaustive lookup checks](../../bqn/fasta-bins-v1/admission-v1/results.json); modest4% median reduction,24 retained-rule application / physical LOC; full-output archive limits disclosed |
+| BQN FASTA `array-bqn-bins` | [Fresh matched measurements and exhaustive lookup checks](../../bqn/fasta-bins-v1/admission-v1/results.json); modest 4% median reduction, 24 retained-rule application / physical LOC; full-output archive limits disclosed |
 | Clojure n-body `clojure-nbody-primitive-updates-v1` | [Fresh matched full-process measurements, typed bytecode and state/output checks](../../clojure/optimization-v1/primitive-v1/admission-v1/results.json); 58.56× faster than the matched control, 111 retained-rule application / 52 physical LOC |
+| Clojure n-body `clojure-nbody-compact-hot-aset-v1` | [Independent compact-candidate measurements](../../clojure/compact-primitive-v1/admission-v1/results.json); 109 retained-rule application / 49 physical LOC; 22.22 s median, 8.26× the freshly matched fast control's time; no matched speedup against the older cohort claimed |
+| Prolog spectral norm `prolog-spectralnorm-blocks8-v1` | [Fresh matched full-process comparison](../../prolog/optimization-v1/admission-v1/results.json); 179.48 → 34.52 s, 5.20× faster; 128 retained-rule application / 87 physical LOC, with the native logical count explicitly unavailable |
 | MATLAB regex `matlab-case-compact`, `matlab-case-optimized` | [Archived correctness correction and six complete-process observations](../../matlab/optimization-v1/admission-v1/results.json); 16 / 19 application LOC respectively, with matching physical LOC; intake adds no native run |
 
 Only catalog-bound admissions receive these statuses; an experiment or prepared
@@ -63,14 +69,16 @@ logical normalization across languages.
 The [source-measurement report](../../../docs/source-metrics.md) supplies
 application/submitted scopes, bytes, deterministic gzip and pinned BPE counts.
 A separate [native logical-owner qualification](../../source-normalization/v2/README.md)
-covers exact Python/Julia sources; it is not a replacement count for every
-language. Generic Ruby worker modules have an unapplied
+covers exact Python/Julia sources. The separate
+[Clojure reader-bound policy](../../source-normalization/clojure-v1/README.md)
+preserves explicit block and binding structure. Neither policy is a replacement
+count for every language. Generic Ruby worker modules have an unapplied
 [embedded-support proposal](../../source-normalization/ruby-support-v1/README.md).
 
 ## Ownership and protection
 
 The following table is the **frozen initial 1,058-profile snapshot**, before the
-seven admissions above. Current counts and the exact catalog hash are generated
+nine admitted profiles above. Current counts and the exact catalog hash are generated
 in `inventory.json` under `summary` and `canonical_input`.
 
 | Classification | Profiles | Evidence rule |
@@ -222,7 +230,9 @@ indexed loop were concrete allocation/boxing candidates, with exact pair order
 and all steps retained. The [typed Clojure candidate](../../clojure/optimization-v1/primitive-v1/README.md)
 is now measured at 2.661471542 s versus 155.866933375 s for its fresh matched control
 (58.56×). The intermediate scalar update form remains a pilot, not a full-size
-result. The Prolog/APL/Smalltalk alternatives remain separate unmeasured proposals.
+result. Prolog's specialized eight-block candidate is now measured at 34.52 s
+versus 179.48 s for its fresh matched control (5.20×); its serial specialization
+remains a pilot. The APL and Smalltalk alternatives remain unmeasured proposals.
 
 **Ada, Futhark, R, Uiua, K, D and Elixir:** Ada regex already uses PCRE2 JIT and
 borrowed heap views; review source-owned scheduling and substitution buffers.
@@ -240,6 +250,14 @@ consider ordinary in-place/record streaming and adversarial FASTA boundaries.
 Elixir nucleotide uses a binary slice and persistent-map update for each window
 on seven serial passes; rolling integer keys and ordinary bounded task/table
 choices are concrete candidates. Its compact/optimized bundles are identical.
+
+The [Lean4 policy correction](../../lean4/library-map-review-v1/README.md)
+excludes both retained k-nucleotide profiles: dense short-key counts and
+query-only scans for the longer widths omit the required standard-library
+hash-table accumulation. Lean4 retains all ten historically measured workloads,
+with nine currently eligible. Source, source counts, observations and earlier
+work assertions remain retained; the explicit later eligibility decision
+supersedes those earlier assertions. No compliant replacement is yet qualified.
 
 The reviewed Prolog spectral, APL fannkuch, Uiua tree and Elixir nucleotide pairs
 each have **two profile labels but one distinct retained source bundle**. Their
