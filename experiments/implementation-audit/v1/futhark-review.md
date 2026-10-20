@@ -1,5 +1,12 @@
 # Futhark implementation review — all ten workload decisions
 
+The subsequent [exact-source policy correction](../../futhark/library-map-review-v1/README.md)
+settles the custom-table question below: both retained k-nucleotide profiles are
+excluded from eligible comparisons. Their source/count/timing evidence remains
+inspectable. Current coverage is eight eligible workloads and nine historically
+measured; binary trees remains unsupported. The original static findings below
+describe the historical sources and do not qualify a replacement.
+
 Read-only static review, 2026-10-20. No Futhark process, compilation, benchmark or canonical-data edit was performed. Inventory main-source hashes were recomputed and matched. Nine workloads have admitted profiles; binary-trees is explicitly unsupported. Additional retained losing/baseline attempts are included where relevant. Historical medians establish only which measured candidates won their saved cohort.
 
 ## Runtime, support, and evidence limits

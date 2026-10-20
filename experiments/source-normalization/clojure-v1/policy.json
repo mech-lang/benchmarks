@@ -1,0 +1,14 @@
+{
+  "schema": "logical-source-owner-policy.v1",
+  "id": "logical-source-owners.clojure-v1",
+  "status": "independently-reviewed-exact-native-source-subset",
+  "definition": "Written definitions, independent bindings, block/control headers and form statements; ordinary nested expressions and implicit work are not expanded.",
+  "conditional_expressions": "if, if-let, cond and case remain expressions in every position. A standalone expression has one statement carrier; a definition, initializer or argument absorbs it. Explicit nested blocks remain visible.",
+  "loops": "One header includes iterator/state bindings. All initializer/range expressions are checked. Body forms count independently.",
+  "bindings": "One let header and one owner per independent target/initializer pair. True destructuring with one initializer remains one binding; defaults are traversed.",
+  "functions": "A single syntactic body expression belongs to its definition. Multiple body forms and explicit do/let/control blocks stay visible. This is not semantic purity analysis.",
+  "reify_methods": "Class and method definitions count. Only scalar method parameter symbols qualify; destructuring/defaults fail closed.",
+  "zero_units": ["literal matrix/vector row layout", "closing delimiters", "comments", "whitespace and commas", "type annotations", "parameter lists", "do/catch/finally syntax shells"],
+  "native_evidence": "Clojure1.12.6 plus pinned tools.reader1.6.0, read-eval disabled, custom/default tag readers removed, no application evaluation or macroexpand. Full native read trace is bound to a separate lossless source-form tree.",
+  "limits": ["Exact reviewed source hashes and explicit fixtures only", "Reader acceptance is not compilation or correctness qualification", "No universal cross-language fairness certificate", "No canonical LOC, timing, source-role or chart-coordinate change in this packet"]
+}

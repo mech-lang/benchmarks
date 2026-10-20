@@ -14,6 +14,7 @@ FAMILY_ADMISSIONS={
     'knucleotide:nim-knucleotide-preencoded-v1':'qualification.import_nim_knucleotide',
     'spectralnorm:array-bqn-native-sum':'qualification.import_bqn_spectral',
     'fasta:array-bqn-bins':'qualification.import_bqn_fasta',
+    'nbody:clojure-nbody-primitive-updates-v1':'qualification.import_clojure_nbody',
 }
 
 def fixture(url=None,local=None):

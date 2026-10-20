@@ -1,0 +1,335 @@
+{
+  "schema": "futhark-knucleotide-policy-review.v1",
+  "reviewed_at": "2026-10-20",
+  "status": "confirmed-exact-source-policy-violation",
+  "applied": false,
+  "rule": {
+    "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+    "snapshot": "experiments/futhark/library-map-review-v1/primary/knucleotide-description.html",
+    "requirement": "Use an existing built-in/library hash table; custom table implementations are not accepted. Accumulate each occurrence by lookup/update and grow from small defaults.",
+    "historical_wording_not_established": true
+  },
+  "decision": {
+    "eligible_for_chart": false,
+    "reason": "The exact retained sources use a suite-local custom hash table, contrary to the task requirement for an existing built-in/library table.",
+    "no_eligible_fallback": true,
+    "eligible_workloads_after": 8,
+    "historically_measured_workloads": 9,
+    "total_workloads": 10
+  },
+  "profiles": [
+    {
+      "key": "knucleotide:futhark-knucleotide-compact",
+      "source_sha256": [
+        "83dda7809af2c2884e0e977d3a90ad11b6c04f63593aa2860d1f9ed29090b06c",
+        "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d",
+        "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9",
+        "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf"
+      ],
+      "profile_sha256": "66606a44dd3c1056bd1b63101b73f8b5648e1fba7eacfae38a0054e8bb51ef3b",
+      "application_loc": 37,
+      "physical_loc": 37,
+      "median_seconds": 29.069172291,
+      "samples_seconds": [
+        29.153263792,
+        29.069172291,
+        29.038587292
+      ]
+    },
+    {
+      "key": "knucleotide:futhark-knucleotide-optimized",
+      "source_sha256": [
+        "86279a96aff35f6dc90a7ffff727c33cf9da642e647856e341139836aea97dc6",
+        "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d",
+        "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9",
+        "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf"
+      ],
+      "profile_sha256": "5e55f2f5813eb1affe791953759d5dcabe26c265b684cbd273e1cfc2a59daa8c",
+      "application_loc": 54,
+      "physical_loc": 54,
+      "median_seconds": 9.040219375,
+      "samples_seconds": [
+        8.778160417,
+        9.040683625,
+        9.040219375
+      ]
+    }
+  ],
+  "custom_table": {
+    "path": "archive/comparisons/additional-languages/20261009-full-suite/stdlib/hashmap.fut",
+    "sha256": "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf",
+    "source_lines": {
+      "storage": [
+        2,
+        5
+      ],
+      "hashing": [
+        6,
+        9
+      ],
+      "probing": [
+        10,
+        13
+      ],
+      "lookup": [
+        14,
+        17
+      ],
+      "insert": [
+        18,
+        23
+      ],
+      "growth": [
+        24,
+        27
+      ],
+      "load_factor_update": [
+        28,
+        39
+      ],
+      "reserve": [
+        41,
+        43
+      ],
+      "slot_update": [
+        45,
+        50
+      ]
+    }
+  },
+  "archived_nonfallback": {
+    "path": "archive/comparisons/additional-languages/20261009-full-suite/sources/knucleotide.fut",
+    "sha256": "089ef1d8565758568fd66c3f3e32b187f62061ec582a7e2b602c66e3dafaa4e5",
+    "current_catalog_profile": false,
+    "reason": "Uses the same custom table; archived source and timing remain retained, never selected as fallback."
+  },
+  "package": {
+    "repository": "https://github.com/diku-dk/containers",
+    "release": "0.10.9",
+    "tag": "v0.10.9",
+    "commit": "508b2f198d4e2776b339a381823d637c24c94152",
+    "inspected_main_commit": "98d3778b37b6702b73de95a866f7abdb2c184c44",
+    "license": "ISC",
+    "growable_mutable_default_capacity_api_established": false,
+    "logical_growth_via_library_insert": true,
+    "compiler_or_performance_qualification": false
+  },
+  "preservation": {
+    "source_bytes": true,
+    "all_samples": true,
+    "timing_summaries": true,
+    "source_counts": true,
+    "source_roles": true,
+    "authorship_and_citations": true,
+    "original_upstream_profiles": true,
+    "historical_required_work_assertions": true
+  },
+  "correction_scope": "Exactly the two source/configuration-bound profiles; move to retained inventory and remove only their Futhark k-nucleotide group. Existing custom-table historical claims remain recorded with this later eligibility override.",
+  "artifacts": [
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/dependency-licenses/cpprandom-LICENSE",
+      "sha256": "65bf582410f3392fd98561fc7a1a7364681ffa6c060361b9f517561b9c520b9f",
+      "bytes": 762
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/dependency-licenses/segmented-LICENSE",
+      "sha256": "95f222edb76263d43c452cbe2d717998e71a141680719365e83e7785bb4e942e",
+      "bytes": 781
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/dependency-licenses/sorts-LICENSE",
+      "sha256": "65bf582410f3392fd98561fc7a1a7364681ffa6c060361b9f517561b9c520b9f",
+      "bytes": 762
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/futhark-package-index.html",
+      "sha256": "c8f9e9a182138d0e9c972ba228af958adaf86d30301834a7f7e53b291e5f7ab6",
+      "bytes": 48271
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/knucleotide-description.html",
+      "sha256": "6dcfc56947203ac9094241f3a84b39a6e19770819a0b9e55a0d25d036df3f7d2",
+      "bytes": 5934
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/license-main.json",
+      "sha256": "2668f4433c583f8e2102bd88909a45a2aeffe8fcc83bac2ab0b3d3cbfd8078fe",
+      "bytes": 1795
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/license-main.json.error.json",
+      "sha256": "67ad92611c5a86b905a2bb7562de3ade08047479257294a6bcc63002d0e06762",
+      "bytes": 174
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/LICENSE",
+      "sha256": "76bd4064e302a62ebd1881385802a9042def700328763e7108974f63bdfeb503",
+      "bytes": 756
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/futhark.pkg",
+      "sha256": "185b948ccfc0b1281eb58a2f218fc5da9d24fc9e6ee6af8a869d783d1074cb3a",
+      "bytes": 285
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/core/hash.fut",
+      "sha256": "0f817ba9a74b796c9c642cb8a0f7e9249f1f3d7df180e99f5d388204b2eee13c",
+      "bytes": 12848
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/core/hashkey.fut",
+      "sha256": "0536155afc2b1ce32257902103ff5a900d5afcb606feba733d785511cd65e74c",
+      "bytes": 785
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/core/key.fut",
+      "sha256": "fdb337b64243d6dbd871bb16e5379e4d90c4142558596be4101191bd6a5d4bb9",
+      "bytes": 10794
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/core/opt.fut",
+      "sha256": "020f8bd0c73a3f1422fcdea4ca41c635759858b3eb092cb938a6f61463c5221d",
+      "bytes": 2445
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/map/hashmap.fut",
+      "sha256": "621b9e51aad88d79f4a054838917c5e4f04231aef5b20d03a897325f0875d061",
+      "bytes": 36698
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/main-98d3778/lib/github.com/diku-dk/containers/map/map.fut",
+      "sha256": "e6241860f9d871432094dda1f86a156f6744f5bd6c7c47082d57614691b56d6b",
+      "bytes": 4201
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tag-0.10.9.json.error.json",
+      "sha256": "f093c61b5532af7792495be3d828dd1e1200c394ac65a41b75049e2481fcb057",
+      "bytes": 168
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tag-0.10.9.json.network-error.json",
+      "sha256": "0cd9d50ace644f7ce9cc02bb37f1e7d778030e5e4619a73ce14e47d4f871619d",
+      "bytes": 123
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tag-v0.10.9.json",
+      "sha256": "2717fbe63ea1cbc454f2ba66d44fca4db826a8cb1cc4198e71a06c1c3d8e92ce",
+      "bytes": 341
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tag-v0.10.9.json.error.json",
+      "sha256": "146459373f18b30c5a5c3e2cb85aa23fdba22104acf73e0f43165bc4db739e9a",
+      "bytes": 169
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tree-main.json",
+      "sha256": "a60e0e7e7eaa8bc094f956f5fd388f01927d4bfaa2380838c6b9da61b9e09b22",
+      "bytes": 16302
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tree-main.json.error.json",
+      "sha256": "de78664e33b0b454d1990c2caa5314a3a8fa60ed49af8e1b031292869bc22d18",
+      "bytes": 175
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/tree-v0.10.9.json",
+      "sha256": "0ca9a58a134f7175f56d697d6bd30f378573276edb29371c86545fbdfbbe4837",
+      "bytes": 13729
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/LICENSE",
+      "sha256": "76bd4064e302a62ebd1881385802a9042def700328763e7108974f63bdfeb503",
+      "bytes": 756
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/README.md",
+      "sha256": "1f12c8fd8eddf8782d7603b3446076719116611ae42f70c68a0316f4444f915d",
+      "bytes": 616
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/futhark.pkg",
+      "sha256": "e459e7b9712d5d6681808dde9cc7a4651a3859a66c12f771d183f65b613f59a9",
+      "bytes": 285
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/hash.fut",
+      "sha256": "a4e8b35b934731570b2fd125c1667bfdc017841818c0e3270170329b8eb7f7c5",
+      "bytes": 12750
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/hashkey.fut",
+      "sha256": "1186a09f4a41ae47d0340783cca2de0e37102ded91f1a116e18341790e7dc897",
+      "bytes": 781
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/hashmap.fut",
+      "sha256": "53cb7f070f758e2cc3ba0a8aabcab463288d2e4b377b93936547d32be73bdfe7",
+      "bytes": 36627
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/key.fut",
+      "sha256": "619cbd3a3d8ab6d0ca496b286a42d572f1c1c16a2447f26c7967934185b6e320",
+      "bytes": 10823
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/map.fut",
+      "sha256": "ab86b78abc1744bc93ce939c9e9f4b269d18767c73a5d05b0de3217163b2aed7",
+      "bytes": 4193
+    },
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/v0.10.9/lib/github.com/diku-dk/containers/opt.fut",
+      "sha256": "7ef6051f8eb7eb0d6ba60fd765f82c89635de6b119386509701a1b4715ec74ce",
+      "bytes": 2157
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/sources/knucleotide-compact.fut",
+      "sha256": "83dda7809af2c2884e0e977d3a90ad11b6c04f63593aa2860d1f9ed29090b06c",
+      "bytes": 2134
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/sources/knucleotide-optimized.fut",
+      "sha256": "86279a96aff35f6dc90a7ffff727c33cf9da642e647856e341139836aea97dc6",
+      "bytes": 2942
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/sources/knucleotide.fut",
+      "sha256": "089ef1d8565758568fd66c3f3e32b187f62061ec582a7e2b602c66e3dafaa4e5",
+      "bytes": 2602
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/stdlib/hashmap.fut",
+      "sha256": "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf",
+      "bytes": 2228
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/stdlib/common.fut",
+      "sha256": "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d",
+      "bytes": 1055
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/adapters/futhark.c",
+      "sha256": "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9",
+      "bytes": 1655
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/README.md",
+      "sha256": "036d9bff80c157ffaade342481e4fc0ebe74107019d6461241d096476e3b5ca3",
+      "bytes": 6884
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/provenance.json",
+      "sha256": "f99dac73b8a93a47f6d365a8ce8690564e6a52476648c2d31b24afb2d4116078",
+      "bytes": 3996
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/audit_sources.py",
+      "sha256": "00cd22726dc6ffd1ef5e779dec813f9418103724e578f6bfcbd915b7e4ce6551",
+      "bytes": 8308
+    },
+    {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/source-audit.json",
+      "sha256": "9b4ec1b0e5d14ec98f83d7ff85888ab228dcebfb3bd7744d42d45f9726af0c79",
+      "bytes": 72327
+    }
+  ]
+}

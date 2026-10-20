@@ -49,6 +49,7 @@ New admissions have statuses distinct from static candidate suggestions:
 | Nim k-nucleotide `nim-knucleotide-preencoded-v1` | [Fresh matched measurements and source/standard-library work review](../../nim/optimization-v1/admission-v1/results.json); 72 retained-rule application LOC / 64 physical LOC |
 | BQN spectral norm `array-bqn-native-sum` | [Fresh matched measurements and source-required work](../../bqn/spectral-sum-v1/admission-v1/results.json); 13 retained-rule application LOC / 9 physical LOC |
 | BQN FASTA `array-bqn-bins` | [Fresh matched measurements and exhaustive lookup checks](../../bqn/fasta-bins-v1/admission-v1/results.json); modest4% median reduction,24 retained-rule application / physical LOC; full-output archive limits disclosed |
+| Clojure n-body `clojure-nbody-primitive-updates-v1` | [Fresh matched full-process measurements, typed bytecode and state/output checks](../../clojure/optimization-v1/primitive-v1/admission-v1/results.json); 58.56× faster than the matched control, 111 retained-rule application / 52 physical LOC |
 | MATLAB regex `matlab-case-compact`, `matlab-case-optimized` | [Archived correctness correction and six complete-process observations](../../matlab/optimization-v1/admission-v1/results.json); 16 / 19 application LOC respectively, with matching physical LOC; intake adds no native run |
 
 Only catalog-bound admissions receive these statuses; an experiment or prepared
@@ -69,7 +70,7 @@ language. Generic Ruby worker modules have an unapplied
 ## Ownership and protection
 
 The following table is the **frozen initial 1,058-profile snapshot**, before the
-six admissions above. Current counts and the exact catalog hash are generated
+seven admissions above. Current counts and the exact catalog hash are generated
 in `inventory.json` under `summary` and `canonical_input`.
 
 | Classification | Profiles | Evidence rule |
@@ -217,14 +218,19 @@ already updates mutable Associations through one lookup; focus on serial-width
 scheduling, byte handling and its THREE prefix parser. Clojure n-body constructs
 and destructures `[[0 dx] [1 dy] [2 dz]]` for every pair in the fifty-million-step
 loop despite primitive body arrays. Scalar primitive updates or a primitive
-indexed loop are a concrete allocation/boxing candidate, with exact pair order
-and all steps retained. None is a measured speedup in this audit.
+indexed loop were concrete allocation/boxing candidates, with exact pair order
+and all steps retained. The [typed Clojure candidate](../../clojure/optimization-v1/primitive-v1/README.md)
+is now measured at 2.661471542 s versus 155.866933375 s for its fresh matched control
+(58.56×). The intermediate scalar update form remains a pilot, not a full-size
+result. The Prolog/APL/Smalltalk alternatives remain separate unmeasured proposals.
 
 **Ada, Futhark, R, Uiua, K, D and Elixir:** Ada regex already uses PCRE2 JIT and
 borrowed heap views; review source-owned scheduling and substitution buffers.
-Futhark nucleotide already has piece maps, rolling keys and bounded reserves;
-inspect generated copying and reserve granularity, plus its raw substring THREE
-parser. R fannkuch already has eight workers and 8192-rank batches; inspect the
+The [Futhark policy correction](../../futhark/library-map-review-v1/README.md)
+excludes both retained nucleotide profiles: their suite-local table violates the
+existing-library requirement. All source/count/sample evidence remains in Data;
+Futhark has eight eligible workloads and nine historically measured. No compliant
+replacement has been qualified. R fannkuch already has eight workers and 8192-rank batches; inspect the
 per-flip `rep`/`ifelse` gather allocations. Uiua tree source aliases do not show
 distinct optimization strategies; review ordinary recursive record/box allocation
 and bounded independent tree work. K fannkuch already has eight rank-range

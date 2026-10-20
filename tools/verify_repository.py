@@ -213,6 +213,7 @@ def check_model_evidence(root, data, key, program, source_models):
         'knucleotide:nim-knucleotide-preencoded-v1': 'import_nim_knucleotide',
         'spectralnorm:array-bqn-native-sum': 'import_bqn_spectral',
         'fasta:array-bqn-bins': 'import_bqn_fasta',
+        'nbody:clojure-nbody-primitive-updates-v1': 'import_clojure_nbody',
     }
     if key in bound:
         module = importlib.import_module('qualification.' + bound[key])

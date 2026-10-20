@@ -66,7 +66,8 @@ class OwnedImplementationAuditTest(unittest.TestCase):
         data = dict(programs=programs, program_inventory={}, files=files, archive_paths={},
             benchmarks=[dict(key="task", groups=[dict(language="mech", fast="task:mech", small="task:mech")])])
         for i, (field, (schema, _, _)) in enumerate(ADMISSION_EXTENSIONS.items()):
-            language = "matlab" if "matlab" in field else "nim" if "nim" in field else "bqn"
+            language = ("matlab" if "matlab" in field else "nim" if "nim" in field
+                        else "clojure" if "clojure" in field else "bqn")
             parent = add("task:parent-"+str(i), language)
             candidate = add("task:candidate-"+str(i), language, 8)
             result = dict(path="evidence/"+field+"/results.json", sha256=str(i)*64)
@@ -80,15 +81,15 @@ class OwnedImplementationAuditTest(unittest.TestCase):
         data = self.admission_catalog(); before = copy.deepcopy(data)
         result = make_inventory(data, "catalog-sha")
         self.assertEqual(data, before)
-        self.assertEqual(result["summary"]["admitted_candidates"], 4)
-        self.assertEqual(result["summary"]["admission_purposes"], {"source-speed-candidate": 3, "archived-correctness-correction": 1})
-        for i in range(4):
+        self.assertEqual(result["summary"]["admitted_candidates"], 6)
+        self.assertEqual(result["summary"]["admission_purposes"], {"source-speed-candidate": 5, "archived-correctness-correction": 1})
+        for i, field in enumerate(ADMISSION_EXTENSIONS):
             child = result["programs"]["task:candidate-"+str(i)]["audit"]
             parent = result["programs"]["task:parent-"+str(i)]["audit"]
             self.assertIn("further-search-open", child["status"])
             self.assertIn("predecessor", parent["qualification_note"].lower())
             self.assertNotIn("admission", parent)
-            if i == 3:
+            if field == "matlab_regex_case_audit":
                 self.assertIn("archived-measurements", child["status"])
                 self.assertIn("no-new-timing", child["runtime_configuration_status"])
             else:
@@ -97,6 +98,18 @@ class OwnedImplementationAuditTest(unittest.TestCase):
         self.assertTrue(mech["separately_requested_compiler_review"])
         self.assertFalse(mech["user_requested_priority_language"])
         self.assertIn("compiler-idioms-reviewed", mech["audit"]["status"])
+
+    def test_confirmed_policy_exclusion_overrides_measured_candidate_status(self):
+        data = self.admission_catalog()
+        row = data['programs']['task:candidate-0']
+        row.update(eligible_for_chart=False, eligibility_correction=dict(
+            reason='suite-local-custom-hash-table', evidence=dict(review=dict(path='policy/review.json'))))
+        original = copy.deepcopy(row)
+        report = make_inventory(data, 'catalog-sha')['programs'][row['key']]['audit']
+        self.assertIn('confirmed-required-work-policy-exclusion', report['status'])
+        self.assertIn('historical-measurements-retained', report['status'])
+        self.assertIn('policy/review.json', report['evidence'])
+        self.assertEqual(data['programs'][row['key']], original)
 
     def test_unbound_or_incomplete_admission_metadata_never_gets_measured_status(self):
         data = self.admission_catalog()

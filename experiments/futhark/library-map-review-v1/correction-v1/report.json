@@ -1,0 +1,141 @@
+{
+  "schema": "futhark-knucleotide-eligibility-preview.v1",
+  "before_sha256": "d2c7b4191e0c44ad6ac4280f4dec2fc2a77d7ae765eb9e8de5788c2e459f0a92",
+  "prepared_sha256": "5d3fe863c6d6f5188970a8d78f83fe933f33a318363a25dcc12d812e2ab8a9bd",
+  "correction": {
+    "schema": "futhark-knucleotide-eligibility-correction.v1",
+    "excluded_programs": [
+      "knucleotide:futhark-knucleotide-compact",
+      "knucleotide:futhark-knucleotide-optimized"
+    ],
+    "evidence": {
+      "review": {
+        "path": "experiments/futhark/library-map-review-v1/review.json",
+        "sha256": "e0bd4d21b5d0c46e4fff59f53b1fde392ca0a159edea35f3bcc6271cedeaf82a"
+      },
+      "controller": {
+        "path": "tools/qualification/apply_futhark_knucleotide_eligibility.py",
+        "sha256": "b07af619a3653fdbcc831d4300789cea323f97ab93e4d776bff694d90fb98ce3"
+      }
+    },
+    "no_eligible_fallback": true,
+    "removed_group": {
+      "language": "futhark",
+      "label": "Futhark",
+      "programs": [
+        "knucleotide:futhark-knucleotide-optimized",
+        "knucleotide:futhark-knucleotide-compact"
+      ],
+      "fast": "knucleotide:futhark-knucleotide-optimized",
+      "small": "knucleotide:futhark-knucleotide-compact",
+      "formatted_fast": null,
+      "formatted_small": null
+    },
+    "removed_group_index": 18,
+    "previous_language": {
+      "key": "futhark",
+      "label": "Futhark",
+      "color": "#5f021f",
+      "coverage_note": "Binary trees is excluded: the array representation omits required per-node allocations.",
+      "unsupported_benchmarks": [
+        "binarytrees"
+      ],
+      "timed_benchmarks": [
+        "nbody",
+        "mandelbrot",
+        "knucleotide",
+        "spectralnorm",
+        "revcomp",
+        "fannkuchredux",
+        "fasta",
+        "regexredux",
+        "pidigits"
+      ],
+      "source_benchmarks": [
+        "nbody",
+        "mandelbrot",
+        "knucleotide",
+        "spectralnorm",
+        "revcomp",
+        "fannkuchredux",
+        "fasta",
+        "regexredux",
+        "pidigits"
+      ],
+      "release_year": 2017,
+      "release_name": "Futhark",
+      "release_source": "https://futhark-lang.org/blog/2017-10-04-futhark-0.1.0-released.html",
+      "release_note": "First compiler release, 0.1.0, on October 4, 2017; earlier research development is excluded.",
+      "formatted_timed_benchmarks": [],
+      "formatted_source_benchmarks": [],
+      "family": "futhark",
+      "runtime_family": "native",
+      "runtime": "Futhark CPU C backend",
+      "execution_modes": [
+        "aot"
+      ],
+      "typing": "static",
+      "paradigms": [
+        "array",
+        "functional"
+      ],
+      "memory_models": [
+        "rc"
+      ],
+      "classification_note": "CPU backend in this cohort, not GPU/OpenCL execution. Array buffers are reference counted; uniqueness checking enables reuse and does not imply tracing GC."
+    },
+    "eligible_workloads": 8,
+    "historically_measured_workloads": 9,
+    "total_workloads": 10,
+    "before_aggregate": {
+      "benchmarks": [
+        "nbody",
+        "mandelbrot",
+        "knucleotide",
+        "spectralnorm",
+        "revcomp",
+        "fannkuchredux",
+        "fasta",
+        "regexredux",
+        "pidigits"
+      ],
+      "count": 9,
+      "fast": {
+        "x": 2.542792321839103,
+        "y": 3.8739342820681504
+      },
+      "small": {
+        "x": 1.8864787170669455,
+        "y": 10.99836958131427
+      }
+    },
+    "after_aggregate": {
+      "benchmarks": [
+        "nbody",
+        "mandelbrot",
+        "spectralnorm",
+        "revcomp",
+        "fannkuchredux",
+        "fasta",
+        "regexredux",
+        "pidigits"
+      ],
+      "count": 8,
+      "fast": {
+        "x": 2.473042887673826,
+        "y": 3.2062778603840365
+      },
+      "small": {
+        "x": 1.8530592183986914,
+        "y": 8.962259444626305
+      }
+    },
+    "aggregate_limit": "Different coverage sets; before/after geometric means are not a matched-workload speedup.",
+    "source_bytes_changed": false,
+    "observations_changed": false,
+    "source_counts_changed": false,
+    "original_profiles_changed": false,
+    "timing_processes": 0
+  },
+  "canonical_changed": false
+}

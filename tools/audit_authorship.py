@@ -223,6 +223,9 @@ def audit(data,models):
         if key=='fasta:array-bqn-bins':
             from qualification.import_bqn_fasta import bound_authorship
             records[key]=bound_authorship(data,p,ROOT)
+        if key=='nbody:clojure-nbody-primitive-updates-v1':
+            from qualification.import_clojure_nbody import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

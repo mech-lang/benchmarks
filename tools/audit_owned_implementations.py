@@ -27,6 +27,7 @@ ADMISSION_EXTENSIONS = {
     "nim_knucleotide_audit": ("nim-knucleotide-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "bqn_spectral_audit": ("bqn-spectral-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "bqn_fasta_audit": ("bqn-fasta-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
+    "clojure_nbody_audit": ("clojure-nbody-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "matlab_regex_case_audit": ("matlab-regex-catalog-extension.v1", "archived-correctness-correction", "archived-complete-process-observations; no-new-native-run-by-intake"),
 }
 
@@ -362,6 +363,11 @@ def make_inventory(data, canonical_sha256):
                 "matched-runtime-source-comparison-retained")
             review["admission"] = admission
             review["evidence"] = [*review.get("evidence", []), program["report"], program["source_accounting"]["evidence"]]
+        if (program.get("eligible_for_chart") is False
+                and program.get("eligibility_correction", {}).get("reason") == "suite-local-custom-hash-table"):
+            review["status"] = "confirmed-required-work-policy-exclusion; historical-measurements-retained"
+            review["eligibility_correction"] = program["eligibility_correction"]
+            review["evidence"] = [*review.get("evidence", []), program["eligibility_correction"]["evidence"]["review"]["path"]]
         if ownership["preserve_upstream_source"]:
             scope = "runtime-configuration-review-only; preserve-original-submission"
         elif requested:

@@ -1,5 +1,13 @@
 # Clojure: complete retained-source and idiom review
 
+The static review below records the original twenty applications. A subsequent
+[typed-array n-body experiment](../../clojure/optimization-v1/primitive-v1/README.md)
+is now measured and admitted: 155.87 s to 2.66 s in three matched complete-process
+rounds, with exact output and state checks. Its source has 111 retained-rule LOC,
+52 physical lines and 66 separately qualified logical units. The compact parent's
+63 logical units remain a distinct expressive endpoint. Other suggestions below
+remain unmeasured unless separately linked.
+
 Reviewed all **twenty distinct Clojure main applications**, compact and optimized
 forms for ten workloads, plus their shared generic support. Exact retained
 compiler-bound hashes and roles are in [inventory.json](inventory.json) and

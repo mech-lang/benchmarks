@@ -2,7 +2,7 @@
   "schema": "owned-implementation-audit.v1",
   "canonical_input": {
     "path": "data/benchmarks.json",
-    "sha256": "6e793a3a6aea002c9aed0d161c2f7fec36757146c68229c5c49e073f7afaaa3b"
+    "sha256": "82630b33a8739c7a749245f3058ddf56e4b65b7cac8f81b9789d3865ecf58d02"
   },
   "policy": {
     "scope": "All retained database profiles; original upstream submissions protected; priority languages affect review order, not ownership classification.",
@@ -18,25 +18,26 @@
     "unchanged_identity_limit": "CLBG citation matching permits CRLF normalization and trimming only; declared-unmodified assertions are labeled separately."
   },
   "summary": {
-    "profiles": 1064,
+    "profiles": 1065,
     "classifications": {
-      "derived-adapted": 596,
+      "derived-adapted": 597,
       "unchanged-upstream": 351,
       "suite-authored": 71,
       "unknown": 46
     },
     "source_protected_profiles": 351,
     "source_review_statuses": {
-      "source-and-idiom-reviewed; candidate-alternatives-not-measured": 274,
+      "source-and-idiom-reviewed; candidate-alternatives-not-measured": 271,
       "not-yet-source-performance-reviewed": 734,
       "source-and-compiler-idioms-reviewed; compiler-alternatives-not-newly-measured": 44,
-      "new-speed-candidate-work-qualified-and-measured; further-search-open": 4,
-      "source-reviewed-against-qualified-measured-alternative; further-search-open": 6,
+      "new-speed-candidate-work-qualified-and-measured; further-search-open": 5,
+      "source-reviewed-against-qualified-measured-alternative; further-search-open": 7,
+      "confirmed-required-work-policy-exclusion; historical-measurements-retained": 2,
       "corrected-source-work-qualified-with-archived-measurements; further-search-open": 2
     },
-    "admitted_candidates": 6,
+    "admitted_candidates": 7,
     "admission_purposes": {
-      "source-speed-candidate": 4,
+      "source-speed-candidate": 5,
       "archived-correctness-correction": 2
     },
     "separately_scoped_compiler_review_profiles": 44,
@@ -330,21 +331,12 @@
     },
     {
       "language": "clojure",
-      "profiles": 20,
+      "profiles": 21,
       "classifications": {
-        "derived-adapted": 20
+        "derived-adapted": 21
       },
       "protected_upstream_profiles": 0,
       "largest_owned_or_unknown_fast_endpoint_gaps": [
-        {
-          "program": "nbody:clojure-nbody-compact",
-          "time_x_mech": 159.08322464737373,
-          "loc_x_mech_fast": 4.36,
-          "observed_sample_ratio_envelope": [
-            151.88732338009487,
-            160.65358520838254
-          ]
-        },
         {
           "program": "fannkuchredux:clojure-fannkuchredux-optimized",
           "time_x_mech": 103.50076964307688,
@@ -361,6 +353,15 @@
           "observed_sample_ratio_envelope": [
             73.81588089093998,
             78.49872005423946
+          ]
+        },
+        {
+          "program": "fasta:clojure-fasta-optimized",
+          "time_x_mech": 20.374363383646667,
+          "loc_x_mech_fast": 1.8372093023255813,
+          "observed_sample_ratio_envelope": [
+            19.187491474826178,
+            20.440328283975802
           ]
         }
       ]
@@ -412,15 +413,6 @@
       "protected_upstream_profiles": 0,
       "largest_owned_or_unknown_fast_endpoint_gaps": [
         {
-          "program": "knucleotide:futhark-knucleotide-optimized",
-          "time_x_mech": 17.593854318052774,
-          "loc_x_mech_fast": 3.176470588235294,
-          "observed_sample_ratio_envelope": [
-            17.05671819820039,
-            17.679671845907105
-          ]
-        },
-        {
           "program": "pidigits:futhark-pidigits-optimized",
           "time_x_mech": 9.714745327505382,
           "loc_x_mech_fast": 0.6052631578947368,
@@ -436,6 +428,15 @@
           "observed_sample_ratio_envelope": [
             5.289748951397847,
             5.472073764914283
+          ]
+        },
+        {
+          "program": "fannkuchredux:futhark-fannkuchredux-optimized",
+          "time_x_mech": 3.3071390976234234,
+          "loc_x_mech_fast": 0.7457627118644068,
+          "observed_sample_ratio_envelope": [
+            3.205900626074736,
+            3.5335839629851082
           ]
         }
       ]
@@ -647,15 +648,15 @@
     "mandelbrot:mandelbrot-smalltalk-published-2",
     "knucleotide:knucleotide-smalltalk-packed",
     "spectralnorm:spectralnorm-smalltalk-recurrence",
-    "nbody:clojure-nbody-compact",
     "fannkuchredux:clojure-fannkuchredux-optimized",
     "revcomp:clojure-revcomp-compact",
+    "fasta:clojure-fasta-optimized",
     "regexredux:regexredux-ada-pcre2-heap",
     "fasta:fasta-gnat-2-faithful",
     "knucleotide:knucleotide-ada-optimized",
-    "knucleotide:futhark-knucleotide-optimized",
     "pidigits:futhark-pidigits-optimized",
     "regexredux:futhark-regexredux",
+    "fannkuchredux:futhark-fannkuchredux-optimized",
     "fannkuchredux:fannkuchredux-r-array-batched",
     "nbody:nbody-r-compact",
     "binarytrees:binarytrees-r-optimized",
@@ -41396,10 +41397,8 @@
     "knucleotide:futhark-knucleotide-compact": {
       "language": "futhark",
       "benchmark": "knucleotide",
-      "published_program": true,
-      "endpoint_roles": [
-        "small"
-      ],
+      "published_program": false,
+      "endpoint_roles": [],
       "user_requested_priority_language": true,
       "separately_requested_compiler_review": false,
       "priority_language_order": 10,
@@ -41425,17 +41424,41 @@
         "retained_source_assertion": "Local faithful CPU port; benchmark computation is in the named language."
       },
       "audit": {
-        "status": "source-and-idiom-reviewed; candidate-alternatives-not-measured",
+        "status": "confirmed-required-work-policy-exclusion; historical-measurements-retained",
         "findings": [],
         "candidate_work": [],
         "evidence": [
-          "experiments/implementation-audit/v1/futhark-review.md"
+          "experiments/implementation-audit/v1/futhark-review.md",
+          "experiments/futhark/library-map-review-v1/review.json"
         ],
         "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
         "source_sha256_reviewed": [
           "83dda7809af2c2884e0e977d3a90ad11b6c04f63593aa2860d1f9ed29090b06c"
         ],
+        "eligibility_correction": {
+          "schema": "benchmark-eligibility-correction.v1",
+          "eligible_for_chart": false,
+          "reason": "suite-local-custom-hash-table",
+          "evidence": {
+            "review": {
+              "path": "experiments/futhark/library-map-review-v1/review.json",
+              "sha256": "e0bd4d21b5d0c46e4fff59f53b1fde392ca0a159edea35f3bcc6271cedeaf82a"
+            },
+            "controller": {
+              "path": "tools/qualification/apply_futhark_knucleotide_eligibility.py",
+              "sha256": "b07af619a3653fdbcc831d4300789cea323f97ab93e4d776bff694d90fb98ce3"
+            }
+          },
+          "source_sha256": [
+            "83dda7809af2c2884e0e977d3a90ad11b6c04f63593aa2860d1f9ed29090b06c",
+            "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d",
+            "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9",
+            "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf"
+          ],
+          "historical_measurement_preserved": true,
+          "historical_work_assertion_preserved": true
+        },
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
@@ -41511,10 +41534,8 @@
     "knucleotide:futhark-knucleotide-optimized": {
       "language": "futhark",
       "benchmark": "knucleotide",
-      "published_program": true,
-      "endpoint_roles": [
-        "fast"
-      ],
+      "published_program": false,
+      "endpoint_roles": [],
       "user_requested_priority_language": true,
       "separately_requested_compiler_review": false,
       "priority_language_order": 10,
@@ -41540,7 +41561,7 @@
         "retained_source_assertion": "Local faithful CPU port; benchmark computation is in the named language."
       },
       "audit": {
-        "status": "source-and-idiom-reviewed; candidate-alternatives-not-measured",
+        "status": "confirmed-required-work-policy-exclusion; historical-measurements-retained",
         "findings": [
           "The source maps thirty-two pieces, reserves table space by bounded batches, and performs rolling-key increments in Futhark. Its >THREE search is a raw substring search rather than a record-token parser."
         ],
@@ -41551,13 +41572,37 @@
           "Compare uniqueness-friendly loop state and general helper composition using the existing hashmap library; verify source accounting for workload helpers rather than hiding them as support."
         ],
         "evidence": [
-          "experiments/implementation-audit/v1/futhark-review.md"
+          "experiments/implementation-audit/v1/futhark-review.md",
+          "experiments/futhark/library-map-review-v1/review.json"
         ],
         "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
         "source_sha256_reviewed": [
           "86279a96aff35f6dc90a7ffff727c33cf9da642e647856e341139836aea97dc6"
         ],
+        "eligibility_correction": {
+          "schema": "benchmark-eligibility-correction.v1",
+          "eligible_for_chart": false,
+          "reason": "suite-local-custom-hash-table",
+          "evidence": {
+            "review": {
+              "path": "experiments/futhark/library-map-review-v1/review.json",
+              "sha256": "e0bd4d21b5d0c46e4fff59f53b1fde392ca0a159edea35f3bcc6271cedeaf82a"
+            },
+            "controller": {
+              "path": "tools/qualification/apply_futhark_knucleotide_eligibility.py",
+              "sha256": "b07af619a3653fdbcc831d4300789cea323f97ab93e4d776bff694d90fb98ce3"
+            }
+          },
+          "source_sha256": [
+            "86279a96aff35f6dc90a7ffff727c33cf9da642e647856e341139836aea97dc6",
+            "56b559f220977ddb2dfe2b6c4b847081fbba71bb181e9aaa5fac58cedbb3342d",
+            "0014598c2062c35c3e0ad2b527e8ce6f359dead2ab2b558bfd9c10b5828ebad9",
+            "0c1b898695cbe779412defe8208936b59631d4689f2b0230175575e5fe6ddcbf"
+          ],
+          "historical_measurement_preserved": true,
+          "historical_work_assertion_preserved": true
+        },
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
@@ -67744,7 +67789,6 @@
       "benchmark": "nbody",
       "published_program": true,
       "endpoint_roles": [
-        "fast",
         "small"
       ],
       "user_requested_priority_language": true,
@@ -67771,7 +67815,7 @@
         "retained_source_assertion": "Twenty locally authored Clojure compact/optimized adaptations retain prescribed CLBG algorithms and independent reference provenance. Every compiler-bound main plus authored generic support.clj is included in canonical LOC; Clojure/JVM vendor classes and JARs are separately pinned. Successful original four-profile/24-case and fresh sixteen-profile/132-case ancestry, admitted source/bytecode work review, and all ninety original full-process records remain unchanged."
       },
       "audit": {
-        "status": "source-and-idiom-reviewed; candidate-alternatives-not-measured",
+        "status": "source-reviewed-against-qualified-measured-alternative; further-search-open",
         "findings": [
           "Although body arrays are primitive, every pair update constructs [[0 dx] [1 dy] [2 dz]] and iterates through doseq destructuring in the fifty-million-step loop."
         ],
@@ -67782,25 +67826,98 @@
           "Review compact idiomatic primitive loops and shared helpers against the existing alternative; preserve exact sqrt/division and every sequential step."
         ],
         "evidence": [
-          "experiments/implementation-audit/v1/clojure-review.md"
+          "experiments/implementation-audit/v1/clojure-review.md",
+          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json"
         ],
         "expressiveness_status": "static-idiom-alternatives-reviewed; no-new-count-or-source-admitted",
         "runtime_configuration_status": "recorded-runtime-fields-inventoried; independent-configuration-review-pending",
         "source_sha256_reviewed": [
           "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
         ],
+        "related_admissions": [
+          {
+            "admitted_program": "nbody:clojure-nbody-primitive-updates-v1",
+            "catalog_extension": "clojure_nbody_audit",
+            "purpose": "source-speed-candidate",
+            "observation_origin": "fresh-complete-process-observations",
+            "predecessor_program": "nbody:clojure-nbody-compact",
+            "admitted_application_sha256": [
+              "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+            ],
+            "source_count_review": "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json",
+            "evidence": {
+              "foundation": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/execution-plan.json",
+                "sha256": "cb43a5a01cfafa8c441e0c9ee8a13d1abcfe84cc1b14f3ff247bc74f96c92195"
+              },
+              "runtime": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/runtime-build.json",
+                "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+              },
+              "builds": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/builds.json",
+                "sha256": "1f3099f38ebc295bfb3173c3ead7cde039b0204ba7891e41c5a0687a6445c159"
+              },
+              "state": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/state-probe-report.json",
+                "sha256": "9cbbb2b59c533207e624f51723c0a986f4a2ab8b087bd5bbc17754e9d3ea3805"
+              },
+              "bounded": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/bounded-v1/report.json",
+                "sha256": "c3f0777f69307134fe9383e4aab8fe1b10e59d9a55d185dd10e785ce9b288d56"
+              },
+              "pilot": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/pilot-v1/report.json",
+                "sha256": "ce91252e209b8c3458e0441e1a15df0200fd4fe961d7dcb14960ae374829b4a8"
+              },
+              "selected_plan": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/plan.json",
+                "sha256": "aeb77e8c01e21e3136c09240ca2657a3d71bb61a460117eeab994bb71696e736"
+              },
+              "full": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run-v1/report.json",
+                "sha256": "9f385e274051e1294380a64c150124ba73f389ad64b756f4e0f41b5f6b1fa1c4"
+              },
+              "ownership": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json",
+                "sha256": "89e695f8c980441c922f8158ce8f0806242dc32db882d3dfaf557ed96f608d14"
+              },
+              "importer": {
+                "path": "tools/qualification/import_clojure_nbody.py",
+                "sha256": "63ce076926af07129b7f5281d9ee56d91234a7c76cc422454c3e4116a5efa4fb"
+              },
+              "shared_helpers": {
+                "path": "tools/qualification/import_bqn_knucleotide.py",
+                "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+              },
+              "plan": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/admission-v1/plan.json",
+                "sha256": "a6ab2884d4874d2d8ddcb2b1ebc14bff0c961a5e19cd243b3e3f72ca0c134bde"
+              },
+              "results": {
+                "path": "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+                "sha256": "4d490e95cc7456a60068efd3221f548839311174cee4bf921fc77d8f01113ab9"
+              }
+            },
+            "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+            "global_optimality_proven": false
+          }
+        ],
+        "qualification_note": "Predecessor source/timings retained; corrected or optimized child qualification does not transfer to this profile.",
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 2,
-        "distinct_source_bundles": 2,
-        "lowest_retained_median_program": "nbody:clojure-nbody-compact",
-        "lowest_retained_median_seconds": 165.364857875,
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 3,
+        "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
+        "lowest_retained_median_seconds": 2.661471542,
         "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
         "fewest_retained_loc": 109,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
-        "admitted_candidate_programs": [],
+        "admitted_candidate_programs": [
+          "nbody:clojure-nbody-primitive-updates-v1"
+        ],
         "global_optimality_proven": false
       },
       "performance": {
@@ -67904,15 +68021,17 @@
         "scope": "user-requested-priority; source-and-runtime-review"
       },
       "candidate_comparison": {
-        "retained_catalog_candidate_profiles": 2,
-        "distinct_source_bundles": 2,
-        "lowest_retained_median_program": "nbody:clojure-nbody-compact",
-        "lowest_retained_median_seconds": 165.364857875,
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 3,
+        "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
+        "lowest_retained_median_seconds": 2.661471542,
         "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
         "fewest_retained_loc": 109,
         "published_fast_matches_lowest_retained_median": true,
         "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
-        "admitted_candidate_programs": [],
+        "admitted_candidate_programs": [
+          "nbody:clojure-nbody-primitive-updates-v1"
+        ],
         "global_optimality_proven": false
       },
       "performance": {
@@ -67962,6 +68081,224 @@
         {
           "sha256": "e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881",
           "path": "clojure-comparison/20261012/.build/private-v2/packages/clojure-nbody-optimized/sources/clbg/nbody/optimized.clj",
+          "role": "application",
+          "included_in_application_loc": true
+        },
+        {
+          "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "path": "clojure-comparison/20261012/.build/private-v1/packages/clojure-binarytrees-compact/support/clbg/support.clj",
+          "role": "runtime-support",
+          "included_in_application_loc": false
+        }
+      ]
+    },
+    "nbody:clojure-nbody-primitive-updates-v1": {
+      "language": "clojure",
+      "benchmark": "nbody",
+      "published_program": true,
+      "endpoint_roles": [
+        "fast"
+      ],
+      "user_requested_priority_language": true,
+      "separately_requested_compiler_review": false,
+      "priority_language_order": 8,
+      "ownership": {
+        "classification": "derived-adapted",
+        "reason": "Documented local changes or translation with retained upstream/reference implementation or predecessor lineage.",
+        "preserve_upstream_source": false,
+        "upstream_identity": "not-established",
+        "original_lineage_status": "unresolved",
+        "origin_gaps": [
+          "Original implementation source not established; a workload description or collection is not an original-source citation."
+        ],
+        "existing_authorship_kind": "ai-adapted",
+        "existing_ai_evidence_status": "family-identified-exact-model-unverified",
+        "existing_ai_models": [],
+        "ai_authorship_inferred": false,
+        "parent_programs": [
+          "nbody:clojure-nbody-compact"
+        ],
+        "sources": [],
+        "evidence": [
+          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/plan.json",
+          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+          "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json"
+        ],
+        "retained_source_assertion": "Suite-authored typed-array optimization of the retained local Clojure n-body source; predecessor origin and inherited terms remain unresolved."
+      },
+      "audit": {
+        "status": "new-speed-candidate-work-qualified-and-measured; further-search-open",
+        "findings": [],
+        "candidate_work": [],
+        "evidence": [
+          "experiments/implementation-audit/v1/clojure-review.md",
+          "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+          "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json"
+        ],
+        "expressiveness_status": "new-exact-source-count-reviewed; uniform-logical-normalization-pending",
+        "runtime_configuration_status": "matched-runtime-source-comparison-retained",
+        "source_sha256_reviewed": [
+          "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+        ],
+        "admission": {
+          "catalog_extension": "clojure_nbody_audit",
+          "purpose": "source-speed-candidate",
+          "observation_origin": "fresh-complete-process-observations",
+          "predecessor_program": "nbody:clojure-nbody-compact",
+          "admitted_application_sha256": [
+            "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+          ],
+          "source_count_review": "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json",
+          "evidence": {
+            "foundation": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/execution-plan.json",
+              "sha256": "cb43a5a01cfafa8c441e0c9ee8a13d1abcfe84cc1b14f3ff247bc74f96c92195"
+            },
+            "runtime": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/runtime-build.json",
+              "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+            },
+            "builds": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/builds.json",
+              "sha256": "1f3099f38ebc295bfb3173c3ead7cde039b0204ba7891e41c5a0687a6445c159"
+            },
+            "state": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/state-probe-report.json",
+              "sha256": "9cbbb2b59c533207e624f51723c0a986f4a2ab8b087bd5bbc17754e9d3ea3805"
+            },
+            "bounded": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/bounded-v1/report.json",
+              "sha256": "c3f0777f69307134fe9383e4aab8fe1b10e59d9a55d185dd10e785ce9b288d56"
+            },
+            "pilot": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/pilot-v1/report.json",
+              "sha256": "ce91252e209b8c3458e0441e1a15df0200fd4fe961d7dcb14960ae374829b4a8"
+            },
+            "selected_plan": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/plan.json",
+              "sha256": "aeb77e8c01e21e3136c09240ca2657a3d71bb61a460117eeab994bb71696e736"
+            },
+            "full": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run-v1/report.json",
+              "sha256": "9f385e274051e1294380a64c150124ba73f389ad64b756f4e0f41b5f6b1fa1c4"
+            },
+            "ownership": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/source-ownership-approved.json",
+              "sha256": "89e695f8c980441c922f8158ce8f0806242dc32db882d3dfaf557ed96f608d14"
+            },
+            "importer": {
+              "path": "tools/qualification/import_clojure_nbody.py",
+              "sha256": "63ce076926af07129b7f5281d9ee56d91234a7c76cc422454c3e4116a5efa4fb"
+            },
+            "shared_helpers": {
+              "path": "tools/qualification/import_bqn_knucleotide.py",
+              "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+            },
+            "plan": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/admission-v1/plan.json",
+              "sha256": "a6ab2884d4874d2d8ddcb2b1ebc14bff0c961a5e19cd243b3e3f72ca0c134bde"
+            },
+            "results": {
+              "path": "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+              "sha256": "4d490e95cc7456a60068efd3221f548839311174cee4bf921fc77d8f01113ab9"
+            }
+          },
+          "qualification_scope": "Exact admitted source/configuration only; predecessor observations and source remain unchanged.",
+          "global_optimality_proven": false
+        },
+        "scope": "user-requested-priority; source-and-runtime-review"
+      },
+      "candidate_comparison": {
+        "retained_catalog_candidate_profiles": 3,
+        "distinct_source_bundles": 3,
+        "lowest_retained_median_program": "nbody:clojure-nbody-primitive-updates-v1",
+        "lowest_retained_median_seconds": 2.661471542,
+        "fewest_retained_loc_program": "nbody:clojure-nbody-compact",
+        "fewest_retained_loc": 109,
+        "published_fast_matches_lowest_retained_median": true,
+        "status": "saved-candidate-medians-and-source-counts-compared; no-workloads-executed-by-inventory",
+        "admitted_candidate_programs": [
+          "nbody:clojure-nbody-primitive-updates-v1"
+        ],
+        "global_optimality_proven": false
+      },
+      "performance": {
+        "seconds": 2.661471542,
+        "samples": [
+          2.661471542,
+          2.714510416,
+          2.658480875
+        ],
+        "sample_count": 3,
+        "loc": 111,
+        "mech_fast_program": "nbody:pairwise-mass-tails",
+        "mech_seconds": 1.039486459,
+        "mech_loc": 25,
+        "time_x_mech": 2.5603715363068527,
+        "loc_x_mech_fast": 4.44,
+        "report": "experiments/clojure/optimization-v1/primitive-v1/admission-v1/results.json",
+        "mech_report": "nbody/experiments/20261011-shared-products/replication-50m.json",
+        "timing_alias_of": null,
+        "comparison_scope": "descriptive medians of retained cohorts; not a new paired experiment",
+        "observed_sample_ratio_envelope": [
+          2.5511306787509866,
+          2.6363409301649123
+        ],
+        "observed_samples_all_slower_than_mech": true,
+        "loc_x_mech_small": 5.55,
+        "mech_small_program": "nbody:compact-baseline",
+        "median_matches_saved_samples": true
+      },
+      "runtime_configuration": {
+        "runtime_arguments": [
+          "50000000"
+        ],
+        "execution_mode": "jvm-aot-classes-jit",
+        "runtime_policy": "Clojure 1.12.6; Temurin 25.0.4.1+1 ARM64; direct-linking classes, fresh HotSpot JVM; ActiveProcessorCount=8 Xms64m Xmx8g G1GC",
+        "runtime_support": "Unchanged generic clbg.support; no foreign n-body kernel or new workload helper.",
+        "command": [
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+          "-XX:ActiveProcessorCount=8",
+          "-Xms64m",
+          "-Xmx8g",
+          "-XX:+UseG1GC",
+          "-cp",
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/primitive-v1/.build/classes-build-v1/primitive-updates:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+          "clbg.nbody.primitive_updates",
+          "50000000"
+        ],
+        "build_command": [
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+          "-XX:ActiveProcessorCount=8",
+          "-Xms64m",
+          "-Xmx8g",
+          "-XX:+UseG1GC",
+          "-cp",
+          "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/primitive-v1/.build/packages-build-v1/primitive-updates/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/primitive-v1/.build/packages-build-v1/primitive-updates/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+          "clojure.main",
+          "-e",
+          "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/primitive-v1/.build/classes-build-v1/primitive-updates\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.primitive-updates))"
+        ],
+        "runtime_sha256": "83c9c5310d044e7c4262432854eb1bc5f49763d7c1e9971777a646c91b96c06d",
+        "runtime_environment": {
+          "PATH": "/usr/bin:/bin",
+          "LC_ALL": "C",
+          "LANG": "C",
+          "TZ": "UTC",
+          "JAVA_HOME": "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home",
+          "CLASSPATH": "",
+          "JAVA_TOOL_OPTIONS": "",
+          "JDK_JAVA_OPTIONS": "",
+          "_JAVA_OPTIONS": "",
+          "OMP_NUM_THREADS": "1",
+          "OPENBLAS_NUM_THREADS": "1",
+          "VECLIB_MAXIMUM_THREADS": "1"
+        }
+      },
+      "source_bundle": [
+        {
+          "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2",
+          "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
           "role": "application",
           "included_in_application_loc": true
         },

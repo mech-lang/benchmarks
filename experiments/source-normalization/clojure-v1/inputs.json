@@ -1,0 +1,861 @@
+{
+  "canonical_changed": false,
+  "catalog_sha256": "82630b33a8739c7a749245f3058ddf56e4b65b7cac8f81b9789d3865ecf58d02",
+  "jobs": {
+    "file:1296ac776e823178a3f8214454b26fefca22d7e7fc69a315103864d3bb4f050b": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "1296ac776e823178a3f8214454b26fefca22d7e7fc69a315103864d3bb4f050b",
+      "text": "(ns clbg.pidigits.optimized\n  (:require [clbg.support :as s])\n  (:import [java.math BigInteger])\n  (:gen-class))\n(def two (BigInteger/valueOf 2))\n(def three-coefficient (BigInteger/valueOf 3))\n(def four-coefficient (BigInteger/valueOf 4))\n(def ten (BigInteger/valueOf 10))\n(defn integer [value] (BigInteger/valueOf (long value)))\n(defn -main [& arguments]\n  (let [wanted (s/argument arguments 27)\n        line (StringBuilder. 10)\n        output (StringBuilder.)]\n    (loop [^BigInteger q BigInteger/ONE ^BigInteger r BigInteger/ZERO ^BigInteger t BigInteger/ONE\n           k 1 emitted 0]\n      (if (= emitted wanted)\n        (do (print (.toString output)) (flush))\n        (let [numerator-three (.add (.multiply q three-coefficient) r)\n              numerator-four (.add (.multiply q four-coefficient) r)\n              ^BigInteger three (.divide numerator-three t)\n              ^BigInteger four (.divide numerator-four t)]\n          (if (.equals three four)\n            (let [number (inc emitted)]\n              (.append line (.intValue three))\n              (when (or (zero? (mod number 10)) (= number wanted))\n                (.append output (String/format java.util.Locale/ROOT \"%-10s\\t:%d\\n\" (to-array [(.toString line) number])))\n                (.setLength line 0))\n              (recur (.multiply q ten) (.multiply (.subtract r (.multiply t three)) ten) t k number))\n            (let [factor (integer (inc (* 2 k)))]\n              (recur (.multiply q (integer k)) (.multiply (.add r (.multiply q two)) factor)\n                     (.multiply t factor) (inc k) emitted))))))))\n"
+    },
+    "file:12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2",
+      "text": "(ns clbg.nbody.primitive-updates (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies]\n  (dotimes [i 5]\n    (let [^doubles a (aget bodies i)]\n      (loop [j (inc i)]\n        (when (< j 5)\n          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n            (aset a 3 (- (aget a 3) (* dx (aget b 6) magnitude)))\n            (aset b 3 (+ (aget b 3) (* dx (aget a 6) magnitude)))\n            (aset a 4 (- (aget a 4) (* dy (aget b 6) magnitude)))\n            (aset b 4 (+ (aget b 4) (* dy (aget a 6) magnitude)))\n            (aset a 5 (- (aget a 5) (* dz (aget b 6) magnitude)))\n            (aset b 5 (+ (aget b 5) (* dz (aget a 6) magnitude))))\n          (recur (inc j))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000) system (bodies)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    },
+    "file:193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "text": "(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies]\n  (dotimes [i 5]\n    (let [^doubles a (aget bodies i)]\n      (loop [j (inc i)]\n        (when (< j 5)\n          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n          (recur (inc j))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000) system (bodies)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    },
+    "file:20b92684b9bd667464df984546f0bd547133ebf8206fc213c92af90272bfa5c0": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "20b92684b9bd667464df984546f0bd547133ebf8206fc213c92af90272bfa5c0",
+      "text": "(ns clbg.regexredux.compact\n  (:require [clbg.support :as s])\n  (:import [java.util.regex Pattern])\n  (:gen-class))\n(def patterns [\"agggtaaa|tttaccct\" \"[cgt]gggtaaa|tttaccc[acg]\" \"a[act]ggtaaa|tttacc[agt]t\" \"ag[act]gtaaa|tttac[agt]ct\" \"agg[act]taaa|ttta[agt]cct\" \"aggg[acg]aaa|ttt[cgt]ccct\" \"agggt[cgt]aa|tt[acg]accct\" \"agggta[cgt]a|t[acg]taccct\" \"agggtaa[cgt]|[acg]ttaccct\"])\n(def substitutions [[\"tHa[Nt]\" \"<4>\"] [\"aND|caN|Ha[DS]|WaS\" \"<3>\"] [\"a[NSt]|BY\" \"<2>\"] [\"<[^>]*>\" \"|\"] [\"\\\\|[^|][^|]*\\\\|\" \"-\"]])\n(defn count-matches [expression text]\n  (let [matcher (.matcher (Pattern/compile expression) text)]\n    (loop [total 0]\n      (if (.find matcher) (recur (inc total)) total))))\n(defn -main [& arguments]\n  (let [raw (s/input-text)\n        dna (.replaceAll (.matcher (Pattern/compile \">[^\\n]*\\n|\\n\") raw) \"\")]\n    (doseq [pattern patterns]\n      (s/printf \"%s %d\\n\" pattern (count-matches pattern dna)))\n    (let [changed (reduce (fn [text [expression replacement]]\n                            (.replaceAll (.matcher (Pattern/compile expression) text) replacement))\n                          dna substitutions)]\n      (s/printf \"\\n%d\\n%d\\n%d\\n\" (count raw) (count dna) (count changed)))))\n\n"
+    },
+    "file:27557c3f45b67533d4114d48868715d6735422b504a6243b470ce7e868bb8870": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "27557c3f45b67533d4114d48868715d6735422b504a6243b470ce7e868bb8870",
+      "text": "(ns clbg.revcomp.compact\n  (:require [clbg.support :as s] [clojure.string :as string])\n  (:gen-class))\n(def complements (zipmap \"ACGTUMRWSYKVHDBNacgtumrwsykvhdbn\" \"TGCAAKYWSRMBDHVNTGCAAKYWSRMBDHVN\"))\n(defn records [raw]\n  (reduce (fn [result ^String line]\n            (cond\n              (.startsWith line \">\") (conj result [line (StringBuilder.)])\n              (or (empty? result) (.startsWith line \";\")) result\n              :else (do (.append ^StringBuilder (second (peek result)) line) result)))\n          [] (string/split raw #\"\\r\\n|\\r|\\n\" -1)))\n(defn -main [& arguments]\n  (doseq [[header ^StringBuilder sequence] (records (s/input-text))]\n    (println header)\n    (let [output (StringBuilder.)]\n      (loop [index (dec (.length sequence)) column 0]\n        (when (>= index 0)\n          (.append output (char (get complements (.charAt sequence (int index)) (.charAt sequence (int index)))))\n          (if (or (= column 59) (zero? index))\n            (do (println (.toString output)) (.setLength output 0) (recur (dec index) 0))\n            (recur (dec index) (inc column))))))))\n\n"
+    },
+    "file:32540cd34c495a8d7acf4e64ca04704f2e2fe8414acc3c7d5c83747a064ba2a2": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "32540cd34c495a8d7acf4e64ca04704f2e2fe8414acc3c7d5c83747a064ba2a2",
+      "text": "(ns clbg.spectralnorm.compact (:require [clbg.support :as s]) (:gen-class))\n(defn denominator ^long [^long row ^long column]\n  (let [sum (+ row column)] (+ (quot (* sum (inc sum)) 2) row 1)))\n(defn multiply [^doubles vector transpose]\n  (let [n (alength vector) output (double-array n)]\n    (dotimes [row n]\n      (aset-double output row\n        (loop [column 0 sum 0.0]\n          (if (= column n) sum\n            (recur (inc column)\n              (+ sum (/ (aget vector column)\n                        (double (if transpose (denominator column row) (denominator row column))))))))))\n    output))\n(defn ata [vector] (multiply (multiply vector false) true))\n(defn result [^doubles u ^doubles v]\n  (loop [index 0 uv 0.0 vv 0.0]\n    (if (= index (alength u)) (Math/sqrt (/ uv vv))\n      (recur (inc index) (+ uv (* (aget u index) (aget v index))) (+ vv (* (aget v index) (aget v index)))))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 100))]\n    (loop [iteration 0 u (double-array n 1.0) v (double-array n)]\n      (if (= iteration 10) (s/printf \"%.9f\\n\" (result u v))\n        (let [next-v (ata u) next-u (ata next-v)]\n          (recur (inc iteration) next-u next-v))))))\n\n"
+    },
+    "file:5e3f2d6aacf6b438f0b7f2fb107973dab8e6a4b4e5ff21c2cddcbd6fcbd85000": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "5e3f2d6aacf6b438f0b7f2fb107973dab8e6a4b4e5ff21c2cddcbd6fcbd85000",
+      "text": "(ns clbg.mandelbrot.compact (:require [clbg.support :as s]) (:import [java.nio.charset StandardCharsets]) (:gen-class))\n(defn inside? [^double cr ^double ci]\n  (loop [iteration 0 zr 0.0 zi 0.0]\n    (if (= iteration 50) true\n      (let [real (+ (- (* zr zr) (* zi zi)) cr)\n            imaginary (+ (* 2.0 zr zi) ci)]\n        (if (> (+ (* real real) (* imaginary imaginary)) 4.0) false\n          (recur (inc iteration) real imaginary))))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 200)) stride (quot (+ n 7) 8) bytes (byte-array (* n stride))]\n    (dotimes [y n]\n      (dotimes [column stride]\n        (let [bits (loop [offset 0 value 0]\n                     (if (= offset 8) value\n                       (let [x (+ (* column 8) offset)]\n                         (recur (inc offset) (bit-or (bit-shift-left value 1)\n                           (if (and (< x n) (inside? (- (/ (* 2.0 x) n) 1.5) (- (/ (* 2.0 y) n) 1.0))) 1 0))))))]\n          (aset-byte bytes (+ (* y stride) column) (unchecked-byte bits)))))\n    (.write System/out (.getBytes (str \"P4\\n\" n \" \" n \"\\n\") StandardCharsets/US_ASCII))\n    (.write System/out bytes)))\n"
+    },
+    "file:6899d4738d9f5a179c5f788ee698ce56843a63862db0a4b343f9331c999a33f3": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "6899d4738d9f5a179c5f788ee698ce56843a63862db0a4b343f9331c999a33f3",
+      "text": "(ns clbg.binarytrees.optimized\n  (:require [clbg.support :as s])\n  (:gen-class))\n(defn make-tree [depth]\n  (let [node (object-array 2)]\n    (when (pos? depth)\n      (aset node 0 (make-tree (dec depth)))\n      (aset node 1 (make-tree (dec depth))))\n    node))\n(defn check-tree [^objects node]\n  (if (nil? (aget node 0)) 1\n    (+ 1 (check-tree (aget node 0)) (check-tree (aget node 1)))))\n(defn interval [depth begin end]\n  (loop [index begin sum 0]\n    (if (= index end) sum\n      (recur (inc index) (+ sum (check-tree (make-tree depth)))))))\n(defn -main [& arguments]\n  (let [maximum (max 6 (s/argument arguments 10))\n        stretch (check-tree (make-tree (inc maximum)))\n        retained (make-tree maximum)]\n    (s/printf \"stretch tree of depth %d\\t check: %d\\n\" (inc maximum) stretch)\n    (doseq [depth (range 4 (inc maximum) 2)]\n      (let [iterations (bit-shift-left 1 (+ maximum 4 (- depth)))\n            workers (min 8 iterations)\n            totals (s/jobs (mapv (fn [worker]\n                                  #(interval depth (quot (* iterations worker) workers)\n                                                   (quot (* iterations (inc worker)) workers)))\n                                (range workers)))]\n        (s/printf \"%d\\t trees of depth %d\\t check: %d\\n\" iterations depth (reduce + totals))))\n    (s/printf \"long lived tree of depth %d\\t check: %d\\n\" maximum (check-tree retained))))\n\n"
+    },
+    "file:7056b08ea6619eb51be47067aec5d14d839a3bf628235f0400746cdef9d956b7": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "7056b08ea6619eb51be47067aec5d14d839a3bf628235f0400746cdef9d956b7",
+      "text": "(ns clbg.fannkuchredux.compact (:require [clbg.support :as s]) (:gen-class))\n(defn rotate-prefix! [^ints permutation last-index]\n  (let [first-value (aget permutation 0)]\n    (dotimes [index last-index] (aset-int permutation index (aget permutation (inc index))))\n    (aset-int permutation last-index first-value)))\n(defn flips ^long [^ints permutation]\n  (let [work (aclone permutation)]\n    (loop [total 0]\n      (let [last-index (aget work 0)]\n        (if (zero? last-index) total\n          (do\n            (loop [left 0 right (long last-index)]\n              (when (< left right)\n                (let [value (aget work left)]\n                  (aset-int work left (aget work right)) (aset-int work right value))\n                (recur (inc left) (dec right))))\n            (recur (inc total))))))))\n(defn carry [^ints permutation ^ints counts r n]\n  (loop [index r]\n    (if (= index n) n\n      (do\n        (rotate-prefix! permutation index)\n        (aset-int counts index (dec (aget counts index)))\n        (if (pos? (aget counts index)) index (recur (inc index)))))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 7)) permutation (int-array (range n)) counts (int-array n)]\n    (assert (pos? n))\n    (loop [r n rank 0 checksum 0 maximum 0]\n      (let [ready (loop [index r]\n                    (if (= index 1) 1\n                      (do (aset-int counts (dec index) index) (recur (int (dec index))))))\n            amount (flips permutation)\n            next-checksum (+ checksum (if (even? rank) amount (- amount)))\n            next-maximum (max maximum amount)\n            next-r (carry permutation counts ready n)]\n        (if (= next-r n)\n          (s/printf \"%d\\nPfannkuchen(%d) = %d\\n\" next-checksum n next-maximum)\n          (recur (int next-r) (inc rank) (long next-checksum) (long next-maximum)))))))\n"
+    },
+    "file:83ebb599bd01e70b9165040b313c7fe4f8fafb90a4a32f08a6f90f426812a87b": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "83ebb599bd01e70b9165040b313c7fe4f8fafb90a4a32f08a6f90f426812a87b",
+      "text": "(ns clbg.regexredux.optimized\n  (:require [clbg.support :as s])\n  (:import [java.util.regex Pattern])\n  (:gen-class))\n(def patterns [\"agggtaaa|tttaccct\" \"[cgt]gggtaaa|tttaccc[acg]\" \"a[act]ggtaaa|tttacc[agt]t\" \"ag[act]gtaaa|tttac[agt]ct\" \"agg[act]taaa|ttta[agt]cct\" \"aggg[acg]aaa|ttt[cgt]ccct\" \"agggt[cgt]aa|tt[acg]accct\" \"agggta[cgt]a|t[acg]taccct\" \"agggtaa[cgt]|[acg]ttaccct\"])\n(def substitutions [[\"tHa[Nt]\" \"<4>\"] [\"aND|caN|Ha[DS]|WaS\" \"<3>\"] [\"a[NSt]|BY\" \"<2>\"] [\"<[^>]*>\" \"|\"] [\"\\\\|[^|][^|]*\\\\|\" \"-\"]])\n(defn count-matches [expression text]\n  (let [matcher (.matcher (Pattern/compile expression) text)]\n    (loop [total 0]\n      (if (.find matcher) (recur (inc total)) total))))\n(defn -main [& arguments]\n  (let [raw (s/input-text)\n        original-length (count raw)\n        dna (.replaceAll (.matcher (Pattern/compile \">[^\\n]*\\n|\\n\") raw) \"\")\n        counts (s/jobs (mapv (fn [pattern] #(count-matches pattern dna)) patterns))]\n    (doseq [[pattern total] (map vector patterns counts)]\n      (s/printf \"%s %d\\n\" pattern total))\n    (let [changed (reduce (fn [text [expression replacement]]\n                            (.replaceAll (.matcher (Pattern/compile expression) text) replacement))\n                          dna substitutions)]\n      (s/printf \"\\n%d\\n%d\\n%d\\n\" original-length (count dna) (count changed)))))\n\n"
+    },
+    "file:8555e3d807bedda93681f29b301bc5968cc13b44491bb0b5fc09ff5a7ef253ec": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "8555e3d807bedda93681f29b301bc5968cc13b44491bb0b5fc09ff5a7ef253ec",
+      "text": "(ns clbg.knucleotide.optimized\n  (:require [clbg.support :as s] [clojure.string :as string])\n  (:import [java.util HashMap Locale])\n  (:gen-class))\n(def widths [1 2 3 4 6 12 18])\n(def queries [\"GGT\" \"GGTA\" \"GGTATT\" \"GGTATTTTAATT\" \"GGTATTTTAATTTATAGT\"])\n(defn third-record [raw]\n  (loop [lines (seq (string/split raw #\"\\r\\n|\\r|\\n\" -1)) selected false output (StringBuilder.)]\n    (if-let [^String line (first lines)]\n      (cond\n        (.startsWith line \";\") (recur (next lines) selected output)\n        (.startsWith line \">\") (if selected (.toUpperCase (.toString output) Locale/ROOT)\n                                  (recur (next lines) (or (= line \">THREE\")\n                                                        (.startsWith line \">THREE \")\n                                                        (.startsWith line \">THREE\\t\")) output))\n        selected (do (.append output line) (recur (next lines) true output))\n        :else (recur (next lines) false output))\n      (.toUpperCase (.toString output) Locale/ROOT))))\n(defn code [character]\n  (case character \\A 0 \\C 1 \\G 2 \\T 3 (throw (IllegalArgumentException. \"Invalid nucleotide\"))))\n(defn histogram [^String sequence width]\n  (let [table (HashMap.) mask (dec (bit-shift-left 1 (* 2 width)))]\n    (loop [position 0 key 0]\n      (when (< position (.length sequence))\n        (let [next-key (bit-and mask (bit-or (bit-shift-left key 2) (code (.charAt sequence (int position)))))]\n          (when (>= (inc position) width)\n            (.put table next-key (inc (long (.getOrDefault table next-key 0)))))\n          (recur (inc position) (long next-key)))))\n    table))\n(defn decode [key width]\n  (let [word (char-array width)]\n    (loop [index (dec width) remaining key]\n      (when (>= index 0)\n        (aset-char word index (.charAt \"ACGT\" (int (bit-and remaining 3))))\n        (recur (dec index) (unsigned-bit-shift-right remaining 2))))\n    (String. word)))\n(defn frequencies [^HashMap table width]\n  (let [rows (mapv (fn [entry] [(decode (.getKey entry) width) (.getValue entry)]) (.entrySet table))\n        total (reduce + 0 (map second rows))]\n    (doseq [[word amount] (sort-by (fn [[word amount]] [(- amount) word]) rows)]\n      (s/printf \"%s %.3f\\n\" word (/ (* 100.0 amount) total)))\n    (println)))\n(defn -main [& arguments]\n  (let [sequence (third-record (s/input-text))\n        tables (s/jobs (mapv (fn [width] #(histogram sequence width)) widths))]\n    (doseq [index (range 2)] (frequencies (nth tables index) (nth widths index)))\n    (doseq [[query ^HashMap table] (map vector queries (drop 2 tables))]\n      (let [key (reduce (fn [key character] (bit-or (bit-shift-left key 2) (code character))) 0 query)]\n        (s/printf \"%d\\t%s\\n\" (.getOrDefault table key 0) query)))))\n"
+    },
+    "file:8cc4c30fc903d727cf2b652fe3a1a1b21061434fdd4d6f8a978ce0eb2122a25a": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "8cc4c30fc903d727cf2b652fe3a1a1b21061434fdd4d6f8a978ce0eb2122a25a",
+      "text": "(ns clbg.fasta.optimized (:require [clbg.support :as s]) (:import [java.io BufferedOutputStream] [java.nio.charset StandardCharsets]) (:gen-class))\n(def alu \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\")\n(def iub-alphabet \"acgtBDHKMNRSVWY\")\n(def iub-probabilities [0.27 0.12 0.12 0.27 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02])\n(def human-probabilities [0.3029549426680 0.1979883004921 0.1975473066391 0.3015094502008])\n(defn draw ^double [^ints state]\n  (let [value (int (mod (+ (* (aget state 0) 3877) 29573) 139968))]\n    (aset-int state 0 value)\n    (/ value 139968.0)))\n(defn random-character [^ints state ^String alphabet ^doubles cumulative]\n  (let [value (draw state)]\n    (loop [index 0]\n      (if (< value (aget cumulative index)) (.charAt alphabet index) (recur (inc index))))))\n(defn header [^BufferedOutputStream output text]\n  (.write output (.getBytes (str text \"\\n\") StandardCharsets/US_ASCII)))\n(defn repeat-record [^BufferedOutputStream output ^String sequence length]\n  (loop [position 0]\n    (when (< position length)\n      (.write output (int (.charAt sequence (int (mod position (.length sequence))))))\n      (when (= (mod position 60) 59) (.write output 10))\n      (recur (inc position))))\n  (when (pos? (mod length 60)) (.write output 10)))\n(defn random-record [^BufferedOutputStream output state alphabet probabilities length]\n  (let [cumulative (double-array (rest (reductions + 0.0 probabilities)))]\n    (loop [position 0]\n      (when (< position length)\n        (.write output (int (random-character state alphabet cumulative)))\n        (when (= (mod position 60) 59) (.write output 10))\n        (recur (inc position))))\n    (when (pos? (mod length 60)) (.write output 10))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 27) state (int-array [42]) output (BufferedOutputStream. System/out 65536)]\n    (header output \">ONE Homo sapiens alu\")\n    (repeat-record output alu (* 2 n))\n    (header output \">TWO IUB ambiguity codes\")\n    (random-record output state iub-alphabet iub-probabilities (* 3 n))\n    (header output \">THREE Homo sapiens frequency\")\n    (random-record output state \"acgt\" human-probabilities (* 5 n))\n    (.flush output)))\n"
+    },
+    "file:8f99077aadb2a446c8af7d0b3d35d0ea31cfe81eb70131310eb309fd98461911": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "8f99077aadb2a446c8af7d0b3d35d0ea31cfe81eb70131310eb309fd98461911",
+      "text": "(ns clbg.revcomp.optimized\n  (:require [clbg.support :as s] [clojure.string :as string])\n  (:import [java.nio.charset StandardCharsets])\n  (:gen-class))\n(def complements (zipmap \"ACGTUMRWSYKVHDBNacgtumrwsykvhdbn\" \"TGCAAKYWSRMBDHVNTGCAAKYWSRMBDHVN\"))\n(defn records [raw]\n  (reduce (fn [result ^String line]\n            (cond\n              (.startsWith line \">\") (conj result [line (StringBuilder.)])\n              (or (empty? result) (.startsWith line \";\")) result\n              :else (do (.append ^StringBuilder (second (peek result)) line) result)))\n          [] (string/split raw #\"\\r\\n|\\r|\\n\" -1)))\n(defn complement-byte [value]\n  (let [character (char (bit-and 255 value))]\n    (unchecked-byte (int (get complements character character)))))\n(defn -main [& arguments]\n  (doseq [[header ^StringBuilder sequence] (records (s/input-text))]\n    (println header)\n    (let [bytes (.getBytes (.toString sequence) StandardCharsets/ISO_8859_1)\n          length (alength bytes)]\n      (loop [left 0 right (dec length)]\n        (when (<= left right)\n          (let [a (complement-byte (aget bytes left)) b (complement-byte (aget bytes right))]\n            (aset-byte bytes left b)\n            (aset-byte bytes right a))\n          (recur (inc left) (dec right))))\n      (loop [start 0]\n        (when (< start length)\n          (.write System/out bytes start (min 60 (- length start)))\n          (.write System/out 10)\n          (recur (+ start 60)))))))\n\n"
+    },
+    "file:9ac679181206a05af5dc3aa11b61aa9513035e379e39c90d69ee71778dbf311e": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "9ac679181206a05af5dc3aa11b61aa9513035e379e39c90d69ee71778dbf311e",
+      "text": "(ns clbg.mandelbrot.optimized (:require [clbg.support :as s]) (:import [java.nio.charset StandardCharsets]) (:gen-class))\n(defn inside? [^double cr ^double ci]\n  (loop [iteration 0 zr 0.0 zi 0.0]\n    (if (= iteration 50) true\n      (let [real (+ (- (* zr zr) (* zi zi)) cr)\n            imaginary (+ (* 2.0 zr zi) ci)]\n        (if (> (+ (* real real) (* imaginary imaginary)) 4.0) false\n          (recur (inc iteration) real imaginary))))))\n(defn rows [^doubles real-coordinates n stride ^bytes bytes begin end]\n  (loop [y (long begin)]\n    (when (< y end)\n      (let [ci (- (/ (* 2.0 y) n) 1.0)]\n        (dotimes [column stride]\n          (let [bits (loop [offset 0 value 0]\n                       (if (= offset 8) value\n                         (let [x (+ (* column 8) offset)]\n                           (recur (inc offset) (bit-or (bit-shift-left value 1)\n                             (if (and (< x n) (inside? (aget real-coordinates x) ci)) 1 0))))))]\n            (aset-byte bytes (+ (* y stride) column) (unchecked-byte bits)))))\n      (recur (inc y)))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 200)) stride (quot (+ n 7) 8) bytes (byte-array (* n stride))\n        real-coordinates (double-array (map #(- (/ (* 2.0 %) n) 1.5) (range n))) workers (min 8 n)]\n    (s/jobs (mapv (fn [worker] #(rows real-coordinates n stride bytes (quot (* n worker) workers) (quot (* n (inc worker)) workers))) (range workers)))\n    (.write System/out (.getBytes (str \"P4\\n\" n \" \" n \"\\n\") StandardCharsets/US_ASCII))\n    (.write System/out bytes)))\n"
+    },
+    "file:9d668efbc990a3dd2ea0989f8d6ee7b7314482b7869007f4c0d069ff42feaf3a": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "9d668efbc990a3dd2ea0989f8d6ee7b7314482b7869007f4c0d069ff42feaf3a",
+      "text": "(ns clbg.spectralnorm.optimized (:require [clbg.support :as s]) (:gen-class))\n(defn denominator ^long [^long row ^long column]\n  (let [sum (+ row column)] (+ (quot (* sum (inc sum)) 2) row 1)))\n(defn interval [^doubles vector transpose ^doubles output begin end]\n  (let [n (alength vector)]\n    (loop [row (long begin)]\n      (when (< row end)\n        (aset-double output row\n          (loop [column 0 sum 0.0]\n            (if (= column n) sum\n              (recur (inc column)\n                (+ sum (/ (aget vector column)\n                          (double (if transpose (denominator column row) (denominator row column)))))))))\n        (recur (inc row))))))\n(defn multiply [^doubles vector transpose]\n  (let [n (alength vector) output (double-array n) workers (min 8 n)]\n    (s/jobs (mapv (fn [worker]\n                   #(interval vector transpose output (quot (* n worker) workers) (quot (* n (inc worker)) workers)))\n                 (range workers)))\n    output))\n(defn ata [vector] (multiply (multiply vector false) true))\n(defn result [^doubles u ^doubles v]\n  (loop [index 0 uv 0.0 vv 0.0]\n    (if (= index (alength u)) (Math/sqrt (/ uv vv))\n      (recur (inc index) (+ uv (* (aget u index) (aget v index))) (+ vv (* (aget v index) (aget v index)))))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 100))]\n    (loop [iteration 0 u (double-array n 1.0) v (double-array n)]\n      (if (= iteration 10) (s/printf \"%.9f\\n\" (result u v))\n        (let [next-v (ata u) next-u (ata next-v)]\n          (recur (inc iteration) next-u next-v))))))\n\n"
+    },
+    "file:a1738475e8bd4721f22a96e85bc6122ea77232d8eeed599d3286a874b76d074c": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "a1738475e8bd4721f22a96e85bc6122ea77232d8eeed599d3286a874b76d074c",
+      "text": "(ns clbg.fasta.compact (:require [clbg.support :as s]) (:gen-class))\n(def alu \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\")\n(def iub-alphabet \"acgtBDHKMNRSVWY\")\n(def iub-probabilities [0.27 0.12 0.12 0.27 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02 0.02])\n(def human-probabilities [0.3029549426680 0.1979883004921 0.1975473066391 0.3015094502008])\n(defn draw ^double [^ints state]\n  (let [value (int (mod (+ (* (aget state 0) 3877) 29573) 139968))]\n    (aset-int state 0 value)\n    (/ value 139968.0)))\n(defn random-character [^ints state ^String alphabet ^doubles cumulative]\n  (let [value (draw state)]\n    (loop [index 0]\n      (if (< value (aget cumulative index)) (.charAt alphabet index) (recur (inc index))))))\n(defn repeat-record [header ^String sequence length]\n  (println header)\n  (loop [position 0]\n    (when (< position length)\n      (let [width (min 60 (- length position)) line (StringBuilder. 60)]\n        (dotimes [offset width]\n          (.append line (.charAt sequence (int (mod (+ position offset) (.length sequence))))))\n        (println (.toString line))\n        (recur (+ position width))))))\n(defn random-record [header state alphabet probabilities length]\n  (println header)\n  (let [cumulative (double-array (rest (reductions + 0.0 probabilities)))]\n    (loop [position 0]\n      (when (< position length)\n        (let [width (min 60 (- length position)) line (StringBuilder. 60)]\n          (dotimes [_ width] (.append line (char (random-character state alphabet cumulative))))\n          (println (.toString line))\n          (recur (+ position width)))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 27) state (int-array [42])]\n    (repeat-record \">ONE Homo sapiens alu\" alu (* 2 n))\n    (random-record \">TWO IUB ambiguity codes\" state iub-alphabet iub-probabilities (* 3 n))\n    (random-record \">THREE Homo sapiens frequency\" state \"acgt\" human-probabilities (* 5 n))))\n\n"
+    },
+    "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+      "text": "(ns clbg.support\n  (:refer-clojure :exclude [printf])\n  (:import [java.nio.charset StandardCharsets]\n           [java.util Locale]\n           [java.util.concurrent Callable Executors TimeUnit]))\n(defn argument [arguments default]\n  (if (seq arguments) (Long/parseLong (first arguments)) default))\n(defn input-text []\n  (String. (.readAllBytes System/in) StandardCharsets/ISO_8859_1))\n(defn printf [format-string & values]\n  (print (String/format Locale/ROOT format-string (to-array values)))\n  (flush))\n(defn jobs [functions]\n  (let [pool (Executors/newFixedThreadPool (min 8 (max 1 (count functions))))]\n    (try\n      (let [futures (mapv (fn [function]\n                            (.submit pool ^Callable (reify Callable (call [_] (function)))))\n                          functions)]\n        (mapv #(.get %) futures))\n      (finally\n        (.shutdown pool)\n        (when-not (.awaitTermination pool 1 TimeUnit/DAYS)\n          (throw (IllegalStateException. \"Worker pool did not finish\")))))))\n"
+    },
+    "file:d3735e4f6e092583c76ababcdb39d159960073f1865d53230e92c2b7d3b2c7bf": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "d3735e4f6e092583c76ababcdb39d159960073f1865d53230e92c2b7d3b2c7bf",
+      "text": "(ns clbg.binarytrees.compact\n  (:require [clbg.support :as s])\n  (:gen-class))\n(defn make-tree [depth]\n  (let [node (object-array 2)]\n    (when (pos? depth)\n      (aset node 0 (make-tree (dec depth)))\n      (aset node 1 (make-tree (dec depth))))\n    node))\n(defn check-tree [^objects node]\n  (if (nil? (aget node 0))\n    1\n    (+ 1 (check-tree (aget node 0)) (check-tree (aget node 1)))))\n(defn -main [& arguments]\n  (let [maximum (max 6 (s/argument arguments 10))\n        stretch (check-tree (make-tree (inc maximum)))\n        retained (make-tree maximum)]\n    (s/printf \"stretch tree of depth %d\\t check: %d\\n\" (inc maximum) stretch)\n    (doseq [depth (range 4 (inc maximum) 2)]\n      (let [iterations (bit-shift-left 1 (+ maximum 4 (- depth)))\n            total (loop [index 0 sum 0]\n                    (if (= index iterations) sum\n                      (recur (inc index) (+ sum (check-tree (make-tree depth))))))]\n        (s/printf \"%d\\t trees of depth %d\\t check: %d\\n\" iterations depth total)))\n    (s/printf \"long lived tree of depth %d\\t check: %d\\n\" maximum (check-tree retained))))\n\n"
+    },
+    "file:dcff2d2b86b6ce63ada0603d705361a329e793ecc1619fea57ac3d2be83bdb6e": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "dcff2d2b86b6ce63ada0603d705361a329e793ecc1619fea57ac3d2be83bdb6e",
+      "text": "(ns clbg.fannkuchredux.optimized (:require [clbg.support :as s]) (:gen-class))\n(defn rotate-prefix! [^ints permutation last-index]\n  (let [first-value (aget permutation 0)]\n    (dotimes [index last-index] (aset-int permutation index (aget permutation (inc index))))\n    (aset-int permutation last-index first-value)))\n(defn flips ^long [^ints permutation]\n  (let [work (aclone permutation)]\n    (loop [total 0]\n      (let [last-index (aget work 0)]\n        (if (zero? last-index) total\n          (do\n            (loop [left 0 right (long last-index)]\n              (when (< left right)\n                (let [value (aget work left)]\n                  (aset-int work left (aget work right)) (aset-int work right value))\n                (recur (inc left) (dec right))))\n            (recur (inc total))))))))\n(defn carry [^ints permutation ^ints counts n]\n  (loop [index 1]\n    (when (< index n)\n      (rotate-prefix! permutation index)\n      (aset-int counts index (dec (aget counts index)))\n      (when (zero? (aget counts index))\n        (aset-int counts index (inc index))\n        (recur (inc index))))))\n(defn initial-state [n rank ^longs factorial]\n  (let [permutation (int-array (range n)) counts (int-array n)]\n    (loop [index (dec n) remaining rank]\n      (when (pos? index)\n        (let [digit (quot remaining (aget factorial index))]\n          (dotimes [_ digit] (rotate-prefix! permutation index))\n          (aset-int counts index (- (inc index) digit))\n          (recur (dec index) (rem remaining (aget factorial index))))))\n    [permutation counts]))\n(defn interval [n begin end factorial]\n  (let [[permutation counts] (initial-state n begin factorial)]\n    (loop [rank (long begin) checksum 0 maximum 0]\n      (if (= rank end) [checksum maximum]\n        (let [amount (flips permutation)]\n          (when (< (inc rank) end) (carry permutation counts n))\n          (recur (inc rank) (long (+ checksum (if (even? rank) amount (- amount)))) (long (max maximum amount))))))))\n(defn -main [& arguments]\n  (let [n (int (s/argument arguments 7)) factorial (long-array (inc n))]\n    (assert (pos? n))\n    (aset-long factorial 0 1)\n    (dotimes [index n] (aset-long factorial (inc index) (* (inc index) (aget factorial index))))\n    (let [total (aget factorial n) workers (min 8 total)\n          results (s/jobs (mapv (fn [worker] #(interval n (quot (* total worker) workers) (quot (* total (inc worker)) workers) factorial)) (range workers)))]\n      (s/printf \"%d\\nPfannkuchen(%d) = %d\\n\" (reduce + (map first results)) n (reduce max (map second results))))))\n"
+    },
+    "file:e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881",
+      "text": "(ns clbg.nbody.optimized (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies pairs ^doubles deltas ^doubles magnitudes]\n  (dotimes [pair 10]\n    (let [[i j] (nth pairs pair) ^doubles a (aget bodies i) ^doubles b (aget bodies j)\n          dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n          distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))]\n      (aset-double deltas (* pair 3) dx)\n      (aset-double deltas (inc (* pair 3)) dy)\n      (aset-double deltas (+ (* pair 3) 2) dz)\n      (aset-double magnitudes pair (/ 0.01 (* distance distance distance)))))\n  (dotimes [pair 10]\n    (let [[i j] (nth pairs pair) ^doubles a (aget bodies i) ^doubles b (aget bodies j)\n          magnitude (aget magnitudes pair)]\n      (dotimes [axis 3]\n        (let [delta (aget deltas (+ (* pair 3) axis))]\n          (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n          (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000) system (bodies)\n        pairs (vec (for [i (range 5) j (range (inc i) 5)] [i j]))\n        deltas (double-array 30) magnitudes (double-array 10)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system pairs deltas magnitudes) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    },
+    "file:f1571777e9aade13ae0b3f41c50dc46055b2113942858d7888073132fcf8c8db": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "f1571777e9aade13ae0b3f41c50dc46055b2113942858d7888073132fcf8c8db",
+      "text": "(ns clbg.pidigits.compact\n  (:require [clbg.support :as s])\n  (:import [java.math BigInteger])\n  (:gen-class))\n(defn integer [value] (BigInteger/valueOf (long value)))\n(defn -main [& arguments]\n  (let [wanted (s/argument arguments 27)]\n    (loop [^BigInteger q BigInteger/ONE ^BigInteger r BigInteger/ZERO ^BigInteger t BigInteger/ONE\n           k 1 emitted 0 line \"\"]\n      (when (< emitted wanted)\n        (let [numerator-three (.add (.multiply q (integer 3)) r)\n              numerator-four (.add (.multiply q (integer 4)) r)\n              ^BigInteger three (.divide numerator-three t)\n              ^BigInteger four (.divide numerator-four t)]\n          (if (.equals three four)\n            (let [number (inc emitted)\n                  text (str line (.intValue three))]\n              (when (or (zero? (mod number 10)) (= number wanted))\n                (s/printf \"%-10s\\t:%d\\n\" text number))\n              (recur (.multiply q (integer 10))\n                     (.multiply (.subtract r (.multiply t three)) (integer 10)) t k number\n                     (if (zero? (mod number 10)) \"\" text)))\n            (let [factor (integer (inc (* 2 k)))]\n              (recur (.multiply q (integer k))\n                     (.multiply (.add r (.multiply q (integer 2))) factor)\n                     (.multiply t factor) (inc k) emitted line))))))))\n\n"
+    },
+    "file:f889c7f46906831717c246584fe9c88a6007edd55b05527fd54efbb9a233ee41": {
+      "scope": "submitted-source-unit",
+      "source_sha256": "f889c7f46906831717c246584fe9c88a6007edd55b05527fd54efbb9a233ee41",
+      "text": "(ns clbg.knucleotide.compact\n  (:require [clbg.support :as s] [clojure.string :as string])\n  (:import [clojure.lang PersistentHashMap] [java.util Locale])\n  (:gen-class))\n(def widths [1 2 3 4 6 12 18])\n(def queries [\"GGT\" \"GGTA\" \"GGTATT\" \"GGTATTTTAATT\" \"GGTATTTTAATTTATAGT\"])\n(defn third-record [raw]\n  (loop [lines (seq (string/split raw #\"\\r\\n|\\r|\\n\" -1)) selected false output (StringBuilder.)]\n    (if-let [^String line (first lines)]\n      (cond\n        (.startsWith line \";\") (recur (next lines) selected output)\n        (.startsWith line \">\") (if selected (.toUpperCase (.toString output) Locale/ROOT)\n                                  (recur (next lines) (or (= line \">THREE\")\n                                                        (.startsWith line \">THREE \")\n                                                        (.startsWith line \">THREE\\t\")) output))\n        selected (do (.append output line) (recur (next lines) true output))\n        :else (recur (next lines) false output))\n      (.toUpperCase (.toString output) Locale/ROOT))))\n(defn histogram [^String sequence width]\n  (let [windows (max 0 (inc (- (.length sequence) width)))]\n    (persistent!\n      (loop [position 0 table (transient PersistentHashMap/EMPTY)]\n        (if (= position windows) table\n          (let [key (.substring sequence (int position) (int (+ position width)))]\n            (recur (inc position) (assoc! table key (inc (get table key 0))))))))))\n(defn frequencies [table]\n  (let [total (reduce + 0 (vals table))]\n    (doseq [[word amount] (sort-by (fn [[word amount]] [(- amount) word]) table)]\n      (s/printf \"%s %.3f\\n\" word (/ (* 100.0 amount) total)))\n    (println)))\n(defn -main [& arguments]\n  (let [sequence (third-record (s/input-text))\n        tables (mapv #(histogram sequence %) widths)]\n    (doseq [table (take 2 tables)] (frequencies table))\n    (doseq [[query table] (map vector queries (drop 2 tables))]\n      (s/printf \"%d\\t%s\\n\" (get table query 0) query))))\n"
+    },
+    "fixture:anonymous-reduction": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "8f3d54c92c57ca4c03c43759405e84ea4ec60b2c2d441b579a188d7e44558b03",
+      "text": "(def result (reduce #(+ %1 %2) 0 [1 2 3]))\n"
+    },
+    "fixture:block-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "cb53da8ad623bffc86e5c2f69e64a09c21786059e7091f43bba68fabc16b68f7",
+      "text": "(defn f [x] (println x) (+ x 1))\n"
+    },
+    "fixture:conditional-block-branch-top-level": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "17c4f0efbfa09440173154fdcbc0a317433ae4a5952ac77cee4eb0ab12dc3cc1",
+      "text": "(if true (do (println 1) (println 2)) 0)\n"
+    },
+    "fixture:conditional-case-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "d57ad717508276a07f7557779d487dbcf5ff3b66e558d4a8b42f2d681dfa849b",
+      "text": "(defn f [x] (case x 0 1 1 2 3))\n"
+    },
+    "fixture:conditional-cond-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "3a51a9ab20d92e70610f7c0bce6bd69966678b4ab17b8028bd223681b4b24454",
+      "text": "(defn f [x] (cond (pos? x) 1 :else 2))\n"
+    },
+    "fixture:conditional-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "b488d9ba3e7012d20512dd476037acbb44c94c1382566a11b3baabc7b2f4ab83",
+      "text": "(defn f [x] (if x 1 2))\n"
+    },
+    "fixture:conditional-do-branch": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "fa1abb2882a2386be075d8691d2ab617e575ae9ae45467d5c619e65f1236e0c3",
+      "text": "(defn f [x] (if x (do (println x) 1) 2))\n"
+    },
+    "fixture:conditional-in-argument": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "72f7c54062f176faa50c235f47de66ffe5ea09c4fc55ee24d8144798c79fd86e",
+      "text": "(defn f [x] (+ (if x 1 2) 3))\n"
+    },
+    "fixture:conditional-lambda-binding": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "3424e0a6bc29c11f0fbe0967f66dc4b64590321c9415858e8a53fb60d7a84906",
+      "text": "(def f (fn [x] (if x 1 2)))\n"
+    },
+    "fixture:conditional-let-branch": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "5ee2ae9a6fdbd9e16ced06452b058cb1b83ba06e2c75064acf8c434921f8a33b",
+      "text": "(defn f [x] (if x (let [y 1] y) 2))\n"
+    },
+    "fixture:conditional-let-initializer": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "154b49d8f38c9fab20913268dea55c6d24ffa16fbb59a5726a7158abaf473065",
+      "text": "(let [x (if true 1 2)] x)\n"
+    },
+    "fixture:conditional-loop-body": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "19f963e9a89a5d5da03c7cfee8eb8a04dbb12cbe304d2d1da57075cbeb22312b",
+      "text": "(dotimes [i 3] (if (pos? i) (println i) (println 0)))\n"
+    },
+    "fixture:conditional-multiform-body": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "a6f452edff92aa624c5db8746ebd012ac024fcf63263f938503292414f5f06f9",
+      "text": "(defn f [x] (if x 1 2) (println x))\n"
+    },
+    "fixture:conditional-top-level": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "c0a5443aa93feb8f6355ccb14d0b1ea8f12bb8c5cb09028ec902655c0a2270c1",
+      "text": "(if true 1 2)\n"
+    },
+    "fixture:destructuring": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "7636ab8e1559da27bc4ddf00085bdcf0fd469864d3d3326de00ce85fec2b35fb",
+      "text": "(let [[x y] [1 2]] (+ x y))\n"
+    },
+    "fixture:disabled-constructor-reader": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "181a56e0c34c089df55f422b1ffd4bf41a3558f7330eb51df8c539bd278d1d1c",
+      "text": "#java.util.Date []\n"
+    },
+    "fixture:disabled-read-eval": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "647526ef149bba3af5b059ffa8720c21c592ff1bfe53922aa54e5ecc0323b8e7",
+      "text": "#=(throw (Exception. \"must not run\"))\n"
+    },
+    "fixture:disabled-tag-reader": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "ba48dcf25909a5a35c1d1d4324c5702a0f423d4390a1da2cca377983e8692e40",
+      "text": "#custom/tag {:x 1}\n"
+    },
+    "fixture:expanded-definitions": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "74c57e670c46fb2033e98bc126b128b40db946d19d6bff2d387f281922d6bf63",
+      "text": "(def x 1)\n(def y 2)\n"
+    },
+    "fixture:explicit-do-block": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "dea8f7bc0c3058bfbc2ec4b48a44c612bcf1c1f5b036f2410d8239a182bdfab6",
+      "text": "(defn f [x] (do (println x) (+ x 1)))\n"
+    },
+    "fixture:function-composition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "82c0e7ce312b494157caebfed438c2d830dfbb73ad9ba0de37462e7026ee56e2",
+      "text": "(def f (comp inc first))\n"
+    },
+    "fixture:if-let-expression": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "14ef717ce0afa851fdfe2d37c7e381917fdce8ebb52f815fa60e87a2b65f449c",
+      "text": "(defn f [x] (if-let [y x] y 0))\n"
+    },
+    "fixture:invalid-reader": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "c7694f3eb01e5e14ea504b241e8533e47045c9c53401807e174e73875abf3732",
+      "text": "(def x [1 2)\n"
+    },
+    "fixture:literal-punctuation": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "7ff18038b334b222cd38a48f96b4a17eeed64871b90d7fdadc15c4eb8fbc669e",
+      "text": "(def text \"; ^ #= (not-code)\")\n"
+    },
+    "fixture:loop-packed": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "414ff019f8967d56c1795aa575cbea4a0689c428daa24781a11313537c0f836b",
+      "text": "(loop [x 0 total 0] (if (< x 3) (recur (inc x) (+ total x)) total))\n"
+    },
+    "fixture:loop-wrapped": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "4e847b7515dcff2e667c100ef3b0b7e12fbf09a130003a5bd2c568d65abd1a3f",
+      "text": "(loop [x 0 total 0]\n (if (< x 3)\n (recur (inc x) (+ total x))\n total))\n"
+    },
+    "fixture:macro-flag-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "81704e841c710018e278e5702febeb8192af7b49023cc17981b3da78c13de0bb",
+      "text": "(defn ^:macro f [x] x) (f 1)\n"
+    },
+    "fixture:map-destructuring": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "df133cac4361b079a0777adf16acdcfcb9e25a0c01978e377e7c856c67f680bc",
+      "text": "(let [{:keys [x y] :or {x 0}} {:x 1 :y 2}] (+ x y))\n"
+    },
+    "fixture:matrix-packed": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "23c60f609480108ca4376d15ee19e398c63f553adebfada6edca6d06c357a16c",
+      "text": "(def matrix [[1 2] [3 4]])\n"
+    },
+    "fixture:matrix-wrapped": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "5daf3060e1973643341079d054e24ded6b6e4fe0617744bfa465f55e6357819c",
+      "text": "(def matrix [\n [1 2]\n [3 4]\n])\n"
+    },
+    "fixture:multi-bindings-packed": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "936bef2d7d2b8a0bc8f6b236af056b970429a5aedbf728ecd319456dc4d1e4f0",
+      "text": "(let [x 1 y 2] (+ x y))\n"
+    },
+    "fixture:multi-bindings-wrapped": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "dd67e1095e08a2a1ed4dd018acb700a4038146c83a67eaafde9560d281a59785",
+      "text": "(let [x 1\n y 2]\n (+ x y))\n"
+    },
+    "fixture:packed-definitions": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "eb6e72a694393da2e47ce2ec6506632bcb7af71a6c39812a57169a2602389baf",
+      "text": "(def x 1)(def y 2)\n"
+    },
+    "fixture:pure-definition": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "7ad57feee593560d20ec860a82db6a3cb711b10f15d89393c38eab44aaa0a70d",
+      "text": "(defn f [x] (+ x 1))\n"
+    },
+    "fixture:semicolon-comments": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "89255ffdebac2d58fb2af6d61e0196865165371bdcafc0150873a9d932c380cc",
+      "text": "(def x 1) ; (def fake 9)\n(def y 2)\n"
+    },
+    "fixture:single-effectful-expression": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "7c1dae784a9fa37de91ed8364bf9a0bdbe42e7a2b15f6bbf3ac5eec4f68e0157",
+      "text": "(defn emit [x] (println x))\n"
+    },
+    "fixture:unicode-symbol-and-string": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "1607b136baae7d169ace7445aae7446b69e0f3ee19e17aa317986650c3ddfd88",
+      "text": "(def β \"🌱\")\n"
+    },
+    "fixture:unknown-conditional-macro": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "ec5f4cc3f4eaa50c36dcca0a3fe8811b16770f2ddafdeeb355d9d8ad543e4bc3",
+      "text": "(defn f [x] (if x 1 (unknown-macro)))\n"
+    },
+    "fixture:unknown-default-macro": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "1ab23de310e8518d53b7d19e1e5398eb0c88ce4c3dd3ca9042279214e85b2ae8",
+      "text": "(let [{:keys [x] :or {x (unknown-macro)}} {}] x)\n"
+    },
+    "fixture:unknown-java-method": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "3133b197ceb130e9de5ce09586f9548cb592dfb2e6b3edf1dd9e09f2299a7046",
+      "text": "(.unknown-method value)\n"
+    },
+    "fixture:unknown-macro": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "7d1e63dde49351aef33ef9507d28c1959bf86f150de1a2090021413ab114abc6",
+      "text": "(unqualified-macro [x 1] (println x))\n"
+    },
+    "fixture:unsupported-core-macro": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "17366732524dc3a514e276344c5db43ab7807d22daed8d401a0a521a8e84a194",
+      "text": "(with-open [stream nil] (println stream))\n"
+    },
+    "fixture:unsupported-threading-macro": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "5ecd36734b5e8b1aed931ad5309f3ee09c288a1403f45582b7cc7fbeffaa0372",
+      "text": "(-> x inc inc)\n"
+    },
+    "fixture:when-multiform-body": {
+      "scope": "synthetic-fixture",
+      "source_sha256": "c7404e221dc7ce76d37eaee5d035e0059ce1c13dc59080ac2264ece72d1f9eda",
+      "text": "(when true (println 1) (println 2))\n"
+    },
+    "variant:source-binding-wrapping": {
+      "scope": "exact-source-derived-fixture",
+      "source_sha256": "f26d550a61522b8aabbbfa32b59d01115454c7b41d1502d9b87aed44070dd7dd",
+      "text": "(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies]\n  (dotimes [i 5]\n    (let [^doubles a (aget bodies i)]\n      (loop [j (inc i)]\n        (when (< j 5)\n          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n          (recur (inc j))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000)\n system (bodies)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    },
+    "variant:source-definition-packing": {
+      "scope": "exact-source-derived-fixture",
+      "source_sha256": "b2436c0a904bccfa57c3f15eba3ca27d609d576d8729dbc2c5db26d8969a61a9",
+      "text": "(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies]\n  (dotimes [i 5]\n    (let [^doubles a (aget bodies i)]\n      (loop [j (inc i)]\n        (when (< j 5)\n          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n          (recur (inc j))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000) system (bodies)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    },
+    "variant:source-matrix-wrapping": {
+      "scope": "exact-source-derived-fixture",
+      "source_sha256": "eff2fb17b822f204b9a401d945802f7880fc68f418716bd6cc09644969365cf4",
+      "text": "(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)\n(defn bodies []\n  (object-array\n    [(double-array [\n0.0 0.0 0.0\n0.0 0.0 0.0 solar-mass])\n     (double-array [4.84143144246472090 -1.16032004402742839 -0.103622044471123109 (* 0.00166007664274403694 days-per-year) (* 0.00769901118419740425 days-per-year) (* -0.0000690460016972063023 days-per-year) (* 0.000954791938424326609 solar-mass)])\n     (double-array [8.34336671824457987 4.12479856412430479 -0.403523417114321381 (* -0.00276742510726862411 days-per-year) (* 0.00499852801234917238 days-per-year) (* 0.0000230417297573763929 days-per-year) (* 0.000285885980666130812 solar-mass)])\n     (double-array [12.8943695621391310 -15.1111514016986312 -0.223307578892655734 (* 0.00296460137564761618 days-per-year) (* 0.00237847173959480950 days-per-year) (* -0.0000296589568540237556 days-per-year) (* 0.0000436624404335156298 solar-mass)])\n     (double-array [15.3796971148509165 -25.9193146099879641 0.179258772950371181 (* 0.00268067772490389322 days-per-year) (* 0.00162824170038242295 days-per-year) (* -0.0000951592254519715870 days-per-year) (* 0.0000515138902046611451 solar-mass)])]))\n(defn offset-momentum [^objects bodies]\n  (dotimes [axis 3]\n    (let [momentum (loop [index 0 total 0.0]\n                     (if (= index 5) total\n                       (let [^doubles body (aget bodies index)]\n                         (recur (inc index) (+ total (* (aget body (+ axis 3)) (aget body 6)))))))]\n      (aset-double ^doubles (aget bodies 0) (+ axis 3) (- (/ momentum solar-mass))))))\n(defn energy [^objects bodies]\n  (loop [i 0 total 0.0]\n    (if (= i 5) total\n      (let [^doubles a (aget bodies i)\n            kinetic (* 0.5 (aget a 6) (+ (* (aget a 3) (aget a 3)) (* (aget a 4) (aget a 4)) (* (aget a 5) (aget a 5))))\n            potential (loop [j (inc i) sum 0.0]\n                        (if (= j 5) sum\n                          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))]\n                            (recur (inc j) (- sum (/ (* (aget a 6) (aget b 6)) (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz)))))))))]\n        (recur (inc i) (+ total kinetic potential))))))\n(defn advance [^objects bodies]\n  (dotimes [i 5]\n    (let [^doubles a (aget bodies i)]\n      (loop [j (inc i)]\n        (when (< j 5)\n          (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n          (recur (inc j))))))\n  (dotimes [i 5]\n    (let [^doubles body (aget bodies i)]\n      (dotimes [axis 3]\n        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n(defn -main [& arguments]\n  (let [n (s/argument arguments 1000) system (bodies)]\n    (offset-momentum system)\n    (s/printf \"%.9f\\n\" (energy system))\n    (loop [step 0]\n      (when (< step n) (advance system) (recur (inc step))))\n    (s/printf \"%.9f\\n\" (energy system))))\n"
+    }
+  },
+  "policy": "logical-source-owners.clojure-v1",
+  "prepared_without_native_execution": true,
+  "programs": {
+    "binarytrees:clojure-binarytrees-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:d3735e4f6e092583c76ababcdb39d159960073f1865d53230e92c2b7d3b2c7bf",
+          "role": "application",
+          "source_sha256": "d3735e4f6e092583c76ababcdb39d159960073f1865d53230e92c2b7d3b2c7bf"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 43,
+      "retained_physical_loc": 25
+    },
+    "binarytrees:clojure-binarytrees-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:6899d4738d9f5a179c5f788ee698ce56843a63862db0a4b343f9331c999a33f3",
+          "role": "application",
+          "source_sha256": "6899d4738d9f5a179c5f788ee698ce56843a63862db0a4b343f9331c999a33f3"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 52,
+      "retained_physical_loc": 30
+    },
+    "fannkuchredux:clojure-fannkuchredux-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:7056b08ea6619eb51be47067aec5d14d839a3bf628235f0400746cdef9d956b7",
+          "role": "application",
+          "source_sha256": "7056b08ea6619eb51be47067aec5d14d839a3bf628235f0400746cdef9d956b7"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 95,
+      "retained_physical_loc": 38
+    },
+    "fannkuchredux:clojure-fannkuchredux-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:dcff2d2b86b6ce63ada0603d705361a329e793ecc1619fea57ac3d2be83bdb6e",
+          "role": "application",
+          "source_sha256": "dcff2d2b86b6ce63ada0603d705361a329e793ecc1619fea57ac3d2be83bdb6e"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 120,
+      "retained_physical_loc": 49
+    },
+    "fasta:clojure-fasta-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:a1738475e8bd4721f22a96e85bc6122ea77232d8eeed599d3286a874b76d074c",
+          "role": "application",
+          "source_sha256": "a1738475e8bd4721f22a96e85bc6122ea77232d8eeed599d3286a874b76d074c"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 73,
+      "retained_physical_loc": 36
+    },
+    "fasta:clojure-fasta-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:8cc4c30fc903d727cf2b652fe3a1a1b21061434fdd4d6f8a978ce0eb2122a25a",
+          "role": "application",
+          "source_sha256": "8cc4c30fc903d727cf2b652fe3a1a1b21061434fdd4d6f8a978ce0eb2122a25a"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 79,
+      "retained_physical_loc": 39
+    },
+    "knucleotide:clojure-knucleotide-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:f889c7f46906831717c246584fe9c88a6007edd55b05527fd54efbb9a233ee41",
+          "role": "application",
+          "source_sha256": "f889c7f46906831717c246584fe9c88a6007edd55b05527fd54efbb9a233ee41"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 79,
+      "retained_physical_loc": 36
+    },
+    "knucleotide:clojure-knucleotide-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:8555e3d807bedda93681f29b301bc5968cc13b44491bb0b5fc09ff5a7ef253ec",
+          "role": "application",
+          "source_sha256": "8555e3d807bedda93681f29b301bc5968cc13b44491bb0b5fc09ff5a7ef253ec"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 120,
+      "retained_physical_loc": 49
+    },
+    "mandelbrot:clojure-mandelbrot-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:5e3f2d6aacf6b438f0b7f2fb107973dab8e6a4b4e5ff21c2cddcbd6fcbd85000",
+          "role": "application",
+          "source_sha256": "5e3f2d6aacf6b438f0b7f2fb107973dab8e6a4b4e5ff21c2cddcbd6fcbd85000"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 53,
+      "retained_physical_loc": 20
+    },
+    "mandelbrot:clojure-mandelbrot-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:9ac679181206a05af5dc3aa11b61aa9513035e379e39c90d69ee71778dbf311e",
+          "role": "application",
+          "source_sha256": "9ac679181206a05af5dc3aa11b61aa9513035e379e39c90d69ee71778dbf311e"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 69,
+      "retained_physical_loc": 26
+    },
+    "nbody:clojure-nbody-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+          "role": "application",
+          "source_sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 109,
+      "retained_physical_loc": 49
+    },
+    "nbody:clojure-nbody-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881",
+          "role": "application",
+          "source_sha256": "e0d1ea88a301c26752fa0cf3bf5ade22ed79321661255956cf0cf061df4c0881"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 121,
+      "retained_physical_loc": 56
+    },
+    "nbody:clojure-nbody-primitive-updates-v1": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2",
+          "role": "application",
+          "source_sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 111,
+      "retained_physical_loc": 52
+    },
+    "pidigits:clojure-pidigits-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:f1571777e9aade13ae0b3f41c50dc46055b2113942858d7888073132fcf8c8db",
+          "role": "application",
+          "source_sha256": "f1571777e9aade13ae0b3f41c50dc46055b2113942858d7888073132fcf8c8db"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 48,
+      "retained_physical_loc": 26
+    },
+    "pidigits:clojure-pidigits-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:1296ac776e823178a3f8214454b26fefca22d7e7fc69a315103864d3bb4f050b",
+          "role": "application",
+          "source_sha256": "1296ac776e823178a3f8214454b26fefca22d7e7fc69a315103864d3bb4f050b"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 54,
+      "retained_physical_loc": 31
+    },
+    "regexredux:clojure-regexredux-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:20b92684b9bd667464df984546f0bd547133ebf8206fc213c92af90272bfa5c0",
+          "role": "application",
+          "source_sha256": "20b92684b9bd667464df984546f0bd547133ebf8206fc213c92af90272bfa5c0"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 34,
+      "retained_physical_loc": 19
+    },
+    "regexredux:clojure-regexredux-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:83ebb599bd01e70b9165040b313c7fe4f8fafb90a4a32f08a6f90f426812a87b",
+          "role": "application",
+          "source_sha256": "83ebb599bd01e70b9165040b313c7fe4f8fafb90a4a32f08a6f90f426812a87b"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 40,
+      "retained_physical_loc": 21
+    },
+    "revcomp:clojure-revcomp-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:27557c3f45b67533d4114d48868715d6735422b504a6243b470ce7e868bb8870",
+          "role": "application",
+          "source_sha256": "27557c3f45b67533d4114d48868715d6735422b504a6243b470ce7e868bb8870"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 44,
+      "retained_physical_loc": 21
+    },
+    "revcomp:clojure-revcomp-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:8f99077aadb2a446c8af7d0b3d35d0ea31cfe81eb70131310eb309fd98461911",
+          "role": "application",
+          "source_sha256": "8f99077aadb2a446c8af7d0b3d35d0ea31cfe81eb70131310eb309fd98461911"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 58,
+      "retained_physical_loc": 31
+    },
+    "spectralnorm:clojure-spectralnorm-compact": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:32540cd34c495a8d7acf4e64ca04704f2e2fe8414acc3c7d5c83747a064ba2a2",
+          "role": "application",
+          "source_sha256": "32540cd34c495a8d7acf4e64ca04704f2e2fe8414acc3c7d5c83747a064ba2a2"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 62,
+      "retained_physical_loc": 24
+    },
+    "spectralnorm:clojure-spectralnorm-optimized": {
+      "files": [
+        {
+          "excluded_ranges": [],
+          "included_in_application": true,
+          "included_ranges": "whole-file",
+          "job": "file:9d668efbc990a3dd2ea0989f8d6ee7b7314482b7869007f4c0d069ff42feaf3a",
+          "role": "application",
+          "source_sha256": "9d668efbc990a3dd2ea0989f8d6ee7b7314482b7869007f4c0d069ff42feaf3a"
+        },
+        {
+          "excluded_ranges": "whole-file",
+          "included_in_application": false,
+          "included_ranges": [],
+          "job": "file:ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446",
+          "role": "runtime-support",
+          "source_sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "retained_loc": 77,
+      "retained_physical_loc": 31
+    }
+  },
+  "qualification_status": "source-manifest-prepared-native-evidence-separate",
+  "schema": "clojure-logical-source-inputs.v1",
+  "source_variants": [
+    {
+      "after": "(double-array [\n0.0 0.0 0.0\n0.0 0.0 0.0 solar-mass])",
+      "base_job": "file:193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "before": "(double-array [0.0 0.0 0.0 0.0 0.0 0.0 solar-mass])",
+      "name": "source-matrix-wrapping",
+      "original_source_sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "program": "nbody:clojure-nbody-compact",
+      "variant_job": "variant:source-matrix-wrapping",
+      "variant_sha256": "eff2fb17b822f204b9a401d945802f7880fc68f418716bd6cc09644969365cf4"
+    },
+    {
+      "after": "(def solar-mass (* 4.0 Math/PI Math/PI))(def days-per-year 365.24)",
+      "base_job": "file:193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "before": "(def solar-mass (* 4.0 Math/PI Math/PI))\n(def days-per-year 365.24)",
+      "name": "source-definition-packing",
+      "original_source_sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "program": "nbody:clojure-nbody-compact",
+      "variant_job": "variant:source-definition-packing",
+      "variant_sha256": "b2436c0a904bccfa57c3f15eba3ca27d609d576d8729dbc2c5db26d8969a61a9"
+    },
+    {
+      "after": "[n (s/argument arguments 1000)\n system (bodies)]",
+      "base_job": "file:193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "before": "[n (s/argument arguments 1000) system (bodies)]",
+      "name": "source-binding-wrapping",
+      "original_source_sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4",
+      "program": "nbody:clojure-nbody-compact",
+      "variant_job": "variant:source-binding-wrapping",
+      "variant_sha256": "f26d550a61522b8aabbbfa32b59d01115454c7b41d1502d9b87aed44070dd7dd"
+    }
+  ],
+  "supplemental_sources": [
+    {
+      "job": "file:12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2",
+      "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+      "retained_profile_keys": [
+        "nbody:clojure-nbody-primitive-updates-v1"
+      ],
+      "source_sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+    }
+  ]
+}

@@ -195,6 +195,12 @@ def historical_catalog(root, current):
     if 'bqn_fasta_audit' in current:
         from qualification.import_bqn_fasta import append_catalog
         expected = append_catalog(expected, root)
+    if 'clojure_nbody_audit' in current:
+        from qualification.import_clojure_nbody import append_catalog
+        expected = append_catalog(expected, root)
+    if 'futhark_knucleotide_eligibility' in current:
+        from qualification.apply_futhark_knucleotide_eligibility import append_catalog
+        expected = append_catalog(expected, root)
     assert current == expected, 'Current catalog differs from the validated source-accounting transformation'
     assert report == receipt['transformation'], 'Source-accounting result differs'
     return before
