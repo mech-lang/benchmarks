@@ -1,0 +1,93 @@
+{
+  "schema": "clojure-compact-typed-aset-bytecode-observations.v1",
+  "status": "partial-build-observations-not-qualification",
+  "build_report": {
+    "path": "experiments/clojure/compact-primitive-v1/build-v1/report.json",
+    "sha256": "61a1b6fb45671f1e46b0c18c2261b42e884dfd0aa7e5172ec8611e7d70bbd001"
+  },
+  "programs": {
+    "parent": {
+      "advance_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/stdout.bin",
+        "sha256": "d663977cefc6e604d767e0fd2250a93f2abbebe54f43eb630fd0ed884d3bd69e"
+      },
+      "source": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      },
+      "static_instruction_sites": {
+        "typed_double_array_store": 0,
+        "generic_aset_double": 5,
+        "double_boxing": 8,
+        "tuple_create": 4,
+        "object_axis_add": 8
+      },
+      "momentum_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/stdout.bin",
+        "sha256": "d1dce7fff241b5bbf583a8590bdceb6c795c93d209f607b079e758ffb61564bf"
+      }
+    },
+    "primitive-control": {
+      "advance_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/stdout.bin",
+        "sha256": "762eb486302c28f8469f2ef3f58491980f4a0b46d5e49216a43d98dc45e316c2"
+      },
+      "source": {
+        "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+        "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+      },
+      "static_instruction_sites": {
+        "typed_double_array_store": 7,
+        "generic_aset_double": 0,
+        "double_boxing": 0,
+        "tuple_create": 0,
+        "object_axis_add": 0
+      },
+      "momentum_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/stdout.bin",
+        "sha256": "f90f4cc7629183d0b78e38882816899af483fc59ebba01ef1f379888d0c9433e"
+      }
+    },
+    "compact-hot-aset": {
+      "advance_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/stdout.bin",
+        "sha256": "7bdb3288ddfc3339d78a56785066b8e15ee7e39b5c0a2732eef50e6380f2a298"
+      },
+      "source": {
+        "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+        "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+      },
+      "static_instruction_sites": {
+        "typed_double_array_store": 5,
+        "generic_aset_double": 0,
+        "double_boxing": 3,
+        "tuple_create": 4,
+        "object_axis_add": 8
+      },
+      "momentum_disassembly": {
+        "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/stdout.bin",
+        "sha256": "54f1f9514628551b41b2901d7abc022b15b0c3b7853f2ba0de5676634228cd1d"
+      }
+    }
+  },
+  "findings": [
+    "compact-hot-aset advance has primitive RT.aset([DID)D calls. Source type hints alone did not establish this; actual disassembly does.",
+    "Five static typed-store sites represent chunked and unchunked doseq expansion (two updates in each branch), plus one position site. They are not a dynamic update count.",
+    "Three Double.valueOf and four Tuple.create instruction sites remain in the compact vector construction; object-axis arithmetic remains. HotSpot may eliminate runtime allocations; no measured allocation claim.",
+    "compact-all-aset was rejected on an additional application reflection warning in offset-momentum: the numeric value was inferred java.lang.Number. It has no accepted disassembly/state/output qualification."
+  ],
+  "failure": {
+    "source": "compact-all-aset",
+    "exit_code": 0,
+    "application_warning": "Reflection warning, clbg/nbody/compact_all_aset.clj:17:7 - call to static method aset on clojure.lang.RT can't be resolved (argument types: [D, int, java.lang.Number).",
+    "stderr": {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-all-aset/stderr.bin",
+      "sha256": "5faeb236ab1f291ef89d2046b39fc3c6ab7296440cad5f09316663c9fe5f56a9"
+    }
+  },
+  "state_probe_executed": false,
+  "bounded_outputs_executed": false,
+  "pilot_executed": false,
+  "all_native_processes_finished": true,
+  "common_lock_released": true
+}

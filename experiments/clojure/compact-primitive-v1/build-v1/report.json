@@ -1,0 +1,383 @@
+{
+  "schema": "clojure-nbody-builds.v1",
+  "status": "FAILED",
+  "active": "compact-all-aset",
+  "runtime": {
+    "path": "experiments/clojure/compact-primitive-v1/runtime-build.json",
+    "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+  },
+  "controller": {
+    "path": "experiments/clojure/compact-primitive-v1/build_candidates.py",
+    "sha256": "7f2c0b82d644ec7f7b27542400969a68e00712e0cf4ea5761b43524601109b0f"
+  },
+  "process_controller": {
+    "path": "experiments/clojure/compact-primitive-v1/run_serial.py",
+    "sha256": "74868cdcd6c72f00c2bf403187cca486e9f0e676fdb648139dde3ff1dd87268e"
+  },
+  "programs": {
+    "parent": {
+      "source": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      },
+      "support": {
+        "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+        "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+      },
+      "namespace": "clbg.nbody.compact",
+      "main_class": "clbg.nbody.compact",
+      "flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/parent/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/parent/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clojure.main",
+        "-e",
+        "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.compact))"
+      ],
+      "compile_options": {
+        "direct_linking": true,
+        "warn_on_reflection": true
+      },
+      "run_argv": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clbg.nbody.compact"
+      ],
+      "classes": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent",
+      "class_pins": {
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$_main.class": "841215e026a349b3d6ad8d0e9ff256ba42549a3a3c29fe1cd0962f492f4ac569",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$advance.class": "39532f6e923183aa8e897a34146b931818ca8b7de66b9734209c2e9079dcf5af",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$bodies.class": "6161a68ddec8b2ded6540e66281dc33ad2d23116f6c27ea540491db3fc994be0",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$energy$fn__160.class": "6a9cb19d5aa9e4546d7f07243e3995dd2b1a372c051e7a490a02b2a1cddd3f46",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$energy.class": "65f1c963a1a02f37c0b48e65c3d80e4e315a7aca8463feaff61a4c985aafb9a1",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$fn__153.class": "b57c053db46835483404f768d5dba975641e3222233656ecbd9b59835032078c",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$loading__6812__auto____151.class": "64b35da4cf4d1511d5ee6aa5415a1a9db8be7947b419c057a91a2fb6c49581ca",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$offset_momentum$fn__156.class": "4920ac520b2da495138a078b0ae236ebc0abaa1c2c7e8f3cde5c634f01dc0c82",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact$offset_momentum.class": "5357790a5fbbcf1da7ed4787b141778ef079a9fc74fd565ec61105c70867b742",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact.class": "1a738c881ad059b2f90c916a6f0f9fdd78177b67ca096ecfb1b74da30ea3a7ee",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/nbody/compact__init.class": "87a34d84fc772dbc7b88ec8dde404ddea905853ec9107912b2adf9dca8e6e972",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$argument.class": "ce407506fc463f2f8b87c96b4d22d5236996eac56a1c681c5cdbc4e538d1c209",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$fn__138.class": "9ee7fe1fa8d4faee5fef20b10d2ff99872294e174e15a3ba1ffd363ff6577531",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$input_text.class": "578f14470aca2707ed2d9d44880db92b7c7df59c4f47091f645b680acd88e840",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$jobs$fn$reify__145.class": "27d41e24c0219cc4d2dc3d52058db2ebbe55a1d888f4cb8fceb22bc5fe39c46e",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$jobs$fn__144.class": "97eba2881cf370ead0f932634baf3be4cb3601652939667f4e35944f1aa93dce",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$jobs$fn__148.class": "0dfff75cc6ef5d57857a5c84f6e5819fb1ad6e5fdd1674fcb4ad4c373ddc20f0",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$jobs.class": "9f86cf015761d0333ea6a4c9a26dd7b73b14eeec6afec2da2120dacf545f94c2",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$loading__6812__auto____136.class": "5d8afa8fc8a32cb0bffe4a5eadb45fcd15493b7506303c83be19871c7a0b646c",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support$printf.class": "1458604caa86b8cdfcbebb0acffe175e9c83fd4d671b9ec561ed1d9401aa9d59",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/parent/clbg/support__init.class": "4547a02ecbf914586f64a4438ee9a46687c4f325b9e4741258133358021b4b45"
+      },
+      "input_files": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/parent/sources/clbg/nbody/compact.clj",
+          "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/parent/support/clbg/support.clj",
+          "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/process.json",
+          "sha256": "ddc088c37899bd35e72beaef08d3b3da500e486cfd2ac7e267bf065625f1421b"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/stderr.bin",
+          "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-parent/stdout.bin",
+          "sha256": "cde37bc9118046575bc5b796bb67a3bf273628b541c29c95397ede34d5db3a80"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/build_candidates.py",
+          "sha256": "7f2c0b82d644ec7f7b27542400969a68e00712e0cf4ea5761b43524601109b0f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/run_serial.py",
+          "sha256": "74868cdcd6c72f00c2bf403187cca486e9f0e676fdb648139dde3ff1dd87268e"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/process.json",
+          "sha256": "91eb09a7ba366eab7c82b28a26af5d5731afce7d57891e70e3f2c718026ca668"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-parent/stdout.bin",
+          "sha256": "d663977cefc6e604d767e0fd2250a93f2abbebe54f43eb630fd0ed884d3bd69e"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/process.json",
+          "sha256": "61255b7fb4ef82b3c2f0d26ac127ed4d059219510f5f144d8dd0f2e91a468d62"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-parent/stdout.bin",
+          "sha256": "d1dce7fff241b5bbf583a8590bdceb6c795c93d209f607b079e758ffb61564bf"
+        }
+      ]
+    },
+    "primitive-control": {
+      "source": {
+        "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+        "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+      },
+      "support": {
+        "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+        "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+      },
+      "namespace": "clbg.nbody.primitive-updates",
+      "main_class": "clbg.nbody.primitive_updates",
+      "flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/primitive-control/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/primitive-control/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clojure.main",
+        "-e",
+        "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.primitive-updates))"
+      ],
+      "compile_options": {
+        "direct_linking": true,
+        "warn_on_reflection": true
+      },
+      "run_argv": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clbg.nbody.primitive_updates"
+      ],
+      "classes": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control",
+      "class_pins": {
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$_main.class": "3ff399e73c0dfa64254155d7b1ca0d35d6914025b092ed77fcb18a32d36a0549",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$advance.class": "ff033a4aba4e94f1ac8556deb4d70ef3153295d7c92b0ff1eea6472adf122faa",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$bodies.class": "88b2d61f0e040dcb3f28405c0ab5b13f61c94646082b5fc5277b4bc27dc8b00c",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$energy$fn__160.class": "61e3de20aec46568fe929b1d4543cc83ce81aac3e00b6a3969a6a2cd2e031942",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$energy.class": "4330416d657d336ad511cad945da0f7dcea91c7cca973219574d47b2585cd0c6",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$fn__153.class": "07505eff95f81540a03aab240d3a3a327b5c2742be1deb68c7505dce927bb089",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$loading__6812__auto____151.class": "e188c9a403fe009f07d548949ffbedc8aff511fd2648c49cf4a1996e6994c928",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$offset_momentum$fn__156.class": "81279d7a728368693898f1ba82b7df98752aeec8b03041372d182a788fcadd42",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates$offset_momentum.class": "a4d92a449efebc96c2fe12690de1c37a5425c322e6992f6aa2c9346a2d103c0f",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates.class": "68d2d730b5a654838d598708cdf708d78c15b9d347da9ebb0221acd98b8e3fc5",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/nbody/primitive_updates__init.class": "a3e54ba339c9e5a344f197fe686e4bc77899c4955058dfb74c75d7806eb02b49",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$argument.class": "ce407506fc463f2f8b87c96b4d22d5236996eac56a1c681c5cdbc4e538d1c209",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$fn__138.class": "9ee7fe1fa8d4faee5fef20b10d2ff99872294e174e15a3ba1ffd363ff6577531",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$input_text.class": "578f14470aca2707ed2d9d44880db92b7c7df59c4f47091f645b680acd88e840",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$jobs$fn$reify__145.class": "27d41e24c0219cc4d2dc3d52058db2ebbe55a1d888f4cb8fceb22bc5fe39c46e",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$jobs$fn__144.class": "97eba2881cf370ead0f932634baf3be4cb3601652939667f4e35944f1aa93dce",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$jobs$fn__148.class": "0dfff75cc6ef5d57857a5c84f6e5819fb1ad6e5fdd1674fcb4ad4c373ddc20f0",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$jobs.class": "9f86cf015761d0333ea6a4c9a26dd7b73b14eeec6afec2da2120dacf545f94c2",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$loading__6812__auto____136.class": "5d8afa8fc8a32cb0bffe4a5eadb45fcd15493b7506303c83be19871c7a0b646c",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support$printf.class": "1458604caa86b8cdfcbebb0acffe175e9c83fd4d671b9ec561ed1d9401aa9d59",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/primitive-control/clbg/support__init.class": "4547a02ecbf914586f64a4438ee9a46687c4f325b9e4741258133358021b4b45"
+      },
+      "input_files": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/primitive-control/sources/clbg/nbody/primitive_updates.clj",
+          "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/primitive-control/support/clbg/support.clj",
+          "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/process.json",
+          "sha256": "66a2a3ef19f8748caa8a6b896209a1733b8f702dde60f65e4e719f078d0bd098"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/stderr.bin",
+          "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-primitive-control/stdout.bin",
+          "sha256": "623a9f855b79cbfd31e32bb0b504c5217f33c54406922a22127eb80af22aada8"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/build_candidates.py",
+          "sha256": "7f2c0b82d644ec7f7b27542400969a68e00712e0cf4ea5761b43524601109b0f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/run_serial.py",
+          "sha256": "74868cdcd6c72f00c2bf403187cca486e9f0e676fdb648139dde3ff1dd87268e"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/process.json",
+          "sha256": "7ba12ca833a0b37dcb70244c3030f20fd5528d1a36ae47463d412ed1d3996f24"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-primitive-control/stdout.bin",
+          "sha256": "762eb486302c28f8469f2ef3f58491980f4a0b46d5e49216a43d98dc45e316c2"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/process.json",
+          "sha256": "cc346a3664bb57ded3fb3e2623727ce431d2bcc430a78ffa90895a5fe24e094b"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-primitive-control/stdout.bin",
+          "sha256": "f90f4cc7629183d0b78e38882816899af483fc59ebba01ef1f379888d0c9433e"
+        }
+      ]
+    },
+    "compact-hot-aset": {
+      "source": {
+        "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+        "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+      },
+      "support": {
+        "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+        "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+      },
+      "namespace": "clbg.nbody.compact-hot-aset",
+      "main_class": "clbg.nbody.compact_hot_aset",
+      "flags": [
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/compact-hot-aset/sources:/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/packages-build-v1/compact-hot-aset/support:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clojure.main",
+        "-e",
+        "(binding [*compile-path* \"/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset\" *compiler-options* {:direct-linking true} *warn-on-reflection* true] (compile 'clbg.support) (compile 'clbg.nbody.compact-hot-aset))"
+      ],
+      "compile_options": {
+        "direct_linking": true,
+        "warn_on_reflection": true
+      },
+      "run_argv": [
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/jdk/jdk-25.0.4.1+1/Contents/Home/bin/java",
+        "-XX:ActiveProcessorCount=8",
+        "-Xms64m",
+        "-Xmx8g",
+        "-XX:+UseG1GC",
+        "-cp",
+        "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/clojure-1.12.6.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/spec.alpha-0.5.238.jar:/private/tmp/mech-benchmark-publication/experiments/clojure/optimization-v1/.build/vendor/core.specs.alpha-0.4.74.jar",
+        "clbg.nbody.compact_hot_aset"
+      ],
+      "classes": "/private/tmp/mech-benchmark-publication/experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset",
+      "class_pins": {
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$_main.class": "8781cf75512dc5b9f418fb7ea13a9b3778e4cee5120b6b298184ab88e5fb4c74",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$advance.class": "420b7a0de870b217540340d8c481f9d12d40b416a41f7516da08752135ec5775",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$bodies.class": "ed6d3331e47e3db9b981e570f24f1b741bc81a5cac33931c4b961450dac99b24",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$energy$fn__160.class": "f5e4549c912cc9f8269873aabd5106809a1b961525f1722d24cfc5059a87ce16",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$energy.class": "907121d94bde01f6edc629676d38e2fffcd276a738dc551232c3acda86a33608",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$fn__153.class": "ca4050d18b23a43196aa8b90bcdad5f0710708c891996d25c9c5b5e89b0d1a94",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$loading__6812__auto____151.class": "04f23512a8b776bb568737483d9b86762d0bad43382ef27db5d759a3c2041faf",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$offset_momentum$fn__156.class": "f6341ed9f3d45df79bfb8f91013318b65f0bed4f13b0de87aafdffbc686e82ae",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset$offset_momentum.class": "63d32ae0a0af7d66d5564158a570ccd8a9b85e88e44b1c3b305ab787132bfbd4",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset.class": "9ddf6bdbcdb9d8ff7df7d8855da46eb4e842228351bb6e3e39b5276606283ea5",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/nbody/compact_hot_aset__init.class": "31b7616e16a8e4a1980b286d74868c96e98f62140e55d2abdac2530a2e20d0fa",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$argument.class": "ce407506fc463f2f8b87c96b4d22d5236996eac56a1c681c5cdbc4e538d1c209",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$fn__138.class": "9ee7fe1fa8d4faee5fef20b10d2ff99872294e174e15a3ba1ffd363ff6577531",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$input_text.class": "578f14470aca2707ed2d9d44880db92b7c7df59c4f47091f645b680acd88e840",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$jobs$fn$reify__145.class": "27d41e24c0219cc4d2dc3d52058db2ebbe55a1d888f4cb8fceb22bc5fe39c46e",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$jobs$fn__144.class": "97eba2881cf370ead0f932634baf3be4cb3601652939667f4e35944f1aa93dce",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$jobs$fn__148.class": "0dfff75cc6ef5d57857a5c84f6e5819fb1ad6e5fdd1674fcb4ad4c373ddc20f0",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$jobs.class": "9f86cf015761d0333ea6a4c9a26dd7b73b14eeec6afec2da2120dacf545f94c2",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$loading__6812__auto____136.class": "5d8afa8fc8a32cb0bffe4a5eadb45fcd15493b7506303c83be19871c7a0b646c",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support$printf.class": "1458604caa86b8cdfcbebb0acffe175e9c83fd4d671b9ec561ed1d9401aa9d59",
+        "experiments/clojure/compact-primitive-v1/.build/classes-build-v1/compact-hot-aset/clbg/support__init.class": "4547a02ecbf914586f64a4438ee9a46687c4f325b9e4741258133358021b4b45"
+      },
+      "input_files": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/compact-hot-aset/sources/clbg/nbody/compact_hot_aset.clj",
+          "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/.build/packages-build-v1/compact-hot-aset/support/clbg/support.clj",
+          "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+        }
+      ],
+      "evidence": [
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/process.json",
+          "sha256": "9300fd0cdf394ab90e3f225e2164b6992627bce957e33b8abec012ee0fd66fc2"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/stderr.bin",
+          "sha256": "2ba5582da6244e2c3361c0a1053fbefe2d9037ebbd9665c80ea9c49357f6c31f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/compile-compact-hot-aset/stdout.bin",
+          "sha256": "a6bbd79304a5421a8550947bddac86a7b735667ac9a81a9bed35a1867f50cbc1"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/build_candidates.py",
+          "sha256": "7f2c0b82d644ec7f7b27542400969a68e00712e0cf4ea5761b43524601109b0f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/controllers/run_serial.py",
+          "sha256": "74868cdcd6c72f00c2bf403187cca486e9f0e676fdb648139dde3ff1dd87268e"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/process.json",
+          "sha256": "f8de4dd35dcda9c0d13f777e4604104f93207b084189ff6b50949dd76be7da4f"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-advance-compact-hot-aset/stdout.bin",
+          "sha256": "7bdb3288ddfc3339d78a56785066b8e15ee7e39b5c0a2732eef50e6380f2a298"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/process.json",
+          "sha256": "1aab610eddb2c744a215c708eddc4a2e559aadc90a04e2caad47d3ea24515415"
+        },
+        {
+          "path": "experiments/clojure/compact-primitive-v1/build-v1/javap-momentum-compact-hot-aset/stdout.bin",
+          "sha256": "54f1f9514628551b41b2901d7abc022b15b0c3b7853f2ba0de5676634228cd1d"
+        }
+      ]
+    }
+  },
+  "started_utc": "2026-10-20T20:25:25.015966+00:00",
+  "common_mutex_inode": 82961857,
+  "inherited_runtime": {
+    "path": "experiments/clojure/optimization-v1/primitive-v1/runtime-build.json",
+    "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+  },
+  "proposal": {
+    "path": "experiments/clojure/compact-primitive-v1/plan.json",
+    "sha256": "ea79597ff1649d27fc2d48ca3e7f5983eeecdc4cedb585c8b882448d096ea44e"
+  },
+  "accepted_warning": {
+    "text": "Reflection warning, clbg/support.clj:19:16 - reference to field get can't be resolved.\n",
+    "scope": "Byte-identical generic support jobs helper, unused by n-body; no application warning accepted."
+  },
+  "error": "ValueError('Build/diagnostic failed or has an unreviewed warning; preserve attempt')",
+  "finished_utc": "2026-10-20T20:25:27.469036+00:00"
+}

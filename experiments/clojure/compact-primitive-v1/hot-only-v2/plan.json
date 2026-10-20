@@ -1,0 +1,244 @@
+{
+  "schema": "clojure-compact-hot-only-qualification-proposal.v2",
+  "status": "hot-only-preselected-after-four-source-build-warning",
+  "chart_admission": false,
+  "source_bytes_in_catalog_unchanged": true,
+  "source_provenance": "Current suite-authored minimal substitutions of retained compact predecessor; inherited origin/terms unresolved.",
+  "author_context": {
+    "tool": "OpenAI Codex",
+    "model_family": "Codex GPT-6",
+    "exact_model": null,
+    "evidence": "Current developer identity provides family only; earlier predecessor original author/model and inherited terms remain unresolved"
+  },
+  "hypothesis": "Typed aset may reduce generic setter overhead while retaining original doseq axis/destructuring/vector structure. Actual primitive lowering and speed remain unverified.",
+  "parent": {
+    "program": "nbody:clojure-nbody-compact",
+    "source": {
+      "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+      "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+    },
+    "support": {
+      "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+      "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+    },
+    "application_loc": 109,
+    "physical_loc": 49,
+    "saved_seconds": 165.364857875,
+    "saved_samples": [
+      158.278659625,
+      165.364857875,
+      165.4170845
+    ],
+    "saved_report_path": "clojure-comparison/20261012/studies/full-v1/nbody/report.json",
+    "report_path_is_legacy": true,
+    "raw_process_evidence": "data/benchmarks.json#/programs/nbody:clojure-nbody-compact/sample_execution_metadata"
+  },
+  "control": {
+    "id": "primitive-control",
+    "namespace": "clbg.nbody.primitive-updates",
+    "source": {
+      "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+      "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+    },
+    "application_loc": 111,
+    "physical_loc": 52,
+    "full_median_seconds": 2.661471542,
+    "full_samples_seconds": [
+      2.661471542,
+      2.714510416,
+      2.658480875
+    ],
+    "evidence": {
+      "path": "experiments/clojure/optimization-v1/primitive-v1/selected-full-v1/run-v1/report.json",
+      "sha256": "9f385e274051e1294380a64c150124ba73f389ad64b756f4e0f41b5f6b1fa1c4"
+    }
+  },
+  "candidates": [
+    {
+      "id": "compact-hot-aset",
+      "namespace": "clbg.nbody.compact-hot-aset",
+      "source": {
+        "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+        "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+      },
+      "proposed_retained_loc": 109,
+      "physical_loc": 49,
+      "compiled": false,
+      "qualified": false,
+      "measured": false,
+      "change_sites": [
+        36,
+        37,
+        42
+      ],
+      "full_delta": [
+        {
+          "line": 1,
+          "parent": "(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))",
+          "candidate": "(ns clbg.nbody.compact-hot-aset (:require [clbg.support :as s]) (:gen-class))",
+          "change": "namespace-only"
+        },
+        {
+          "line": 36,
+          "parent": "              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))",
+          "candidate": "              (aset a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))",
+          "change": "typed-aset-substitution"
+        },
+        {
+          "line": 37,
+          "parent": "              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))",
+          "candidate": "              (aset b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))",
+          "change": "typed-aset-substitution"
+        },
+        {
+          "line": 42,
+          "parent": "        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))",
+          "candidate": "        (aset body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))",
+          "change": "typed-aset-substitution"
+        }
+      ]
+    }
+  ],
+  "programs": [
+    {
+      "id": "parent",
+      "namespace": "clbg.nbody.compact",
+      "source": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      }
+    },
+    {
+      "id": "primitive-control",
+      "namespace": "clbg.nbody.primitive-updates",
+      "source": {
+        "path": "experiments/clojure/optimization-v1/primitive-v1/sources/clbg/nbody/primitive_updates.clj",
+        "sha256": "12d61dd8a07254f6ba94652fb30b63cc305ec0145e482f1136044a1dc8c88fe2"
+      }
+    },
+    {
+      "id": "compact-hot-aset",
+      "namespace": "clbg.nbody.compact-hot-aset",
+      "source": {
+        "path": "experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj",
+        "sha256": "e73abcb37312c1f54fd71e4fbc80042d0581b5e36bc26e06a2d46aebe575ef05"
+      }
+    }
+  ],
+  "support": {
+    "path": "programs/clojure/binarytrees/clojure-binarytrees-compact/support.clj",
+    "sha256": "ae37ffdcbfe8d1fa34632e1151d4098b5747f71ce2ad074d326043be3d289446"
+  },
+  "runtime": {
+    "receipt": {
+      "path": "experiments/clojure/optimization-v1/primitive-v1/runtime-build.json",
+      "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+    },
+    "copy": {
+      "path": "experiments/clojure/compact-primitive-v1/hot-only-v2/runtime-build.json",
+      "sha256": "8a77c406dacff8f397359bba295d2f92ece05ee2270c2f7c83f517ac576e9f3a"
+    },
+    "new_restoration": false
+  },
+  "required_work": {
+    "status": "source-reviewed-proposal-no-executed-witness",
+    "steps": 50000000,
+    "pair_order": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        0,
+        3
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        1,
+        3
+      ],
+      [
+        1,
+        4
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        2,
+        4
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "pair_interactions": 500000000,
+    "pair_square_roots": 500000000,
+    "pair_divisions": 500000000,
+    "velocity_stores": 3000000000,
+    "position_stores": 750000000,
+    "additional_work": "Canonical initialization; offset momentum; before/after energies; full flushed output",
+    "numeric_rule": "Preserve source expression grouping, pair order, velocity store order and delayed positions; no unchecked or fast math"
+  },
+  "bounded_n": [
+    0,
+    1,
+    2,
+    3,
+    7,
+    10,
+    31,
+    1000,
+    1001,
+    10000
+  ],
+  "state_n": [
+    0,
+    1,
+    2,
+    3,
+    10,
+    100
+  ],
+  "state_slots": 35,
+  "state_invocations": 348,
+  "energy_raw_bits": true,
+  "pilot_sources": [
+    "primitive-control",
+    "compact-hot-aset"
+  ],
+  "pilot_n": 1000000,
+  "pilot_rounds": 1,
+  "full_n": 50000000,
+  "full_rounds": 3,
+  "full_selection": "Separate root-reviewed selection plan after complete bounded and1m pilot; no slow original-parent full rerun required. Retain every screen observation.",
+  "actual_bytecode_review_required": true,
+  "source_count_approval_required": true,
+  "logical_qualification": "63 is the native-reader-qualified parent expectation only; do not claim candidate count until its own exact source replay.",
+  "execution_authorization": "Root authorizes this separate three-source build/state/bounded qualification window; pilot/full timing remains unauthorized.",
+  "prior_attempt": {
+    "report": {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/report.json",
+      "sha256": "61a1b6fb45671f1e46b0c18c2261b42e884dfd0aa7e5172ec8611e7d70bbd001"
+    },
+    "bytecode": {
+      "path": "experiments/clojure/compact-primitive-v1/build-v1/bytecode-observations.json",
+      "sha256": "267e02c105ef7ba8f6ff0f62ca7f976912c690949013779b9402d4979deb04dc"
+    },
+    "failed_source": "compact-all-aset",
+    "reason": "Non-hot momentum typed-aset emits an application reflection warning. No warning waiver; its exactsource and failed attempt remain unchanged."
+  }
+}
