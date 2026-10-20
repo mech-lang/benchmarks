@@ -767,3 +767,65 @@ assert.match(element('#inspector-body').innerHTML,/No qualified timing median/);
 assert.match(element('#inspector-body').innerHTML,/2 samples/);
 assert.doesNotMatch(element('#inspector-body').innerHTML,/undefined|\[object Object\]/);
 console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG renders across summary, benchmark, Mech and language views; alphabetical table, fixed axes, independent playback, trail removal, ${pony.length} Pony source audits and ${elixir.length} Elixir inspectors.`);
+
+// Render each new source axis from the same immutable observations. A third
+// inventory candidate wins byte/token size but was never a canonical endpoint.
+const sizesFixture=structuredClone(fixture);sizesFixture.program_inventory={};
+for(const program of Object.values(sizesFixture.programs)){
+  program.source_metrics={application:program.key.endsWith('-fast')?
+    {utf8_bytes:80,gzip_bytes:100,cl100k_base_tokens:30}:{utf8_bytes:100,gzip_bytes:70,cl100k_base_tokens:40}};
+  if(program.key.endsWith('-fast')){
+    const candidate={...program,key:program.key+'-inventory',id:program.id+'-inventory',loc:999,x:999,
+      seconds:program.seconds*1.5,y:program.y*1.5,samples:program.samples.map(n=>n*1.5),
+      source_metrics:{application:{utf8_bytes:60,gzip_bytes:90,cl100k_base_tokens:20}}};
+    sizesFixture.program_inventory[candidate.key]=candidate;
+    const alias={...candidate,key:candidate.key+'-alias',id:candidate.id+'-alias',timing_alias_of:candidate.key};
+    sizesFixture.program_inventory[alias.key]=alias;
+  }
+}
+context.harness.initialize(sizesFixture);context.harness.formatting(true);
+const sizeView={view:'summary',languageFocus:null,disabled:new Set(),fast:true,small:true,focusMeans:false,
+  sampleMode:'highlight',medianMode:'highlight',densityMode:'off',global:false,ellipses:new Set()};
+let yDomain=null;
+for(const metric of ['bytes','gzip','bpe']){
+  context.harness.render({...sizeView,locMetric:metric});
+  const derived=context.harness.derived(),chart=element('#chart');
+  assert.equal(derived.samples.length,36,'Only 12 selected endpoint sources × 3 independent runs.');
+  assert.equal(new Set(derived.samples.map(p=>p.observation_source+'#'+p.run)).size,36);
+  assert.equal(chart.dataset.locMetric,metric);
+  assert.ok(derived.model.entries.every(e=>e.inputs.every(i=>i.small.key.includes('-inventory')===(metric!=='gzip'))));
+  assert.match(chart.getAttribute('aria-label'),new RegExp(formatted.sourceMetricDefinitions[metric].label));
+  context.harness.table();assert.ok(element('#mean-table thead').innerHTML.includes(formatted.sourceMetricDefinitions[metric].label));
+  const tableBody=element('#mean-table tbody').innerHTML;
+  assert.ok(tableBody.includes(`Change in log₂ time divided by change in log₂ ${formatted.sourceMetricDefinitions[metric].unit}`));
+  assert.ok(tableBody.includes(`${formatted.sourceMetricDefinitions[metric].fewest} profile 2σ covariance ellipse area`));
+  assert.ok(!tableBody.includes('change in log₂ LOC')&&!tableBody.includes('Fewest-LOC-profile'));
+  const current=[chart.dataset.yMin,chart.dataset.yMax];if(yDomain)assert.deepEqual(current,yDomain);else yDomain=current;
+  const children=chart.children.slice(),sample=sampleMarks()[0];
+  sample.emit('pointerenter');sample.emit('pointermove');sample.emit('pointerleave');
+  assert.deepEqual(chart.children,children,'Source-size hover never rebuilds the chart.');
+}
+for(const metric of ['canonical','formatted']){
+  context.harness.render({...sizeView,locMetric:metric});
+  assert.deepEqual([element('#chart').dataset.yMin,element('#chart').dataset.yMax],yDomain,'All five measures share the same timing domain.');
+}
+const missingSizeFixture=structuredClone(sizesFixture);
+missingSizeFixture.programs['alpha-b1-fast'].source_metrics.application.cl100k_base_tokens=null;
+context.harness.initialize(missingSizeFixture);
+context.harness.render({...sizeView,locMetric:'bpe',view:'language',
+  languageFocus:{keys:['alpha'],label:'Alpha',variant:'alpha',benchmark:'b1'}});
+context.harness.relativeTable();
+assert.ok(context.harness.derived().model.entries.find(e=>e.language.key==='alpha').inputs[0].fast.key.includes('-inventory'));
+assert.ok(element('#language-comparison-table tbody').innerHTML.includes('<td class="ratio">1.2×</td>'),
+  'Hero time ratios follow the BPE-qualified fastest candidate, matching the chart.');
+const equalSizeFixture=structuredClone(sizesFixture);
+for(const p of [...Object.values(equalSizeFixture.programs),...Object.values(equalSizeFixture.program_inventory)])
+  p.source_metrics.application={utf8_bytes:30,gzip_bytes:30,cl100k_base_tokens:30};
+context.harness.initialize(equalSizeFixture);
+context.harness.render({...sizeView,locMetric:'bytes'});
+const reusedRun=sampleMarks()[0];assert.match(reusedRun.getAttribute('aria-label'),/30 UTF-8 bytes/);
+context.harness.render({...sizeView,locMetric:'bpe'});
+assert.equal(sampleMarks()[0],reusedRun,'Equal counts reuse the original sample node.');
+assert.match(reusedRun.getAttribute('aria-label'),/30 BPE tokens/,'Cached sample readout must still change units.');
+context.harness.formatting(false);
+console.log('Source-size SVGs: all-candidate endpoints, alias run identity, metric labels/table, fixed time domains and no hover rebuild PASS');

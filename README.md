@@ -14,6 +14,19 @@ The **[Data view](https://mech-lang.org/benchmarks/#v=1&view=data)** lists every
 
 The [methodology](docs/methodology.md) describes timing boundaries, source counting, library use, and comparison rules. [Mech's optimization history](docs/optimizations.md) connects compiler and runtime changes to their measured effects.
 
+The [implementation audit](experiments/implementation-audit/v1/README.md) separates
+unchanged published submissions from local implementations and adaptations,
+records source reviews and measured improvements, and identifies remaining
+optimization questions. Fastest and smallest endpoints are winners among the
+retained qualified candidates; further improvements remain possible.
+
+[Complementary source measures](docs/source-metrics.md) expose application and
+submitted bytes, deterministic gzip size and pinned BPE token counts alongside
+retained application LOC and qualified formatted LOC. Each measure has explicit
+limits. The [native logical-source qualification](experiments/source-normalization/v2/README.md)
+currently covers exact Python and Julia sources; other languages await equivalent
+ownership checks.
+
 [Reproduction records](docs/reproduction.md) expose recorded versions, build commands, runtime settings, inputs and gaps. [Implementation authorship](docs/authorship.md) distinguishes published sources,
 local AI adaptations and generated programs. The data view and exports include
 verified model IDs, original attribution, license terms and explicit evidence gaps.

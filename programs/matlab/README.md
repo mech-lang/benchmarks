@@ -15,6 +15,8 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | nbody | [matlab-optimized](nbody/matlab-optimized/program.json) | 59 | 7.4072 | 3 |
 | pidigits | [matlab-compact](pidigits/matlab-compact/program.json) | 30 | 14.9627 | 3 |
 | pidigits | [matlab-optimized](pidigits/matlab-optimized/program.json) | 31 | 13.917 | 3 |
+| regexredux | [matlab-case-compact](regexredux/matlab-case-compact/program.json) | 16 | 14.8532 | 3 |
+| regexredux | [matlab-case-optimized](regexredux/matlab-case-optimized/program.json) | 19 | 14.9019 | 3 |
 | regexredux | [matlab-compact](regexredux/matlab-compact/program.json) | 16 | 31.8718 | 3 |
 | regexredux | [matlab-optimized](regexredux/matlab-optimized/program.json) | 19 | 31.6941 | 3 |
 | revcomp | [matlab-compact](revcomp/matlab-compact/program.json) | 24 | 15.4133 | 3 |

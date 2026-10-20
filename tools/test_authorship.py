@@ -1,11 +1,19 @@
 """Authorship is evidence metadata, independent of rankings and measurements."""
-import copy,hashlib,importlib.util,json,unittest,sys
+import copy,hashlib,importlib,importlib.util,json,unittest,sys
 from pathlib import Path
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import source_lineage
 spec=importlib.util.spec_from_file_location('audit_authorship',Path(__file__).with_name('audit_authorship.py'))
 audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
+
+# Exact admitted applications only: family identity is not a per-file model event.
+# Each frozen importer binds the source, predecessor and admission receipts.
+FAMILY_ADMISSIONS={
+    'knucleotide:array-bqn-occurrence-frame':'qualification.import_bqn_knucleotide',
+    'knucleotide:nim-knucleotide-preencoded-v1':'qualification.import_nim_knucleotide',
+    'spectralnorm:array-bqn-native-sum':'qualification.import_bqn_spectral',
+}
 
 def fixture(url=None,local=None):
     code='// contributed by Example Contributor\nint main() { return 0; }\n';sha=hashlib.sha256(code.encode()).hexdigest()
@@ -15,6 +23,23 @@ def fixture(url=None,local=None):
     return {'programs':{'test:p':p},'files':{sha:{'code':code,'name':'main.c','path':'programs/test/main.c'}}}
 
 class Authorship(unittest.TestCase):
+    def assert_bound_family_authorship(self,data,p):
+        module_name=FAMILY_ADMISSIONS.get(p['key'])
+        if module_name is None:return None
+        module=importlib.import_module(module_name)
+        self.assertEqual(p['key'],module.KEY)
+        self.assertEqual(p['authorship'],module.bound_authorship(data,p,audit.ROOT))
+        ai=p['authorship']['ai']
+        self.assertEqual(ai['status'],'family-identified-exact-model-unverified')
+        self.assertEqual(ai['model_family'],'Codex GPT-6')
+        self.assertEqual(ai['models'],[]);self.assertIsNone(ai['exact_model'])
+        self.assertEqual(ai['matched_source_files'],[module.SOURCE_SHA])
+        pins=[dict(path=path,sha256=hashlib.sha256((audit.ROOT/path).read_bytes()).hexdigest())
+              for path in (module.PLAN,module.RESULTS)]
+        self.assertEqual(ai['evidence'],pins)
+        self.assertEqual(p['source_provenance_record']['admission'],pins[1])
+        return module
+
     def test_published_source_preserves_author_and_does_not_claim_ai(self):
         data=fixture('https://benchmarksgame-team.pages.debian.net/benchmarksgame/program/test-c-1.html')
         row=audit.audit(data,{})['test:p'];self.assertEqual(row['kind'],'upstream')
@@ -85,8 +110,14 @@ class Authorship(unittest.TestCase):
         self.assertTrue(any(s['url'].endswith('/program/nbody-fsharpcore-4.html') for s in changed['sources']))
         for p in cat.values():
             self.assertEqual({s['source_sha256'] for s in p['authorship']['retained_sources']},set(p['files']))
+            family=self.assert_bound_family_authorship(data,p)
             for s in p['authorship']['retained_sources']:
-                self.assertIn('/blob/'+p.get('retained_source_revision',audit.SOURCE_REVISION)+'/',s['url'])
+                if family is not None and s['source_sha256']!=family.SOURCE_SHA:
+                    parent=cat[family.PARENT]
+                    self.assertIn(s,parent['authorship']['retained_sources'])
+                    self.assertIn(s['source_sha256'],parent['files'])
+                else:
+                    self.assertIn('/blob/'+p.get('retained_source_revision',audit.SOURCE_REVISION)+'/',s['url'])
             for s in p['authorship']['sources']:
                 if s['relationship']=='implementation':self.assertTrue(audit.exact_source(s['url']),s)
 
@@ -96,12 +127,26 @@ class Authorship(unittest.TestCase):
             a=p['authorship'];self.assertEqual(a['source_sha256'],p['files'],key)
             self.assertTrue(a['label']);self.assertIn(a['license']['status'],['identified','partial','unverified'])
             self.assertTrue(set(a['ai']['matched_source_files']).issubset(p['files']))
-            for e in a['ai']['evidence']:self.assertIn(e['source_sha256'],p['files'])
+            if self.assert_bound_family_authorship(data,p) is None:
+                for e in a['ai']['evidence']:self.assertIn(e['source_sha256'],p['files'])
             for path in a['evidence']:self.assertTrue((audit.ROOT/path).is_file(),path)
             for license in a['license']['licenses']:
                 self.assertTrue((audit.ROOT/license['evidence']).is_file(),license['evidence'])
             self.assertNotIn('/Users/',json.dumps(a));self.assertNotIn('session_id',json.dumps(a))
         self.assertGreaterEqual(len(catalog),1013)
+
+    def test_family_admission_compatibility_rejects_changed_evidence_and_source(self):
+        original=json.loads((audit.ROOT/'data/benchmarks.json').read_text())
+        for key in FAMILY_ADMISSIONS:
+            with self.subTest(key=key,change='evidence'):
+                data=copy.deepcopy(original);p={**data['program_inventory'],**data['programs']}[key]
+                p['authorship']['ai']['evidence'][0]['sha256']='0'*64
+                with self.assertRaises(AssertionError):self.assert_bound_family_authorship(data,p)
+            with self.subTest(key=key,change='source'):
+                data=copy.deepcopy(original);p={**data['program_inventory'],**data['programs']}[key]
+                p['source_provenance_record']['source_sha256']='0'*64
+                with self.assertRaises(ValueError):self.assert_bound_family_authorship(data,p)
+        self.assertIsNone(self.assert_bound_family_authorship({},fixture()['programs']['test:p']))
 
     def test_explicit_prolog_predecessors_require_matching_source_bytes(self):
         data=json.loads((audit.ROOT/'data/benchmarks.json').read_text())

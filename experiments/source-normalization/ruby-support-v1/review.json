@@ -1,0 +1,2662 @@
+{
+  "schema": "ruby-embedded-support-review.v1",
+  "status": "candidate-not-applied",
+  "catalog_sha256": "fda00e2cd7e1274edf977a1f14989f6bc9178ab95c9c3f56507e3893bf5b98de",
+  "tool_sha256": "3b8acaa8f22838a84aa9dc098d5e936a773429992222603ebc0d380008cc63e6",
+  "policy": "Only exact reviewed generic worker definitions are proposed support. Imports, arguments, workload partition construction, workload callbacks, merging, formatting and top-level dispatch remain application.",
+  "source_policy": "Protected unchanged Game source remains byte-identical; this proposal changes neither admission nor runtime code. Canonical application/LOC/source metrics remain unchanged.",
+  "native_processes_run": 0,
+  "candidate_source_files": 5,
+  "candidate_profiles": 10,
+  "protected_ruby_profiles": 42,
+  "protected_source_files": 19,
+  "protected_profile_sha256": {
+    "binarytrees:binarytrees-ruby-1": "942a5363e3bc06f89f966ed3777b19a8fdfa7f592a2155a0ad50ceff893dd7ab",
+    "binarytrees:binarytrees-ruby-1-zjit": "3360ffb3f96ee2ea1a0db8b9abd8a04177a400aaccae14558892804061e8c40b",
+    "binarytrees:binarytrees-ruby-5": "edb6e5615306964c4f4988c14dfae433bf824e7d0a5b36ab829f67a20d9aeeb7",
+    "binarytrees:binarytrees-ruby-5-zjit": "f424e2b53f84617b16d853742a1dbc735d2d0dc3d85b10c8869d08fbabad5dc7",
+    "fannkuchredux:fannkuchredux-ruby-2-cpu4": "830f23404249e719ffa0a33ce504ab39cf2acbc1ab87a7b2794c47b5254f9ccd",
+    "fannkuchredux:fannkuchredux-ruby-2-cpu4-zjit": "e46330d3cfd24a02fc4cdf59b28c21a1e83541fd0472eed423213d0ed02f7c44",
+    "fannkuchredux:fannkuchredux-ruby-8": "e79fd10068c7eb58b90e00e247ebc11335690668e24963a2ffb2ed97e04e93cb",
+    "fannkuchredux:fannkuchredux-ruby-8-yjit-first-call-v1": "38b36cb6a0ce4918cbf6b7b10ea92fe24ac916935f8aff19f2cfcdad1991deaa",
+    "fannkuchredux:fannkuchredux-ruby-8-zjit": "9ff5b30ee1b18fbb152274413ac9c0d5ae7fb54db374eb334a4f581196265d24",
+    "fasta:fasta-ruby-2": "2678795a1500a1aecfb586ec8ad819df7c17fae5d39330d031f4270f4eb420ed",
+    "fasta:fasta-ruby-2-zjit": "cc8bb2aa7169d1b133f7cd0082f9b61f167d5a928e4711f866b5c40153d61673",
+    "fasta:fasta-ruby-6": "160f63b08707c9608f7c3e8af02568809c6fcbde08792cf8a0b2ae430504b56b",
+    "fasta:fasta-ruby-6-zjit": "51d47e439a35ac3e7111fde0f837d9877e3cdf9476d3c46759af9c014b0be53e",
+    "knucleotide:knucleotide-ruby-1": "7fb300defb1cd674e22cc8ad3428b762b953037acfbd113fbc9cc680192a085b",
+    "knucleotide:knucleotide-ruby-1-zjit": "8b543b74253e73006cfc3e3a7b52e60e0f8741aeb48aa7809ccbb35bae3a64e8",
+    "knucleotide:knucleotide-ruby-2": "f9f5d1383a27de20237f848df8f6cdaf786d04929d6d22ae7bd91f22da6b0cad",
+    "knucleotide:knucleotide-ruby-2-zjit": "ad76e69ceacd8a07380275162fdf6367df368283c2175214a2e5ca86167fc4c9",
+    "mandelbrot:mandelbrot-ruby-5": "b10415b518338b608a3563fe9b1291360d7fd5c33389077b7843c54143bd46cc",
+    "mandelbrot:mandelbrot-ruby-5-zjit": "a56ad2876f25c4a9d243572881ab97953ac63d43c834e6e58333266d92db160f",
+    "mandelbrot:mandelbrot-ruby-8": "5de87d5c620b0ef756829a5a5e82619b136c9595547cf30379bbc67f317c7dc5",
+    "mandelbrot:mandelbrot-ruby-8-zjit": "b92afa8b920df033a8f6ca91bbe71eff24a314fc790200e6c16df121a84c739a",
+    "nbody:nbody-ruby-2": "6dd80229f7b0cbf35c3046869efe60810d7897b6afc779f8a746f1c1db41e7ea",
+    "nbody:nbody-ruby-2-zjit": "ff612b60a9222854c6068f3a151c094c2f2857e12dee50199440b59beca02b0d",
+    "nbody:nbody-ruby-3": "5308295dbd54c88f96883620b2a4c56a293cd484c6868ddfbcccd0e164094043",
+    "nbody:nbody-ruby-3-zjit": "c3213bf8a1602dd5d6c9c84bb56d69e88ef0132d6ae2266b9625d1d690a3e4d4",
+    "pidigits:pidigits-ruby-1": "061dd5c4903477536bdf822da3a788631adca835a6e644df766cbd8430559c5a",
+    "pidigits:pidigits-ruby-1-yjit-v1": "4e1f20f563a6ec45cc41085d842772a73c0411b6293adc5888340cb0866c3635",
+    "pidigits:pidigits-ruby-1-zjit": "cfff8ee580af6553651aaeb284f92770bfe3a5fc7d1ede08aeb7749c4036f264",
+    "regexredux:regexredux-ruby-3": "efc59db6a3d79ef9b4fd5022c0f957b699693e1c053439de238a153cc94d28dc",
+    "regexredux:regexredux-ruby-3-yjit-v1": "f86c1d0ed51788d732eb223114e34534c8cf56f0e2ae92c0475fe078f0552c8e",
+    "regexredux:regexredux-ruby-3-zjit": "1734654f5ab18a10f87c135c11d596b6709eee92ccf02c9848a5483c44e85792",
+    "regexredux:regexredux-ruby-9": "6fad98aa1835ff7bb128a098e2944772f02e51259440051964738b3cf1fc6ab1",
+    "regexredux:regexredux-ruby-9-yjit-v1": "d7a3fa24357e0e317e9afd2740edc83bf44e9c7c778cdae9d896be33e9903ded",
+    "regexredux:regexredux-ruby-9-zjit": "6ef02ee1150fef8bec4dd5ff165a4f6bec6c5dbf828ffde39536e34819d0edd8",
+    "revcomp:revcomp-ruby-4": "5eed6b4b55fa3fe7a50f27f4b6c7ab763df6f8aa5e4dfca1871b2108dfe71001",
+    "revcomp:revcomp-ruby-4-zjit": "bcb05bad5ef2bdb7ae61c69f2431e7eff38a63020815fa256eb05b45aec29f5d",
+    "revcomp:revcomp-ruby-5": "362e2094406ac96528bb1afc63cf1732603bea99c9128ab0a06030dbe4ae9a26",
+    "revcomp:revcomp-ruby-5-zjit": "464d9d7a53232bb71e3301f7cdaedea4d1c3aab17a710ec30cd8c44deeb64faa",
+    "spectralnorm:spectralnorm-ruby-5": "c1dc381a26e11932f02e931d5c5674bca6d258738a41b14b63d03ef38708bbc7",
+    "spectralnorm:spectralnorm-ruby-5-zjit": "15e2ab6ac599bb6a3f36defea3ba4451c996dfc2f479a8191e4081c08528d3e1",
+    "spectralnorm:spectralnorm-ruby-8": "23cc00f6d31528fb2009e9c39e2433d8416f837f14608168cec0f270103534b4",
+    "spectralnorm:spectralnorm-ruby-8-zjit": "bfed12e42bd4626b66d59f40b073fb097ac546d7a3ad2b1ea285ed4ee7e37082"
+  },
+  "protected_source_sha256": [
+    "01d3079dc51dba4defb49d74574dceea591d7642c24fa23014286c9b3c55eb44",
+    "16dd0b710079de1579f8f87c404358efa423ed5f4885a5a2fa0465f2bb5a239e",
+    "2e5a501cc569baf0590ffceba9906aa0deb8be8e6ca17ea5d3b2f32d237ce08f",
+    "45d77609445db3378a7aba02d855a4e89b0cec9c6f85b4b09b182d88785db328",
+    "4b35098f46cc635dcd460b1bd05c6dc7db92c6817f8bffec1d0b69b55f22cfbb",
+    "4ed165a4dd9ab09888745ade03a3175069c6ffb29b76e6e710756dcfe4b6ead4",
+    "51f016a7169e36bf8e0574f971d9e96f3477a76affd15edc861cba2b82e0a307",
+    "5264c2373c346c6aa1921d473e8c93a8c2c16493e220f46ff3f36990bb77d218",
+    "71d9b627153ca8c409b422fb3663fac4218d693359841af40f02b6bd21505687",
+    "954000670356efa8179c7f4e2b740e9cf90dd78e116d194a5236d41d3a1a4bf8",
+    "a4f840db54190914b6174287b885a20d19244c3c28df35ea3e62769a13364b79",
+    "affb193beb99fee220ef23a08581d99d901f9c2722b26ef7b1351aacf2d0f5af",
+    "b8bbe0b852722800ff89f6c5ee92a90cec8d0b7755fa855af891c2056d6e9adb",
+    "bccb5b1ec81054ae804b9aa3d947616b2919ce988e333f8587bf2c433e58f01f",
+    "c7bd5e001454bf9f9966c9e9adb95ca2a8d0251db07ed9aa22b89fa44de841cf",
+    "e150c95ed0c55b9c68317a670f9808d0199954cc0565e053f5e74afbfbc2fb87",
+    "ea9366a1f81e076e5076c49c778897333c9b9563e67c2b035485ea5f52cb2b16",
+    "f1f6c0f3a48a00edc6458291c8d34692b5f2bdbf814c818d7cba4842e6a6f7ac",
+    "fe548f0ad23d64b495928d3e78eec236e28bd4784ddeb4d635191d932af36706"
+  ],
+  "reviews": [
+    {
+      "source_sha256": "c7bd5e001454bf9f9966c9e9adb95ca2a8d0251db07ed9aa22b89fa44de841cf",
+      "name": "binarytrees-ruby-5.rb",
+      "path": "compact/upstream/binarytrees-ruby-5.rb",
+      "expected_profiles": [
+        "binarytrees:binarytrees-ruby-5",
+        "binarytrees:binarytrees-ruby-5-zjit"
+      ],
+      "generic_api": "MiniParallel",
+      "support_line_ranges": [
+        [
+          12,
+          103
+        ]
+      ],
+      "application_line_ranges": [
+        [
+          1,
+          11
+        ],
+        [
+          104,
+          161
+        ]
+      ],
+      "submitted": {
+        "utf8_bytes": 3803,
+        "sha256": "c7bd5e001454bf9f9966c9e9adb95ca2a8d0251db07ed9aa22b89fa44de841cf"
+      },
+      "candidate_application": {
+        "utf8_bytes": 1669,
+        "sha256": "4cdf2d3c0b736ab9a0ee5e2038bdb501309e1addd2fdb850b9c690f4e834b423"
+      },
+      "candidate_excluded_support": {
+        "utf8_bytes": 2134,
+        "sha256": "f4f3f6c369ee61212faeb81a7e5baede8c26b5f8982ddbdd50487f5cfb938461"
+      },
+      "review_segments": [
+        {
+          "start": 13,
+          "end": 27,
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "start": 29,
+          "end": 35,
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "start": 37,
+          "end": 39,
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "start": 43,
+          "end": 65,
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "start": 67,
+          "end": 73,
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "start": 75,
+          "end": 95,
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "start": 97,
+          "end": 102,
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        }
+      ],
+      "per_line_review": [
+        {
+          "line": 12,
+          "line_sha256": "d1c8983a8f0ae16f0391b0d1dd4cae4da2c67a8f74f877f895182821f33f5aed",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 13,
+          "line_sha256": "baeb8f134dfc94d61158f7130fc05f2e1e3b1d31bdca2485d35a3066f2361fce",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 14,
+          "line_sha256": "9a271500ca436090d24bdd972676187e840e51080982771ebed3316cd2a098dd",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 15,
+          "line_sha256": "4e9dd2d7960e2fa35f660f745ae6df955c635538f58cdfb240cc412a719a0024",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 16,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 17,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 18,
+          "line_sha256": "b8088e0c7f1cb217a1283b491f67cc4e6cd97d0645b2d78c3cdd02c6d7abf170",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 19,
+          "line_sha256": "f1a7fb101a4d33e804cc92e8b094948471a665967105cadef06eff7c363344d0",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 20,
+          "line_sha256": "490d0eed05c7cca1356366a9d7e03b79593bf9e0eed86d0479a7461755a9ae2e",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 21,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 22,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 23,
+          "line_sha256": "04f61928c2a161ce7c2578c1f6c8850c503fe0df3384c3962bdba80adf145473",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 24,
+          "line_sha256": "ca5024fe351eb615e7338bff864bc5653ec829a47f1b60970b99c23fa242f4db",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 25,
+          "line_sha256": "face94ba4fdf632e5930fe2d063c0546eeed443560fe78d2cfd3fc7d9509898c",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 26,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 27,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 28,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 29,
+          "line_sha256": "3432f13bf81adcb741d95a16bdb063892d651259a4b987691657d14222a9c1e2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 30,
+          "line_sha256": "d204a6789f311935ab14e00e525026a2618818e2bbe18ef6f6a718c7ecf9abb7",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 31,
+          "line_sha256": "6dd1c1a7b3b264a3b791ad5246b7120d2f8ee82788aca51861c620aca2d42f37",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 32,
+          "line_sha256": "1d45d1bb18524765f3fcf045e4958eeabf9f34918c419307fa10e6fa1fcba898",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 33,
+          "line_sha256": "d905317591f5fdab92576846ef349fc3af907a4bbb62912cf0cb19e67befa588",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 34,
+          "line_sha256": "5909a53a618d028e1d3000c0a7abceecbe5fb37f4e511efe46643fad6e66872f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 35,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 36,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 37,
+          "line_sha256": "bdb8fa13be03add1d3ad509f474ceb6eb76d1c738e6928c24318a56b547d9399",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 38,
+          "line_sha256": "3cc717a14293072214b74c0cb00702baebc6244ef27f5bb48ab82a76bb964cdf",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 39,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 40,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 41,
+          "line_sha256": "0b51578b3a77194dccff4aa7379270a0234c69e4d82d5f21df4a3df719fc80e1",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 42,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 43,
+          "line_sha256": "5d67451c31fd50d0eeb917c7c9bfd9359eefb507417ecd2c98dab37d7f635906",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 44,
+          "line_sha256": "4b2dc5d38f32da4ee23af4ba6418d750d195540a8438402970280a326d865179",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 45,
+          "line_sha256": "fb3ad3d4d3d951f4ec775ab309269de021bdefe360f7738ac4690bdbab77164a",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 46,
+          "line_sha256": "d26f49047c9d586fd4bdf40e420c2f1160fa7629d2def0c6842cc6da60697e89",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 47,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 48,
+          "line_sha256": "9e6ce53de483ba66e3da3a885bee25e59abbdad2c039e72f6b65679bdcae79df",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 49,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 50,
+          "line_sha256": "c884bb00540d9df559ecf39b3c0efed425d62b0058419d289fb4a8f5c5a25418",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 51,
+          "line_sha256": "98d8bd337e5a808b0d1ad546fabf75e582e4c8ec2da149fed8e6d3af9483d20c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 52,
+          "line_sha256": "8231e40df33c6f40f637df03fbe3bc8088a3278c6dd919940e496d88206e3532",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 53,
+          "line_sha256": "44d84667e6e3b5a45c851e6f684f1838076a61927a37e53cab98c78850d8c8f2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 54,
+          "line_sha256": "c00c82a74f37a5a8adf3ded8bca059249ac5cf4c5ee8a784ebb468d55c6f3473",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 55,
+          "line_sha256": "9ccf97032b193d8e52587e0ecf27a62b3639f2d6b7adc0a3d180b334339e165b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 56,
+          "line_sha256": "a038bf966a176524f26e99ae206c11539745cbdd0fa456758d8e08fef7abfe3f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 57,
+          "line_sha256": "1b4381af47eb190d0a418b136e40ea1a3db6f843713e04611b332588fa2b70ee",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 58,
+          "line_sha256": "a9dc63fc7d3faebbd8ed468ae865c2e33158aca10431fb0399e61a09eeceaf08",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 59,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 60,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 61,
+          "line_sha256": "038097073db3cdc0397f8402bce65e2e5613fbdd2c506c4f50d42e508a05d163",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 62,
+          "line_sha256": "9ee309b689e0959f3202dd4563c375d3e6642a7f8a33d6ddd6c07aff2a0084a2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 63,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 64,
+          "line_sha256": "d6a9a86adf5559a2c6c5023689a210145995ca2ff230e859227d83906e4a58dd",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 65,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 66,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 67,
+          "line_sha256": "483a7fc7532916a2aaabf64a4adfb91cd1c9c28a47ef80cf793e1ec49c6ba9da",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 68,
+          "line_sha256": "8d93d9e786cb3ecd197c1facb7b8f78058d18e664fd27d6693e8a1edb7904a17",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 69,
+          "line_sha256": "a7d68178f33d586cbbc71734f9629425afbc2254c1d700b0062cb9afeb06e999",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 70,
+          "line_sha256": "c7ef9136e122ca5a6e09dccc3c495366a7dad04db131d39accf82c0cd2058355",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 71,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 72,
+          "line_sha256": "992144cf4bb8dd200110b02294ee0efdcac48c2f7f89d324d4902d4fd130993e",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 73,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 74,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 75,
+          "line_sha256": "23472b5539772bce1211826bc6d024a3a8c1e8675b0fa536ec3e4e86e575d969",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 76,
+          "line_sha256": "804d4297e96805f9c3b69cc6c2f5280b214f0fe87db21434207fcd1882ed6f8e",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 77,
+          "line_sha256": "55d11b19d267c482c02238e995648daeafa3f60eb27215a39284cfc5dcf56396",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 78,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 79,
+          "line_sha256": "99e1297efb079362600bd66270249e8b61f3347332decc3025e1f7da4504d39c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 80,
+          "line_sha256": "de838c39d5232d8fbecca7a91dc12021b6de1a4d339878d32926eb063630fb4b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 81,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 82,
+          "line_sha256": "9aa09bd2ec8ca38b5bfd30bbd1c3970fcfebf681c3e66125f24306a197a743e1",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 83,
+          "line_sha256": "d3c183b9afa6f8bc3f9e4ac2dbcdc73326295838f48874362b46e5cb6411149b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 84,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 85,
+          "line_sha256": "865b5c477bda246e1aedf8f930242abb9e70c9dcb5e45d043df0ba24a8c52943",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 86,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 87,
+          "line_sha256": "ded43485f808c3c759035abe5e6b1f106ea3e100b24efb4d876200c32e45db2f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 88,
+          "line_sha256": "563ca05a5cba58b7fbc337083b4e5551c8ba1bfa3d567f019a41a0af76ce0fd0",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 89,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 90,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 91,
+          "line_sha256": "2c3eb7f481f787139be66de969e02a707188e85ab44a2bd447301c4e5f76a1ee",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 92,
+          "line_sha256": "4fc4e8ccf1f7f317ff918d1ac02c5672bd1b7ee4c1fabb9b03ac51eb0e920c24",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 93,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 94,
+          "line_sha256": "d257cb308c87f10897a10ca360d73d78c6fed705f303def4305a809bf5d04837",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 95,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 96,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 97,
+          "line_sha256": "902f5468c896ed84117433986a8fab493500d1fb09f384338d4e9f66d85c1d83",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 98,
+          "line_sha256": "2137b0ef9b6c49f5f404204e9db90b3a1f6b2e3d9e458d6cd9b14350bba8fea3",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 99,
+          "line_sha256": "3b85dd6cbf8368d97c3507a261ee44f584423ec63a5c9ec6ccc4246f5b71bc93",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 100,
+          "line_sha256": "1643f68b37ce1342eb64a7f72dbecafa8ce02baba38db21a87b996a1d60dc952",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 101,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 102,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 103,
+          "line_sha256": "48332fe667bc51ac4a51ba0efe734441c90def55c60a26d7db275ecbbcf42f15",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        }
+      ],
+      "normalized_loc": null,
+      "normalized_loc_status": "unavailable-pending-Ruby-native-owner-qualification"
+    },
+    {
+      "source_sha256": "b8bbe0b852722800ff89f6c5ee92a90cec8d0b7755fa855af891c2056d6e9adb",
+      "name": "mandelbrot-ruby-5.rb",
+      "path": "compact/upstream/mandelbrot-ruby-5.rb",
+      "expected_profiles": [
+        "mandelbrot:mandelbrot-ruby-5",
+        "mandelbrot:mandelbrot-ruby-5-zjit"
+      ],
+      "generic_api": "MiniParallel",
+      "support_line_ranges": [
+        [
+          14,
+          105
+        ]
+      ],
+      "application_line_ranges": [
+        [
+          1,
+          13
+        ],
+        [
+          106,
+          164
+        ]
+      ],
+      "submitted": {
+        "utf8_bytes": 3783,
+        "sha256": "b8bbe0b852722800ff89f6c5ee92a90cec8d0b7755fa855af891c2056d6e9adb"
+      },
+      "candidate_application": {
+        "utf8_bytes": 1640,
+        "sha256": "3c0811b95819980e6342457649c1ca6ed0a1c53559499fe65b34d9b22976ec3d"
+      },
+      "candidate_excluded_support": {
+        "utf8_bytes": 2143,
+        "sha256": "7e24bdddf91ac7ac3bf23cde9b1e522384bdb6cbe6a3544c532e3a20902f89c9"
+      },
+      "review_segments": [
+        {
+          "start": 15,
+          "end": 29,
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "start": 31,
+          "end": 37,
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "start": 39,
+          "end": 41,
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "start": 45,
+          "end": 67,
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "start": 69,
+          "end": 75,
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "start": 77,
+          "end": 97,
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "start": 99,
+          "end": 104,
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        }
+      ],
+      "per_line_review": [
+        {
+          "line": 14,
+          "line_sha256": "d1c8983a8f0ae16f0391b0d1dd4cae4da2c67a8f74f877f895182821f33f5aed",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 15,
+          "line_sha256": "baeb8f134dfc94d61158f7130fc05f2e1e3b1d31bdca2485d35a3066f2361fce",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 16,
+          "line_sha256": "9a271500ca436090d24bdd972676187e840e51080982771ebed3316cd2a098dd",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 17,
+          "line_sha256": "4e9dd2d7960e2fa35f660f745ae6df955c635538f58cdfb240cc412a719a0024",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 18,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 19,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 20,
+          "line_sha256": "b8088e0c7f1cb217a1283b491f67cc4e6cd97d0645b2d78c3cdd02c6d7abf170",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 21,
+          "line_sha256": "f1a7fb101a4d33e804cc92e8b094948471a665967105cadef06eff7c363344d0",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 22,
+          "line_sha256": "490d0eed05c7cca1356366a9d7e03b79593bf9e0eed86d0479a7461755a9ae2e",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 23,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 24,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 25,
+          "line_sha256": "04f61928c2a161ce7c2578c1f6c8850c503fe0df3384c3962bdba80adf145473",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 26,
+          "line_sha256": "ca5024fe351eb615e7338bff864bc5653ec829a47f1b60970b99c23fa242f4db",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 27,
+          "line_sha256": "face94ba4fdf632e5930fe2d063c0546eeed443560fe78d2cfd3fc7d9509898c",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 28,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 29,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 30,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 31,
+          "line_sha256": "3432f13bf81adcb741d95a16bdb063892d651259a4b987691657d14222a9c1e2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 32,
+          "line_sha256": "d204a6789f311935ab14e00e525026a2618818e2bbe18ef6f6a718c7ecf9abb7",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 33,
+          "line_sha256": "6dd1c1a7b3b264a3b791ad5246b7120d2f8ee82788aca51861c620aca2d42f37",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 34,
+          "line_sha256": "1d45d1bb18524765f3fcf045e4958eeabf9f34918c419307fa10e6fa1fcba898",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 35,
+          "line_sha256": "d905317591f5fdab92576846ef349fc3af907a4bbb62912cf0cb19e67befa588",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 36,
+          "line_sha256": "5909a53a618d028e1d3000c0a7abceecbe5fb37f4e511efe46643fad6e66872f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 37,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 38,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 39,
+          "line_sha256": "bdb8fa13be03add1d3ad509f474ceb6eb76d1c738e6928c24318a56b547d9399",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 40,
+          "line_sha256": "3cc717a14293072214b74c0cb00702baebc6244ef27f5bb48ab82a76bb964cdf",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 41,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 42,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 43,
+          "line_sha256": "0b51578b3a77194dccff4aa7379270a0234c69e4d82d5f21df4a3df719fc80e1",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 44,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 45,
+          "line_sha256": "5d67451c31fd50d0eeb917c7c9bfd9359eefb507417ecd2c98dab37d7f635906",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 46,
+          "line_sha256": "4b2dc5d38f32da4ee23af4ba6418d750d195540a8438402970280a326d865179",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 47,
+          "line_sha256": "fb3ad3d4d3d951f4ec775ab309269de021bdefe360f7738ac4690bdbab77164a",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 48,
+          "line_sha256": "bcca3411ae866ff67f344b931a49c8992250b33e949e71a34d16a243a109568d",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 49,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 50,
+          "line_sha256": "9e6ce53de483ba66e3da3a885bee25e59abbdad2c039e72f6b65679bdcae79df",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 51,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 52,
+          "line_sha256": "c884bb00540d9df559ecf39b3c0efed425d62b0058419d289fb4a8f5c5a25418",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 53,
+          "line_sha256": "98d8bd337e5a808b0d1ad546fabf75e582e4c8ec2da149fed8e6d3af9483d20c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 54,
+          "line_sha256": "8231e40df33c6f40f637df03fbe3bc8088a3278c6dd919940e496d88206e3532",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 55,
+          "line_sha256": "e8471ae1549386198a9d1628cb9004f2e7c399c29fcca98c91a16246e7a38a6f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 56,
+          "line_sha256": "c00c82a74f37a5a8adf3ded8bca059249ac5cf4c5ee8a784ebb468d55c6f3473",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 57,
+          "line_sha256": "9ccf97032b193d8e52587e0ecf27a62b3639f2d6b7adc0a3d180b334339e165b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 58,
+          "line_sha256": "a038bf966a176524f26e99ae206c11539745cbdd0fa456758d8e08fef7abfe3f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 59,
+          "line_sha256": "1b4381af47eb190d0a418b136e40ea1a3db6f843713e04611b332588fa2b70ee",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 60,
+          "line_sha256": "a9dc63fc7d3faebbd8ed468ae865c2e33158aca10431fb0399e61a09eeceaf08",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 61,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 62,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 63,
+          "line_sha256": "038097073db3cdc0397f8402bce65e2e5613fbdd2c506c4f50d42e508a05d163",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 64,
+          "line_sha256": "9ee309b689e0959f3202dd4563c375d3e6642a7f8a33d6ddd6c07aff2a0084a2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 65,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 66,
+          "line_sha256": "d6a9a86adf5559a2c6c5023689a210145995ca2ff230e859227d83906e4a58dd",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 67,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 68,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 69,
+          "line_sha256": "483a7fc7532916a2aaabf64a4adfb91cd1c9c28a47ef80cf793e1ec49c6ba9da",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 70,
+          "line_sha256": "8d93d9e786cb3ecd197c1facb7b8f78058d18e664fd27d6693e8a1edb7904a17",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 71,
+          "line_sha256": "a7d68178f33d586cbbc71734f9629425afbc2254c1d700b0062cb9afeb06e999",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 72,
+          "line_sha256": "c7ef9136e122ca5a6e09dccc3c495366a7dad04db131d39accf82c0cd2058355",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 73,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 74,
+          "line_sha256": "992144cf4bb8dd200110b02294ee0efdcac48c2f7f89d324d4902d4fd130993e",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 75,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 76,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 77,
+          "line_sha256": "23472b5539772bce1211826bc6d024a3a8c1e8675b0fa536ec3e4e86e575d969",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 78,
+          "line_sha256": "804d4297e96805f9c3b69cc6c2f5280b214f0fe87db21434207fcd1882ed6f8e",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 79,
+          "line_sha256": "55d11b19d267c482c02238e995648daeafa3f60eb27215a39284cfc5dcf56396",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 80,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 81,
+          "line_sha256": "99e1297efb079362600bd66270249e8b61f3347332decc3025e1f7da4504d39c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 82,
+          "line_sha256": "de838c39d5232d8fbecca7a91dc12021b6de1a4d339878d32926eb063630fb4b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 83,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 84,
+          "line_sha256": "9aa09bd2ec8ca38b5bfd30bbd1c3970fcfebf681c3e66125f24306a197a743e1",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 85,
+          "line_sha256": "d3c183b9afa6f8bc3f9e4ac2dbcdc73326295838f48874362b46e5cb6411149b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 86,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 87,
+          "line_sha256": "865b5c477bda246e1aedf8f930242abb9e70c9dcb5e45d043df0ba24a8c52943",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 88,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 89,
+          "line_sha256": "ded43485f808c3c759035abe5e6b1f106ea3e100b24efb4d876200c32e45db2f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 90,
+          "line_sha256": "563ca05a5cba58b7fbc337083b4e5551c8ba1bfa3d567f019a41a0af76ce0fd0",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 91,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 92,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 93,
+          "line_sha256": "2c3eb7f481f787139be66de969e02a707188e85ab44a2bd447301c4e5f76a1ee",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 94,
+          "line_sha256": "4fc4e8ccf1f7f317ff918d1ac02c5672bd1b7ee4c1fabb9b03ac51eb0e920c24",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 95,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 96,
+          "line_sha256": "d257cb308c87f10897a10ca360d73d78c6fed705f303def4305a809bf5d04837",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 97,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 98,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 99,
+          "line_sha256": "902f5468c896ed84117433986a8fab493500d1fb09f384338d4e9f66d85c1d83",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 100,
+          "line_sha256": "2137b0ef9b6c49f5f404204e9db90b3a1f6b2e3d9e458d6cd9b14350bba8fea3",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 101,
+          "line_sha256": "3b85dd6cbf8368d97c3507a261ee44f584423ec63a5c9ec6ccc4246f5b71bc93",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 102,
+          "line_sha256": "1643f68b37ce1342eb64a7f72dbecafa8ce02baba38db21a87b996a1d60dc952",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 103,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 104,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 105,
+          "line_sha256": "48332fe667bc51ac4a51ba0efe734441c90def55c60a26d7db275ecbbcf42f15",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        }
+      ],
+      "normalized_loc": null,
+      "normalized_loc_status": "unavailable-pending-Ruby-native-owner-qualification"
+    },
+    {
+      "source_sha256": "45d77609445db3378a7aba02d855a4e89b0cec9c6f85b4b09b182d88785db328",
+      "name": "fannkuchredux-ruby-2.rb",
+      "path": "compact/upstream/fannkuchredux-ruby-2.rb",
+      "expected_profiles": [
+        "fannkuchredux:fannkuchredux-ruby-2-cpu4",
+        "fannkuchredux:fannkuchredux-ruby-2-cpu4-zjit"
+      ],
+      "generic_api": "MiniParallel",
+      "support_line_ranges": [
+        [
+          10,
+          101
+        ]
+      ],
+      "application_line_ranges": [
+        [
+          1,
+          9
+        ],
+        [
+          102,
+          221
+        ]
+      ],
+      "submitted": {
+        "utf8_bytes": 5796,
+        "sha256": "45d77609445db3378a7aba02d855a4e89b0cec9c6f85b4b09b182d88785db328"
+      },
+      "candidate_application": {
+        "utf8_bytes": 3645,
+        "sha256": "47493c858f699c819d09a5d5718945bd002e6b3342d94f4b8ffcc8d59b3e611e"
+      },
+      "candidate_excluded_support": {
+        "utf8_bytes": 2151,
+        "sha256": "36082875bc4c7e17dd2b94e29cdf54afe43bba2f1e4145fd2a588e02dd26e2fb"
+      },
+      "review_segments": [
+        {
+          "start": 11,
+          "end": 25,
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "start": 27,
+          "end": 33,
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "start": 35,
+          "end": 37,
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "start": 41,
+          "end": 63,
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "start": 65,
+          "end": 71,
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "start": 73,
+          "end": 93,
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "start": 95,
+          "end": 100,
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        }
+      ],
+      "per_line_review": [
+        {
+          "line": 10,
+          "line_sha256": "d1c8983a8f0ae16f0391b0d1dd4cae4da2c67a8f74f877f895182821f33f5aed",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 11,
+          "line_sha256": "baeb8f134dfc94d61158f7130fc05f2e1e3b1d31bdca2485d35a3066f2361fce",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 12,
+          "line_sha256": "9a271500ca436090d24bdd972676187e840e51080982771ebed3316cd2a098dd",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 13,
+          "line_sha256": "4e9dd2d7960e2fa35f660f745ae6df955c635538f58cdfb240cc412a719a0024",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 14,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 15,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 16,
+          "line_sha256": "b8088e0c7f1cb217a1283b491f67cc4e6cd97d0645b2d78c3cdd02c6d7abf170",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 17,
+          "line_sha256": "f1a7fb101a4d33e804cc92e8b094948471a665967105cadef06eff7c363344d0",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 18,
+          "line_sha256": "490d0eed05c7cca1356366a9d7e03b79593bf9e0eed86d0479a7461755a9ae2e",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 19,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 20,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 21,
+          "line_sha256": "04f61928c2a161ce7c2578c1f6c8850c503fe0df3384c3962bdba80adf145473",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 22,
+          "line_sha256": "ca5024fe351eb615e7338bff864bc5653ec829a47f1b60970b99c23fa242f4db",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 23,
+          "line_sha256": "face94ba4fdf632e5930fe2d063c0546eeed443560fe78d2cfd3fc7d9509898c",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 24,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 25,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Worker pipe abstraction: initialize arbitrary handles, close them, serialize an index and load an arbitrary result."
+        },
+        {
+          "line": 26,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 27,
+          "line_sha256": "3432f13bf81adcb741d95a16bdb063892d651259a4b987691657d14222a9c1e2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 28,
+          "line_sha256": "d204a6789f311935ab14e00e525026a2618818e2bbe18ef6f6a718c7ecf9abb7",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 29,
+          "line_sha256": "6dd1c1a7b3b264a3b791ad5246b7120d2f8ee82788aca51861c620aca2d42f37",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 30,
+          "line_sha256": "1d45d1bb18524765f3fcf045e4958eeabf9f34918c419307fa10e6fa1fcba898",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 31,
+          "line_sha256": "d905317591f5fdab92576846ef349fc3af907a4bbb62912cf0cb19e67befa588",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 32,
+          "line_sha256": "5909a53a618d028e1d3000c0a7abceecbe5fb37f4e511efe46643fad6e66872f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 33,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic array/block map entry point and worker-count cap; no workload partition logic."
+        },
+        {
+          "line": 34,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 35,
+          "line_sha256": "bdb8fa13be03add1d3ad509f474ceb6eb76d1c738e6928c24318a56b547d9399",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 36,
+          "line_sha256": "3cc717a14293072214b74c0cb00702baebc6244ef27f5bb48ab82a76bb964cdf",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 37,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic cached CPU-count discovery; runtime shim policy is unchanged."
+        },
+        {
+          "line": 38,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 39,
+          "line_sha256": "0b51578b3a77194dccff4aa7379270a0234c69e4d82d5f21df4a3df719fc80e1",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 40,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 41,
+          "line_sha256": "5d67451c31fd50d0eeb917c7c9bfd9359eefb507417ecd2c98dab37d7f635906",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 42,
+          "line_sha256": "4b2dc5d38f32da4ee23af4ba6418d750d195540a8438402970280a326d865179",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 43,
+          "line_sha256": "fb3ad3d4d3d951f4ec775ab309269de021bdefe360f7738ac4690bdbab77164a",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 44,
+          "line_sha256": "d26f49047c9d586fd4bdf40e420c2f1160fa7629d2def0c6842cc6da60697e89",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 45,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 46,
+          "line_sha256": "9e6ce53de483ba66e3da3a885bee25e59abbdad2c039e72f6b65679bdcae79df",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 47,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 48,
+          "line_sha256": "c884bb00540d9df559ecf39b3c0efed425d62b0058419d289fb4a8f5c5a25418",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 49,
+          "line_sha256": "98d8bd337e5a808b0d1ad546fabf75e582e4c8ec2da149fed8e6d3af9483d20c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 50,
+          "line_sha256": "9ba543626d0ea808ea005bcb06ded52db3334aced2b0f6a948b8629499456ccf",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 51,
+          "line_sha256": "393c08ec43fe2fdcdcc81ed3569930894ae844b17ad903160ab3389e354922a4",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 52,
+          "line_sha256": "980bd6b9cf300a4620dce7cd839c140adf63904ba16e93acce4c39218476afa1",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 53,
+          "line_sha256": "fef1beda4ceff2292f615915a68a6b81caec7d8b2c2303eb9f1086d34df9897b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 54,
+          "line_sha256": "579e74f7b807c822dfa21c086edc60125fd2e9f70f0fba3e1f0e92edf372a273",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 55,
+          "line_sha256": "47be7369143110e28b2e2216698e90f5112794c7ee96e1e94495cce6907fd89a",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 56,
+          "line_sha256": "a9dc63fc7d3faebbd8ed468ae865c2e33158aca10431fb0399e61a09eeceaf08",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 57,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 58,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 59,
+          "line_sha256": "038097073db3cdc0397f8402bce65e2e5613fbdd2c506c4f50d42e508a05d163",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 60,
+          "line_sha256": "9ee309b689e0959f3202dd4563c375d3e6642a7f8a33d6ddd6c07aff2a0084a2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 61,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 62,
+          "line_sha256": "d6a9a86adf5559a2c6c5023689a210145995ca2ff230e859227d83906e4a58dd",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 63,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic process-map queue: mutex-protected index dispatch, ordered results, thread/process joins."
+        },
+        {
+          "line": 64,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 65,
+          "line_sha256": "483a7fc7532916a2aaabf64a4adfb91cd1c9c28a47ef80cf793e1ec49c6ba9da",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 66,
+          "line_sha256": "8d93d9e786cb3ecd197c1facb7b8f78058d18e664fd27d6693e8a1edb7904a17",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 67,
+          "line_sha256": "a7d68178f33d586cbbc71734f9629425afbc2254c1d700b0062cb9afeb06e999",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 68,
+          "line_sha256": "c7ef9136e122ca5a6e09dccc3c495366a7dad04db131d39accf82c0cd2058355",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 69,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 70,
+          "line_sha256": "992144cf4bb8dd200110b02294ee0efdcac48c2f7f89d324d4902d4fd130993e",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 71,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Construct an arbitrary requested number of generic workers."
+        },
+        {
+          "line": 72,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 73,
+          "line_sha256": "23472b5539772bce1211826bc6d024a3a8c1e8675b0fa536ec3e4e86e575d969",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 74,
+          "line_sha256": "804d4297e96805f9c3b69cc6c2f5280b214f0fe87db21434207fcd1882ed6f8e",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 75,
+          "line_sha256": "55d11b19d267c482c02238e995648daeafa3f60eb27215a39284cfc5dcf56396",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 76,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 77,
+          "line_sha256": "99e1297efb079362600bd66270249e8b61f3347332decc3025e1f7da4504d39c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 78,
+          "line_sha256": "de838c39d5232d8fbecca7a91dc12021b6de1a4d339878d32926eb063630fb4b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 79,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 80,
+          "line_sha256": "9aa09bd2ec8ca38b5bfd30bbd1c3970fcfebf681c3e66125f24306a197a743e1",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 81,
+          "line_sha256": "d3c183b9afa6f8bc3f9e4ac2dbcdc73326295838f48874362b46e5cb6411149b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 82,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 83,
+          "line_sha256": "865b5c477bda246e1aedf8f930242abb9e70c9dcb5e45d043df0ba24a8c52943",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 84,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 85,
+          "line_sha256": "ded43485f808c3c759035abe5e6b1f106ea3e100b24efb4d876200c32e45db2f",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 86,
+          "line_sha256": "563ca05a5cba58b7fbc337083b4e5551c8ba1bfa3d567f019a41a0af76ce0fd0",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 87,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 88,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 89,
+          "line_sha256": "2c3eb7f481f787139be66de969e02a707188e85ab44a2bd447301c4e5f76a1ee",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 90,
+          "line_sha256": "4fc4e8ccf1f7f317ff918d1ac02c5672bd1b7ee4c1fabb9b03ac51eb0e920c24",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 91,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 92,
+          "line_sha256": "d257cb308c87f10897a10ca360d73d78c6fed705f303def4305a809bf5d04837",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 93,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic pipe/fork lifecycle and dispatch of the caller-provided block; no benchmark callback is hardcoded."
+        },
+        {
+          "line": 94,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 95,
+          "line_sha256": "902f5468c896ed84117433986a8fab493500d1fb09f384338d4e9f66d85c1d83",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 96,
+          "line_sha256": "2137b0ef9b6c49f5f404204e9db90b3a1f6b2e3d9e458d6cd9b14350bba8fea3",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 97,
+          "line_sha256": "3b85dd6cbf8368d97c3507a261ee44f584423ec63a5c9ec6ccc4246f5b71bc93",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 98,
+          "line_sha256": "1643f68b37ce1342eb64a7f72dbecafa8ce02baba38db21a87b996a1d60dc952",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 99,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 100,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic job server: deserialize an index and serialize caller block(array[index]) result."
+        },
+        {
+          "line": 101,
+          "line_sha256": "48332fe667bc51ac4a51ba0efe734441c90def55c60a26d7db275ecbbcf42f15",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        }
+      ],
+      "normalized_loc": null,
+      "normalized_loc_status": "unavailable-pending-Ruby-native-owner-qualification"
+    },
+    {
+      "source_sha256": "01d3079dc51dba4defb49d74574dceea591d7642c24fa23014286c9b3c55eb44",
+      "name": "spectralnorm-ruby-5.rb",
+      "path": "compact/upstream/spectralnorm-ruby-5.rb",
+      "expected_profiles": [
+        "spectralnorm:spectralnorm-ruby-5",
+        "spectralnorm:spectralnorm-ruby-5-zjit"
+      ],
+      "generic_api": "Worker.map",
+      "support_line_ranges": [
+        [
+          5,
+          74
+        ]
+      ],
+      "application_line_ranges": [
+        [
+          1,
+          4
+        ],
+        [
+          75,
+          125
+        ]
+      ],
+      "submitted": {
+        "utf8_bytes": 2225,
+        "sha256": "01d3079dc51dba4defb49d74574dceea591d7642c24fa23014286c9b3c55eb44"
+      },
+      "candidate_application": {
+        "utf8_bytes": 907,
+        "sha256": "9c854122e2124fa1a799044093a0357ebb7f9e71f0c2c6e989d6efab9bf34d65"
+      },
+      "candidate_excluded_support": {
+        "utf8_bytes": 1318,
+        "sha256": "56c5ac2010ac0a6a44cd1fd6b82dd22e2d1b106bde3aaa861d47bb216aa00c00"
+      },
+      "review_segments": [
+        {
+          "start": 7,
+          "end": 7,
+          "reason": "Expose a generic reader handle."
+        },
+        {
+          "start": 9,
+          "end": 23,
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "start": 25,
+          "end": 33,
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "start": 35,
+          "end": 37,
+          "reason": "Serialize an arbitrary message to the parent."
+        },
+        {
+          "start": 39,
+          "end": 63,
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "start": 65,
+          "end": 73,
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        }
+      ],
+      "per_line_review": [
+        {
+          "line": 5,
+          "line_sha256": "db7fcba1c12dfc0b53eea816797e573d80ed2c4de1fd6215ffc0f139d34b4a06",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 6,
+          "line_sha256": "8855c6119660c614d285554e51769066e94fcb75ff215ccc2fa6b4838b18756b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 7,
+          "line_sha256": "2e59d82f984e7adf7a88e74798dbfb052a916ee6b35b3982c3d278fb3560b67c",
+          "role": "candidate-reusable-support",
+          "reason": "Expose a generic reader handle."
+        },
+        {
+          "line": 8,
+          "line_sha256": "8855c6119660c614d285554e51769066e94fcb75ff215ccc2fa6b4838b18756b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 9,
+          "line_sha256": "79234575049b66655a224845356a02ccc180765569b31d45dd553537940f1b4c",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 10,
+          "line_sha256": "393f0474e55b7cc134a8b9734f82ae5a43ba908153826000e99091b50b7a835c",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 11,
+          "line_sha256": "17a184f6182a25181a19abab2e5b2a1008f5979aec64b29e0e193c8d5cdc7ba5",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 12,
+          "line_sha256": "a032a1fbfda682cf780a098cd29d11b3efd9c5790b99153256defa3aef52949f",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 13,
+          "line_sha256": "63ad8e85349fe11819885976ef96cbe3f6f65c288b290713acadbdf9a9280388",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 14,
+          "line_sha256": "4ec415ebab38639d91964bbe3ba3439a7e18b2032ba89615ad8efbe4ab140f6a",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 15,
+          "line_sha256": "03e88438f3c62efefab36662464a3dcccbcdf8b7eca53a26090d101c3b5597e7",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 16,
+          "line_sha256": "37a769a677fc54417e5faa7c2f208f84ddcc8f3f7c6a5fc6344bd726c83e1ae4",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 17,
+          "line_sha256": "664e2bea6327389070e785d09a770b4ae07c076a038ebac672725ace53409994",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 18,
+          "line_sha256": "6c5d29fec4df0bc2e5ddd128dfd32a7eb8e8f454d241b65409d2addf9e799f9b",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 19,
+          "line_sha256": "e5d1e1fc634cb55dbc5b0b9a456c8dbfef260f494d4c64a742e80311f641b87d",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 20,
+          "line_sha256": "d57ddd18447673d0a7f369d6f96b666c4f73c88d64f9dbe3ca22835ccf8ff750",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 21,
+          "line_sha256": "03e88438f3c62efefab36662464a3dcccbcdf8b7eca53a26090d101c3b5597e7",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 22,
+          "line_sha256": "3b2fba137c3a226d9d04a507dcc8ce69499ad00b694643e250a23ec34a06fd1d",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 23,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Retain arbitrary enumeration/worker index and fork its caller-provided block over generic pipe handles."
+        },
+        {
+          "line": 24,
+          "line_sha256": "8855c6119660c614d285554e51769066e94fcb75ff215ccc2fa6b4838b18756b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 25,
+          "line_sha256": "e9eb748fb0a41adfa1478ca841cfcd5e4b2a9e08c6622c9a5ee1e77348391af8",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 26,
+          "line_sha256": "d7cbd6f62d15c2399ca0d792bf1db9cd1f19d645981445f95821443fba64cd8f",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 27,
+          "line_sha256": "63ad8e85349fe11819885976ef96cbe3f6f65c288b290713acadbdf9a9280388",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 28,
+          "line_sha256": "9aafead2087444c8fbf9630a4d4441aa7286dc7cbb0d4dc460ffa5e5dee19b25",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 29,
+          "line_sha256": "0a9666dd47d7d0f4b5c2e36db1f50fd164191154f47cb2a5a53a21b99e5e2a21",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 30,
+          "line_sha256": "8908a560b93af629df3bd2a63b6bdd789ebf3d2346544557d4a56d4533e5159c",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 31,
+          "line_sha256": "30abb1d0c99b026b0ba0cae3bd33c9b4ca38f83fce7dea2f9af06564f2819686",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 32,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 33,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Partition enumeration indices across workers and return indexed arbitrary callback results; no dense-product formula."
+        },
+        {
+          "line": 34,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 35,
+          "line_sha256": "b4f5cc2b88bb1503735d5e51e16d1efa5029d07ee613dab5ab45ebb6847dbad3",
+          "role": "candidate-reusable-support",
+          "reason": "Serialize an arbitrary message to the parent."
+        },
+        {
+          "line": 36,
+          "line_sha256": "95a6b7f37b666b2c9d6a95d8e6efd2c8d357687367c4845a6d4599475881d4ff",
+          "role": "candidate-reusable-support",
+          "reason": "Serialize an arbitrary message to the parent."
+        },
+        {
+          "line": 37,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Serialize an arbitrary message to the parent."
+        },
+        {
+          "line": 38,
+          "line_sha256": "8855c6119660c614d285554e51769066e94fcb75ff215ccc2fa6b4838b18756b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 39,
+          "line_sha256": "80d74cbfcf806a33c1eff1eb0d449b89618269e2d7800283d8f2589e6c69dc46",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 40,
+          "line_sha256": "e33977840b838567655255e1b7059273727816362dfe60f3912bba42558207f1",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 41,
+          "line_sha256": "449b3f34d621b4bdbb701e5448612be3914ff291650de59529d9c432c4442d5c",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 42,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 43,
+          "line_sha256": "0afc761c0855de2447d70ea10ae161204c0362aa1b51404b51a6861885545faf",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 44,
+          "line_sha256": "5c7b2b0a38ef829e598fa7390cc82b19cd8eb337c151e0411f208c10757e5400",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 45,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 46,
+          "line_sha256": "c0ccc91f026b92e59a0f4092b1520388cb5426bd1da63795a09ba5791de90840",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 47,
+          "line_sha256": "74edf21b1c3e83b188e5c989c6b6aa91cac6e46f108fcdaa8b4a49ba404056ae",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 48,
+          "line_sha256": "93721c1b0e1d6c553d10cd4c7d07ad5ca41f8ecad1d8e410a490a85be9405cad",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 49,
+          "line_sha256": "a92a19178f97e2c1592192af493529e649fe45ee67f45c688a068d092c422df8",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 50,
+          "line_sha256": "f58dd1aca79854343f8b002e38edbda8c8161178f262ff0b0504d53b5a8a98cb",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 51,
+          "line_sha256": "a3e780df437c95d4075a470877167f7870b8ae1251f9d23d80df6135618342c8",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 52,
+          "line_sha256": "016f17b771eb261b8adb02645f1e26d66dfe1dadf6bb31cc2e684454a5a04856",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 53,
+          "line_sha256": "a9dc63fc7d3faebbd8ed468ae865c2e33158aca10431fb0399e61a09eeceaf08",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 54,
+          "line_sha256": "83f93cad4c6e1e473d7b2e763eff1070e58086ae4cded4383d9d9fdb7922d793",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 55,
+          "line_sha256": "3e6db4475132afe3390b3232c6e57f987f2f930548e9be52cb3a6f84d50180f0",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 56,
+          "line_sha256": "944ebe0318e7d148598c3e952ad981dfe1e01fc1fc7ac8347ff67b2f8b1b2a75",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 57,
+          "line_sha256": "b5a396694dc112f288a3e2730da48c8d0bf35397f64ced2a7add5f7031450497",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 58,
+          "line_sha256": "d57ddd18447673d0a7f369d6f96b666c4f73c88d64f9dbe3ca22835ccf8ff750",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 59,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 60,
+          "line_sha256": "63ad8e85349fe11819885976ef96cbe3f6f65c288b290713acadbdf9a9280388",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 61,
+          "line_sha256": "469805a5291e14cda39f019c8f367df908a0fb3db306e6efbec2a6c24e159588",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 62,
+          "line_sha256": "ff4f7a39f9ec1d351c0b24ee7f599444c87f642f8183028d1ce3d49d885c78e7",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 63,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Gather arbitrary indexed results from selectable pipes, handle EOF and wait for children."
+        },
+        {
+          "line": 64,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 65,
+          "line_sha256": "0f2dc5a3564a52926edb2b173f5ee7221e4ab475ac7973416acbbd78150f8f8d",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 66,
+          "line_sha256": "e714ce5f968b2524afde1d5e0f2d19149553604ac60e33ebe719f9b3039f3805",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 67,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 68,
+          "line_sha256": "cb831d2370dee633c30cf859b9b773f01a54c32ba01982063875c37078dcdf6e",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 69,
+          "line_sha256": "3ec59f0352a1e3c1eb11d700354d838feb27ae28b669e73a49eb8fffe04c6ca2",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 70,
+          "line_sha256": "e4d3897a0f9d69c9db81bc977415e40b722a5d44dde5bd8f726451baed248a40",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 71,
+          "line_sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 72,
+          "line_sha256": "e0adbaa6b92b5e937de2cf0f0e0d3d342e26e50c0336c502acdad2c263525e0c",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 73,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Generic enumeration/block map entry point with a default worker count."
+        },
+        {
+          "line": 74,
+          "line_sha256": "48332fe667bc51ac4a51ba0efe734441c90def55c60a26d7db275ecbbcf42f15",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        }
+      ],
+      "normalized_loc": null,
+      "normalized_loc_status": "unavailable-pending-Ruby-native-owner-qualification"
+    },
+    {
+      "source_sha256": "affb193beb99fee220ef23a08581d99d901f9c2722b26ef7b1351aacf2d0f5af",
+      "name": "knucleotide-ruby-1.rb",
+      "path": "compact/upstream/knucleotide-ruby-1.rb",
+      "expected_profiles": [
+        "knucleotide:knucleotide-ruby-1",
+        "knucleotide:knucleotide-ruby-1-zjit"
+      ],
+      "generic_api": "Worker",
+      "support_line_ranges": [
+        [
+          44,
+          62
+        ]
+      ],
+      "application_line_ranges": [
+        [
+          1,
+          43
+        ],
+        [
+          63,
+          71
+        ]
+      ],
+      "submitted": {
+        "utf8_bytes": 1423,
+        "sha256": "affb193beb99fee220ef23a08581d99d901f9c2722b26ef7b1351aacf2d0f5af"
+      },
+      "candidate_application": {
+        "utf8_bytes": 1146,
+        "sha256": "547f969c0ef77ce9edf5bc38957991666d09aecef1034dbb30016d8a27a61e73"
+      },
+      "candidate_excluded_support": {
+        "utf8_bytes": 277,
+        "sha256": "79368a38e9c5125140c79fcb57f05360659ce102fe002ab4a02be78f5574f54c"
+      },
+      "review_segments": [
+        {
+          "start": 45,
+          "end": 54,
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "start": 56,
+          "end": 61,
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        }
+      ],
+      "per_line_review": [
+        {
+          "line": 44,
+          "line_sha256": "db7fcba1c12dfc0b53eea816797e573d80ed2c4de1fd6215ffc0f139d34b4a06",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 45,
+          "line_sha256": "86ea921e9b2e318768ffeca49a29f1554f051cc88926ae2a0be5f504320ae40e",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 46,
+          "line_sha256": "3660c988a7eefadae89c2b035083ae3a511eeae3b2949375162a80e45e32c917",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 47,
+          "line_sha256": "37a769a677fc54417e5faa7c2f208f84ddcc8f3f7c6a5fc6344bd726c83e1ae4",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 48,
+          "line_sha256": "04c15fc95a72bab88c9c0747cefbc37aff01ac9a811da07f46ac829c10629ecd",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 49,
+          "line_sha256": "96b90ca6348f3b68e86aaaa7c2c373dea04a8e9f0e4ac4cd9e71be7f3ca784c5",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 50,
+          "line_sha256": "83b91a1ffa71323c43dbe623b1ac58796229590f08402a782b57b9b6cfa6e6fa",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 51,
+          "line_sha256": "d57ddd18447673d0a7f369d6f96b666c4f73c88d64f9dbe3ca22835ccf8ff750",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 52,
+          "line_sha256": "03e88438f3c62efefab36662464a3dcccbcdf8b7eca53a26090d101c3b5597e7",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 53,
+          "line_sha256": "cd8a2696acea67b8741b8c0fce8afbcc149e423ea9ef0a086bf3983020d90d09",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 54,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Generic arbitrary-block fork, byte-output pipe and descriptor lifecycle; no sequence/frequency method is named."
+        },
+        {
+          "line": 55,
+          "line_sha256": "8855c6119660c614d285554e51769066e94fcb75ff215ccc2fa6b4838b18756b",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        },
+        {
+          "line": 56,
+          "line_sha256": "a7e50c5dcc6ebe5da8acb63fbd77c522a9c873aa8e5a4fe1a01301db4bea1e11",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 57,
+          "line_sha256": "aa9f478d6f59fdb8ca7080ee5b4b56afb190b63babf77b83bb9d04e45715184f",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 58,
+          "line_sha256": "16fee08b97efa4e859ede237a48ed4e54d2dcfbfbc30d4c45b23b968377f1321",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 59,
+          "line_sha256": "6b5039412dc14822c10b1aba862780a01ae258d3a933ef1265421c763df64f14",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 60,
+          "line_sha256": "ceb52c0281c63b84eb6582f9100643a6137cf0708e6f9f032939a553d19ffb44",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 61,
+          "line_sha256": "779811c5fbe25c3d4e5f3d1fd35ab9da6bcf8a68c5edf9d6ba97f68686c39680",
+          "role": "candidate-reusable-support",
+          "reason": "Read the arbitrary worker output, close the descriptor and wait for that child."
+        },
+        {
+          "line": 62,
+          "line_sha256": "48332fe667bc51ac4a51ba0efe734441c90def55c60a26d7db275ecbbcf42f15",
+          "role": "candidate-reusable-support",
+          "reason": "Enclosing generic class/module syntax, visibility marker or separator within the reviewed API definition."
+        }
+      ],
+      "normalized_loc": null,
+      "normalized_loc_status": "unavailable-pending-Ruby-native-owner-qualification"
+    }
+  ],
+  "deferred": [
+    {
+      "source_name": "revcomp-ruby-4.rb",
+      "line_ranges": [
+        [
+          31,
+          60
+        ]
+      ],
+      "reason": "forking_worker calls the fixed original_process_segment callback; keep this benchmark-coupled bridge and record dispatch counted until a narrower review."
+    },
+    {
+      "source_name": "regexredux-ruby-3.rb",
+      "line_ranges": [
+        [
+          53,
+          65
+        ]
+      ],
+      "reason": "forked_pattern_count calls the fixed original_pattern_count callback; keep the wrapper and nine-pattern orchestration counted."
+    }
+  ],
+  "limits": [
+    "No Ruby parser/native ownership count is qualified here; do not subtract physical rows from retained LOC.",
+    "Proposed raw scopes include original comments and whitespace and concatenate kept complete rows without synthetic separators.",
+    "gzip/BPE/formatted metrics require separate regeneration only after boundary approval; current report is not changed."
+  ]
+}

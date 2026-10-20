@@ -12,6 +12,8 @@ const spec={benchmarks:defaults.benchmarks,languages:defaults.languages,ellipses
 const normalize=view=>({...view,...Object.fromEntries(['benchmarks','languages','ellipses','disabled','collapsedFamilies'].map(k=>[k,[...view[k]].sort()]))});
 const roundtrip=view=>assert.deepEqual(normalize(decodeView(encodeView(view,defaults),defaults,spec)),normalize(view));
 roundtrip(defaults);
+for(const locMetric of ['canonical','formatted','bytes','gzip','bpe'])roundtrip({...defaults,locMetric});
+assert.equal(decodeView('#v=1&locMetric=unqualified-logical',defaults,spec).locMetric,'canonical');
 roundtrip({...defaults,benchmarks:[],languages:[],ellipses:[],disabled:['p'],collapsedFamilies:['lean'],
   fast:false,small:false,global:true,focusMeans:false,sampleMode:'off',medianMode:'off',densityMode:'highlight',
   releaseYearStart:2000,releaseYear:2020,playbackYear:2010,traits:{memory:['rc']},benchmarkFilters:{resource:['compute']},

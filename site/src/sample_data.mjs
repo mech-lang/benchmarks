@@ -23,7 +23,7 @@ export function sampleRows(data,catalog={...data.program_inventory,...data.progr
     const implementations=[p,...related];
     const authorship=p.authorship?.label??'Unverified';
     const ai=p.authorship?.ai,ai_model=ai?.status==='not-applicable'?'—':
-      ai?.models?.length?ai.models.join(', ')+(ai.status==='partial-source-writes'?' (partial)':''):'Model unverified';
+      ai?.models?.length?ai.models.join(', ')+(ai.status==='partial-source-writes'?' (partial)':''):ai?.model_family?`${ai.model_family} family · exact version unverified`:'Model unverified';
     const terms=p.authorship?.license;
     const license=[...new Set(terms?.licenses?.map(l=>l.id)??[])].join(' + ')+(terms?.status==='partial'?' (partial)':'')||'Unverified';
     const reproduction=data.reproducibility?.[p.key]??null;

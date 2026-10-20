@@ -12,6 +12,7 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | fasta | [nim-fasta-optimized](fasta/nim-fasta-optimized/program.json) | 77 | 2.94848 | 3 |
 | knucleotide | [nim-knucleotide-compact](knucleotide/nim-knucleotide-compact/program.json) | 37 | 31.1244 | 3 |
 | knucleotide | [nim-knucleotide-optimized](knucleotide/nim-knucleotide-optimized/program.json) | 72 | 3.58565 | 3 |
+| knucleotide | [nim-knucleotide-preencoded-v1](knucleotide/nim-knucleotide-preencoded-v1/program.json) | 72 | 2.60608 | 3 |
 | mandelbrot | [nim-mandelbrot-compact](mandelbrot/nim-mandelbrot-compact/program.json) | 26 | 11.2086 | 3 |
 | mandelbrot | [nim-mandelbrot-optimized](mandelbrot/nim-mandelbrot-optimized/program.json) | 51 | 1.27291 | 3 |
 | nbody | [nim-nbody-compact](nbody/nim-nbody-compact/program.json) | 97 | 1.57208 | 3 |

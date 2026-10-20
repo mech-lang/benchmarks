@@ -180,6 +180,18 @@ def historical_catalog(root, current):
     if 'ruby_zjit_audit' in current:
         from qualification.import_ruby_zjit import append_catalog
         expected = append_catalog(expected, root)
+    if 'bqn_knucleotide_audit' in current:
+        from qualification.import_bqn_knucleotide import append_catalog
+        expected = append_catalog(expected, root)
+    if 'nim_knucleotide_audit' in current:
+        from qualification.import_nim_knucleotide import append_catalog
+        expected = append_catalog(expected, root)
+    if 'matlab_regex_case_audit' in current:
+        from qualification.import_matlab_regex import append_catalog
+        expected = append_catalog(expected, root)
+    if 'bqn_spectral_audit' in current:
+        from qualification.import_bqn_spectral import append_catalog
+        expected = append_catalog(expected, root)
     assert current == expected, 'Current catalog differs from the validated source-accounting transformation'
     assert report == receipt['transformation'], 'Source-accounting result differs'
     return before

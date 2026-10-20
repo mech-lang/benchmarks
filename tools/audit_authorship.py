@@ -202,6 +202,24 @@ def audit(data,models):
             'models':model_ids,'status':ai_status,'matched_source_files':matched_files,'total_source_files':len(p['files']),
             'evidence':matches},'license':{'status':status,'licenses':licenses,'unresolved':sorted(set(unresolved))},
             'evidence':sorted(set(evidence))}
+        # This later optimization has a source-bound admission packet and a
+        # known current contributor family. Its predecessor's original author,
+        # exact model and inherited terms remain unresolved. Never infer these
+        # facts for another BQN file from a missing citation or shared language.
+        if key=='knucleotide:array-bqn-occurrence-frame':
+            from qualification.import_bqn_knucleotide import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
+        if key=='knucleotide:nim-knucleotide-preencoded-v1':
+            from qualification.import_nim_knucleotide import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
+        # These exact sources were written in the archived 20261012 cohort.
+        # Current evidence review cannot establish their source-writing model.
+        if key in {'regexredux:matlab-case-compact','regexredux:matlab-case-optimized'}:
+            from qualification.import_matlab_regex import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
+        if key=='spectralnorm:array-bqn-native-sum':
+            from qualification.import_bqn_spectral import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

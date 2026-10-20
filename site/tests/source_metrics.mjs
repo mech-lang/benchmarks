@@ -36,6 +36,8 @@ const csv=samplesCSV([record]);
 for(const name of ['normalized_application_loc','normalized_loc_status','qualified_formatted_loc','application_utf8_bytes',
   'submitted_gzip_bytes','excluded_support_cl100k_base_tokens','source_metrics','source_metric_definitions'])assert.ok(csv.split('\r\n')[0].split(',').includes(name));
 assert.ok(csv.includes('retained-not-uniformly-recertified'));assert.ok(csv.includes('cl100k_base'));
+const familyRows=sampleRows({...data,programs:{[program.key]:{...program,authorship:{label:'AI adapted',ai:{models:[],model_family:'Codex GPT-6',status:'family-identified-exact-model-unverified'}}}}});
+assert.equal(familyRows[0].ai_model,'Codex GPT-6 family · exact version unverified');
 const absent=sourceSizeFields({...program,source_metrics:undefined});
 assert.equal(absent.application_utf8_bytes,null);assert.equal(absent.application_cl100k_base_tokens,null);
 const disabled=sourceSizeFields({...program,source_metrics:{...metrics,application:{...metrics.application,cl100k_base_tokens:null}}});

@@ -3,6 +3,7 @@
 import argparse
 import csv
 import hashlib
+import importlib
 import importlib.util
 import json
 from pathlib import Path, PurePosixPath
@@ -201,6 +202,33 @@ def check_v(root, data, catalog, migration):
     return {'v_forms': len(forms), 'v_samples': 60, 'v_endpoint_programs': len(selected), 'matched_mech_samples': len(controls)}
 
 
+def check_model_evidence(root, data, key, program, source_models):
+    """Keep archived model events separate from exact-source family evidence."""
+    authorship = program.get('authorship', {})
+    require(authorship.get('schema') == 'benchmark-authorship.v1'
+            and authorship.get('source_sha256') == program['files'],
+            f'Authorship source binding differs: {key}')
+    bound = {
+        'knucleotide:array-bqn-occurrence-frame': 'import_bqn_knucleotide',
+        'knucleotide:nim-knucleotide-preencoded-v1': 'import_nim_knucleotide',
+        'spectralnorm:array-bqn-native-sum': 'import_bqn_spectral',
+    }
+    if key in bound:
+        module = importlib.import_module('qualification.' + bound[key])
+        require(authorship == module.bound_authorship(data, program, root),
+                f'Authorship admission evidence differs: {key}')
+        return
+    # No missing archived event, unsupported status or shared model family can
+    # establish a historical write. This exact comparison remains unchanged
+    # for every program outside the three source-bound additions above.
+    expected = [] if authorship.get('kind') == 'upstream' else [
+        row for digest in program['files'] for row in source_models.get(digest, [])]
+    require(authorship.get('ai', {}).get('evidence') == expected
+            and authorship['ai']['models'] == sorted({row['model'] for row in expected})
+            and not authorship['ai'].get('model_family'),
+            f'Authorship model evidence differs: {key}')
+
+
 def verify(root, check_index=False):
     root = Path(root).resolve()
     data = read_json(root / 'data/benchmarks.json')
@@ -212,13 +240,7 @@ def verify(root, check_index=False):
     if any('authorship' in p for p in catalog.values()):
         source_models=read_json(root/'data/source-model-evidence.json')['files']
         for key,p in catalog.items():
-            a=p.get('authorship',{})
-            require(a.get('schema')=='benchmark-authorship.v1' and a.get('source_sha256')==p['files'],
-                    f'Authorship source binding differs: {key}')
-            expected=[] if a.get('kind')=='upstream' else [row for f in p['files'] for row in source_models.get(f,[])]
-            require(a.get('ai',{}).get('evidence')==expected and
-                    a['ai']['models']==sorted({row['model'] for row in expected}),
-                    f'Authorship model evidence differs: {key}')
+            check_model_evidence(root,data,key,p,source_models)
     for key, source in data['files'].items():
         require(hashlib.sha256(source['code'].encode('utf-8')).hexdigest() == source['sha256'],
                 f'Dataset source hash mismatch: {key}')

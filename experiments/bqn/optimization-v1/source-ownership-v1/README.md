@@ -1,6 +1,6 @@
-# Exact-source BQN ownership review awaiting root inspection
+# Exact-source BQN ownership review
 
-The frame candidate has 43 nonblank, noncomment physical lines. A proposed extension of the retained BQN manual rule gives 48 units. Each chunk candidate has 54 physical lines and a proposed 59 units. These are review evidence, not newly admitted canonical LOC. Every receipt has `application_loc: null` and `independent_review_approved: false`.
+The frame candidate has 43 nonblank, noncomment physical lines and 48 application units under an independently reviewed extension of the retained BQN manual rule. Its receipt records approval and the admitted exact-source count. Each chunk candidate has 54 physical lines and a proposed 59 units; those receipts remain unapproved and have `application_loc: null`.
 
 The retained baseline is exactly replayed as 36 physical lines plus its two saved packed-line adjustments (one and two), yielding its existing 39. The historical rule in `archive/comparisons/array-comparison/all-20261009/audit_sources.py` is physical lines plus exact-source manual adjustments. It is not a general BQN grammar certificate. In particular, its written closing lines count physically, and its case separators do not independently increase the count.
 

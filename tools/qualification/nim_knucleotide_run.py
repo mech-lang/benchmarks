@@ -16,13 +16,20 @@ def main():
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument('--output',type=Path,required=True)
     p.add_argument('--full',action='store_true')
+    p.add_argument('--build-plan',type=Path,default=HERE/'matched-build-plan.json')
+    p.add_argument('--include-controls',action='store_true')
     p.add_argument('--samples',type=int,default=1)
     args=p.parse_args()
     assert args.samples>0 and not args.output.exists()
-    plan=json.loads((HERE/'matched-build-plan.json').read_text())
+    plan=json.loads(args.build_plan.read_text())
+    if args.include_controls:
+        plan['commands'] = json.loads((HERE/'matched-build-plan.json').read_text())['commands']+plan['commands']
     builds={r['id']:r for r in plan['commands']}
     pins={}
     args.output.mkdir(parents=True)
+    shutil.copyfile(__file__,args.output/'controller.py')
+    shutil.copyfile(ROOT/'tools/qualification/lean_run.py',args.output/'process_controller.py')
+    shutil.copyfile(args.build_plan,args.output/'build-plan.json')
     for name,row in builds.items():
         source,binary=Path(row['source']),Path(row['binary'])
         receipt=json.loads((source.parent/'build.json').read_text())
@@ -41,7 +48,7 @@ def main():
     report=dict(schema='nim-knucleotide-execution.v1',status='RUNNING',chart_admission=False,full_workload=args.full,
         source_commit=__import__('subprocess').check_output(['git','rev-parse','HEAD'],text=True).strip(),
         controller_sha256=sha(__file__),shared_process_controller_sha256=sha(ROOT/'tools/qualification/lean_run.py'),
-        matched_build_plan_sha256=sha(HERE/'matched-build-plan.json'),pins=pins,
+        build_plan=dict(path=str(args.build_plan),sha256=sha(args.build_plan)),included_controls=args.include_controls,pins=pins,
         timing_boundary='Fresh executable process through exit, all startup/input/worker threads/output included; no compilation or validation in timer.',
         orders=[],cases=[])
     rng=random.Random(20261020)

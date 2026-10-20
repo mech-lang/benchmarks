@@ -1,0 +1,115 @@
+{
+  "schema": "matlab-optimization-plan.v1",
+  "status": "source-prepared-not-run",
+  "benchmark": "knucleotide",
+  "parent_program_key": "knucleotide:matlab-compact",
+  "parent_source": {
+    "path": "archive/comparisons/matlab-comparison/20261010/sources/knucleotide_compact.m",
+    "sha256": "f322d78633d9ce2cce9313d0ea57475e52d3d3edca159615e669a571ec0e5f13",
+    "ownership": {
+      "classification": "suite-authored",
+      "reason": "A retained source-origin assertion explicitly identifies local implementation; this does not establish an AI author or exclude earlier influences.",
+      "preserve_upstream_source": false,
+      "upstream_identity": "not-established",
+      "original_lineage_status": "unresolved",
+      "origin_gaps": [
+        "Original implementation source not established; a workload description or collection is not an original-source citation."
+      ],
+      "existing_authorship_kind": "local-origin-unverified",
+      "existing_ai_evidence_status": "unverified",
+      "existing_ai_models": [],
+      "ai_authorship_inferred": false,
+      "parent_programs": [],
+      "sources": [],
+      "evidence": [
+        "archive/comparisons/matlab-comparison/20261010/source-audit.json"
+      ],
+      "retained_source_assertion": "Local MATLAB implementation of the official required algorithm; no published MATLAB timing or source ranking is claimed."
+    }
+  },
+  "candidate": {
+    "path": "experiments/matlab/optimization-v1/sources/knucleotide-default/knucleotide_compact.m",
+    "sha256": "77830cd398c5f3875da72fdbb60884503d2e9dfd99958316a85d8a5f05fb1c59",
+    "exact_unified_diff": "--- archive/comparisons/matlab-comparison/20261010/sources/knucleotide_compact.m\n+++ experiments/matlab/optimization-v1/sources/knucleotide-default/knucleotide_compact.m\n@@ -23,7 +23,7 @@\n     for offset = 1:width\n         words = 4*words+codes(offset:end-width+offset);\n     end\n-    counts = dictionary(words,0);\n+    counts = configureDictionary('double','double');\n     for frame = 1:width\n         counts = update_frame(counts,words,frame,width);\n     end\n@@ -52,6 +52,6 @@\n function counts = update_frame(counts,words,frame,width)\n for pos = frame:width:numel(words)\n     key = words(pos);\n-    counts(key) = counts(key)+1;\n+    counts(key) = lookup(counts,key,'FallbackValue',0)+1;\n end\n end\n",
+    "change": "Start each width with an empty configured double/double dictionary and use the ordinary fallback lookup before every scalar insertion or increment; retain the parent frame helper and all windows."
+  },
+  "admission_question": {
+    "status": "open-review-question-no-catalog-change",
+    "question": "Does constructor prepopulation using the complete actual word array satisfy the current requirement to grow a hash table from a small default size?",
+    "evidence": "Parent dictionary(words,0) inserts all actual keys before its separate count loop; MathWorks documents scalar-value broadcasting and duplicate-key overwriting, but not an input-size-independent capacity policy. The candidate removes this ambiguity at the application level by creating an empty dictionary.",
+    "rules_url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+    "library_semantics_url": "https://www.mathworks.com/help/matlab/ref/dictionary.html",
+    "lookup_semantics_url": "https://www.mathworks.com/help/matlab/ref/dictionary.lookup.html"
+  },
+  "required_work": {
+    "widths": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      12,
+      18
+    ],
+    "preserved": [
+      "all packed keys and all explicit per-window lookup/update work",
+      "growable built-in dictionary per width",
+      "reading-frame update helper",
+      "full maps for every width and all queries",
+      "original input parser and output formatting"
+    ],
+    "no_presizing_or_prepopulation": true
+  },
+  "parent_performance": {
+    "seconds": 28.114039833,
+    "samples": [
+      28.946614708,
+      27.597327459,
+      28.114039833
+    ],
+    "sample_count": 3,
+    "loc": 54,
+    "mech_fast_program": "knucleotide:mech-compact-final-std1-simd0-p4",
+    "mech_seconds": 0.51382825,
+    "mech_loc": 17,
+    "time_x_mech": 54.714858190455665,
+    "loc_x_mech_fast": 3.176470588235294,
+    "report": "matlab-comparison/20261010/exports/20261010T192801960763Z/timings.json",
+    "mech_report": "additional-languages/20261009-full-suite/results/timings.json",
+    "timing_alias_of": null,
+    "comparison_scope": "descriptive medians of retained cohorts; not a new paired experiment",
+    "observed_sample_ratio_envelope": [
+      53.623973034260466,
+      56.60707423409567
+    ],
+    "observed_samples_all_slower_than_mech": true,
+    "loc_x_mech_small": 3.176470588235294,
+    "mech_small_program": "knucleotide:mech-compact-final-std1-simd0-p4",
+    "median_matches_saved_samples": true
+  },
+  "runtime_configuration": {
+    "runtime_sha256": "ed2d96026421bb1f5d0deed46b1cfefa6011e8f5e7eef678675abe64ae0df764",
+    "runtime_policy": "MATLAB R2026b \u00b7 standard JIT \u00b7 native Apple Silicon \u00b7 base MATLAB \u00b7 at most eight automatic computation threads",
+    "execution_mode": "jit",
+    "runtime_support": "Ordinary MATLAB arrays, dictionaries, regex and binary I/O. Pi uses standard Java BigInteger from the pinned task-local Temurin JRE 25. No MEX benchmark executor; the native cell-identity diagnostic is untimed audit evidence only.",
+    "runtime_arguments": [
+      "/bin/sh",
+      "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/matlab-comparison/20261010/matlab-stdin.sh",
+      "/Applications/MATLAB_R2026b.app/bin/matlab",
+      "-licmode",
+      "onlinelicensing",
+      "-nodisplay",
+      "-sd",
+      "/Users/cim310/.codex/worktrees/clbg-nbody-v04/mech/benchmarks/clbg/matlab-comparison/20261010/sources",
+      "-batch",
+      "knucleotide_compact()"
+    ]
+  },
+  "validation_plan": [
+    "Preparation performs only exact source diff/hash review; no MATLAB process was executed.",
+    "Sole runner should validate canonical outputs and compare under the same pinned R2026b native batch runtime, wrapper and thread limits.",
+    "This minimal change does not repair the inherited THREE-prefix/comment/short-sequence parser edge cases; prepare a separate parser-corrected candidate before broad edge-case admission.",
+    "No parent samples may be reassigned to this candidate."
+  ],
+  "canonical_catalog_changed": false
+}

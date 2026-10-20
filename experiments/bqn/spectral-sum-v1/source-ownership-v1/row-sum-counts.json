@@ -1,0 +1,239 @@
+{
+  "schema": "bqn-spectral-source-ownership-review.v1",
+  "status": "independently-reviewed-exact-source-retained-policy-extension",
+  "source": "experiments/bqn/spectral-sum-v1/sources/row-sum.bqn",
+  "source_sha256": "5366d80b35f49fd6aecdf3ffd1144c285a5b6df7d01be366d5012f3290a835c9",
+  "application_loc": 13,
+  "physical_loc": 9,
+  "retained_rule_proposed_loc": 13,
+  "policy": "application-loc-v1 / retained BQN physical-plus-packed-statements",
+  "independent_review_approved": true,
+  "source_bytes_changed": false,
+  "native_or_language_execution": false,
+  "policies": {
+    "retained": {
+      "source": "archive/comparisons/array-comparison/all-20261009/audit_sources.py",
+      "source_sha256": "414d42da9421e54e3d78deee5f6d9e4b6d1c85432a550cf44592e96aedf36719",
+      "saved_audit": "archive/comparisons/array-comparison/all-20261009/source-audit.json",
+      "saved_audit_sha256": "f29e21feac7a634b6d2cab44c3f65dbf96794fb77da5546aa27e9db8d09c858e",
+      "verbatim_saved_policy": "Nonblank, noncomment physical LOC plus separately audited packed statements, inline/chained assignments and imperative function headers; no compressed-size metric. Structural separators are unchanged. Runtime/library bindings are pinned and shown separately; all benchmark algorithms remain in the listed source.",
+      "closers": "No standalone closer rows occur. Braces/parentheses on a source row do not create extra units; any written significant closer-only row would retain the historical physical unit.",
+      "packed_statements": "Exactly the same line4 Av+2 and line5 Atv+2 explicit expansion as the pinned parent; native Sum is a call replacing a reduction, not a new source binding or helper.",
+      "pure_array_expressions": "Pure coefficient and composed AtAv function bindings, nested pure Each row callbacks, reductions, array arithmetic, repetition, and output formatting remain expression owners; primitive/internal loops are not scalarized.",
+      "limit": "Manual exact-source retained-policy replay; not a whole-language grammar or native parser certificate. No proposed-v2 rule is used."
+    }
+  },
+  "baseline_comparison": {
+    "source": "archive/comparisons/array-comparison/all-20261009/sources/spectralnorm-faithful.bqn",
+    "source_sha256": "5e6955104b07d3c2fdda9b5ee29c80ced059c064bd386db33d941f6c2b29d380",
+    "physical_loc": 9,
+    "canonical_retained_loc": 13,
+    "retained_expansions": [
+      {
+        "line": 4,
+        "extra_lines": 2,
+        "reason": "Av binding, vector binding, return"
+      },
+      {
+        "line": 5,
+        "extra_lines": 2,
+        "reason": "Atv binding, vector binding, return"
+      }
+    ],
+    "exact_statement_inventory_preserved": true
+  },
+  "source_delta": {
+    "method": "replace only the two literal row-reduction tokens {+´v× by {•math.Sum v×",
+    "unified_diff": "--- archive/comparisons/array-comparison/all-20261009/sources/spectralnorm-faithful.bqn\n+++ experiments/bqn/spectral-sum-v1/sources/row-sum.bqn\n@@ -1,8 +1,8 @@\n # Four separately defined functions, with coefficients evaluated in every multiply.\n n ← •ParseFloat⊑•args\n A ← {1÷1+𝕨+0.5×(𝕨+𝕩)×1+𝕨+𝕩}\n-Av ← {v←𝕩 ⋄ {+´v×𝕩 A ↕≠v}¨↕≠v}\n-Atv ← {v←𝕩 ⋄ {+´v×(↕≠v) A 𝕩}¨↕≠v}\n+Av ← {v←𝕩 ⋄ {•math.Sum v×𝕩 A ↕≠v}¨↕≠v}\n+Atv ← {v←𝕩 ⋄ {•math.Sum v×(↕≠v) A 𝕩}¨↕≠v}\n AtAv ← Atv∘Av\n v ← AtAv⍟19 n⥊1\n u ← AtAv v\n"
+  },
+  "support_boundary": {
+    "application": "All nine significant source rows, including argv parsing, coefficient, all four functions, vector initialization, all twenty AtAv applications, final products and formatting, are counted.",
+    "excluded_support": "No imports, user-provided support or FFI helper. Ordinary pinned CBQN math.Sum implementation is vendor runtime and is not added to application LOC."
+  },
+  "coverage": {
+    "written_lines": 10,
+    "nonblank_noncomment_physical_lines": 9,
+    "manual_line_ledger_rows": 10,
+    "all_lines_reproduced": true,
+    "token_parser_certificate": false,
+    "not_scalarized": true
+  },
+  "line_ledger": [
+    {
+      "line": 1,
+      "source_text": "# Four separately defined functions, with coefficients evaluated in every multiply.",
+      "significant": false,
+      "role": "comment-or-blank",
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 2,
+      "source_text": "n ← •ParseFloat⊑•args",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "n ← •ParseFloat⊑•args"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 3,
+      "source_text": "A ← {1÷1+𝕨+0.5×(𝕨+𝕩)×1+𝕨+𝕩}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "A ← {1÷1+𝕨+0.5×(𝕨+𝕩)×1+𝕨+𝕩}"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 4,
+      "source_text": "Av ← {v←𝕩 ⋄ {•math.Sum v×𝕩 A ↕≠v}¨↕≠v}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        "Av function binding/header",
+        "v←𝕩 local vector binding",
+        "{•math.Sum v×𝕩 A ↕≠v}¨↕≠v return expression"
+      ],
+      "retained_extra_units": 2,
+      "closer_line": false
+    },
+    {
+      "line": 5,
+      "source_text": "Atv ← {v←𝕩 ⋄ {•math.Sum v×(↕≠v) A 𝕩}¨↕≠v}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        "Atv function binding/header",
+        "v←𝕩 local vector binding",
+        "{•math.Sum v×(↕≠v) A 𝕩}¨↕≠v return expression"
+      ],
+      "retained_extra_units": 2,
+      "closer_line": false
+    },
+    {
+      "line": 6,
+      "source_text": "AtAv ← Atv∘Av",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "AtAv ← Atv∘Av"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 7,
+      "source_text": "v ← AtAv⍟19 n⥊1",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "v ← AtAv⍟19 n⥊1"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 8,
+      "source_text": "u ← AtAv v",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "u ← AtAv v"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 9,
+      "source_text": "r ← √(+´u×v)÷+´v×v",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "r ← √(+´u×v)÷+´v×v"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 10,
+      "source_text": "•Out {¯9(↓∾'.'∾↑)•Repr⌊0.5+1e9×𝕩} r",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out {¯9(↓∾'.'∾↑)•Repr⌊0.5+1e9×𝕩} r"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    }
+  ],
+  "required_work": {
+    "status": "source-reviewed-with-bounded-and-full-output",
+    "separate_functions": [
+      "A",
+      "Av",
+      "Atv",
+      "AtAv"
+    ],
+    "atav_applications": 20,
+    "matrix_vector_products": 40,
+    "coefficient_evaluations_full": 1210000000,
+    "full_n": 5500,
+    "precomputed_matrix": false,
+    "new_ffi_or_native_helper": false,
+    "single_thread_application": true,
+    "bounded_cases": [
+      1,
+      2,
+      3,
+      5,
+      9,
+      10,
+      100
+    ]
+  },
+  "execution_evidence": {
+    "plan": {
+      "path": "experiments/bqn/spectral-sum-v1/plan.json",
+      "sha256": "f109e1438c97e77c3575559391d9b4ae7573f5ab6f575f1c27612f7f50ff0822"
+    },
+    "bounded": {
+      "path": "experiments/bqn/spectral-sum-v1/bounded-v1/report.json",
+      "sha256": "722e63d306e2ebd9286448f6af147a1f7191bd0d5812ca4df4abbfed1b6ad0d4"
+    },
+    "full": {
+      "path": "experiments/bqn/spectral-sum-v1/full-matched-v1/report.json",
+      "sha256": "2fa8ccc2b871585538faf8e4cca68d789d639e93ce050a984c846ce8b09f922e"
+    }
+  },
+  "approval_note": "Root must inspect this exact13/9 proposal and set independent_review_approved=true/application_loc=13 before admission. Parent13/9, immutable source, frozen execution controller/plan/review and prior records are unchanged.",
+  "independent_review": {
+    "reviewer": "root implementation auditor",
+    "all_source_and_owner_lines_inspected": true,
+    "normalization": "Identical parent owner shapes: nine significant physical rows plus two additional owners for each of Av and Atv. Only two reduction primitives change.",
+    "uniform_logical_certificate": false,
+    "required_functions_retained": [
+      "A",
+      "Av",
+      "Atv",
+      "AtAv"
+    ],
+    "products": 40,
+    "coefficients_recomputed_in_each_product": true
+  }
+}
