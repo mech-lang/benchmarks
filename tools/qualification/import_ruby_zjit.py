@@ -105,6 +105,7 @@ def reconcile(root=ROOT):
         plan=pin(root,'experiments/ruby-jit/plan-v1.json'),
         producer_report=pin(root,'experiments/ruby-jit/full-v1/report.json'),
         measurement_controller=pin(root,'experiments/ruby-jit/controller-v1.py'),
+        continuation=pin(root,'experiments/ruby-jit/continuation-v1.json'),
         toolchains={key:dict(version=plan['runtime']['probes'][mode]['description'],
                               path=plan['runtime']['path'],sha256=plan['runtime']['sha256'])
                     for key,mode in [('ruby','yjit'),(LANG,'zjit')]},
@@ -133,7 +134,7 @@ def append_catalog(before, root=ROOT):
     evidence = {name:pin(root,path) for name,path in dict(
         plan='experiments/ruby-jit/plan-v1.json',results='experiments/ruby-jit/results-v1.json',
         full='experiments/ruby-jit/full-v1/report.json',bounded='experiments/ruby-jit/bounded-v2/report.json',
-        controller='experiments/ruby-jit/controller-v1.py').items()}
+        controller='experiments/ruby-jit/controller-v1.py',continuation='experiments/ruby-jit/continuation-v1.json').items()}
     data = copy.deepcopy(before)
     assert LANG not in {l['key'] for l in before['languages']}
     catalog = {**before.get('program_inventory',{}),**before['programs']}
@@ -164,6 +165,8 @@ def append_catalog(before, root=ROOT):
             distinct_optimization_claimed=False,
             source_alias_note='Exact retained Ruby submission, measured separately with '+mode.upper()+'. Application LOC, source attribution and worker policy are unchanged.',
             timing_boundary=plan['timing_boundary'],
+            runtime_policy=mode.upper()+' default compilation thresholds; original worker policy '+str(parent.get('runtime_policy') or 'unchanged'),
+            runtime_evidence_scope='Enabled engine and command flags verified. Per-method compilation coverage was not measured; cold methods may remain interpreted.',
             timing_summary='Three fresh complete-process '+mode.upper()+' samples. Historical observations retain their original dates; this is a runtime/cohort measurement, not a source optimization.',
             full_output_validation=dict(all_three_samples_passed=True,evidence=evidence['full']),
             chart_admission=dict(historical_reports_unchanged=True,**evidence),
