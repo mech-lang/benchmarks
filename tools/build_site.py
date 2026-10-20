@@ -7,6 +7,7 @@ import json
 import re
 import shutil
 from source_metrics import canonical, metadata_for, partition_text, totals
+from logical_source_payload import bind as bind_logical_source_units, load_reports as logical_source_reports
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_METRICS_PATH = Path('experiments/source-metrics/v1/metrics.json')
@@ -204,7 +205,7 @@ def bind_source_metrics(catalog, catalog_raw, report, report_raw=None):
     return metadata, report['profiles']
 
 
-def browser_data(catalog, *, source_metrics=None, catalog_raw=None, metrics_raw=None):
+def browser_data(catalog, *, source_metrics=None, catalog_raw=None, metrics_raw=None, logical_reports=None):
     """Project the recorded catalog without mutating or recomputing observations.
 
     Both ordered program maps remain intact: their order drives source browsing.
@@ -228,6 +229,14 @@ def browser_data(catalog, *, source_metrics=None, catalog_raw=None, metrics_raw=
         for pool in ('programs', 'program_inventory'):
             for key, row in result.get(pool, {}).items():
                 row['source_metrics'] = profiles[key]
+    if logical_reports is not None:
+        if catalog_raw is None:
+            raise ValueError('Exact catalog bytes are required to bind qualified logical units')
+        result['logical_source_units'], profiles = bind_logical_source_units(catalog, catalog_raw, logical_reports)
+        for pool in ('programs', 'program_inventory'):
+            for key, row in result.get(pool, {}).items():
+                if key in profiles:
+                    row['logical_source_units'] = profiles[key]
     reproduction=ROOT/'data/reproducibility.json'
     if reproduction.exists():
         index=json.loads(reproduction.read_text())
@@ -250,10 +259,11 @@ def build():
     catalog_raw = dataset.read_bytes()
     metrics_raw = (ROOT/SOURCE_METRICS_PATH).read_bytes()
     payload = browser_payload(json.loads(catalog_raw), catalog_raw=catalog_raw,
-                              source_metrics=json.loads(metrics_raw), metrics_raw=metrics_raw)
+                              source_metrics=json.loads(metrics_raw), metrics_raw=metrics_raw,
+                              logical_reports=logical_source_reports())
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
-    inputs = sorted(source.iterdir()) + [Path(__file__)]
+    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py']
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():

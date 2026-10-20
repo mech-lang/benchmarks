@@ -607,11 +607,12 @@ function update(){
   renderLanguageOverview();renderMedianRankings();
   const dataView=state.view==='data';
   $('#sample-data').hidden=!dataView;
-  for(const selector of ['.loc-metric-control','.axes-control','.year-playback','#formatted-loc-note','#normalized-loc-note','#source-size-note','.method']){
+  for(const selector of ['.loc-metric-control','.axes-control','.year-playback','#formatted-loc-note','#normalized-loc-note','#qualified-logical-note','#source-size-note','.method']){
     const element=$(selector);
     if(selector==='#formatted-loc-note')element.hidden=dataView||state.locMetric!=='formatted';
     else if(selector==='#normalized-loc-note')element.hidden=dataView||state.locMetric!=='canonical';
-    else if(selector==='#source-size-note')element.hidden=dataView||!isSourceSizeMetric(state.locMetric);
+    else if(selector==='#qualified-logical-note')element.hidden=dataView||state.locMetric!=='logical';
+    else if(selector==='#source-size-note')element.hidden=dataView||!isSourceSizeMetric(state.locMetric)||state.locMetric==='logical';
     else element.hidden=dataView;
   }
   if(dataView)renderSampleTable();
@@ -673,10 +674,11 @@ function renderControls(){
   $('#loc-metric').value=state.locMetric;
   $('#formatted-loc-note').hidden=state.locMetric!=='formatted';
   $('#normalized-loc-note').hidden=state.locMetric!=='canonical';
-  $('#source-size-note').hidden=!isSourceSizeMetric(state.locMetric);
+  $('#source-size-note').hidden=!isSourceSizeMetric(state.locMetric)||state.locMetric==='logical';
+  $('#qualified-logical-note').hidden=state.locMetric!=='logical';
   $('#small-profile-label').textContent=fewestName();
   $('#small-profile').closest('label').title=`Include ${fewestName().toLowerCase()} program samples and medians`;
-  $('#plot-source-caption').textContent=`${isSourceSizeMetric(state.locMetric)?'Smaller source':'Fewer lines'} left · faster below · fixed log₂ axes`;
+  $('#plot-source-caption').textContent=`${state.locMetric==='logical'?'Fewer units':isSourceSizeMetric(state.locMetric)?'Smaller source':'Fewer lines'} left · faster below · fixed log₂ axes`;
   const allowed=yearKeys(),enabled=effectiveLanguages();
   const active=document.activeElement;
   const focusAttribute=filterControls.contains(active)?['data-language','data-family','data-open-language','data-open-family','data-trait-option','data-benchmark-facet','data-spread','data-benchmark'].find(attribute=>active.hasAttribute(attribute)):null;
@@ -1234,6 +1236,7 @@ function renderSampleTable(){
     if(key==='loc')return `<span title="Retained count rule: ${esc(r.normalized_loc_rule)}. Not uniformly recertified logical LOC.">${r.loc}</span>`;
     if(key==='normalized_loc_rule')return `<span title="${esc(r.normalized_loc_status)}">${esc(r.normalized_loc_rule)}</span>`;
     if(key==='formatted_loc')return r.formatted_loc==null?`<span title="${esc(r.formatted_loc_status)}">—</span>`:`<span title="Qualified native formatter output; ${esc(r.formatted_loc_status)}">${r.formatted_loc}</span>`;
+    if(key==='qualified_logical_units')return r.qualified_logical_units==null?'<span title="No exact-source native owner qualification; no retained-LOC fallback.">—</span>':`<span title="Native parse/owner policy: ${esc(r.logical_units_policy)}. Partial source coverage; separate from formatted lines.">${r.qualified_logical_units}</span>`;
     const value=r[key];
     if(value==null)return '—';
     if(['seconds','median_seconds','sd_seconds'].includes(key))return `<span title="${esc(value)}">${Number(value.toPrecision(6))}</span>`;
@@ -1274,7 +1277,8 @@ function initSampleTable(){
       const {samples,sample_details,...metadata}=p;return [key,metadata];
     }));
     const content=format==='csv'?samplesCSV(records):JSON.stringify({schema:'benchmark-samples.v1',view_url:location.href,
-      scope,row_count:records.length,protocol:data.protocol,source_metrics:data.source_metrics??null,rows:records,programs,
+      scope,row_count:records.length,protocol:data.protocol,source_metrics:data.source_metrics??null,
+      logical_source_units:data.logical_source_units??null,rows:records,programs,
       languages:data.languages.filter(l=>rows.some(r=>r.language===l.key)),
       benchmarks:data.benchmarks.filter(b=>rows.some(r=>r.benchmark===b.key)).map(({groups,...metadata})=>metadata),
       files:Object.fromEntries([...new Set(Object.values(programs).flatMap(p=>p.files))].map(key=>[key,data.files[key]]))},null,2)+'\n';
@@ -1415,6 +1419,14 @@ function renderSourceMetrics(program,sourceHash){
   const policyURL=data.repository?.url?`${data.repository.url.replace(/\/$/,'')}/blob/main/docs/source-metrics.md`:null;
   return `<section class="detail-section source-metrics"><h3>Source size</h3><p class="profile-note"><strong>${program.loc} normalized application LOC</strong> · retained rule: ${esc(metrics.retained_application_loc.metric)}. These cohort rules have not been uniformly recertified as logical LOC. Qualified formatted LOC is a separate, incomplete metric.</p>${table(metrics)}<p class="profile-note">Application sizes use the actual included source lines, including their comments and whitespace. Submitted sizes include every attached source file and excluded support. These byte, gzip and BPE counts measure source text; they are not language lexical tokens or logical statements.</p><p class="profile-note">gzip uses level 9, zero timestamp and no filename; bundle sizes sum separately compressed nonempty file fragments. cl100k_base BPE depends on vocabulary and Unicode spelling and is not a language-neutral fairness score.${tokenizer?.status!=='available'?` Tokenizer unavailable: ${esc(tokenizer?.reason??'No qualified tokenizer measurement.')} Blank token cells are not estimated.`:''} ${policyURL?`<a href="${esc(policyURL)}" target="_blank" rel="noopener">Metric definitions and evidence gaps</a>`:''}</p>${partition}<p class="source-meta">Metrics report SHA-256: ${esc(data.source_metrics?.report_sha256??'Unavailable')}</p></section>`;
 }
+function renderLogicalSourceUnits(program,sourceHash){
+  const count=program.logical_source_units,metadata=data.logical_source_units;
+  if(count?.status!=='qualified')return '<section class="detail-section logical-source-units"><h3>Qualified logical units · partial coverage</h3><p class="profile-note">Unavailable for this exact source bundle. Native parse/owner review currently covers a subset of Python, Julia and Clojure sources. Retained LOC and formatted lines do not supply a fallback count.</p></section>';
+  const policy=metadata?.policies?.[count.policy],number=value=>value==null?'—':Number(value).toLocaleString('en');
+  const evidenceURL=policy?.evidence_path&&data.repository?.url?`${data.repository.url.replace(/\/$/,'')}/blob/main/${policy.evidence_path}`:null;
+  const selected=count.sources.find(source=>source.source_sha256===sourceHash);
+  return `<section class="detail-section logical-source-units"><h3>Qualified logical units · partial coverage</h3><p><strong>${number(count.application)} application logical units</strong> · ${esc(count.policy)}</p><p class="profile-note">${esc(policy?.definition??'Exact-source native parse/owner qualification.')} These are written-source owners, separately from formatter lines and retained cohort LOC. Independent statements and bindings remain visible when packed; literal row wrapping adds no units. Conditional, definition and loop choices are policy-specific; there is no whole-language certificate or universal fairness claim.</p><p class="profile-note">Submitted bundle: ${number(count.submitted)} logical units · excluded support: ${number(count.excluded_support)}. Blank scope counts are unavailable.${selected?` Selected file application: ${number(selected.application)} units; application projection SHA-256: ${esc(selected.application_projection_sha256??'No application fragment')}.`:''}</p><p class="profile-note">${esc(policy?.native_parsers??'Native evidence unavailable.')}${evidenceURL?` <a href="${esc(evidenceURL)}" target="_blank" rel="noopener">Owner rules, fixtures and evidence limits</a>`:''}</p><p class="source-meta">Qualification report SHA-256: ${esc(policy?.report_sha256??'Unavailable')}${policy?.independent_review_sha256?`<br>Independent review SHA-256: ${esc(policy.independent_review_sha256)}`:''}</p></section>`;
+}
 function renderInspector({renderRelated=true}={}){
   const program=selectedProgram();
   if(!program){$('#inspector-context').textContent='Program unavailable';$('#inspector-title').textContent='Program details';$('#inspector-body').replaceChildren();return;}
@@ -1442,7 +1454,7 @@ function renderInspector({renderRelated=true}={}){
   const formattedNote=`<p class="profile-note formatted-source-count">${esc(formattedText(program))}. ${esc((program.formatted_loc_evidence?.reasons??[]).join(' '))}${state.locMetric==='formatted'&&!plottable(plotProgram(program))?' This program has no eligible formatted chart coordinate; its original source and measured timing remain available.':''}</p>`;
   const sizeNote=isSourceSizeMetric(state.locMetric)?`<p class="profile-note source-axis-count">Selected source metric: ${esc(sourceValueText(program))}.${!plottable(plotProgram(program))?' No eligible coordinate is available; missing counts are not estimated.':''}</p>`:'';
   $('#inspector-body').innerHTML=`${aggregate}${navigation}<div class="inspector-controls"><label>Benchmark<select id="detail-benchmark">${available.map(item=>`<option value="${item.key}" ${item.key===b.key?'selected':''}>${esc(item.title)}</option>`).join('')}</select></label><label>Profile<select id="detail-profile"><option value="fast" ${pending?'disabled':''} ${state.detail.kind==='fast'?'selected':''}>Fastest</option><option value="small" ${state.detail.kind==='small'?'selected':''}>${fewestName()}</option></select></label><label class="program-choice">Program<select id="detail-program">${availablePrograms.map(p=>`<option value="${p.key}" ${program.key===p.key?'selected':''}>${esc(p.id)} · ${esc(sourceValueText(p))} · ${seconds(p.seconds)}</option>`).join('')}</select></label></div>
-    ${canonicalProgram?`<label class="inclusion"><input id="include-program" type="checkbox" ${pending||!eligibleForChart(program)||inLanguageView()?'disabled':''} ${pending||!eligibleForChart(program)||state.disabled.has(program.key)?'':'checked'}>Include this program in the speed comparison${inLanguageView()?' · all published programs shown in this view':''}</label>`:'<p class="profile-note">This qualified program is retained in the language overview. The main comparison uses the published fastest and fewest-LOC endpoints.</p>'}<p class="profile-note">${esc(b.workload)}</p>
+    ${canonicalProgram?`<label class="inclusion"><input id="include-program" type="checkbox" ${pending||!eligibleForChart(program)||inLanguageView()?'disabled':''} ${pending||!eligibleForChart(program)||state.disabled.has(program.key)?'':'checked'}>Include this program in the speed comparison${inLanguageView()?' · all published programs shown in this view':''}</label>`:`<p class="profile-note">This program remains available in the language overview. The main comparison selects eligible fastest and ${esc(fewestName().toLowerCase())} endpoints under the selected source measure.</p>`}<p class="profile-note">${esc(b.workload)}</p>
     <div class="detail-stats"><div class="detail-stat"><strong>${program.loc}</strong><span>normalized app LOC · retained rules</span></div><div class="detail-stat"><strong>${formattedValue(program)}</strong><span>qualified formatted app LOC</span></div><div class="detail-stat"><strong>${seconds(program.seconds)}</strong><span>${program.timing_alias_of?'shared median time':'median measured time'}</span></div><div class="detail-stat"><strong>${pending?'Not measured':seconds(program.timing_sd)}</strong><span>${program.timing_alias_of?'shared run-to-run SD':'run-to-run SD'}</span></div></div>
     ${formattedNote}${sizeNote}${renderAliasDisclosure(program)}${renderAuthorship(program)}${renderReproduction(program)}
     ${!eligibleForChart(program)?`<p class="profile-note publication-exclusion">Excluded from charts and comparisons. ${esc(program.exclusion_reason??'Publication qualification is incomplete.')} Saved timings and sources remain available for inspection.</p>`:''}
@@ -1450,6 +1462,7 @@ function renderInspector({renderRelated=true}={}){
     ${program.timing_summary?`<p class="profile-note timing-boundary">${esc(program.timing_summary)}</p>`:''}
     <section class="detail-section"><h3>${program.timing_alias_of?'Shared recorded timing samples':'Recorded timing samples'}</h3>${pending?'<p class="profile-note">No qualified timing median is available. Any retained successful samples below do not supply a speed ratio, geometric mean, or standard-deviation ellipse.</p>':''}${program.samples.length?`<div class="timings-table-wrap"><table class="timings-table"><thead><tr>${sortHeader('timings','run','Run')}${sortHeader('timings','elapsed','Whole process seconds')}<th scope="col">${program.samples.length} ${program.timing_alias_of?'shared samples':'samples'}</th></tr></thead><tbody>${samples.map(sample=>`<tr><td>${sample.run}</td><td class="sample-value">${sample.elapsed.toFixed(6)}</td><td><div class="sample-bar" style="width:${sample.elapsed/Math.max(...program.samples)*100}%"></div></td></tr>`).join('')}</tbody></table></div>`:''}</section>
     ${renderLocAudit(program)}
+    ${renderLogicalSourceUnits(program,sourceHash)}
     ${renderSourceMetrics(program,sourceHash)}
     <section class="detail-section"><div class="code-toolbar"><select id="detail-file" aria-label="Source file">${program.files.map((key,i)=>`<option value="${i}" ${i===Math.min(state.detail.file,program.files.length-1)?'selected':''}>${esc(data.files[key].name)}${sourceRoleLabel(programSource(program,key).role)}</option>`).join('')}</select><a id="download-source" href="#">Download source</a>${file.source_url?`<a href="${esc(file.source_url)}" target="_blank" rel="noopener">${esc(program.source_link_label??'Upstream listing')}</a>`:''}${program.license_url?`<a href="${esc(program.license_url)}" target="_blank" rel="noopener">License</a>`:''}</div><pre><code id="source-code"></code></pre><div class="source-meta">${file.loc_note?esc(file.loc_note)+'<br>':''}Verified source SHA-256: ${file.sha256}<br>Timing report: ${esc(program.report)}</div></section>
     ${program.local_adaptation?`<p class="profile-note source-provenance">${program.source_accounting?.removed_loc?'Recorded admission notes (previous LOC policy): ':''}${esc(program.source_provenance)}</p>`:''}${program.algorithm?.reason?`<p class="profile-note">${esc(program.algorithm.reason)}</p>`:''}${program.runtime_policy?`<p class="profile-note">Runtime policy: ${esc(program.runtime_policy)}</p>`:''}${program.runtime_support?`<p class="profile-note">${esc(program.runtime_support)}</p>`:''}

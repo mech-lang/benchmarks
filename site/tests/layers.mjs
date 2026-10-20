@@ -113,6 +113,7 @@ vm.runInContext(executable+`\nglobalThis.harness={
   formatting(real){axisData=real?realAxisData:data=>data;projectProgram=real?realProjectProgram:program=>program;},
   table(){renderTable();},
   locAudit:renderLocAudit,
+  logicalSection:renderLogicalSourceUnits,
   sameJSONValue,
   programSource,
   compare(key){state.languageFocus={keys:[catalogProgram(key).language],comparison:true,comparisonProgram:key};return comparisonData();},
@@ -772,11 +773,13 @@ console.log(`Passed ${mathCases} layer combinations and ${renderCases} SVG rende
 // inventory candidate wins byte/token size but was never a canonical endpoint.
 const sizesFixture=structuredClone(fixture);sizesFixture.program_inventory={};
 for(const program of Object.values(sizesFixture.programs)){
+  program.logical_source_units={status:'qualified',application:program.key.endsWith('-fast')?30:40,policy:'fixture.owner-v1',sources:[]};
   program.source_metrics={application:program.key.endsWith('-fast')?
     {utf8_bytes:80,gzip_bytes:100,cl100k_base_tokens:30}:{utf8_bytes:100,gzip_bytes:70,cl100k_base_tokens:40}};
   if(program.key.endsWith('-fast')){
     const candidate={...program,key:program.key+'-inventory',id:program.id+'-inventory',loc:999,x:999,
       seconds:program.seconds*1.5,y:program.y*1.5,samples:program.samples.map(n=>n*1.5),
+      logical_source_units:{status:'qualified',application:20,policy:'fixture.owner-v1',sources:[]},
       source_metrics:{application:{utf8_bytes:60,gzip_bytes:90,cl100k_base_tokens:20}}};
     sizesFixture.program_inventory[candidate.key]=candidate;
     const alias={...candidate,key:candidate.key+'-alias',id:candidate.id+'-alias',timing_alias_of:candidate.key};
@@ -787,7 +790,7 @@ context.harness.initialize(sizesFixture);context.harness.formatting(true);
 const sizeView={view:'summary',languageFocus:null,disabled:new Set(),fast:true,small:true,focusMeans:false,
   sampleMode:'highlight',medianMode:'highlight',densityMode:'off',global:false,ellipses:new Set()};
 let yDomain=null;
-for(const metric of ['bytes','gzip','bpe']){
+for(const metric of ['logical','bytes','gzip','bpe']){
   context.harness.render({...sizeView,locMetric:metric});
   const derived=context.harness.derived(),chart=element('#chart');
   assert.equal(derived.samples.length,36,'Only 12 selected endpoint sources × 3 independent runs.');
@@ -807,7 +810,7 @@ for(const metric of ['bytes','gzip','bpe']){
 }
 for(const metric of ['canonical','formatted']){
   context.harness.render({...sizeView,locMetric:metric});
-  assert.deepEqual([element('#chart').dataset.yMin,element('#chart').dataset.yMax],yDomain,'All five measures share the same timing domain.');
+  assert.deepEqual([element('#chart').dataset.yMin,element('#chart').dataset.yMax],yDomain,'All six measures share the same timing domain.');
 }
 const missingSizeFixture=structuredClone(sizesFixture);
 missingSizeFixture.programs['alpha-b1-fast'].source_metrics.application.cl100k_base_tokens=null;
@@ -820,12 +823,20 @@ assert.ok(element('#language-comparison-table tbody').innerHTML.includes('<td cl
   'Hero time ratios follow the BPE-qualified fastest candidate, matching the chart.');
 const equalSizeFixture=structuredClone(sizesFixture);
 for(const p of [...Object.values(equalSizeFixture.programs),...Object.values(equalSizeFixture.program_inventory)])
-  p.source_metrics.application={utf8_bytes:30,gzip_bytes:30,cl100k_base_tokens:30};
+  {p.source_metrics.application={utf8_bytes:30,gzip_bytes:30,cl100k_base_tokens:30};p.logical_source_units.application=30;}
 context.harness.initialize(equalSizeFixture);
 context.harness.render({...sizeView,locMetric:'bytes'});
 const reusedRun=sampleMarks()[0];assert.match(reusedRun.getAttribute('aria-label'),/30 UTF-8 bytes/);
 context.harness.render({...sizeView,locMetric:'bpe'});
 assert.equal(sampleMarks()[0],reusedRun,'Equal counts reuse the original sample node.');
 assert.match(reusedRun.getAttribute('aria-label'),/30 BPE tokens/,'Cached sample readout must still change units.');
+context.harness.render({...sizeView,locMetric:'logical'});
+assert.equal(sampleMarks()[0],reusedRun);assert.match(reusedRun.getAttribute('aria-label'),/30 logical units/);
+assert.match(html,/id="qualified-logical-note"[^>]*hidden>Qualified logical units · partial coverage/);
+assert.match(html,/Python\/Julia \(v2\) and Clojure \(v1\)/);
+const logicalSection=context.harness.logicalSection({logical_source_units:{status:'qualified',application:30,submitted:48,excluded_support:18,policy:'fixture.owner-v1',sources:[]}},'source');
+assert.match(logicalSection,/30 application logical units/);assert.match(logicalSection,/Submitted bundle: 48 logical units · excluded support: 18/);
+assert.match(logicalSection,/separately from formatter lines/);
+assert.match(context.harness.logicalSection({},'source'),/Unavailable for this exact source bundle/);
 context.harness.formatting(false);
 console.log('Source-size SVGs: all-candidate endpoints, alias run identity, metric labels/table, fixed time domains and no hover rebuild PASS');

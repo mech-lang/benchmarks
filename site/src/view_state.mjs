@@ -1,7 +1,7 @@
 // Versioned, catalog-validated links. Defaults stay compact; empty selections
 // are explicit. URL data never supplies markup, source code or object keys.
 const lists={benchmarks:'benchmarks',languages:'languages',ellipses:'ellipses',disabled:'disabled',collapsedFamilies:'collapsed'};
-const enums={view:['summary','benchmark','mech','rankings','language','data'],locMetric:['canonical','formatted','bytes','gzip','bpe'],sampleMode:['off','dim','highlight'],medianMode:['off','dim','highlight'],densityMode:['off','dim','highlight']};
+const enums={view:['summary','benchmark','mech','rankings','language','data'],locMetric:['canonical','formatted','logical','bytes','gzip','bpe'],sampleMode:['off','dim','highlight'],medianMode:['off','dim','highlight'],densityMode:['off','dim','highlight']};
 const booleans=['fast','small','focusMeans','global','benchmarkExpanded','languageExpanded'];
 const equal=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 const sorted=values=>[...values].sort();

@@ -16,6 +16,9 @@ const excluded=row('b:excluded','a',1,1,scope(1,1,1),{eligible_for_chart:false})
 const pending=row('b:pending','a',1,null,scope(1,1,1),{y:null});
 const missing=row('b:missing','c',1,1,scope(null,null,null));
 const zero=row('b:zero','c',1,1,scope(0,0,0));
+for(const [program,application] of [[a,12],[b,9],[inventory,5],[other,4],[alias,5],[excluded,1],[pending,1]])
+  program.logical_source_units={status:'qualified',application,policy:'fixture.owner-v1'};
+zero.logical_source_units={status:'qualified',application:0,policy:'fixture.owner-v1'};
 const data={languages:[{key:'a'},{key:'b'},{key:'c'}],
   programs:Object.fromEntries([a,b,other].map(p=>[p.key,p])),
   program_inventory:Object.fromEntries([inventory,alias,excluded,pending,missing,zero].map(p=>[p.key,p])),
@@ -23,12 +26,12 @@ const data={languages:[{key:'a'},{key:'b'},{key:'c'}],
     {language:'a',programs:[a.key,b.key],fast:b.key,small:a.key,formatted_fast:b.key,formatted_small:a.key},
     {language:'b',programs:[other.key],fast:other.key,small:other.key,formatted_fast:other.key,formatted_small:other.key}]}]};
 const before=JSON.stringify(data),selection={benchmarks:new Set(['b']),languages:new Set(['a','b','c']),disabled:new Set()};
-assert.deepEqual(sourceMetricKeys,['canonical','formatted','bytes','gzip','bpe']);
+assert.deepEqual(sourceMetricKeys,['canonical','formatted','logical','bytes','gzip','bpe']);
 assert.equal(axisData(data,'canonical'),data);
 assert.equal(axisData(data,'formatted').programs[a.key].loc,3);
 assert.equal(axisData(data,'formatted').benchmarks[0].baseline_loc,3);
 assert.deepEqual(axisData(data,'formatted').benchmarks[0].groups[0].programs,[a.key,b.key],'formatted pool unchanged');
-const expected={bytes:{baseline:60,small:inventory.key,other:150/60},gzip:{baseline:40,small:b.key,other:1},bpe:{baseline:20,small:inventory.key,other:1}};
+const expected={logical:{baseline:4,small:inventory.key,other:1},bytes:{baseline:60,small:inventory.key,other:150/60},gzip:{baseline:40,small:b.key,other:1},bpe:{baseline:20,small:inventory.key,other:1}};
 for(const [metric,want] of Object.entries(expected)){
   const projected=axisData(data,metric),model=comparison(projected,selection),entry=model.entries.find(e=>e.language.key==='a');
   assert.equal(projected,axisData(data,metric),'metric projection cached');
@@ -69,5 +72,13 @@ assert.equal(bpe.inputs[0].fast.key,inventory.key,'missing BPE cannot borrow byt
 assert.equal(languageRelativeComparisons(incompleteAxis,'a',{locData:incompleteAxis}).find(r=>r.language.key==='b').time.ratio,other.seconds/inventory.seconds,'Raw-axis hero time ratios use the chart candidate pool.');
 assert.equal(projectProgram(a,'bytes').x,null,'standalone projection requires a baseline');
 assert.equal(sourceMetricValue(missing,'bpe'),null);assert.equal(sourceMetricValue(zero,'bytes'),null);
+assert.equal(sourceMetricValue(missing,'logical'),null);assert.equal(sourceMetricValue(zero,'logical'),null);
+assert.equal(sourceMetricValue({...a,logical_source_units:{status:'draft',application:1}},'logical'),null);
+assert.equal(sourceMetricValue({...a,logical_source_units:{status:'qualified',application:2.5}},'logical'),null);
+const logicalMissing={...data,programs:{...data.programs,[b.key]:{...b,logical_source_units:null}}};
+const logicalAxis=axisData(logicalMissing,'logical'),logical=comparison(logicalAxis,selection).entries.find(e=>e.language.key==='a');
+assert.equal(logical.inputs[0].fast.key,inventory.key,'Missing native owners cannot borrow retained LOC or text size.');
+assert.equal(logicalAxis.benchmarks[0].baseline_seconds,2);
+assert.equal(axisData(data,'canonical'),data);assert.deepEqual(axisData(data,'formatted').benchmarks[0].groups[0].programs,[a.key,b.key]);
 assert.equal(JSON.stringify(data),before,'all original counts/source/timing records remain immutable');
 console.log('Source axes: own minima, inventory endpoints, missing counts, exclusions, aliases, locking, rankings and immutable timing evidence PASS');

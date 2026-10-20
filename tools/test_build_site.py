@@ -272,13 +272,18 @@ class BrowserProjection(unittest.TestCase):
             (root/builder.SOURCE_METRICS_PATH).write_text(json.dumps(metrics))
             implementation = root/'builder.py'
             implementation.write_text('reviewed transformation revision 1\n')
-            with patch.object(builder, 'ROOT', root), patch.object(builder, '__file__', str(implementation)):
+            # This build fixture exercises asset/data integrity. Exact native
+            # logical binding has its own saved-proof fixtures.
+            logical = {'schema': 'fixture-logical-metadata', 'partial_coverage': True}
+            with patch.object(builder, 'ROOT', root), patch.object(builder, '__file__', str(implementation)), \
+                    patch.object(builder, 'logical_source_reports', return_value={}), \
+                    patch.object(builder, 'bind_logical_source_units', return_value=(logical, {})):
                 builder.build()
                 first = json.loads((root/'site/public/build.json').read_bytes())
                 payload = (root/'site/public/data.json').read_bytes()
                 compressed = (root/'site/public/data.json.gz').read_bytes()
                 self.assertEqual(payload, builder.browser_payload(json.loads(original), catalog_raw=original,
-                    source_metrics=metrics, metrics_raw=(root/builder.SOURCE_METRICS_PATH).read_bytes()))
+                    source_metrics=metrics, metrics_raw=(root/builder.SOURCE_METRICS_PATH).read_bytes(), logical_reports={}))
                 self.assertEqual(gzip.decompress(compressed), payload)
                 self.assertEqual(compressed, gzip.compress(payload, mtime=0))
                 self.assertEqual(first['files']['data.json'], hashlib.sha256(payload).hexdigest())

@@ -13,13 +13,14 @@ const digest=bytes=>crypto.createHash('sha256').update(bytes).digest('hex');
 assert.equal(digest(raw),manifest.files['data.json']);
 const catalog={...data.program_inventory,...data.programs};
 const definitions={canonical:['Normalized LOC','LOC'],formatted:['Qualified formatted LOC','LOC'],
+  logical:['Qualified logical units · partial coverage','logical units','logical_units'],
   bytes:['Application UTF-8 bytes','UTF-8 bytes','utf8_bytes'],
   gzip:['Application gzip bytes','gzip bytes','gzip_bytes'],bpe:['Application BPE tokens','BPE tokens','cl100k_base_tokens']};
 const close=(a,b,label)=>assert.ok(Math.abs(a-b)<=1e-11*Math.max(1,Math.abs(a),Math.abs(b)),`${label}: ${a} != ${b}`);
 const mean=values=>Math.exp(values.reduce((sum,n)=>sum+Math.log(n),0)/values.length);
 function expected(metric,state){
   const field=definitions[metric][2],rawSize=!!field,disabled=new Set(state.disabled);
-  const counts=p=>rawSize?p.source_metrics?.application?.[field]:metric==='formatted'?
+  const counts=p=>metric==='logical'?(p.logical_source_units?.status==='qualified'?p.logical_source_units.application:null):rawSize?p.source_metrics?.application?.[field]:metric==='formatted'?
     (p.formatted_loc_status==='qualified'&&p.formatted_loc_complete===true?p.formatted_loc:null):p.loc;
   const valid=p=>p.eligible_for_chart!==false&&Number.isFinite(p.seconds)&&p.seconds>0&&Number.isFinite(p.y)&&p.y>0&&Number.isSafeInteger(counts(p))&&counts(p)>0;
   const baselines=new Map(data.benchmarks.map(b=>{const rows=Object.values(catalog).filter(p=>p.benchmark===b.key&&valid(p));
@@ -83,8 +84,10 @@ try{
       const y=[observed.domain.yMin,observed.domain.yMax];if(timeDomain)assert.deepEqual(y,timeDomain);else timeDomain=y;
       assert.ok((await page.locator('#chart .axis-title').first().textContent())!==null);
       assert.ok((await page.locator('#mean-table thead').textContent()).includes(definitions[metric][0]));
-      assert.equal(await page.locator('#source-size-note').isVisible(),!!definitions[metric][2]);
-      if(definitions[metric][2]){const note=await page.locator('#source-size-note').textContent();for(const word of ['comments and whitespace','Unicode','cl100k_base'])assert.ok(note.includes(word));}
+      assert.equal(await page.locator('#source-size-note').isVisible(),!!definitions[metric][2]&&metric!=='logical');
+      assert.equal(await page.locator('#qualified-logical-note').isVisible(),metric==='logical');
+      if(metric==='logical'){const note=await page.locator('#qualified-logical-note').textContent();for(const word of ['partial coverage','Python/Julia (v2)','Clojure (v1)','no retained-LOC fallback'])assert.ok(note.includes(word));}
+      else if(definitions[metric][2]){const note=await page.locator('#source-size-note').textContent();for(const word of ['comments and whitespace','Unicode','cl100k_base'])assert.ok(note.includes(word));}
       const hover=await page.evaluate(async unit=>{const chart=document.querySelector('#chart'),children=[...chart.children],sample=chart.querySelector('[data-sample]');
         if(!sample)return {skipped:true};const mutations=[],observer=new MutationObserver(r=>mutations.push(...r));observer.observe(chart,{childList:true,subtree:true});
         sample.dispatchEvent(new PointerEvent('pointerover',{bubbles:true,pointerType:'mouse'}));await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
@@ -105,13 +108,17 @@ try{
     assert.equal(Number(await page.locator('#chart [data-layer="density"]').getAttribute('data-density-runs')),density.runs);
     await page.evaluate(()=>benchmarkExplorer.setLayerModes({samples:'dim',medians:'highlight',density:'off'}));
     for(const view of ['rankings','mech','benchmark']){await page.click(`[data-view="${view}"]`);await page.selectOption('#loc-metric','bpe');await settle(page);assert.equal(await page.locator('#source-size-note').isVisible(),true);notes.push({width,view,bias_note_visible:true});}
+    for(const view of ['rankings','mech','benchmark']){await page.click(`[data-view="${view}"]`);await page.selectOption('#loc-metric','logical');await settle(page);assert.equal(await page.locator('#qualified-logical-note').isVisible(),true);notes.push({width,view,logical_partial_note_visible:true});}
     if(width<=720)await page.click('#open-filters');await page.click('[data-open-language="bqn"]');await page.selectOption('#loc-metric','bpe');await settle(page);
     assert.equal(await page.locator('#source-size-note').isVisible(),true);notes.push({width,view:'language',bias_note_visible:true});
     await page.evaluate(()=>benchmarkExplorer.inspectProgram('regexredux:matlab-case-compact'));await settle(page);
     const details=await page.locator('#inspector-body').textContent();for(const text of ['comments and whitespace','Unicode','Submitted bundle','Excluded support'])assert.ok(details.includes(text));
     assert.ok(!details.includes('Previous count: undefined'));await page.click('#close-inspector');
+    await page.evaluate(()=>benchmarkExplorer.inspectProgram('nbody:clojure-nbody-primitive-updates-v1'));await settle(page);
+    const logicalDetails=await page.locator('#inspector-body').textContent();for(const text of ['66 application logical units','logical-source-owners.clojure-v1','Qualification report SHA-256','comments and whitespace','Unicode'])assert.ok(logicalDetails.includes(text));
+    await page.click('#close-inspector');
     await page.click('[data-view="data"]');assert.equal(await page.locator('.sample-source-metrics-note').isVisible(),true);
-    const dataNote=await page.locator('.sample-source-metrics-note').textContent();for(const text of ['comments and whitespace','Unicode','cl100k_base'])assert.ok(dataNote.includes(text));
+    const dataNote=await page.locator('.sample-source-metrics-note').textContent();for(const text of ['comments and whitespace','Unicode','cl100k_base','Qualified logical units','Python/Julia v2 and Clojure v1'])assert.ok(dataNote.includes(text));
     assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),true);
     await page.close();
   }
@@ -119,6 +126,6 @@ try{
   await fs.mkdir(path.dirname(path.resolve(output)),{recursive:true});
   await fs.writeFile(output,JSON.stringify({schema:'source-axis-native-browser-qa.v1',status:'PASSED',build:manifest.version,
     browser:browser.version(),files:manifest.files,catalog_profiles:Object.keys(catalog).length,source_files:Object.keys(data.files).length,
-    metrics_report_sha256:data.source_metrics.report_sha256,rows,notes,page_errors:errors,native_benchmark_processes:0},null,2)+'\n');
+    metrics_report_sha256:data.source_metrics.report_sha256,logical_source_units:data.logical_source_units,rows,notes,page_errors:errors,native_benchmark_processes:0},null,2)+'\n');
   console.log(JSON.stringify({status:'PASSED',build:manifest.version,choices:rows.length,note_views:notes.length,profiles:Object.keys(catalog).length,source_files:Object.keys(data.files).length,output}));
 }finally{await browser.close();await new Promise(resolve=>server.close(resolve));}

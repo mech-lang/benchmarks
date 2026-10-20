@@ -5,6 +5,7 @@ const cache=new WeakMap();
 export const sourceMetricDefinitions={
   canonical:{label:'Normalized LOC (retained)',name:'normalized LOC (retained rules)',unit:'LOC',fewest:'Fewest LOC'},
   formatted:{label:'Qualified formatted LOC',name:'qualified formatted LOC',unit:'formatted LOC',fewest:'Fewest LOC'},
+  logical:{label:'Qualified logical units · partial coverage',name:'qualified logical source units (partial coverage)',unit:'logical units',fewest:'Fewest units',field:'logical_units'},
   bytes:{label:'Application UTF-8 bytes',name:'application UTF-8 bytes',unit:'UTF-8 bytes',fewest:'Fewest bytes',field:'utf8_bytes'},
   gzip:{label:'Application gzip bytes',name:'application gzip bytes',unit:'gzip bytes',fewest:'Fewest gzip bytes',field:'gzip_bytes'},
   bpe:{label:'Application BPE tokens',name:'application cl100k_base BPE tokens',unit:'BPE tokens',fewest:'Fewest tokens',field:'cl100k_base_tokens'},
@@ -14,6 +15,10 @@ export const isSourceSizeMetric=metric=>!!sourceMetricDefinitions[metric]?.field
 export function sourceMetricValue(program,metric='canonical'){
   if(metric==='canonical')return program.loc;
   if(metric==='formatted')return hasFormattedLOC(program)?program.formatted_loc:null;
+  if(metric==='logical'){
+    const value=program.logical_source_units?.application;
+    return program.logical_source_units?.status==='qualified'&&Number.isSafeInteger(value)&&value>0?value:null;
+  }
   if(!isSourceSizeMetric(metric))throw new Error('Unknown source metric.');
   const value=program.source_metrics?.application?.[sourceMetricDefinitions[metric].field];
   return Number.isSafeInteger(value)&&value>0?value:null;
@@ -38,7 +43,7 @@ export function axisData(data,metric='canonical'){
   if(cache.get(data).has(metric))return cache.get(data).get(metric);
   if(isSourceSizeMetric(metric)){
     // Every admitted, timed candidate can become a size endpoint. Canonical
-    // LOC endpoints do not constrain a byte/compression/token comparison.
+    // LOC endpoints do not constrain a qualified owner/text-size comparison.
     const catalog={...data.program_inventory,...data.programs};
     const admitted=p=>eligibleForChart(p)&&Number.isFinite(p.seconds)&&p.seconds>0&&
       Number.isFinite(p.y)&&p.y>0&&sourceMetricValue(p,metric)!==null;

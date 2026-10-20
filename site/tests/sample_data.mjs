@@ -11,6 +11,8 @@ for(const r of rows){
   const p=catalog[r.program];assert.equal(r.seconds,p.samples[r.run-1]);assert.equal(r.loc,p.loc);
   assert.equal(r.median_seconds,p.seconds);assert.equal(r.report,p.report);
   assert.equal(r.formatted_loc,p.formatted_loc_complete===true?p.formatted_loc:null);
+  assert.equal(r.qualified_logical_units,p.logical_source_units?.status==='qualified'?p.logical_source_units.application:null);
+  assert.deepEqual(r.logical_source_definitions,data.logical_source_units??null);
   assert.equal(r.implementations[0].key,p.key);
 }
 for(const p of Object.values(catalog).filter(p=>p.timing_alias_of)){
@@ -44,6 +46,19 @@ const p=catalog[lean[0].program],fixture={...data,program_inventory:{},programs:
 const equal=sampleRows(fixture);assert.equal(equal.length,6);assert.equal(equal.filter(r=>r.time_x_best==null).length,3);
 assert.equal(filterSamples(equal,{disabled:new Set(['b'])}).length,6);
 assert.equal(filterSamples(equal,{disabled:new Set(['b','shared'])}).length,3);
+fixture.programs.b.logical_source_units={status:'qualified',application:10,policy:'fixture.owner-v1'};
+fixture.programs.shared.logical_source_units={status:'qualified',application:20,policy:'fixture.owner-v1'};
+fixture.programs.a.logical_source_units={status:'draft',application:1,policy:'unreviewed'};
+fixture.programs.a.eligible_for_chart=false;
+fixture.logical_source_units={partial_coverage:true,policies:{'fixture.owner-v1':{report_sha256:'pinned'}}};
+const logicalRows=sampleRows(fixture),logicalExports=exportRows(logicalRows,p=>p.key);
+assert.equal(logicalRows.length,6,'Source owner aliases do not create extra timing observations.');
+assert.equal(logicalRows.find(r=>r.program==='a').qualified_logical_units,null);
+assert.equal(logicalRows.find(r=>r.program==='a').eligible,false,'Historical excluded observations remain in Data.');
+assert.ok(logicalExports.filter(r=>r.program_key==='b').every(r=>r.qualified_logical_units===10&&r.logical_units_policy==='fixture.owner-v1'));
+assert.equal(logicalExports.find(r=>r.program_key==='b').timing_aliases[0].logical_source_units.application,20);
+assert.deepEqual(logicalExports[0].logical_source_definitions,fixture.logical_source_units);
+assert.ok(samplesCSV(logicalExports).includes('qualified_logical_units,logical_units_status,logical_units_policy'));
 
 const defaults={view:'summary',focus:'nbody',benchmarks:data.benchmarks.map(b=>b.key),languages:data.languages.map(l=>l.key),
   ellipses:[],disabled:[],collapsedFamilies:[],traits:{},benchmarkFilters:{},releaseYearStart:1950,releaseYear:2026,

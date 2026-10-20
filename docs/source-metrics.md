@@ -1,8 +1,8 @@
 # Complementary source measurements
 
 [The additive report](../experiments/source-metrics/v1/metrics.json) and
-[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,064 retained
-profiles, covering 965 distinct source files and 63 execution variants. The
+[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,065 retained
+profiles, covering 966 distinct source files and 63 execution variants. The
 report preserves the saved canonical catalog, source bytes, timings and
 coordinates. The chart offers separate source-size projections described below.
 Profiles remain separate records even when execution modes
@@ -19,7 +19,7 @@ several measures and expose gaps in the existing normalization rules.
 | Field | Definition and practical limits |
 | --- | --- |
 | `retained_application_loc` | The catalog's existing nonblank, noncomment application count, with its recorded metric and evidence. Cohort rules differ; copying the count does not recertify it as uniform logical LOC. |
-| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 60 profiles have complete evidence; 833 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
+| `canonical_formatted_loc` | Existing qualified native formatter LOC under the application boundary. Only 60 profiles have complete evidence; 834 are pending, 151 unavailable and 20 not qualified. No guessed formatting fills these gaps. Native formatter styles and versions can also differ. |
 | `utf8_bytes` | Exact UTF-8 text size, including comments, indentation, blank lines, BOM and retained line endings. A Unicode glyph can take multiple bytes. |
 | `unicode_codepoints` | Python Unicode string length, including comments/whitespace. This is neither grapheme count nor visual width, and no Unicode normalization is applied. |
 | `physical_lines` | All rows in the selected text, including blank/comment rows, using Python `splitlines`. This differs deliberately from retained noncomment `physical_loc`. |
@@ -68,7 +68,7 @@ BPE retains the vocabulary and Unicode biases described below.
 The regenerated report includes the separately admitted BQN nucleotide, Nim
 nucleotide, corrected MATLAB regex, BQN spectral-sum and BQN FASTA Bins source/count receipts.
 Their exact-source retained counts do not certify a uniform native ownership
-grammar. In this catalog, 248 profiles have attached or embedded excluded
+grammar. In this catalog, 249 profiles have attached or embedded excluded
 support. Source partitions and report/catalog hashes are regenerated and bound
 for the complete admitted catalog, including these additions.
 
@@ -162,8 +162,17 @@ because they answer different questions.
 The separate [v2 Python/Julia qualification](../experiments/source-normalization/v2/README.md)
 now records native statement ownership, source coverage and paired packing/literal
 wrapping evidence for 52 exact Python/Julia/JIT-AOT profiles. It is an additive
-qualified subset, kept separate from the full-cohort retained counts and chart
-axes. Its parser/rule limits and unsupported forms remain explicit; it does not
+qualified subset, kept separate from the full-cohort retained counts. The separate
+[Clojure v1 qualification](../experiments/source-normalization/clojure-v1/README.md)
+adds 21 exact profiles with native-reader-bound source owners. The browser's
+**Qualified logical units · partial coverage** option exposes these 73 profiles,
+with blank counts elsewhere. Each source records its versioned policy and proof
+references; Python/Julia v2 and Clojure v1 remain distinct reviewed conventions.
+This option uses a fixed per-workload minimum over eligible, qualified timed
+candidates and never borrows retained LOC or formatted counts. Data, source
+details and CSV/JSON exports include the count and policy. The browser payload
+contains compact counts/hashes, not native syntax trees. Its parser/rule limits
+and unsupported forms remain explicit; it does not
 certify the remaining syntax families or authorize a uniform ranking.
 
 ## Tokenizer pins and bias
