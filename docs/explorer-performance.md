@@ -236,3 +236,9 @@ native pointer input and selection of the exact clicked implementation. The
 settled states for exact comparison of geometry, paint, domains, readouts and
 selections. Independent layer tests retain 432 renderer cases. No language
 benchmark, source, LOC or timing observation changes.
+
+Build `f360c8bf40c2e010` is [published and verified](../site/publications/chart-hover-v1/deployment.json)
+at [mech-lang.org/benchmarks](https://mech-lang.org/benchmarks/), website commit
+`126609ddf7fce86df6f7739f2b6204289a9af181`. All 41 public asset hashes and the final
+manifest match. All 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json)
+pass with no page errors, and the 38 settled control states match exactly.
