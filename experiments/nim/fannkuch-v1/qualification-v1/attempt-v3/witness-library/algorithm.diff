@@ -1,0 +1,42 @@
+--- /private/tmp/mech-benchmark-publication/experiments/nim/optimization-v1/.build/nim/nim-2.2.12/lib/pure/algorithm.nim
++++ /private/tmp/mech-benchmark-publication/experiments/nim/fannkuch-v1/.build/attempt-v3/witness-lib/pure/algorithm.nim
+@@ -97,6 +97,29 @@
+     assert a == [4, 4, 4, 4, 4, 4]
+   fillImpl(a, 0, a.high, value)
+ 
++
++var fannTraceFile* {.threadvar.}: File
++var fannTraceN* {.threadvar.}: int
++var fannTraceRank* {.threadvar.}: int
++
++proc fannOpen*(path: string, n, first, last: int) =
++  fannTraceFile = open(path, fmWrite)
++  fannTraceN = n
++  fannTraceRank = -1
++  fannTraceFile.writeLine("begin\t" & $first & "\t" & $last & "\t" & $n)
++
++proc fannEvent*[T](kind: string, x, y: int, values: openArray[T]) =
++  fannTraceFile.write(kind & "\t" & $fannTraceRank & "\t" & $x & "\t" & $y & "\t")
++  for i in 0 ..< fannTraceN:
++    if i != 0:
++      fannTraceFile.write(",")
++    fannTraceFile.write($values[i])
++  fannTraceFile.writeLine("")
++
++proc fannClose*(first, last, checksum, maximum: int) =
++  fannTraceFile.writeLine("end\t" & $first & "\t" & $last & "\t" & $checksum & "\t" & $maximum)
++  fannTraceFile.close()
++  fannTraceFile = nil
+ 
+ proc reverse*[T](a: var openArray[T], first, last: Natural) =
+   ## Reverses the slice `a[first..last]`.
+@@ -117,6 +140,9 @@
+   var y = last
+   while x < y:
+     swap(a[x], a[y])
++    when T is int or T is uint8:
++      if fannTraceFile != nil and a.len == 12:
++        fannEvent("swap", x, y, a)
+     dec(y)
+     inc(x)
+ 

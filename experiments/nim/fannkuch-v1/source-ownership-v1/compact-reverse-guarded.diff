@@ -1,0 +1,30 @@
+--- programs/nim/fannkuchredux/nim-fannkuchredux-compact/compact.nim
++++ experiments/nim/fannkuch-v1/sources/compact-reverse-guarded.nim
+@@ -1,4 +1,4 @@
+-import std/[os, strutils]
++import std/[algorithm, os, strutils]
+ 
+ let n = parseInt(paramStr(1))
+ doAssert n >= 1 and n <= 12
+@@ -11,16 +11,12 @@
+ var checksum = 0
+ var maximum = 0
+ for rank in 0 ..< total:
+-  var work = permutation
+   var flips = 0
+-  while work[0] != 0:
+-    var left = 0
+-    var right = work[0]
+-    while left < right:
+-      swap(work[left], work[right])
+-      inc left
+-      dec right
+-    inc flips
++  if permutation[0] != 0:
++    var work = permutation
++    while work[0] != 0:
++      reverse(work, 0, work[0])
++      inc flips
+   checksum += (if (rank and 1) == 0: flips else: -flips)
+   maximum = max(maximum, flips)
+   for width in 2 .. n:

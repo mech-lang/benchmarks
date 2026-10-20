@@ -1,0 +1,29 @@
+--- programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim
++++ experiments/nim/fannkuch-v1/sources/parallel-guarded-copy.nim
+@@ -23,16 +23,17 @@
+   var checksum = 0
+   var maximum = 0
+   for rank in job.first ..< job.last:
+-    var work = permutation
+     var flips = 0
+-    while work[0] != 0:
+-      var left = 0
+-      var right = work[0]
+-      while left < right:
+-        swap(work[left], work[right])
+-        inc left
+-        dec right
+-      inc flips
++    if permutation[0] != 0:
++      var work = permutation
++      while work[0] != 0:
++        var left = 0
++        var right = work[0]
++        while left < right:
++          swap(work[left], work[right])
++          inc left
++          dec right
++        inc flips
+     checksum += (if (rank and 1) == 0: flips else: -flips)
+     maximum = max(maximum, flips)
+     for width in 2 .. job.n:

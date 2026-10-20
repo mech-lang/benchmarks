@@ -1,0 +1,96 @@
+{
+  "schema": "lean4-retained-source-count-qualification-plan.v1",
+  "status": "source-only-plan-not-executed",
+  "scope": "All four exact proposed application mains plus unchanged generic fixed-point C leaf; no source count is approved by this plan.",
+  "applications": {
+    "nat-alter": {
+      "path": "experiments/lean4/knucleotide-map-v1/sources/nat-alter.lean",
+      "sha256": "8e5bb9391f806da1ddc603ce79cf6356ed14e291382f33953bdf4eb804f6ae83",
+      "bytes": 3272
+    },
+    "nat-get-insert": {
+      "path": "experiments/lean4/knucleotide-map-v1/get-insert-v1/sources/nat-get-insert.lean",
+      "sha256": "26f91e360f93b6f4d7920dee3f864c97527cb59bafc0a06810c689cf1fdcdf99",
+      "bytes": 3292
+    },
+    "uint64-alter": {
+      "path": "experiments/lean4/knucleotide-map-v1/sources/uint64-alter.lean",
+      "sha256": "c980e38a109b67cd5a2b6ae248a6a910a84e1b19e3632c92129e3fd7b406ad92",
+      "bytes": 3260
+    },
+    "uint64-get-insert": {
+      "path": "experiments/lean4/knucleotide-map-v1/get-insert-v1/sources/uint64-get-insert.lean",
+      "sha256": "7251cb4159e4f359ce52e8ca350b43f8c653aad4920e481598ce48ce828c882a",
+      "bytes": 3280
+    }
+  },
+  "generic_support": {
+    "source": {
+      "path": "experiments/lean4/knucleotide-map-v1/sources/Format.c",
+      "sha256": "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000",
+      "bytes": 351
+    },
+    "role": "runtime-support",
+    "included_in_application": false,
+    "submitted_source_retained": true,
+    "old_native_count_evidence": {
+      "path": "experiments/lean4/source-counts-v1/qualification-v4/qualified-counts.json",
+      "sha256": "8882bba006fd59883460ed63127247d2a7af49c581c2e68bfc866241db1c6fdd",
+      "bytes": 17863
+    },
+    "old_source_sha256": "efa69b65452aef20b0b9d60a24f95bcc13a08d03e607d1f4fe411948f3a16000",
+    "old_submitted_unit_count": 9,
+    "reuse_requires": "Exact source/hash and same generic support role, all native source proof pins revalidated; no workload logic added."
+  },
+  "retained_policy": {
+    "report_schema": "lean-canonical-source-counts.v1",
+    "policy": "Count source lines owning native lexical tokens, excluding comments and blanks; expand packed independent do statements and same-line C control bodies. Count every authored helper compilation unit in each retained bundle.",
+    "helper": {
+      "path": "experiments/lean4/source-counts-v1/Reader.lean",
+      "sha256": "60351245bf7f08d3a9610ebff4f7abc9ce3522b79c7d9bd2d6b26e039df5e525",
+      "bytes": 1287
+    },
+    "baseline_counter": {
+      "path": "tools/qualification/lean_source_counts.py",
+      "sha256": "653d129c715b6459e96fcd375c6c4207538708aa2b2d5190ff05d028e2216192",
+      "bytes": 7501
+    },
+    "variant_counter": {
+      "path": "tools/qualification/lean_variant_counts.py",
+      "sha256": "a716b9f959bd0f8b262cfb470ef7b86028be209852486dcd5c542bce50eb80a1",
+      "bytes": 6944
+    },
+    "frozen_variant_counter_snapshot": {
+      "path": "experiments/lean4/optimization-v1/counts-fast-v5/producer.py",
+      "sha256": "a716b9f959bd0f8b262cfb470ef7b86028be209852486dcd5c542bce50eb80a1",
+      "bytes": 6944
+    },
+    "independent_replay_evidence": {
+      "path": "experiments/lean4/source-counts-v1/qualification-v4/independent-replay.json",
+      "sha256": "013661493684f21927c83c40cb7ef874e372d7af375bcfc3c472320386c311e7",
+      "bytes": 739
+    },
+    "native_helper_initializers": "Reader explicitly enables trusted module initializers and imports Std; do not claim no initializer execution. Application main is not invoked by the parser helper.",
+    "physical_rule": "Rows owning native noncomment lexical token byte spans; literal/data wrapping retained.",
+    "normalization_rule": "Add independent doSeqItem owners beyond the first starting on the same physical row, retaining all new bindings and nested written statement bodies.",
+    "not_uniform_logical_owner_metric": true,
+    "formatter_qualification": false
+  },
+  "future_capture_requirements": [
+    "Use separate immutable output/attempt directories and the common timing mutex under explicit native window authorization.",
+    "Reverify actual pinned compiler/reader/runtime/module identities, all compiler-loaded application/support/library inputs, flags, environment and diagnostics.",
+    "Compile each exact application for native syntax/type acceptance, separately capture reader token and doSeqItem byte spans without application execution.",
+    "Retain full source bytes, UTF8-aware byte span boundaries, native stdout/stderr, commands and exit status; reject missing source records, diagnostics or altered source/producer pins.",
+    "Replay native spans independently; retain line owners/expansion evidence for parser loops, exact-header tests, map key conversion, update bindings/calls, callbacks, literal query rows and output.",
+    "Reuse six old passed fixture receipts only if their exact helper/controller/runtime/source evidence remains bound; add new paired cases for these actual layouts, comments/Unicode, multiline calls, independent packed bindings and literal row wrapping.",
+    "Keep every app helper and FFI declaration included; preserve separate submitted/application/excluded scopes and no fallback from physical/native syntax acceptance to an approved count.",
+    "Record all failed attempts; require independent source/meaning/count review before a numeric application measure can be admitted."
+  ],
+  "all_application_helpers_counted": true,
+  "new_counter_controller": null,
+  "native_processes_executed": 0,
+  "application_counts": null,
+  "count_approval": false,
+  "canonical_changed": false,
+  "retained_policy_extension_not_universal_grammar_certificate": true
+}

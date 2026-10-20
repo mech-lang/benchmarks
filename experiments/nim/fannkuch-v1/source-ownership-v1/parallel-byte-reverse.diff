@@ -1,0 +1,43 @@
+--- programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim
++++ experiments/nim/fannkuch-v1/sources/parallel-byte-reverse.nim
+@@ -1,4 +1,4 @@
+-import std/[os, strutils, typedthreads]
++import std/[algorithm, os, strutils, typedthreads]
+ 
+ type Result = tuple[checksum: int, maximum: int]
+ type Job = tuple[n: int, first: int, last: int, output: ptr Result]
+@@ -8,10 +8,10 @@
+   factorial[0] = 1
+   for width in 1 .. job.n:
+     factorial[width] = factorial[width - 1] * width
+-  var permutation: array[12, int]
++  var permutation: array[12, uint8]
+   var rotations: array[12, int]
+   for i in 0 ..< job.n:
+-    permutation[i] = i
++    permutation[i] = uint8(i)
+   for width in countdown(job.n, 2):
+     let shift = (job.first div factorial[width - 1]) mod width
+     rotations[width - 1] = shift
+@@ -23,16 +23,12 @@
+   var checksum = 0
+   var maximum = 0
+   for rank in job.first ..< job.last:
+-    var work = permutation
+     var flips = 0
+-    while work[0] != 0:
+-      var left = 0
+-      var right = work[0]
+-      while left < right:
+-        swap(work[left], work[right])
+-        inc left
+-        dec right
+-      inc flips
++    if permutation[0] != 0:
++      var work = permutation
++      while work[0] != 0:
++        reverse(work, 0, int(work[0]))
++        inc flips
+     checksum += (if (rank and 1) == 0: flips else: -flips)
+     maximum = max(maximum, flips)
+     for width in 2 .. job.n:

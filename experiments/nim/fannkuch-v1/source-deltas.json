@@ -1,0 +1,66 @@
+{
+  "schema": "nim-fannkuch-source-deltas.v1",
+  "status": "source-only-not-native-qualified",
+  "variants": {
+    "compact-reverse-guarded": {
+      "parent": {
+        "path": "programs/nim/fannkuchredux/nim-fannkuchredux-compact/compact.nim",
+        "sha256": "57cc5adf96e38204127c5069077da3608bf1cd5c40965e968c3e9c3c4c894fcc"
+      },
+      "candidate": {
+        "path": "experiments/nim/fannkuch-v1/sources/compact-reverse-guarded.nim",
+        "sha256": "7b608f027095abd9d00b441c0697a32a43e6009d77a5aa93ed78e11e52d9f6a5"
+      },
+      "unified_diff": {
+        "path": "experiments/nim/fannkuch-v1/source-ownership-v1/compact-reverse-guarded.diff",
+        "sha256": "a5885c34b375e3d62d41a132da3df3e67e1785f47b4c6f5da4efa83c9cd36926"
+      },
+      "exact_statement_change": "Add algorithm import; move work copy below nonzero-first guard; replace same prefix swap loop with standard in-place reverse."
+    },
+    "parallel-guarded-copy": {
+      "parent": {
+        "path": "programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim",
+        "sha256": "8fc3d7d48313f9d311232cc088e62796db6a21ef1fcfde4faec3d20ff070f053"
+      },
+      "candidate": {
+        "path": "experiments/nim/fannkuch-v1/sources/parallel-guarded-copy.nim",
+        "sha256": "5a0243e7b4fda15c6e6a045bf732b44a10b3c9c936395160bb9813bef9a49861"
+      },
+      "unified_diff": {
+        "path": "experiments/nim/fannkuch-v1/source-ownership-v1/parallel-guarded-copy.diff",
+        "sha256": "291aa6e677539abe63c585d3cd62a6b7e16a13a957fac1ecba742769b80a50b1"
+      },
+      "exact_statement_change": "Move work copy below nonzero-first guard; otherwise retain manual prefix swap loop."
+    },
+    "parallel-reverse-guarded": {
+      "parent": {
+        "path": "programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim",
+        "sha256": "8fc3d7d48313f9d311232cc088e62796db6a21ef1fcfde4faec3d20ff070f053"
+      },
+      "candidate": {
+        "path": "experiments/nim/fannkuch-v1/sources/parallel-reverse-guarded.nim",
+        "sha256": "e1d2bd29756151626d471b42b974010e0d2e3274566a6c2e0914dc819410c02e"
+      },
+      "unified_diff": {
+        "path": "experiments/nim/fannkuch-v1/source-ownership-v1/parallel-reverse-guarded.diff",
+        "sha256": "eefc8410c29bf29b551bfc5e410f0237a60eda21339a43e0ea7cbcb389dfe9e6"
+      },
+      "exact_statement_change": "Add algorithm import; guard work copy; replace same prefix swap loop with standard in-place reverse."
+    },
+    "parallel-byte-reverse": {
+      "parent": {
+        "path": "programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim",
+        "sha256": "8fc3d7d48313f9d311232cc088e62796db6a21ef1fcfde4faec3d20ff070f053"
+      },
+      "candidate": {
+        "path": "experiments/nim/fannkuch-v1/sources/parallel-byte-reverse.nim",
+        "sha256": "18e5bad4ff926c27e8db5b437479df68a7086d8882eb02a6d4c63a09e182e3f0"
+      },
+      "unified_diff": {
+        "path": "experiments/nim/fannkuch-v1/source-ownership-v1/parallel-byte-reverse.diff",
+        "sha256": "52e12a03773cf461309187c6c31c28069639e6477c99f7a1d236b166774bc22a"
+      },
+      "exact_statement_change": "Same guarded standard reversal; narrow permutation/work elements only to uint8 with explicit initialization and reverse-bound conversions."
+    }
+  }
+}

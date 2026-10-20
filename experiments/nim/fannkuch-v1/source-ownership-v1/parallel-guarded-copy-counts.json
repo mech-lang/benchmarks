@@ -1,0 +1,444 @@
+{
+  "schema": "nim-source-ownership-review.v1",
+  "status": "source-only-manual-proposal-not-qualified",
+  "source": "experiments/nim/fannkuch-v1/sources/parallel-guarded-copy.nim",
+  "source_sha256": "5a0243e7b4fda15c6e6a045bf732b44a10b3c9c936395160bb9813bef9a49861",
+  "physical_loc": 65,
+  "retained_rule_proposed_loc": 72,
+  "application_loc": null,
+  "independent_review_approved": false,
+  "native_frontend_qualified": false,
+  "policy": "canonical-source-units-20261012-approved-rule-v2",
+  "policy_evidence": [
+    {
+      "path": "archive/languages/nim/20261012/source-counts/helper-owners-v2/REVIEW.md",
+      "sha256": "e1953164ec92234abce2b2c982f8a6e6c89bd6651e5c03e1f5ca8d4b22d53125"
+    },
+    {
+      "path": "archive/languages/nim/20261012/source-counts/helper-owners-v2/meaning-review.json",
+      "sha256": "2a5e010233d550e9491ddf3f12bda377a745db20397efc7ccda18ce8b1e420b3"
+    },
+    {
+      "path": "archive/languages/nim/20261012/source-counts/helper-owners-v2/jobs/exact-source20-loc-v2/source-counts.json",
+      "sha256": "d529323f791e0ac854eb03f25e5cfc0bbb3b386a12c4a9e41bd64f73fe089185"
+    }
+  ],
+  "scope": "All workload logic, parsing, scheduling, thread creation/join, reductions and output in this exact single application file. Vendor algorithm.nim remains general standard-library support.",
+  "qualification_limit": "Manual proposed extension of retained source-local owner rules, not a uniform logical-source metric or native frontend acceptance.",
+  "parent": {
+    "path": "programs/nim/fannkuchredux/nim-fannkuchredux-optimized/optimized.nim",
+    "sha256": "8fc3d7d48313f9d311232cc088e62796db6a21ef1fcfde4faec3d20ff070f053"
+  },
+  "parent_physical_loc": 64,
+  "parent_retained_loc": 71,
+  "line_ledger": [
+    {
+      "line": 1,
+      "source": "import std/[os, strutils, typedthreads]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 2,
+      "source": "",
+      "retained_rule_proposed_units": 0,
+      "reason": "Blank line; no written source unit."
+    },
+    {
+      "line": 3,
+      "source": "type Result = tuple[checksum: int, maximum: int]",
+      "retained_rule_proposed_units": 3,
+      "reason": "Retained tuple declaration header and two fields; unchanged parent owner shape."
+    },
+    {
+      "line": 4,
+      "source": "type Job = tuple[n: int, first: int, last: int, output: ptr Result]",
+      "retained_rule_proposed_units": 5,
+      "reason": "Retained tuple declaration header and four fields; unchanged parent owner shape."
+    },
+    {
+      "line": 5,
+      "source": "",
+      "retained_rule_proposed_units": 0,
+      "reason": "Blank line; no written source unit."
+    },
+    {
+      "line": 6,
+      "source": "proc run(job: Job) {.thread.} =",
+      "retained_rule_proposed_units": 2,
+      "reason": "Retained procedure header plus independent thread pragma; unchanged parent owner shape."
+    },
+    {
+      "line": 7,
+      "source": "  var factorial: array[13, int]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 8,
+      "source": "  factorial[0] = 1",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 9,
+      "source": "  for width in 1 .. job.n:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 10,
+      "source": "    factorial[width] = factorial[width - 1] * width",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 11,
+      "source": "  var permutation: array[12, int]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 12,
+      "source": "  var rotations: array[12, int]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 13,
+      "source": "  for i in 0 ..< job.n:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 14,
+      "source": "    permutation[i] = i",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 15,
+      "source": "  for width in countdown(job.n, 2):",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 16,
+      "source": "    let shift = (job.first div factorial[width - 1]) mod width",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 17,
+      "source": "    rotations[width - 1] = shift",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 18,
+      "source": "    for turn in 0 ..< shift:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 19,
+      "source": "      let first = permutation[0]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 20,
+      "source": "      for j in 0 ..< width - 1:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 21,
+      "source": "        permutation[j] = permutation[j + 1]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 22,
+      "source": "      permutation[width - 1] = first",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 23,
+      "source": "  var checksum = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 24,
+      "source": "  var maximum = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 25,
+      "source": "  for rank in job.first ..< job.last:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 26,
+      "source": "    var flips = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 27,
+      "source": "    if permutation[0] != 0:",
+      "retained_rule_proposed_units": 1,
+      "reason": "New written conditional header protecting only the scratch copy and flip loop."
+    },
+    {
+      "line": 28,
+      "source": "      var work = permutation",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 29,
+      "source": "      while work[0] != 0:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 30,
+      "source": "        var left = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 31,
+      "source": "        var right = work[0]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 32,
+      "source": "        while left < right:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 33,
+      "source": "          swap(work[left], work[right])",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 34,
+      "source": "          inc left",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 35,
+      "source": "          dec right",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 36,
+      "source": "        inc flips",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 37,
+      "source": "    checksum += (if (rank and 1) == 0: flips else: -flips)",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 38,
+      "source": "    maximum = max(maximum, flips)",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 39,
+      "source": "    for width in 2 .. job.n:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 40,
+      "source": "      let first = permutation[0]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 41,
+      "source": "      for j in 0 ..< width - 1:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 42,
+      "source": "        permutation[j] = permutation[j + 1]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 43,
+      "source": "      permutation[width - 1] = first",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 44,
+      "source": "      inc rotations[width - 1]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 45,
+      "source": "      if rotations[width - 1] < width:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 46,
+      "source": "        break",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 47,
+      "source": "      rotations[width - 1] = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 48,
+      "source": "  job.output[] = (checksum, maximum)",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 49,
+      "source": "",
+      "retained_rule_proposed_units": 0,
+      "reason": "Blank line; no written source unit."
+    },
+    {
+      "line": 50,
+      "source": "let n = parseInt(paramStr(1))",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 51,
+      "source": "doAssert n >= 1 and n <= 12",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 52,
+      "source": "var total = 1",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 53,
+      "source": "for width in 1 .. n:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 54,
+      "source": "  total *= width",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 55,
+      "source": "let count = min(8, total)",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 56,
+      "source": "var threads: array[8, Thread[Job]]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 57,
+      "source": "var results: array[8, Result]",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 58,
+      "source": "for worker in 0 ..< count:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 59,
+      "source": "  createThread(threads[worker], run, (n, total * worker div count, total * (worker + 1) div count, addr results[worker]))",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 60,
+      "source": "for worker in 0 ..< count:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 61,
+      "source": "  joinThread(threads[worker])",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 62,
+      "source": "var checksum = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 63,
+      "source": "var maximum = 0",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 64,
+      "source": "for worker in 0 ..< count:",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 65,
+      "source": "  checksum += results[worker].checksum",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 66,
+      "source": "  maximum = max(maximum, results[worker].maximum)",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 67,
+      "source": "echo checksum",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    },
+    {
+      "line": 68,
+      "source": "echo \"Pfannkuchen(\", n, \") = \", maximum",
+      "retained_rule_proposed_units": 1,
+      "reason": "One written import, declaration, binding, control header or statement under the retained owner convention."
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+--- experiments/lean4/knucleotide-map-v1/sources/nat-alter.lean
++++ experiments/lean4/knucleotide-map-v1/get-insert-v1/sources/nat-get-insert.lean
+@@ -60,7 +60,8 @@
+   for i in [:sequence.size] do
+     key := ((key <<< 2) ||| sequence[i]!.toUInt64) &&& mask
+     if i + 1 >= width then
+-      counts := counts.alter (mapKey key) (fun previous => some (previous.getD 0 + 1))
++      let encodedKey := mapKey key
++      counts := counts.insert encodedKey (counts.getD encodedKey 0 + 1)
+   return counts
+ 
+ def decode (key : Key) (width : Nat) : String := Id.run do

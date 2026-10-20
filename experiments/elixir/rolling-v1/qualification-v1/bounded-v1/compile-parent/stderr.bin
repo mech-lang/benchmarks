@@ -1,0 +1,19 @@
+    warning: the following clause will never match:
+
+        {:error, reason} ->
+
+    because it attempts to match on the result of:
+
+        IO.binwrite(:stdio, data)
+
+    which has type:
+
+        dynamic(not {:error, term()})
+
+    type warning found at:
+    \x{2502}
+ 33 \x{2502}       {:error, reason} -> raise "Output error: #{inspect(reason)}"
+    \x{2502}       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    \x{2502}
+    \x{2514}\x{2500} experiments/elixir/rolling-v1/qualification-v1/bounded-v1/builds/parent/input/support.ex:33: Clbg.Support.write/1
+
