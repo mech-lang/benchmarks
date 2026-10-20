@@ -27,6 +27,16 @@ assert.ok(traits.get('c').memory.has('manual'));
 assert.ok(!traits.get('c').memory.has('owned'));
 assert.ok(traits.get('rust').memory.has('owned'));
 assert.ok(!traits.get('rust').memory.has('manual'));
+if(traits.has('ruby-zjit')){
+ for(const key of ['ruby','ruby-zjit']){
+  assert.ok(traits.get(key).execution.has('jit'));
+  assert.ok(!traits.get(key).execution.has('interpreted'));
+  assert.ok(traits.get(key).typing.has('dynamic'));
+  assert.ok(traits.get(key).memory.has('gc'));
+ }
+ assert.equal(languageMetadata['ruby-zjit'].runtime,'CRuby / ZJIT');
+ assert.equal(languageMetadata.ruby.runtime,'CRuby / YJIT');
+}
 if(traits.has('luau')){
  assert.ok(traits.get('luau').typing.has('gradual'));
  assert.ok(traits.get('luau').execution.has('interpreted'));

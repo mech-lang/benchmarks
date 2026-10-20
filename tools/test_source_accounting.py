@@ -4,15 +4,18 @@ import gzip
 import json
 import unittest
 
-from source_accounting import ROOT, PACKET, historical_catalog
+from source_accounting import ROOT, PACKET, historical_catalog, transform
 
 
 class SourceAccountingTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.current = json.loads((ROOT / 'data/benchmarks.json').read_text())
+        cls.published = json.loads((ROOT / 'data/benchmarks.json').read_text())
         cls.before = json.loads(gzip.decompress((ROOT / PACKET / 'before.json.gz').read_bytes()))
         cls.partitions = json.loads((ROOT / PACKET / 'partitions.json').read_text())
+        # Check the LOC transition independently, then check the complete public
+        # catalog including every later admission through historical_catalog.
+        cls.current, _ = transform(cls.before,json.loads((ROOT/'data/source-size-review.json').read_text()),cls.partitions)
 
     def test_sources_and_every_timing_field_are_preserved(self):
         self.assertEqual(self.current['files'], self.before['files'])
@@ -42,8 +45,8 @@ class SourceAccountingTests(unittest.TestCase):
         self.assertEqual(row['source_accounting']['previous_formatted_loc'],79)
 
     def test_exact_legacy_reconstruction_and_tamper_rejection(self):
-        self.assertEqual(historical_catalog(ROOT,self.current), self.before)
-        changed = copy.deepcopy(self.current)
+        self.assertEqual(historical_catalog(ROOT,self.published), self.before)
+        changed = copy.deepcopy(self.published)
         changed['programs']['mandelbrot:luau-mandelbrot-v1']['loc'] += 1
         with self.assertRaisesRegex(AssertionError,'validated source-accounting'):
             historical_catalog(ROOT,changed)

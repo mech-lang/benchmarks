@@ -177,6 +177,9 @@ def historical_catalog(root, current):
     assert sha(review_raw) == receipt['review_sha256']
     assert sha(partitions_raw) == receipt['partitions_sha256']
     expected, report = transform(before, json.loads(review_raw), json.loads(partitions_raw))
+    if 'ruby_zjit_audit' in current:
+        from qualification.import_ruby_zjit import append_catalog
+        expected = append_catalog(expected, root)
     assert current == expected, 'Current catalog differs from the validated source-accounting transformation'
     assert report == receipt['transformation'], 'Source-accounting result differs'
     return before

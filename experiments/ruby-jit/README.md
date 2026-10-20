@@ -4,6 +4,8 @@ This cohort runs the 19 retained Benchmarks Game Ruby submissions across all ten
 
 Both engines use the same Homebrew CRuby 4.0.7 executable. `plan-v1.json` records its digest, build options, operating system, source and portability-helper digests, complete commands, environment, and explicit probes showing that `--yjit` and `--zjit` activate the intended engine exclusively. Ruby documents these engines in its [YJIT](https://docs.ruby-lang.org/en/4.0/jit/yjit_md.html) and [ZJIT](https://docs.ruby-lang.org/en/4.0/jit/zjit_md.html) manuals.
 
+This cohort retains each engine's default compilation thresholds. An enabled JIT can still execute cold methods in the interpreter; the measurements include that engine policy. They do not claim every method was compiled, or that every possible JIT tuning option has been optimized.
+
 Sixteen retained YJIT profiles have the exact executable digest in their historical measurement reports. Their three samples remain historical observations with their original dates. The other three profiles have saved version strings but lack the executable digest; this cohort collects fresh YJIT samples for those profiles. All 19 ZJIT profiles receive three fresh, complete-process samples. No other language is remeasured.
 
 `bounded-v2/report.json` records 38 checks: each source runs once under each engine with a smaller workload, and each ZJIT output must equal its paired YJIT output. This checks engine agreement and does not replace the independent full-size output check. The earlier `bounded-v1/input-preparation` directory retains a setup attempt that stopped on a recorder path error before any comparison sample; it is not timing evidence.

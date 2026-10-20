@@ -77,6 +77,15 @@ try{
       await luau.close();
     }
   }
+  if(process.env.EXPECTED_ZJIT_PROGRAMS){
+    const zjit=await open(base+'#v=1&view=language&language=ruby&variant=ruby-zjit');
+    const summary=await zjit.locator('#language-overview-summary').textContent();
+    assert.match(summary,/10\/10 selected benchmarks/);
+    assert.match(summary,new RegExp(`\\b${process.env.EXPECTED_ZJIT_PROGRAMS} programs\\b`));
+    assert.match(summary,/57 recorded runs/);
+    await roundtrip(zjit,'Ruby ZJIT full language page');
+    await zjit.close();
+  }
   await page.locator('[data-open-language="lean4"]').click();
   const leanSummary=await page.locator('#language-overview-summary').textContent();
   if(expectedLeanPrograms)assert.match(leanSummary,new RegExp(`\\b${Number(expectedLeanPrograms)} programs\\b`),'Expected measured Lean catalog');
