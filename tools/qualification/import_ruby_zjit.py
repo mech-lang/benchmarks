@@ -264,7 +264,7 @@ def write_summary(results, root=ROOT):
         'The fastest retained source is selected separately for each mode.','',
         '| Workload | YJIT (s) | ZJIT (s) | ZJIT / YJIT |',
         '| --- | ---: | ---: | ---: |']
-    for b in results['workloads']:
+    for b in sorted(results['workloads']):
         candidates=[r for r in rows if r['benchmark']==b]
         y=min(r['yjit_median_seconds'] for r in candidates)
         z=min(r['median_seconds'] for r in candidates)

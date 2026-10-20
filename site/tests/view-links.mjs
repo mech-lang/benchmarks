@@ -78,14 +78,16 @@ try{
     }
   }
   if(process.env.EXPECTED_ZJIT_PROGRAMS){
-    const zjit=await open(base+'#v=1&view=language&language=ruby-zjit&variant=ruby-zjit');
-    assert.equal((await snapshot(zjit)).state.languageFocus.variant,'ruby-zjit');
-    const summary=await zjit.locator('#language-overview-summary').textContent();
-    assert.match(summary,/10\/10 selected benchmarks/);
-    assert.match(summary,new RegExp(`\\b${process.env.EXPECTED_ZJIT_PROGRAMS} programs\\b`));
-    assert.match(summary,/57 recorded runs/);
-    await roundtrip(zjit,'Ruby ZJIT full language page');
-    await zjit.close();
+    for(const [key,programs,runs] of [['ruby',Number(process.env.EXPECTED_RUBY_PROGRAMS??22),66],['ruby-zjit',Number(process.env.EXPECTED_ZJIT_PROGRAMS),57]]){
+      const ruby=await open(base+'#v=1&view=language&language='+key+'&variant='+key);
+      assert.equal((await snapshot(ruby)).state.languageFocus.variant,key);
+      const summary=await ruby.locator('#language-overview-summary').textContent();
+      assert.match(summary,/10\/10 selected benchmarks/);
+      assert.match(summary,new RegExp(`\\b${programs} programs\\b`));
+      assert.match(summary,new RegExp(`\\b${runs} recorded runs\\b`));
+      await roundtrip(ruby,key+' full language page');
+      await ruby.close();
+    }
   }
   await page.locator('[data-open-language="lean4"]').click();
   const leanSummary=await page.locator('#language-overview-summary').textContent();
