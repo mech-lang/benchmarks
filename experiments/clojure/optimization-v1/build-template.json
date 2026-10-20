@@ -1,0 +1,58 @@
+{
+  "schema": "clojure-nbody-build-template.v1",
+  "status": "source-only-not-executed",
+  "placeholders": {
+    "JAVA_HOME": "Fresh restored and exactly verified Temurin 25.0.4.1+1 full JDK",
+    "MAIN_ROOT": "Exclusive package/sources with exactly one clbg/nbody/<variant>.clj",
+    "SUPPORT_ROOT": "Exclusive package/support with byte-identical clbg/support.clj",
+    "CLASSES": "Fresh exclusive per-variant output directory",
+    "CLOJURE_JAR": "Pinned clojure-1.12.6.jar",
+    "SPEC_JAR": "Pinned spec.alpha-0.5.238.jar",
+    "CORE_SPECS_JAR": "Pinned core.specs.alpha-0.4.74.jar",
+    "NS": "clbg.nbody.compact, clbg.nbody.scalar-updates, or clbg.nbody.scalar-moves",
+    "MUNGED_NS": "Generated Java class namespace: clbg.nbody.compact, clbg.nbody.scalar_updates, or clbg.nbody.scalar_moves",
+    "N": "Explicit bounded step count or full 50000000"
+  },
+  "compile_argv": [
+    "{JAVA_HOME}/bin/java",
+    "-XX:ActiveProcessorCount=8",
+    "-Xms64m",
+    "-Xmx8g",
+    "-XX:+UseG1GC",
+    "-cp",
+    "{MAIN_ROOT}:{SUPPORT_ROOT}:{CLOJURE_JAR}:{SPEC_JAR}:{CORE_SPECS_JAR}",
+    "clojure.main",
+    "-e",
+    "(binding [*compile-path* \"{CLASSES}\" *compiler-options* {:direct-linking true}] (compile 'clbg.support) (compile '{NS}))"
+  ],
+  "diagnostic_compile_note": "A separate isolated compile can bind *warn-on-reflection* true. Preserve exact source, options, stderr and class hashes. Any *unchecked-math* :warn-on-boxed build is a different diagnostic build and must not be substituted for timed classes.",
+  "run_argv": [
+    "{JAVA_HOME}/bin/java",
+    "-XX:ActiveProcessorCount=8",
+    "-Xms64m",
+    "-Xmx8g",
+    "-XX:+UseG1GC",
+    "-cp",
+    "{CLASSES}:{CLOJURE_JAR}:{SPEC_JAR}:{CORE_SPECS_JAR}",
+    "{MUNGED_NS}",
+    "{N}"
+  ],
+  "bytecode_argv": [
+    "{JAVA_HOME}/bin/javap",
+    "-c",
+    "-p",
+    "-s",
+    "-classpath",
+    "{CLASSES}:{CLOJURE_JAR}:{SPEC_JAR}:{CORE_SPECS_JAR}",
+    "{MUNGED_NS}$advance"
+  ],
+  "retention": [
+    "Exact argv, cwd, controlled environment, runtime/JAR/dependency hashes and common-lock ownership",
+    "Raw compiler stdout/stderr and every warning or failure",
+    "Exact source copies and input inventory; no hidden workload helper",
+    "Every generated class path, byte count and SHA256 before execution",
+    "Actual javap command/raw output pinned to those same class files",
+    "Complete process receipts, output streams, full output checks and no remaining process group members"
+  ],
+  "execution_authorized": false
+}

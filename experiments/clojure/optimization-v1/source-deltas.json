@@ -1,0 +1,30 @@
+{
+  "schema": "clojure-nbody-source-deltas.v1",
+  "status": "source-only-no-compiler-execution",
+  "candidates": {
+    "scalar-updates": {
+      "parent": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      },
+      "source": {
+        "path": "experiments/clojure/optimization-v1/sources/clbg/nbody/scalar_updates.clj",
+        "sha256": "0117d4c395ab2a9ad0a2bb4d119b53c6023ec476f77e2e334ead1f10ee81e113"
+      },
+      "unified_diff": "--- programs/clojure/nbody/clojure-nbody-compact/compact.clj\n+++ experiments/clojure/optimization-v1/sources/clbg/nbody/scalar_updates.clj\n@@ -1,4 +1,4 @@\n-(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n+(ns clbg.nbody.scalar-updates (:require [clbg.support :as s]) (:gen-class))\n (def solar-mass (* 4.0 Math/PI Math/PI))\n (def days-per-year 365.24)\n (defn bodies []\n@@ -32,9 +32,12 @@\n         (when (< j 5)\n           (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                 distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n-            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n-              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n-              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n+            (aset-double a 3 (- (aget a 3) (* dx (aget b 6) magnitude)))\n+            (aset-double b 3 (+ (aget b 3) (* dx (aget a 6) magnitude)))\n+            (aset-double a 4 (- (aget a 4) (* dy (aget b 6) magnitude)))\n+            (aset-double b 4 (+ (aget b 4) (* dy (aget a 6) magnitude)))\n+            (aset-double a 5 (- (aget a 5) (* dz (aget b 6) magnitude)))\n+            (aset-double b 5 (+ (aget b 5) (* dz (aget a 6) magnitude))))\n           (recur (inc j))))))\n   (dotimes [i 5]\n     (let [^doubles body (aget bodies i)]\n",
+      "inverse_equality_required": true
+    },
+    "scalar-moves": {
+      "parent": {
+        "path": "programs/clojure/nbody/clojure-nbody-compact/compact.clj",
+        "sha256": "193e26ad8dfd011fd1835d9d67be04bb223d088e6cdd3e2d6302ca8cae2f46d4"
+      },
+      "source": {
+        "path": "experiments/clojure/optimization-v1/sources/clbg/nbody/scalar_moves.clj",
+        "sha256": "78ca30cf62198ee8a648e20dae69ff5ed5fa567e8ca6f77296cdbdac2d1f5a51"
+      },
+      "unified_diff": "--- programs/clojure/nbody/clojure-nbody-compact/compact.clj\n+++ experiments/clojure/optimization-v1/sources/clbg/nbody/scalar_moves.clj\n@@ -1,4 +1,4 @@\n-(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))\n+(ns clbg.nbody.scalar-moves (:require [clbg.support :as s]) (:gen-class))\n (def solar-mass (* 4.0 Math/PI Math/PI))\n (def days-per-year 365.24)\n (defn bodies []\n@@ -32,14 +32,18 @@\n         (when (< j 5)\n           (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))\n                 distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]\n-            (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]\n-              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))\n-              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))\n+            (aset-double a 3 (- (aget a 3) (* dx (aget b 6) magnitude)))\n+            (aset-double b 3 (+ (aget b 3) (* dx (aget a 6) magnitude)))\n+            (aset-double a 4 (- (aget a 4) (* dy (aget b 6) magnitude)))\n+            (aset-double b 4 (+ (aget b 4) (* dy (aget a 6) magnitude)))\n+            (aset-double a 5 (- (aget a 5) (* dz (aget b 6) magnitude)))\n+            (aset-double b 5 (+ (aget b 5) (* dz (aget a 6) magnitude))))\n           (recur (inc j))))))\n   (dotimes [i 5]\n     (let [^doubles body (aget bodies i)]\n-      (dotimes [axis 3]\n-        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))\n+      (aset-double body 0 (+ (aget body 0) (* 0.01 (aget body 3))))\n+      (aset-double body 1 (+ (aget body 1) (* 0.01 (aget body 4))))\n+      (aset-double body 2 (+ (aget body 2) (* 0.01 (aget body 5)))))))\n (defn -main [& arguments]\n   (let [n (s/argument arguments 1000) system (bodies)]\n     (offset-momentum system)\n",
+      "inverse_equality_required": true
+    }
+  }
+}
