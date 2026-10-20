@@ -1,0 +1,363 @@
+{
+  "schema": "bqn-fasta-source-ownership-review.v1",
+  "status": "independently-reviewed-exact-source-retained-policy-extension",
+  "source": "experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn",
+  "source_sha256": "62c9f888a5869da3655fc530478a590ad7472f5c0ccf337dfb4e088dfef8edc5",
+  "application_loc": 24,
+  "physical_loc": 24,
+  "retained_rule_proposed_loc": 24,
+  "independent_review_approved": true,
+  "policy": "application-loc-v1 / retained BQN physical-plus-packed-statements",
+  "source_bytes_changed": false,
+  "native_or_language_execution": false,
+  "policies": {
+    "retained": {
+      "source": "archive/comparisons/array-comparison/all-20261009/audit_sources.py",
+      "source_sha256": "414d42da9421e54e3d78deee5f6d9e4b6d1c85432a550cf44592e96aedf36719",
+      "saved_audit": "archive/comparisons/array-comparison/all-20261009/source-audit.json",
+      "saved_audit_sha256": "f29e21feac7a634b6d2cab44c3f65dbf96794fb77da5546aa27e9db8d09c858e",
+      "verbatim_saved_policy": "Nonblank, noncomment physical LOC plus separately audited packed statements, inline/chained assignments and imperative function headers; no compressed-size metric. Structural separators are unchanged. Runtime/library bindings are pinned and shown separately; all benchmark algorithms remain in the listed source.",
+      "closers": "Standalone significant closing rows11 and19 each retain one historical physical unit. Inline punctuation adds no unit.",
+      "conditionals": "Existing parent Wrap line9 conditional cases are structural with no EXTRAS entry. Candidate seed-assignment line15 contains one conditional expression with one result in each body and no additional written sequential binding; proposed one unit follows that retained exact-source treatment.",
+      "pure_array_expressions": "Rand, seeded scan, Bins, cumulative scan, gather, array reshape and wrapping stay array expressions; no expansion of implicit loops or standard primitives.",
+      "limit": "Proposed manual extension of exact historical examples, not an existing changed-file parser certificate. Root must inspect and approve the new conditional-expression owner; draft uniform logical rules are not used."
+    }
+  },
+  "baseline_comparison": {
+    "source": "archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn",
+    "source_sha256": "531d039ae5f9aa34f9db35e4df9efc723dc64098e3b1828c7b4fba972e35085e",
+    "canonical_retained_loc": 24,
+    "physical_loc": 24,
+    "retained_expansions": []
+  },
+  "source_delta": {
+    "unified_diff": "--- archive/comparisons/array-comparison/all-20261009/sources/fasta.bqn\n+++ experiments/bqn/fasta-bins-v1/sources/bins-empty-safe.bqn\n@@ -12,9 +12,9 @@\n Rand ← {139968|29573+3877×𝕨}\n Random ← {alphabet‿probabilities‿size:\n   r ← seed Rand` size⥊0\n-  seed ↩ ¯1⊑r\n+  seed ↩ {0<≠𝕩? ¯1⊑𝕩; seed} r\n   cumulative ← +`probabilities\n-  indices ← +´˘⍉ cumulative ≤⌜ r÷139968\n+  indices ← cumulative ⍋ r÷139968\n   Wrap indices⊏alphabet\n }\n •Out \">ONE Homo sapiens alu\"\n",
+    "changes": [
+      "line15 guards empty last-state pick while preserving original positive update",
+      "line17 replaces outer comparison/transpose/reduction with floating Bins"
+    ]
+  },
+  "coverage": {
+    "written_lines": 25,
+    "nonblank_noncomment_physical_lines": 24,
+    "manual_line_ledger_rows": 25,
+    "all_lines_reproduced": true,
+    "not_scalarized": true,
+    "token_parser_certificate": false
+  },
+  "line_ledger": [
+    {
+      "line": 1,
+      "source_text": "# CLBG LCG, inverse cumulative probabilities, and 60-column FASTA output.",
+      "significant": false,
+      "role": "comment-or-blank",
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 2,
+      "source_text": "n ← •ParseFloat⊑•args",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "n ← •ParseFloat⊑•args"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 3,
+      "source_text": "seed ← 42",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "seed ← 42"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 4,
+      "source_text": "alu ← \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\"",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "alu ← \"GGCCGGGCGCGGTGGCTCACGCCTGTAATCCCAGCACTTTGGGAGGCCGAGGCGGGCGGATCACCTGAGGTCAGGAGTTCGAGACCAGCCTGGCCAACATGGTGAAACCCCGTCTCTACTAAAAATACAAAAATTAGCCGGGCGTGGTGGCGCGCGCCTGTAATCCCAGCTACTCGGGAGGCTGAGGCAGGAGAATCGCTTGAACCCGGGAGGCGGAGGTTGCAGTGAGCCGAGATCGCGCCACTGCACTCCAGCCTGGGCGACAGAGCGAGACTCCGTCTCAAAAA\""
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 5,
+      "source_text": "Wrap ← {",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Wrap ← {"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 6,
+      "source_text": "  full ← 60×⌊(≠𝕩)÷60",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "full ← 60×⌊(≠𝕩)÷60"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 7,
+      "source_text": "  rows ← (full÷60)‿60⥊full↑𝕩",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "rows ← (full÷60)‿60⥊full↑𝕩"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 8,
+      "source_text": "  •term.OutRaw ⥊{𝕩∾@+10}˘rows",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•term.OutRaw ⥊{𝕩∾@+10}˘rows"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 9,
+      "source_text": "  {0<≠𝕩?•Out 𝕩;@} full↓𝕩",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "{0<≠𝕩?•Out 𝕩;@} full↓𝕩"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 10,
+      "source_text": "  @",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "@"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 11,
+      "source_text": "}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": true
+    },
+    {
+      "line": 12,
+      "source_text": "Rand ← {139968|29573+3877×𝕨}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Rand ← {139968|29573+3877×𝕨}"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 13,
+      "source_text": "Random ← {alphabet‿probabilities‿size:",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Random ← {alphabet‿probabilities‿size:"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 14,
+      "source_text": "  r ← seed Rand` size⥊0",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "r ← seed Rand` size⥊0"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 15,
+      "source_text": "  seed ↩ {0<≠𝕩? ¯1⊑𝕩; seed} r",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "seed ↩ {0<≠𝕩? ¯1⊑𝕩; seed} r"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 16,
+      "source_text": "  cumulative ← +`probabilities",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "cumulative ← +`probabilities"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 17,
+      "source_text": "  indices ← cumulative ⍋ r÷139968",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "indices ← cumulative ⍋ r÷139968"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 18,
+      "source_text": "  Wrap indices⊏alphabet",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Wrap indices⊏alphabet"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 19,
+      "source_text": "}",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": true
+    },
+    {
+      "line": 20,
+      "source_text": "•Out \">ONE Homo sapiens alu\"",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out \">ONE Homo sapiens alu\""
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 21,
+      "source_text": "Wrap (2×n)⥊alu",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Wrap (2×n)⥊alu"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 22,
+      "source_text": "•Out \">TWO IUB ambiguity codes\"",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out \">TWO IUB ambiguity codes\""
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 23,
+      "source_text": "Random ⟨\"acgtBDHKMNRSVWY\",0.27‿0.12‿0.12‿0.27∾11⥊0.02,3×n⟩",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Random ⟨\"acgtBDHKMNRSVWY\",0.27‿0.12‿0.12‿0.27∾11⥊0.02,3×n⟩"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 24,
+      "source_text": "•Out \">THREE Homo sapiens frequency\"",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out \">THREE Homo sapiens frequency\""
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    },
+    {
+      "line": 25,
+      "source_text": "Random ⟨\"acgt\",0.3029549426680‿0.1979883004921‿0.1975473066391‿0.3015094502008,5×n⟩",
+      "significant": true,
+      "role": "application",
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Random ⟨\"acgt\",0.3029549426680‿0.1979883004921‿0.1975473066391‿0.3015094502008,5×n⟩"
+      ],
+      "retained_extra_units": 0,
+      "closer_line": false
+    }
+  ],
+  "support_boundary": {
+    "application": "All24 significant rows including original ALU literal, argv, LCG, global seed update, cumulative probabilities, binary search, all three output records and wrapping are counted.",
+    "excluded_support": "No production imports or FFI. Ordinary pinned CBQN primitives remain vendor runtime. Separate lookup qualification file and Python execution controller are test/orchestration evidence and are not imported by production."
+  },
+  "required_work": {
+    "status": "static-review-only-not-executed",
+    "naive_lcg_updates_full": 200000000,
+    "full_n": 25000000,
+    "original_floating_probabilities_and_division": true,
+    "unscaled_f64_binary_search": true,
+    "cached_random_period": false,
+    "new_native_helper": false,
+    "empty_input_seed_preserved": true
+  },
+  "approval_note": "Independent exact-source review approves24retained-rule units and24significant physical rows. Every source row is represented; closing rows11/19 retain the historical physical unit. The seed update is one assigned conditional expression with no additional sequential binding, matching the parent Wrap conditional treatment. Bins remains an array expression. Native syntax/output/work qualification is separate and still required; this does not certify a uniform logical-LOC grammar."
+}
