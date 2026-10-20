@@ -118,6 +118,14 @@ def reconcile(root=ROOT):
         value['reconstruction']=dict(command=[plan['runtime']['path']]+[
             '--yjit' if a=='{jit}' else str(n) if a=='{n}' else a for a in fasta['argv']],
             stdout=path,note='Reconstruct the pinned FASTA input; generation is outside subject timing.')
+    support={}
+    for p in plan['profiles']:
+        for path,wanted in p['support'].items():
+            assert sha(root/path)==wanted
+            unit=support.setdefault(path,dict(path=path,sha256=wanted,used_by=[]))
+            unit['used_by'].append(p['key'])
+    results['support_files']=dict(scope='Cohort portability files; each entry identifies the submissions using it.',
+                                 files=list(support.values()))
     return results
 
 
