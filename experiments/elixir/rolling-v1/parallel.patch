@@ -1,0 +1,15 @@
+--- serial.ex
++++ parallel.ex
+@@ -71,7 +71,11 @@
+ 
+   def main(_arguments) do
+     dna = S.input() |> S.lines() |> sequence(false, [])
+-    output = Enum.map(@widths, fn width -> result(dna, width) end)
++    output =
++      @widths
++      |> Task.async_stream(fn width -> result(dna, width) end,
++        max_concurrency: 7, ordered: true, timeout: :infinity)
++      |> Enum.map(fn {:ok, result} -> result end)
+     S.write(output)
+   end
+ end
