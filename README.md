@@ -22,10 +22,12 @@ retained qualified candidates; further improvements remain possible.
 
 [Complementary source measures](docs/source-metrics.md) expose application and
 submitted bytes, deterministic gzip size and pinned BPE token counts alongside
-retained application LOC and qualified formatted LOC. Each measure has explicit
-limits. The [native logical-source qualification](experiments/source-normalization/v2/README.md)
-currently covers exact Python and Julia sources; other languages await equivalent
-ownership checks.
+retained application LOC, qualified formatted LOC and qualified logical units.
+The six chart options keep unavailable counts blank. Native logical-source
+qualification covers 73 exact programs under the separate
+[Python/Julia](experiments/source-normalization/v2/README.md) and
+[Clojure](experiments/source-normalization/clojure-v1/README.md) owner policies;
+other source families await equivalent checks. Each measure has explicit limits.
 
 [Reproduction records](docs/reproduction.md) expose recorded versions, build commands, runtime settings, inputs and gaps. [Implementation authorship](docs/authorship.md) distinguishes published sources,
 local AI adaptations and generated programs. The data view and exports include
