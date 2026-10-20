@@ -1,0 +1,25 @@
+--- programs/clojure/nbody/clojure-nbody-compact/compact.clj
++++ experiments/clojure/compact-primitive-v1/sources/clbg/nbody/compact_hot_aset.clj
+@@ -1,4 +1,4 @@
+-(ns clbg.nbody.compact (:require [clbg.support :as s]) (:gen-class))
++(ns clbg.nbody.compact-hot-aset (:require [clbg.support :as s]) (:gen-class))
+ (def solar-mass (* 4.0 Math/PI Math/PI))
+ (def days-per-year 365.24)
+ (defn bodies []
+@@ -33,13 +33,13 @@
+           (let [^doubles b (aget bodies j) dx (- (aget a 0) (aget b 0)) dy (- (aget a 1) (aget b 1)) dz (- (aget a 2) (aget b 2))
+                 distance (Math/sqrt (+ (* dx dx) (* dy dy) (* dz dz))) magnitude (/ 0.01 (* distance distance distance))]
+             (doseq [[axis delta] [[0 dx] [1 dy] [2 dz]]]
+-              (aset-double a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))
+-              (aset-double b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))
++              (aset a (+ axis 3) (- (aget a (+ axis 3)) (* delta (aget b 6) magnitude)))
++              (aset b (+ axis 3) (+ (aget b (+ axis 3)) (* delta (aget a 6) magnitude)))))
+           (recur (inc j))))))
+   (dotimes [i 5]
+     (let [^doubles body (aget bodies i)]
+       (dotimes [axis 3]
+-        (aset-double body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))
++        (aset body axis (+ (aget body axis) (* 0.01 (aget body (+ axis 3)))))))))
+ (defn -main [& arguments]
+   (let [n (s/argument arguments 1000) system (bodies)]
+     (offset-momentum system)
