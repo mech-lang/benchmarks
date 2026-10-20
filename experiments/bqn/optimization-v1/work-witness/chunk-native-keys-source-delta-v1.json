@@ -1,0 +1,71 @@
+{
+  "schema": "bqn-chunk-witness-source-delta.v1",
+  "status": "static-instrumentation-prepared-not-executed",
+  "pinned_cbqn_commit": "c893d3e7828899a50150df03ad33c9052fa51d3c",
+  "runtime_artifacts_observed_read_only": [
+    {
+      "path": "experiments/bqn/optimization-v1/.build/CBQN/BQN",
+      "sha256": "0d39846db5f4727c59e6cb652328481e5d4c80d1bce28158172bd0c71d7305d5",
+      "use": "timing-only-release",
+      "executed_by_preparation_agent": false
+    },
+    {
+      "path": "experiments/bqn/optimization-v1/.build/CBQN-witness/BQN",
+      "sha256": "b2b67734b4b675034e699951e80542560c6caba7b244b7f65f50a94f571cdf10",
+      "use": "untimed-work-witness-only",
+      "executed_by_preparation_agent": false
+    }
+  ],
+  "instrumentation_patch": {
+    "path": "experiments/bqn/optimization-v1/work-witness/instrument-count.patch",
+    "sha256": "dded21055879c7405fe8bac52344ab6c8f6ed42a771df9054497bb8248556332"
+  },
+  "marker_binding_source": {
+    "path": "experiments/bqn/optimization-v1/sources/ordinal-horner-grouped-witness-v2-native-keys-v1.bqn",
+    "sha256": "ec613c01ced251a396d8b79516dae3c222fc4c7c6078ea8826943f51ea457734"
+  },
+  "marker_scope": "Only ord calculation including singleton HashMap fallback; no encoding or keys grouping postprocessing is inside the scope.",
+  "identities": [
+    "width",
+    "global chunk start",
+    "literal zero piece"
+  ],
+  "validator": {
+    "path": "experiments/bqn/optimization-v1/work-witness/validate_witness.py",
+    "sha256": "620c0433685b7092b194ff73d0470eb3ef2f351bd145a7faf6f1794d2896727e",
+    "arguments": "--chunk-size EXACT_SOURCE_BATCH_SIZE --dna-length ACTUAL_SELECTED_DNA_LENGTH",
+    "synthetic_self_test": "passed before preparation; no BQN invoked"
+  },
+  "candidates": [
+    {
+      "chunk_size": 100000,
+      "source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-100000-v4-native-keys-v1.bqn",
+      "source_sha256": "c649fef98d5bc197937b269bd102c08a8836220ecb260708415c2a33b444e30e",
+      "witness_source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-100000-v4-native-keys-witness-v1.bqn",
+      "witness_source_sha256": "e03cd39071cb1c1cefea3930d1fb5dedf898858567f0516b29d0b2ebb2f1a33e",
+      "instrumentation_inverse_equals_original_bytes": true,
+      "unified_diff": "--- experiments/bqn/optimization-v1/sources/ordinal-chunk-100000-v4-native-keys-v1.bqn\n+++ experiments/bqn/optimization-v1/sources/ordinal-chunk-100000-v4-native-keys-witness-v1.bqn\n@@ -8,16 +8,22 @@\n body ← end↑tail\n body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body\n dna ← 4|\"ACGTacgt\"⊐∾body\n+pid ← \"/usr/lib/libSystem.B.dylib\" •FFI \"i32\"‿\"getpid\"\n+Mark ← {𝕊 event‿width‿frame‿piece‿rows:\n+ •term.ErrRaw \"MECH_FRAME_WITNESS \"∾event∾\" \"∾(•Repr Pid ⟨⟩)∾\" \"∾(•Repr width)∾\" \"∾(•Repr frame)∾\" \"∾(•Repr piece)∾\" \"∾(•Repr rows)∾(@+10)\n+}\n Pair ← {𝕊 factor‿shift‿left‿right:\n  n ← 0⌈(≠right)-shift\n  (factor×n↑left)+shift↓right\n }\n-Counts ← {𝕊 width‿wanted‿keys:\n+Counts ← {𝕊 width‿wanted‿keys‿start:\n+ Mark \"begin\"‿width‿start‿0‿(≠keys)\n  ord ← {\n   1<≠𝕩? ⊒ ¯1↓𝕩∾@;\n   h ← ⟨⟩ •HashMap ⟨⟩\n   {n←0 h.Get 𝕩 ⋄ 𝕩 h.Set n+1 ⋄ n}¨𝕩\n  } keys\n+ Mark \"end\"‿width‿start‿0‿(≠keys)\n  {𝕊 unused: width<3? v←0⌈⌈´¨keys⊔1+ord ⋄ v∾((4⋆width)-≠v)⥊0;\n  ⟨⌈´ 0∾1+(keys=wanted)/ord⟩} @\n }\n@@ -36,7 +42,7 @@\n  ∾{𝕊 i:\n   width ← i⊑widths\n   keys ← (rows⌊0⌈available+1-width)↑i⊑words\n-  Counts ⟨width,i⊑targets,keys⟩\n+  Counts ⟨width,i⊑targets,keys,start⟩\n  }¨↕7\n }\n batchSize ← 100000\n"
+    },
+    {
+      "chunk_size": 250000,
+      "source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-250000-v4-native-keys-v1.bqn",
+      "source_sha256": "cf9704270c9756b6fbe897ac2ceba39fbba4b77125b43410b28119189390d6ab",
+      "witness_source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-250000-v4-native-keys-witness-v1.bqn",
+      "witness_source_sha256": "6924f732530bc6cb0e2d21eb3fe1cae4541e3c2fddc38d92151e8a0599c4c89e",
+      "instrumentation_inverse_equals_original_bytes": true,
+      "unified_diff": "--- experiments/bqn/optimization-v1/sources/ordinal-chunk-250000-v4-native-keys-v1.bqn\n+++ experiments/bqn/optimization-v1/sources/ordinal-chunk-250000-v4-native-keys-witness-v1.bqn\n@@ -8,16 +8,22 @@\n body ← end↑tail\n body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body\n dna ← 4|\"ACGTacgt\"⊐∾body\n+pid ← \"/usr/lib/libSystem.B.dylib\" •FFI \"i32\"‿\"getpid\"\n+Mark ← {𝕊 event‿width‿frame‿piece‿rows:\n+ •term.ErrRaw \"MECH_FRAME_WITNESS \"∾event∾\" \"∾(•Repr Pid ⟨⟩)∾\" \"∾(•Repr width)∾\" \"∾(•Repr frame)∾\" \"∾(•Repr piece)∾\" \"∾(•Repr rows)∾(@+10)\n+}\n Pair ← {𝕊 factor‿shift‿left‿right:\n  n ← 0⌈(≠right)-shift\n  (factor×n↑left)+shift↓right\n }\n-Counts ← {𝕊 width‿wanted‿keys:\n+Counts ← {𝕊 width‿wanted‿keys‿start:\n+ Mark \"begin\"‿width‿start‿0‿(≠keys)\n  ord ← {\n   1<≠𝕩? ⊒ ¯1↓𝕩∾@;\n   h ← ⟨⟩ •HashMap ⟨⟩\n   {n←0 h.Get 𝕩 ⋄ 𝕩 h.Set n+1 ⋄ n}¨𝕩\n  } keys\n+ Mark \"end\"‿width‿start‿0‿(≠keys)\n  {𝕊 unused: width<3? v←0⌈⌈´¨keys⊔1+ord ⋄ v∾((4⋆width)-≠v)⥊0;\n  ⟨⌈´ 0∾1+(keys=wanted)/ord⟩} @\n }\n@@ -36,7 +42,7 @@\n  ∾{𝕊 i:\n   width ← i⊑widths\n   keys ← (rows⌊0⌈available+1-width)↑i⊑words\n-  Counts ⟨width,i⊑targets,keys⟩\n+  Counts ⟨width,i⊑targets,keys,start⟩\n  }¨↕7\n }\n batchSize ← 250000\n"
+    },
+    {
+      "chunk_size": 1000000,
+      "source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-1000000-v4-native-keys-v1.bqn",
+      "source_sha256": "822880a74092f6d0e21a381d1cac00dea84e63ce4f853c7ef198a617922a4066",
+      "witness_source": "experiments/bqn/optimization-v1/sources/ordinal-chunk-1000000-v4-native-keys-witness-v1.bqn",
+      "witness_source_sha256": "c53582a65c49bd47190d6dd053ef1c39e26dc11bc209a9e9d32d9e7f8180a7dd",
+      "instrumentation_inverse_equals_original_bytes": true,
+      "unified_diff": "--- experiments/bqn/optimization-v1/sources/ordinal-chunk-1000000-v4-native-keys-v1.bqn\n+++ experiments/bqn/optimization-v1/sources/ordinal-chunk-1000000-v4-native-keys-witness-v1.bqn\n@@ -8,16 +8,22 @@\n body ← end↑tail\n body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body\n dna ← 4|\"ACGTacgt\"⊐∾body\n+pid ← \"/usr/lib/libSystem.B.dylib\" •FFI \"i32\"‿\"getpid\"\n+Mark ← {𝕊 event‿width‿frame‿piece‿rows:\n+ •term.ErrRaw \"MECH_FRAME_WITNESS \"∾event∾\" \"∾(•Repr Pid ⟨⟩)∾\" \"∾(•Repr width)∾\" \"∾(•Repr frame)∾\" \"∾(•Repr piece)∾\" \"∾(•Repr rows)∾(@+10)\n+}\n Pair ← {𝕊 factor‿shift‿left‿right:\n  n ← 0⌈(≠right)-shift\n  (factor×n↑left)+shift↓right\n }\n-Counts ← {𝕊 width‿wanted‿keys:\n+Counts ← {𝕊 width‿wanted‿keys‿start:\n+ Mark \"begin\"‿width‿start‿0‿(≠keys)\n  ord ← {\n   1<≠𝕩? ⊒ ¯1↓𝕩∾@;\n   h ← ⟨⟩ •HashMap ⟨⟩\n   {n←0 h.Get 𝕩 ⋄ 𝕩 h.Set n+1 ⋄ n}¨𝕩\n  } keys\n+ Mark \"end\"‿width‿start‿0‿(≠keys)\n  {𝕊 unused: width<3? v←0⌈⌈´¨keys⊔1+ord ⋄ v∾((4⋆width)-≠v)⥊0;\n  ⟨⌈´ 0∾1+(keys=wanted)/ord⟩} @\n }\n@@ -36,7 +42,7 @@\n  ∾{𝕊 i:\n   width ← i⊑widths\n   keys ← (rows⌊0⌈available+1-width)↑i⊑words\n-  Counts ⟨width,i⊑targets,keys⟩\n+  Counts ⟨width,i⊑targets,keys,start⟩\n  }¨↕7\n }\n batchSize ← 1000000\n"
+    }
+  ],
+  "no_other_logic_changes": true,
+  "native_execution_or_compilation_performed": false,
+  "canonical_catalog_changed": false
+}

@@ -1,0 +1,789 @@
+{
+  "schema": "bqn-source-ownership-review.v1",
+  "status": "independently-reviewed-exact-source-retained-policy-extension",
+  "source": "experiments/bqn/optimization-v1/sources/ordinal-horner-grouped-v5-native-keys-v1.bqn",
+  "source_sha256": "8443008a54a968cc0dd77bac54cee29fdbc78e2a02a1023b5e7916aa99af4802",
+  "application_loc": 48,
+  "physical_loc": 43,
+  "retained_rule_proposed_loc": 48,
+  "proposed_v2_loc": 50,
+  "policy": "retained-manual-BQN-v1-extension; separately proposed logical-owner-v2",
+  "independent_review_approved": true,
+  "source_bytes_changed": false,
+  "native_or_language_execution": false,
+  "policies": {
+    "retained": {
+      "name": "application-loc-v1 / exact-source BQN manual packed-statement extension",
+      "status": "proposed-extension-not-an-existing-general-parser-certificate",
+      "source": "archive/comparisons/array-comparison/all-20261009/audit_sources.py",
+      "source_sha256": "414d42da9421e54e3d78deee5f6d9e4b6d1c85432a550cf44592e96aedf36719",
+      "saved_audit": "archive/comparisons/array-comparison/all-20261009/source-audit.json",
+      "saved_audit_sha256": "f29e21feac7a634b6d2cab44c3f65dbf96794fb77da5546aa27e9db8d09c858e",
+      "verbatim_saved_policy": "Nonblank, noncomment physical LOC plus separately audited packed statements, inline/chained assignments and imperative function headers; no compressed-size metric. Structural separators are unchanged. Runtime/library bindings are pinned and shown separately; all benchmark algorithms remain in the listed source.",
+      "closers": "Each nonblank/noncomment written closer line still contributes one physical unit, including } keys and }¨↕7. Structural punctuation does not add extra units.",
+      "pure_expression_functions": "One written binding/expression owner; do not expand primitives, composed functions or implicit array loops.",
+      "packed_sequential_statements": "Add one for each independently written binding/expression beyond the physical line; follow baseline explicit Fixed +2 and fold update/return +1 conventions. Multiple-body case separators are structural in this retained physical-based cohort.",
+      "limit": "This extrapolates the recorded manual examples to new exact source; original EXTRAS dictionary does not certify changed files. Root must inspect before canonical application_loc is assigned."
+    },
+    "v2": {
+      "name": "BQN manual logical-owner proposal v2",
+      "status": "draft-not-qualified-not-for-publication",
+      "source": "tools/source_metrics.py",
+      "source_sha256": "2af37fd2e4e6e6830dd2a22c3b884095320c183f09150528369ed52a4cad35e3",
+      "closers": "Zero units; trailing application after } belongs to the expression/binding opened earlier.",
+      "array_expressions": "One owner per actual expression or binding, including Insert/Group/Each/reductions and pure expression functions. No scalarization.",
+      "block_headers": "One block-function declaration owner for each imperative function literal, including anonymous literals. A result binding invoking such a literal has its own binding owner. Pure expression function bindings/literals stay within one enclosing owner.",
+      "guard_and_bodies": "Count each written predicate guard and each branch result/binding independently; ; is structural.",
+      "open_policy_choice": "Anonymous imperative-function header ownership and predicate-body treatment need BQN grammar/fixture review; totals below are the explicitly stated proposal, not an inferred canonical rule."
+    }
+  },
+  "baseline_comparison": {
+    "source": "archive/comparisons/array-comparison/all-20261009/sources/knucleotide-faithful.bqn",
+    "source_sha256": "84810c4d5567d1554416698e3e83ec5ca7d587d6a21b0be331915c4962326716",
+    "physical_loc": 36,
+    "canonical_retained_loc": 39,
+    "retained_expansions": [
+      {
+        "line": 16,
+        "extra_lines": 1,
+        "reason": "hash-table update, then fold accumulator"
+      },
+      {
+        "line": 24,
+        "extra_lines": 2,
+        "reason": "Fixed binding, s binding, return"
+      }
+    ],
+    "note": "Baseline count replayed exactly; new-source extension needs review and cannot retroactively change baseline39."
+  },
+  "support_boundary": {
+    "application": "Every significant line in this main is application-owned, including parser, encoding, key representation coercion, counting, fallback, grouping, formatting and parallel-job construction.",
+    "excluded_support": "Imported unchanged generic standard.bqn/process-map binding and pinned CBQN runtime are separately identified by the experiment runtime/support pins; no benchmark helper is moved out of this file."
+  },
+  "coverage": {
+    "written_lines": 44,
+    "nonblank_noncomment_physical_lines": 43,
+    "manual_line_ledger_rows": 44,
+    "all_lines_reproduced": true,
+    "token_parser_certificate": false,
+    "not_scalarized": true
+  },
+  "line_ledger": [
+    {
+      "line": 1,
+      "source_text": "std ← •Import \"../stdlib/standard.bqn\"",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "std ← •Import \"../stdlib/standard.bqn\""
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "std ← •Import \"../stdlib/standard.bqn\""
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 2,
+      "source_text": "# Select the exact THREE record; native FLines handles LF, CRLF and CR.",
+      "significant": false,
+      "retained_rule_units": 0,
+      "retained_rule_owners": [],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": false,
+      "role": "comment-or-blank"
+    },
+    {
+      "line": 3,
+      "source_text": "lines ← •FLines \"/dev/stdin\"",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "lines ← •FLines \"/dev/stdin\""
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "lines ← •FLines \"/dev/stdin\""
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 4,
+      "source_text": "IsThree ← {(\">THREE\"≡6↑𝕩)∧(∨´(6⊑7↑𝕩)=\" \"∾@+9)}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "IsThree ← {(\">THREE\"≡6↑𝕩)∧(∨´(6⊑7↑𝕩)=\" \"∾@+9)}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "IsThree ← {(\">THREE\"≡6↑𝕩)∧(∨´(6⊑7↑𝕩)=\" \"∾@+9)}"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 5,
+      "source_text": "start ← 1+⊑(/IsThree¨lines)∾≠lines",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "start ← 1+⊑(/IsThree¨lines)∾≠lines"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "start ← 1+⊑(/IsThree¨lines)∾≠lines"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 6,
+      "source_text": "tail ← start↓lines",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "tail ← start↓lines"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "tail ← start↓lines"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 7,
+      "source_text": "end ← ⊑(/'>'=⊑¨1↑¨tail)∾≠tail",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "end ← ⊑(/'>'=⊑¨1↑¨tail)∾≠tail"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "end ← ⊑(/'>'=⊑¨1↑¨tail)∾≠tail"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 8,
+      "source_text": "body ← end↑tail",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "body ← end↑tail"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "body ← end↑tail"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 9,
+      "source_text": "body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "body /˜↩ (';'≠⊑¨1↑¨body)∧0<≠¨body"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 10,
+      "source_text": "dna ← 4|\"ACGTacgt\"⊐∾body",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "dna ← 4|\"ACGTacgt\"⊐∾body"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "dna ← 4|\"ACGTacgt\"⊐∾body"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 11,
+      "source_text": "Frame ← {𝕊 width‿frame‿piece‿wanted:",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Frame ← {𝕊 width‿frame‿piece‿wanted:"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Frame ← {𝕊 width‿frame‿piece‿wanted:"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 12,
+      "source_text": " total ← 0⌈⌊((≠dna)-frame)÷width",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "total ← 0⌈⌊((≠dna)-frame)÷width"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "total ← 0⌈⌊((≠dna)-frame)÷width"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 13,
+      "source_text": " first ← ⌊total×piece÷8",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "first ← ⌊total×piece÷8"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "first ← ⌊total×piece÷8"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 14,
+      "source_text": " last ← ⌊total×(piece+1)÷8",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "last ← ⌊total×(piece+1)÷8"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "last ← ⌊total×(piece+1)÷8"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 15,
+      "source_text": " rows ← last-first",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "rows ← last-first"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "rows ← last-first"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 16,
+      "source_text": " data ← (width×rows)↑(frame+width×first)↓dna",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "data ← (width×rows)↑(frame+width×first)↓dna"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "data ← (width×rows)↑(frame+width×first)↓dna"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 17,
+      "source_text": " keys ← {𝕨+4×𝕩}˝⌽⍉rows‿width⥊data",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "keys ← {𝕨+4×𝕩}˝⌽⍉rows‿width⥊data"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "keys ← {𝕨+4×𝕩}˝⌽⍉rows‿width⥊data"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 18,
+      "source_text": " ord ← {",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "ord ← {"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 2,
+      "proposed_v2_owners": [
+        "ord binding to result of invoked block",
+        "anonymous imperative function declaration/header"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 19,
+      "source_text": "  1<≠𝕩? ⊒ ¯1↓𝕩∾@;",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "1<≠𝕩? ⊒ ¯1↓𝕩∾@;"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 2,
+      "proposed_v2_owners": [
+        "1<≠𝕩? (predicate guard)",
+        "⊒ ¯1↓𝕩∾@ (first-body result)"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 20,
+      "source_text": "  h ← ⟨⟩ •HashMap ⟨⟩",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "h ← ⟨⟩ •HashMap ⟨⟩"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "h ← ⟨⟩ •HashMap ⟨⟩"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 21,
+      "source_text": "  {n←0 h.Get 𝕩 ⋄ 𝕩 h.Set n+1 ⋄ n}¨𝕩",
+      "significant": true,
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        "n←0 h.Get 𝕩",
+        "𝕩 h.Set n+1",
+        "n"
+      ],
+      "retained_extra_units": 2,
+      "proposed_v2_units": 4,
+      "proposed_v2_owners": [
+        "anonymous imperative function declaration/header",
+        "n←0 h.Get 𝕩",
+        "𝕩 h.Set n+1",
+        "n"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 22,
+      "source_text": " } keys",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "} keys"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": true,
+      "role": "application"
+    },
+    {
+      "line": 23,
+      "source_text": " Final ← {⌈´ 0∾1+(keys=𝕩)/ord}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Final ← {⌈´ 0∾1+(keys=𝕩)/ord}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Final ← {⌈´ 0∾1+(keys=𝕩)/ord}"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 24,
+      "source_text": " {𝕊 unused: width<3? {𝕊 unused: v←0⌈⌈´¨keys⊔1+ord ⋄ v∾((4⋆width)-≠v)⥊0} @; Final wanted} @",
+      "significant": true,
+      "retained_rule_units": 2,
+      "retained_rule_owners": [
+        "conditional postprocessing/result expression (case alternatives are structural under retained cohort)",
+        "v←0⌈⌈´¨keys⊔1+ord"
+      ],
+      "retained_extra_units": 1,
+      "proposed_v2_units": 6,
+      "proposed_v2_owners": [
+        "outer 𝕊 unused: block-function declaration/header",
+        "width<3? (predicate guard)",
+        "inner 𝕊 unused: imperative block-function declaration/header",
+        "v←0⌈⌈´¨keys⊔1+ord",
+        "v∾((4⋆width)-≠v)⥊0",
+        "Final wanted (second-body result)"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 25,
+      "source_text": "}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": true,
+      "role": "application"
+    },
+    {
+      "line": 26,
+      "source_text": "Count ← {𝕊 width‿wanted:",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Count ← {𝕊 width‿wanted:"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Count ← {𝕊 width‿wanted:"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 27,
+      "source_text": " jobs ← ∾{𝕊 frame: {width‿frame‿𝕩‿wanted}¨↕8}¨↕width",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "jobs ← ∾{𝕊 frame: {width‿frame‿𝕩‿wanted}¨↕8}¨↕width"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "jobs ← ∾{𝕊 frame: {width‿frame‿𝕩‿wanted}¨↕8}¨↕width"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 28,
+      "source_text": " +´Frame std._Parallel jobs",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "+´Frame std._Parallel jobs"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "+´Frame std._Parallel jobs"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 29,
+      "source_text": "}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": true,
+      "role": "application"
+    },
+    {
+      "line": 30,
+      "source_text": "Decode ← {\"ACGT\"⊏˜4|⌊𝕩÷4⋆⌽↕𝕨}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Decode ← {\"ACGT\"⊏˜4|⌊𝕩÷4⋆⌽↕𝕨}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Decode ← {\"ACGT\"⊏˜4|⌊𝕩÷4⋆⌽↕𝕨}"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 31,
+      "source_text": "Fixed ← {s←•Repr⌊0.5+1e3×𝕩 ⋄ ¯3(↓∾'.'∾↑) (((4⌈≠s)-(≠s))⥊'0')∾s}",
+      "significant": true,
+      "retained_rule_units": 3,
+      "retained_rule_owners": [
+        "Fixed ← { … } (imperative function binding/header)",
+        "s←•Repr⌊0.5+1e3×𝕩",
+        "¯3(↓∾'.'∾↑) (((4⌈≠s)-(≠s))⥊'0')∾s"
+      ],
+      "retained_extra_units": 2,
+      "proposed_v2_units": 3,
+      "proposed_v2_owners": [
+        "Fixed ← { … } (imperative function binding/header)",
+        "s←•Repr⌊0.5+1e3×𝕩",
+        "¯3(↓∾'.'∾↑) (((4⌈≠s)-(≠s))⥊'0')∾s"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 32,
+      "source_text": "Frequency ← {𝕊 width:",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Frequency ← {𝕊 width:"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Frequency ← {𝕊 width:"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 33,
+      "source_text": " counts ← Count width‿0",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "counts ← Count width‿0"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "counts ← Count width‿0"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 34,
+      "source_text": " keys ← /0<counts",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "keys ← /0<counts"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "keys ← /0<counts"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 35,
+      "source_text": " ordered ← keys⊏˜⍒keys⊏counts",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "ordered ← keys⊏˜⍒keys⊏counts"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "ordered ← keys⊏˜⍒keys⊏counts"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 36,
+      "source_text": " {•Out (width Decode 𝕩)∾\" \"∾Fixed 100×(𝕩⊑counts)÷+´counts}¨ordered",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "{•Out (width Decode 𝕩)∾\" \"∾Fixed 100×(𝕩⊑counts)÷+´counts}¨ordered"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "{•Out (width Decode 𝕩)∾\" \"∾Fixed 100×(𝕩⊑counts)÷+´counts}¨ordered"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 37,
+      "source_text": " •Out \"\"",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out \"\""
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "•Out \"\""
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 38,
+      "source_text": "}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": true,
+      "role": "application"
+    },
+    {
+      "line": 39,
+      "source_text": "Frequency¨ 1‿2",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Frequency¨ 1‿2"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Frequency¨ 1‿2"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 40,
+      "source_text": "Query ← {𝕊 s:",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Query ← {𝕊 s:"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Query ← {𝕊 s:"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 41,
+      "source_text": " key ← +´(4|\"ACGTacgt\"⊐s)×4⋆⌽↕≠s",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "key ← +´(4|\"ACGTacgt\"⊐s)×4⋆⌽↕≠s"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "key ← +´(4|\"ACGTacgt\"⊐s)×4⋆⌽↕≠s"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 42,
+      "source_text": " •Out (•Repr Count (≠s)‿key)∾(@+9)∾s",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "•Out (•Repr Count (≠s)‿key)∾(@+9)∾s"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "•Out (•Repr Count (≠s)‿key)∾(@+9)∾s"
+      ],
+      "closer_line": false,
+      "role": "application"
+    },
+    {
+      "line": 43,
+      "source_text": "}",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "}"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 0,
+      "proposed_v2_owners": [],
+      "closer_line": true,
+      "role": "application"
+    },
+    {
+      "line": 44,
+      "source_text": "Query¨ ⟨\"GGT\",\"GGTA\",\"GGTATT\",\"GGTATTTTAATT\",\"GGTATTTTAATTTATAGT\"⟩",
+      "significant": true,
+      "retained_rule_units": 1,
+      "retained_rule_owners": [
+        "Query¨ ⟨\"GGT\",\"GGTA\",\"GGTATT\",\"GGTATTTTAATT\",\"GGTATTTTAATTTATAGT\"⟩"
+      ],
+      "retained_extra_units": 0,
+      "proposed_v2_units": 1,
+      "proposed_v2_owners": [
+        "Query¨ ⟨\"GGT\",\"GGTA\",\"GGTATT\",\"GGTATTTTAATT\",\"GGTATTTTAATTTATAGT\"⟩"
+      ],
+      "closer_line": false,
+      "role": "application"
+    }
+  ],
+  "admission": "Do not publish proposed normalized counts until root independently approves this exact source/policy receipt. application_loc remains null.",
+  "independent_review": {
+    "reviewer": "root implementation auditor",
+    "source_and_every_ledger_line_inspected": true,
+    "retained_compatibility": "43 significant physical rows plus two additional singleton-body statements, one additional grouped count binding, and two additional Fixed function/body owners, following the retained exact-source BQN conventions.",
+    "uniform_logical_certificate": false,
+    "draft_v2_approved": false,
+    "runtime_or_timing_changed": false
+  }
+}

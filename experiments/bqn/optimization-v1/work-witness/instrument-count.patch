@@ -1,0 +1,230 @@
+--- /dev/null
++++ b/src/utils/mechCountWitness.h
+@@ -0,0 +1,42 @@
++#pragma once
++/* Untimed required-work witness only. No benchmark algorithms live here. */
++#include <stdio.h>
++#include <stdlib.h>
++#include <stdint.h>
++#include <unistd.h>
++
++static inline bool mech_witness_enabled(void) {
++  static int enabled = -1;
++  if (enabled < 0) {
++    const char* flag = getenv("MECH_BQN_COUNT_WITNESS");
++    enabled = flag && flag[0]=='1' && flag[1]=='\0';
++  }
++  return enabled;
++}
++static inline void mech_witness_write(const char* line, int n) {
++  if (n>0 && n<1024) (void)write(STDERR_FILENO, line, (size_t)n);
++}
++typedef struct MechCountWitness {
++  const char* path;
++  u64 call, n, rank, el_type;
++  bool boxed;
++  u64 lookups, updates, inserts, increments;
++  u64 initial_capacity, final_capacity, growths, unique;
++} MechCountWitness;
++static inline void mech_witness_count(const MechCountWitness* w) {
++  if (!mech_witness_enabled()) return;
++  char line[1024];
++  int n = snprintf(line, sizeof(line),
++    "MECH_COUNT_WITNESS {\"pid\":%ld,\"call\":%llu,\"path\":\"%s\","
++    "\"n\":%llu,\"rank\":%llu,\"el_type\":%llu,\"boxed\":%s,"
++    "\"lookups\":%llu,\"updates\":%llu,\"inserts\":%llu,\"increments\":%llu,"
++    "\"initial_capacity\":%llu,\"final_capacity\":%llu,\"growths\":%llu,\"unique\":%llu}\n",
++    (long)getpid(), (unsigned long long)w->call, w->path,
++    (unsigned long long)w->n, (unsigned long long)w->rank,
++    (unsigned long long)w->el_type, w->boxed?"true":"false",
++    (unsigned long long)w->lookups, (unsigned long long)w->updates,
++    (unsigned long long)w->inserts, (unsigned long long)w->increments,
++    (unsigned long long)w->initial_capacity, (unsigned long long)w->final_capacity,
++    (unsigned long long)w->growths, (unsigned long long)w->unique);
++  mech_witness_write(line, n);
++}
+--- a/src/builtins/selfsearch.c
++++ b/src/builtins/selfsearch.c
+@@ -35,6 +35,7 @@
+ #include "utils/hash.h"
+ #include "utils/talloc.h"
+ #include "utils/calls.h"
++#include "utils/mechCountWitness.h"
+ 
+ extern B shape_c1(B, B);
+ extern B slash_c2(B, B, B);
+@@ -287,16 +288,19 @@
+   }
+ }
+ 
+-B count_c1(B t, B x) {
++B count_c1(B t, B x);
++
++static B mech_count_c1_impl(B t, B x, MechCountWitness* witness) {
+   if (isAtm(x) || RNK(x)==0) thrM("⊒𝕩: 𝕩 cannot have rank 0");
+   u64 n = *SH(x);
+-  if (n<=1) { decG(x); return n ? taga(arr_shVec(allZeroes(1))) : emptyIVec(); }
++  if (n<=1) { witness->path="trivial"; decG(x); return n ? taga(arr_shVec(allZeroes(1))) : emptyIVec(); }
+   if (n>(usz)I32_MAX+1) thrM("⊒𝕩: 𝕩 length >2⋆31 not supported");
+   
+   usz csz = arr_csz(x);
+-  if (csz==0) { decG(x); return C1(ud, m_f64(n)); }
++  if (csz==0) { witness->path="empty_cells"; decG(x); return C1(ud, m_f64(n)); }
+   u8 lw = cellWidthLog(x);
+   if (lw==0) {
++    witness->path="boolean";
+     u64* xp = bitany_ptr(x);
+     B r;
+     #define COUNT_BOOL(T) \
+@@ -316,7 +320,8 @@
+     decG(x); return r;
+     #undef COUNT_BOOL
+   }
+-  if (use_sorted(x, lw) && n>16 && (lw>4 || n<1<<16)) { // ↕∘≠(⊣-⌈`∘×)∊
++  if (use_sorted(x, lw) && n>16 && (lw>4 || n<1<<16)) {
++    witness->path="sorted"; // ↕∘≠(⊣-⌈`∘×)∊
+     B c = shift_ne(x, n, lw, 1);
+     B i = C1(ud, m_f64(n));
+     B m = C2(mul, c, incG(i));
+@@ -324,6 +329,7 @@
+   }
+   void* xv = tyany_ptr(x);
+   #define BRUTE(T) \
++    witness->path="brute" #T; \
+     i##T* xp = xv;                                             \
+     i8* rp; B r = m_i8arrv(&rp, n); rp[0]=0;                   \
+     for (usz i=1; i<n; i++) {                                  \
+@@ -333,6 +339,7 @@
+     }                                                          \
+     decG(x); return r;
+   #define LOOKUP(T) \
++    witness->path="lookup" #T; \
+     usz tn = 1<<T;                                             \
+     u##T* xp = (u##T*)xv;                                      \
+     i32* rp; B r = m_i32arrv(&rp, n);                          \
+@@ -345,12 +352,13 @@
+   if (lw==3) { if (n<12) { BRUTE(8); } else { LOOKUP(8); } }
+   if (lw==4) { if (n<12) { BRUTE(16); } else { LOOKUP(16); } }
+   #undef LOOKUP
+-  #define TRY_HASHTAB(W) TRY_HASHTAB_RET(count, W, squeeze_numNewTy(el_i32,r))
++  #define TRY_HASHTAB(W) { witness->path="hash" #W; TRY_HASHTAB_RET(count, W, squeeze_numNewTy(el_i32,r)) }
+   if (lw==5) {
+     if (n<20) { BRUTE(32); }
+     i32* rp; B r = m_i32arrv(&rp, n);
+     TRY_HASHTAB(32)
+     // Radix-assisted lookup
++    witness->path="radix32";
+     usz rx = 256, tn = 1<<16; // Radix; table length
+     u32* v0 = (u32*)xv;
+     i32* r0 = rp;
+@@ -381,18 +389,43 @@
+   #undef BRUTE
+   
+   if (RNK(x)>1) {
+-    if (shouldWidenBitarr(x, csz)) return C1(count, widenBitArr(x, 1));
++    if (shouldWidenBitarr(x, csz)) { witness->path="widen"; return C1(count, widenBitArr(x, 1)); }
+     x = toCells(x);
+   }
+   i32* rp; B r = m_i32arrv(&rp, n);
+   H_b2i* map = m_b2i(64);
++  witness->path="generic";
++  witness->initial_capacity=map->sz;
+   SGetU(x)
+   for (usz i = 0; i < n; i++) {
++    u64 capacity_before=map->sz;
++    witness->lookups++;
+     bool had; u64 p = mk_b2i(&map, GetU(x,i), &had);
+-    rp[i] = had? ++map->a[p].val : (map->a[p].val = 0);
+-  }
++    if (map->sz != capacity_before) witness->growths++;
++    if (had) { witness->increments++; rp[i]=++map->a[p].val; }
++    else { witness->inserts++; rp[i]=(map->a[p].val=0); }
++    witness->updates++;
++  }
++  witness->final_capacity=map->sz;
++  witness->unique=map->pop;
+   decG(x); free_b2i(map);
+   return squeeze_numNewTy(el_i32,r);
++}
++
++B count_c1(B t, B x) {
++  static u64 witness_serial=0;
++  MechCountWitness witness={0};
++  witness.path="unclassified";
++  witness.call=++witness_serial;
++  if (isArr(x)) {
++    witness.rank=RNK(x);
++    witness.n=RNK(x)>0?*SH(x):0;
++    witness.el_type=TI(x,elType);
++    witness.boxed=TI(x,elType)==el_B;
++  }
++  B result=mech_count_c1_impl(t, x, &witness);
++  mech_witness_count(&witness);
++  return result;
+ }
+ 
+ static B reduceI32WidthBelow(B r, usz after) {
+--- a/src/builtins/search.c
++++ b/src/builtins/search.c
+@@ -607,6 +607,8 @@
+ }
+ 
+ 
++#include "utils/mechCountWitness.h"
++
+ // •HashMap implementation
+ typedef struct HashMap {
+   struct Value;
+@@ -719,7 +721,7 @@
+   return tag(map, OBJ_TAG);
+ }
+ 
+-B hashmap_lookup(B* vars, B w, B x) {
++static B mech_hashmap_lookup_impl(B* vars, B w, B x) {
+   HashMap* map = c(HashMap, vars[2]);
+   u64* hp = map->a; u64 sh = map->sh;
+   B* keys = harr_ptr(vars[0]);
+@@ -728,7 +730,7 @@
+   dec(x); return w;
+ }
+ 
+-void hashmap_set(B* vars, B w, B x) {
++static void mech_hashmap_set_impl(B* vars, B w, B x) {
+   HashMap* map = c(HashMap, vars[2]);
+   u64* hp = map->a; u64 sh = map->sh;
+   usz i = IA(vars[0]);
+@@ -746,6 +748,34 @@
+   }
+   vars[0] = vec_addN(vars[0], w);
+   vars[1] = vec_addN(vars[1], x);
++}
++
++static inline void mech_witness_hashmap(const char* operation, B* vars, u64 before_capacity, u64 before_population) {
++  if (!mech_witness_enabled()) return;
++  /* vars identifies the namespace across hash-storage reallocations. */
++  HashMap* after = c(HashMap, vars[2]);
++  char line[1024];
++  int n = snprintf(line, sizeof(line),
++    "MECH_HASHMAP_WITNESS {\"pid\":%ld,\"operation\":\"%s\",\"map\":\"%llx\","
++    "\"before_capacity\":%llu,\"after_capacity\":%llu,\"before_population\":%llu,\"after_population\":%llu}\n",
++    (long)getpid(), operation, (unsigned long long)(uintptr_t)vars,
++    (unsigned long long)before_capacity, (unsigned long long)after->sz,
++    (unsigned long long)before_population, (unsigned long long)after->pop);
++  mech_witness_write(line, n);
++}
++
++B hashmap_lookup(B* vars, B w, B x) {
++  HashMap* before=c(HashMap, vars[2]);
++  u64 capacity=before->sz, population=before->pop;
++  B result=mech_hashmap_lookup_impl(vars, w, x);
++  mech_witness_hashmap("get", vars, capacity, population);
++  return result;
++}
++void hashmap_set(B* vars, B w, B x) {
++  HashMap* before=c(HashMap, vars[2]);
++  u64 capacity=before->sz, population=before->pop;
++  mech_hashmap_set_impl(vars, w, x);
++  mech_witness_hashmap("set", vars, capacity, population);
+ }
+ 
+ void hashmap_delete(B* vars, B x) {

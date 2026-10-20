@@ -1,0 +1,13 @@
+# Exact-source BQN ownership review awaiting root inspection
+
+The frame candidate has 43 nonblank, noncomment physical lines. A proposed extension of the retained BQN manual rule gives 48 units. Each chunk candidate has 54 physical lines and a proposed 59 units. These are review evidence, not newly admitted canonical LOC. Every receipt has `application_loc: null` and `independent_review_approved: false`.
+
+The retained baseline is exactly replayed as 36 physical lines plus its two saved packed-line adjustments (one and two), yielding its existing 39. The historical rule in `archive/comparisons/array-comparison/all-20261009/audit_sources.py` is physical lines plus exact-source manual adjustments. It is not a general BQN grammar certificate. In particular, its written closing lines count physically, and its case separators do not independently increase the count.
+
+For the frame candidate, the proposed extra units are two on line 21 (`n` lookup binding, table update, final `n`), one on line 24 (the grouped-count `v` binding alongside the result), and two on line 31 (`Fixed` declaration, local `s`, returned formatting expression). The remaining physical lines retain one unit each. The corresponding chunk lines are 19, 21 and 46. Each JSON receipt reproduces every source line with its manual owner list, including zero-unit comments and explicit closer classification.
+
+The separate proposed logical-owner v2 projection gives 50 for the frame and 62 for each chunk under its explicitly stated choices. It drops written closers, counts predicate guards and branch bodies independently, and charges anonymous imperative function declarations. These choices require BQN grammar and fixture review. They must not replace the retained rule or the baseline count silently. Pure expression functions, array primitives, Insert, Each, Group, reductions, compositions and literal elements stay as written operations; no implicit iteration is scalarized.
+
+Official [block documentation](https://mlochbaum.github.io/BQN/doc/block.html) distinguishes statement lists, function headers, multiple bodies and predicates. [Expression syntax](https://mlochbaum.github.io/BQN/doc/expression.html) describes assignments and roles. These establish syntax, not a canonical source-count metric. `tools/source_metrics.py` likewise marks its logical-owner policy as proposed and not qualified.
+
+All main-source work remains application-owned: parsing, encoding, the representation coercion used by occurrence counting, every table update, singleton fallback, grouping, parallel job construction and output. The unchanged generic imported process-map library and pinned runtime retain their separately recorded support boundary.
