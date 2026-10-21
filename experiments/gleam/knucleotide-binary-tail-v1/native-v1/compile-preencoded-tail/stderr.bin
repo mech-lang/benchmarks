@@ -1,0 +1,38 @@
+error: Inexhaustive patterns
+   ┌─ /private/tmp/mech-benchmark-publication/experiments/gleam/knucleotide-binary-tail-v1/.build/native-v1/packages/preencoded-tail/src/benchmark.gleam:71:3
+   │  
+71 │ ╭   case sequence {
+72 │ │     <<base, rest:bits>> -> {
+73 │ │       let value = code(base)
+74 │ │       encode_once(rest, <<encoded:bits, value>>)
+75 │ │     }
+76 │ │     <<>> -> encoded
+77 │ │   }
+   │ ╰───^
+
+This case expression does not have a pattern for all possible values. If it
+is run on one of the values without a pattern then it will crash.
+
+The missing patterns are:
+
+    _
+
+error: Inexhaustive patterns
+   ┌─ /private/tmp/mech-benchmark-publication/experiments/gleam/knucleotide-binary-tail-v1/.build/native-v1/packages/preencoded-tail/src/benchmark.gleam:81:3
+   │  
+81 │ ╭   case sequence {
+82 │ │     <<base, rest:bits>> -> {
+83 │ │       let key = { key * 4 + base } % modulus
+84 │ │       let counts = case index + 1 >= width {
+   · │
+93 │ │     <<>> -> counts
+94 │ │   }
+   │ ╰───^
+
+This case expression does not have a pattern for all possible values. If it
+is run on one of the values without a pattern then it will crash.
+
+The missing patterns are:
+
+    _
+

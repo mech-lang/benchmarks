@@ -122,8 +122,11 @@ pending. No catalog/chart timing has changed.
 
 - [Gleam binary traversal](../../gleam/knucleotide-binary-tail-v1/proposal.json):
   native binary head/tail traversal and optional once-only encoding. Seven full
-  library maps and process workers remain. Compilation, allocation/lowering
-  inspection, complete work probes, counts and measurements are pending.
+  library maps and process workers remain. The initial exhaustiveness errors are
+  retained; additive repairs compile and pass81complete independent outputs.
+  [Actual BEAM inspection](../../gleam/knucleotide-binary-tail-v1/native-lowering-review-v1.json)
+  confirms match-context traversal and private append. Work traces, source counts,
+  independent review and quantitative measurements remain pending.
 - [Elm hash-library review](../../elm/knucleotide-library-review-v1/source-review-v1.json):
   the retained core Dict is a red-black tree, conflicting with the workload's
   hash-table requirement. Historical compiler-input identity and independent

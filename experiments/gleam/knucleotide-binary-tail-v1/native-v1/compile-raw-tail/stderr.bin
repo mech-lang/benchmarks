@@ -1,0 +1,19 @@
+error: Inexhaustive patterns
+   ┌─ /private/tmp/mech-benchmark-publication/experiments/gleam/knucleotide-binary-tail-v1/.build/native-v1/packages/raw-tail/src/benchmark.gleam:71:3
+   │  
+71 │ ╭   case sequence {
+72 │ │     <<base, rest:bits>> -> {
+73 │ │       let key = { key * 4 + code(base) } % modulus
+74 │ │       let counts = case index + 1 >= width {
+   · │
+83 │ │     <<>> -> counts
+84 │ │   }
+   │ ╰───^
+
+This case expression does not have a pattern for all possible values. If it
+is run on one of the values without a pattern then it will crash.
+
+The missing patterns are:
+
+    _
+

@@ -1,0 +1,51 @@
+{
+  "schema": "gleam-binary-tail-native-lowering-review.v1",
+  "status": "three-builds-and81-complete-outputs-pass; counts-work-probes-and-timings-pending",
+  "report": {
+    "path": "experiments/gleam/knucleotide-binary-tail-v1/native-v2/report.json",
+    "sha256": "cc0bc77fe20e82bab1f0bdbbdf8c0147a93ca72250221b02a63bba875c386cd7"
+  },
+  "disassembly": {
+    "parent": {
+      "path": "experiments/gleam/knucleotide-binary-tail-v1/native-v2/disassembly-parent/stdout.bin",
+      "sha256": "c4801367747d1c5a75ea85376b28760c9f4f943637eedbef75570b6d4d17290d"
+    },
+    "raw-tail": {
+      "path": "experiments/gleam/knucleotide-binary-tail-v1/native-v2/disassembly-raw-tail/stdout.bin",
+      "sha256": "0db580c6ac45921ca92c174bf1f1fa5f69d69b895de029a0bf85409bce46d5fa"
+    },
+    "preencoded-tail": {
+      "path": "experiments/gleam/knucleotide-binary-tail-v1/native-v2/disassembly-preencoded-tail/stdout.bin",
+      "sha256": "07a601f4d483535fa72d3265a5769d274b924f8f39c85ce093ff1f0ea01283b0"
+    }
+  },
+  "new_sources": [
+    {
+      "path": "experiments/gleam/knucleotide-binary-tail-v1/source-v2/raw-tail.gleam",
+      "sha256": "e2f7116bc1a8323a9774724142fad2b64ebfba812a7730bc2d9e527d2c2957cf"
+    },
+    {
+      "path": "experiments/gleam/knucleotide-binary-tail-v1/source-v2/preencoded-tail.gleam",
+      "sha256": "40c6b72e695d90b0cebdc5c556737e5bc9fefff559f10bafb16e9d17dc4ac9cf"
+    }
+  ],
+  "findings": [
+    "Both histogram loops use BEAM binary match operations and reuse the match context across a tail call; per-byte foreign byte/size calls are absent from the loop.",
+    "Preencoding compiles to a bs_create_bin private_append construction followed by a tail call, not whole-prefix reconstruction per base.",
+    "Histogram map_get and gleam@dict.insert remain standard-library map operations. No foreign nucleotide kernel is present.",
+    "Current Gleam emits BEAM; saved disassembly is evidence of actual lowering, not an assumed Erlang-source translation."
+  ],
+  "limits": [
+    "No native complete-histogram event trace or quantitative result is established by output checks alone.",
+    "Peak allocation/GC behavior and performance still need measurements.",
+    "New retained-policy, uniform logical and formatted source counts remain unapproved."
+  ],
+  "preserved_failure": {
+    "path": "experiments/gleam/knucleotide-binary-tail-v1/native-v1/report.json",
+    "sha256": "1e62f6d9bb2483e698c73dbc9c3fc75ae1b8186915988811cce9f07b6a9203aa"
+  },
+  "ownership_boundary": {
+    "path": "experiments/gleam/knucleotide-binary-tail-v1/ownership-boundary-v1.json",
+    "sha256": "2e08063461a3fb2fbb36cafa457e692122854f004ede14f1481bb7b3e9247a51"
+  }
+}
