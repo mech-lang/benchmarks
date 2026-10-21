@@ -1,0 +1,44 @@
+type input_line_kind = Bases | Header | Comment
+
+let read_three table =
+  let dna = Buffer.create 65536 and header = Buffer.create 80 in
+  let active = ref false and finished = ref false in
+  let beginning = ref true and kind = ref Bases in
+  let finish_line () =
+    if !kind = Header then begin
+      let text = Buffer.contents header in
+      let length = String.length text in
+      if !active then finished := true
+      else if length >= 6 && String.sub text 0 6 = ">THREE" &&
+              (length = 6 || text.[6] = ' ' || text.[6] = '\t') then
+        active := true
+    end;
+    Buffer.clear header;
+    beginning := true;
+    kind := Bases
+  in
+  let chunk = Bytes.create 65536 in
+  let rec read () =
+    let size = input stdin chunk 0 (Bytes.length chunk) in
+    for i = 0 to size - 1 do
+      if not !finished then begin
+        let byte = Bytes.get chunk i in
+        if byte = '\r' || byte = '\n' then finish_line ()
+        else begin
+          if !beginning then begin
+            beginning := false;
+            kind := (match byte with '>' -> Header | ';' -> Comment | _ -> Bases)
+          end;
+          match !kind with
+          | Header -> Buffer.add_char header byte
+          | Comment -> ()
+          | Bases -> if !active then
+              Buffer.add_char dna (Char.unsafe_chr table.(Char.code byte))
+        end
+      end
+    done;
+    if size = 0 then finish_line ()
+    else if not !finished then read ()
+  in
+  read ();
+  Buffer.contents dna

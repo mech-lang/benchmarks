@@ -7,6 +7,11 @@ local implementation, unresolved lineage, and the priority review scope.
 It does not change canonical measurements, application LOC, source bytes,
 citations, model attribution or endpoint selection.
 
+The additive [exact coverage report](../coverage-v1/README.md) also reconciles
+later TypeScript, Odin and OCaml source inspections without rewriting this
+inventory or its original queue. Its per-family remaining work is a static
+review ledger; it does not confer native, timing or source-count qualification.
+
 ## What “fast” establishes
 
 The generated inventory checks whether each published fastest endpoint has the

@@ -54,6 +54,21 @@ scratch vector; parser boundary findings and other performance/idiom hypotheses
 remain unmeasured. Raw size measures are retained for all inspected files and
 the candidate, with normalized/formatted counts left unqualified.
 
+The [OCaml source review](../experiments/ocaml/source-review-v1/README.md) covers
+six local/derived sources and preserves twelve upstream submissions. Four
+uncompiled drafts explore exact-record parsing, rolling numeric keys, a shorter
+ordinary-library form and bounded FASTA output buffering. Independent Python
+oracles reproduce all thirty shared nucleotide/FASTA references and prepare
+fourteen extra buffer-boundary cases; the resulting 88 native candidate
+executions remain pending. Raw source measures are retained; normalized and
+formatted counts and timings remain unqualified.
+
+The additive [source-review coverage report](../experiments/implementation-audit/coverage-v1/README.md)
+reconciles the later TypeScript, Odin and OCaml inspections with the exact current
+catalog. It records 293 reviewed and 380 unreviewed local/derived profiles, 46
+unresolved ownership records and 351 protected upstream profiles. These are
+inspection counts, not completed optimization or native qualification totals.
+
 
 Explorer rollover and highlighting now batch pointer changes once per animation frame and update language groups instead of individual dots. Opacity animations and repeated ranking readouts are removed. The [matched profile](../site/publications/chart-hover-v1/comparison.json) and [performance notes](explorer-performance.md#rollover-and-highlighting) retain the measurements; browser data and reproduction payloads are byte-identical. Build `f360c8bf40c2e010` is [live and verified](../site/publications/chart-hover-v1/deployment.json), with all 41 public assets matching and all 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json) passing.
 
