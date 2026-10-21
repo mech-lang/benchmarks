@@ -3,11 +3,11 @@
   "inputs": [
     {
       "path": "experiments/implementation-audit/v1/inventory.json",
-      "sha256": "615907746e446ec108088bd9e28baabb92b3c2ef29754f1652e49d239c76ef7c"
+      "sha256": "71b1bd09425a9c334954d218d0891b2c0472f0b0cb5931e38195ccf5a092f6d9"
     },
     {
       "path": "data/benchmarks.json",
-      "sha256": "7b8d39d6963bc9b87e68e80ba17aea2f3edc2defae69b620c19f4af362a20835"
+      "sha256": "99db1ecdd4f8a20fc6aabfc13d493728a4a36d94cdc6778235376ebb60983d1c"
     },
     {
       "path": "data/languages.json",
@@ -22,7 +22,7 @@
   "ranking_limit": "Saved cohort ratios prioritize inspection; they do not predict optimization gains.",
   "summary": {
     "families": 54,
-    "profiles": 1067,
+    "profiles": 1070,
     "protected_profiles": 351,
     "families_with_local_sources": 44
   },
@@ -3843,12 +3843,14 @@
       "execution_variants": [
         "crystal"
       ],
-      "profiles": 20,
+      "profiles": 23,
       "protected_profiles": 0,
-      "locally_derived_or_authored_profiles": 20,
-      "distinct_included_source_bundles": 20,
+      "locally_derived_or_authored_profiles": 23,
+      "distinct_included_source_bundles": 23,
       "source_review_statuses": {
-        "not-yet-source-performance-reviewed": 20
+        "new-speed-candidate-work-qualified-and-measured; further-search-open": 3,
+        "not-yet-source-performance-reviewed": 18,
+        "source-reviewed-against-qualified-measured-alternative; further-search-open": 2
       },
       "local_workloads": [
         "binarytrees",
@@ -3863,9 +3865,9 @@
         "spectralnorm"
       ],
       "initial_largest_saved_gaps": [
-        "regexredux:crystal-regexredux-optimized",
         "binarytrees:crystal-binarytrees-compact",
-        "spectralnorm:crystal-spectralnorm-optimized"
+        "spectralnorm:crystal-spectralnorm-optimized",
+        "revcomp:crystal-revcomp-optimized"
       ],
       "programs": [
         {
@@ -4209,7 +4211,7 @@
           "ownership": "derived-adapted",
           "preserve_upstream_source": false,
           "source_change_scope": "new-derived-candidate-allowed",
-          "source_review_status": "not-yet-source-performance-reviewed",
+          "source_review_status": "source-reviewed-against-qualified-measured-alternative; further-search-open",
           "source_bundle": [
             {
               "sha256": "6d82ab4ea92a705d0b2959996c29feef76b36ca7321c74a7f5bfdc7d4c1b196c",
@@ -4219,7 +4221,6 @@
             }
           ],
           "endpoint_roles": [
-            "small",
             "formatted_small"
           ],
           "saved_seconds": 82.470745333,
@@ -4233,7 +4234,7 @@
           "ownership": "derived-adapted",
           "preserve_upstream_source": false,
           "source_change_scope": "new-derived-candidate-allowed",
-          "source_review_status": "not-yet-source-performance-reviewed",
+          "source_review_status": "source-reviewed-against-qualified-measured-alternative; further-search-open",
           "source_bundle": [
             {
               "sha256": "36d759ccb7c40f7b18927381b6a9a427eae0cd333e50f434c4bba0f43c59bbe6",
@@ -4243,11 +4244,77 @@
             }
           ],
           "endpoint_roles": [
-            "fast",
             "formatted_fast"
           ],
           "saved_seconds": 35.720843875,
           "saved_time_x_mech": 72.95751375645557,
+          "timing_alias_of": null
+        },
+        {
+          "program": "regexredux:crystal-regexredux-scan-block-parallel-v1",
+          "language": "crystal",
+          "benchmark": "regexredux",
+          "ownership": "derived-adapted",
+          "preserve_upstream_source": false,
+          "source_change_scope": "new-derived-candidate-allowed",
+          "source_review_status": "new-speed-candidate-work-qualified-and-measured; further-search-open",
+          "source_bundle": [
+            {
+              "sha256": "ba9752096484a652b2cea36da8ff21673299774b7fea17b39f412920acd5c773",
+              "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-parallel.cr",
+              "role": "application",
+              "included_in_application_loc": true
+            }
+          ],
+          "endpoint_roles": [
+            "fast"
+          ],
+          "saved_seconds": 1.650545709,
+          "saved_time_x_mech": 3.371132879486773,
+          "timing_alias_of": null
+        },
+        {
+          "program": "regexredux:crystal-regexredux-scan-inline-compact-v1",
+          "language": "crystal",
+          "benchmark": "regexredux",
+          "ownership": "derived-adapted",
+          "preserve_upstream_source": false,
+          "source_change_scope": "new-derived-candidate-allowed",
+          "source_review_status": "new-speed-candidate-work-qualified-and-measured; further-search-open",
+          "source_bundle": [
+            {
+              "sha256": "c2f3174388879f0d61b75bc879ad8474e45b2a7903da8326ecf63480762d0e69",
+              "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-compact.cr",
+              "role": "application",
+              "included_in_application_loc": true
+            }
+          ],
+          "endpoint_roles": [
+            "small"
+          ],
+          "saved_seconds": 2.571763166,
+          "saved_time_x_mech": 5.252659965659636,
+          "timing_alias_of": null
+        },
+        {
+          "program": "regexredux:crystal-regexredux-scan-inline-parallel-v1",
+          "language": "crystal",
+          "benchmark": "regexredux",
+          "ownership": "derived-adapted",
+          "preserve_upstream_source": false,
+          "source_change_scope": "new-derived-candidate-allowed",
+          "source_review_status": "new-speed-candidate-work-qualified-and-measured; further-search-open",
+          "source_bundle": [
+            {
+              "sha256": "49e48b96021f34f55a8aefde780712402f83c38303c8f02216faa5740ee6f1ec",
+              "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-parallel.cr",
+              "role": "application",
+              "included_in_application_loc": true
+            }
+          ],
+          "endpoint_roles": [],
+          "saved_seconds": 1.685757584,
+          "saved_time_x_mech": 3.443050857228084,
           "timing_alias_of": null
         },
         {

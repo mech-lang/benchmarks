@@ -20,6 +20,9 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | pidigits | [crystal-pidigits-optimized](pidigits/crystal-pidigits-optimized/program.json) | 31 | 1.33239 | 3 |
 | regexredux | [crystal-regexredux-compact](regexredux/crystal-regexredux-compact/program.json) | 41 | 82.4707 | 3 |
 | regexredux | [crystal-regexredux-optimized](regexredux/crystal-regexredux-optimized/program.json) | 56 | 35.7208 | 3 |
+| regexredux | [crystal-regexredux-scan-block-parallel-v1](regexredux/crystal-regexredux-scan-block-parallel-v1/program.json) | 54 | 1.65055 | 3 |
+| regexredux | [crystal-regexredux-scan-inline-compact-v1](regexredux/crystal-regexredux-scan-inline-compact-v1/program.json) | 32 | 2.57176 | 3 |
+| regexredux | [crystal-regexredux-scan-inline-parallel-v1](regexredux/crystal-regexredux-scan-inline-parallel-v1/program.json) | 47 | 1.68576 | 3 |
 | revcomp | [crystal-revcomp-compact](revcomp/crystal-revcomp-compact/program.json) | 23 | 7.1672 | 3 |
 | revcomp | [crystal-revcomp-optimized](revcomp/crystal-revcomp-optimized/program.json) | 70 | 1.01298 | 3 |
 | spectralnorm | [crystal-spectralnorm-compact](spectralnorm/crystal-spectralnorm-compact/program.json) | 27 | 1.70569 | 3 |

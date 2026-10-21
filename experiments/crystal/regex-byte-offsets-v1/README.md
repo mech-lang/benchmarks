@@ -45,4 +45,7 @@ Original application citations and authorship/license uncertainty remain in each
 source proposal. Current edits are Codex GPT-6-family adaptations; the exact
 serving model is unknown. No parent model attribution is inferred. All unsuccessful
 hypotheses, failed source-count host attempts and immutable earlier sources remain
-available. No canonical chart record has yet changed from this packet.
+available. [Guarded catalog admission](admission-v1/results.json) adds the three measured
+scan sources. [Historical preservation](admission-v1/preservation.json) verifies
+that every earlier profile, source, count and observation remains unchanged.
+Native formatted and uniform logical counts remain pending.

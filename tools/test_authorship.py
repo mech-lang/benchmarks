@@ -1,6 +1,7 @@
 """Authorship is evidence metadata, independent of rankings and measurements."""
 import copy,hashlib,importlib,importlib.util,json,unittest,sys
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 sys.path.insert(0,str(Path(__file__).resolve().parent))
 import source_lineage
@@ -17,6 +18,9 @@ FAMILY_ADMISSIONS={
     'nbody:clojure-nbody-primitive-updates-v1':'qualification.import_clojure_nbody',
     'nbody:clojure-nbody-compact-hot-aset-v1':'qualification.import_clojure_compact',
     'spectralnorm:prolog-spectralnorm-blocks8-v1':'qualification.import_prolog_spectral',
+    'regexredux:crystal-regexredux-scan-block-parallel-v1':'qualification.import_crystal_scan',
+    'regexredux:crystal-regexredux-scan-inline-parallel-v1':'qualification.import_crystal_scan',
+    'regexredux:crystal-regexredux-scan-inline-compact-v1':'qualification.import_crystal_scan',
 }
 
 def fixture(url=None,local=None):
@@ -31,18 +35,26 @@ class Authorship(unittest.TestCase):
         module_name=FAMILY_ADMISSIONS.get(p['key'])
         if module_name is None:return None
         module=importlib.import_module(module_name)
-        self.assertEqual(p['key'],module.KEY)
+        if module_name=='qualification.import_crystal_scan':
+            variant=next(v for v in module.VARIANTS if module.key(v)==p['key'])
+            source_sha,_,_,parent=module.VARIANTS[variant]
+            family=SimpleNamespace(SOURCE_SHA=source_sha,PARENT=parent)
+            evidence_paths=(module.PLAN,module.RESULTS,module.FROZEN['review'][0])
+        else:
+            self.assertEqual(p['key'],module.KEY)
+            family=module
+            evidence_paths=(module.PLAN,module.RESULTS)
         self.assertEqual(p['authorship'],module.bound_authorship(data,p,audit.ROOT))
         ai=p['authorship']['ai']
         self.assertEqual(ai['status'],'family-identified-exact-model-unverified')
         self.assertEqual(ai['model_family'],'Codex GPT-6')
         self.assertEqual(ai['models'],[]);self.assertIsNone(ai['exact_model'])
-        self.assertEqual(ai['matched_source_files'],[module.SOURCE_SHA])
+        self.assertEqual(ai['matched_source_files'],[family.SOURCE_SHA])
         pins=[dict(path=path,sha256=hashlib.sha256((audit.ROOT/path).read_bytes()).hexdigest())
-              for path in (module.PLAN,module.RESULTS)]
+              for path in evidence_paths]
         self.assertEqual(ai['evidence'],pins)
         self.assertEqual(p['source_provenance_record']['admission'],pins[1])
-        return module
+        return family
 
     def test_published_source_preserves_author_and_does_not_claim_ai(self):
         data=fixture('https://benchmarksgame-team.pages.debian.net/benchmarksgame/program/test-c-1.html')

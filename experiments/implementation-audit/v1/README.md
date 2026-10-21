@@ -57,6 +57,7 @@ New admissions have statuses distinct from static candidate suggestions:
 | Clojure n-body `clojure-nbody-compact-hot-aset-v1` | [Independent compact-candidate measurements](../../clojure/compact-primitive-v1/admission-v1/results.json); 109 retained-rule application / 49 physical LOC; 22.22 s median, 8.26× the freshly matched fast control's time; no matched speedup against the older cohort claimed |
 | Prolog spectral norm `prolog-spectralnorm-blocks8-v1` | [Fresh matched full-process comparison](../../prolog/optimization-v1/admission-v1/results.json); 179.48 → 34.52 s, 5.20× faster; 128 retained-rule application / 87 physical LOC, with the native logical count explicitly unavailable |
 | MATLAB regex `matlab-case-compact`, `matlab-case-optimized` | [Archived correctness correction and six complete-process observations](../../matlab/optimization-v1/admission-v1/results.json); 16 / 19 application LOC respectively, with matching physical LOC; intake adds no native run |
+| Crystal regex standard scan, three forms | [Reviewed source/count/full-process admission](../../crystal/regex-byte-offsets-v1/admission-v1/results.json); parallel block1.651s (3.37× Mech AOT), parallel inline1.686s (3.44×), compact inline2.572s (5.25×);54/47/32retained units and46/41/28physical lines |
 
 Only catalog-bound admissions receive these statuses; an experiment or prepared
 preview alone does not qualify. Predecessors are marked reviewed against an
@@ -78,7 +79,7 @@ count for every language. Generic Ruby worker modules have an unapplied
 ## Ownership and protection
 
 The following table is the **frozen initial 1,058-profile snapshot**, before the
-nine admitted profiles above. Current counts and the exact catalog hash are generated
+later admitted profiles above. Current counts and the exact catalog hash are generated
 in `inventory.json` under `summary` and `canonical_input`.
 
 | Classification | Profiles | Evidence rule |

@@ -232,6 +232,11 @@ def audit(data,models):
         if key=='spectralnorm:prolog-spectralnorm-blocks8-v1':
             from qualification.import_prolog_spectral import bound_authorship
             records[key]=bound_authorship(data,p,ROOT)
+        if key in {'regexredux:crystal-regexredux-scan-block-parallel-v1',
+                   'regexredux:crystal-regexredux-scan-inline-parallel-v1',
+                   'regexredux:crystal-regexredux-scan-inline-compact-v1'}:
+            from qualification.import_crystal_scan import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

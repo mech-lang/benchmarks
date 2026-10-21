@@ -213,6 +213,9 @@ def historical_catalog(root, current):
     if 'lean4_knucleotide_eligibility' in current:
         from qualification.apply_lean4_knucleotide_eligibility import append_catalog
         expected = append_catalog(expected, root)
+    if 'crystal_scan_audit' in current:
+        from qualification.import_crystal_scan import append_catalog
+        expected = append_catalog(expected, root)
     assert current == expected, 'Current catalog differs from the validated source-accounting transformation'
     assert report == receipt['transformation'], 'Source-accounting result differs'
     return before

@@ -88,7 +88,9 @@ was taken. Full-size seconds cannot normalize those pilots.
 - TypeScript rolling-map and D compaction candidates need further required-work,
   owner-count/runtime qualification and independently preselected full-size runs.
 
-No candidate in this tranche has been added to the canonical catalog or chart.
+The three full-size Crystal scan candidates are now
+[admitted](../../crystal/regex-byte-offsets-v1/admission-v1/results.json). Other
+candidates in this tranche remain outside the canonical catalog.
 Exact failures, unsuccessful hypotheses, sources, citations and process captures
 are retained. A lowest observed candidate median never establishes global
 optimality or minimum idiomatic source.
@@ -116,7 +118,7 @@ extrapolate. The Mech AOT denominator is a historical median of0.51382825s on th
 same full workload, identified by profile, original report and samples. None of
 those observations is replaced or pooled into this cohort. Source-count approval,
 more detailed independent work review and guarded catalog admission remain
-pending. No catalog/chart timing has changed.
+pending for TypeScript. No TypeScript catalog/chart timing has changed.
 
 ## Additional source review
 

@@ -1,8 +1,8 @@
 # Complementary source measurements
 
 [The additive report](../experiments/source-metrics/v1/metrics.json) and
-[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,067 retained
-profiles, covering 968 distinct source files and 63 execution variants. The
+[CSV](../experiments/source-metrics/v1/metrics.csv) measure all 1,070 retained
+profiles, covering 971 distinct source files and 63 execution variants. The
 report preserves the saved canonical catalog, source bytes, timings and
 coordinates. The chart offers separate source-size projections described below.
 Profiles remain separate records even when execution modes

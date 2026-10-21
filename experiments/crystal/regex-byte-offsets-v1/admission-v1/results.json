@@ -1,0 +1,2382 @@
+{
+  "schema": "crystal-scan-admission-results.v1",
+  "status": "RECONCILED",
+  "plan": {
+    "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/plan.json",
+    "sha256": "314ea37d4f1b187b629c3dc76256973dcb2cfc39d1700ac459211de838f092e2"
+  },
+  "evidence": {
+    "review": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/independent-review-v1.json",
+      "sha256": "9f6cfdaafc5c10d905968f0e5a82df50a87ae8b187c2d412bd201a452f05b2f0"
+    },
+    "full_plan": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+      "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+    },
+    "full": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+      "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+    },
+    "bounded_plan": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-plan-v1.json",
+      "sha256": "7cde296c5fa3a27e5e3e488b41190c37266bfc69600251dd57dc10445af61524"
+    },
+    "bounded": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/report.json",
+      "sha256": "61b3baad813d6e87fd9e5d2f12f0e31f852b43841c556ae78c3a8e63227f30e6"
+    },
+    "counts": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/receipt.json",
+      "sha256": "52aeec015c5a11ea2626a8934c9612614ea20908b42acfee22cd33369cab22e1"
+    },
+    "stdlib": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/manifest.json",
+      "sha256": "4e27342156c2e192723cc25f6686b022e37c2b08add0ef41c40eee6af92c1cc5"
+    },
+    "relative": {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/mech-aot-relative-v1.json",
+      "sha256": "d255f9085c2cd676df32d9229de7872540a0920a877f52ea32233461b6911d6c"
+    },
+    "importer": {
+      "path": "tools/qualification/import_crystal_scan.py",
+      "sha256": "ffe98117a31cd0cf776b1406e68400d2fa9248f3449d601bad01d622db2de978"
+    },
+    "shared_helpers": {
+      "path": "tools/qualification/import_bqn_knucleotide.py",
+      "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+    }
+  },
+  "author_context": {
+    "tool": "OpenAI Codex",
+    "model_family": "Codex GPT-6",
+    "exact_model": null,
+    "status": "developer-identity-family-only",
+    "original_predecessor_model": "unverified"
+  },
+  "recorded_execution_root": "/private/tmp/mech-benchmark-publication",
+  "programs": [
+    {
+      "id": "crystal-regexredux-scan-block-parallel-v1",
+      "key": "regexredux:crystal-regexredux-scan-block-parallel-v1",
+      "variant": "block-parallel",
+      "parent": "regexredux:crystal-regexredux-optimized",
+      "parent_source_sha256": "36d759ccb7c40f7b18927381b6a9a427eae0cd333e50f434c4bba0f43c59bbe6",
+      "source_sha256": "ba9752096484a652b2cea36da8ff21673299774b7fea17b39f412920acd5c773",
+      "source": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-parallel.cr",
+      "loc": 54,
+      "physical_loc": 46,
+      "loc_expansions": [
+        {
+          "line": 19,
+          "original": "def count_matches(sequence : String, pattern : Regex)",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 431,
+              "end": 484,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 21,
+          "original": "  sequence.scan(pattern) { count += 1 }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 499,
+              "end": 523,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 535,
+              "end": 536,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 27,
+              "end_column": 39,
+              "units": 1,
+              "assignments": [
+                {
+                  "column": 34,
+                  "operator": "+="
+                }
+              ],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 23,
+          "original": "end",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "close",
+              "start": 545,
+              "end": 548,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 30,
+          "original": "def count_job(sequence : String, source : String, index : Int32, done : Channel(Tuple(Int32, Int32)))",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 687,
+              "end": 788,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 33,
+          "original": "end",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "close",
+              "start": 874,
+              "end": 877,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 36,
+          "original": "8.times { |index| spawn count_job(sequence, PATTERNS[index].source, index, done) }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 963,
+              "end": 980,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 1044,
+              "end": 1045,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 18,
+              "end_column": 82,
+              "units": 1,
+              "assignments": [],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 38,
+          "original": "8.times do",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 1071,
+              "end": 1081,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 41,
+          "original": "end",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "close",
+              "start": 1138,
+              "end": 1141,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 43,
+          "original": "PATTERNS.each_with_index { |pattern, index| puts \"#{pattern.source} #{counts[index]}\" }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 1191,
+              "end": 1234,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 1277,
+              "end": 1278,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 44,
+              "end_column": 87,
+              "units": 1,
+              "assignments": [],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 45,
+          "original": "SUBSTITUTIONS.each { |pair| sequence = sequence.gsub(pair[0], pair[1]) }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 1280,
+              "end": 1307,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 1351,
+              "end": 1352,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 28,
+              "end_column": 72,
+              "units": 1,
+              "assignments": [
+                {
+                  "column": 38,
+                  "operator": "="
+                }
+              ],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        }
+      ],
+      "samples_seconds": [
+        1.61399175,
+        1.650545709,
+        1.669591667
+      ],
+      "median_seconds": 1.650545709,
+      "sample_sd_seconds": 0.02825565195708142,
+      "peak_rss_bytes": 341606400,
+      "binary_sha256": "37d9908c695902fb2e1d31a53313c0934ed4acb3e024061ff973b4bb1c25c8da",
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/block-parallel"
+      ],
+      "build_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/bin/crystal",
+        "build",
+        "--release",
+        "--no-debug",
+        "--no-color",
+        "--error-trace",
+        "--mcpu",
+        "native",
+        "--threads",
+        "1",
+        "--link-flags",
+        "-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.4 -L /opt/homebrew/Cellar/gmp/6.3.0/lib -L /opt/homebrew/Cellar/pcre2/10.49/lib -L /private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/lib",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/block-parallel",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-parallel.cr"
+      ],
+      "build_evidence": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-block-parallel/process.json",
+        "sha256": "fb6dc4efc8baccb9a4e536a46014c855f6b313db97295ef368ace6b62aa39db5"
+      },
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/block-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:16.626007+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22198,
+          "exit_code": 0,
+          "elapsed_seconds": 1.61399175,
+          "user_seconds": 2.700098,
+          "system_seconds": 0.028561,
+          "maximum_rss_bytes": 341606400,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:15:18.240502+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/process.json",
+            "sha256": "00c934f3ee01b305da42d94087c97bd2b113c0d7d328a96d6d45511189bd06f6"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/block-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:23.346487+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22201,
+          "exit_code": 0,
+          "elapsed_seconds": 1.650545709,
+          "user_seconds": 2.754879,
+          "system_seconds": 0.027351,
+          "maximum_rss_bytes": 326795264,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:15:24.997563+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/process.json",
+            "sha256": "79a23f0b04923f93e907572649e0cc5b9a9cb7bc1ae9e1e4c1f37532a9ce3d9e"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/block-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:16:04.326926+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22227,
+          "exit_code": 0,
+          "elapsed_seconds": 1.669591667,
+          "user_seconds": 2.789115,
+          "system_seconds": 0.027378999999999997,
+          "maximum_rss_bytes": 341606400,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:16:05.997088+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/process.json",
+            "sha256": "9790dc238a1e7a918ec17f17c0d6fa3580fb0d54691f9ffa5fcee247ced75027"
+          },
+          "workload_n": 5000000
+        }
+      ],
+      "source_count_review": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/block-parallel.json",
+        "sha256": "ba27009e951fefdb2dcaf66296e4990dda947adaa1734787cf34394db9551af4",
+        "bytes": 25195
+      },
+      "matched_control_speedup": 21.19948063310496,
+      "time_x_mech_aot": 3.371132879486773
+    },
+    {
+      "id": "crystal-regexredux-scan-inline-parallel-v1",
+      "key": "regexredux:crystal-regexredux-scan-inline-parallel-v1",
+      "variant": "inline-parallel",
+      "parent": "regexredux:crystal-regexredux-optimized",
+      "parent_source_sha256": "36d759ccb7c40f7b18927381b6a9a427eae0cd333e50f434c4bba0f43c59bbe6",
+      "source_sha256": "49e48b96021f34f55a8aefde780712402f83c38303c8f02216faa5740ee6f1ec",
+      "source": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-parallel.cr",
+      "loc": 47,
+      "physical_loc": 41,
+      "loc_expansions": [
+        {
+          "line": 24,
+          "original": "def count_job(sequence : String, source : String, index : Int32, done : Channel(Tuple(Int32, Int32)))",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 568,
+              "end": 669,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 27,
+          "original": "end",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "close",
+              "start": 750,
+              "end": 753,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 30,
+          "original": "8.times { |index| spawn count_job(sequence, PATTERNS[index].source, index, done) }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 839,
+              "end": 856,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 920,
+              "end": 921,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 18,
+              "end_column": 82,
+              "units": 1,
+              "assignments": [],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 32,
+          "original": "8.times do",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 947,
+              "end": 957,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 35,
+          "original": "end",
+          "units": 1,
+          "extra_lines": 0,
+          "canonical_events": [
+            {
+              "kind": "close",
+              "start": 1014,
+              "end": 1017,
+              "units": 1,
+              "scope": "foreign-crystal"
+            }
+          ],
+          "events": [],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 37,
+          "original": "PATTERNS.each_with_index { |pattern, index| puts \"#{pattern.source} #{counts[index]}\" }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 1062,
+              "end": 1105,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 1148,
+              "end": 1149,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 44,
+              "end_column": 87,
+              "units": 1,
+              "assignments": [],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 39,
+          "original": "SUBSTITUTIONS.each { |pair| sequence = sequence.gsub(pair[0], pair[1]) }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 1151,
+              "end": 1178,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 1222,
+              "end": 1223,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 28,
+              "end_column": 72,
+              "units": 1,
+              "assignments": [
+                {
+                  "column": 38,
+                  "operator": "="
+                }
+              ],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        }
+      ],
+      "samples_seconds": [
+        1.670413,
+        1.686581042,
+        1.685757584
+      ],
+      "median_seconds": 1.685757584,
+      "sample_sd_seconds": 0.009106224275411775,
+      "peak_rss_bytes": 341606400,
+      "binary_sha256": "bdba98a59fd6a47b39e5e912ab3e6fa71ad49a710548208b94df78d68e0fcfb2",
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-parallel"
+      ],
+      "build_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/bin/crystal",
+        "build",
+        "--release",
+        "--no-debug",
+        "--no-color",
+        "--error-trace",
+        "--mcpu",
+        "native",
+        "--threads",
+        "1",
+        "--link-flags",
+        "-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.4 -L /opt/homebrew/Cellar/gmp/6.3.0/lib -L /opt/homebrew/Cellar/pcre2/10.49/lib -L /private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/lib",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-parallel",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-parallel.cr"
+      ],
+      "build_evidence": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-parallel/process.json",
+        "sha256": "60c4f025e27b07fd7ef324effcfeff987889a1972d471476041e56e29b815ff7"
+      },
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:14.954388+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22197,
+          "exit_code": 0,
+          "elapsed_seconds": 1.670413,
+          "user_seconds": 2.696695,
+          "system_seconds": 0.029446999999999997,
+          "maximum_rss_bytes": 326762496,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:15:16.625347+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/process.json",
+            "sha256": "ef2ac05f0a64af961daf1ec927f2dff32e8b20a401231acd562f52699ab59264"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:59.992201+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22225,
+          "exit_code": 0,
+          "elapsed_seconds": 1.686581042,
+          "user_seconds": 2.710069,
+          "system_seconds": 0.026012999999999998,
+          "maximum_rss_bytes": 326795264,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:16:01.679344+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/process.json",
+            "sha256": "92c7a44a5da5d8acabc83647bc789215115eb16a08e355df38827989e822eaa0"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-parallel"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:16:05.997752+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22228,
+          "exit_code": 0,
+          "elapsed_seconds": 1.685757584,
+          "user_seconds": 2.823785,
+          "system_seconds": 0.028267999999999998,
+          "maximum_rss_bytes": 341606400,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:16:07.684070+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/process.json",
+            "sha256": "2847c1f6f787d5166afbaa6ff2361de40a04c1cae1f49e523350de925081b209"
+          },
+          "workload_n": 5000000
+        }
+      ],
+      "source_count_review": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/inline-parallel.json",
+        "sha256": "d323363351104d10c7b76a1d722b754236f893aaf44d686e55ae8c3f3f2b041b",
+        "bytes": 22357
+      },
+      "matched_control_speedup": 20.756668766676004,
+      "time_x_mech_aot": 3.443050857228084
+    },
+    {
+      "id": "crystal-regexredux-scan-inline-compact-v1",
+      "key": "regexredux:crystal-regexredux-scan-inline-compact-v1",
+      "variant": "inline-compact",
+      "parent": "regexredux:crystal-regexredux-compact",
+      "parent_source_sha256": "6d82ab4ea92a705d0b2959996c29feef76b36ca7321c74a7f5bfdc7d4c1b196c",
+      "source_sha256": "c2f3174388879f0d61b75bc879ad8474e45b2a7903da8326ecf63480762d0e69",
+      "source": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-compact.cr",
+      "loc": 32,
+      "physical_loc": 28,
+      "loc_expansions": [
+        {
+          "line": 24,
+          "original": "PATTERNS.each { |pattern| puts \"#{pattern.source} #{sequence.scan(pattern).size}\" }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 568,
+              "end": 593,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 650,
+              "end": 651,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 26,
+              "end_column": 83,
+              "units": 1,
+              "assignments": [],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        },
+        {
+          "line": 26,
+          "original": "SUBSTITUTIONS.each { |pair| sequence = sequence.gsub(pair[0], pair[1]) }",
+          "units": 3,
+          "extra_lines": 2,
+          "canonical_events": [
+            {
+              "kind": "header",
+              "start": 653,
+              "end": 680,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            },
+            {
+              "kind": "close",
+              "start": 724,
+              "end": 725,
+              "units": 1,
+              "scope": "foreign-crystal-callback"
+            }
+          ],
+          "events": [
+            {
+              "start_column": 28,
+              "end_column": 72,
+              "units": 1,
+              "assignments": [
+                {
+                  "column": 38,
+                  "operator": "="
+                }
+              ],
+              "declaration_bindings": 0,
+              "reason": "independent-statement-and-chained-bindings"
+            }
+          ],
+          "reason": "Approved owner/header/body/close units; preserve literal/data wrapping."
+        }
+      ],
+      "samples_seconds": [
+        2.571763166,
+        2.531128084,
+        2.645723166
+      ],
+      "median_seconds": 2.571763166,
+      "sample_sd_seconds": 0.05809951851167862,
+      "peak_rss_bytes": 340787200,
+      "binary_sha256": "f4124d5ec4922c364ca08ec472f80e9acf213d93670a71c1333620d1130af64d",
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-compact"
+      ],
+      "build_command": [
+        "/private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/bin/crystal",
+        "build",
+        "--release",
+        "--no-debug",
+        "--no-color",
+        "--error-trace",
+        "--mcpu",
+        "native",
+        "--threads",
+        "1",
+        "--link-flags",
+        "-isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -mmacosx-version-min=14.4 -L /opt/homebrew/Cellar/gmp/6.3.0/lib -L /opt/homebrew/Cellar/pcre2/10.49/lib -L /private/tmp/mech-benchmark-publication/experiments/implementation-audit/remaining-v1/.build/crystal/distribution/crystal-1.21.1-1/embedded/lib",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-compact",
+        "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-compact.cr"
+      ],
+      "build_evidence": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-compact/process.json",
+        "sha256": "50d674d47f1128d97222edd3ff36fccff8430c71886b87efc679bd51dd716c55"
+      },
+      "sample_execution_metadata": [
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-compact"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:18.241171+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22199,
+          "exit_code": 0,
+          "elapsed_seconds": 2.571763166,
+          "user_seconds": 2.531692,
+          "system_seconds": 0.030612999999999998,
+          "maximum_rss_bytes": 340787200,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:15:20.813481+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/process.json",
+            "sha256": "f9d640ac03cb4e4deef879a4ef5dcaf5f10254aa0cb0479ba114dcf82e1d920e"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-compact"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:15:20.814190+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22200,
+          "exit_code": 0,
+          "elapsed_seconds": 2.531128084,
+          "user_seconds": 2.49116,
+          "system_seconds": 0.030750999999999997,
+          "maximum_rss_bytes": 340770816,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:15:23.345809+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/process.json",
+            "sha256": "45b07172b6b70140e088a3be722794f5c29c26abfe39f868a246096185f2ace3"
+          },
+          "workload_n": 5000000
+        },
+        {
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/scan-v1/.build/native-v1/inline-compact"
+          ],
+          "cwd": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1",
+          "environment": {
+            "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+            "LC_ALL": "C",
+            "LANG": "C",
+            "TZ": "UTC",
+            "UV_THREADPOOL_SIZE": "8",
+            "CRYSTAL_WORKERS": "8",
+            "OMP_NUM_THREADS": "1",
+            "OPENBLAS_NUM_THREADS": "1",
+            "VECLIB_MAXIMUM_THREADS": "1"
+          },
+          "started_utc": "2026-10-21T00:16:01.680022+00:00",
+          "stdin": "/private/tmp/mech-benchmark-publication/experiments/lean4/.build/inputs/n5000000.fasta",
+          "quantitative_benchmark": true,
+          "common_mutex_inherited": true,
+          "common_mutex_inode": 82961857,
+          "pid": 22226,
+          "exit_code": 0,
+          "elapsed_seconds": 2.645723166,
+          "user_seconds": 2.605293,
+          "system_seconds": 0.032055,
+          "maximum_rss_bytes": 340770816,
+          "remaining_process_group": false,
+          "timed_out": false,
+          "finished_utc": "2026-10-21T00:16:04.326226+00:00",
+          "stdout": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/stdout.bin",
+            "bytes": 298,
+            "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+          },
+          "stderr": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/stderr.bin",
+            "bytes": 0,
+            "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+          },
+          "producer_plan": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+            "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+          },
+          "producer_report": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+            "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+          },
+          "raw_evidence": {
+            "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/process.json",
+            "sha256": "99056cf399e0990401f1019a28a34f7381de30b64a3bca3692a100e1594e1785"
+          },
+          "workload_n": 5000000
+        }
+      ],
+      "source_count_review": {
+        "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/inline-compact.json",
+        "sha256": "c5616f57ff77a52418655869b33d377947764905f1d515a4e1bbd807c30c3ce6",
+        "bytes": 13999
+      },
+      "matched_control_speedup": 13.605728651298366,
+      "time_x_mech_aot": 5.252659965659636
+    }
+  ],
+  "toolchains": {
+    "crystal": {
+      "version": "Crystal 1.21.1 [73ea5c2b1] (2026-09-26)\n\nLLVM: 15.0.7\nDefault target: aarch64-apple-macosx11.0\n",
+      "evidence": {
+        "path": "experiments/implementation-audit/remaining-v1/native-v1/crystal-version/stdout.bin",
+        "sha256": "ed3e7f26ebcc05c15191e247359f48365060db0e2587d261bda369bceb8f5076"
+      }
+    }
+  },
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56\n",
+  "host": {
+    "scope": "Suite Apple M3 runner; exact OS captured, no separate cohort hardware probe."
+  },
+  "input": {
+    "path": "experiments/lean4/.build/inputs/n5000000.fasta",
+    "bytes": 50833411,
+    "sha256": "97197f5957a12f8a859ba7edff6d97994daa18afacd77db21fa68c6f2e447e38"
+  },
+  "full_workload_n": 5000000,
+  "library_pins": {
+    "/opt/homebrew/Cellar/pcre2/10.49/lib/libpcre2-8.0.dylib": "c3adcd954967b7e92812831fe12c614a9ca2d12221e897a87ee379df2ac004fd"
+  },
+  "runtime_environment": {
+    "PATH": "/opt/homebrew/bin:/usr/bin:/bin",
+    "LC_ALL": "C",
+    "LANG": "C",
+    "TZ": "UTC",
+    "UV_THREADPOOL_SIZE": "8",
+    "CRYSTAL_WORKERS": "8",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "timing_boundary": "Three shuffled sequential fresh-process observations per source; startup/input/work/complete output/shutdown included. Preparation/hashing excluded.",
+  "required_work": {
+    "nine_separate_case_sensitive_nonoverlapping_scans": true,
+    "pattern_order_preserved": true,
+    "full_cleaned_sequence_per_pattern": true,
+    "five_sequential_ordered_global_replacements": true,
+    "unchanged_complete_input_and_original_cleaned_final_byte_lengths": true,
+    "whole_input_read": "STDIN.gets_to_end in each fresh native process",
+    "library_boundary": "Ordinary installed String.scan/Regex/PCRE2/String.gsub APIs; no authored native regex executor or custom FFI. Every authored helper and scheduling statement is included in reviewed application LOC.",
+    "parallel_schedule": "Eight source-owned count fibers send indexed totals through standard Channel; main receives all eight before ninth scan/output and all five replacements. Shared cleaned String is unchanged while counting; each worker constructs its own default Regex from identical source. Output is serialized in PATTERNS order.",
+    "scan_api_findings": "Pinned String.scan starts byte_offset0 with default MatchOptions::None, calls match_at_byte_index, advances by actual byte_begin/byte_end (and handles zero-length progress), then adds NO_UTF_CHECK only after a successful first checked search. Array scan delegates to block scan and retains MatchData objects; it does not change scan work.",
+    "regex_engine_findings": "Pinned PCRE2 wrapper adds UTF/UCP/DUPNAMES by default, attempts ordinary JIT compilation at construction with documented fallback for JIT_BADOPTION, and maps invalid UTF errors to ArgumentError. No source-supplied NO_UTF_CHECK, NO_JIT or alternate engine options.",
+    "jit_limit": "Default JIT compilation path is established from pinned library code/linkage; this review did not observe per-pattern JIT success or execute an engine probe.",
+    "validation_limit": "The four native invalid-UTF8 rejections occur in unchanged initial gsub. They establish application rejection; first-scan validation is a separate static conclusion from pinned stdlib, not an isolated native scan witness.",
+    "mechanism_limit": "Byte-position progress and validation-once behavior are visible source/API changes. No native profile apportions elapsed savings between offset conversion, repeated UTF checking, allocation or scheduling."
+  },
+  "mech_aot_baseline": {
+    "profile": "regexredux:mech-regex-final-reuse-signed",
+    "seconds": 0.489611584,
+    "samples_seconds": [
+      0.489611584,
+      0.493169167,
+      0.485795291
+    ],
+    "stdev_seconds": 0.0036876943186566233,
+    "original_report": {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/results/timings.json",
+      "sha256": "2af915b2b4af15342df200070bfa5e02c7f9177d82edb3144b92094956321958"
+    },
+    "original_selector": "/programs/regexredux:mech-control",
+    "source_sha256": [
+      "69b4a43724aef3d161cae8ba29c683928027435b61bd0e270e9bd1d969a0741d"
+    ],
+    "binary_sha256": "026fa8c40c7d425282349c20a8cb155db271f2b7f4fdfefc1699408adcee0eef",
+    "workload_size": 5000000,
+    "output_sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+  },
+  "matched_control": {
+    "samples": [
+      34.520576542,
+      34.990711792,
+      35.311928083
+    ],
+    "median_seconds": 34.990711792,
+    "stdev_seconds": 0.39800425465469325,
+    "peak_rss_bytes": 341671936
+  },
+  "new_observations": 9,
+  "matched_control_observations_retained": 3,
+  "old_profiles_unchanged": true,
+  "source_size_scope": "Approved exact retained Crystal policy only; uniform logical and native formatted metrics unavailable.",
+  "protocol_limits": [
+    "Power/low-power settings and process listing are captured once before the cohort, not before and after every observation. Do not invent per-observation brackets.",
+    "Only12 declared source observations are admitted; three utility command receipts use the same quantitative helper but are not benchmark samples.",
+    "Fixed shuffled3round cohort with3samples/source supports these measured medians; it is not a global-optimality or general statistical precision claim.",
+    "Saved producer standard deviations should be retained exactly and recomputation checked with tight relative tolerance across Python versions. Samples and medians must remain exact."
+  ],
+  "artifacts": [
+    {
+      "path": "archive/languages/crystal/20261012/source-counts/corrected-qualified-overlay-v2/qualified-loc-overlay.json",
+      "sha256": "e22140622a5154a1e3b9512580eb469c8c078beda4a2ae9812bf429e51e089e2"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/__init__.py",
+      "sha256": "ff7513f3a4c6a47b96f057a4759f2e2e2744647d4d86670b88ecb628a34f0ade"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/lexers/__init__.py",
+      "sha256": "e98873c462a55a4dfc3fa269209510d6b56f5740c4663126758b1d310e7c8529"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/lexers/_mapping.py",
+      "sha256": "f5fbfbc5839400eafa2f37dd152e0c0db3eeefca38390407fb69ec2356cd65fe"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/modeline.py",
+      "sha256": "2b9792911f064b5af93a45d74c739c57468cffac6993d7963442005be38e2768"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/plugin.py",
+      "sha256": "b4fc74ac9093219f62a1180b3581b8a627c26c0c1345465d76f2f0f8d7c0936c"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/token.py",
+      "sha256": "59b7561a1626fd5a2c6f40c3c56f651cd3e02135df593b10987b7a732f516dc3"
+    },
+    {
+      "path": "archive/qualification/nim/records/formatted-nim-plan-v1/jobs/actual-plans-v1/imports/pygments/util.py",
+      "sha256": "a11b52a62028e6333dba59ed92f55b81751d8805b9ee39ee60607bb7d7d8ba17"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/clojure-grammar-v3/jobs/grammar-v3-source-replay-v1/grammar-dependencies/canonical.py",
+      "sha256": "4568ecaa00623b18de165d228f37752c973db58e9254f5b587e1b820bbbe56da"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/crystal-brace-repair-v2/foreign_crystal.py",
+      "sha256": "df4481e27581d106e9bd7af181395dd5ba5d40d1848d077dda79b98550a17b8a"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/crystal-brace-repair-v2/jobs/fixtures-replay-v1/fixture-receipt.json",
+      "sha256": "9b76503c1344a09689c0bf12456bdf89661897fee5fd721d7e53ba84248b86f4"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/foreign_core.py",
+      "sha256": "62a79d27740647f5f4918c3f29df6ba977e72f61777f8cf3f431e0ec66ba5be5"
+    },
+    {
+      "path": "archive/validation/loc-normalization/20261012/foreign_future_mask.py",
+      "sha256": "3b9a5c498459e5ae3ed04695faef938bbd15080c2c47ac1010ef87fb964cabd5"
+    },
+    {
+      "path": "archive/workloads/regexredux/inputs/output-full.txt",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/LICENSE",
+      "sha256": "d936c11961ab8e041bb54a0dbf6148810a5b9f0a1130a9fd8c557a2252a17bdf"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/manifest.json",
+      "sha256": "4e27342156c2e192723cc25f6686b022e37c2b08add0ef41c40eee6af92c1cc5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/regex.cr",
+      "sha256": "eced969d770407e131c8fbf2aa56faef12caead01433f314a84ed64c34413463"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/regex/pcre2.cr",
+      "sha256": "3035ad3e17d80a357127c40ad98d0716a012bd78bedfa69154df1a9acf1b1641"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/admission-v1/runtime-source/string.cr",
+      "sha256": "7c7aceb5e4a6760715a0077728d15f5cb70212b71412ab4d610874115e3c532f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/mech-aot-relative-v1.json",
+      "sha256": "d255f9085c2cd676df32d9229de7872540a0920a877f52ea32233461b6911d6c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+      "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/00-cr-parent/process.json",
+      "sha256": "9a3e1258fc8c2eac769251260a3cb6a01912d30391b73bdd63a63c0ade021bdc"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/00-cr-parent/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/00-cr-parent/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/process.json",
+      "sha256": "ef2ac05f0a64af961daf1ec927f2dff32e8b20a401231acd562f52699ab59264"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/01-cr-scan-inline-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/process.json",
+      "sha256": "00c934f3ee01b305da42d94087c97bd2b113c0d7d328a96d6d45511189bd06f6"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/02-cr-scan-block-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/process.json",
+      "sha256": "f9d640ac03cb4e4deef879a4ef5dcaf5f10254aa0cb0479ba114dcf82e1d920e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/03-cr-scan-inline-compact/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/process.json",
+      "sha256": "45b07172b6b70140e088a3be722794f5c29c26abfe39f868a246096185f2ace3"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/04-cr-scan-inline-compact/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/process.json",
+      "sha256": "79a23f0b04923f93e907572649e0cc5b9a9cb7bc1ae9e1e4c1f37532a9ce3d9e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/05-cr-scan-block-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/06-cr-parent/process.json",
+      "sha256": "cdb62baddf1189e6b207df52ab85b52cfa5a9199d74df397bfbae8ca8a16557b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/06-cr-parent/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/06-cr-parent/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/process.json",
+      "sha256": "92c7a44a5da5d8acabc83647bc789215115eb16a08e355df38827989e822eaa0"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/07-cr-scan-inline-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/process.json",
+      "sha256": "99056cf399e0990401f1019a28a34f7381de30b64a3bca3692a100e1594e1785"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/08-cr-scan-inline-compact/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/process.json",
+      "sha256": "9790dc238a1e7a918ec17f17c0d6fa3580fb0d54691f9ffa5fcee247ced75027"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/09-cr-scan-block-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/process.json",
+      "sha256": "2847c1f6f787d5166afbaa6ff2361de40a04c1cae1f49e523350de925081b209"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/10-cr-scan-inline-parallel/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/11-cr-parent/process.json",
+      "sha256": "3606aed1a532543453a34924bac098869b7e9d8a9511311ba605586736e8442f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/11-cr-parent/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/11-cr-parent/stdout.bin",
+      "sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-settings/process.json",
+      "sha256": "39f52332c1ce6f0ae6420406a69a317a64e8030c772332f8215f67f911ae847b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-settings/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-settings/stdout.bin",
+      "sha256": "ddbe35ed301d860035575feb40da3479421f16bf13010f3419f81ab9760467f5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-source/process.json",
+      "sha256": "e541c55884d8442963c1b39c7761bf7dd36497c103eaa7cb3100c1f194d851e5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-source/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/power-source/stdout.bin",
+      "sha256": "4c067866e4a9f75eace63b1c12068100c736fdbd442cb3e5fba47577e91bb50d"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/processes-before/process.json",
+      "sha256": "dcedeea5e14ad450afb5d0014528ed292dbfac6bae40d1b977ae55d5100edecb"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/processes-before/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/processes-before/stdout.bin",
+      "sha256": "ad97830beef7e3d59b7c68c433b8bb4269895be89a02240451d7087d985803d2"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json",
+      "sha256": "a30de30110d3f7159822fbd810feff10cebe884f97e1687bb669773e15c0b6ec"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-1/active.json",
+      "sha256": "28aa2ba15ccab3e2475fc5738ba436956a1bf88a15b02c0b8fd54680346be088"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-1/process.json",
+      "sha256": "7e82c9e91205bfba9ddb2506e76a7c5722e8a47751fdaaa3786e9bd4e2252109"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-1/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-1/stdout.bin",
+      "sha256": "35532a016962100a51dd00552dd1f0c7f91b5aeeb50e2ac2a715ed751f6446fa"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-2/active.json",
+      "sha256": "b47c68c22fcde9a68f57f37e8ad7bec53b06ef0aa5ba402560bff816155f8ee7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-2/process.json",
+      "sha256": "0b17d71718634788d8b4e9a69eab2b70a7ec06d91679ec66305a994b7de2fc7b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-2/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-2/stdout.bin",
+      "sha256": "32d837b151effa7d9a9a22c843b82cb106fdea545a8f8b82db69e5a2d30bf8a8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-3/active.json",
+      "sha256": "ded0f97fcc1c75afeb613da813d77dacf2b07ca7ce967d1d7daeab151b836974"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-3/process.json",
+      "sha256": "a8ad7bf96e26c2b8c076b5aa23b88ddd0b5776dd3afa2565e514d1e77f0df566"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-3/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-3/stdout.bin",
+      "sha256": "0f1de90192d6a3c349feac00b8eb92a720ae2654032bc47bd1cdd85de774968e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-4/active.json",
+      "sha256": "49aeebddfb7de7ff7162b519058cec75e9172d6ceade6d166164f55871cc291c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-4/process.json",
+      "sha256": "d1eab8b4288e06053030d343be488d1b7dfa673f332c04bc3f0324525c73ab56"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-4/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-4/stdout.bin",
+      "sha256": "431fa13dc1919e483c9ff19c88e977b61c3d2dade95cc40563edfd7008d869ce"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-5/active.json",
+      "sha256": "a4a8a928abc1b5aea65fd423f8132f4f2c03152708a3b2db9bcba9665ff0fe9c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-5/process.json",
+      "sha256": "2c370a5c26628716503ed398838608f4b3f5d140347e250abcb513af290bb687"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-5/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/image-5/stdout.bin",
+      "sha256": "c46cbf745b34b36b7126b6481a396444606c3354ec66f0fad8d69aa8482e461b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/os-build/active.json",
+      "sha256": "4ce5afd65ee8612bc845242a91501efaa66df7000f10a7afcc4328925c1a2d7e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/os-build/process.json",
+      "sha256": "f3d5de1d3a17be2a87870f24be8220ca0165a294efcdefe7d998ba7db767c919"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/os-build/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/runtime-discovery/os-build/stdout.bin",
+      "sha256": "50d598276e1b5fb38874dedb2e0829126024993316eb2afda985821d3946863c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/full_comparison.py",
+      "sha256": "c3290b1321de9b68454a465e5e6d79311a953bbce0b1cbd9d28d28271e54e1e2"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/independent-review-v1.json",
+      "sha256": "9f6cfdaafc5c10d905968f0e5a82df50a87ae8b187c2d412bd201a452f05b2f0"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-plan-v1.json",
+      "sha256": "7cde296c5fa3a27e5e3e488b41190c37266bfc69600251dd57dc10445af61524"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/adjacent-matches.expected",
+      "sha256": "c2037af72cf07beb1b2829328cc7f8cf746e5a043a096bd186ee8b0951543cc8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/adjacent-matches.stdin",
+      "sha256": "0a839a4e70b4b30e0f936a8d0f2f409442df429d00aea945db229f2db9a04a90"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-adjacent-matches/process.json",
+      "sha256": "b1bbfda55e2df071396c739f65956f6f4382c5ac52322f0e65401309c3d8f7b7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-adjacent-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-adjacent-matches/stdout.bin",
+      "sha256": "c2037af72cf07beb1b2829328cc7f8cf746e5a043a096bd186ee8b0951543cc8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-empty/process.json",
+      "sha256": "414747e81e5f37bf83b1e31adb16fc8d239805ad81a90d4f9264612bc9cdaa0f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-empty/stdout.bin",
+      "sha256": "f081054482d3004e3643f41a3e11674f4c63c7c33fc830773b743138667a7aba"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-invalid-utf8/process.json",
+      "sha256": "90f81bf7ec6453facba6a2d50c000de7a6f46f2c8fdf4588f11ab6b92bcaa27b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-invalid-utf8/stderr.bin",
+      "sha256": "3744edc174f64f2491a3ef9dff0943072b15d46ab5151a89c5caab6c5c06b32e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-invalid-utf8/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-match-at-eof/process.json",
+      "sha256": "f7ef78449147a47ceb2154707e72f7a48f5831c1f0ed1c0d2a9eda30c63b9fde"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-match-at-eof/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-match-at-eof/stdout.bin",
+      "sha256": "ada71caf9968719b2da7127c0d497d840cb4b298bfa0d888b09b70fb3efff936"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-mixed-case/process.json",
+      "sha256": "6cc4d05f8daae2f5e9d2b63fb352a8c84e047e1f4ae4581eb9d7f256fda5c63f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-mixed-case/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-mixed-case/stdout.bin",
+      "sha256": "ef42aaee2c3658bf10c625b6854d21b2c6621ce1ac6c4af975c89231648be890"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-random/process.json",
+      "sha256": "cee965151f0fa66293a875f202333e58613008e18e5f4d18437f2db7e09e3591"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-random/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-random/stdout.bin",
+      "sha256": "2a8cd0b6f43fe8dc2c469010b917c0df534d2d7f4220c21b68fdc72ed03c5281"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-substitution-order/process.json",
+      "sha256": "3d6d13f135be8bcff34f242404df1ab032482e3a820b19068aaffa2f4163b63e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-substitution-order/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-substitution-order/stdout.bin",
+      "sha256": "61b0330dcbed3236edf1ce4503660a8a2ea3a4d55b2176061d6c576497cf5bf8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-gap/process.json",
+      "sha256": "15a9f1f21f9f960a685462b2edb28268ad24f8e5a48b901e21e615518a343a16"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-gap/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-gap/stdout.bin",
+      "sha256": "3e8cfb2a630ebd6f3ef7a6f04af2f84ddb9e989b77d7b1490f467afeaa57b0b5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-near-matches/process.json",
+      "sha256": "3cb2e95e8758cfef2637b81aa88d21c659d92835be0c5705cd9677035f3b8402"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-near-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-compact-utf8-near-matches/stdout.bin",
+      "sha256": "48a52d14f903c0d52fcbadff73e910ad72dec903bf720f818adda674e9e10458"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-adjacent-matches/process.json",
+      "sha256": "c96d3f0ad3f83a8e2a3e04ca01e768395b7aaaaf862cec16544edfba67b4202b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-adjacent-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-adjacent-matches/stdout.bin",
+      "sha256": "c2037af72cf07beb1b2829328cc7f8cf746e5a043a096bd186ee8b0951543cc8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-empty/process.json",
+      "sha256": "2a1c63b513b99f3d6a40ab263a285f57a3395f40bbef7ec1f25226e59d3a88d1"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-empty/stdout.bin",
+      "sha256": "f081054482d3004e3643f41a3e11674f4c63c7c33fc830773b743138667a7aba"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-invalid-utf8/process.json",
+      "sha256": "7da687240845f303c35ee78caba6c52c2aace0370f6c453892c61a4cedbee73e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-invalid-utf8/stderr.bin",
+      "sha256": "4f50be8058abb3b06c595dd3d7123444e0e1f774bbe2936022db395532bc4f9c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-invalid-utf8/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-match-at-eof/process.json",
+      "sha256": "9e12eedaf130e221e67bee96be372a431eadd68570d734a167c59b1740dffee7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-match-at-eof/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-match-at-eof/stdout.bin",
+      "sha256": "ada71caf9968719b2da7127c0d497d840cb4b298bfa0d888b09b70fb3efff936"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-mixed-case/process.json",
+      "sha256": "f2abba8106b8ef151741bcee16a5a263efc211cd9a2d7be4b0e34c955ad961de"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-mixed-case/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-mixed-case/stdout.bin",
+      "sha256": "ef42aaee2c3658bf10c625b6854d21b2c6621ce1ac6c4af975c89231648be890"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-random/process.json",
+      "sha256": "a1c05c94b3b7ad05ac2d9348364ac91c38dc3700c514998df02ac49bb7fd1a3e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-random/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-random/stdout.bin",
+      "sha256": "2a8cd0b6f43fe8dc2c469010b917c0df534d2d7f4220c21b68fdc72ed03c5281"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-substitution-order/process.json",
+      "sha256": "6fe79ed83fa624118982af20aa20f3f30c0aa17bf634d3464df0ca513b3bd0ca"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-substitution-order/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-substitution-order/stdout.bin",
+      "sha256": "61b0330dcbed3236edf1ce4503660a8a2ea3a4d55b2176061d6c576497cf5bf8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-gap/process.json",
+      "sha256": "905241f8a2bb3b049d09728e0ef88069c18a41a5185a822a72d7b181f9726cc7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-gap/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-gap/stdout.bin",
+      "sha256": "3e8cfb2a630ebd6f3ef7a6f04af2f84ddb9e989b77d7b1490f467afeaa57b0b5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-near-matches/process.json",
+      "sha256": "845e6a4fc3f538da6a60e9bf31a7f7ee1fdb57376e922ee89b941c73d556014b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-near-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/block-parallel-utf8-near-matches/stdout.bin",
+      "sha256": "48a52d14f903c0d52fcbadff73e910ad72dec903bf720f818adda674e9e10458"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-block-parallel/process.json",
+      "sha256": "fb6dc4efc8baccb9a4e536a46014c855f6b313db97295ef368ace6b62aa39db5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-block-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-block-parallel/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-compact/process.json",
+      "sha256": "50d674d47f1128d97222edd3ff36fccff8430c71886b87efc679bd51dd716c55"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-compact/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-compact/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-parallel/process.json",
+      "sha256": "60c4f025e27b07fd7ef324effcfeff987889a1972d471476041e56e29b815ff7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-parallel/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/compile-inline-parallel/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/empty.expected",
+      "sha256": "f081054482d3004e3643f41a3e11674f4c63c7c33fc830773b743138667a7aba"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/empty.stdin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-adjacent-matches/process.json",
+      "sha256": "b81f77796c0f3c2ef68d9b8e2b6870f69b50da95e08dac787d7b87194a404723"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-adjacent-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-adjacent-matches/stdout.bin",
+      "sha256": "c2037af72cf07beb1b2829328cc7f8cf746e5a043a096bd186ee8b0951543cc8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-empty/process.json",
+      "sha256": "472a34313ae0380c88f156d4db45a8964b360b1bc51a41843356957dd7b2ee38"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-empty/stdout.bin",
+      "sha256": "f081054482d3004e3643f41a3e11674f4c63c7c33fc830773b743138667a7aba"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-invalid-utf8/process.json",
+      "sha256": "3b6f74f2e284601e4caa5767a2f1799c852f200fc439562f3ddddf8740a41623"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-invalid-utf8/stderr.bin",
+      "sha256": "057a86ab20f28e26688ce9df4c8c281ad3783898b9a5b580f9302e665033e433"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-invalid-utf8/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-match-at-eof/process.json",
+      "sha256": "0520fdb03882ea11641c53ac4178758a5d25b4fcc63011a0b3d4106ffbc3a298"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-match-at-eof/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-match-at-eof/stdout.bin",
+      "sha256": "ada71caf9968719b2da7127c0d497d840cb4b298bfa0d888b09b70fb3efff936"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-mixed-case/process.json",
+      "sha256": "f0407618f04e9128f6c5dc8e7ce5cf0e3350d451f38b74a2500bb7ecb08d138d"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-mixed-case/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-mixed-case/stdout.bin",
+      "sha256": "ef42aaee2c3658bf10c625b6854d21b2c6621ce1ac6c4af975c89231648be890"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-random/process.json",
+      "sha256": "4aa37af4590e93d1dace66bc6a7c379a4b34ca7b2a9e9b3917340807ef41fc4b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-random/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-random/stdout.bin",
+      "sha256": "2a8cd0b6f43fe8dc2c469010b917c0df534d2d7f4220c21b68fdc72ed03c5281"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-substitution-order/process.json",
+      "sha256": "3704ba365f20943edb6648e56d4e6d33251647f7fed5a1012a00f4d311949e90"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-substitution-order/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-substitution-order/stdout.bin",
+      "sha256": "61b0330dcbed3236edf1ce4503660a8a2ea3a4d55b2176061d6c576497cf5bf8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-gap/process.json",
+      "sha256": "022cdffd23c5538131899fba9edd4983ebd81d881b4cf5465d1e9281e4c85ed1"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-gap/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-gap/stdout.bin",
+      "sha256": "3e8cfb2a630ebd6f3ef7a6f04af2f84ddb9e989b77d7b1490f467afeaa57b0b5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-near-matches/process.json",
+      "sha256": "b918c52b9ac2f58f3a574f6e245911f20678e7454f95919f648cef90f2ac35b9"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-near-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-compact-utf8-near-matches/stdout.bin",
+      "sha256": "48a52d14f903c0d52fcbadff73e910ad72dec903bf720f818adda674e9e10458"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-adjacent-matches/process.json",
+      "sha256": "b7ea4e49d06987e2ccbd7ac6bf4d43e72ea3c5ed0a881c94afecb90a24a6d36e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-adjacent-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-adjacent-matches/stdout.bin",
+      "sha256": "c2037af72cf07beb1b2829328cc7f8cf746e5a043a096bd186ee8b0951543cc8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-empty/process.json",
+      "sha256": "06efb398c14a30cc2c5cd6dba8b259e99f84e07f532922ca7e5652136b1784e8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-empty/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-empty/stdout.bin",
+      "sha256": "f081054482d3004e3643f41a3e11674f4c63c7c33fc830773b743138667a7aba"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-invalid-utf8/process.json",
+      "sha256": "fa8c7b5332b2bb7c9a9cb7617c2af84ec807623b24962b877766e8a4239b995f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-invalid-utf8/stderr.bin",
+      "sha256": "9df38dfd9f9dcb7e0d8058d34d35e47392a638c7e5fde91bc8e00f4ba8ec80b4"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-invalid-utf8/stdout.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-match-at-eof/process.json",
+      "sha256": "59933c352b9f81248a1cdfd0a47244d0e34efe0366bc6912b220f58c919eeba7"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-match-at-eof/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-match-at-eof/stdout.bin",
+      "sha256": "ada71caf9968719b2da7127c0d497d840cb4b298bfa0d888b09b70fb3efff936"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-mixed-case/process.json",
+      "sha256": "1b143c99f0bd8d823e04b0b777b88b9043a03003929ea7e0b558316a9d290118"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-mixed-case/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-mixed-case/stdout.bin",
+      "sha256": "ef42aaee2c3658bf10c625b6854d21b2c6621ce1ac6c4af975c89231648be890"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-random/process.json",
+      "sha256": "0e3b0ac162b536d0bd0bf4f8ccecb3c00e05c243eb673d8293e582e73578997f"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-random/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-random/stdout.bin",
+      "sha256": "2a8cd0b6f43fe8dc2c469010b917c0df534d2d7f4220c21b68fdc72ed03c5281"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-substitution-order/process.json",
+      "sha256": "f40600836ef856927866bc5b153ea4a6e85f9e29816d6c3f104d8e816164c47c"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-substitution-order/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-substitution-order/stdout.bin",
+      "sha256": "61b0330dcbed3236edf1ce4503660a8a2ea3a4d55b2176061d6c576497cf5bf8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-gap/process.json",
+      "sha256": "bfe15dba3cac0c8368db40fb624d2651ee451fa88caab9945c3b7453438b2a31"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-gap/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-gap/stdout.bin",
+      "sha256": "3e8cfb2a630ebd6f3ef7a6f04af2f84ddb9e989b77d7b1490f467afeaa57b0b5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-near-matches/process.json",
+      "sha256": "dd1af8ec57dc50e560271c7fa061bfed6c92eedaa608510818b88fb4fda57035"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-near-matches/stderr.bin",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/inline-parallel-utf8-near-matches/stdout.bin",
+      "sha256": "48a52d14f903c0d52fcbadff73e910ad72dec903bf720f818adda674e9e10458"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/match-at-eof.expected",
+      "sha256": "ada71caf9968719b2da7127c0d497d840cb4b298bfa0d888b09b70fb3efff936"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/match-at-eof.stdin",
+      "sha256": "673b3ae12b41e57f1b6c4fe3e6dfe576174fc50df2f89b0cb4f7a303401cd287"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/mixed-case.expected",
+      "sha256": "ef42aaee2c3658bf10c625b6854d21b2c6621ce1ac6c4af975c89231648be890"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/mixed-case.stdin",
+      "sha256": "dcc2c80b9114788ee7af7908f3f97e7e4e4f33a080aa09bc114ec7cdf269cd8b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/random.expected",
+      "sha256": "2a8cd0b6f43fe8dc2c469010b917c0df534d2d7f4220c21b68fdc72ed03c5281"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/random.stdin",
+      "sha256": "3f5297e3f668344b099f475f2552f3151e188171048ed3f753c103920d8ec4df"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/report.json",
+      "sha256": "61b3baad813d6e87fd9e5d2f12f0e31f852b43841c556ae78c3a8e63227f30e6"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/substitution-order.expected",
+      "sha256": "61b0330dcbed3236edf1ce4503660a8a2ea3a4d55b2176061d6c576497cf5bf8"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/substitution-order.stdin",
+      "sha256": "8b7ea012e8a7e71a6c8e828b016f64ab8db4483feb2094a6a268ee1a790496b3"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/utf8-gap.expected",
+      "sha256": "3e8cfb2a630ebd6f3ef7a6f04af2f84ddb9e989b77d7b1490f467afeaa57b0b5"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/utf8-gap.stdin",
+      "sha256": "5e7a8781376acd77aa0e71ebb1aaa761c721716ea42bb3515a9ee7748de1c94e"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/utf8-near-matches.expected",
+      "sha256": "48a52d14f903c0d52fcbadff73e910ad72dec903bf720f818adda674e9e10458"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/native-v1/utf8-near-matches.stdin",
+      "sha256": "021ebcdce471de43e67564f59efaf2eb592091854f626823530f67b0217ae2ae"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/proposal.json",
+      "sha256": "98f3b59a54982b6ff02dfef1db068373fb46aa8ac5eeae7acaac1e7278cce285"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/qualify.py",
+      "sha256": "ad2bdf3a14a6b360d93570957d9f7d576d554290bbc1ae294a2eda3d6dff325d"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/replay_counts.py",
+      "sha256": "fe9bf4ebe52c9b45d335165f442062e0d3ab3fdbeb148a3fb497c347ea88a59a"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/block-parallel.json",
+      "sha256": "ba27009e951fefdb2dcaf66296e4990dda947adaa1734787cf34394db9551af4"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/inline-compact.json",
+      "sha256": "c5616f57ff77a52418655869b33d377947764905f1d515a4e1bbd807c30c3ce6"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/inline-parallel.json",
+      "sha256": "d323363351104d10c7b76a1d722b754236f893aaf44d686e55ae8c3f3f2b041b"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source-counts-v1/receipt.json",
+      "sha256": "52aeec015c5a11ea2626a8934c9612614ea20908b42acfee22cd33369cab22e1"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-compact.cr",
+      "sha256": "8d334548d88ac6ca5159e5bd4de854a013983f60a77762ce7b82d1839462cbc2"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-parallel.cr",
+      "sha256": "ba9752096484a652b2cea36da8ff21673299774b7fea17b39f412920acd5c773"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-compact.cr",
+      "sha256": "c2f3174388879f0d61b75bc879ad8474e45b2a7903da8326ecf63480762d0e69"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-parallel.cr",
+      "sha256": "49e48b96021f34f55a8aefde780712402f83c38303c8f02216faa5740ee6f1ec"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/source-counts-v3/receipt.json",
+      "sha256": "47cac1a1d1103f4848b05f76c47ff1bfebe1e281cff52cb84b01d84506aadad4"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/source/compact.cr",
+      "sha256": "d41fccc314d457b89660d5d197da4d669b6b6afbaefad1f616bc71532dce2b04"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/source/parallel.cr",
+      "sha256": "05eb9aaa465bef0e9a739afd71f81d18cce6304f68d70a7da61a51e787cc0292"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/utf8-once-v1/native-v1/report.json",
+      "sha256": "22fb00f5def8dd3b76a6181ac43ca081ac637d6bf3334caf7119cb1b63f09804"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/utf8-once-v1/source-counts-v1/receipt.json",
+      "sha256": "2168e1565d01d3e155e8b1a3e446764d5b46568f0922dd9c5f3e7e58594943f0"
+    },
+    {
+      "path": "experiments/crystal/regex-byte-offsets-v1/utf8-once-v1/source/parallel.cr",
+      "sha256": "4bfe215870fc6bac8bb33f66007dda5b5ab20b4a651adf07f4d6897c9b57d02e"
+    },
+    {
+      "path": "experiments/d/revcomp-inplace-v1/source/inplace.d",
+      "sha256": "c9a4e9d811ebcd07532a99d5cc6a734fa72ac176e42e672a6f1c8263ce83ad54"
+    },
+    {
+      "path": "experiments/elixir/rolling-v1/pilot-1m-v1/process.py",
+      "sha256": "ac7660ee80dd25b6f1554ba2131e711f402bb3d93a8869b0ca5f0d957c9b5889"
+    },
+    {
+      "path": "experiments/elixir/rolling-v1/qualification-v1/native_process.py",
+      "sha256": "ff7b5bbcf31bdc38004eb7e4bce49b9934649c42935314566cac531dfbfb8ae8"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/native-plan-v1.json",
+      "sha256": "5259fca7b51b24c6d838f056c5c3961800884d60d794fe90458dcd1342b85a71"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/native-v1/compile-cr-parent/process.json",
+      "sha256": "21c7f9689715714cdcbf91cde5ceb86fda01b578aaba7e3675b0be2299733090"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/native-v1/crystal-version/stdout.bin",
+      "sha256": "ed3e7f26ebcc05c15191e247359f48365060db0e2587d261bda369bceb8f5076"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/native-v1/report.json",
+      "sha256": "6c17e9f35ddb98b34efe056d979f6a320e5373e1cd33c03dd28323c430454946"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/native_bounded.py",
+      "sha256": "640f539c53da08cef9ad70300355247ca3c1d3a085717095d07a7bcfb174ef80"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot-v2/crystal.expected",
+      "sha256": "efa11fc898456f166f14cf579de0d8eed21987afe07f026b70f25759ac8cea67"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot-v2/d.expected",
+      "sha256": "ef42c158a986f082e0400c029eed919ae30b7b39efce8c1b1d3977330f2a626c"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot-v2/plan.json",
+      "sha256": "8ed683fc01dac59b0c7c68c282e2c87df19c69e827dc2240c8039b4ae202e906"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot-v2/selected-records-8m.fasta",
+      "sha256": "97a13574c4e9c718babcf66574a8028a56dc78e448ceeaf93a9697ff89b2975c"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot_crystal_scan.py",
+      "sha256": "b85365c5087c3630238a3c8a926b19d29e0a87af946f457faa144e68ec10b2e4"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot_crystal_utf8.py",
+      "sha256": "88ece370a810b8622c41e56b055aa5bbf1ddf2ec07a8dba38d3fc0e87033b1f8"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/pilot_v2.py",
+      "sha256": "adfeffe16a13c616cb67142815409484a3d16883850f14d67d320cf8e6cd2ed7"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/scan-pilot-v1/plan.json",
+      "sha256": "e4ba81626d33a125ac2f7fe5b25b16fc7d4e7edcf8e0ddac5e7ab2fc94a4ce55"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/scan-pilot-v1/run-v1/report.json",
+      "sha256": "46959c490598da15a713e3adbfdde6b003bd21805e29345089f1e14b3e09e645"
+    },
+    {
+      "path": "experiments/implementation-audit/remaining-v1/utf8-pilot-v1/plan.json",
+      "sha256": "8dd41d005da8acb9f145921f1428de6861b75fe10b156277b53e4bdfaac6cd4e"
+    },
+    {
+      "path": "experiments/typescript/rolling-map-v1/source/knucleotide.ts",
+      "sha256": "4791a1254a036736f9208875cb3791f460510dfb5d3ffd128d92ac997b9b52b7"
+    },
+    {
+      "path": "experiments/typescript/source-v1/tsconfig.json",
+      "sha256": "ebde65206600290649a1ab699767c8da341f1460ebb6e50c8d4b7c83d1d2053d"
+    },
+    {
+      "path": "programs/crystal/regexredux/crystal-regexredux-compact/compact.cr",
+      "sha256": "6d82ab4ea92a705d0b2959996c29feef76b36ca7321c74a7f5bfdc7d4c1b196c"
+    },
+    {
+      "path": "programs/crystal/regexredux/crystal-regexredux-compact/program.json",
+      "sha256": "5ee9825c3933f6c710e5566404d2c6f1cc43be56af32b0d30a1b53f9b33f49f5"
+    },
+    {
+      "path": "programs/crystal/regexredux/crystal-regexredux-optimized/optimized.cr",
+      "sha256": "36d759ccb7c40f7b18927381b6a9a427eae0cd333e50f434c4bba0f43c59bbe6"
+    },
+    {
+      "path": "programs/crystal/regexredux/crystal-regexredux-optimized/program.json",
+      "sha256": "025825e35b995c8157a9de237633a37cd15cb73c55b24458e7473544fe723ac8"
+    },
+    {
+      "path": "programs/d/revcomp/revcomp-d-optimized/optimized.d",
+      "sha256": "2d89a9c6a8f3d1829c172e7ee38ab8b48fc7a8562f568c5e026acdb3ac9841da"
+    },
+    {
+      "path": "programs/typescript/knucleotide/typescript-knucleotide-v1/knucleotide.ts",
+      "sha256": "975ef7d9ed4a80497b7526b701e7c3373edd687cff3bf13e1e3a3d81547f5f3b"
+    },
+    {
+      "path": "tools/qualification/import_bqn_knucleotide.py",
+      "sha256": "5e79b71fc96822ece4604f4075bae444f25ecaf2b65bd3af07d9cea66c6f1843"
+    },
+    {
+      "path": "tools/qualification/import_crystal_scan.py",
+      "sha256": "ffe98117a31cd0cf776b1406e68400d2fa9248f3449d601bad01d622db2de978"
+    }
+  ]
+}

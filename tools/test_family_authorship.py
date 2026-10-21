@@ -18,7 +18,10 @@ class FamilyAuthorship(unittest.TestCase):
                 'spectralnorm:array-bqn-native-sum', 'fasta:array-bqn-bins',
                 'nbody:clojure-nbody-primitive-updates-v1',
                 'nbody:clojure-nbody-compact-hot-aset-v1',
-                'spectralnorm:prolog-spectralnorm-blocks8-v1']
+                'spectralnorm:prolog-spectralnorm-blocks8-v1',
+                'regexredux:crystal-regexredux-scan-block-parallel-v1',
+                'regexredux:crystal-regexredux-scan-inline-parallel-v1',
+                'regexredux:crystal-regexredux-scan-inline-compact-v1']
         for key in keys:
             row = self.data['programs'][key]
             check_model_evidence(ROOT, self.data, key, row, self.models)

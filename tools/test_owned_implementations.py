@@ -67,7 +67,8 @@ class OwnedImplementationAuditTest(unittest.TestCase):
             benchmarks=[dict(key="task", groups=[dict(language="mech", fast="task:mech", small="task:mech")])])
         for i, (field, (schema, _, _)) in enumerate(ADMISSION_EXTENSIONS.items()):
             language = ("matlab" if "matlab" in field else "nim" if "nim" in field
-                        else "clojure" if "clojure" in field else "prolog" if "prolog" in field else "bqn")
+                        else "clojure" if "clojure" in field else "prolog" if "prolog" in field
+                        else "crystal" if "crystal" in field else "bqn")
             parent = add("task:parent-"+str(i), language)
             candidate = add("task:candidate-"+str(i), language, 8)
             result = dict(path="evidence/"+field+"/results.json", sha256=str(i)*64)
@@ -81,9 +82,10 @@ class OwnedImplementationAuditTest(unittest.TestCase):
         data = self.admission_catalog(); before = copy.deepcopy(data)
         result = make_inventory(data, "catalog-sha")
         self.assertEqual(data, before)
-        self.assertEqual(result["summary"]["admitted_candidates"], 8)
+        self.assertEqual(result["summary"]["admitted_candidates"], 9)
         self.assertEqual(result["summary"]["admission_purposes"], {
             "source-speed-candidate": 6, "source-expressiveness-candidate": 1,
+            "source-speed-and-expressiveness-candidates": 1,
             "archived-correctness-correction": 1})
         for i, field in enumerate(ADMISSION_EXTENSIONS):
             child = result["programs"]["task:candidate-"+str(i)]["audit"]

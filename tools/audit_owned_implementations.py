@@ -38,6 +38,7 @@ ADMISSION_EXTENSIONS = {
     "clojure_nbody_audit": ("clojure-nbody-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
     "clojure_compact_audit": ("clojure-compact-catalog-extension.v1", "source-expressiveness-candidate", "fresh-complete-process-observations"),
     "prolog_spectral_audit": ("prolog-spectral-catalog-extension.v1", "source-speed-candidate", "fresh-complete-process-observations"),
+    "crystal_scan_audit": ("crystal-scan-catalog-extension.v1", "source-speed-and-expressiveness-candidates", "fresh-complete-process-observations"),
     "matlab_regex_case_audit": ("matlab-regex-catalog-extension.v1", "archived-correctness-correction", "archived-complete-process-observations; no-new-native-run-by-intake"),
 }
 

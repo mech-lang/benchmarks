@@ -216,6 +216,9 @@ def check_model_evidence(root, data, key, program, source_models):
         'nbody:clojure-nbody-primitive-updates-v1': 'import_clojure_nbody',
         'nbody:clojure-nbody-compact-hot-aset-v1': 'import_clojure_compact',
         'spectralnorm:prolog-spectralnorm-blocks8-v1': 'import_prolog_spectral',
+        'regexredux:crystal-regexredux-scan-block-parallel-v1': 'import_crystal_scan',
+        'regexredux:crystal-regexredux-scan-inline-parallel-v1': 'import_crystal_scan',
+        'regexredux:crystal-regexredux-scan-inline-compact-v1': 'import_crystal_scan',
     }
     if key in bound:
         module = importlib.import_module('qualification.' + bound[key])
