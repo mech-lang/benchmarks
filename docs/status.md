@@ -34,6 +34,12 @@ source-size measures are retained. Native normalized/formatted counts and a
 representative whole-input parser comparison remain pending. These diagnostic
 observations do not change catalog timings or chart selections.
 
+[Janet](../experiments/janet/README.md) is being added for all ten workloads.
+Ten source drafts have clean compile-only diagnostics with a locally built
+Janet 1.42.1 runtime, with original-source lineage and licenses retained.
+Correctness, required work, normalized/formatted counts and full timing remain
+pending. No Janet profile is included in the measured coverage totals above.
+
 
 Explorer rollover and highlighting now batch pointer changes once per animation frame and update language groups instead of individual dots. Opacity animations and repeated ranking readouts are removed. The [matched profile](../site/publications/chart-hover-v1/comparison.json) and [performance notes](explorer-performance.md#rollover-and-highlighting) retain the measurements; browser data and reproduction payloads are byte-identical. Build `f360c8bf40c2e010` is [live and verified](../site/publications/chart-hover-v1/deployment.json), with all 41 public assets matching and all 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json) passing.
 

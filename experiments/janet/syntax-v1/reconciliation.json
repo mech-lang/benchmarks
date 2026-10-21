@@ -1,0 +1,32 @@
+{
+  "schema": "janet-flycheck-producer-reconciliation.v1",
+  "status": "failed-initial-source-and-search-path",
+  "producer_results_sha256": "992629a37862c1bc4c757a08837d055f144728619411e8b3e09767638ed7a0a3",
+  "producer_status": "passed",
+  "producer_gate_error": "Exit code zero alone misclassified Janet -k diagnostics. Original stdout/stderr and snapshots are retained; neither conformance nor timings were qualified.",
+  "strict_clean_sources": 8,
+  "diagnostic_failures": [
+    {
+      "source": "experiments/janet/source-v1/knucleotide.janet",
+      "exit_code": 0,
+      "stderr_sha256": "211b5a1458c3e4e3da93374c8145baab9876fbc255c21b73ceeab8cc30b019da"
+    },
+    {
+      "source": "experiments/janet/source-v1/regexredux.janet",
+      "exit_code": 0,
+      "stderr_sha256": "8053c128b66e841427d763a80bbd79eea7e8b1d5ddd92e604e4e3d7070bc4cd9"
+    }
+  ],
+  "repairs": [
+    {
+      "scope": "source-v2/knucleotide.janet",
+      "change": "Use a separate mutable local for decode state; function parameters are constant in Janet."
+    },
+    {
+      "scope": "syntax-v2 environment",
+      "change": "Point JANET_PATH at dependencies-v1/spork, whose spork/regex.janet is the actual unmodified module."
+    }
+  ],
+  "new_gate": "Require zero exit and empty stderr for every compile-only source check.",
+  "chart_admission": false
+}

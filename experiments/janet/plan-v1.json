@@ -1,0 +1,60 @@
+{
+  "schema": "benchmark-language-plan.v1",
+  "language": {
+    "key": "janet",
+    "label": "Janet",
+    "family": "janet",
+    "project": "https://janet-lang.org/",
+    "references": [
+      "https://github.com/janet-lang/janet/releases/tag/v1.42.1",
+      "https://janet-lang.org/docs/abstract_machine.html",
+      "https://janet-lang.org/spork/api/regex.html",
+      "https://janet-lang.org/api/ffi.html"
+    ]
+  },
+  "status": "IMPLEMENTATION_IN_PROGRESS",
+  "toolchain": {
+    "release": "1.42.1",
+    "revision": "e1963cdfe0148f83601907727e00bd672d798115",
+    "distribution": "Official macos-aarch64 release",
+    "archive_sha256": "53eaa09807764b246cbb7aa1a7a8bbc34a0d783f11187f00b1cf07f9b24e85cb",
+    "execution_modes": [
+      "interpreted"
+    ],
+    "runtime_family": "Janet standalone register-based bytecode VM",
+    "classification_pending_native_version_probe": false,
+    "local_fallback": "Official bundled release C sources compiled locally with Apple Clang; version1.42.1-e1963cd observed.",
+    "runtime_binary_sha256": "6732dd0bb37de61676bbdb3a8d3fb14b76b3a39fc9852e2b1f060dd21a9bc765"
+  },
+  "workloads": [
+    "binarytrees",
+    "fannkuchredux",
+    "fasta",
+    "knucleotide",
+    "mandelbrot",
+    "nbody",
+    "pidigits",
+    "regexredux",
+    "revcomp",
+    "spectralnorm"
+  ],
+  "qualification": {
+    "source": "Use idiomatic Janet, retain every authored helper and exact original-source citations for consulted or adapted implementations.",
+    "correctness": "Run the shared independent bounded corpus, validate complete full-size outputs and inspect required work.",
+    "source_size": "Expose raw physical rows, bytes/characters, deterministic gzip and pinned BPE metrics; qualify native normalized and formatted counts separately without guessing missing values.",
+    "libraries": "Use published general-purpose libraries or ordinary FFI leaves where appropriate; benchmark algorithms and control remain in Janet. No custom native benchmark executor.",
+    "timing": "Three fresh complete-process samples per admitted source, including standard source-to-bytecode compilation/loading, VM startup, input, complete work/output and shutdown.",
+    "ratios": "Every quantitative observation retains raw seconds and a Mech AOT multiple on the exact equivalent input; absent equivalent denominators remain unavailable.",
+    "contention": "Quantitative cohorts require the unchanged shared timing mutex and sequential fresh processes. Untimed development-only runtime/flycheck diagnostics retain their explicit lock exception while the first prebuilt --version process remains in an uninterruptible launch state; no timed cohort starts in that state.",
+    "preservation": "Preserve existing sources, source counts, timing observations and baselines.",
+    "admission": "Only fully measured, validated and source-qualified implementations enter the plotted catalog."
+  },
+  "benchmark_samples": 0,
+  "chart_admission": false,
+  "methodology": "../../docs/methodology.md",
+  "source_manifest": "source-manifest-v1.json",
+  "active_source_directory": "source-v2",
+  "source_drafts": 10,
+  "clean_compile_only_drafts": 10,
+  "native_compile_evidence": "syntax-v2/results.json"
+}
