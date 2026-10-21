@@ -26,3 +26,15 @@ allocations and D reverse-complement buffering. These are source hypotheses;
 none has a new admitted timing in this queue. Existing Nim, Elixir and Lean
 candidate packets remain separate qualification work. Quantitative benchmarks
 share one exclusive timing lock and never run concurrently.
+
+Timing reports include elapsed seconds and `elapsed / Mech AOT elapsed` for the
+same benchmark and input size. The denominator is the fastest eligible measured
+Mech AOT implementation in the cited catalog snapshot, identified by profile,
+samples and original measurement report. A value above 1 means more elapsed time
+than Mech AOT. Historical-baseline ratios are distinguished from fresh matched
+control comparisons; neither measurement is silently replaced or pooled.
+
+Reduced-input pilots retain their raw seconds. Their Mech AOT multiple is
+unavailable unless an equivalent reduced-input Mech AOT measurement exists; a
+full-size baseline cannot supply that denominator. The chart continues to use
+its independent best-time normalization.

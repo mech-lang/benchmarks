@@ -45,22 +45,42 @@ The shortest compact inline form has a0.517698s median. Retained-policy count
 proposals are54/47units for the two parallel forms and32for compact inline,
 versus56for the retained parallel and41for retained compact. These are exact
 retained Crystal policy replays, not new uniform logical-LOC qualifications;
-independent approvals remain pending.
+independent review has passed; guarded catalog admission remains pending.
 
 The preselected [full comparison](../../crystal/regex-byte-offsets-v1/full-v1/plan.json)
 covers the retained parallel control, both parallel scan forms and the smallest
 compact inline form. Its whole canonical N5m input,298-byte reference, binaries,
 sources and discovered linked vendor-library bytes are pinned before timing.
-Full results must be read from its completed report, not extrapolated from this
-pilot table. Canonical admission is a separate guarded step.
+The completed full comparison validates all twelve complete298-byte outputs.
+Its [raw report](../../crystal/regex-byte-offsets-v1/full-v1/run-v1/report.json)
+and [summary](../../crystal/regex-byte-offsets-v1/full-v1/summary.json) retain every
+sample, spread, process capture and peak RSS. These full results supersede pilot
+extrapolation; canonical admission remains a separate guarded step.
+
+| Full N5m source | Median | × Mech AOT time | Sample SD | Speedup over matched control | Retained count proposal |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Retained parallel control |34.991s|71.47×|0.398s|1.00×|56 |
+| Standard scan block, parallel |1.651s|3.37×|0.028s|21.20×|54 |
+| Inline scan array, parallel |1.686s|3.44×|0.009s|20.76×|47 |
+| Inline scan array, compact |2.572s|5.25×|0.058s|13.61×|32 |
+
+The Mech AOT denominator is the retained full-size regex median **0.489612s
+(1.00×)**, from a historical cohort, rather than a new member of the Crystal
+cohort. [The relative report](../../crystal/regex-byte-offsets-v1/full-v1/mech-aot-relative-v1.json)
+binds that exact profile, catalog snapshot, original samples and workload, and
+retains a Mech AOT multiple for every Crystal observation. Reduced-input pilot
+ratios to Mech AOT are unavailable: no equivalent reduced-input Mech measurement
+was taken. Full-size seconds cannot normalize those pilots.
 
 ## Other prepared candidates
 
 - [R fannkuch](../../r/fannkuch-masks-v1/proposal.json): ordinary prefix-reversal
   index masks and a bounded gather-index table. Actual permutations and reversals
-  remain in R. Static review caught the n=1vector/matrix boundary in the small-mask
-  source; its [additive replacement](../../r/fannkuch-masks-v1/static-boundary-review-v1.json)
-  remains unexecuted. No R speedup or approved count is claimed.
+  remain in R. An initial n=1shape concern was
+  [retracted after control-flow review](../../r/fannkuch-masks-v1/static-boundary-review-v2.json):
+  the only permutation has no flips, so the matrix lookup is not reached. The
+  additive explicit-matrix form remains an optional unexecuted alternative.
+  No R speedup or approved count is claimed.
 - [Pony tree batching](../../pony/tree-batches-v1/proposal.json): bounded work per
   actor behavior, with smaller batches at deeper levels and yields between
   batches. Native allocation, GC/lifetime, fairness, source counts and timings

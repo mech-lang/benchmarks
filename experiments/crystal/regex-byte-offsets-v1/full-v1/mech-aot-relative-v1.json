@@ -1,0 +1,107 @@
+{
+  "schema": "benchmark-mech-aot-relative-report.v1",
+  "catalog": {
+    "path": "data/benchmarks.json",
+    "sha256": "7b8d39d6963bc9b87e68e80ba17aea2f3edc2defae69b620c19f4af362a20835"
+  },
+  "summary": {
+    "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/summary.json",
+    "sha256": "97a458e7abe401256b4bbd22500e297f662055930ffc2b969150a4179f1d2fcd"
+  },
+  "plan": {
+    "path": "experiments/crystal/regex-byte-offsets-v1/full-v1/plan.json",
+    "sha256": "6df00a899d9b8872a4b6ea699e5be20b51cd906e7112b8cca930742c206a566e"
+  },
+  "benchmark": "regexredux",
+  "workload_size": 5000000,
+  "input_bytes": 50833411,
+  "ratio_definition": "candidate elapsed seconds / retained Mech AOT median seconds; >1 takes longer",
+  "comparison_scope": "Same full standard workload and output; Mech denominator is a retained historical measurement, not a fresh member of the Crystal comparison cohort. No observations pooled or replaced.",
+  "mech_aot_baseline": {
+    "profile": "regexredux:mech-regex-final-reuse-signed",
+    "seconds": 0.489611584,
+    "samples_seconds": [
+      0.489611584,
+      0.493169167,
+      0.485795291
+    ],
+    "stdev_seconds": 0.0036876943186566233,
+    "original_report": {
+      "path": "archive/comparisons/additional-languages/20261009-full-suite/results/timings.json",
+      "sha256": "2af915b2b4af15342df200070bfa5e02c7f9177d82edb3144b92094956321958"
+    },
+    "original_selector": "/programs/regexredux:mech-control",
+    "source_sha256": [
+      "69b4a43724aef3d161cae8ba29c683928027435b61bd0e270e9bd1d969a0741d"
+    ],
+    "binary_sha256": "026fa8c40c7d425282349c20a8cb155db271f2b7f4fdfefc1699408adcee0eef",
+    "workload_size": 5000000,
+    "output_sha256": "a37e6da1d43b332d5c0f4fc25b76090e9095d4c97c25f1a7186385e87706e4af"
+  },
+  "programs": {
+    "cr-parent": {
+      "samples_seconds": [
+        34.520576542,
+        34.990711792,
+        35.311928083
+      ],
+      "samples_x_mech_aot": [
+        70.5060453430775,
+        71.46626619030322,
+        72.12232969349026
+      ],
+      "median_seconds": 34.990711792,
+      "median_x_mech_aot": 71.46626619030322,
+      "stdev_seconds": 0.39800425465469325,
+      "stdev_in_mech_aot_time_units": 0.8128979535228751
+    },
+    "cr-scan-block-parallel": {
+      "samples_seconds": [
+        1.61399175,
+        1.650545709,
+        1.669591667
+      ],
+      "samples_x_mech_aot": [
+        3.296473781960192,
+        3.371132879486773,
+        3.4100330171109676
+      ],
+      "median_seconds": 1.650545709,
+      "median_x_mech_aot": 3.371132879486773,
+      "stdev_seconds": 0.02825565195708142,
+      "stdev_in_mech_aot_time_units": 0.05771034199444395
+    },
+    "cr-scan-inline-parallel": {
+      "samples_seconds": [
+        1.670413,
+        1.686581042,
+        1.685757584
+      ],
+      "samples_x_mech_aot": [
+        3.411710536652662,
+        3.444732716944867,
+        3.443050857228084
+      ],
+      "median_seconds": 1.685757584,
+      "median_x_mech_aot": 3.443050857228084,
+      "stdev_seconds": 0.009106224275411775,
+      "stdev_in_mech_aot_time_units": 0.01859887423621859
+    },
+    "cr-scan-inline-compact": {
+      "samples_seconds": [
+        2.571763166,
+        2.531128084,
+        2.645723166
+      ],
+      "samples_x_mech_aot": [
+        5.252659965659636,
+        5.169665438307931,
+        5.4037184830986345
+      ],
+      "median_seconds": 2.571763166,
+      "median_x_mech_aot": 5.252659965659636,
+      "stdev_seconds": 0.05809951851167862,
+      "stdev_in_mech_aot_time_units": 0.11866450960375688
+    }
+  }
+}
