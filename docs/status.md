@@ -63,9 +63,16 @@ fourteen extra buffer-boundary cases; the resulting 88 native candidate
 executions remain pending. Raw source measures are retained; normalized and
 formatted counts and timings remain unqualified.
 
-The additive [source-review coverage report](../experiments/implementation-audit/coverage-v1/README.md)
-reconciles the later TypeScript, Odin and OCaml inspections with the exact current
-catalog. It records 293 reviewed and 380 unreviewed local/derived profiles, 46
+The [C# source review](../experiments/csharp/source-review-v1/README.md) covers
+ten local/derived source bundles shared by twenty JIT/AOT profiles and preserves
+nineteen upstream profiles. Five uncompiled drafts address scratch reuse,
+nucleotide input/block handling, ordinary and source-generated managed regex,
+and reverse-complement short reads. A private-helper diagnostic is prepared;
+no new native execution, timing or source-count qualification is claimed.
+
+The additive [source-review coverage report](../experiments/implementation-audit/coverage-v2/README.md)
+reconciles the later TypeScript, Odin, OCaml and C# inspections with the exact current
+catalog. It records 313 reviewed and 360 unreviewed local/derived profiles, 46
 unresolved ownership records and 351 protected upstream profiles. These are
 inspection counts, not completed optimization or native qualification totals.
 
