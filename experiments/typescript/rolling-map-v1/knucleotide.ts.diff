@@ -1,0 +1,135 @@
+--- experiments/typescript/source-v1/knucleotide.ts
++++ experiments/typescript/rolling-map-v1/source/knucleotide.ts
+@@ -1,82 +1,75 @@
+-// Typed source draft; compilation, conformance, work and counts are pending.
+ /* The Computer Language Benchmarks Game
+    https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
+-
+-   Naive transliteration from bearophile's program
+-   contributed by Isaac Gouy
++   Derived from the retained TypeScript transliteration of bearophile's
++   program contributed by Isaac Gouy. Rolling numeric-key adaptation.
+ */
+-
+ import { createInterface } from "node:readline";
+ 
+-type Frequency = [sequence: string, percentage: number];
+-
+-async function seq_lines(): Promise<string[]> {
+-    const stdin = createInterface({
+-        input: process.stdin,
+-        crlfDelay: Infinity,
+-    });
++async function sequence(): Promise<Uint8Array> {
++    const input = createInterface({ input: process.stdin, crlfDelay: Infinity });
+     const lines: string[] = [];
+     let started = false;
+-    for await (const line of stdin) {
++    for await (const line of input) {
+         if (line.startsWith(";")) continue;
+         if (started) {
+             if (line.startsWith(">")) break;
+             lines.push(line);
+         } else {
+-            started = line === ">THREE" || line.startsWith(">THREE ") ||
+-                line.startsWith(">THREE\t");
++            started = line === ">THREE" || line.startsWith(">THREE ") || line.startsWith(">THREE\t");
+         }
+     }
+-    return lines;
++    return encode(lines.join("").toUpperCase());
+ }
+ 
+-function base_counts(bases: number, seq: string): Map<string, number> {
+-    const counts = new Map<string, number>();
+-    const size = seq.length + 1 - bases;
+-    for (let i = 0; i < size; i++) {
+-        const nucleo = seq.substring(i,i+bases);
+-        const v = counts.get(nucleo); if (v !== undefined)
+-            counts.set(nucleo,v+1);
+-        else
+-            counts.set(nucleo,1);
++function encode(text: string): Uint8Array {
++    const result = new Uint8Array(text.length);
++    for (let i = 0; i < text.length; i++) {
++        switch (text.charCodeAt(i)) {
++            case 65: result[i] = 0; break;
++            case 67: result[i] = 1; break;
++            case 71: result[i] = 2; break;
++            case 84: result[i] = 3; break;
++            default: throw new Error("Invalid nucleotide in THREE record");
++        }
+     }
+-    return counts;
++    return result;
+ }
+ 
+-function sorted_freq(bases: number, seq: string): Frequency[] {
+-    const size = seq.length + 1 - bases;
+-    const counts = base_counts(bases, seq);
+-    return Array.from(counts)
+-        .sort((a, b) => b[1] - a[1] ||
+-            (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
+-        .map((a): Frequency => [a[0], 100.0 * a[1] / size]);
++function counts(width: number, bases: Uint8Array): Map<number, number> {
++    const table = new Map<number, number>();
++    const modulus = 4 ** width;
++    let key = 0;
++    for (let i = 0; i < bases.length; i++) {
++        key = (key * 4 + bases[i]) % modulus;
++        if (i + 1 >= width) table.set(key, (table.get(key) ?? 0) + 1);
++    }
++    return table;
+ }
+ 
+-function specific_count(code: string, seq: string): number {
+-    const counts = base_counts(code.length,seq);
+-    return counts.get(code) ?? 0;
++function decode(key: number, width: number): string {
++    let text = "";
++    for (let i = 0; i < width; i++) {
++        text = "ACGT"[key % 4] + text;
++        key = Math.floor(key / 4);
++    }
++    return text;
+ }
+ 
+-function write_freq(a: Frequency): void {
+-    console.log(`${a[0]} ${a[1].toFixed(3)}`);
++async function main(): Promise<void> {
++    const bases = await sequence();
++    for (const width of [1, 2]) {
++        const entries = Array.from(counts(width, bases)).sort((a, b) => b[1] - a[1] || a[0] - b[0]);
++        for (const [key, count] of entries) {
++            console.log(`${decode(key, width)} ${(100 * count / (bases.length - width + 1)).toFixed(3)}`);
++        }
++        console.log();
++    }
++    for (const query of ["GGT", "GGTA", "GGTATT", "GGTATTTTAATT", "GGTATTTTAATTTATAGT"]) {
++        let key = 0;
++        for (const base of encode(query)) key = key * 4 + base;
++        const table = counts(query.length, bases);
++        console.log(`${table.get(key) ?? 0}\t${query}`);
++    }
+ }
+ 
+-function main(): void {
+-    seq_lines().then(a => {
+-        const seq = a.map((s) => s.toUpperCase()).join("");
+-        if (/[^ACGT]/.test(seq)) throw new Error("Invalid nucleotide in THREE record");
+-
+-        for (const base of [1,2]) {
+-            sorted_freq(base,seq).forEach(write_freq);
+-            console.log();
+-        }
+-
+-        for (const code of ["GGT", "GGTA", "GGTATT",
+-                "GGTATTTTAATT", "GGTATTTTAATTTATAGT"]) {
+-            console.log(`${specific_count(code,seq)}\t${code}`);
+-        }
+-
+-    } );
+-}
+-
+-main()
++main();

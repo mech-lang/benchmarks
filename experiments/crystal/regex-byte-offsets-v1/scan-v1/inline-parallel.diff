@@ -1,0 +1,36 @@
+--- programs/crystal/regexredux/crystal-regexredux-optimized/optimized.cr
++++ experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-parallel.cr
+@@ -16,15 +16,6 @@
+   {/<[^>]*>/, "|"},
+   {/\|[^|][^|]*\|/, "-"},
+ ]
+-def count_matches(sequence : String, pattern : Regex)
+-  count = 0
+-  position = 0
+-  while match = pattern.match(sequence, position)
+-    count += 1
+-    position = match.end
+-  end
+-  count
+-end
+ input = STDIN.gets_to_end
+ original_length = input.bytesize
+ sequence = input.gsub(/>[^\n]*\n|\n/, "")
+@@ -32,7 +23,7 @@
+ 
+ def count_job(sequence : String, source : String, index : Int32, done : Channel(Tuple(Int32, Int32)))
+   pattern = Regex.new(source)
+-  done.send({index, count_matches(sequence, pattern)})
++  done.send({index, sequence.scan(pattern).size})
+ end
+ Fiber::ExecutionContext.default.resize(8)
+ done = Channel(Tuple(Int32, Int32)).new(8)
+@@ -42,7 +33,7 @@
+   record = done.receive
+   counts[record[0]] = record[1]
+ end
+-counts[8] = count_matches(sequence, PATTERNS[8])
++counts[8] = sequence.scan(PATTERNS[8]).size
+ PATTERNS.each_with_index { |pattern, index| puts "#{pattern.source} #{counts[index]}" }
+ 
+ SUBSTITUTIONS.each { |pair| sequence = sequence.gsub(pair[0], pair[1]) }

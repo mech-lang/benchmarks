@@ -1,0 +1,20 @@
+{
+  "schema": "r-gather-static-boundary-review.v1",
+  "status": "initial-small-mask-source-rejected-for-n1-shape; replacement-unexecuted",
+  "original_source": {
+    "path": "experiments/r/fannkuch-masks-v1/source/reversal-mask.R",
+    "sha256": "b6f328ebf040fbbc6890299bf73ddfa13c1e4272a6dae77df46922d262daba0d"
+  },
+  "finding": "Atn1,vapply with integer(1) returns a vector, while the small-mask candidate indexes it as a matrix. Explicit matrix construction preserves the required1x1shape. The precomputed-gather source already constructs its indexed matrix explicitly.",
+  "primary_documentation": "https://stat.ethz.ch/R-manual/R-devel/library/base/html/lapply.html",
+  "documentation_version": "base4.6.0 manual; exact retained4.6.1 native validation remains pending",
+  "replacement": {
+    "path": "experiments/r/fannkuch-masks-v1/source/reversal-mask-v2.R",
+    "sha256": "9ec8d460d1afda209b749bd9716fb38ff749d99b5f7c440ad43c5adf0e3148da",
+    "application_loc": null,
+    "native_qualified": false,
+    "timed": false
+  },
+  "original_source_and_proposal_preserved": true,
+  "no_source_count_inferred": true
+}

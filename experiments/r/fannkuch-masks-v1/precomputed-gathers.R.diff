@@ -1,0 +1,22 @@
+--- archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/fannkuchredux/array-batched.R
++++ experiments/r/fannkuch-masks-v1/source/precomputed-gathers.R
+@@ -4,6 +4,8 @@
+   total <- factorials[n+1L]
+   workers <- min(8L,total)
+   ranges <- floor(seq.int(0L,workers)*total/workers)
++  reversals <- vapply(seq_len(n), function(width) c(rev(seq_len(width)), if (width < n) seq.int(width+1L,n) else integer()), integer(n))
++  gathers <- matrix(as.integer(rep(reversals,8192L)+rep(seq.int(0L,8191L)*n,each=n*n)),n)
+   task <- function(worker) {
+     checksum <- 0
+     maximum <- 0L
+@@ -20,9 +22,7 @@
+       flips <- integer(length(ranks))
+       active <- which(permutation[1L,] != 1L)
+       while (length(active)) {
+-        first <- rep(permutation[1L,active],each=n)
+-        rows <- rep(seq_len(n),length(active))
+-        gather <- ifelse(rows <= first,first+1L-rows,rows)+rep(active-1L,each=n)*n
++        gather <- gathers[,(active-1L)*n+permutation[1L,active],drop=FALSE]
+         permutation[,active] <- permutation[gather]
+         flips[active] <- flips[active]+1L
+         active <- active[permutation[1L,active] != 1L]

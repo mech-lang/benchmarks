@@ -1,0 +1,20 @@
+--- archive/languages/pony/20261012/qualification/private-v6/source-snapshot/revisions/precedence-v4/sources/binarytrees/optimized/main.pony
++++ experiments/pony/tree-batches-v1/source/main.pony
+@@ -32,9 +32,14 @@
+     if _remaining == 0 then
+       _parent.done(_sum)
+     else
+-      let tree = Node(_depth)
+-      _sum = _sum + tree.check()
+-      _remaining = _remaining - 1
++      let batch = _remaining.min(((USize(1) << 16) >> _depth).max(1).min(256))
++      var index: USize = 0
++      while index < batch do
++        let tree = Node(_depth)
++        _sum = _sum + tree.check()
++        _remaining = _remaining - 1
++        index = index + 1
++      end
+       _one()
+     end
+ 

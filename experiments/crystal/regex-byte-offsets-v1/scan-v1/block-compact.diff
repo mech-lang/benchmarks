@@ -1,0 +1,18 @@
+--- programs/crystal/regexredux/crystal-regexredux-compact/compact.cr
++++ experiments/crystal/regex-byte-offsets-v1/scan-v1/source/block-compact.cr
+@@ -18,13 +18,10 @@
+ ]
+ def count_matches(sequence : String, pattern : Regex)
+   count = 0
+-  position = 0
+-  while match = pattern.match(sequence, position)
+-    count += 1
+-    position = match.end
+-  end
++  sequence.scan(pattern) { count += 1 }
+   count
+ end
++
+ input = STDIN.gets_to_end
+ original_length = input.bytesize
+ sequence = input.gsub(/>[^\n]*\n|\n/, "")

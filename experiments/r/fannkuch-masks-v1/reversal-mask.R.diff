@@ -1,0 +1,21 @@
+--- archive/comparisons/r-apl-uiua-comparison/20261011/sources/r/fannkuchredux/array-batched.R
++++ experiments/r/fannkuch-masks-v1/source/reversal-mask.R
+@@ -4,6 +4,7 @@
+   total <- factorials[n+1L]
+   workers <- min(8L,total)
+   ranges <- floor(seq.int(0L,workers)*total/workers)
++  reversals <- vapply(seq_len(n), function(width) c(rev(seq_len(width)), if (width < n) seq.int(width+1L,n) else integer()), integer(n))
+   task <- function(worker) {
+     checksum <- 0
+     maximum <- 0L
+@@ -20,9 +21,7 @@
+       flips <- integer(length(ranks))
+       active <- which(permutation[1L,] != 1L)
+       while (length(active)) {
+-        first <- rep(permutation[1L,active],each=n)
+-        rows <- rep(seq_len(n),length(active))
+-        gather <- ifelse(rows <= first,first+1L-rows,rows)+rep(active-1L,each=n)*n
++        gather <- reversals[,permutation[1L,active],drop=FALSE]+rep((active-1L)*n,each=n)
+         permutation[,active] <- permutation[gather]
+         flips[active] <- flips[active]+1L
+         active <- active[permutation[1L,active] != 1L]

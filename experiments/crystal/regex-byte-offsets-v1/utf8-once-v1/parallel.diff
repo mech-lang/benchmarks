@@ -1,0 +1,15 @@
+--- experiments/crystal/regex-byte-offsets-v1/source/parallel.cr
++++ experiments/crystal/regex-byte-offsets-v1/utf8-once-v1/source/parallel.cr
+@@ -19,9 +19,11 @@
+ def count_matches(sequence : String, pattern : Regex)
+   count = 0
+   position = 0
+-  while match = pattern.match_at_byte_index(sequence, position)
++  options = Regex::MatchOptions::None
++  while match = pattern.match_at_byte_index(sequence, position, options: options)
+     count += 1
+     position = match.byte_end
++    options = Regex::MatchOptions::NO_UTF_CHECK
+   end
+   count
+ end

@@ -1,0 +1,25 @@
+--- programs/crystal/regexredux/crystal-regexredux-compact/compact.cr
++++ experiments/crystal/regex-byte-offsets-v1/scan-v1/source/inline-compact.cr
+@@ -16,21 +16,12 @@
+   {/<[^>]*>/, "|"},
+   {/\|[^|][^|]*\|/, "-"},
+ ]
+-def count_matches(sequence : String, pattern : Regex)
+-  count = 0
+-  position = 0
+-  while match = pattern.match(sequence, position)
+-    count += 1
+-    position = match.end
+-  end
+-  count
+-end
+ input = STDIN.gets_to_end
+ original_length = input.bytesize
+ sequence = input.gsub(/>[^\n]*\n|\n/, "")
+ cleaned_length = sequence.bytesize
+ 
+-PATTERNS.each { |pattern| puts "#{pattern.source} #{count_matches(sequence, pattern)}" }
++PATTERNS.each { |pattern| puts "#{pattern.source} #{sequence.scan(pattern).size}" }
+ 
+ SUBSTITUTIONS.each { |pair| sequence = sequence.gsub(pair[0], pair[1]) }
+ puts ""

@@ -1,0 +1,14 @@
+--- archive/languages/crystal/20261012/qualification/private-input-archive-filter-v6/source-snapshot/sources/regexredux/optimized.cr
++++ experiments/crystal/regex-byte-offsets-v1/source/parallel.cr
+@@ -19,9 +19,9 @@
+ def count_matches(sequence : String, pattern : Regex)
+   count = 0
+   position = 0
+-  while match = pattern.match(sequence, position)
++  while match = pattern.match_at_byte_index(sequence, position)
+     count += 1
+-    position = match.end
++    position = match.byte_end
+   end
+   count
+ end
