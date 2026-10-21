@@ -1,0 +1,109 @@
+{
+  "schema": "elm-nucleotide-library-source-review.v1",
+  "status": "source-required-work-conflict-found; canonical-disposition-pending",
+  "profile": "knucleotide:knucleotide-elm-core-dict",
+  "source": {
+    "path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/sources/elm/KnucleotideDict.elm",
+    "sha256": "55dcf173e56390782e6719865775bb9e0e10a750b84af56aeb57af890b3ee7a4"
+  },
+  "dependency_config": {
+    "path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/sources/elm/elm.json",
+    "sha256": "90f96ba31a5dc721a3dfd4571d478cded9779069df3dc14064047b43f6e6fbc1"
+  },
+  "primary_sources": [
+    {
+      "path": "experiments/futhark/library-map-review-v1/primary/knucleotide-description.html",
+      "sha256": "6dcfc56947203ac9094241f3a84b39a6e19770819a0b9e55a0d25d036df3f7d2"
+    },
+    {
+      "path": "experiments/elm/knucleotide-library-review-v1/primary/core-Dict.elm",
+      "sha256": "2afc5fcbc080b98903d9b05a98eb0efbf65265eb42ed076b2d442d9e4aca14e5"
+    },
+    {
+      "path": "experiments/elm/knucleotide-library-review-v1/primary/HashDict.elm",
+      "sha256": "151e675271850a66fa8f5f269a5f617a10adb677ab4fe5da02abc3610ea90e62"
+    },
+    {
+      "path": "experiments/elm/knucleotide-library-review-v1/primary/HashTrie.elm",
+      "sha256": "d7cb5d61ab0e285b791561af83c8afa5cfc18d9374dcfac9d14864b01bb1e92c"
+    },
+    {
+      "path": "experiments/elm/knucleotide-library-review-v1/primary/Hashing.elm",
+      "sha256": "70596f44222ce9a7cd623e8a55b2870774cebb287b9a8bad6659f0fdabb69eb1"
+    },
+    {
+      "path": "experiments/elm/knucleotide-library-review-v1/primary/Equality.elm",
+      "sha256": "ebcd5c5f3875eaaa0ef6c1e24015e6d08b9928780996a3021c28de46c674f5d7"
+    }
+  ],
+  "catalog_changed": false,
+  "native_processes_started": 0,
+  "findings": [
+    {
+      "kind": "required-work",
+      "result": "Retained core Dict uses a red-black search tree; every rolling-key increment calls Dict.update on that tree. The workload prescribes hash tables. Complete map contents alone do not satisfy that data-structure requirement.",
+      "application_lines": [
+        4,
+        22,
+        31
+      ],
+      "library_lines": [
+        68,
+        70,
+        379,
+        387
+      ],
+      "disposition": "Needs guarded eligibility correction after independent evidence review; historical observations must remain available."
+    },
+    {
+      "kind": "key-equality",
+      "result": "HashDict separates hash projection from Equality.int key equality and stores original key/value entries in collision lists. A 32-bit hash does not by itself discard the 36-bit original key. Do not infer an equality defect from hash collisions alone.",
+      "evidence": [
+        "HashDict.accessHashTrieAtKey",
+        "HashDict.mapHashTrieAtKey",
+        "HashTrie.get",
+        "HashTrie.update"
+      ]
+    },
+    {
+      "kind": "parser",
+      "result": "Retained source searches an arbitrary >THREE substring, treats invalid bases as A and does not skip comment lines; exact-token, repeated-record, missing-record and comment fixtures are required before stronger input claims."
+    },
+    {
+      "kind": "performance",
+      "result": "Tree balancing and repeated get/insert, seven String.foldl passes and tuple closures are hypotheses to inspect, not measured attributions."
+    }
+  ],
+  "retained_performance": {
+    "seconds": 301.239681625,
+    "samples": [
+      301.239681625,
+      301.3903885,
+      298.776081584
+    ],
+    "sample_count": 3,
+    "loc": 59,
+    "mech_fast_program": "knucleotide:mech-compact-final-std1-simd0-p4",
+    "mech_seconds": 0.51382825,
+    "mech_loc": 17,
+    "time_x_mech": 586.2653165235661,
+    "loc_x_mech_fast": 3.4705882352941178,
+    "report": "zig-odin-roc-elm-comparison/20261010/results/timings-complete.json",
+    "mech_report": "additional-languages/20261009-full-suite/results/timings.json",
+    "timing_alias_of": null,
+    "comparison_scope": "descriptive medians of retained cohorts; not a new paired experiment",
+    "observed_sample_ratio_envelope": [
+      580.5475391030117,
+      589.3894076168885
+    ],
+    "observed_samples_all_slower_than_mech": true,
+    "loc_x_mech_small": 3.4705882352941178,
+    "mech_small_program": "knucleotide:mech-compact-final-std1-simd0-p4",
+    "median_matches_saved_samples": true
+  },
+  "evidence_limits": [
+    "Official exact-version source fetched for review; its correspondence to every historical compiler-consumed vendor file still needs an archived build-manifest join.",
+    "No native parser counterexample, new source count or timing was run in this review.",
+    "No speed or optimal-source claim follows from using the hash library."
+  ]
+}

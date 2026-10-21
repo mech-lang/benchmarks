@@ -92,3 +92,40 @@ No candidate in this tranche has been added to the canonical catalog or chart.
 Exact failures, unsuccessful hypotheses, sources, citations and process captures
 are retained. A lowest observed candidate median never establishes global
 optimality or minimum idiomatic source.
+
+## TypeScript full-size rolling-map comparison
+
+The preselected [full plan](typescript-full-v1/plan.json) compares the retained
+substring-key program with the rolling numeric-key candidate on the complete
+canonical N25m input. All six fresh-process observations match the entire
+independent reference. Startup, V8 JIT, input parsing, every complete histogram,
+sorting, formatting, output and shutdown are timed. The
+[raw report](typescript-full-v1/run-v1/report.json) includes seconds and a Mech AOT
+multiple for every observation; [the summary](typescript-full-v1/summary.json)
+retains dispersion and memory as well as the matched comparison.
+
+| Nucleotide implementation | Median seconds | × Mech AOT time | Sample SD seconds | Peak RSS MB |
+| --- | ---: | ---: | ---: | ---: |
+| Retained TypeScript substring maps |44.791|87.17×|1.317|791 |
+| TypeScript rolling numeric maps |29.883|58.16×|0.574|832 |
+| Retained Mech AOT baseline |0.514|1.00×|0.002|— |
+
+The candidate is1.50× faster than its freshly measured parent. Full-size peak
+memory increases about5.2%; the reduced-input pilot's lower RSS does not
+extrapolate. The Mech AOT denominator is a historical median of0.51382825s on the
+same full workload, identified by profile, original report and samples. None of
+those observations is replaced or pooled into this cohort. Source-count approval,
+more detailed independent work review and guarded catalog admission remain
+pending. No catalog/chart timing has changed.
+
+## Additional source review
+
+- [Gleam binary traversal](../../gleam/knucleotide-binary-tail-v1/proposal.json):
+  native binary head/tail traversal and optional once-only encoding. Seven full
+  library maps and process workers remain. Compilation, allocation/lowering
+  inspection, complete work probes, counts and measurements are pending.
+- [Elm hash-library review](../../elm/knucleotide-library-review-v1/source-review-v1.json):
+  the retained core Dict is a red-black tree, conflicting with the workload's
+  hash-table requirement. Historical compiler-input identity and independent
+  guarded eligibility disposition remain pending. A standard hash-container
+  candidate with exact-token input parsing is retained without a new timing.

@@ -1,0 +1,67 @@
+{
+  "schema": "owned-language-source-candidates.v1",
+  "status": "uncompiled-source-proposal",
+  "chart_admission": false,
+  "current_authoring_tool": "Codex",
+  "current_model_family": "GPT-6",
+  "exact_serving_model": null,
+  "original_lineage_not_inferred": true,
+  "candidate": {
+    "source": {
+      "path": "experiments/elm/knucleotide-library-review-v1/source/KnucleotideHashStrings.elm",
+      "sha256": "dc55361e79bf8a2f364523a6502b4fe70b39a4aeb7c846a5ea58509849366560"
+    },
+    "parent_program": "knucleotide:knucleotide-elm-core-dict",
+    "parent_source": {
+      "path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/sources/elm/KnucleotideDict.elm",
+      "sha256": "55dcf173e56390782e6719865775bb9e0e10a750b84af56aeb57af890b3ee7a4"
+    },
+    "application_loc": null,
+    "parent_ownership_and_citations": {
+      "classification": "derived-adapted",
+      "reason": "Retained metadata explicitly records local adaptation/porting, but original implementation lineage is unresolved.",
+      "preserve_upstream_source": false,
+      "upstream_identity": "not-established",
+      "original_lineage_status": "unresolved",
+      "origin_gaps": [
+        "Original implementation source not established; a workload description or collection is not an original-source citation."
+      ],
+      "existing_authorship_kind": "local-origin-unverified",
+      "existing_ai_evidence_status": "unverified",
+      "existing_ai_models": [],
+      "ai_authorship_inferred": false,
+      "parent_programs": [],
+      "sources": [],
+      "evidence": [],
+      "retained_source_assertion": "Locally authored Elm benchmark. Locally authored pure-Elm alternative using the ordinary core Dict map rather than the generic HashingContainers/typeclass package. All seven maps for widths 1,2,3,4,6,12,18 scan every overlapping window. Numeric keys retain all 36 bits: core Dict compares exact ordinary numeric values without truncating bitwise keys. No fixed bucket limit, target-only counting, period cache, host benchmark executor or precomputed result. All decoding, window generation, maps, sorting, formatting and output remain in counted Elm application source."
+    },
+    "inherited_support_bundle": [
+      {
+        "sha256": "e8775fd5c317dd4e8fa12ad84099259d35fe53a2d92299e69fd4795e9e938330",
+        "path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/support/elm-runner.cjs",
+        "role": "runtime-support",
+        "included_in_application_loc": false
+      },
+      {
+        "sha256": "90f96ba31a5dc721a3dfd4571d478cded9779069df3dc14064047b43f6e6fbc1",
+        "path": "archive/comparisons/zig-odin-roc-elm-comparison/20261010/sources/elm/elm.json",
+        "role": "runtime-support",
+        "included_in_application_loc": false
+      }
+    ],
+    "hypothesis": "Use the existing ordinary hash-container library with standard integer equality and a standard library hashing projection, while preserving complete rolling-key maps. Exact-token record parsing is explicit in Elm.",
+    "hashing_scope": "Standard library composition String.fromInt with Hashing.string12. Decimal representations of 0..4^18-1 have at most11characters, so this uses the complete-string fold branch; no custom hash table or native kernel. String conversion adds allocation and is not claimed fastest.",
+    "required_work": [
+      "All seven growing library hash maps start at H.empty; every overlapping occurrence updates its full map.",
+      "Numeric key stays exact through36bits; standard Equality.int compares original keys separately from hash values.",
+      "All decoding, sorting, formatting, parsing and output remain counted Elm source."
+    ],
+    "remaining_gates": [
+      "Compile with pinned existing package/runtime versions and inspect generated JavaScript.",
+      "Independently check hash collisions/full keys, complete histograms, all update events and parser boundaries.",
+      "Replay exact source ownership counts; no inherited source count copied.",
+      "Compare lower-allocation standard-library hash choices without replacing the map or narrowing required work.",
+      "Measure isolated matched pilots/full samples, reporting seconds and equivalent-size Mech AOT multiples."
+    ]
+  }
+}
