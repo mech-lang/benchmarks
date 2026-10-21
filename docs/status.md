@@ -40,6 +40,20 @@ Janet 1.42.1 runtime, with original-source lineage and licenses retained.
 Correctness, required work, normalized/formatted counts and full timing remain
 pending. No Janet profile is included in the measured coverage totals above.
 
+Janet's [149-case bounded-output schedule](../experiments/janet/bounded-v1/README.md)
+is prepared with 697 pinned files and six passing pure checker tests. This
+starts no Janet process: 142 success contracts await native execution, and seven
+malformed-IUPAC cases require capture and a Janet-specific diagnostic adapter.
+The owned-process controller and release of the existing shared mutex remain
+prerequisites; source counts and timings are unqualified.
+
+The [Odin source review](../experiments/odin/source-review-v1/README.md) inspects
+thirteen local/derived bundles across nine workloads and preserves two unchanged
+upstream N-body sources. A cited, uncompiled spectral-norm candidate reuses its
+scratch vector; parser boundary findings and other performance/idiom hypotheses
+remain unmeasured. Raw size measures are retained for all inspected files and
+the candidate, with normalized/formatted counts left unqualified.
+
 
 Explorer rollover and highlighting now batch pointer changes once per animation frame and update language groups instead of individual dots. Opacity animations and repeated ranking readouts are removed. The [matched profile](../site/publications/chart-hover-v1/comparison.json) and [performance notes](explorer-performance.md#rollover-and-highlighting) retain the measurements; browser data and reproduction payloads are byte-identical. Build `f360c8bf40c2e010` is [live and verified](../site/publications/chart-hover-v1/deployment.json), with all 41 public assets matching and all 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json) passing.
 

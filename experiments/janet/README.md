@@ -57,6 +57,13 @@ decisions, loops and output remain in Janet. Every authored FFI declaration is
 application source. The native GMP ABI and both workloads' complete outputs
 still require qualification.
 
+The [bounded-output preparation](bounded-v1/README.md) seals all 149 shared
+corpus cases, exact source/runtime/dependency identities and a pure success-output
+checker. Its six corruption/boundary tests pass without launching Janet. The
+seven malformed-IUPAC cases remain capture-only pending a Janet-specific native
+diagnostic review. This is preparation, with zero subject executions or timings;
+the owned-process controller and free common mutex remain prerequisites.
+
 Implementations and dependencies remain local to this packet while qualification
 is in progress. No Janet timing is yet admitted, and existing language results
 remain unchanged. Every benchmark will run sequentially under the shared mutex.
