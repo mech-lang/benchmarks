@@ -1,0 +1,47 @@
+--- programs/gleam/knucleotide/gleam-knucleotide-optimized/benchmark.gleam
++++ experiments/gleam/knucleotide-binary-tail-v1/source/preencoded-tail.gleam
+@@ -67,11 +67,20 @@
+   case width == 0 { True -> total False -> power_four(width - 1, total * 4) }
+ }
+ 
++fn encode_once(sequence: BitArray, encoded: BitArray) -> BitArray {
++  case sequence {
++    <<base, rest:bits>> -> {
++      let value = code(base)
++      encode_once(rest, <<encoded:bits, value>>)
++    }
++    <<>> -> encoded
++  }
++}
++
+ fn histogram(sequence: BitArray, width: Int, index: Int, key: Int, modulus: Int, counts: dict.Dict(Int, Int)) -> dict.Dict(Int, Int) {
+-  case index == io.size(sequence) {
+-    True -> counts
+-    False -> {
+-      let key = { key * 4 + code(io.byte(sequence, index)) } % modulus
++  case sequence {
++    <<base, rest:bits>> -> {
++      let key = { key * 4 + base } % modulus
+       let counts = case index + 1 >= width {
+         True -> {
+           let existing = case dict.get(counts, key) { Ok(value) -> value Error(_) -> 0 }
+@@ -79,8 +88,9 @@
+         }
+         False -> counts
+       }
+-      histogram(sequence, width, index + 1, key, modulus, counts)
++      histogram(rest, width, index + 1, key, modulus, counts)
+     }
++    <<>> -> counts
+   }
+ }
+ 
+@@ -114,7 +124,7 @@
+ }
+ 
+ pub fn main() -> Nil {
+-  let sequence = records(io.read_all(), 0, False, [])
++  let sequence = records(io.read_all(), 0, False, []) |> encode_once(<<>>)
+   let tasks = list.map([1, 2, 3, 4, 6, 12, 18], fn(width) {
+     process.start(fn() { histogram(sequence, width, 0, 0, power_four(width, 1), dict.new()) })
+   })

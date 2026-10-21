@@ -1,0 +1,27 @@
+--- programs/gleam/knucleotide/gleam-knucleotide-optimized/benchmark.gleam
++++ experiments/gleam/knucleotide-binary-tail-v1/source/raw-tail.gleam
+@@ -68,10 +68,9 @@
+ }
+ 
+ fn histogram(sequence: BitArray, width: Int, index: Int, key: Int, modulus: Int, counts: dict.Dict(Int, Int)) -> dict.Dict(Int, Int) {
+-  case index == io.size(sequence) {
+-    True -> counts
+-    False -> {
+-      let key = { key * 4 + code(io.byte(sequence, index)) } % modulus
++  case sequence {
++    <<base, rest:bits>> -> {
++      let key = { key * 4 + code(base) } % modulus
+       let counts = case index + 1 >= width {
+         True -> {
+           let existing = case dict.get(counts, key) { Ok(value) -> value Error(_) -> 0 }
+@@ -79,8 +78,9 @@
+         }
+         False -> counts
+       }
+-      histogram(sequence, width, index + 1, key, modulus, counts)
++      histogram(rest, width, index + 1, key, modulus, counts)
+     }
++    <<>> -> counts
+   }
+ }
+ 
