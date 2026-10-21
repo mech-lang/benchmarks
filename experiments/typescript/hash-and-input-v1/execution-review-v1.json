@@ -1,0 +1,81 @@
+{
+  "schema": "typescript-input-map-source-execution-review.v1",
+  "status": "reviewed-with-limits",
+  "reviewer_is_authoring_agent": true,
+  "source_proposal_sha256": "3ef4a9a4feaf857d373a7ef31b46bd048ee070e3915be62241ea55a4d3dc9394",
+  "native_plan_sha256": "a02f072597ab3998749585957678a40cdda0a3d8ec2a01ba7e0917e2919d4596",
+  "native_report_sha256": "14a997ffd4f66c39e8316650d5c9bbd900ca6f418cb3b9616246fa39cc023ad9",
+  "reconciliation_sha256": "0cd47fa9603b96c13aaee94cdf0c01f3f9d6badca0671ada496a9548409c80ee",
+  "pilot_plan_sha256": "7deda7fb4c57e30d38863c682cfeb33dd88c8a2c9294b7ec21a506b0a33eb28a",
+  "pilot_results_sha256": "9f09545aafd8e666be32aa95f63aae59fc98e1cd28fa62a81d4e3880d815c205",
+  "sources": [
+    {
+      "label": "rolling-parent",
+      "source_sha256": "4791a1254a036736f9208875cb3791f460510dfb5d3ffd128d92ac997b9b52b7",
+      "javascript_sha256": "128400d93caff2312995d505cda774935d356ff8dc61fe90962cdfababb12b81",
+      "source_map_sha256": "ba1974e673eb21024249ccdcd176b585b421058808a0e35188e075f8ace57795",
+      "source_map_exact_typed_source": true,
+      "config_sha256": "d4a11d94a99ff169b6aade5f47fc2f677e25b1963d10fd8e0ffe8af5dceb31a6",
+      "retained_imports": [
+        "const node_readline_1 = require(\"node:readline\");"
+      ]
+    },
+    {
+      "label": "readline-cells",
+      "source_sha256": "7f191009889ea4010e8fcd6117e740104a5275778bfe06667aebad2b337049c2",
+      "javascript_sha256": "0a3084e68467842584b765d480407b56a80414fa230ad5c3f7404df65da56df1",
+      "source_map_sha256": "208e4a24d77a4d002a4ae4e977895b497ba660d982ae60cd1d75c172b8a0cc3c",
+      "source_map_exact_typed_source": true,
+      "config_sha256": "d4a11d94a99ff169b6aade5f47fc2f677e25b1963d10fd8e0ffe8af5dceb31a6",
+      "retained_imports": [
+        "const node_readline_1 = require(\"node:readline\");"
+      ]
+    },
+    {
+      "label": "buffer-numbers",
+      "source_sha256": "908e557396f7d56e2f0da1b3b8bcca5a5e897aa809f04020963c7a30f10a80e8",
+      "javascript_sha256": "c5ea207335877ecd33313b6fc18678708b46a01a82693e124c2d8079885f6306",
+      "source_map_sha256": "f9135e079b4a2e30d43c3b8f42af40ebcb26d1464697a5fb47e2592ce98d22bb",
+      "source_map_exact_typed_source": true,
+      "config_sha256": "d4a11d94a99ff169b6aade5f47fc2f677e25b1963d10fd8e0ffe8af5dceb31a6",
+      "retained_imports": [
+        "const node_fs_1 = require(\"node:fs\");"
+      ]
+    },
+    {
+      "label": "buffer-cells",
+      "source_sha256": "9a44267f458b4d1b6d62a703560abbdce0a97f4383e86d2f5767de52ba4e5640",
+      "javascript_sha256": "25e428e72803a6e0bf13e73c81da0064e6dccb57614df1fc5773c036b065549c",
+      "source_map_sha256": "578d6d9cbf3de06251c9395fc002aa38c64666a8c7322cb9713b0319e99b256d",
+      "source_map_exact_typed_source": true,
+      "config_sha256": "d4a11d94a99ff169b6aade5f47fc2f677e25b1963d10fd8e0ffe8af5dceb31a6",
+      "retained_imports": [
+        "const node_fs_1 = require(\"node:fs\");"
+      ]
+    }
+  ],
+  "ownership_boundary": "All algorithmic work stays in these TypeScript files; ordinary Node fs/readline, ECMAScript Map and V8 are unchanged. Diagnostics are separate preloaded processes and absent from every quantitative command.",
+  "work_observations": {
+    "output_checks": 280,
+    "complete_histograms": 980,
+    "ordered_updates": 292908,
+    "rejections": 12,
+    "diagnostic_semantics": "Map subclass observes gets/sets and cell Proxy observes increments; complete outputs match the corresponding uninstrumented program. This diagnostic is not a quantitative performance measurement."
+  },
+  "pilot_review": {
+    "samples": 12,
+    "matched_rounds": 3,
+    "full_size": false,
+    "all_complete_outputs": true,
+    "all_processes_closed": true,
+    "denominator": null,
+    "comparison_scope": "First one million retained THREE bases only; preceding records omitted. Fresh whole processes.",
+    "conclusion": "All four medians are within about 0.002 seconds. Three reduced-input samples do not establish a useful speed advantage; mutable-value forms use about 20 percent more peak memory. The reduced input omits preceding FASTA records, so it cannot settle whole-input parser cost.",
+    "full_candidate_selected": null
+  },
+  "source_counts_qualified": false,
+  "independent_source_count_review": false,
+  "native_formatted_counts_qualified": false,
+  "full_size_timing_available": false,
+  "chart_admission": false
+}

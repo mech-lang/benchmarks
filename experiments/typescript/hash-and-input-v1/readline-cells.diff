@@ -1,0 +1,43 @@
+--- experiments/typescript/rolling-map-v1/source/knucleotide.ts
++++ experiments/typescript/hash-and-input-v1/source/readline-cells.ts
+@@ -35,13 +35,19 @@
+     return result;
+ }
+ 
+-function counts(width: number, bases: Uint8Array): Map<number, number> {
+-    const table = new Map<number, number>();
++type CountCell = { value: number };
++
++function counts(width: number, bases: Uint8Array): Map<number, CountCell> {
++    const table = new Map<number, CountCell>();
+     const modulus = 4 ** width;
+     let key = 0;
+     for (let i = 0; i < bases.length; i++) {
+         key = (key * 4 + bases[i]) % modulus;
+-        if (i + 1 >= width) table.set(key, (table.get(key) ?? 0) + 1);
++        if (i + 1 >= width) {
++            const cell = table.get(key);
++            if (cell === undefined) table.set(key, { value: 1 });
++            else cell.value++;
++        }
+     }
+     return table;
+ }
+@@ -58,7 +64,7 @@
+ async function main(): Promise<void> {
+     const bases = await sequence();
+     for (const width of [1, 2]) {
+-        const entries = Array.from(counts(width, bases)).sort((a, b) => b[1] - a[1] || a[0] - b[0]);
++        const entries = Array.from(counts(width, bases), ([key, cell]) => [key, cell.value] as const).sort((a, b) => b[1] - a[1] || a[0] - b[0]);
+         for (const [key, count] of entries) {
+             console.log(`${decode(key, width)} ${(100 * count / (bases.length - width + 1)).toFixed(3)}`);
+         }
+@@ -68,7 +74,7 @@
+         let key = 0;
+         for (const base of encode(query)) key = key * 4 + base;
+         const table = counts(query.length, bases);
+-        console.log(`${table.get(key) ?? 0}\t${query}`);
++        console.log(`${table.get(key)?.value ?? 0}\t${query}`);
+     }
+ }
+ 

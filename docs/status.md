@@ -9,16 +9,30 @@ source details and exports expose the corrected counts and previous totals.
 The current catalog contains **63 execution variants across 54 language families**, **10 workloads**, and **1,007 selected timed program profiles**. The full source inventory retains **1,070 distinct profiles** across **971 source files**, including sixty-three measured candidates outside the chart catalog. Sixty-two execution variants cover the complete suite. The catalog retains **3,294 sample entries representing 3,282 distinct recorded runs**; **3,105 runs belong to selected profiles**. Four program labels explicitly share another program’s measurements.
 
 Three reviewed Crystal regex scan implementations are now admitted with nine new
-full-process observations. The parallel block form has a1.651s median
-(3.37× the retained Mech AOT time), versus34.991s (71.47×) for the freshly
-measured retained-source control. Parallel inline scan is1.686s (3.44×), and
-compact inline scan is2.572s (5.25×). Retained-policy counts are54/47/32units,
+full-process observations. The parallel block form has a 1.651s median
+(3.37× the retained Mech AOT time), versus 34.991s (71.47×) for the freshly
+measured retained-source control. Parallel inline scan is 1.686s (3.44×), and
+compact inline scan is 2.572s (5.25×). Retained-policy counts are 54/47/32 units,
 respectively. The [admission](../experiments/crystal/regex-byte-offsets-v1/admission-v1/results.json)
 and [preservation proof](../experiments/crystal/regex-byte-offsets-v1/admission-v1/preservation.json)
-retain every older profile, source, count and sample. Mech AOT’s0.489612s
+retain every older profile, source, count and sample. Mech AOT’s 0.489612s
 baseline is historical and is separate from the matched Crystal comparison.
-Native formatted and uniform logical Crystal counts remain pending. The updated
-explorer build is prepared locally; deployment verification remains pending.
+Native formatted and uniform logical Crystal counts remain pending. Explorer
+build `d99c08066acbc1db`, website commit
+`1754e93bdde2471d4963f01083d339f4b86ffacd`, is
+[live and verified](../site/publications/crystal-scan-v1/live-pages.json):
+all 41 public assets match, and all 14
+[live Data/export/mobile/shared-selection checks](../site/publications/crystal-scan-v1/live-browser.json)
+passed with no page errors.
+
+The [TypeScript input/Map audit](../experiments/typescript/hash-and-input-v1/README.md)
+compiled four forms and passed 280 complete-output checks, 980 complete
+histogram witnesses, 292,908 ordered update checks and 12 invalid-input
+rejections. Twelve reduced-input observations show no clear speed advantage
+for the three new forms; mutable count cells use more peak memory. Their raw
+source-size measures are retained. Native normalized/formatted counts and a
+representative whole-input parser comparison remain pending. These diagnostic
+observations do not change catalog timings or chart selections.
 
 
 Explorer rollover and highlighting now batch pointer changes once per animation frame and update language groups instead of individual dots. Opacity animations and repeated ranking readouts are removed. The [matched profile](../site/publications/chart-hover-v1/comparison.json) and [performance notes](explorer-performance.md#rollover-and-highlighting) retain the measurements; browser data and reproduction payloads are byte-identical. Build `f360c8bf40c2e010` is [live and verified](../site/publications/chart-hover-v1/deployment.json), with all 41 public assets matching and all 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json) passing.

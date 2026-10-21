@@ -1,0 +1,67 @@
+--- experiments/typescript/rolling-map-v1/source/knucleotide.ts
++++ experiments/typescript/hash-and-input-v1/source/buffer-numbers.ts
+@@ -3,22 +3,51 @@
+    Derived from the retained TypeScript transliteration of bearophile's
+    program contributed by Isaac Gouy. Rolling numeric-key adaptation.
+ */
+-import { createInterface } from "node:readline";
++import { readFileSync } from "node:fs";
+ 
+-async function sequence(): Promise<Uint8Array> {
+-    const input = createInterface({ input: process.stdin, crlfDelay: Infinity });
+-    const lines: string[] = [];
+-    let started = false;
+-    for await (const line of input) {
+-        if (line.startsWith(";")) continue;
+-        if (started) {
+-            if (line.startsWith(">")) break;
+-            lines.push(line);
+-        } else {
+-            started = line === ">THREE" || line.startsWith(">THREE ") || line.startsWith(">THREE\t");
++function sequence(): Uint8Array {
++    const raw = readFileSync(0);
++    let start = -1;
++    let end = raw.length;
++    let length = 0;
++    let offset = 0;
++    while (offset < raw.length) {
++        const first = offset;
++        while (offset < raw.length && raw[offset] !== 10 && raw[offset] !== 13) offset++;
++        const last = offset;
++        if (offset < raw.length && raw[offset] === 13) offset++;
++        if (offset < raw.length && raw[offset] === 10) offset++;
++        if (first === last) continue;
++        if (raw[first] === 62) {
++            if (start >= 0) { end = first; break; }
++            if (last - first >= 6 && raw[first + 1] === 84 && raw[first + 2] === 72 &&
++                raw[first + 3] === 82 && raw[first + 4] === 69 && raw[first + 5] === 69 &&
++                (last - first === 6 || raw[first + 6] === 32 || raw[first + 6] === 9)) start = offset;
++        } else if (start >= 0 && raw[first] !== 59) {
++            length += last - first;
+         }
+     }
+-    return encode(lines.join("").toUpperCase());
++    const bases = new Uint8Array(length);
++    let output = 0;
++    let lineStart = true;
++    for (let i = start < 0 ? end : start; i < end; i++) {
++        const byte = raw[i];
++        if (byte === 10 || byte === 13) { lineStart = true; continue; }
++        if (lineStart && byte === 59) {
++            while (i < end && raw[i] !== 10 && raw[i] !== 13) i++;
++            lineStart = true;
++            continue;
++        }
++        lineStart = false;
++        switch (byte) {
++            case 65: case 97: bases[output++] = 0; break;
++            case 67: case 99: bases[output++] = 1; break;
++            case 71: case 103: bases[output++] = 2; break;
++            case 84: case 116: bases[output++] = 3; break;
++            default: throw new Error("Invalid nucleotide in THREE record");
++        }
++    }
++    return bases;
+ }
+ 
+ function encode(text: string): Uint8Array {

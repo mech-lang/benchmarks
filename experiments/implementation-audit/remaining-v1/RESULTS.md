@@ -120,6 +120,17 @@ those observations is replaced or pooled into this cohort. Source-count approval
 more detailed independent work review and guarded catalog admission remain
 pending for TypeScript. No TypeScript catalog/chart timing has changed.
 
+The additive [input/Map audit](../../typescript/hash-and-input-v1/README.md)
+compares three further ordinary source forms with that rolling candidate.
+Strict compilation and 280 complete-output checks pass. Separate diagnostic
+runs reconcile every ordered update and final entry in all seven Maps: 980
+histograms and 292,908 updates. Twelve invalid-input rejections and seven
+corruption tests also pass. A fixed twelve-sample reduced-input cohort shows
+no clear speed advantage; mutable cells increase peak memory. Its exact input
+has no retained Mech AOT denominator, so all ratios remain null. Raw source,
+gzip and BPE measures are retained; native owner-count extensions, formatting
+and a representative whole-input parser comparison remain pending.
+
 ## Additional source review
 
 - [Gleam binary traversal](../../gleam/knucleotide-binary-tail-v1/proposal.json):
