@@ -74,3 +74,8 @@ count defect. A separately retained v3 regex overlay passes all seven regex case
 together with the nine other v2 workloads, all 142 success contracts now pass.
 Malformed-input rejection review, required-work checks and full timings remain
 pending. Earlier blocker descriptions above describe the historical attempts.
+
+A [spectral-norm candidate](native-v1/spectral-review.md) reuses three vectors
+and advances exact coefficient denominators. All seven bounded output cases and
+14 native parent/candidate counter checks pass. It remains unmeasured and does
+not replace the historical source manifest or enter the chart.
