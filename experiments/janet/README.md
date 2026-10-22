@@ -1,81 +1,73 @@
 # Janet benchmarks
 
-Janet is being added across the ten suite workloads using Janet 1.42.1. The
-official Apple Silicon distribution, archive digest, exact source revision and
-MIT runtime license are retained in
-[runtime-acquisition-v1.json](runtime-acquisition-v1.json).
+Janet 1.42.1 is being qualified across the ten suite workloads using its standard
+standalone register-based bytecode VM. Fresh-process timing includes source
+parsing, bytecode compilation, VM startup, complete input/computation/output and
+shutdown. Bundling this VM in an executable is not native AOT compilation of the
+application.
 
-All ten [active source drafts](source-v2/) pass compile-only checks with empty
-stdout/stderr using the locally built runtime. The
-[source manifest](source-manifest-v1.json) binds each exact source, every consulted
-local predecessor, original Benchmarks Game citations and applicable notices
-and licenses. These are newly authored adaptations or implementations, not
-original Janet submissions to the Benchmarks Game.
+The [active source overlays](source-overlays-v1.json) identify seven v2 programs
+and the v3 regex-redux, spectral-norm and reverse-complement programs. These are
+locally authored implementations or adaptations, with original consulted sources,
+contributors and licenses in the preserved [source manifest](source-manifest-v1.json).
+Local authoring identifies Codex GPT-6 family; the exact serving model is unknown.
+Every authored helper and GMP FFI declaration remains application source.
 
-The initial execution variant is the standard standalone Janet bytecode VM.
-Fresh-process timing will include source parsing, bytecode compilation, VM
-startup, complete input/computation/output and shutdown. A standalone executable
-containing the VM is not classified as native AOT compilation of the application.
+## Current validation and timing
 
-[plan-v1.json](plan-v1.json) tracks all ten workloads. Source implementations,
-required-work checks, source-size measures, toolchain/library versions and
-complete observations are required before plotted admission. Candidate source
-files are newly authored Janet programs; specific consulted predecessor files,
-original authors and licenses must accompany each source record. Current
-authoring identifies Codex GPT-6; the exact serving model is unknown.
+All 149 bounded corpus contracts pass for the active source set: 142 complete
+success-output contracts and seven explicit invalid-IUPAC rejection contracts.
+The [original native capture](native-v1/README.md) retains the initial overlapping
+regex-count defect and its correction. The
+[reverse-complement review](native-v1/rejection-review.md) records valid cases,
+invalid-byte/position diagnostics, partial stdout and rejection-adapter tests.
+These checks do not establish full-size correctness for every workload.
 
-## Runtime and development validation
+The [spectral-norm candidate](native-v1/spectral-review.md) reuses three vectors
+and advances exact coefficient denominators. Seven bounded output cases and 14
+source-projected native work checks pass. Six sequential
+[full-size process observations](spectral-full-v1/README.md) at N=5500 validate
+complete output. Parent median: 66.827 seconds (776.4× retained Mech AOT).
+Candidate median: 16.531 seconds (192.1×), an observed 4.04× improvement. The
+retained, same-input Mech AOT median is 0.086075292 seconds (1.0×); it was not
+remeasured in this cohort. Substantial macOS background activity is recorded.
+These exploratory observations require quiet-host confirmation and do not enter
+the public chart.
 
-The downloaded executable stalled in macOS launch before returning a version.
-The [owned launch observation](runtime-probe-v1/hang-observation.json) retains
-its exact PID/group and the termination signal; it does not claim that the
-uninterruptible process has exited. No security setting was changed. The
-[local build result](local-runtime-build-result-v1.json) instead uses the
-verified release's bundled C sources and header with Apple Clang. Its observed
-version is `1.42.1-e1963cd`. Runtime compilation is preparation, outside any
-benchmark interval.
+[Complementary source measures](source-overlay-measures-v1.json) retain exact
+physical rows, UTF-8 bytes, code points, deterministic gzip and pinned BPE tokens
+for all three overlays and their parents. They include comments, whitespace and
+every application helper. Native normalized and formatted counts remain pending;
+raw rows and BPE are not substitutes for qualified language-specific counts.
+Run the [source measurement tool](source_overlay_measures.py) in the pinned
+source-metrics environment to reproduce or check the packet.
 
-The [initial compile-only attempt](syntax-v1/reconciliation.json) exposed a
-constant-parameter assignment and an incorrect module search path. Janet's
-`-k` command returned zero even when it printed these diagnostics. The original
-snapshots, streams and producer result remain; the reconciliation rejects the
-producer's exit-code-only success label. The corrected
-[second attempt](syntax-v2/results.json) requires zero exit and empty streams
-for every source. All ten meet that stronger development check. Compile-only
-checks do not execute benchmark main functions or qualify their outputs/work.
+## Runtime and library boundaries
 
-Untimed runtime/flycheck development commands retain their explicit resource
-reservation exception while the first `--version` launch remains uninterruptible.
-Quantitative measurements require the unchanged common mutex and have not
-started. Clean locked process/closure qualification remains a separate gate.
+The [release acquisition](runtime-acquisition-v1.json) pins the official archive,
+exact revision and MIT license. The original downloaded executable stalled before
+returning a version; its [owned observation](runtime-probe-v1/hang-observation.json)
+retains the failed launch and termination attempt. No security setting was changed.
+The retained [local build](local-runtime-build-result-v1.json) instead compiles the
+verified release's bundled C sources with Apple Clang. Restoring those inputs
+reproduced the exact same runtime SHA-256 and version `1.42.1-e1963cd`.
+The downloaded executable was not relaunched.
+
+The [first syntax attempt](syntax-v1/reconciliation.json) printed diagnostics
+while returning zero. The corrected [second attempt](syntax-v2/results.json)
+requires zero exit and empty stdout/stderr. Historical compile-only evidence and
+the [149-case preparation](bounded-v1/README.md) remain unchanged. The preparation's
+old blocked status describes that earlier stage; native results are separate.
 
 Regex-redux uses the unmodified published
-[Spork regex module](dependencies-v1/spork/snapshot.json), which compiles its
-supported regular expressions to Janet's PEG engine. Pi digit generation uses
-Janet's ordinary FFI to call general GMP arithmetic operations; the spigot state,
-decisions, loops and output remain in Janet. Every authored FFI declaration is
-application source. The native GMP ABI and both workloads' complete outputs
-still require qualification.
+[Spork regex module](dependencies-v1/spork/snapshot.json), which compiles supported
+regular expressions to Janet PEGs. The application explicitly advances beyond
+each eight-byte motif for non-overlapping counts. Pi digits uses ordinary FFI to
+call general GMP arithmetic leaves; the full spigot, both digit extractions,
+control and output remain in Janet.
 
-The [bounded-output preparation](bounded-v1/README.md) seals all 149 shared
-corpus cases, exact source/runtime/dependency identities and a pure success-output
-checker. Its six corruption/boundary tests pass without launching Janet. The
-seven malformed-IUPAC cases remain capture-only pending a Janet-specific native
-diagnostic review. This is preparation, with zero subject executions or timings;
-the owned-process controller and free common mutex remain prerequisites.
-
-Implementations and dependencies remain local to this packet while qualification
-is in progress. No Janet timing is yet admitted, and existing language results
-remain unchanged. Every benchmark will run sequentially under the shared mutex.
-
-The [native bounded validation](native-v1/README.md) restores the identical local
-runtime and records the first actual 149-case run. It exposed an overlapping-regex
-count defect. A separately retained v3 regex overlay passes all seven regex cases;
-together with the nine other v2 workloads, all 142 success contracts now pass.
-Malformed-input rejection review, required-work checks and full timings remain
-pending. Earlier blocker descriptions above describe the historical attempts.
-
-A [spectral-norm candidate](native-v1/spectral-review.md) reuses three vectors
-and advances exact coefficient denominators. All seven bounded output cases and
-14 native parent/candidate counter checks pass. It remains unmeasured and does
-not replace the historical source manifest or enter the chart.
+Required-work review across the remaining workloads, complete library-loader
+closure, qualified source counts, remaining full-size outputs and timing cohorts,
+and chart admission remain pending. All native cases and quantitative subjects
+run sequentially under the common mutex. Existing language results and sources
+are preserved; no Janet profile is yet admitted.

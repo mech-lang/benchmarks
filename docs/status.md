@@ -1,5 +1,13 @@
 # Benchmark coverage
 
+Janet now passes all 149 bounded contracts across ten draft workloads, including
+seven language-specific malformed-input rejections. Its spectral-norm candidate
+has six full-size process observations: parent median 66.827s (776.4× retained
+Mech AOT), candidate 16.531s (192.1×), a 4.04× observed improvement. These remain
+exploratory because substantial desktop activity was recorded. No Janet profile
+is admitted; the [Janet packet](../experiments/janet/README.md) records source-size
+measures, limitations and outstanding work.
+
 The [application-LOC correction](source-size-correction.md) resolves the reviewed
 host/binding/library inconsistencies in 183 profiles, including embedded source
 sections. The earlier [audit](source-size-audit.md) remains a snapshot of the
