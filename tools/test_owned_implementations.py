@@ -31,6 +31,34 @@ class OwnedImplementationAuditTest(unittest.TestCase):
         p["local_adaptation"] = True
         self.assertEqual(classify(p)["classification"], "derived-adapted")
 
+    def test_published_identity_protects_source_despite_runner_adaptation_metadata(self):
+        p = self.program()
+        p["local_adaptation"] = True
+        p["authorship"] = {"kind": "ai-adapted", "sources": [{
+            "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/program/test-c-1.html",
+            "relationship": "implementation", "citation_check": {
+                "matching_retained_source_sha256": ["app"]}}]}
+        before = copy.deepcopy(p)
+        result = classify(p)
+        self.assertEqual(result["classification"], "derived-adapted")
+        self.assertTrue(result["preserve_upstream_source"])
+        self.assertTrue(result["protection_metadata_conflict"])
+        self.assertEqual(p, before)
+        # A changed application or an unmatched second application is not the
+        # same source; generic support remains outside the application boundary.
+        changed = copy.deepcopy(p); changed["files"] = ["changed-app", "library"]
+        self.assertFalse(classify(changed)["preserve_upstream_source"])
+        extra = copy.deepcopy(p); extra["files"].append("authored-helper")
+        self.assertFalse(classify(extra)["preserve_upstream_source"])
+
+    def test_local_repository_identity_is_not_external_published_protection(self):
+        p = self.program(); p["local_adaptation"] = True
+        p["authorship"] = {"kind": "ai-adapted", "sources": [{
+            "url": "https://github.com/mech-lang/benchmarks/blob/revision/app.py",
+            "relationship": "implementation", "citation_check": {
+                "matching_retained_source_sha256": ["app"]}}]}
+        self.assertFalse(classify(p)["preserve_upstream_source"])
+
     def test_cited_upstream_is_protected_when_identity_is_incomplete(self):
         p = self.program()
         p["authorship"] = {"kind": "upstream"}

@@ -14,7 +14,7 @@ from pathlib import Path
 import statistics
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = Path("experiments/implementation-audit/v1/inventory.json")
+OUTPUT = Path("experiments/implementation-audit/v2/inventory.json")
 PRIORITY = ["bqn", "matlab", "nim", "prolog", "apl", "smalltalk", "ruby",
             "clojure", "ada", "futhark", "r", "uiua", "k", "d", "elixir"]
 DEEP_REVIEWS = {language: f"experiments/implementation-audit/v1/{language}-review.md"
@@ -229,6 +229,32 @@ def bound_static_review(program, source_reviews):
                 candidate_execution=False)
 
 
+
+def external_published_identity(program):
+    """Require every application file to match a cited external implementation.
+
+    Runner/port metadata may be broader than the source files. It cannot grant
+    permission to edit bytes independently identified as published source.
+    This is an edit-protection rule, not an inference about who copied a file.
+    """
+    matches = set()
+    for ref in program.get("authorship", {}).get("sources", []):
+        if ref.get("relationship") not in ("implementation", "reference implementation"):
+            continue
+        url = ref.get("url", "")
+        if not url.startswith(("https://", "http://")) or any(prefix in url for prefix in (
+                "github.com/mech-lang/", "raw.githubusercontent.com/mech-lang/", "mech-lang.org/")):
+            continue
+        check = ref.get("citation_check", {})
+        matches.update(check.get("matching_retained_source_sha256", []))
+        if check.get("body_sha256"):
+            matches.add(check["body_sha256"])
+        if ref.get("upstream_sha256"):
+            matches.add(ref["upstream_sha256"])
+    app = set(application_shas(program))
+    return bool(app) and app.issubset(matches)
+
+
 def classify(program):
     """Separate ownership from AI attribution and unchanged-source protection."""
     authored = program.get("authorship", {})
@@ -268,11 +294,18 @@ def classify(program):
         reason = "Retained evidence does not establish unchanged upstream identity, a specific adaptation, or explicit local origin."
     # Cited upstream submissions remain protected even when identity evidence is
     # incomplete. Missing citations never authorize rewriting a published file.
-    protect = category == "unchanged-upstream" or (authored.get("kind") == "upstream" and not changed)
+    external_identity = external_published_identity(program)
+    if external_identity and changed:
+        reason += (" Complete application identity matches published source; the adaptation claim is retained metadata, not evidence of changed application bytes.")
+    protect = (category == "unchanged-upstream"
+               or (authored.get("kind") == "upstream" and not changed)
+               or external_identity)
     return {
         "classification": category,
         "reason": reason,
         "preserve_upstream_source": protect,
+        "external_published_application_identity": external_identity,
+        "protection_metadata_conflict": external_identity and changed,
         "upstream_identity": "normalized-source-match" if confirmed else "declared-unmodified" if unmodified else "not-established",
         "original_lineage_status": authored.get("origin_status", "unresolved"),
         "origin_gaps": authored.get("origin_gaps", []),
@@ -504,7 +537,7 @@ def make_inventory(data, canonical_sha256):
             priority_keys.insert(0, "knucleotide:array-bqn-faithful")
         queue.extend(k for k in priority_keys if k not in queue)
     return {
-        "schema": "owned-implementation-audit.v1",
+        "schema": "owned-implementation-audit.v2",
         "canonical_input": {"path": "data/benchmarks.json", "sha256": canonical_sha256},
         "policy": {
             "scope": "All retained database profiles; original upstream submissions protected; priority languages affect review order, not ownership classification.",
