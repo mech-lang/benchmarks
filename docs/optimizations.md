@@ -321,7 +321,7 @@ the canonical historical website catalog is unchanged pending admission.
 ### 2026-10-22 — Streamed record compaction
 
 The [reverse-complement study](../experiments/mech/revcomp-streaming-v1/RESULTS.md)
-removes a generic input memory pass. Single-byte record prefixes with an empty
+removes a generic input memory pass ([compiler PR #910](https://github.com/mech-lang/mech/pull/910)). Single-byte record prefixes with an empty
 join separator now compact line endings directly from buffered input. The Mech
 application and emitted Cranelift compute object are unchanged.
 
