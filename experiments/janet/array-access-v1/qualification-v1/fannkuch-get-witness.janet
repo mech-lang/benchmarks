@@ -1,0 +1,51 @@
+# SPDX-License-Identifier: Apache-2.0 AND BSD-3-Clause
+# Janet adaptation of the retained Rex Kerr / Isaac Gouy permutation algorithm.
+(defn fannkuch [n]
+  (if (zero? n) [0 0]
+    (do
+      (def original (seq [i :range [0 n]] i))
+      (def permutation (array/new-filled n 0))
+      (def counts (array/new-filled n 0))
+      (var rank n)
+      (var ordinal 0)
+      (var checksum 0)
+      (var maximum 0)
+      (var done false)
+      (while (not done)
+        (while (not= rank 1)
+          (put counts (dec rank) rank)
+          (-- rank))
+        (for i 0 n (put permutation i (get original i)))
+        (var flips 0)
+        (while (not= (get permutation 0) 0)
+          (def last (get permutation 0))
+          (var i 0)
+          (while (< (* 2 i) last)
+            (def temporary (get permutation i))
+            (put permutation i (get permutation (- last i)))
+            (put permutation (- last i) temporary)
+            (++ i))
+          (++ flips))
+        (file/write stderr (string/format "%.0f %.0f " ordinal flips))
+        (each value original (file/write stderr (string/format "%.0f," value)))
+        (file/write stderr "\n")
+        (set maximum (max maximum flips))
+        (+= checksum (if (zero? (% ordinal 2)) flips (- flips)))
+        (var carry true)
+        (while carry
+          (if (= rank n)
+            (do (set done true) (set carry false))
+            (do
+              (def first (get original 0))
+              (for i 0 rank (put original i (get original (inc i))))
+              (put original rank first)
+              (put counts rank (dec (get counts rank)))
+              (if (> (get counts rank) 0) (set carry false) (++ rank)))))
+        (++ ordinal))
+      [checksum maximum])))
+
+(defn main [& args]
+  (def n (scan-number (get args 1 "7")))
+  (def [checksum maximum] (fannkuch n))
+  (print checksum)
+  (print (string/format "Pfannkuchen(%d) = %d" n maximum)))

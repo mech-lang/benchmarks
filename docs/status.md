@@ -1,34 +1,34 @@
 # Benchmark coverage
 
-Janet now passes all 149 bounded contracts across ten draft workloads, including
-seven language-specific malformed-input rejections. Its spectral-norm candidate
-has six full-size process observations: parent median 66.827s (776.4× retained
-Mech AOT), candidate 16.531s (192.1×), a 4.04× observed improvement. These remain
-exploratory because substantial desktop activity was recorded. No Janet profile
-is admitted; the [Janet packet](../experiments/janet/README.md) records source-size
-measures, limitations and outstanding work. Native grammar lexical counts now
-cover thirteen exact sources. Formatter qualification exposed preserved layout
-in Spork, so formatter rows remain separate from pending normalized LOC.
-The separate Janet FASTA study adds three exact sources, bringing native lexical
-coverage to sixteen Janet sources. Its batched linear form measures 23.047s
-(42.6× retained Mech AOT), versus the parent's 38.648s (71.4×). A compact form has
-357 lexical tokens versus 416, at 51.455s (95.1×). All twelve full-size samples
-pass; [source measures and cohort limits](../experiments/janet/fasta-search-v1/RESULTS.md)
-remain explicit, and no Janet chart admission is made.
-The Janet k-nucleotide study adds five exact alternatives (21 native-lexical-counted
-Janet sources across packets). Its seven-worker standard-modulo source measures
-24.651s (48.0× retained Mech AOT), versus the parent's 73.965s (143.9×), a 3.00×
-improvement. All eighteen full outputs and 588 bounded complete hash tables pass;
-[RSS, source costs and cohort limits](../experiments/janet/knucleotide-bytes-v1/RESULTS.md)
-remain separate from the pending normalized-LOC and admission gates.
+Janet has full-size studies for five workloads, with three fresh-process samples
+per tested source and all full outputs verified. All application helpers remain
+in scope; the standard Janet VM is unchanged. Timings below are parent → fastest
+tested alternative, with ratios to retained same-input Mech AOT references:
 
-The Janet reverse-complement study adds three alternatives (24 native-lexical-counted
-Janet sources). Dense lookup and chunked output measure 12.712s (85.2× retained
-Mech AOT), versus the historical parent's 13.380s (89.6×), with about 91% lower
-peak RSS. All twelve full-size outputs and 272 bounded contracts pass. The new
-forms meet line-by-line input rules that the historical parent does not;
-[source-size and cohort qualifications](../experiments/janet/revcomp-stream-v1/RESULTS.md)
-remain separate from pending normalization and chart admission.
+| Workload | Parent seconds (× Mech AOT) | Candidate seconds (× Mech AOT) |
+|---|---:|---:|
+| Spectral norm | 66.827 (776.4×) | 16.531 (192.1×) |
+| FASTA | 38.648 (71.4×) | 23.047 (42.6×) |
+| k-nucleotide | 73.965 (143.9×) | 24.651 (48.0×) |
+| Reverse complement | 13.380 (89.6×) | 12.712 (85.2×) |
+| n-body | 105.393 (101.4×) | 23.864 (23.0×) |
+
+The n-body register/macro form is 4.42× faster with all pair arithmetic retained.
+The reverse-complement candidates also meet line-by-line input requirements that
+the historical parent does not, with about 91% lower peak RSS. All 149 original
+bounded contracts pass across the active draft set. New binary-trees/fannkuch
+candidates add 35 complete output checks and 35 work witnesses, including unique
+node allocation and every permutation/flip through N=8; they have no full-size
+timings yet. Native lexical measures now cover 30 unique Janet sources.
+
+Five workloads still lack full-size studies. Normalized logical and canonical
+formatted LOC, remaining qualification and chart admission remain pending.
+No Janet profile is admitted. The [Janet packet](../experiments/janet/README.md)
+retains every source-size tradeoff, original lineage/license, raw sample and
+ownership receipt. Mech references are historical, not freshly paired controls;
+recorded desktop activity and live telemetry prevent pristine-idle/continuous
+thermal claims. The [boundary clarification](../experiments/janet/measurement-boundary-review-v1.json)
+changes no elapsed values or prior sealed captures.
 
 The [application-LOC correction](source-size-correction.md) resolves the reviewed
 host/binding/library inconsistencies in 183 profiles, including embedded source
