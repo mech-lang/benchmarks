@@ -8,6 +8,7 @@ import hashlib
 import json
 from source_metrics import metadata_for
 from clojure_logical_extensions import bind as bind_clojure_extension
+from mech_logical_extensions import bind as bind_mech_extension
 
 ROOT = Path(__file__).resolve().parents[1]
 V2 = Path('experiments/source-normalization/v2/qualification.json')
@@ -184,6 +185,11 @@ def bind(catalog, catalog_raw, reports, root=ROOT):
     if extension:
         policies[CLOJURE_POLICY]['source_extensions'] = dict(proof=extension['extension_proof'], independent_review=extension['extension_review'],
             profiles=sorted(extension['profiles']), projection_path='experiments/source-normalization/clojure-extensions/v1/projection.json')
+    mech = bind_mech_extension(catalog, root)
+    if mech:
+        require(not set(mech['profiles']).intersection(profiles), 'Duplicate logical policy ownership')
+        profiles.update(mech['profiles'])
+        policies[mech['policy']['id']] = mech['policy']
     metadata = dict(schema='browser-qualified-logical-source-units.v1', catalog_sha256=digest, partial_coverage=True,
         generic_language_certificate=False, default_status='unavailable', policies=policies,
         coverage=dict(qualified_profiles=len(profiles), retained_profiles=len(programs),

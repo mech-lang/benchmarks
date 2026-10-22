@@ -251,5 +251,6 @@ The separate [Mech native-owner qualification](../experiments/source-normalizati
 adds three exact pi-digits source forms: 38 logical units for the parent, 39 for
 the shared-numerator helper form and 37 for the shorter form. Native token
 coverage, eighteen manual fixtures and twenty-one closed capture processes are
-retained. These counts are pending browser/catalog projection; they do not change
-the older Python/Julia or Clojure proofs or qualify canonical formatted LOC.
+retained. These counts now bind to six exact Mech profiles in the browser/catalog projection.
+They do not change the older Python/Julia or Clojure source outcomes or qualify
+canonical formatted LOC.

@@ -209,6 +209,9 @@ def check_model_evidence(root, data, key, program, source_models):
             and authorship.get('source_sha256') == program['files'],
             f'Authorship source binding differs: {key}')
     bound = {
+        'pidigits:mech-pi-advance-parent-20261022': 'import_mech_pidigits',
+        'pidigits:mech-pi-shared-numerator-20261022': 'import_mech_pidigits',
+        'pidigits:mech-pi-compact-shared-20261022': 'import_mech_pidigits',
         'knucleotide:array-bqn-occurrence-frame': 'import_bqn_knucleotide',
         'knucleotide:nim-knucleotide-preencoded-v1': 'import_nim_knucleotide',
         'spectralnorm:array-bqn-native-sum': 'import_bqn_spectral',

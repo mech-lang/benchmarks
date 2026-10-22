@@ -11,6 +11,8 @@ audit=importlib.util.module_from_spec(spec);spec.loader.exec_module(audit)
 # Exact admitted applications only: family identity is not a per-file model event.
 # Each frozen importer binds the source, predecessor and admission receipts.
 FAMILY_ADMISSIONS={
+    'pidigits:mech-pi-shared-numerator-20261022':'qualification.import_mech_pidigits',
+    'pidigits:mech-pi-compact-shared-20261022':'qualification.import_mech_pidigits',
     'knucleotide:array-bqn-occurrence-frame':'qualification.import_bqn_knucleotide',
     'knucleotide:nim-knucleotide-preencoded-v1':'qualification.import_nim_knucleotide',
     'spectralnorm:array-bqn-native-sum':'qualification.import_bqn_spectral',
@@ -35,7 +37,12 @@ class Authorship(unittest.TestCase):
         module_name=FAMILY_ADMISSIONS.get(p['key'])
         if module_name is None:return None
         module=importlib.import_module(module_name)
-        if module_name=='qualification.import_crystal_scan':
+        if module_name=='qualification.import_mech_pidigits':
+            name=next(n for n,k in module.KEYS.items() if k==p['key'])
+            source_sha=module.read(audit.ROOT,module.STUDY/'source-manifest.json')['local_candidates'][name]['sha256']
+            family=SimpleNamespace(SOURCE_SHA=source_sha,PARENT=module.PARENT)
+            evidence_paths=(str(module.STUDY/'source-manifest.json'),str(module.PACKET/'cohort.json'))
+        elif module_name=='qualification.import_crystal_scan':
             variant=next(v for v in module.VARIANTS if module.key(v)==p['key'])
             source_sha,_,_,parent=module.VARIANTS[variant]
             family=SimpleNamespace(SOURCE_SHA=source_sha,PARENT=parent)

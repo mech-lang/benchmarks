@@ -216,6 +216,10 @@ def historical_catalog(root, current):
     if 'crystal_scan_audit' in current:
         from qualification.import_crystal_scan import append_catalog
         expected = append_catalog(expected, root)
+    if 'mech_pidigits_20261022_audit' in current:
+        from qualification.import_mech_pidigits import append_catalog as append_mech_pi, reconcile as reconcile_mech_pi
+        languages = json.loads((root / 'data/languages.json').read_bytes())
+        expected, _ = append_mech_pi(expected, languages, reconcile_mech_pi(root), root)
     assert current == expected, 'Current catalog differs from the validated source-accounting transformation'
     assert report == receipt['transformation'], 'Source-accounting result differs'
     return before

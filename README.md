@@ -24,9 +24,10 @@ retained qualified candidates; further improvements remain possible.
 submitted bytes, deterministic gzip size and pinned BPE token counts alongside
 retained application LOC, qualified formatted LOC and qualified logical units.
 The six chart options keep unavailable counts blank. Native logical-source
-qualification covers 74 exact programs under the separate
+qualification covers 80 exact profiles under the separate
 [Python/Julia](experiments/source-normalization/v2/README.md) and
-[Clojure](experiments/source-normalization/clojure-v1/README.md) owner policies;
+[Clojure](experiments/source-normalization/clojure-v1/README.md) and
+[Mech](experiments/source-normalization/mech-v1/README.md) owner policies;
 other source families await equivalent checks. Each measure has explicit limits.
 
 [Reproduction records](docs/reproduction.md) expose recorded versions, build commands, runtime settings, inputs and gaps. [Implementation authorship](docs/authorship.md) distinguishes published sources,
