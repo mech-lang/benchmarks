@@ -42,6 +42,19 @@ but takes 51.455s (95.1×). All twelve full-size samples match complete output;
 all ordinary LCG updates and probability searches remain in Janet. These are
 experimental candidates with explicit cohort and source-count limitations.
 
+The [k-nucleotide study](knucleotide-bytes-v1/RESULTS.md) measures five alternatives
+against the parent with all seven complete maps retained. Standard byte input,
+positive modulo and seven ordinary Janet workers give a 24.651s median
+(48.0× retained Mech AOT), versus 73.965s (143.9×): a 3.00× observed improvement.
+A serial line-reader/modulo form takes 64.720s (126.0×) with about 145 MiB peak RSS,
+about 96% below the parent's peak. All eighteen full outputs and 588 bounded full
+histograms pass. Normalized source counts and admission remain pending.
+
+The [measurement metadata reconciliation](measurement-metadata-reconciliation-v1.json)
+corrects an inherited receipt label on eighteen earlier spectral/FASTA experimental
+observations. Their recorded elapsed values and full-process boundaries are
+unchanged. New quantitative subject receipts explicitly set the measurement flag.
+
 [Complementary source measures](source-overlay-measures-v1.json) retain exact
 physical rows, UTF-8 bytes, code points, deterministic gzip and pinned BPE tokens
 for all three overlays and their parents. They include comments, whitespace and

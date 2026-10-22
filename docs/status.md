@@ -15,6 +15,12 @@ coverage to sixteen Janet sources. Its batched linear form measures 23.047s
 357 lexical tokens versus 416, at 51.455s (95.1×). All twelve full-size samples
 pass; [source measures and cohort limits](../experiments/janet/fasta-search-v1/RESULTS.md)
 remain explicit, and no Janet chart admission is made.
+The Janet k-nucleotide study adds five exact alternatives (21 native-lexical-counted
+Janet sources across packets). Its seven-worker standard-modulo source measures
+24.651s (48.0× retained Mech AOT), versus the parent's 73.965s (143.9×), a 3.00×
+improvement. All eighteen full outputs and 588 bounded complete hash tables pass;
+[RSS, source costs and cohort limits](../experiments/janet/knucleotide-bytes-v1/RESULTS.md)
+remain separate from the pending normalized-LOC and admission gates.
 
 The [application-LOC correction](source-size-correction.md) resolves the reviewed
 host/binding/library inconsistencies in 183 profiles, including embedded source

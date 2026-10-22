@@ -43,8 +43,8 @@ This does not authorize replacement for arbitrary floating or signed inputs.
 `modulo-qualification-v1` checks another 28 complete outputs and 196 full tables.
 `native-domain-v1` adds 72,360 boundary/reachable-value checks in the actual runtime;
 the pure domain test also checks those bounds. The two modulo files preserve
-all original loops and maps. They require their own full timing observations;
-no speed gain is inferred merely from the different runtime opcode.
+all original loops and maps. Their separate six-sample full cohort confirms the improvement; exact results
+and adjacent-cohort limits are in [RESULTS.md](RESULTS.md).
 
 The input is generated outside measurement using the already verified Janet FASTA
 source, then checked against its complete 254,166,745-byte reference. Its payload
@@ -58,3 +58,8 @@ notices through `source-manifest.json`. Local changes are authored by Codex GPT-
 family, exact serving model unknown. Every authored parser, map, decoder and
 summary helper remains application source. Normalized LOC, native canonical
 formatting and chart admission remain separate pending gates.
+
+The [complete study](RESULTS.md) also qualifies a standard seven-worker variant,
+including full-map transfer, all seven unique completions and worker-error
+propagation. Its three full-size samples retain every prescribed window update.
+All eighteen samples, 84 bounded outputs and 588 complete table witnesses pass.
