@@ -1,6 +1,6 @@
 # Benchmark coverage
 
-Janet has full-size studies for five workloads, with three fresh-process samples
+Janet has full-size studies for six workloads, with three fresh-process samples
 per tested source and all full outputs verified. All application helpers remain
 in scope; the standard Janet VM is unchanged. Timings below are parent → fastest
 tested alternative, with ratios to retained same-input Mech AOT references:
@@ -12,6 +12,12 @@ tested alternative, with ratios to retained same-input Mech AOT references:
 | k-nucleotide | 73.965 (143.9×) | 24.651 (48.0×) |
 | Reverse complement | 13.380 (89.6×) | 12.712 (85.2×) |
 | n-body | 105.393 (101.4×) | 23.864 (23.0×) |
+| Binary trees* | 102.899 (260.9×) | 20.715 (52.5×) |
+
+*Binary-trees allocation policies differ: Janet uses default GC, whereas the
+Mech reference uses a general library pool with distinct node slots. Its 4.97×
+improvement is within Janet. All fifteen full-size samples and 66 bounded
+node-identity/visit checks pass.
 
 The n-body register/macro form is 4.42× faster with all pair arithmetic retained.
 The reverse-complement candidates also meet line-by-line input requirements that
@@ -19,9 +25,9 @@ the historical parent does not, with about 91% lower peak RSS. All 149 original
 bounded contracts pass across the active draft set. New binary-trees/fannkuch
 candidates add 35 complete output checks and 35 work witnesses, including unique
 node allocation and every permutation/flip through N=8; they have no full-size
-timings yet. Native lexical measures now cover 30 unique Janet sources.
+timings yet. Native lexical measures now cover 33 unique Janet sources.
 
-Five workloads still lack full-size studies. Normalized logical and canonical
+Four workloads still lack full-size studies. Normalized logical and canonical
 formatted LOC, remaining qualification and chart admission remain pending.
 No Janet profile is admitted. The [Janet packet](../experiments/janet/README.md)
 retains every source-size tradeoff, original lineage/license, raw sample and
@@ -100,10 +106,12 @@ nucleotide input/block handling, ordinary and source-generated managed regex,
 and reverse-complement short reads. A private-helper diagnostic is prepared;
 no new native execution, timing or source-count qualification is claimed.
 
-The additive [source-review coverage report](../experiments/implementation-audit/coverage-v3/README.md)
-reconciles the later TypeScript, Odin, OCaml and C# inspections with the exact current
-catalog. It records 334 reviewed and 339 unreviewed local/derived profiles, 46
-unresolved ownership records and 351 protected upstream profiles. These are
+The additive [source-review coverage report](../experiments/implementation-audit/coverage-v4/README.md)
+reconciles the later TypeScript, Odin, OCaml, C# and F# inspections with the exact current
+catalog. It records 334 reviewed and 305 unreviewed editable profiles, 46
+unresolved ownership records and 385 protected published profiles. A captured-source
+identity reconciliation protects 34 additional profiles despite broad adaptation
+metadata; it grants no new source-inspection or native qualification. These are
 inspection counts, not completed optimization or native qualification totals.
 
 

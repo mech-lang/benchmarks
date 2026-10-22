@@ -64,14 +64,23 @@ reducing the median from 105.393s (101.4× retained Mech AOT) to 23.864s (23.0×
 a 4.42× improvement. All twelve full outputs match exactly, and canonical plus
 perturbed-state captures preserve complete state bits. This costs 902 lexical
 tokens versus the parent's 705; no normalized LOC benefit is claimed.
-Five Janet workloads remain without full-size studies.
 
-The [array-access candidates](array-access-v1/README.md) add three unmeasured
-alternatives for binary-trees and fannkuch. Thirty-five complete bounded outputs
+The [binary-trees study](binarytrees-workers-v1/RESULTS.md) measures five forms.
+Seven ordinary workers give a 20.715s median (52.5× retained Mech AOT), versus
+102.899s (260.9×), a 4.97× improvement within Janet. All fifteen complete outputs,
+66 bounded distinct-node/visit witnesses and 2,464 native partition bounds pass.
+The worker form costs 540 lexical tokens versus 197 and raises peak RSS. Janet
+uses default GC; the Mech reference uses a general library pool, so those ratios
+are not a matched allocator comparison. Four workloads still lack full-size
+studies. Native lexical measures now cover 33 unique Janet sources.
+
+The [array-access packet](array-access-v1/README.md) retains the earlier bounded
+qualification of three alternatives for binary-trees and fannkuch. Its cached
+tree source now has full-size measurements in the study above; the fannkuch
+alternatives remain unmeasured at full size. Thirty-five complete bounded outputs
 and 35 complete-work witnesses pass, including distinct tree allocations and
-every permutation/flip through N=8. Across all packets, native lexical measures
-now cover 30 unique Janet application sources. These checks are not full-size
-performance or normalized-LOC admission.
+every permutation/flip through N=8. Native lexical measures cover all five exact
+sources in that packet. These checks do not qualify normalized LOC.
 
 The [telemetry-boundary clarification](measurement-boundary-review-v1.json)
 records that periodic power/process snapshots occur inside live subject windows.

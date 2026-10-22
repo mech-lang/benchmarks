@@ -1,0 +1,53 @@
+{
+  "schema": "janet-tree-standard-runtime-review.v1",
+  "files": [
+    {
+      "path": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "sha256": "f6671a167ae3f61f7db72ef3bec08625080a4c61cbd13ad20ee57c2a3ed844da"
+    },
+    {
+      "path": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/shell.c",
+      "sha256": "dbd05c7cc169c0e1bc031995d958ed1f6d0062b9bf6ae5b4c9b21b32fecff4c6"
+    }
+  ],
+  "findings": [
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 12206,
+      "fact": "ev/thread is the standard OS-thread API. :n starts asynchronous work; :t carries the numeric job tuple as task ID. No custom native helper is introduced."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 11316,
+      "fact": "Each asynchronous threaded subroutine increments the event-loop listener reference count."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 10481,
+      "fact": "The event loop is not done while its listener count remains nonzero."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 12200,
+      "fact": "The worker VM calls janet_deinit before its threaded subroutine returns."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 11290,
+      "fact": "The POSIX worker posts its completion callback only after the threaded subroutine returns."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/janet.c",
+      "line": 10625,
+      "fact": "Handling that callback decrements the event-loop listener count."
+    },
+    {
+      "source": "experiments/janet/.build/runtime-v1/janet-v1.42.1-macos/src/shell.c",
+      "line": 1284,
+      "fact": "The CLI runs its root through janet_loop_fiber, whose event loop drains those outstanding references."
+    }
+  ],
+  "application_review": "The worker is module-level and receives only three numbers. Main keeps the retained tree local. Constructors create fresh mutable arrays; checks read all nodes; no GC settings, arena or free list are used.",
+  "no_runtime_change": true,
+  "scope": "Static inspection of the pinned runtime source used to build the measured VM; not a generic thread-library certificate."
+}
