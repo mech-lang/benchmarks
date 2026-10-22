@@ -34,6 +34,14 @@ remeasured in this cohort. Substantial macOS background activity is recorded.
 These exploratory observations require quiet-host confirmation and do not enter
 the public chart.
 
+The [FASTA study](fasta-search-v1/RESULTS.md) adds three measured alternatives.
+Batched linear search has a 23.047s median (42.6× retained Mech AOT), versus the
+parent's 38.648s (71.4×): a 1.68× improvement. Ordinary binary search is slower
+here. A compact sequence form uses 357 lexical tokens versus the parent's 416,
+but takes 51.455s (95.1×). All twelve full-size samples match complete output;
+all ordinary LCG updates and probability searches remain in Janet. These are
+experimental candidates with explicit cohort and source-count limitations.
+
 [Complementary source measures](source-overlay-measures-v1.json) retain exact
 physical rows, UTF-8 bytes, code points, deterministic gzip and pinned BPE tokens
 for all three overlays and their parents. They include comments, whitespace and

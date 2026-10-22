@@ -9,6 +9,12 @@ is admitted; the [Janet packet](../experiments/janet/README.md) records source-s
 measures, limitations and outstanding work. Native grammar lexical counts now
 cover thirteen exact sources. Formatter qualification exposed preserved layout
 in Spork, so formatter rows remain separate from pending normalized LOC.
+The separate Janet FASTA study adds three exact sources, bringing native lexical
+coverage to sixteen Janet sources. Its batched linear form measures 23.047s
+(42.6× retained Mech AOT), versus the parent's 38.648s (71.4×). A compact form has
+357 lexical tokens versus 416, at 51.455s (95.1×). All twelve full-size samples
+pass; [source measures and cohort limits](../experiments/janet/fasta-search-v1/RESULTS.md)
+remain explicit, and no Janet chart admission is made.
 
 The [application-LOC correction](source-size-correction.md) resolves the reviewed
 host/binding/library inconsistencies in 183 profiles, including embedded source
