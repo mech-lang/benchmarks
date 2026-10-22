@@ -1,0 +1,94 @@
+"""Serial FASTA outputs, actual-source draw witnesses and search-equivalence checks."""
+import fcntl
+import importlib.util
+import json
+from pathlib import Path
+import sys
+
+HERE=Path(__file__).resolve().parent
+ROOT=HERE.parents[2]
+spec=importlib.util.spec_from_file_location('janet_fasta_owned',HERE.parent/'native-v1/run.py')
+process=importlib.util.module_from_spec(spec);spec.loader.exec_module(process)
+sys.path.insert(0,str(HERE.parent/'bounded-v1'))
+from outputs import validate_success
+
+
+def main():
+    plan=json.loads((HERE.parent/'bounded-v1/plan-v1.json').read_bytes())
+    for name,pin in plan['pins'].items():
+        p=Path(name) if name.startswith('/') else ROOT/name
+        assert process.sha(p)==pin['sha256'],name
+    sources={'parent':HERE.parent/'source-v2/fasta.janet',**{name:HERE/'sources'/(name+'.janet') for name in ('linear','binary')}}
+    out=HERE/'qualification-v1';out.mkdir(exist_ok=False)
+    report=dict(status='running',benchmark_samples=0,chart_admission=False,
+                sources={label:dict(path=str(p.relative_to(ROOT)),sha256=process.sha(p)) for label,p in sources.items()},
+                controller_sha256=process.sha(Path(__file__)),outputs=[],witnesses=[])
+    corpus_path=ROOT/plan['corpus'];corpus=json.loads(corpus_path.read_bytes())
+    projections={}
+    for label,source in sources.items():
+        text=source.read_text()
+        assert text.count('(set seed (% (+ (* seed 3877) 29573) 139968))')==1
+        text='(var draw-count 0)\n'+text.replace('(set seed (% (+ (* seed 3877) 29573) 139968))','(++ draw-count)\n    (set seed (% (+ (* seed 3877) 29573) 139968))')
+        assert text.count('(random-record (* 5 n) homo))')==1
+        text=text.replace('(random-record (* 5 n) homo))','(random-record (* 5 n) homo)\n  (file/write stderr (string/format "%d %d\\n" draw-count seed)))')
+        projection=out/(label+'-witness.janet');projection.write_text(text);projections[label]=projection
+    # Exact source extraction: only source function wrapper/return is added.
+    parent=sources['parent'].read_text();prefix=parent[:parent.index('(defn random []')]
+    searches=[]
+    for label in ('linear','binary'):
+        text=sources[label].read_text()
+        start=text.index('    (var rank 0)' if label=='linear' else '    (var lower 0)')
+        stop=text.index('    (buffer/push-byte block',start)
+        searches.append(f'(defn rank-{label} [value thresholds limit]\n'+text[start:stop]+'  rank)\n')
+    classification=out/'search-equivalence.janet'
+    classification.write_text(prefix+'\n'.join(searches)+'''
+(defn main [& args]
+  (var checks 0)
+  (each distribution [iub homo]
+    (var cumulative 0)
+    (def thresholds (map (fn [[_ probability]] (+= cumulative probability)) distribution))
+    (def limit (dec (length thresholds)))
+    (for state 0 139968
+      (def value (/ state 139968))
+      (assert (= (rank-linear value thresholds limit) (rank-binary value thresholds limit)))
+      (++ checks)))
+  (each thresholds [[0 0.5 1] [0.5 0.5 1] [0 0 1]]
+    (each value [0 0.49999999999999994 0.5 0.5000000000000001 0.9999999999999999]
+      (assert (= (rank-linear value thresholds 2) (rank-binary value thresholds 2)))
+      (++ checks)))
+  (print checks))
+''')
+    report['projection_sha256']={label:process.sha(p) for label,p in projections.items()}
+    report['search_projection_sha256']=process.sha(classification)
+    with Path(plan['common_mutex']).open('a+') as lock:
+        fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        def run(source,directory,n=None,stdin=None):
+            command=[plan['runtime'],'-R','-n',str(source)]+([str(n)] if n is not None else [])
+            return process.execute(command,directory,plan['environment'],lock,stdin)
+        for row in plan['schedule']:
+            if row['benchmark']!='fasta':continue
+            case=corpus['cases'][row['corpus_index']];expected=(corpus_path.parent/case['expected']['path']).read_bytes()
+            seed=42
+            for _ in range(8*case['n']):seed=(seed*3877+29573)%139968
+            for label,source in sources.items():
+                directory=out/f"{label}-{row['case']}"
+                result=run(source,directory,case['n'],ROOT/row['stdin'])
+                receipt=validate_success(case,(directory/'stdout.bin').read_bytes(),(directory/'stderr.bin').read_bytes(),result['exit_status'],expected)
+                report['outputs'].append(dict(label=label,**receipt))
+                directory=out/f"{label}-witness-{row['case']}"
+                result=run(projections[label],directory,case['n'],ROOT/row['stdin'])
+                assert (directory/'stderr.bin').read_bytes()==f"{8*case['n']} {seed}\n".encode()
+                validate_success(case,(directory/'stdout.bin').read_bytes(),b'',result['exit_status'],expected)
+                report['witnesses'].append(dict(label=label,case=case['case'],draws=8*case['n'],final_seed=seed,stdout_valid=True))
+                process.save(out/'results.json',report)
+        directory=out/'search-equivalence'
+        result=run(classification,directory)
+        assert result['exit_status']==0 and not (directory/'stderr.bin').read_bytes()
+        assert (directory/'stdout.bin').read_bytes()==b'279951\n'
+        report['search_equivalence_checks']=279951
+        report['status']='48-bounded-outputs-48-draw-witnesses-and-279951-search-checks-pass'
+        process.save(out/'results.json',report)
+    print(report['status'])
+
+
+if __name__=='__main__':main()
