@@ -37,8 +37,12 @@ the public chart.
 [Complementary source measures](source-overlay-measures-v1.json) retain exact
 physical rows, UTF-8 bytes, code points, deterministic gzip and pinned BPE tokens
 for all three overlays and their parents. They include comments, whitespace and
-every application helper. Native normalized and formatted counts remain pending;
-raw rows and BPE are not substitutes for qualified language-specific counts.
+every application helper. The [native source qualification](source-qualification-v1/README.md) adds
+qualified grammar-level lexical token counts for all thirteen sources, with
+hand-counted layout probes. Both formatting experiments pass reader round-trips,
+compilation and all 149 contracts, but neither row measure supplies normalized
+statement LOC. Native normalized and canonical formatted counts remain pending;
+raw rows, formatter rows, lexical tokens and BPE remain separate measures.
 Run the [source measurement tool](source_overlay_measures.py) in the pinned
 source-metrics environment to reproduce or check the packet.
 
