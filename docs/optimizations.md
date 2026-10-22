@@ -337,3 +337,27 @@ power and low-power settings are recorded; nonzero swap and missing frequency
 telemetry limit generalization. Raw samples, original inputs, source snapshots,
 failed launch preflight and compiler identity remain retained. Website catalog
 timings are unchanged pending separate admission.
+
+### 2026-10-22 — Reuse completed record storage
+
+Existing phase diagnostics identify input and output as the dominant remaining
+reverse-complement costs. The [buffer reuse study](../experiments/mech/revcomp-buffer-reuse-v1/RESULTS.md)
+returns uniquely owned byte storage after a mapped result has been written,
+retaining at most one allocation for later input. Shared views and live captures
+are not reclaimed. Application bytes and the native compute object stay unchanged.
+
+In a new matched seven-round cohort, compaction-only Mech takes **0.1293 s
+(1.05× new Mech AOT)** and buffer reuse takes **0.1229 s (1.00×)**: another 5.0%
+less time. The original parent takes **0.1433 s (1.17×)** in this same cohort,
+so the combined reduction is 14.3%. Unchanged Rust takes **0.1107 s (0.90×)**.
+The candidate improves both matched controls in every round. Peak RSS falls
+from 248.4 MiB to 125.1 MiB. These effects are not pooled with older cohorts.
+
+All 35 full outputs pass and all 61 old/new bounded behaviors match; eleven
+pre-existing broader FASTA source limitations remain explicit. Ten runtime tests
+pass, including 2,736 differential parser cases with storage recycling. A later
+test-only refinement produces byte-identical measured executable bytes. Its
+first rebuild refusal and successful corrected rebuild are preserved. Default
+power settings, nonzero changing swap, and missing frequency/temperature traces
+limit extrapolation. [Compiler PR #910](https://github.com/mech-lang/mech/pull/910)
+contains both runtime improvements. No website timings are replaced by this packet.

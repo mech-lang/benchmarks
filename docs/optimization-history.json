@@ -862,6 +862,55 @@
         }
       ],
       "pull_request": "https://github.com/mech-lang/mech/pull/910"
+    },
+    {
+      "id": "record-completed-buffer-reuse",
+      "date": "2026-10-22",
+      "title": "Reuse completed uniquely owned record storage",
+      "change_kind": "generic runtime allocation reuse; application and native compute object unchanged",
+      "status": "measured experimental; canonical catalog unchanged",
+      "inspiration": "Existing read/compute/write phase diagnostics and source-level allocation audit after record compaction.",
+      "mechanism": "After a mapped result has been written, reclaim only uniquely owned byte storage from completed values and formatting views. Retain at most one largest allocation in the streaming reader and grow it normally for subsequent records. Live aliases and captures remain untouched.",
+      "compiler_commit": "fca1ba1f7462a555eb56833ad32135408a140a72",
+      "base_compiler_commit": "6634f1f4d59c0a2eebee44065f236f8647703464",
+      "pull_request": "https://github.com/mech-lang/mech/pull/910",
+      "evidence": [
+        "experiments/mech/revcomp-buffer-reuse-v1/run-v1/results.json",
+        "experiments/mech/revcomp-buffer-reuse-v1/qualification-v1/results.json",
+        "experiments/mech/revcomp-buffer-reuse-v1/test-refinement-v2/results.json",
+        "experiments/mech/revcomp-buffer-reuse-v1/analysis.json",
+        "experiments/mech/revcomp-buffer-reuse-v1/verification.json"
+      ],
+      "frozen_snapshot": "experiments/mech/revcomp-buffer-reuse-v1/seal.json",
+      "limitations": [
+        "Seven shuffled serial rounds; all 35 full outputs and five official outputs pass. Same existing eleven extended FASTA source limitations, with all 61 parent/candidate behaviors identical.",
+        "Ten runtime tests pass; 2736 differential cases now recycle completed buffers. Test-only refinement rebuild is byte-identical to the measured executable. Initial rebuild refusal and corrected attempt retained.",
+        "Published Rust remains unchanged and takes 0.110701084 s (0.9010x new Mech AOT); no universal fastest claim.",
+        "Default AC power policy and low-power mode disabled; nonzero swap decreases by 24 MiB across the cohort. No temperature or frequency trace.",
+        "Whole-process startup and all I/O included; trusted legacy I/O, not a new secured activation comparison. At most one largest completed allocation can remain live until the stream closes."
+      ],
+      "measurements": [
+        {
+          "label": "Compacted Mech to completed buffer reuse, four partitions",
+          "before_seconds": 0.129337041,
+          "after_seconds": 0.122859292,
+          "speedup": 1.0527249416348583,
+          "elapsed_change_percent": -5.008425235273483,
+          "samples_per_variant": 7,
+          "before_x_optimized_mech_aot": 1.0527249416348583,
+          "after_x_optimized_mech_aot": 1.0
+        },
+        {
+          "label": "Original Mech to combined compaction and buffer reuse, four partitions",
+          "before_seconds": 0.143319625,
+          "after_seconds": 0.122859292,
+          "speedup": 1.166534680990999,
+          "elapsed_change_percent": -14.27601628178975,
+          "samples_per_variant": 7,
+          "before_x_optimized_mech_aot": 1.166534680990999,
+          "after_x_optimized_mech_aot": 1.0
+        }
+      ]
     }
   ]
 }
