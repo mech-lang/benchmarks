@@ -71,8 +71,19 @@ Seven ordinary workers give a 20.715s median (52.5× retained Mech AOT), versus
 66 bounded distinct-node/visit witnesses and 2,464 native partition bounds pass.
 The worker form costs 540 lexical tokens versus 197 and raises peak RSS. Janet
 uses default GC; the Mech reference uses a general library pool, so those ratios
-are not a matched allocator comparison. Four workloads still lack full-size
-studies. Native lexical measures now cover 33 unique Janet sources.
+are not a matched allocator comparison. Its source costs and allocator
+qualifications remain separate from normalized LOC and chart admission.
+
+The [pi-digits study](pidigits-gmp-v1/RESULTS.md) tests eight GMP-leaf forms.
+Positive-operand quotient division gives a 0.295s median (0.98× retained Mech AOT),
+versus 0.402s (1.34×): a 1.36× observed improvement within Janet. A shorter composed
+form takes 0.299s (1.00×) and uses 417 lexical tokens versus 454. Both required
+extractions remain actual arbitrary-precision divisions. All 140 full-size
+observations are retained; the final eight-way cohort has 56 matching outputs.
+Ninety-six exact state traces and full-size call counters verify the work. The
+Mech reference is historical; the close ratios do not establish a current
+cross-language ordering. Three workloads still lack full-size studies. Native
+lexical measures now cover 40 unique Janet application sources.
 
 The [array-access packet](array-access-v1/README.md) retains the earlier bounded
 qualification of three alternatives for binary-trees and fannkuch. Its cached

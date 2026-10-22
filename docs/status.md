@@ -1,6 +1,6 @@
 # Benchmark coverage
 
-Janet has full-size studies for six workloads, with three fresh-process samples
+Janet has full-size studies for seven workloads, with repeated fresh-process samples
 per tested source and all full outputs verified. All application helpers remain
 in scope; the standard Janet VM is unchanged. Timings below are parent → fastest
 tested alternative, with ratios to retained same-input Mech AOT references:
@@ -13,21 +13,30 @@ tested alternative, with ratios to retained same-input Mech AOT references:
 | Reverse complement | 13.380 (89.6×) | 12.712 (85.2×) |
 | n-body | 105.393 (101.4×) | 23.864 (23.0×) |
 | Binary trees* | 102.899 (260.9×) | 20.715 (52.5×) |
+| Pi digits | 0.402 (1.34×) | 0.295 (0.98×) |
 
 *Binary-trees allocation policies differ: Janet uses default GC, whereas the
 Mech reference uses a general library pool with distinct node slots. Its 4.97×
 improvement is within Janet. All fifteen full-size samples and 66 bounded
 node-identity/visit checks pass.
 
+The pi-digits study adds seven source alternatives. Its final eight-way cohort
+has seven sequential shuffled rounds per source; all 56 outputs match. Earlier
+35- and 49-observation cohorts remain separate. Both extraction calls and exact
+integer states are verified. The shorter positive-division form takes 0.299s
+(1.00× retained Mech AOT) with 417 lexical tokens versus 454. Its close historical
+Mech ratios do not establish a current cross-language ordering.
+
 The n-body register/macro form is 4.42× faster with all pair arithmetic retained.
 The reverse-complement candidates also meet line-by-line input requirements that
 the historical parent does not, with about 91% lower peak RSS. All 149 original
 bounded contracts pass across the active draft set. New binary-trees/fannkuch
 candidates add 35 complete output checks and 35 work witnesses, including unique
-node allocation and every permutation/flip through N=8; they have no full-size
-timings yet. Native lexical measures now cover 33 unique Janet sources.
+node allocation and every permutation/flip through N=8. The tree candidate now
+has full-size timings above; the fannkuch alternatives remain unmeasured at full
+size. Native lexical measures now cover 40 unique Janet sources.
 
-Four workloads still lack full-size studies. Normalized logical and canonical
+Three workloads still lack full-size studies. Normalized logical and canonical
 formatted LOC, remaining qualification and chart admission remain pending.
 No Janet profile is admitted. The [Janet packet](../experiments/janet/README.md)
 retains every source-size tradeoff, original lineage/license, raw sample and
