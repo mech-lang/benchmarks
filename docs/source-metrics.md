@@ -246,3 +246,10 @@ the measurable gzip size of empty text. Aggregation is by exact attached-file
 order, with a content-manifest digest. The CSV flattens program-level sizes
 and availability, leaving unavailable numerical fields empty. The tool's
 `--check` compares both generated artifacts byte for byte and writes nothing.
+
+The separate [Mech native-owner qualification](../experiments/source-normalization/mech-v1/README.md)
+adds three exact pi-digits source forms: 38 logical units for the parent, 39 for
+the shared-numerator helper form and 37 for the shorter form. Native token
+coverage, eighteen manual fixtures and twenty-one closed capture processes are
+retained. These counts are pending browser/catalog projection; they do not change
+the older Python/Julia or Clojure proofs or qualify canonical formatted LOC.

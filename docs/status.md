@@ -7,6 +7,11 @@ Rust #3 takes 0.3097s (1.07×) and Janet 0.3083s (1.06×). All 35 full outputs m
 actual GMP call witnesses verify both divisions and 22,454 saved multiplications.
 The new study is separate from the historical catalog ratios below.
 
+The [native Mech owner proof](../experiments/source-normalization/mech-v1/README.md)
+now qualifies logical counts 38, 39 and 37 for its three source forms. Eighteen
+manual fixtures and all native-token ownership checks pass; catalog/browser
+projection and the new timing admission remain pending.
+
 Janet has full-size studies for seven workloads, with repeated fresh-process samples
 per tested source and all full outputs verified. All application helpers remain
 in scope; the standard Janet VM is unchanged. Timings below are parent → fastest

@@ -1,0 +1,24 @@
+{
+  "origin": "Manually specified owner-policy expectations; fixture input is parsed but never executed.",
+  "cases": [
+    {"id":"binding","source":"x := 1\n","expected":1},
+    {"id":"nested-calls","source":"x := f(g(1), h(2))\n","expected":1},
+    {"id":"matrix-rows","source":"x := [1 2; 3 4]\n","expected":1},
+    {"id":"matrix-wrapped","source":"x := [1 2\n      3 4]\n","expected":1},
+    {"id":"comprehension","source":"x := [i + 1 | i <- 0..4]'\n","expected":1},
+    {"id":"expression-function","source":"f(x<u64>) => <u64> := x + 1\n","expected":1},
+    {"id":"block-function","source":"f(x<u64>) = (y<u64>) :=\n  y := x + 1.\n","expected":2},
+    {"id":"block-function-flat","source":"f(x<u64>) = (y<u64>) := y := x + 1.\n","expected":2},
+    {"id":"block-two-bindings","source":"f(x<u64>) = (y<u64>) :=\n  z := x + 1\n  y := z + 1.\n","expected":3},
+    {"id":"type-alias","source":"<item> := <{x<u64>, y<u64>}>\n","expected":1},
+    {"id":"comment","source":"-- x := 1\n","expected":0},
+    {"id":"comment-and-binding","source":"-- x := 1\ny := 2\n","expected":1},
+    {"id":"two-bindings","source":"x := 1\ny := 2\n","expected":2},
+    {"id":"string-not-a-binding","source":"x := \"y := 2\"\n","expected":1},
+    {"id":"unicode-binding","source":"α := 1\n","expected":1},
+    {"id":"match-expression","source":"x := (true ? | true => 1 | * => 2)\n","expected":1},
+    {"id":"invalid","source":"x := (\n","reject":true},
+    {"id":"unowned-expression","source":"1 + 2\n","reject":true}
+  ],
+  "equivalent_pairs": [["matrix-rows","matrix-wrapped"],["block-function","block-function-flat"]]
+}
