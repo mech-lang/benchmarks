@@ -294,3 +294,26 @@ The comparison includes [Chapel #3's eight-pixel grouping](../archive/workloads/
 ## Maintaining this history
 
 After each Mech optimization experiment, append an entry to the ledger and this document with the source/compiler/library/policy scope, inspiration, unchanged-work validation, exact before/after cohort, timing boundary and receipt paths. Record rejected ideas and regressions as well as selected changes. If there is no matched timing, say so. Preserve the old inputs, sources and reports. Retain exact sources, reports, and version identifiers for reproducibility.
+
+### 2026-10-22 — Janet-inspired pi extraction reuse
+
+The [paired pi-digits study](../experiments/mech/pidigits-performance-v1/RESULTS.md)
+transfers a source-level arithmetic reuse from Janet into Mech. After extracting
+from `3*q+r`, adding the unchanged `q` forms `4*q+r`; the second actual division
+still executes. Existing general bigint operations suffice. The compiler already
+had quotient-only division for equal-sign operands, so that runtime optimization
+is not credited as a new change.
+
+Across seven shuffled serial rounds, unchanged Mech takes **0.3128 seconds
+(1.08× optimized Mech AOT)** and the shorter candidate **0.2901 seconds (1.00×)**:
+7.3% less time. In the same cohort, unchanged published Rust #3 takes **0.3097
+seconds (1.07×)** and Janet **0.3083 seconds (1.06×)**. All 35 full outputs match.
+Actual GMP witnesses verify 44,908 divisions in every program and exactly 22,454
+fewer multiplications in each Mech candidate. Both candidates beat their paired
+parent in all seven rounds.
+
+The shorter form changes physical rows 38 → 37, UTF-8 bytes 2,050 → 2,045,
+deterministic gzip bytes 726 → 713, and BPE tokens 715 → 713. These do not establish
+normalized LOC or minimal source. The original sources, unsuccessful diagnostic
+attempt, all samples, library captures and generated objects remain retained;
+the canonical historical website catalog is unchanged pending admission.

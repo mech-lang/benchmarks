@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "updated_at": "2026-10-14",
+  "updated_at": "2026-10-22",
   "scope": "Mech compiler, runtime and language optimization studies; historical receipts remain authoritative.",
   "hardware": "Apple M3; each receipt specifies power, workers, source and timing conditions.",
   "ratio_definition": "speedup = before_seconds / after_seconds; elapsed_change_percent = 100 * (after_seconds / before_seconds - 1). These are within-study comparisons, not x-of-Mech language rankings.",
@@ -785,6 +785,43 @@
       "measurements": [],
       "containing_commits": [
         "bf9d7f2b6"
+      ]
+    },
+    {
+      "id": "pidigits-shared-extraction-numerator",
+      "date": "2026-10-22",
+      "title": "Share pi-digit extraction numerators in Mech source",
+      "change_kind": "source-level arithmetic reuse; compiler/runtime unchanged",
+      "status": "measured experimental; canonical catalog unchanged",
+      "inspiration": "The qualified Janet implementation forms 4*q+r by adding q to the preserved 3*q+r extraction numerator.",
+      "mechanism": "Reuse the mutable scratch bigint through existing general addition and floor-to-u64 operations, retaining both actual unbounded divisions. Inline the first extraction for a shorter source form. The same-sign quotient-only runtime path already existed.",
+      "evidence": [
+        "experiments/mech/pidigits-performance-v1/run-v1/results.json",
+        "experiments/mech/pidigits-performance-v1/work-v2/results.json",
+        "experiments/mech/pidigits-performance-v1/library-v1/results.json",
+        "experiments/mech/pidigits-performance-v1/source-measures.json",
+        "experiments/mech/pidigits-performance-v1/verification.json"
+      ],
+      "frozen_snapshot": "experiments/mech/pidigits-performance-v1/seal.json",
+      "compiler_commit": "6de19875e2266f39c93712800c400672a44b98c9",
+      "limitations": [
+        "Seven shuffled serial rounds; 35 complete full-size measurements across five exact implementations. The compact form is faster than its parent in all seven paired rounds.",
+        "All five subjects load the same installed GMP. Current Rust #3 is 0.309706 seconds (1.0677x optimized Mech AOT); Janet is 0.308255625 seconds (1.0627x). Historical medians are not pooled.",
+        "Mech and unchanged Rust retain the final generator state update; Janet omits it after the last digit. All perform 44,908 actual quotient divisions.",
+        "Physical rows 38 to 37, UTF-8 bytes 2050 to 2045, deterministic gzip 726 to 713, BPE tokens 715 to 713. These are complementary source measures; normalized and canonical formatted LOC are not claimed.",
+        "No universal fastest claim. Initial diagnostic interposer timed out and was reaped; corrected diagnostics are separate from all timed subjects."
+      ],
+      "measurements": [
+        {
+          "label": "Mech parent to compact shared numerator, N=10000",
+          "before_seconds": 0.312764334,
+          "after_seconds": 0.29006225,
+          "speedup": 1.0782662480208989,
+          "elapsed_change_percent": -7.258527118376601,
+          "samples_per_source": 7,
+          "before_x_optimized_mech_aot": 1.0782662480208989,
+          "after_x_optimized_mech_aot": 1.0
+        }
       ]
     }
   ]

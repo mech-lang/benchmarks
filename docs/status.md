@@ -1,5 +1,12 @@
 # Benchmark coverage
 
+The [Mech pi-digits study](../experiments/mech/pidigits-performance-v1/RESULTS.md)
+reuses the extraction numerator, reducing the current AOT median from 0.3128s
+(1.08× optimized Mech) to 0.2901s (1.00×). In seven fresh shuffled rounds, unchanged
+Rust #3 takes 0.3097s (1.07×) and Janet 0.3083s (1.06×). All 35 full outputs match;
+actual GMP call witnesses verify both divisions and 22,454 saved multiplications.
+The new study is separate from the historical catalog ratios below.
+
 Janet has full-size studies for seven workloads, with repeated fresh-process samples
 per tested source and all full outputs verified. All application helpers remain
 in scope; the standard Janet VM is unchanged. Timings below are parent → fastest

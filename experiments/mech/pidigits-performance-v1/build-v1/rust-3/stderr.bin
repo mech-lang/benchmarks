@@ -1,0 +1,32 @@
+warning: use of deprecated function `std::mem::uninitialized`: use `mem::MaybeUninit` instead
+  --> /private/tmp/mech-benchmark-publication/archive/workloads/pidigits/upstream/pidigits-rust-3.rs:12:15
+   |
+12 | use std::mem::uninitialized;
+   |               ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(deprecated)]` on by default
+
+warning: use of deprecated function `std::mem::uninitialized`: use `mem::MaybeUninit` instead
+   --> /private/tmp/mech-benchmark-publication/archive/workloads/pidigits/upstream/pidigits-rust-3.rs:108:27
+    |
+108 |             let mut mpz = uninitialized();
+    |                           ^^^^^^^^^^^^^
+
+warning: the type `mpz_struct` does not permit being left uninitialized
+   --> /private/tmp/mech-benchmark-publication/archive/workloads/pidigits/upstream/pidigits-rust-3.rs:108:27
+    |
+108 |             let mut mpz = uninitialized();
+    |                           ^^^^^^^^^^^^^^^
+    |                           |
+    |                           this code causes undefined behavior when executed
+    |                           help: use `MaybeUninit<T>` instead, and only call `assume_init` after initialization is done
+    |
+note: integers must be initialized (in this struct field)
+   --> /private/tmp/mech-benchmark-publication/archive/workloads/pidigits/upstream/pidigits-rust-3.rs:180:5
+    |
+180 |     _mp_alloc: c_int,
+    |     ^^^^^^^^^^^^^^^^
+    = note: `#[warn(invalid_value)]` on by default
+
+warning: 3 warnings emitted
+

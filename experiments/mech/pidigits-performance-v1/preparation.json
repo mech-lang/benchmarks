@@ -1,0 +1,34 @@
+{
+  "status": "measured-complete-outputs-and-real-gmp-work-verified",
+  "compiler_branch": "codex/pidigits-performance",
+  "compiler_base": "6de19875e2266f39c93712800c400672a44b98c9",
+  "parent_source_sha256": "7079dab9ee52637f5397547adac3a37cf73eda17c290ae5d6593ef45f93eeb8e",
+  "candidate_source_sha256": "781f5c306a759e71d125dca8d4bd37db343c2dd79ee8c443c393cdd7fb2ef986",
+  "change": "After actual extract(3), scratch still holds 3*q+r. Add q to form 4*q+r and perform the second actual floor division. q,r,t remain unchanged during both extractions.",
+  "required_work": "Sequential unbounded spigot; both candidate divisions retained; no digit cache or output substitution.",
+  "recorded_references": {
+    "mech_aot_seconds": 0.300272042,
+    "rust_3_seconds": 0.303086375,
+    "rust_4_seconds": 0.491783209,
+    "janet_positive_division_seconds": 0.294685542
+  },
+  "comparison_scope": "Historical references are not a fresh paired cohort.",
+  "canonical_catalog_changes": false,
+  "initial_saved_base": "7baa187cf",
+  "build_attempts": [
+    {
+      "log": "baseline-build.log",
+      "result": "gmp.h not found; explicit installed include and library paths needed"
+    },
+    {
+      "log": "baseline-build-with-gmp.log",
+      "result": "root CLI missing selected host catalog functions with minimal feature selection"
+    },
+    {
+      "log": "upstream-build.log",
+      "result": "passed with current upstream and mech-build/standard-hosts added"
+    }
+  ],
+  "compact_candidate_source_sha256": "6113de2381115b198008df6fc3b69cb85480560aef01489c2b0e0665980ff02c",
+  "compact_change": "Inline the first extraction in ExtractStep; same shared numerator algorithm, fewer physical source rows, no claim of normalized or minimal LOC."
+}
