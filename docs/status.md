@@ -22,6 +22,14 @@ improvement. All eighteen full outputs and 588 bounded complete hash tables pass
 [RSS, source costs and cohort limits](../experiments/janet/knucleotide-bytes-v1/RESULTS.md)
 remain separate from the pending normalized-LOC and admission gates.
 
+The Janet reverse-complement study adds three alternatives (24 native-lexical-counted
+Janet sources). Dense lookup and chunked output measure 12.712s (85.2× retained
+Mech AOT), versus the historical parent's 13.380s (89.6×), with about 91% lower
+peak RSS. All twelve full-size outputs and 272 bounded contracts pass. The new
+forms meet line-by-line input rules that the historical parent does not;
+[source-size and cohort qualifications](../experiments/janet/revcomp-stream-v1/RESULTS.md)
+remain separate from pending normalization and chart admission.
+
 The [application-LOC correction](source-size-correction.md) resolves the reviewed
 host/binding/library inconsistencies in 183 profiles, including embedded source
 sections. The earlier [audit](source-size-audit.md) remains a snapshot of the

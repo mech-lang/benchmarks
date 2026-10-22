@@ -50,6 +50,15 @@ A serial line-reader/modulo form takes 64.720s (126.0×) with about 145 MiB peak
 about 96% below the parent's peak. All eighteen full outputs and 588 bounded full
 histograms pass. Normalized source counts and admission remain pending.
 
+The [reverse-complement study](revcomp-stream-v1/RESULTS.md) adds three native-counted
+alternatives. Dense complement lookup and chunked output measure 12.712s
+(85.2× retained Mech AOT), versus the historical parent's 13.380s (89.6×), with
+about 91% lower peak RSS. The candidates meet line-by-line input requirements;
+the historical whole-input parent does not. All twelve full-size outputs and
+272 bounded output/rejection checks pass. A whole-row loop shows no useful
+additional speed gain. Six Janet workloads remain without full-size studies;
+normalized LOC and chart admission are still pending.
+
 The [measurement metadata reconciliation](measurement-metadata-reconciliation-v1.json)
 corrects an inherited receipt label on eighteen earlier spectral/FASTA experimental
 observations. Their recorded elapsed values and full-process boundaries are
