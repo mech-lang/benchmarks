@@ -12,6 +12,8 @@ now qualifies logical counts 38, 39 and 37 for its three source forms. Eighteen
 manual fixtures and all native-token ownership checks pass. The catalog now
 retains all 21 fresh Mech samples and selects the shorter candidate as its fastest
 pi-digits result. Native logical counts bind to six exact Mech profiles.
+The [Pages deployment](../experiments/mech/pidigits-pages-v1/README.md) is live:
+build `66e4796d6f7171fd`, all 41 assets verified against the tested manifest.
 
 Janet has full-size studies for seven workloads, with repeated fresh-process samples
 per tested source and all full outputs verified. All application helpers remain
