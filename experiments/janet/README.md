@@ -67,3 +67,10 @@ the owned-process controller and free common mutex remain prerequisites.
 Implementations and dependencies remain local to this packet while qualification
 is in progress. No Janet timing is yet admitted, and existing language results
 remain unchanged. Every benchmark will run sequentially under the shared mutex.
+
+The [native bounded validation](native-v1/README.md) restores the identical local
+runtime and records the first actual 149-case run. It exposed an overlapping-regex
+count defect. A separately retained v3 regex overlay passes all seven regex cases;
+together with the nine other v2 workloads, all 142 success contracts now pass.
+Malformed-input rejection review, required-work checks and full timings remain
+pending. Earlier blocker descriptions above describe the historical attempts.
