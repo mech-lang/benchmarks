@@ -86,9 +86,9 @@ nucleotide input/block handling, ordinary and source-generated managed regex,
 and reverse-complement short reads. A private-helper diagnostic is prepared;
 no new native execution, timing or source-count qualification is claimed.
 
-The additive [source-review coverage report](../experiments/implementation-audit/coverage-v2/README.md)
+The additive [source-review coverage report](../experiments/implementation-audit/coverage-v3/README.md)
 reconciles the later TypeScript, Odin, OCaml and C# inspections with the exact current
-catalog. It records 313 reviewed and 360 unreviewed local/derived profiles, 46
+catalog. It records 334 reviewed and 339 unreviewed local/derived profiles, 46
 unresolved ownership records and 351 protected upstream profiles. These are
 inspection counts, not completed optimization or native qualification totals.
 

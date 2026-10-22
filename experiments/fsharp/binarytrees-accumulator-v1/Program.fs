@@ -1,0 +1,45 @@
+﻿// The Computer Language Benchmarks Game
+// https://salsa.debian.org/benchmarksgame-team/benchmarksgame/
+//
+// Based on Java version by Jarkko Miettinen's
+// Contributed by Vasily Kirichenko
+
+[<Sealed; AllowNullLiteral>]
+type TreeNode(left: TreeNode, right: TreeNode) =
+    member this.itemCheck() = 
+        if isNull left then 1 else 1 + left.itemCheck() + right.itemCheck()
+
+
+let rec bottomUpTree(depth: int) : TreeNode =
+    if depth > 0 then
+        TreeNode(bottomUpTree(depth - 1), bottomUpTree(depth - 1))
+    else
+        TreeNode(null, null)
+
+[<EntryPoint>]
+let main args =
+    let n = match args with [|n|] -> int n | _ -> 0
+    let minDepth = 4
+    let maxDepth = max (minDepth + 2) n
+    let stretchDepth = maxDepth + 1
+
+    System.Console.WriteLine("stretch tree of depth {0}\t check: {1}", stretchDepth, bottomUpTree(stretchDepth).itemCheck())
+
+    let longLivedTree = bottomUpTree maxDepth
+
+    [| for depth in minDepth..2..maxDepth do
+         yield async {
+            let iterations = 1 <<< (maxDepth - depth + minDepth)
+            let mutable check = 0
+            for _ = 1 to iterations do
+                check <- Checked.(+) check (bottomUpTree(depth).itemCheck())
+            return System.String.Format("{0}\t trees of depth {1}\t check: {2}", iterations, depth, check)
+         } |]
+    |> fun jobs -> Async.Parallel(jobs, maxDegreeOfParallelism=8)
+    |> Async.RunSynchronously
+    |> Array.iter (fun value -> System.Console.WriteLine(value:string))
+
+    System.Console.WriteLine("long lived tree of depth {0}\t check: {1}", maxDepth, longLivedTree.itemCheck())
+    0
+
+// Local candidate changes: Apache-2.0; original Benchmarks Game notices retained.
