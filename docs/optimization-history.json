@@ -823,6 +823,44 @@
           "after_x_optimized_mech_aot": 1.0
         }
       ]
+    },
+    {
+      "id": "record-streaming-compaction",
+      "date": "2026-10-22",
+      "title": "Compact streamed record bodies directly from buffered input",
+      "change_kind": "generic runtime input compaction; application and native object unchanged",
+      "status": "measured experimental; canonical catalog unchanged",
+      "inspiration": "Rust comparison and audit of record reading memory passes; published Rust source remains unchanged.",
+      "mechanism": "Recognize single-byte record prefixes at physical line starts and append body spans directly without LF or one trailing CR. Preserve generic semantics and fallback for other prefixes/separators.",
+      "compiler_commit": "6634f1f4d59c0a2eebee44065f236f8647703464",
+      "base_compiler_commit": "6de19875e2266f39c93712800c400672a44b98c9",
+      "evidence": [
+        "experiments/mech/revcomp-streaming-v1/run-v2/results.json",
+        "experiments/mech/revcomp-streaming-v1/qualification-v1/results.json",
+        "experiments/mech/revcomp-streaming-v1/compiler.json",
+        "experiments/mech/revcomp-streaming-v1/analysis.json",
+        "experiments/mech/revcomp-streaming-v1/verification.json"
+      ],
+      "frozen_snapshot": "experiments/mech/revcomp-streaming-v1/seal.json",
+      "limitations": [
+        "Seven shuffled serial rounds; 35 complete outputs across five execution variants. Fresh whole processes include startup and all I/O.",
+        "All 61 parent/candidate input behaviors match; eleven existing broader FASTA source-contract differences are retained, not passed off as conformance. Official N=1000 and all full generated outputs pass.",
+        "Rust median is 0.109735416 seconds (0.8555x optimized Mech AOT). No universal fastest claim.",
+        "AC power, low power mode disabled; default power policy. Swap remains nonzero at 2025.12 MiB, with no temperature/frequency trace.",
+        "Native compute object is byte-identical. This is runtime input handling, not a new machine-code optimization. Trusted legacy I/O path; secure capability activation overhead is not newly measured."
+      ],
+      "measurements": [
+        {
+          "label": "Mech parent to buffered compaction, four partitions, 250 million bases",
+          "before_seconds": 0.1437055,
+          "after_seconds": 0.128275542,
+          "speedup": 1.1202876071262284,
+          "elapsed_change_percent": -10.737207692120354,
+          "samples_per_variant": 7,
+          "before_x_optimized_mech_aot": 1.1202876071262284,
+          "after_x_optimized_mech_aot": 1.0
+        }
+      ]
     }
   ]
 }

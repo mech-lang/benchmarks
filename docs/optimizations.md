@@ -317,3 +317,23 @@ deterministic gzip bytes 726 → 713, and BPE tokens 715 → 713. These do not e
 normalized LOC or minimal source. The original sources, unsuccessful diagnostic
 attempt, all samples, library captures and generated objects remain retained;
 the canonical historical website catalog is unchanged pending admission.
+
+### 2026-10-22 — Streamed record compaction
+
+The [reverse-complement study](../experiments/mech/revcomp-streaming-v1/RESULTS.md)
+removes a generic input memory pass. Single-byte record prefixes with an empty
+join separator now compact line endings directly from buffered input. The Mech
+application and emitted Cranelift compute object are unchanged.
+
+Across seven shuffled serial rounds, Mech changes from **0.1437 s (1.12× optimized
+Mech AOT)** to **0.1283 s (1.00×)**, 10.7% less elapsed time. Unchanged published
+Rust takes **0.1097 s (0.86×)**. All 35 full outputs pass, and all 61 old/new bounded
+behaviors match. Eleven existing extended FASTA source limitations remain
+explicit; they are not claimed as successful reference checks. Eight relevant
+runtime tests pass, including 2,736 differential parser cases.
+
+This is a runtime improvement, with full-process startup and I/O included. AC
+power and low-power settings are recorded; nonzero swap and missing frequency
+telemetry limit generalization. Raw samples, original inputs, source snapshots,
+failed launch preflight and compiler identity remain retained. Website catalog
+timings are unchanged pending separate admission.
