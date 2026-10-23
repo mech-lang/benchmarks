@@ -2,6 +2,30 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## SIMD hash-table controls
+
+Compiler [`d760b334f`](https://github.com/mech-lang/mech/commit/d760b334f148d2b7fb05abea64f874613e56e38e) compares eight hash-control bytes together, then checks each matching full key. A separate control array replaces the occupancy word, reducing table slots from 32 to 24 bytes. Bounded probing, collision checks, insertion/growth, source errors and shared finite accounting remain. The unchanged program still computes all seven histograms. IR42/work policy63/ABI22 identify this stage.
+
+Three **125-million-base** cohorts rotate execution order, retain every complete-process observation and exclude no warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.552 | 1.00× |
+| Previous compact-key stage, `100f2ec89` | 3.292 | 5.96× |
+| SIMD hash-table controls, `d760b334f` | 2.913 | 5.28× |
+
+The observed median speedup is **1.13×**, reducing elapsed time by **11.5%**. Candidate samples are 2.913, 2.919 and 2.828 seconds; parent samples are 3.397, 3.292 and 3.151 seconds. All three candidate observations are below all three parent observations. The [cohort results](full-parallel-simd-cohort-v1/results.json) include all samples, standard deviations, orders and receipt hashes. This establishes a gain in these cohorts, not Rust parity or a universal speedup.
+
+The [one-million-base prefix](parallel-simd-timing-v1/results.json), with three alternating complete-process observations and one excluded warmup per executable, gives Rust **0.0209 s (1.0×)**, parent **0.832 s (39.9×)** and candidate **0.808 s (38.8×)**. The candidate median is 2.9% lower, but its 0.779–0.840-second range overlaps the parent's 0.792–0.833-second range. This does not resolve the earlier prefix regression relative to serial execution.
+
+Every candidate execution verifies exact output, seven packed SSA regions, one batch containing two source regions and seven tasks, a peak of seven concurrent workers, and all **6,999,961 prefix** or **874,999,961 full-input updates**. Two-bit source-derived key proofs remain selected. Source, program bytecode, inputs and finite launch policies match the parent; secured startup/shutdown and capability checks are included. Subjects run sequentially under the common lock. [Validation](../native-owner-dispatch-v1/parallel-simd-validation-v1/summary.json) passes **272 native tests**, with three pre-existing manual exclusions, including wrapped collisions, full-key verification, growth, exact/one-short shared limits, compact encoding, seven-worker composition and failure cleanup.
+
+[Offline inspection](simd-codegen-audit-v1/summary.json) finds twelve ARM64 `cmeq.8b` control-group comparisons in the generated program entry, versus none in the compact parent, and matches their instruction windows into the exact timed executable. Mech already vectorizes the source map/join input normalization in 16-byte batches; this is distinct from the new hash-control SIMD. The [remaining Rust differences](simd-codegen-audit-v1/remaining-rust-differences.txt) include smaller entries/counts, different hashing, fewer steady-loop checks and avoiding Mech's canonical String-map publication. Their individual timing contributions have not been isolated.
+
+The [profiling build](profile-parallel-simd-build-v1/summary.json) has identical entire machine code to the timed executable: **4,128,804 bytes**, SHA-256 `4cd933ef7feaf470dda12f89fc612bf2a00deb92797d1949a604f482e57070e4`. A [completed full-input capture](full-profile-parallel-simd-v1/summary.json) observes seven workers and 10,313 worker samples: **84.42%** have generated program code as their innermost recorded frame. Inclusive shares are **4.94%** for map publication, **8.09%** for library work debits and **6.51%** for waiting. A [prefix capture](prefix-profile-parallel-simd-v1/summary.json) observes 1,121 samples from two remaining workers after the other five finish: **56.29%** include publication, **54.59%** include library debits and **41.30%** include waiting; none have generated program code as their innermost frame. Both executions verify complete output and all updates. These overlapping categories include waits, partial unwinds and profiling overhead; they are not wall-time shares or matched baseline profiles. The prefix capture supports publication/shared-budget contention in the tail, without attributing the entire regression.
+
+Publication/debit improvements, additional loop simplification, narrower storage, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished at this stage.
+
 ## Source-derived character encoding
 
 Compiler [`100f2ec89`](https://github.com/mech-lang/mech/commit/100f2ec894424b7b54f5e4c602e5a9aeb2916cdb) derives finite character alphabets from immutable source maps, copies and joins. When a shift-and-mask encoding is injective for that alphabet, generated loops pack each character into fewer bits and decode every retained key during canonical publication. Unknown or unsupported producers retain the full ASCII representation. This is a source proof, not a scan for nucleotide data. The unchanged program selects two-bit keys in all seven workers; cold failure origins remain active. IR41/work policy62/ABI21 identify the stage.
@@ -28,7 +52,7 @@ Its candidate median is **5.4% slower**, with overlapping ranges: 0.795–0.855 
 
 Qualification records both selected map-region proofs: **two bits per character, shift one**, with a lossless alphabet mapping and no ASCII fallback. Every candidate run verifies exact output, seven actual packed SSA regions, one batch of seven tasks, a peak of seven concurrent workers and all **6,999,961 prefix** or **874,999,961 full-input updates**. Source, program bytecode, inputs and finite launch policies match the parent. Secured startup, shutdown, capability checks and shared resource accounting remain included; subjects run sequentially under the common lock.
 
-[Validation](../native-owner-dispatch-v1/parallel-compact-validation-v1/summary.json) passes **268 native tests**, with three pre-existing manual exclusions. Coverage includes original and decoded programs, restored descriptors, non-nucleotide alphabets, unused codes, word-boundary widths, fallback, complete map publication, seven-worker composition and shared cleanup. Earlier profiles concern earlier executables; no profile of this compact candidate is claimed here. SIMD probing, publication/budget contention, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished.
+[Validation](../native-owner-dispatch-v1/parallel-compact-validation-v1/summary.json) passes **268 native tests**, with three pre-existing manual exclusions. Coverage includes original and decoded programs, restored descriptors, non-nucleotide alphabets, unused codes, word-boundary widths, fallback, complete map publication, seven-worker composition and shared cleanup. Earlier profiles concern earlier executables; no profile of this compact candidate is claimed here. SIMD probing was a subsequent stage, measured above. Publication/budget contention, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remained unfinished at this stage.
 
 ## Cold failure origins
 
@@ -50,7 +74,7 @@ The [one-million-base prefix](cold-origin-timing-v1/results.json) has three alte
 
 All 255 existing native tests passed with the compiler change. The new failure-origin fixture initially contained a misplaced source terminator in its direct-lookup case; after that fixture was corrected, its focused test passed for original, decoded and restored execution, including arithmetic, rejection, selection, missing-key, malformed-helper and finite-budget failures with cleanup. [Initial validation](../native-owner-dispatch-v1/cold-origin-validation-v1/summary.json) and [corrected fixture validation](../native-owner-dispatch-v1/cold-origin-validation-v2/summary.json) preserve that distinction. The preceding stage's exact-code profiles motivated the change; they are not profiles of this new executable.
 
-At the cold-origin stage, compact source-derived key domains were a subsequent stage; their measurements now appear above. SIMD probing and reducing measured publication/budget contention remain subsequent stages. Rust parity and secured/trusted comparison remain unfinished.
+At the cold-origin stage, compact source-derived key domains and SIMD probing were subsequent stages; their measurements now appear above. Reducing measured publication/budget contention, Rust parity and secured/trusted comparison remained unfinished at this stage.
 
 ## Parallel source comprehensions
 
@@ -86,7 +110,7 @@ A [prefix capture of the same executable](prefix-profile-parallel-v1/summary.jso
 
 These profile categories overlap. The observations include waits, partial unwinds and profiling overhead; their percentages are neither CPU utilization nor wall-time shares, and thread totals cannot be added as elapsed time. An [earlier profiling attempt](full-profile-parallel-v2/summary.json) failed when the sandbox denied process inventory, captured no stacks and cleaned up its owned processes; it supplies no profiling or timing evidence.
 
-At this stage, repeated full-input cohorts, moving error-origin stores off the hot loop and compact character encoding were unfinished; subsequent stages above measure them. Isolation and correction of the prefix regression, SIMD table controls, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished. Historical sections retain the results and limitations of their respective compiler stages.
+At this stage, repeated full-input cohorts, moving error-origin stores off the hot loop, compact character encoding and SIMD table controls were unfinished; subsequent stages above measure them. Isolation and correction of the prefix regression, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remained unfinished. Historical sections retain the results and limitations of their respective compiler stages.
 
 ## Native register loops
 

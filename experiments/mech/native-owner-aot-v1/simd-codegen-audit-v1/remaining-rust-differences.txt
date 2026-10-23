@@ -1,0 +1,85 @@
+Stage-specific comparison with the exact upstream Rust #7 executable
+
+Mech source: d760b334f148d2b7fb05abea64f874613e56e38e
+Mech executable SHA-256: ad6feb9d04786e1d6f9f7330366cb15e6d66bc57be7d476ff26a89f320b9bb53
+Rust executable SHA-256: f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763
+
+This updates the historical optimization list in ../rust-codegen-audit-v1/
+findings.txt. That audit's instruction observations still concern the same Rust
+executable; its references to older Mech storage and missing parallelism/SSA/
+SIMD describe an earlier compiler stage. Latest Mech has rolling two-bit keys,
+SSA register loops, eight-control SIMD probing, cached same-key entry reuse,
+and seven observed concurrent histogram workers. All source updates remain.
+
+Supported remaining differences
+
+1. Storage widths. Rust uses eight-byte entries for u8/u16/u32 keys and
+   sixteen-byte entries for u64 keys, with u32 counts. Latest Mech retains
+   three u64 words (low key, high key, value), or 24 bytes per slot, plus a
+   separate control byte. The compact proof eliminates the high-word comparison
+   on this workload but does not remove the storage word or narrow the u64
+   count. See program_packed_map.rs Slot and program_packed_map_codegen.rs probe
+   at the pinned compiler commit. The candidate-object excerpt contains the
+   0x18 slot stride and full low-key comparison at 0x6430..0x6454.
+   Narrowing must preserve general String/U64 semantics and prove bounds;
+   smaller entries are a plausible locality target, not a measured gain yet.
+
+2. Hashing. The exact Rust path uses a seeded folded multiply (mul + umulh,
+   XOR their halves), as recorded in worker-u64.s. Mech's proved narrow-key
+   path still performs three XOR/shift stages and two wrapping multiplies,
+   using 0xbf58476d1ce4e5b9 and 0x94d049bb133111eb. Candidate-object instructions
+   before the first control-group comparison and the pinned generated probe
+   implement this mix. No isolated measurement establishes how much a different
+   hash would save, or its collision behavior under Mech's finite policy.
+
+3. Loop structure and checks. Rust's ordinary first-candidate existing-key path
+   has 34 instructions counted statically in the earlier audit, with iterator
+   termination as its steady-loop bound. Mech compiles the source state-machine
+   branches, checked arithmetic, selected-window bounds and per-operation
+   permission/fuel checks into SSA. It reuses the entry pointer for subsequent
+   contains/get/insert operations, so a claim of three complete hashes/lookups
+   per source update would be wrong. Source-state/probe guards, update-count
+   overflow checks and distinct-key runtime insertion remain in the generated
+   path. The compiler could prove more checks redundant or specialize storage;
+   it cannot remove required error behavior or resource accounting. No matched
+   complete instruction-path/cycle count for latest Mech is claimed here.
+
+4. Input normalization is already SIMD in both executables. Latest Mech's
+   selected `_mech_string_map_region_0` loads/stores 16 bytes per vector batch
+   and performs eight `tbl.16b` subtable lookups with a missing-entry check
+   (object 0xcc..0x154); its full bounded instruction window matches the timed
+   executable. The compiled generic table implements the source's uppercase
+   map, with scalar/batched tails preserving the first missing key. Rust's
+   exact input path uses four 16-byte shift/mask vectors per 64-byte iteration
+   to encode bytes once. The difference is generic lookup normalization versus
+   simpler arithmetic encoding and wider unrolling, not absence of Mech SIMD.
+   Mech subsequently encodes a new character into each histogram's rolling key;
+   Rust's workers share the already encoded input. These programs have different
+   observable normalization semantics on inputs outside the workload; an
+   optimization must derive an equivalent transform from the Mech source.
+
+5. Representation lifetime and publication. Each Mech worker currently returns
+   a complete canonical String/U64 map from its histogram, decoding retained
+   packed keys and constructing the canonical map before downstream source
+   frequencies or guarded queries. Rust retains its integer-key maps through
+   their direct consumption. Mech must still build every histogram and retain
+   every key/count; deferring representation conversion until an observer needs
+   canonical String keys is a potential general optimization. It has not been
+   implemented or measured in this stage. Finite shared work debits also remain
+   a Mech requirement without an equivalent mechanism in this Rust executable.
+   The current full and prefix profiles supply evidence of publication/debit
+   stacks; inclusive percentages overlap and cannot be attributed as recoverable
+   wall time or a numerical fraction of the Rust gap.
+
+Evidence and limits
+
+summary.json pins the exact object, descriptor and timed executable, and verifies
+all twelve SIMD hash-control instruction windows plus the input-map SIMD window
+inside the linked machine code. control-group-excerpts.txt and
+normalization-excerpt.txt retain bounded disassembly; complete object disassembly
+is also retained. ../rust-codegen-audit-v1/ retains the Rust extraction ranges,
+source interpretation and tool receipts. Source references above use the pinned
+compiler commit, not a later working tree. Full/prefix current profile summaries
+are ../full-profile-parallel-simd-v1/summary.json and
+../prefix-profile-parallel-simd-v1/summary.json. This is static comparison and
+sample evidence; no new subjects were executed during this audit.
