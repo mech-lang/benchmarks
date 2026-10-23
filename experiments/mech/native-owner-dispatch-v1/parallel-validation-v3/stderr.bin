@@ -1,0 +1,13 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+    Finished `test` profile [unoptimized] target(s) in 9.13s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+
+thread 'native_artifact::program_runtime::parallel_tests::parallel_source_bodies_keep_all_seven_maps_updates_captures_and_order' (1505341) panicked at hosts/gpu/src/native_artifact/program_parallel_tests.rs:108:114:
+called `Result::unwrap()` on an `Err` value: Base(Memory { error: BudgetExceeded { operation: Some("retained node admission"), requested: 67963, limit: 65536 } })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'native_artifact::program_runtime::parallel_tests::prior_push_failure_precedes_later_worker_arithmetic_and_retires_pending_results' (1505372) panicked at hosts/gpu/src/native_artifact/program_parallel_tests.rs:158:9:
+assertion `left == right` failed: source error order differs
+  left: "Control(Arithmetic { origin: NativeMatchOrigin { node: NodeId(5), block: Some(0), local: Some(6) } })"
+ right: "Base(Memory { error: BudgetExceeded { operation: Some(\"retained node admission\"), requested: 73344, limit: 65536 } })"
+error: test failed, to rerun pass `-p mech-gpu --lib`
