@@ -158,6 +158,17 @@ and demand after caller-payload retirement. IR30/work policy44/ABI15 are unchang
 Private-builder/frame geometry and checked retained-map routing remain unfinished;
 full-input qualification and fresh timings are still pending.
 
+The [live caller geometry study](../experiments/mech/native-caller-geometry-v1/README.md)
+combines snapshots, caches, native metadata and live draft/join/histogram/query
+builders in a supported canonical caller view. All 204 native checks pass,
+with three pre-existing exclusions. Generated original/decoded executions retain
+prior-output nodes during activation and charge the same first-preview work for
+one and 4,096 prior cells. Active source/window and callback-free Tail loans are
+explicitly declined. Retained-map tables and owner-lane storage still need to be
+combined before checked entry/call/exit routing can use complete geometry.
+IR30/work policy44/ABI15 and normal selection are unchanged. Full-input work
+qualification and fresh timings remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
