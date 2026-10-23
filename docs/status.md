@@ -126,6 +126,18 @@ execution of combined scalar and map loops. Normal generated storage remains
 canonical. Complete caller geometry, checked retained-map routing, full-input
 qualification and fresh timings remain unfinished.
 
+The [account node witness study](../experiments/mech/account-node-witness-v1/README.md)
+tracks admitted canonical snapshot owners across the shared memory account,
+including caller-held values outside the native arena. Reads require no payload
+traversal. Aliases share claims; independent imports add claims; last-owner
+retirement and String handoff release them. Validation passes 536 distinct checks
+(322 core, two catalog, 201 native and eleven map; three pre-existing native
+exclusions). Work policy43 admits the witness storage and rejects preceding
+policy42 objects; IR30 and ABI15 are unchanged. Private builders and native
+metadata still need separate accounting before complete caller geometry and
+retained-map routing can be qualified. Full-input qualification and fresh timings
+remain pending.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
