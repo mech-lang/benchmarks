@@ -1,0 +1,39 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+error[E0369]: binary operation `==` cannot be applied to type `FrozenSnapshotIdentity`
+   --> src/stdlib/tests/native_map_entries.rs:426:13
+    |
+426 |             assert_eq!(source.frozen_storage_identity(), original);
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |             |
+    |             FrozenSnapshotIdentity
+    |             FrozenSnapshotIdentity
+    |
+note: `FrozenSnapshotIdentity` does not implement `PartialEq`
+   --> src/core/src/snapshot/validation.rs:363:1
+    |
+363 | pub struct FrozenSnapshotIdentity {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `FrozenSnapshotIdentity` is defined in another crate
+
+error[E0560]: struct `MapEntryDraft` has no field named `key`
+   --> src/stdlib/tests/native_map_entries.rs:327:21
+    |
+327 |                     key: ValueDataDraft::String("é\0x".into()),
+    |                     ^^^ `MapEntryDraft` does not have this field
+    |
+    = note: available fields are: `items`
+
+error[E0560]: struct `MapEntryDraft` has no field named `value`
+   --> src/stdlib/tests/native_map_entries.rs:328:21
+    |
+328 |                     value: ValueDataDraft::U64(17),
+    |                     ^^^^^ `MapEntryDraft` does not have this field
+    |
+    = note: available fields are: `items`
+
+Some errors have detailed explanations: E0369, E0560.
+For more information about an error, try `rustc --explain E0369`.
+error: could not compile `mech-stdlib` (test "native_map_entries") due to 3 previous errors

@@ -5,7 +5,8 @@ The canonical Mech nucleotide compiler work remains on draft
 [batched lowering](../experiments/mech/native-hashmap-batch-v1/README.md)
 passes all 168 native tests, public source/decoded standalone qualification,
 permission denials and exact full-input output checks. Every full execution
-retains seven tables and 874,999,961 actual updates. Its CPU profile is a
+retains seven tables and 874,999,961 actual updates. Those witnesses belong to
+the batched revision, rather than the later source-level procedure. Its CPU profile is a
 separate diagnostic; final timing runs are deferred while optimization continues.
 The preceding canonical-native branch retains ordinary dense-counter and
 direct-query optimization. No new nucleotide profile or website result is admitted.
@@ -19,12 +20,16 @@ tests. The [preceding pure-entry study](../experiments/mech/general-map-entry-v1
 retains the earlier resource-denial evidence. An explicit general hash-table
 contract, native ownership/lowering and complete-input work qualification remain
 pending. No new benchmark timings or nucleotide results are admitted.
-The [native entry binding study](../experiments/mech/native-map-entries-v1/README.md)
-qualifies ordinary map entry calls through the native library boundary and
-preserves source arithmetic as native scalar work. The candidate passes 49
-focused checks, with one pre-existing ignored check. The complete Mech counting
-state machine still rejects map-valued structural bindings; the seven-width
-negative test records that gap rather than claiming native counting success.
+The [native state binding study](../experiments/mech/native-state-projection-v1/README.md)
+closes the map-valued structural binding gap. The source counting procedure now
+executes as native machine code for all seven widths and three input cases,
+including original and bytecode-decoded artifacts (42 cases). Build-owned
+images round-trip, emitted objects use IR28/work policy41/ABI15, and 418 focused
+checks pass with four pre-existing ignored checks. The invocation ledger retains
+spent comparison work on failed preflight and retry. Standalone executables,
+physical hash-table representation and complete-input qualification remain pending;
+no new benchmark result is admitted. The [preceding native entry study](../experiments/mech/native-map-entries-v1/README.md)
+retains the intermediate per-entry qualification and resolved gap evidence.
 
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
