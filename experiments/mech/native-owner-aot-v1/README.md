@@ -2,6 +2,38 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Folded unsigned-product hashing
+
+Compiler [`c871644b0`](https://github.com/mech-lang/mech/commit/c871644b02586b52ffe60aef4a27ea81d0010a78) replaces the packed table's two dependent mixing multiplies with a folded unsigned 128-bit product: multiply the two key words after XOR with fixed constants, then XOR the product's upper and lower halves. The runtime and generated code use the same function. Full-key equality, collision handling, bounded probing, every table entry and all source updates remain. The constants are unchanged; the hash does not depend on benchmark names, query strings or measured input. IR46/ABI24 prevent pairing generated code with the previous runtime hash; work policy64, source, bytecode and finite launch policies remain unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.555 | 1.00× |
+| Previous source-state stage, `d9cc2f6dc` | 2.018 | 3.64× |
+| Folded hash, `c871644b0` | 1.975 | 3.56× |
+
+The observed median speedup is **1.02×**, reducing elapsed time by **2.1%**. Candidate observations are 1.957, 1.975 and 2.029 seconds; parent observations are 1.978, 2.018 and 2.057 seconds. Each candidate is lower than its parent in the same cohort, but the ranges overlap. [Full cohort receipts](full-folded-hash-cohort-v1/results.json) retain all observations, order and standard deviations. This is a modest result from three cohorts, not a universal speedup or Rust parity.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, also improves in this run:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0192 | 1.0× |
+| Previous source-state stage | 0.568 | 29.6× |
+| Folded hash | 0.518 | 26.9× |
+
+The median is **8.8% lower**. Candidate observations span 0.517–0.527 seconds, below the parent range of 0.545–0.577 seconds. [Prefix receipts](folded-hash-timing-v1/results.json) retain every observation. Neither protocol isolates the cause of the difference beyond this compiler-stage comparison.
+
+[Offline code inspection](folded-hash-codegen-audit-v1/summary.json) finds twelve generated probe sites with an unsigned `mul`/`umulh`/XOR sequence; the parent object has no `umulh`. Each inspected 192-byte instruction window matches the exact timed executable. [Emission metadata](folded-hash-timing-v1/emission-audit.json) retains both source-state regions, each with 90 product nodes, three header versions, fourteen branch-specialization records over five original sites, four latch routes, nine distinct payload-guard substitutions and four arithmetic substitutions. Runtime receipts separately verify seven packed SSA instances, one batch of seven tasks, a peak of seven workers, exact output and all **6,999,961 prefix** or **874,999,961 full-input updates**. Subjects run sequentially, including secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/folded-hash-focused-v1/summary.json) compares the actual generated hash with the runtime on **17,689 pairs** spanning both unsigned key words. The [full validation](../native-owner-dispatch-v1/folded-hash-native-v1/summary.json) passes **296 GPU native tests and one standard-library catalog test**, with three existing manual exclusions. Coverage retains wrapped collisions, wide keys, growth, failure cleanup and finite resource limits. Clean before/after source snapshots identify the focused production revision and its subsequent test-only identity-expectation correction.
+
+The [profiling build](profile-folded-hash-build-v1/summary.json) matches the timed executable's entire **4,133,468-byte** machine-code section, SHA-256 `3d305b20a55de5993cddea925bce9771a77aa02f34d9a79a8869af5408ddefa6`. The [full-input capture](full-profile-folded-hash-v1/summary.json) observes seven workers and 7,093 worker samples: **82.60%** have generated program code as their innermost recorded frame. Inclusive shares are **2.07%** for publication, **6.01%** for library work debits and **7.82%** for waiting. The [prefix capture](prefix-profile-folded-hash-v1/summary.json) observes 542 samples from two remaining workers: **24.72%** include publication, **31.55%** include work debits and **36.53%** include waiting; none have generated program code as their innermost frame. Both ordinary and batched debit APIs are included.
+
+These categories overlap and include waits, partial unwinds and profiling overhead; they are not wall-time shares or matched baseline profiles. The prefix capture covers its tail, not the earlier counting phase. Further loop simplification, narrower helper synchronization and private packed-map retention remain unmeasured at this stage, alongside separate decoded-source executable qualification, secured/trusted comparison and Rust parity.
+
 ## Paths specialized by source state
 
 Compiler [`d9cc2f6dc`](https://github.com/mech-lang/mech/commit/d9cc2f6dc6dbd43152fa75a5707310addf921876) carries proved enum state across loop latches and emits separate paths for known states. It specializes the original Mech control flow; unknown or invalid tags retain checked behavior. Each new traversal discards other transient facts, and original header visits, work charges, table updates and error locations remain. The source, bytecode and finite launch policies match the narrow-slot parent. IR45 identifies this code-generation change; ABI23 and work policy64 remain unchanged.
