@@ -45,6 +45,8 @@ def main():
   def execute(cmd,dest,stdin=None,quant=False,extra=None,deadline=1800):
    r=process.execute(cmd,dest,{**env,**(extra or {})},lock,stdin=stdin,deadline=deadline,quantitative=quant)
    return r
+  for label,command in [('hardware',['/usr/sbin/sysctl','machdep.cpu.brand_string','hw.model','hw.memsize','hw.ncpu']),('os',['/usr/bin/sw_vers']),('power-source',['/usr/bin/pmset','-g','batt']),('power-settings',['/usr/bin/pmset','-g','custom'])]:
+   r=execute(command,out/label,deadline=30);assert r['exit_status']==0,(out/label/'stderr.bin').read_text()
   bytecode=b/'knucleotide.mecb'
   r=execute([str(cli),'--no-config','build',str(source),'--name','canonical-knucleotide','--emit','bytecode','--offline','--workspace-root',str(WORKSPACE),'-o',str(bytecode)],out/'bytecode')
   assert r['exit_status']==0,(out/'bytecode/stderr.bin').read_text()[-5000:]
