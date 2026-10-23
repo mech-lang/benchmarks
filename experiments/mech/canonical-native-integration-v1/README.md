@@ -7,6 +7,13 @@ The resulting compiler commit is
 `4c377322759352f0886e236e182f7245af5e5d00` on
 `codex/benchmark-canonical-native-integration`.
 
+A test-only follow-up at `3864005a46a8032c183308b7ddc5b6e0079b53c7` aligns
+two inherited failing CI checks with the current scalar IR and prepared-resource
+launcher. It strengthens same-object comparison to include the descriptor and
+resource images. `corrected_contracts.py` must pass its dedicated final-head
+checks before `qualify.py` can collect timings. Production compiler code is
+unchanged by this follow-up.
+
 The merge preserves PR #909's canonical native implementation exactly and changes
 only `hosts/gpu/src/sequence/runtime.rs` relative to its head. That file retains
 the previously qualified record runtime changes exactly. PR #909 remains

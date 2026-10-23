@@ -26,6 +26,9 @@ def oracle(raw):
 
 def main():
  validation=json.loads((HERE/'validation-v1/results.json').read_bytes());assert validation['status']=='integration-tests-and-compiler-build-passed'
+ correction=json.loads((HERE/'corrected-contracts-v1/results.json').read_bytes());assert correction['status']=='final-head-native-contracts-passed'
+ assert subprocess.check_output(['git','-C',str(WORKSPACE),'rev-parse','HEAD'],text=True).strip()==correction['source_commit']
+ assert not subprocess.check_output(['git','-C',str(WORKSPACE),'status','--porcelain'])
  out=HERE/'qualification-v1';out.mkdir(exist_ok=False);b=HERE/'.build';env=validation['environment'];cli=b/'mech-canonical'
  assert process.sha(cli)==validation['compiler_sha256']
  source=out/'knucleotide.mec';shutil.copyfile(WORKSPACE/'hosts/gpu/tests/fixtures/native/knucleotide-idiomatic.mec',source)
@@ -35,7 +38,7 @@ def main():
  policy=dict(grants=[dict(target='cli/stdin',operations=['read'],paths=['text']),dict(target='cli/stdout',operations=['write'],paths=['text'])],max_ports=16,input_text_bytes=full.stat().st_size,output_text_bytes=1048576,memory_bytes=1073741824,work=1<<48,transport_bytes=16777216,native_stack_bytes=1048576,library=dict(output_elements=1000000,output_bytes=134217728,temporary_bytes=536870912,cloned_bytes=536870912,retained_nodes=1000000,compute_work=1<<46,comparison_work=1<<40))
  launch=out/'launch.json';process.save(launch,policy)
  cases=[b'>ONE\nAAAA\n>THREE\nGGTA\n>FOUR\nTTTT\n',b'>THREE\n',b'>ONE\nACGT\n',b'>THREE description\r\nggta\r\nACGT\r\n>FOUR\r\nTT\r\n',b'>THREEish\nTTTT\n>THREE\tselected\nACGTTGGTATT\n',b'>THREE\n' + b'ACGTGGTA'*500+b'\n']
- report=dict(status='running',integration_commit=validation['integration_commit'],source_sha256=process.sha(source),input_sha256=process.sha(full),input_bytes=full.stat().st_size,selected_bases=125000000,policy_sha256=process.sha(launch),benchmark_scope='fresh-process startup through exit including secured capture, native computation, output and report; build and parent validation excluded; warm filesystem cache',variants={},samples=[])
+ report=dict(status='running',integration_commit=correction['source_commit'],production_source_validated_at=validation['integration_commit'],source_sha256=process.sha(source),input_sha256=process.sha(full),input_bytes=full.stat().st_size,selected_bases=125000000,policy_sha256=process.sha(launch),benchmark_scope='fresh-process startup through exit including secured capture, native computation, output and report; build and parent validation excluded; warm filesystem cache',variants={},samples=[])
  process.save(out/'results.json',report)
  with Path(PLAN['common_mutex']).open('a+') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
