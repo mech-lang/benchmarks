@@ -64,3 +64,17 @@ Compiler `913450a68c609070b2f12f8f5f5bbf742fa11b75` hoists the caller's fixed no
 | Cached caller inventory `913450a68` | 8.944 | 430× |
 
 The [fresh paired measurements](../native-owner-aot-v1/caller-census-timing-v1/results.json) show 7.6% less elapsed time. All nine complete-process outputs match, and both Mech binaries perform seven tables and 6,999,961 updates. Source and program bytecode are unchanged. Ratios use Rust from this same cohort; this is a diagnostic result, not full-input qualification or Rust parity.
+
+## Native paths and fused helper admission
+
+Compiler `32a3a7b449f64740ecf137ba3539a08cda2240e2` replaces straight-line groups with acyclic native paths across scalar branches and joins. All interior predecessors belong to the same entry. Headers cut backedges; helpers remain observable boundaries. The runtime retains the admitted anchor and accepts only a proved frontier, with native Tail-latch retirement at the original next-header boundary. Every original generated instruction and arithmetic failure location remains. Selected map/key helpers admit their boundary inside their own callback; refused owner entry keeps the canonical protocol. IR34, work policy52 and ABI19 identify the change.
+
+[map-path-validation-v2](map-path-validation-v2/summary.json) passes 215 native checks with three pre-existing exclusions. The actual original/decoded and restored-image tests require multiple frontier successors, fewer emitted callbacks and exactly one admission per fused helper. Replay, foreign frontier, missing fuel and interior-error checks preserve control/storage state and cleanup. All 84 independent source counting cases pass. The first full run retains one obsolete ABI18 expectation failure; the corrected ABI19 expectation passes in the complete rerun.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0222 | 1.00× |
+| Previous Mech AOT `913450a68` | 8.988 | 405× |
+| Native paths `32a3a7b44` | 7.331 | 330× |
+
+[Fresh paired measurements](../native-owner-aot-v1/map-path-timing-v1/results.json) show 18.4% less elapsed time. All outputs match and both Mech binaries perform seven tables and 6,999,961 updates. Admitted runtime boundaries fall from 139,717,328 to 55,717,707; the new count includes fused helper admissions and should not be described as standalone callback calls. The source and program image are unchanged. [Matching executable profiles](../native-owner-aot-v1/full-profile-path-v1/analysis.json) identify retained map/key helpers as the largest remaining sampled category. Full-input qualification and Rust parity remain unfinished.

@@ -63,6 +63,8 @@ def main():
         "selected_key_projection": "State11project_key",
         "selected_range_cardinality": "selected_u64_range_cardinality",
         "generated_block_admission": "program_runtime5admit",
+        "runtime_boundary_validation": "7Context5visit",
+        "iteration_transition_validation": "10visit_from",
         "native_work_debit": "NativeWorkMeter6charge",
         "library_work_debit": "NativeLibraryWorkBudget6charge",
     }

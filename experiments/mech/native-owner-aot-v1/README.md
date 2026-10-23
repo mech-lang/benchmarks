@@ -4,6 +4,36 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Current measured improvement
 
+Compiler [`32a3a7b44`](https://github.com/mech-lang/mech/commit/32a3a7b449f64740ecf137ba3539a08cda2240e2) prepays native paths across scalar branches and joins between runtime boundaries. Every interior has the same entry; headers cut backedges, and helpers cut effects. A native Tail latch retains its original retirement at the following header. The next callback must match a proved frontier, and arithmetic failures retain their original source location. Selected map and key helpers admit their own boundary in the helper callback, eliminating the separate admission round trip. Refused owner entry preserves canonical execution. IR34, work policy52 and ABI19 identify this protocol.
+
+Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0222 | 1.00× |
+| Previous Mech AOT, `913450a68` | 8.988 | 405× |
+| Native paths, `32a3a7b44` | 7.331 | 330× |
+
+Elapsed time falls by **18.4%**. All nine timed outputs match the independent reference; both Mech executables perform seven tables and 6,999,961 updates. Runtime admissions fall from 139,717,328 to 55,717,707. The latter includes admission fused into map/key helper callbacks; it is not a count of standalone admission-function calls. Source and program bytecode are unchanged. Runs are serial, include secured startup/shutdown, and exclude one warmup per executable. [Raw measurements](map-path-timing-v1/results.json) retain every sample, configuration and executable identity. Ratios use Rust from this cohort only. This diagnostic does not qualify the full 125-million-base workload or Rust parity.
+
+[Validation](../native-owner-dispatch-v1/map-path-validation-v2/summary.json) passes 215 native checks with three pre-existing exclusions. Original/decoded and restored build-image tests exercise branches with multiple runtime successors, actual callback reduction, exactly-once fused admission, canonical fallback, helper replay and foreign-frontier rejection, insufficient fuel before state/storage changes, exact interior arithmetic failures and complete cleanup. The existing 84 independently checked counting cases remain correct. The first broad run passed 214 checks and failed only an outdated ABI18 expectation; the ABI19 expectation passes in the complete rerun.
+
+The [profiling build](profile-path-build-v1/results.json) has the identical complete machine-code section as the timed executable: 3,943,088 bytes, SHA-256 `9dab5e6a7d578c5151ad1a931899d3dc380021be8ce854ae27c08fa084d19947`. Three two-second samples during the beginning of full-input counting show:
+
+| Path | Inclusive sample share |
+|---|---:|
+| Retained map/key helpers | 65–67% |
+| Runtime boundary validation, including fused admission | 27–29% |
+| Standalone admission callback | 17–18% |
+| Native work debits | 11–14% |
+| Selected range cardinality/shape validation | 10–11% |
+
+Categories overlap and must not be added. [Analysis](full-profile-path-v1/analysis.json) records symbol patterns and union counting. The subject was stopped and reaped at the planned 45-second deadline; these are bounded samples from the beginning of execution, not a completed full-input timing or a matched before/after profile.
+
+The remaining implementation still admits about eight runtime boundaries per table update and separately validates/project keys and checks map operations. The next targets are reducing repeated work inside these helpers and extending native finite-fuel execution across map boundaries. Packed keys, independent-loop parallelism, practical full-input source/decoded qualification and same-binary secured/trusted measurements remain unfinished. The counting algorithm remains source-written Mech.
+
+## Cached caller inventory
+
 Compiler [`913450a68`](https://github.com/mech-lang/mech/commit/913450a68c609070b2f12f8f5f5bbf742fa11b75) retains the outer caller's fixed node inventory for each proved closed map-loop invocation. The region may contain native scalar/state operations, selected map operations and selected key projections; other managed operations and nested loops decline reuse. Snapshot holdings and call-cache metadata are read afresh, and every operation still includes current private table and key-view nodes and actual memory use. Work policy51 identifies the changed setup/accounting; IR33 and ABI18 are unchanged. Source and generated program bytecode are unchanged.
 
 Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
@@ -142,7 +172,7 @@ That profile selected per-window range/String materialization and library invoca
 
 ## Evidence and reproduction scope
 
-- `compiler-v2` through `compiler-v6` pin the retained-map, cache-total, selected-key, admission-group and caller-inventory compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
+- `compiler-v2` through `compiler-v7` pin the retained-map, cache-total, selected-key, admission-group, caller-inventory and native-path compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
 - `build_and_time.py`, `measure_cache.py`, `measure_scale.py`, `measure_spans.py`, `compare_rust_spans.py`, `measure_admission.py` and `measure_stage.py` retain the exact build/run procedures. Output directories are versioned and guard against overwriting samples. `measure_stage.py` uses the configuration saved in each result and verifies its parent executable against the parent cohort's recorded hash. `measure_cache.py` reuses the candidate build receipt from `cache-timing-v1`; that attempted cohort stopped before quantitative timing because unmodified Rust used a different tie order on the synthetic input. Rust is excluded from that diagnostic, and its full standard-input output passes.
 - `profile_full.py`, `build_profile.py` and `analyze_profile.py` retain the sampled process procedure, matching-link settings and code-identity check. Earlier `profile-build-v2`, `full-profile-v2` and `profile-cache-build-v1` used a ThinLTO final link and are explicitly marked as exploratory mismatches. Their percentages are not a matched before/after comparison. `profile-build-v1` and `full-profile-v1` retain failed preparation/monitor diagnostics, not benchmark samples.
 - `profile_rust.py` and `analyze_rust_profile.py` capture and summarize the exact timed upstream Rust binary on the complete input; the original program and binary are unchanged. Profiling process durations are excluded from benchmark cohorts.
