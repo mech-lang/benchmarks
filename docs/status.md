@@ -195,6 +195,19 @@ code still uses canonical transport. Production helper routing, conditional
 opaque words, the source hash contract and complete-input qualification precede
 fresh timings. No new runtime result or website dataset change is admitted.
 
+The [generated owner dispatch study](../experiments/mech/native-owner-dispatch-v1/README.md)
+connects normal generated map-valued states to retained hash storage. Conditional
+native words handle carrier transport, source-produced map operands and canonical
+publication; refused admission preserves ordinary execution on the same ledger.
+Actual original/decoded runs include nonempty seeds, wider carriers, malformed
+calls, stale references and failure teardown. The source counting procedure has
+42 explicitly observed cases across all seven widths, with exact update counts,
+independently checked results and zero canonical map calls. All 209 native and
+eleven map checks pass (220 distinct; three pre-existing exclusions). IR31/work
+policy47/ABI16 fence the selected protocol. Full-input standalone qualification,
+the explicit source hash contract and fresh secured/trusted timings remain
+unfinished. No new dataset result or website timing is admitted.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
