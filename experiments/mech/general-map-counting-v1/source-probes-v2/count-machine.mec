@@ -1,0 +1,20 @@
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  ~counts := h
+  keys<{string}> := counts_keys
+  previous := (key ∈ keys)? | true => counts{key} | false => 0u64.
+  counts{key} = previous + 1u64
+  out := counts.
+#Count(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Next(index<u64>, counts<{string:u64}>)
+  | :Done(counts<{string:u64}>).
+#Count(s, width, n, initial) -> :Next(0u64, initial)
+  :Next(index, counts)
+    | width == 0u64 -> :Done(counts)
+    | index >= n -> :Done(counts)
+    | width > n - index -> :Done(counts)
+    | * -> :Next(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Done(counts) => counts.
+empty<{string:u64}> := {:}
+#Count("GGTAGGT", 3u64, 7u64, empty)

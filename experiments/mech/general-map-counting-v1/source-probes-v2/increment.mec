@@ -1,0 +1,8 @@
++> map
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  ~counts := h
+  keys<{string}> := counts_keys
+  previous := (key ∈ keys)? | true => counts{key} | false => 0u64.
+  counts{key} = previous + 1u64
+  out := counts.
+increment({"a": 0u64}, "b")

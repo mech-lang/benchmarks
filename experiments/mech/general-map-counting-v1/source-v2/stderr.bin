@@ -1,0 +1,26 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+warning: function `find_with_compare` is never used
+  --> src/engine/src/resident/numeric/string_map_access.rs:69:15
+   |
+69 | pub(super) fn find_with_compare(
+   |               ^^^^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+    Finished `test` profile [unoptimized] target(s) in 20.30s
+     Running tests/source_op_assign_contract.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/source_op_assign_contract-4109dad6cb68b6fd)
+
+thread 'source_map_assignment_inserts_a_missing_key_without_a_counting_helper' (562436) panicked at src/stdlib/tests/source_op_assign_contract.rs:16:63:
+~counts<{string:u64}> := {:}
+counts{"é"} = 1u64
+counts{"é"} = 3u64
+counts
+: Execution(Kernel { node: NodeId(1), error: InvalidShape })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+fatal runtime error: failed to initiate panic, error 5, aborting
+error: test failed, to rerun pass `-p mech-stdlib --test source_op_assign_contract`
+
+Caused by:
+  process didn't exit successfully: `/private/tmp/mech-pidigits-performance/target/debug/deps/source_op_assign_contract-4109dad6cb68b6fd source_map_assignment --test-threads=1 --nocapture` (signal: 6, SIGABRT: process abort signal)

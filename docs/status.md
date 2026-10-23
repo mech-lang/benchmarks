@@ -1,16 +1,25 @@
 # Benchmark coverage
 
-The [canonical Mech nucleotide study](../experiments/mech/native-hashmap-work-v1/README.md)
-restores mandatory library hash-table work in [compiler PR #911](https://github.com/mech-lang/mech/pull/911).
-All 166 native regression tests pass. Original and decoded standalone builds
-have identical binaries, pass capability denials, and verify seven complete
-tables and 874,999,961 updates on each standard full input. Seven shuffled serial
-rounds give canonical secured Mech AOT **9.39939 s (1.00000× this Mech)** and
-unchanged Rust #7 **0.54998 s (0.05851×)**. Mech is currently 17.09× slower;
-process CPU evidence shows approximately one core versus Rust's 4.35. These
-measurements establish a conforming compiler baseline for further optimization;
-the canonical dataset and website are unchanged.
+The canonical Mech nucleotide compiler work remains on draft
+[PR #911](https://github.com/mech-lang/mech/pull/911). The
+[batched lowering](../experiments/mech/native-hashmap-batch-v1/README.md)
+passes all 168 native tests, public source/decoded standalone qualification,
+permission denials and exact full-input output checks. Every full execution
+retains seven tables and 874,999,961 actual updates. Its CPU profile is a
+separate diagnostic; final timing runs are deferred while optimization continues.
+The preceding canonical-native branch retains ordinary dense-counter and
+direct-query optimization. No new nucleotide profile or website result is admitted.
 
+The [general map source audit](../experiments/mech/general-map-counting-v1/README.md)
+keeps the counting algorithm in Mech. The library candidate adds a generic empty
+map constructor and missing-key insertion, with source execution checks for both
+string and integer keys, replacement and fixed-cardinality rejection. Shared
+solver, map-runtime and compiler-free linkage checks are retained in that study.
+A pure state-machine entry operation and explicit hash-table representation
+contract remain work before the counting source can qualify. These library
+checks add no quantitative samples or catalog results.
+The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
+is retained as historical evidence, not a final performance result.
 
 The [Mech pi-digits study](../experiments/mech/pidigits-performance-v1/RESULTS.md)
 reuses the extraction numerator, reducing the current AOT median from 0.3128s
@@ -78,7 +87,14 @@ sections. The earlier [audit](source-size-audit.md) remains a snapshot of the
 previous accounting. Source bytes and timing observations are unchanged. Current
 source details and exports expose the corrected counts and previous totals.
 
-The current catalog contains **63 execution variants across 54 language families**, **10 workloads**, and **1,007 selected timed program profiles**. The full source inventory retains **1,070 distinct profiles** across **971 source files**, including sixty-three measured candidates outside the chart catalog. Sixty-two execution variants cover the complete suite. The catalog retains **3,294 sample entries representing 3,282 distinct recorded runs**; **3,105 runs belong to selected profiles**. Four program labels explicitly share another program’s measurements.
+The current chart catalog contains **1,014 program profiles**, **63 execution
+variants across 54 language families**, and **10 workloads**. The full reconciled
+inventory contains **1,077 profiles across 973 source identities**. Its
+[exact-source review inventory](../experiments/implementation-audit/coverage-v5/README.md)
+separates 385 protected upstream profiles, 641 editable profiles and 51 profiles
+with unresolved ownership. Of the editable profiles, 336 have static source
+inspections and 305 remain unreviewed. An inspection is not a completed
+optimization study or proof that an implementation is globally fastest.
 
 Three reviewed Crystal regex scan implementations are now admitted with nine new
 full-process observations. The parallel block form has a 1.651s median

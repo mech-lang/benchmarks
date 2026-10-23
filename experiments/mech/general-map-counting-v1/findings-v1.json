@@ -1,0 +1,39 @@
+{
+  "schema": "mech.general-map-counting-gap-audit.v1",
+  "compiler_source_commit": "be81aff98acbaaffb2a41dc2b1dea7c94d6efd2f",
+  "benchmark_samples": 0,
+  "canonical_dataset_changed": false,
+  "source_compile_probes": "source-probes-v1/results.json",
+  "state_machine_probes": "source-probes-v2/results.json",
+  "baseline_assignment_source_sha256": "7063574eb9a1f95351938587783727c36c4c88f403fc8aad844b3038e90dd54f",
+  "findings": [
+    {
+      "topic": "map updates and insertion",
+      "evidence": "Both sources compile; the baseline assignment implementation returns an error when the selected key is absent. Compilation success alone is not execution qualification.",
+      "next_work": "Implement and verify ordinary new-key insertion with complete key/value candidate admission and cardinality checks."
+    },
+    {
+      "topic": "empty map",
+      "evidence": "Typed {:} compiles. {} denotes a set and its rejection is not a map compiler defect."
+    },
+    {
+      "topic": "membership",
+      "evidence": "key \u2208 map is rejected because the current operator resolves set/element-of. Existing key-set projection can express presence; a direct map lookup/presence API is a separate general-library question."
+    },
+    {
+      "topic": "counting state machine",
+      "evidence": "An explicit Mech state machine calling a mutable-local increment helper is rejected by the pure maintained control-block gate.",
+      "next_work": "Provide a general pure map-entry insertion/update operation; retain the counting loop and count increment in Mech."
+    },
+    {
+      "topic": "hash-table representation",
+      "evidence": "MapValue currently stores canonical ordered entries. The source-level map type does not promise hashing.",
+      "next_work": "Express any required hash-table implementation through a general map-library contract, and bind native lowering to it. Preserve ordinary abstract-map optimization."
+    }
+  ],
+  "additional_baseline_gap": {
+    "topic": "zero upper-bound empty map initialization",
+    "evidence": "Constructing an empty map with Dynamic cardinality upper_bound=0 is refused during ValueCell initialization as current=1, before assignment executes. The map-insertion limit test therefore also exercises the supported bounded-one representation with an existing entry.",
+    "scope": "Separate unresolved initialization/accounting issue; not claimed fixed by insertion support."
+  }
+}

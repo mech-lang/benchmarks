@@ -1,0 +1,31 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+error[E0599]: the function or associated item `new` exists for struct `Box<[u64]>`, but its trait bounds were not satisfied
+   --> src/engine/src/intrinsics/map_new.rs:109:32
+    |
+109 |             vec![Box::<[u64]>::new([])].into_boxed_slice(),
+    |                                ^^^ function or associated item cannot be called on `Box<[u64]>` due to unsatisfied trait bounds
+    |
+note: if you're trying to build a new `Box<[u64]>` consider using one of the following associated functions:
+      Box::<T>::clone_from_ref
+      Box::<T>::try_clone_from_ref
+      Box::<T, A>::clone_from_ref_in
+      Box::<T, A>::try_clone_from_ref_in
+      and 4 others
+   --> /Users/cim310/.rustup/toolchains/nightly-2026-03-03-aarch64-apple-darwin/lib/rustlib/src/rust/library/alloc/src/boxed.rs:783:5
+    |
+783 |     pub fn clone_from_ref(src: &T) -> Box<T> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+804 |     pub fn try_clone_from_ref(src: &T) -> Result<Box<T>, AllocError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+829 |     pub fn clone_from_ref_in(src: &T, alloc: A) -> Box<T, A> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+856 |     pub fn try_clone_from_ref_in(src: &T, alloc: A) -> Result<Box<T, A>, AllocError> {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: the following trait bounds were not satisfied:
+            `[u64]: Sized`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `mech-engine` (lib) due to 1 previous error

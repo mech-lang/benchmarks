@@ -1,0 +1,32 @@
+   Compiling mech-core v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/core)
+   Compiling mech-syntax v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/syntax)
+   Compiling mech-bytecode v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/bytecode)
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+error[E0308]: `if` and `else` have incompatible types
+   --> src/engine/src/resident/map_ops.rs:387:9
+    |
+271 |        let (count, payload, work, key_comparison_work, scratch_bytes) = if let Some(strings) =
+    |  _______________________________________________________________________-
+272 | |          source_strings
+273 | |      {
+274 | |          let n = strings.len();
+...   |
+281 | |/         if plan.operation == Operation::HashHistogram {
+282 | ||             let scratch_bytes = primitives::hash_counts::scratch_bound(n)
+283 | ||                 .ok_or(ResidentKernelError::InvalidShape)?;
+284 | ||             let work = primitives::hash_counts::work_bound(n, bytes)
+...   ||
+368 | ||         (count, payload, 0, key_comparison_work, scratch_bytes)
+369 | ||         }
+    | ||_________- expected because of this
+...   |
+387 | |          (entries.len(), payload, entries.len(), entries.len(), 0)
+    | |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ expected `(usize, usize, {integer}, u64, usize)`, found `(usize, usize, usize, usize, {integer})`
+388 | |      };
+    | |______- `if` and `else` have incompatible types
+    |
+    = note: expected tuple `(_, _, {integer}, u64, usize)`
+               found tuple `(_, _, usize, usize, {integer})`
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `mech-engine` (lib) due to 1 previous error
