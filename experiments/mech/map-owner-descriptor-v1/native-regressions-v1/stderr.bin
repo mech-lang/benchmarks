@@ -1,0 +1,31 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+   Compiling mech-compute v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/compute)
+   Compiling mech-runtime v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/runtime)
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-build v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/build)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-terminal v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/terminal)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0061]: this function takes 5 arguments but 4 arguments were supplied
+   --> hosts/gpu/src/native_artifact/program_prefix_tests.rs:126:17
+    |
+126 |                 program_identity::typed_ir_sha256(&descriptor.plan, frontiers, &joins, &lines)
+    |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^--------------------------------------------- argument #5 of type `&mech_engine::native_artifact::NativeMapOwnerWords` is missing
+    |
+note: function defined here
+   --> hosts/gpu/src/native_artifact/program_identity.rs:212:15
+    |
+212 | pub(super) fn typed_ir_sha256(
+    |               ^^^^^^^^^^^^^^^
+...
+217 |     map_owners: &mech_engine::native_artifact::NativeMapOwnerWords,
+    |     --------------------------------------------------------------
+help: provide the argument
+    |
+126 |                 program_identity::typed_ir_sha256(&descriptor.plan, frontiers, &joins, &lines, /* &mech_engine::native_artifact::NativeMapOwnerWords */)
+    |                                                                                              ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0061`.
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

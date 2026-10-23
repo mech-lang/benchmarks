@@ -106,6 +106,16 @@ arena total does not include all private builders or external caller roots.
 Normal generated programs still use canonical maps; complete caller geometry,
 retained-map activation, full-input qualification and fresh timings remain pending.
 
+The [retained-map descriptor study](../experiments/mech/map-owner-descriptor-v1/README.md)
+preserves complete same-plan candidate layouts through standalone metadata and
+binds their full ordered inventory into Object identity. IR29 rejects preceding
+IR28 objects; work policy42 and ABI15 are unchanged. Programs without candidates
+retain no duplicate scalar layout. Validation passes 210 distinct checks
+(199 native and eleven map; three pre-existing native exclusions), including
+source/decoded round trips and thirty isolated metadata identity changes.
+This associates metadata only. Runtime storage handoff, complete caller geometry,
+current-visit routing, full-input qualification and final timings remain pending.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
