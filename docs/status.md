@@ -116,6 +116,16 @@ source/decoded round trips and thirty isolated metadata identity changes.
 This associates metadata only. Runtime storage handoff, complete caller geometry,
 current-visit routing, full-input qualification and final timings remain pending.
 
+The [occupied-frame composition study](../experiments/mech/map-owner-frame-v1/README.md)
+places candidate map-state words after borrowed-string and closed-loop metadata,
+preserving ordinary scalar offsets and root reference slots. IR30 distinguishes
+the explicit owner boundary; work policy42 and ABI15 remain unchanged. Validation
+passes 212 distinct checks (201 native and eleven map; three pre-existing native
+exclusions), including emitted copies across a protected gap and source/decoded
+execution of combined scalar and map loops. Normal generated storage remains
+canonical. Complete caller geometry, checked retained-map routing, full-input
+qualification and fresh timings remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)

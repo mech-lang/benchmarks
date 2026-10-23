@@ -1,0 +1,11 @@
+# Composing map state with occupied native frame lanes
+
+Compiler revision `7d5139169f950747d5a8ff00399b47969f4c641c` closes a frame-layout integration gap: candidate map-state words previously started immediately after ordinary scalar aggregates, where borrowed-string and closed-loop bookkeeping may also live. The candidate layout now records an explicit private owner boundary and appends map-state words after the complete occupied prefix.
+
+Ordinary scalar slots, constants and root map-reference slots retain their addresses. Only appended private map-state slices move. Frame extent arithmetic is checked, overlapping prefixes and overflow are rejected, and composing an already placed layout at the same boundary is idempotent. The reserved gap is not owned or written by map transport. Descriptor images preserve the boundary and offsets. Typed IR30 distinguishes this layout protocol from IR29; work policy42 and ABI15 remain unchanged. Runtime allocation and storage selection are unchanged.
+
+Validation passes 201 native checks and eleven map integration checks: 212 distinct passing checks, with three pre-existing native exclusions. New emitted-code coverage relocates projections beyond a 37-word sentinel gap, preserves full-width opaque words, checks every derived slot and leaves the gap untouched. Original and decoded programs combining a scalar state-machine loop and a map state-machine loop retain real closed-loop metadata, round-trip their composed descriptor layout, execute correctly, and release all admitted claims. The existing identity test now covers sixteen metadata changes per artifact, including the owner boundary; preceding IR29 objects are rejected.
+
+`native-regressions-v1` and `map-contracts-v1` are passing bounded correctness runs under the shared benchmark mutex, with complete owned-process cleanup records. No quantitative benchmark samples were collected. The canonical dataset and frozen benchmark executable are unchanged.
+
+This qualifies layout composition and continued canonical execution. It does not activate retained-map calls or establish complete live caller geometry. Checked entry/call/exit routing, general source hash representation intent, full-input work qualification and fresh complete-process timings remain unfinished.
