@@ -85,6 +85,17 @@ source/bytecode layout checks. This is transport groundwork: canonical seed
 import, actual table binding, owner-generation/site authority, full live geometry,
 version-fenced program adoption and full-input timings remain unfinished.
 
+The [retained binding study](../experiments/mech/map-owner-binding-v1/README.md)
+connects typed canonical seeds to actual retained tables and versioned native
+references. Six binding checks pass within 196 native checks, with eleven map
+integration checks (207 distinct; three pre-existing ignored). Cases reject
+stale/foreign references, wrong sites/revisions/accounts, missing key geometry
+and nested allowance renewal; denied writes/exits remain retryable. Seeds and
+published results retain independent immutable ownership. This is a private
+storage layer, not current-visit authority or normal program activation. The
+checked generated caller, complete frame geometry, version-fenced protocol,
+full-input work qualification and performance measurements remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
