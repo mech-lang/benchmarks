@@ -1,0 +1,22 @@
+{
+  "schema": "mech.canonical-native-integration-ci-inspection.v1",
+  "observed_head": "c5b0b3a35b7537358361529aa5a6148464ec415d",
+  "pull_request": "https://github.com/mech-lang/mech/pull/909",
+  "run": "https://github.com/mech-lang/mech/actions/runs/39872960187",
+  "status": "upstream-failures-inspected-corrections-not-yet-applied",
+  "failures": [
+    {
+      "job": 120152078421,
+      "test": "linked::benchmark::benchmark_generator_preserves_the_original_object_and_isolates_policy_controls",
+      "file": "hosts/gpu/tests/support/canonical_hosted_benchmark.rs",
+      "finding": "Generated shell now calls with_prepared_canonical_native_resources_phased_text; test still requires old with_canonical_native_resources_phased substring. Preserve boundary and same-object checks when updating."
+    },
+    {
+      "job": 120164373377,
+      "test": "native_artifact_match_lowering",
+      "file": "src/stdlib/tests/native_artifact_match_lowering.rs",
+      "finding": "Two matches reference removed NativeMatchAction::Primitive.memory_plan. Current lowering still binds for ExecutionTarget::Native and validates selected semantic witnesses before constructing the private scalar IR. Align tests with the current scalar IR and preserve type/capture and missing-witness denial checks."
+    }
+  ],
+  "qualification_gap": "The initial canonical-host gate lacks the canonical-native-benchmark-policy feature; separately exercise this feature after correcting its failed assertion. Add native_artifact_match_lowering to the serial correction gates. Do not infer green CI from unrelated successful checks."
+}
