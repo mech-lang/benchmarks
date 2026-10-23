@@ -75,6 +75,16 @@ expression in the source. Validation passes 346 distinct checks: eleven map,
 The candidates select no retained runtime storage; owner transport, complete
 caller authority, full-input qualification and final timings remain unfinished.
 
+The [private map word-transport study](../experiments/mech/map-owner-words-v1/README.md)
+adds fixed native transport for scalar state fields and opaque map references,
+appended to the preserved scalar aggregate layout. Validation passes 201 checks
+(190 native and eleven map integration; three pre-existing ignored). Eighteen
+small generated functions pass 54 transport cases and reject eighteen wrong
+variants before destination writes. All seven widths and chained updates retain
+source/bytecode layout checks. This is transport groundwork: canonical seed
+import, actual table binding, owner-generation/site authority, full live geometry,
+version-fenced program adoption and full-input timings remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
