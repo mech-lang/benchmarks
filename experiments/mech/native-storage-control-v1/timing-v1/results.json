@@ -1,0 +1,107 @@
+{
+  "status": "all-outputs-and-table-updates-verified",
+  "scope": "Diagnostic native String/U64 storage control, not Mech generated code; runtime admission/accounting and canonical map publication are absent; all seven tables and updates retained; one-million-base THREE prefix",
+  "source_sha256": "ae2be467ad98d112eb532c1c612344b6df49217435ffafb994db529ef4155625",
+  "mech_compiler_commit": "32a3a7b449f64740ecf137ba3539a08cda2240e2",
+  "mech_sha256": "2febd22a1555ceb57d66f7a0e4227a76ddf507e8c4c26b8eda06ac72dd9f60c8",
+  "rust_sha256": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763",
+  "hashbrown": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libhashbrown-85f11e69d704a89a.rlib",
+    "sha256": "553f532d2e7d7c4cebe95e0bb7483f3cc4901747311d12b604e729a6797c6592"
+  },
+  "input_sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+  "input_bases": 1000000,
+  "expected_updates": 6999961,
+  "samples": [
+    {
+      "label": "control",
+      "seconds": 0.192636667,
+      "maximum_rss_bytes": 23789568
+    },
+    {
+      "label": "mech",
+      "seconds": 7.34546325,
+      "maximum_rss_bytes": 85983232
+    },
+    {
+      "label": "rust",
+      "seconds": 0.02079425,
+      "maximum_rss_bytes": 17104896
+    },
+    {
+      "label": "rust",
+      "seconds": 0.017566167,
+      "maximum_rss_bytes": 16498688
+    },
+    {
+      "label": "mech",
+      "seconds": 7.411978958,
+      "maximum_rss_bytes": 85934080
+    },
+    {
+      "label": "control",
+      "seconds": 0.203392833,
+      "maximum_rss_bytes": 23773184
+    },
+    {
+      "label": "mech",
+      "seconds": 7.386060875,
+      "maximum_rss_bytes": 86016000
+    },
+    {
+      "label": "control",
+      "seconds": 0.20942325,
+      "maximum_rss_bytes": 23789568
+    },
+    {
+      "label": "rust",
+      "seconds": 0.017300833,
+      "maximum_rss_bytes": 17072128
+    }
+  ],
+  "environment": {
+    "PATH": "/Users/cim310/.cargo/bin:/usr/bin:/bin",
+    "LC_ALL": "C",
+    "LANG": "C",
+    "TZ": "UTC",
+    "NO_COLOR": "1",
+    "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+    "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+    "HOME": "/Users/cim310",
+    "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+    "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+    "RUSTFLAGS": "-L native=/opt/homebrew/Cellar/gmp/6.3.0/lib",
+    "CARGO_TARGET_DIR": "/private/tmp/mech-pidigits-performance/target",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_PROFILE_DEV_STRIP": "symbols",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "TMPDIR": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/tmp",
+    "RUSTUP_TOOLCHAIN": "nightly-2026-03-03"
+  },
+  "control_sha256": "830f33f639f11139e19c16847781dcc7fd9db2d3d0f4fa46336f1a5d9298c771",
+  "compile_command": [
+    "/Users/cim310/.cargo/bin/rustc",
+    "--edition=2021",
+    "-Copt-level=3",
+    "-Ctarget-cpu=native",
+    "-Ccodegen-units=1",
+    "-Ldependency=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps",
+    "--extern",
+    "hashbrown=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libhashbrown-85f11e69d704a89a.rlib",
+    "/private/tmp/mech-benchmark-publication/experiments/mech/native-storage-control-v1/string_maps.rs",
+    "-o",
+    "/private/tmp/mech-benchmark-publication/experiments/mech/native-storage-control-v1/.build/string-maps"
+  ],
+  "median_seconds": {
+    "control": 0.203392833,
+    "mech": 7.386060875,
+    "rust": 0.017566167
+  },
+  "x_rust": {
+    "control": 11.578668983392905,
+    "mech": 420.4708332216129,
+    "rust": 1.0
+  },
+  "interpretation": "A direct native storage cost control, not a Mech speedup or a prediction. LLVM, canonical publication and runtime accounting differ. Source traversal, serial execution, String keys, separate lookup/update calls and complete table work are retained."
+}
