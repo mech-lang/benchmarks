@@ -17,6 +17,8 @@ parser.add_argument('--receipt', required=True)
 parser.add_argument('--comparison-work', type=int)
 parser.add_argument('--parent-receipt')
 parser.add_argument('--parent-binary')
+parser.add_argument('--order', nargs='+', choices=('rust', 'mech', 'baseline'),
+                    help='Execution order; must list each selected executable exactly once')
 parser.add_argument('--require-packed-map', action='store_true',
                     help='Require the candidate to select packed storage for all regions and updates; also inherited from its prefix receipt')
 parser.add_argument('--require-parallel-tasks', type=int, choices=[7],
@@ -30,6 +32,8 @@ timing = json.loads((HERE / args.timing / 'results.json').read_text())
 compiler = json.loads((HERE / args.compiler / 'results.json').read_text())
 assert timing['status'] == 'all-outputs-and-update-counts-verified'
 assert compiler['source_commit'] == timing['source_commit']
+if timing.get('require_key_bits') is not None:
+    assert timing.get('source_key_domains_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -53,6 +57,9 @@ if args.parent_receipt:
     assert parent['rust_sha256'] == timing['rust_sha256']
     targets['baseline'] = HERE / '.build' / args.parent_binary
     assert process.sha(targets['baseline']) == parent['candidate_sha256']
+order = args.order or list(targets)
+if len(order) != len(targets) or set(order) != set(targets):
+    parser.error('--order must list each selected executable exactly once')
 inp = HERE.parents[2] / 'experiments/janet/.build/inputs/fasta-n25000000.stdin'
 assert process.sha(inp) == '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'
 policy = HERE / 'full-timing-v1/launch.json'
@@ -78,6 +85,10 @@ report = dict(status='running', source_commit=timing['source_commit'],
                                            current=launch['library']['comparison_work']),
               configuration=vars(args), samples=[], native_executions=[],
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
+              require_key_bits=timing.get('require_key_bits'),
+              source_key_domains_qualified=timing.get('source_key_domains_qualified'),
+              closed_key_domains=timing.get('closed_key_domains'),
+              native_descriptor_sha256=timing.get('native_descriptor_sha256'),
               require_parallel_tasks=require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               scope='Single serial complete process per executable, including secured Mech startup/shutdown; full-input qualification, not median benchmark timings; no excluded warmup')
 if parent:
@@ -87,7 +98,8 @@ process.save(out / 'results.json', report)
 try:
     with Path(PLAN['common_mutex']).open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-        for label, binary in targets.items():
+        for label in order:
+            binary = targets[label]
             command = [str(binary)]
             native_report = out / ('native.report.json' if label == 'mech' else label + '.native.report.json')
             if label != 'rust':

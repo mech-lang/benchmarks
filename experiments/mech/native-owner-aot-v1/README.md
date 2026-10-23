@@ -2,11 +2,33 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Cold failure origins
+
+Compiler [`8afcd192c`](https://github.com/mech-lang/mech/commit/8afcd192c708f450136d939769ca8b7c4edbfaf7) moves error-location writes from successful packed SSA blocks to their failing edges. Source arithmetic, branches, bounds, map operations, work charges and rejection behavior are unchanged. Each failure still reports its original source location. Seven-worker execution and IR40/work policy61/ABI21 remain in use.
+
+Three full **125-million-base** cohorts rotate the order of the candidate, previous seven-worker executable and upstream Rust. Every observation is retained, with fresh complete processes and no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.566 | 1.0× |
+| Previous seven-worker stage, `a99910795` | 4.540 | 8.0× |
+| Cold failure origins, `8afcd192c` | 3.391 | 6.0× |
+
+The measured median speedup is **1.34×**, reducing elapsed time by **25.3%**. Candidate samples are 3.391, 3.503 and 3.387 seconds; the parent samples are 4.540, 4.550 and 4.368 seconds. Rust samples are 1.291, 0.546 and 0.566 seconds. Its unusually slow first run is retained, which is why the median cohort ratio is more informative than the first single-run ratio. [Cohort summary](full-cold-origin-cohort-v1/results.json) includes all raw samples, standard deviations, execution orders and receipt hashes.
+
+Every full execution verifies exact output, all **874,999,961 updates**, seven packed SSA maps and a peak of seven concurrent workers. Program source, bytecode, input and finite launch policy match the parent. Capability checks and secured startup/shutdown remain included; subjects run sequentially under the common lock.
+
+The [one-million-base prefix](cold-origin-timing-v1/results.json) has three alternating complete-process medians: Rust **0.0207 s (1.0×)**, previous parallel **0.815 s (39.5×)** and candidate **0.764 s (37.0×)**. Samples overlap, and this modest change does not resolve the earlier regression relative to serial execution. One warmup per executable is excluded only in this prefix protocol.
+
+All 255 existing native tests passed with the compiler change. The new failure-origin fixture initially contained a misplaced source terminator in its direct-lookup case; after that fixture was corrected, its focused test passed for original, decoded and restored execution, including arithmetic, rejection, selection, missing-key, malformed-helper and finite-budget failures with cleanup. [Initial validation](../native-owner-dispatch-v1/cold-origin-validation-v1/summary.json) and [corrected fixture validation](../native-owner-dispatch-v1/cold-origin-validation-v2/summary.json) preserve that distinction. The preceding stage's exact-code profiles motivated the change; they are not profiles of this new executable.
+
+Compact source-derived key domains, SIMD probing and reducing measured publication/budget contention remain subsequent stages. Rust parity and secured/trusted comparison remain unfinished.
+
 ## Parallel source comprehensions
 
 Compiler [`a99910795`](https://github.com/mech-lang/mech/commit/a999107959d91428e25ea5a55f6db41ece79ff12) executes independent pure comprehension elements in scoped native workers. A source-derived dependency proof groups the two frequency tasks and five query tasks into one batch. Each worker executes the original generated Mech body with its own mutable state; results return through the original ordered publication points. All seven histograms and every source update remain. The source and program bytecode are unchanged. IR40/work policy61/ABI21 identify this stage.
 
-The latest **125-million-base** cohort measures one complete process per executable:
+This stage's **125-million-base** cohort measures one complete process per executable:
 
 | Executable | Seconds, one run | × Rust time |
 |---|---:|---:|
@@ -36,7 +58,7 @@ A [prefix capture of the same executable](prefix-profile-parallel-v1/summary.jso
 
 These profile categories overlap. The observations include waits, partial unwinds and profiling overhead; their percentages are neither CPU utilization nor wall-time shares, and thread totals cannot be added as elapsed time. An [earlier profiling attempt](full-profile-parallel-v2/summary.json) failed when the sandbox denied process inventory, captured no stacks and cleaned up its owned processes; it supplies no profiling or timing evidence.
 
-Repeated full-input cohorts, isolation and correction of the prefix regression, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished. Compact character encoding, SIMD table controls and moving error-origin stores off the hot loop remain unmeasured. Earlier sections retain the results and limitations of their respective compiler stages.
+At this stage, repeated full-input cohorts and moving error-origin stores off the hot loop were unfinished; the subsequent stage above measures both. Isolation and correction of the prefix regression, compact character encoding, SIMD table controls, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished. Historical sections retain the results and limitations of their respective compiler stages.
 
 ## Native register loops
 

@@ -12,6 +12,41 @@ WORKSPACE = Path('/private/tmp/mech-native-hashmap-performance')
 sys.path.insert(0, str(HERE.parent / 'revcomp-streaming-v1'))
 from build_baseline import PLAN, process
 
+
+def closed_key_domains(descriptor):
+    """Record the runtime/codegen domain choice for every closed-tail region."""
+    regions = []
+    for index, region in enumerate(descriptor['closed_tails']['regions']):
+        packed = region.get('packed')
+        domain = packed.get('domain') if packed is not None else None
+        # Domain::packing retains an injective bit window; absent proofs and
+        # finite alphabets without such a window use the full ASCII encoding.
+        packing = domain if domain is not None and domain.get('shift') is not None else dict(
+            alphabet=[(1 << 64) - 1, (1 << 64) - 1], bits=7, shift=0)
+        regions.append(dict(region=index, map_owner=region.get('map'),
+                            packed_proof=packed is not None, source_domain=domain,
+                            packing_domain=packing if packed is not None else None))
+    return regions
+
+
+def require_key_domains(regions, bits):
+    """Reject fallback or noninjective source proofs before any timed process."""
+    maps = [region for region in regions if region['map_owner'] is not None]
+    assert maps, 'Candidate has no closed map domains to qualify'
+    for region in maps:
+        domain = region['source_domain']
+        assert region['packed_proof'] and domain is not None, 'Closed map lacks a source-derived packed domain'
+        assert domain['bits'] == bits and region['packing_domain'] == domain, 'Closed map uses a different or fallback encoding'
+        shift = domain['shift']
+        assert type(shift) is int and 0 <= shift <= 7 - bits, 'Packed domain lacks a valid bit window'
+        alphabet = domain['alphabet']
+        assert len(alphabet) == 2 and all(type(word) is int and 0 <= word < (1 << 64) for word in alphabet)
+        symbols = [byte for byte in range(128) if alphabet[byte // 64] & (1 << (byte % 64))]
+        assert symbols and max(1, (len(symbols) - 1).bit_length()) == bits, 'Packed domain has an inconsistent symbol width'
+        codes = {(byte >> shift) & ((1 << bits) - 1) for byte in symbols}
+        assert len(codes) == len(symbols), 'Packed domain bit window loses character identity'
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--compiler', required=True)
 parser.add_argument('--parent-receipt', required=True)
@@ -27,6 +62,8 @@ parser.add_argument('--require-packed-map', action='store_true',
                     help='Require every candidate execution to select packed storage for all regions and updates')
 parser.add_argument('--require-packed-ssa', action='store_true',
                     help='Require all seven candidate regions to complete in generated SSA loops')
+parser.add_argument('--require-key-bits', type=int, choices=range(1, 8),
+                    help='Require every closed map to use this source-derived injective character bit width; also require packed storage and SSA')
 parser.add_argument('--require-parallel-tasks', type=int, choices=[7],
                     help='Require one combined batch, two source regions and seven tasks; also require packed storage and SSA')
 parser.add_argument('--minimum-parallel-peak', type=int,
@@ -36,8 +73,8 @@ if args.minimum_parallel_peak is not None and (
         args.require_parallel_tasks is None or not 1 <= args.minimum_parallel_peak <= args.require_parallel_tasks):
     parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
-require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None
-require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -69,6 +106,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               rust_sha256=process.sha(targets['rust']), input_bases=1000000,
               expected_table_updates=6999961, samples=[], configuration=vars(args),
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
+              require_key_bits=args.require_key_bits,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -87,10 +125,16 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
+    report['native_descriptor_sha256'] = process.sha(project / 'native-descriptor.json')
+    report['closed_key_domains'] = closed_key_domains(descriptor)
     report['closed_map_regions'] = sum(region.get('map') is not None
                                       for region in descriptor['closed_tails']['regions'])
     assert report['closed_map_regions'] >= args.minimum_closed_map_regions
     process.save(out / 'results.json', report)
+    if args.require_key_bits is not None:
+        require_key_domains(report['closed_key_domains'], args.require_key_bits)
+        report['source_key_domains_qualified'] = True
+        process.save(out / 'results.json', report)
 
     def run(label, round_number, timed):
         name = f'{round_number}-{label}'
