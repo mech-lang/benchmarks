@@ -1,0 +1,137 @@
+{
+  "status": "retained-worker-offset-groups-mapped-to-exact-object",
+  "source_commit": "d760b334f148d2b7fb05abea64f874613e56e38e",
+  "timed_binary_sha256": "ad6feb9d04786e1d6f9f7330366cb15e6d66bc57be7d476ff26a89f320b9bb53",
+  "machine_code_sha256": "4cd933ef7feaf470dda12f89fc612bf2a00deb92797d1949a604f482e57070e4",
+  "object_sha256": "119bfbcf22b28bc680a9a98ae4b72cdf97de56e16067c800b6e9dc0f155b4611",
+  "object_entry_start": "0x280",
+  "observed_workers": 7,
+  "worker_observations": 10313,
+  "generated_entry_exclusive_observations": 8706,
+  "generated_entry_exclusive_percent": 84.41772520120237,
+  "merged_nodes": [
+    {
+      "thread": "Thread_1608159",
+      "exclusive_observations": 1774,
+      "reported_offsets": "36708,32688,...",
+      "explicit_offsets": [
+        36708,
+        32688
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+         !   1774 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 36708,32688,...  [0x104cd17e4,0x104cd0830,...]"
+    },
+    {
+      "thread": "Thread_1608160",
+      "exclusive_observations": 1749,
+      "reported_offsets": "36708,32688,...",
+      "explicit_offsets": [
+        36708,
+        32688
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+         !   1749 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 36708,32688,...  [0x104cd17e4,0x104cd0830,...]"
+    },
+    {
+      "thread": "Thread_1608158",
+      "exclusive_observations": 1380,
+      "reported_offsets": "36708,30096,...",
+      "explicit_offsets": [
+        36708,
+        30096
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+             1380 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 36708,30096,...  [0x104cd17e4,0x104ccfe10,...]"
+    },
+    {
+      "thread": "Thread_1608157",
+      "exclusive_observations": 1043,
+      "reported_offsets": "36708,33744,...",
+      "explicit_offsets": [
+        36708,
+        33744
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+             1043 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 36708,33744,...  [0x104cd17e4,0x104cd0c50,...]"
+    },
+    {
+      "thread": "Thread_1608156",
+      "exclusive_observations": 947,
+      "reported_offsets": "36708,30096,...",
+      "explicit_offsets": [
+        36708,
+        30096
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+             947 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 36708,30096,...  [0x104cd17e4,0x104ccfe10,...]"
+    },
+    {
+      "thread": "Thread_1608155",
+      "exclusive_observations": 914,
+      "reported_offsets": "57236,53076,...",
+      "explicit_offsets": [
+        57236,
+        53076
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+             914 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 57236,53076,...  [0x104cd6814,0x104cd57d4,...]"
+    },
+    {
+      "thread": "Thread_1608154",
+      "exclusive_observations": 899,
+      "reported_offsets": "57236,53076,...",
+      "explicit_offsets": [
+        57236,
+        53076
+      ],
+      "additional_offsets_omitted": true,
+      "original_node": "+             899 mech_canonical_program_entry_v1  (in counting-parallel-simd-profile) + 57236,53076,...  [0x104cd6814,0x104cd57d4,...]"
+    }
+  ],
+  "explicit_offset_mapping": [
+    {
+      "symbol_offset_decimal": 30096,
+      "object_address": "0x7810",
+      "instruction": "cbz\tx27, 0x781c",
+      "interpretation": "Fuel/refill guard after packed-frame reload"
+    },
+    {
+      "symbol_offset_decimal": 32688,
+      "object_address": "0x8230",
+      "instruction": "stur\tx1, [sp, #0xc0]",
+      "interpretation": "Checked window-end calculation and source bounds predicate; stores calculated end"
+    },
+    {
+      "symbol_offset_decimal": 33744,
+      "object_address": "0x8650",
+      "instruction": "mov.d\tx7, v1[0]",
+      "interpretation": "SIMD fingerprint comparison result transferred to integer candidate mask"
+    },
+    {
+      "symbol_offset_decimal": 36708,
+      "object_address": "0x91e4",
+      "instruction": "str\tx5, [x22, #0x10]",
+      "interpretation": "Caller-produced u64 count stored into the existing 24-byte slot"
+    },
+    {
+      "symbol_offset_decimal": 53076,
+      "object_address": "0xd1d4",
+      "instruction": "uxtb\tw0, w0",
+      "interpretation": "Checked window-end/source bounds predicate before admitted fast selection"
+    },
+    {
+      "symbol_offset_decimal": 57236,
+      "object_address": "0xe214",
+      "instruction": "str\tx5, [x22, #0x10]",
+      "interpretation": "Caller-produced u64 count stored into the existing 24-byte slot"
+    }
+  ],
+  "scope": "Offline analysis of completed retained sample and disassembly; no new subject execution",
+  "limitations": "The macOS sample report merges distinct instruction offsets into each symbol node and truncates the list with ellipses. Node counts apply to the entire merged offset set, not each listed instruction. These records establish observed loop areas but cannot rank individual instruction costs, recover omitted offsets or assign wall-time shares. Stack spill/reload instructions in the excerpts establish code presence, not measured spill overhead.",
+  "evidence_sha256": {
+    "../full-profile-parallel-simd-v1/sample-0/stacks.txt": "f7c2d72c1c98f0391a5f6148adca683845ecd43e7f2fa177d108982cfcd3e19b",
+    "../full-profile-parallel-simd-v1/analysis.json": "7b946b1008ca5ab78fc0dc844b13d0b3bb01f73ae450bd2c375fe5027426897e",
+    "../simd-codegen-audit-v1/candidate-object.disassembly.txt": "4dfa63cdeb38d7b70f9c1f7d34ef99109cbaac7066b82d3253d71e7bd3611888",
+    "excerpts.txt": "eb4f903683a736dd2bd5279961043d0fe5e3f7cdd26d64b0fff4a54e04d49c1e"
+  }
+}
