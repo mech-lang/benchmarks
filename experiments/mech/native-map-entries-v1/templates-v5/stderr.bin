@@ -1,0 +1,22 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+error[E0599]: no method named `is_empty` found for reference `&mech_core::snapshot::MapValue` in the current scope
+   --> src/stdlib/tests/native_map_entries.rs:184:89
+    |
+184 |             matches!(empty.as_ref().unwrap().data(), ValueData::Map(entries) if entries.is_empty())
+    |                                                                                         ^^^^^^^^ method not found in `&mech_core::snapshot::MapValue`
+
+error[E0599]: no method named `is_empty` found for reference `&mech_core::snapshot::MapValue` in the current scope
+   --> src/stdlib/tests/native_map_entries.rs:222:89
+    |
+222 |             matches!(empty.as_ref().unwrap().data(), ValueData::Map(entries) if entries.is_empty())
+    |                                                                                         ^^^^^^^^ method not found in `&mech_core::snapshot::MapValue`
+
+error[E0599]: no method named `len` found for reference `&mech_core::snapshot::MapValue` in the current scope
+   --> src/stdlib/tests/native_map_entries.rs:225:88
+    |
+225 |             matches!(next.as_ref().unwrap().data(), ValueData::Map(entries) if entries.len() == 1)
+    |                                                                                        ^^^ method not found in `&mech_core::snapshot::MapValue`
+
+For more information about this error, try `rustc --explain E0599`.
+error: could not compile `mech-stdlib` (test "native_map_entries") due to 3 previous errors

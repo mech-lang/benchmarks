@@ -19,6 +19,13 @@ tests. The [preceding pure-entry study](../experiments/mech/general-map-entry-v1
 retains the earlier resource-denial evidence. An explicit general hash-table
 contract, native ownership/lowering and complete-input work qualification remain
 pending. No new benchmark timings or nucleotide results are admitted.
+The [native entry binding study](../experiments/mech/native-map-entries-v1/README.md)
+qualifies ordinary map entry calls through the native library boundary and
+preserves source arithmetic as native scalar work. The candidate passes 49
+focused checks, with one pre-existing ignored check. The complete Mech counting
+state machine still rejects map-valued structural bindings; the seven-width
+negative test records that gap rather than claiming native counting success.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
