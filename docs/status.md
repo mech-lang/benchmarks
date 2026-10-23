@@ -56,6 +56,15 @@ These facts do not establish complete ownership or select a runtime backend.
 Map-valued repeated application remains rejected by the existing frontend;
 supported state-machine syntax passes. No new benchmark samples are collected.
 
+The [retained-map publication study](../experiments/mech/owned-map-publication-v1/README.md)
+adds canonical output from a completed table on the same memory/work accounts.
+Eight publication checks pass within 187 native checks (three pre-existing
+ignored), including immutable prior snapshots, typed native arena transport,
+exact/one-short limits, memory denial, and sorting denial without work renewal.
+The bridge implements no source traversal or counting. Compiled owner-region
+selection and complete caller geometry/site authority remain unfinished;
+no new benchmark result or performance gain is claimed.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
