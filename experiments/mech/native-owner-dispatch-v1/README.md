@@ -92,3 +92,17 @@ Compiler `7091f025d2489ef511c4650b2c5e6d6dfe29102b` binds a closed generated map
 | Closed map loops `7091f025d` | 1.985 | 94× |
 
 [Fresh paired measurements](../native-owner-aot-v1/closed-map-timing-v2/results.json) show a 3.70× speedup with unchanged source and program bytecode. All nine complete outputs match; both Mech executables perform seven tables and 6,999,961 updates. Admissions fall from 55,717,707 to 443. The initial top-level-only attempt selected no closed map loops and produced no gain; its [receipt](../native-owner-aot-v1/closed-map-timing-v1/results.json) and selection analysis remain explicit. The final harness requires two selected regions and fewer actual admissions before timing. [Matching profiles](../native-owner-aot-v1/full-profile-closed-v1/analysis.json) now identify repeated range shape/cardinality validation as the largest remaining category. Full-input qualification and Rust parity remain unfinished.
+
+## Reused range shapes
+
+Compiler `30dd67991bfb03a24c36303115f33f5ece78cc24` retains the last successful range shape in the invocation-owned closed map lane. Fresh endpoints always use maintained cardinality semantics; a different schema key or width requires full shape/layout validation. Current String bounds and selector consumption are checked on every projection. Full work debits, scratch reservation and owner memory accounting remain in place. IR36/work policy54/ABI20 identify the change.
+
+[Engine checks](shape-reuse-engine-v3/summary.json) pass 67 tests, including materialized-range comparisons and integer-limit errors. The [full native suite](shape-reuse-native-v2/summary.json) passes 218 with three pre-existing exclusions. Original/decoded/restored-image cases exercise changing widths and invalid current bounds after successful shape reuse, and check complete cleanup.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0205 | 1.00× |
+| Previous Mech AOT `7091f025d` | 1.978 | 96.5× |
+| Reused range shapes `30dd67991` | 1.230 | 60.0× |
+
+[Fresh paired measurements](../native-owner-aot-v1/shape-timing-v1/results.json) show 37.8% less elapsed time. All nine outputs match the independent reference, source and bytecode are unchanged, and both Mech executables perform seven tables and 6,999,961 updates with 443 runtime admissions. The harness explicitly permits equal admissions for this optimization within an already selected closed loop; its earlier strict-reduction check remains the default. Full-input qualification and Rust parity remain unfinished.

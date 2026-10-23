@@ -21,6 +21,8 @@ parser.add_argument('--package', required=True)
 parser.add_argument('--work-policy', required=True, type=int)
 parser.add_argument('--receipt', required=True)
 parser.add_argument('--minimum-closed-map-regions', type=int, default=0)
+parser.add_argument('--allow-equal-admissions', action='store_true',
+                    help='For improvements inside an already selected closed loop; still reject more admissions')
 args = parser.parse_args()
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
@@ -97,7 +99,12 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     if args.minimum_closed_map_regions:
         candidate = json.loads((out / 'warmup-candidate.report.json').read_text())
         baseline = json.loads((out / 'warmup-baseline.report.json').read_text())
-        assert candidate['native_visits'] < baseline['native_visits'], 'The new path did not reduce runtime admissions'
+        if args.allow_equal_admissions:
+            assert candidate['native_visits'] <= baseline['native_visits'], 'The candidate added runtime admissions'
+        else:
+            assert candidate['native_visits'] < baseline['native_visits'], 'The new path did not reduce runtime admissions'
+        report['warmup_native_visits'] = {label: native['native_visits']
+                                         for label, native in [('candidate', candidate), ('baseline', baseline)]}
     for index, order in enumerate([['candidate', 'baseline', 'rust'], ['rust', 'baseline', 'candidate'], ['baseline', 'candidate', 'rust']]):
         for label in order:
             run(label, index, True)

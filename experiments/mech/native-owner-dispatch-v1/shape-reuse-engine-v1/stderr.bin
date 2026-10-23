@@ -1,0 +1,35 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+   Compiling mech-compute v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/compute)
+   Compiling mech-runtime v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/runtime)
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-build v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/build)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-terminal v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/terminal)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0433]: cannot find type `Error` in this scope
+   --> hosts/gpu/src/native_artifact/program_map_closed_tests.rs:190:51
+    |
+190 |                     assert!(matches!(outcome, Err(Error::Library {
+    |                                                   ^^^^^ use of undeclared type `Error`
+    |
+note: enum `crate::native_artifact::program_runtime::map_owners::closed::Error` exists but is inaccessible
+   --> hosts/gpu/src/native_artifact/program_runtime.rs:66:1
+    |
+ 66 | pub enum NativeProgramExecutionError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ not accessible
+help: consider importing one of these items
+    |
+  2 + use crate::Error;
+    |
+  2 + use crate::fmt::Error;
+    |
+  2 + use crate::native_artifact::owned_string_map::Error;
+    |
+  2 + use std::error::Error;
+    |
+    = and 9 other candidates
+
+For more information about this error, try `rustc --explain E0433`.
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

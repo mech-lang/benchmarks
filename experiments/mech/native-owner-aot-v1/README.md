@@ -4,6 +4,35 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Current measured improvement
 
+Compiler [`30dd67991`](https://github.com/mech-lang/mech/commit/30dd67991bfb03a24c36303115f33f5ece78cc24) reuses a successfully validated range shape within a closed native map loop. Every call still computes the current range cardinality with the maintained endpoint semantics and checks current String bounds. Reuse requires the exact output schema key and cardinality; a changed width runs the full shape/layout resolver. The invocation-owned selector retains only that shape proof, with the original scratch reservation and full work debit. IR36, work policy54 and ABI20 identify the protocol.
+
+Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0205 | 1.00× |
+| Previous Mech AOT, `7091f025d` | 1.978 | 96.5× |
+| Reused range shapes, `30dd67991` | 1.230 | 60.0× |
+
+Elapsed time falls by **37.8%**, a **1.61× speedup**. All nine timed outputs exactly match the independent reference. Both Mech executables perform seven tables and 6,999,961 updates, with 443 runtime admissions. Source and program bytecode are unchanged. Runs are serial and include secured startup/shutdown, with one excluded warmup per executable. [Raw measurements](shape-timing-v1/results.json) retain every sample and identity. Ratios use Rust from this cohort. These prefix measurements do not qualify the full 125-million-base workload.
+
+[Engine validation](../native-owner-dispatch-v1/shape-reuse-engine-v3/summary.json) passes 67 tests, and the [full native suite](../native-owner-dispatch-v1/shape-reuse-native-v2/summary.json) passes 218 with three pre-existing exclusions. Inclusive/exclusive ranges are compared against ordinary materialized ranges across changed widths, shifted endpoints and integer limits. Native original/decoded and restored-image execution checks changing widths, current bounds failures after reuse, unchanged accounting and complete cleanup. Earlier failed validation receipts retain a test-only error-name correction, a work-metadata lifetime assertion correction and two stale version expectations.
+
+The [profiling build](profile-shape-build-v1/results.json) has identical complete machine code to the timed executable: 3,949,744 bytes, SHA-256 `af86a9f9b805421628a7d09ab19aed2c79dae6641dae5f4866ee58a6cb3b1148`. Three samples during early full-input counting and three separate, completed one-million-base executions show:
+
+| Path | Early full-input sample share | Complete-prefix sample share |
+|---|---:|---:|
+| Closed map storage calls | 80–81% | 67–69% |
+| Private map reads | 22–23% | 19–20% |
+| Private map insertions | 21–22% | 18–20% |
+| Range selector, including fresh endpoints | 11–12% | 8–10% |
+| Work-scope guard setup/teardown | 13–14% | 10–12% |
+| Canonical map publication | 0% observed | 10% |
+
+Categories overlap. No samples contain the full range shape validator, although it still runs at the first or changed shape. The [full-input profile](full-profile-shape-v1/analysis.json) retains the 45-second bounded stop; the [prefix profiles](prefix-profile-shape-v1/analysis.json) each complete, match the independent output and perform all 6,999,961 updates. Prefix sampling begins shortly after launch and may omit early startup. Neither profile set supplies benchmark timings. Repeated map lookup and call setup are the next measured targets; full-input qualification and Rust parity remain unfinished.
+
+## Closed native map loops
+
 Compiler [`7091f025d`](https://github.com/mech-lang/mech/commit/7091f025d2489ef511c4650b2c5e6d6dfe29102b) binds a proved closed map loop to invocation-owned storage and a pinned String. The generated Mech code still traverses the input, chooses branches, computes counts and updates every window. Private storage calls use the existing hash library. Entry validates the source representation and caller ownership; the same finite work account funds bounded batches of generated iterations and individual storage operations. Unsupported representations retain canonical execution. A suspended parent comprehension does not prevent a closed child map loop from selecting this path. IR36, work policy53 and ABI20 identify the protocol.
 
 Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
