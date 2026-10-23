@@ -36,3 +36,17 @@ Each row contains three alternating fresh secured processes, with startup/shutdo
 [key-span-validation-v2](key-span-validation-v2) passes 211 native checks with three pre-existing exclusions. The source counting fixture covers 84 original/decoded cases: seven widths and six inputs, including Unicode, CRLF and an empty input. It independently checks returned maps, actual update counts, both projection visits and the absence of canonical range/key calls. Additional checks cover extra key observers, invalid bounds, refused owner entry, stale or substituted helpers, corrupted map references and cleanup after failure.
 
 The retained failed diagnostics are not passing evidence: `key-span-count-v1` exposed an incorrect assumption about Tail iteration counters, corrected by retiring views at the actual Tail latch/exit boundary; `key-span-validation-v1` failed an obsolete ABI16 assertion, updated to ABI17 before the complete rerun. `key-span-count-v2` and `key-span-validation-v2` contain the corrected passing records.
+
+## Grouped native instruction admission
+
+Compiler `a3b1ddfcdf501f4bc3c6eb81a7e975849295fcc4` groups consecutive native owner instructions with single-entry interiors and no intervening library helper, loop transition or ownership boundary. One checked entry prepays every original visit's work plus proof overhead. The generated CFG retains every operation and its original failure origin. The runtime advances to the proved group end for the next callback; exceptional arithmetic returns are accepted only at an original member of that live, admitted group. Refused owner entry keeps ordinary per-instruction admission. IR33, work policy50 and ABI18 pin the protocol and decoded layout.
+
+[map-admission-validation-v1](map-admission-validation-v1) passes 213 native checks with three pre-existing exclusions. Original/decoded and build-owned-image tests observe actual emitted callbacks, verify correct outputs through native and fallback paths, reject replay/interior entry, refuse one-short fuel before advancing the group or spending a partial debit, preserve an interior division failure's exact origin and verify complete cleanup. The 84 independently checked source counting cases also pass.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0184 | 1.00× |
+| Previous Mech AOT `7aa1bea1b` | 12.570 | 682× |
+| Grouped Mech AOT `a3b1ddfcd` | 9.600 | 521× |
+
+Three fresh complete processes per executable run serially in alternating order, after excluded warmups. Every stdout matches the independent reference. Both Mech executables perform seven tables and 6,999,961 updates; actual admission callbacks fall from 321,998,942 to 139,717,328. The [standalone receipts](../native-owner-aot-v1/map-admission-timing-v1/results.json) retain all samples and identities. This 23.6% improvement leaves a substantial gap to Rust and does not qualify the full-input source-map workload.

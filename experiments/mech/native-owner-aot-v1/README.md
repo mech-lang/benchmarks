@@ -4,6 +4,43 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Current measured improvement
 
+Compiler [`a3b1ddfcd`](https://github.com/mech-lang/mech/commit/a3b1ddfcdf501f4bc3c6eb81a7e975849295fcc4) admits a straight-line group of native map-owner instructions once before its first instruction. Group interiors have a single predecessor and contain no library helper or loop/ownership boundary. Every source instruction is still emitted, including its original arithmetic failure location. Refused owner entry retains the canonical per-block callbacks. The full original instruction work plus group-proof overhead is prepaid on the same finite ledger. IR33, work policy50 and ABI18 identify this protocol.
+
+The current diagnostic comparison uses the first **one million bases** of the standard THREE record. Three alternating complete-process measurements per executable give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0184 | 1.00× |
+| Mech AOT before grouping, `7aa1bea1b` | 12.570 | 682× |
+| Mech AOT after grouping, `a3b1ddfcd` | 9.600 | 521× |
+
+The compiler change reduces elapsed time by 23.6%. All nine timed outputs exactly match the independent reference; Mech uses secured startup and shutdown, and each executable has one excluded warmup. Source and generated program bytecode are unchanged. Ratios use Rust measured in this same cohort; its short complete-process timings vary between runs. Raw seconds and all samples are in [map-admission-timing-v1](map-admission-timing-v1/results.json).
+
+| Observed work on one million bases | Before | After |
+|---|---:|---:|
+| Runtime admission callbacks | 321,998,942 | 139,717,328 |
+| Hash tables | 7 | 7 |
+| Actual hash-table updates | 6,999,961 | 6,999,961 |
+
+[Validation](../native-owner-dispatch-v1/map-admission-validation-v1) passes 213 native checks with three pre-existing exclusions. New original/decoded and restored-image tests observe fewer actual callbacks, retained canonical fallback, refusal with one unit less than the group work requirement, rejection of group replay/interior entry, exact interior arithmetic errors and complete owner cleanup. The existing 84 counting cases remain correct. Rust parity is not reached; this is not a full 125-million-base source-map result.
+
+The [matching profiling build](profile-groups-build-v1/results.json) retains symbols with the public CLI's final-host FatLTO settings. Its entire `__TEXT,__text` section is byte-identical to the timed candidate: 3,919,368 bytes, SHA-256 `bc38c7feb54e6ece3c7dd2f58a3d814549c5e749473f61a223e2b36d7700ebc2`. Three two-second samples on the full input identify the remaining overhead:
+
+| Path | Inclusive share across the three sample windows |
+|---|---:|
+| Retained map/key helpers | 59–60% |
+| Generated-block admission | 35–37% |
+| Native work debits, across paths | 20–23% |
+| Library work debits, across paths | 18–21% |
+| Selected-key projection, within the helpers | 9–10% |
+| Selected range cardinality/shape validation | 8–9% |
+
+Categories overlap and must not be added. [Reproducible analysis](full-profile-groups-v1/analysis.json) counts the union of matching stacks within each category. These samples characterize the grouped candidate; they are not a matched before/after profile. The subject was stopped and reaped at the planned 45-second deadline ([receipt](full-profile-groups-v1/results.json)), so this is not a full-input timing. Further work targets the repeated admission, map-binding and accounting checks while retaining general map storage, source-written operations and finite resource accounting.
+
+The attempted 100,000-base Rust comparison was excluded before quantitative timing: the upstream program prints tied `AG` and `GT` frequencies in the opposite order from the required ascending-key tiebreak ([specification](https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html), [failed warmup](rust-span-diagnostic-v1/results.json)). The published Rust program is unchanged. The one-million-base prefix passes exact output comparison for both executables. [rust-span-diagnostic-v2](rust-span-diagnostic-v2/results.json) retains the separate first paired cohort; its Rust median is not used as a denominator for later cohorts.
+
+## Selected String keys
+
 Compiler [`7aa1bea1b`](https://github.com/mech-lang/mech/commit/7aa1bea1b5565113cd07ddeaeea2bed30ed84a54) borrows selected String map keys instead of materializing a range and substring on every window. Selection still uses the maintained String index, including Unicode and CRLF behavior. The compiler selects this representation only when every key use belongs to the same closed map region; an extra observer retains the canonical path. Source control flow, all hash-table updates and caller-produced counts remain unchanged. IR32, work policy49 and ABI17 identify the new representation and checked helper protocol.
 
 Three alternating measurements per executable on the same 100,000-base prefix give:
@@ -55,10 +92,10 @@ The same historical **source**, SHA-256 `12cadfcd00e25605f190e9d360f7f7bb661be8a
 
 On the current machine, the rebuilt histogram-source control performs seven full hash tables and 874,999,961 updates. Its complete stdout and native execution report are checked on every run. Three paired complete-process measurements on the standard 125-million-base input give:
 
-| Executable | Seconds | × current histogram-source Mech AOT control |
+| Executable | Seconds | × Rust time |
 |---|---:|---:|
-| Same historical Mech source, current compiler `f6ee09e63` | 4.2816 | 1.00× |
-| Unmodified upstream Rust #7 | 0.5511 | 0.129× |
+| Same historical Mech source, compiler `f6ee09e63` | 4.2816 | 7.77× |
+| Unmodified upstream Rust #7 | 0.5511 | 1.00× |
 
 These measurements are the `full-preserved-control` cohort in [cache-timing-v2](cache-timing-v2/results.json); “preserved” refers only to source. Rust is 7.77 times faster in this cohort. This control neither measures the new source-map program nor demonstrates a hardware regression from historical #909. It also does not isolate the cache-total optimization: earlier compiler changes already altered the histogram path.
 
@@ -74,8 +111,8 @@ That profile selected per-window range/String materialization and library invoca
 
 ## Evidence and reproduction scope
 
-- `compiler-v2`, `compiler-v3` and `compiler-v4` pin the retained-map, cache-total and selected-key compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
-- `build_and_time.py`, `measure_cache.py`, `measure_scale.py` and `measure_spans.py` retain the exact build/run procedures. Output directories are versioned and guard against overwriting samples. `measure_cache.py` reuses the candidate build receipt from `cache-timing-v1`; that attempted cohort stopped before quantitative timing because unmodified Rust used a different tie order on the synthetic input. Rust is excluded from that diagnostic, and its full standard-input output passes.
+- `compiler-v2` through `compiler-v5` pin the retained-map, cache-total, selected-key and admission-group compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
+- `build_and_time.py`, `measure_cache.py`, `measure_scale.py`, `measure_spans.py`, `compare_rust_spans.py` and `measure_admission.py` retain the exact build/run procedures. Output directories are versioned and guard against overwriting samples. `measure_cache.py` reuses the candidate build receipt from `cache-timing-v1`; that attempted cohort stopped before quantitative timing because unmodified Rust used a different tie order on the synthetic input. Rust is excluded from that diagnostic, and its full standard-input output passes.
 - `profile_full.py`, `build_profile.py` and `analyze_profile.py` retain the sampled process procedure, matching-link settings and code-identity check. Earlier `profile-build-v2`, `full-profile-v2` and `profile-cache-build-v1` used a ThinLTO final link and are explicitly marked as exploratory mismatches. Their percentages are not a matched before/after comparison. `profile-build-v1` and `full-profile-v1` retain failed preparation/monitor diagnostics, not benchmark samples.
 - `available-timing-v1` records the earlier canonical-map implementation at compiler `f6fb76f5f`: 5.4684 seconds on the 1,000-base diagnostic. `candidate-timing-v1` records the subsequent retained-map change. These historical diagnostic measurements are not full-input results.
 - Every build, test, profile and timed process uses the existing common mutex and owned-process cleanup. The canonical benchmark dataset, website data and protected upstream submissions are unchanged.
