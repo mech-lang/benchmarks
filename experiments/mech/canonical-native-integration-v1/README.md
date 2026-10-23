@@ -21,8 +21,8 @@ wire preservation, emitted query/histogram kernels, and same-binary policy
 contracts. `qualify.py` refuses to run until both gates pass. It builds the
 unchanged idiomatic nucleotide fixture through public source and decoded-bytecode
 routes, checks generated pins, requires byte-identical executables, checks bounded
-outputs and missing-grant denials, and qualifies complete standard-input output
-before collecting samples. All subjects inherit the existing common timing mutex;
+outputs and missing-grant denials, and qualifies complete standard-input output. Benchmark timing is separately
+blocked by the required-work conformance gate. All subjects inherit the existing common timing mutex;
 the lock is never replaced.
 
 Tool preparation uses normal dev/test profiles with debug information removed.
@@ -36,6 +36,17 @@ THREE. Fresh-process measurements include startup, secured input acquisition,
 compiled computation, output, security report publication, and shutdown. Build
 and parent-side validation are excluded. Finite policy values and all raw
 observations are retained. These are warm filesystem-cache measurements.
+
+The [workload conformance review](workload-conformance-v1.json) blocks benchmark
+admission and matched Rust comparisons for the current generated counting kernels.
+The official nucleotide task requires actual library hash-table updates at all
+seven widths. Dense small-width counters and direct query counting do not meet
+that requirement, even when selected by a generic compiler transformation.
+`qualify.py` therefore performs output/security qualification only and collects
+zero benchmark timing samples. `compare_rust.py` refuses to run until a
+hash-table-preserving implementation is qualified. The existing compliant Mech
+catalog baseline remains unchanged; no speed claim is made from counting-kernel
+results. A generic native window-to-hash-table lowering remains necessary.
 
 Current validation status is in `validation-v2/results.json`, followed by
 `corrected-contracts-v1/results.json` and `qualification-v1/results.json` when

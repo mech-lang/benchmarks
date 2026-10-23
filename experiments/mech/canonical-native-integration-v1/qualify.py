@@ -38,7 +38,7 @@ def main():
  policy=dict(grants=[dict(target='cli/stdin',operations=['read'],paths=['text']),dict(target='cli/stdout',operations=['write'],paths=['text'])],max_ports=16,input_text_bytes=full.stat().st_size,output_text_bytes=1048576,memory_bytes=1073741824,work=1<<48,transport_bytes=16777216,native_stack_bytes=1048576,library=dict(output_elements=1000000,output_bytes=134217728,temporary_bytes=536870912,cloned_bytes=536870912,retained_nodes=1000000,compute_work=1<<46,comparison_work=1<<40))
  launch=out/'launch.json';process.save(launch,policy)
  cases=[b'>ONE\nAAAA\n>THREE\nGGTA\n>FOUR\nTTTT\n',b'>THREE\n',b'>ONE\nACGT\n',b'>THREE description\r\nggta\r\nACGT\r\n>FOUR\r\nTT\r\n',b'>THREEish\nTTTT\n>THREE\tselected\nACGTTGGTATT\n',b'>THREE\n' + b'ACGTGGTA'*500+b'\n']
- report=dict(status='running',integration_commit=correction['source_commit'],production_source_validated_at=validation['integration_commit'],source_sha256=process.sha(source),input_sha256=process.sha(full),input_bytes=full.stat().st_size,selected_bases=125000000,policy_sha256=process.sha(launch),benchmark_scope='fresh-process startup through exit including secured capture, native computation, output and report; build and parent validation excluded; warm filesystem cache',variants={},samples=[])
+ report=dict(status='running',hash_table_work_preserved=False,benchmark_admission_allowed=False,qualification_scope='Output and security qualification only; current dense/query kernels remove required hash-table work. No benchmark timings or ranking admission.',integration_commit=correction['source_commit'],production_source_validated_at=validation['integration_commit'],source_sha256=process.sha(source),input_sha256=process.sha(full),input_bytes=full.stat().st_size,selected_bases=125000000,policy_sha256=process.sha(launch),benchmark_scope='fresh-process startup through exit including secured capture, native computation, output and report; build and parent validation excluded; warm filesystem cache',variants={},samples=[])
  process.save(out/'results.json',report)
  with Path(PLAN['common_mutex']).open('a+') as lock:
   fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
@@ -73,7 +73,7 @@ def main():
    assert r['exit_status']!=0 and (out/f'{variant}-denied/stdout.bin').stat().st_size==0 and not (out/f'{variant}-denied.report.json').exists()
    process.save(out/'results.json',report)
   assert report['variants']['source']['binary_sha256']==report['variants']['decoded']['binary_sha256']
-  for round_id in range(4):
+  for round_id in range(1):
    for variant in (['source','decoded'] if round_id%2==0 else ['decoded','source']):
     label=f'full-{round_id}-{variant}';receipt=out/(label+'.report.json');binary=b/('knucleotide-'+variant)
     r=execute([str(binary),str(launch),str(receipt),'--'],out/label,full,quant=round_id>0,deadline=120)
@@ -82,6 +82,6 @@ def main():
     native=json.loads(receipt.read_bytes());assert native['native_aot'] and not native['resident_body_evaluation'] and native['shutdown']=='completed'
     if round_id>0:report['samples'].append(dict(variant=variant,round=round_id,seconds=r['elapsed_seconds'],maximum_rss_bytes=r['maximum_rss_bytes'],process=str((out/label/'process.json').relative_to(ROOT)),security_report=str(receipt.relative_to(ROOT))))
     process.save(out/'results.json',report);print(label,'passed',flush=True)
-  report['medians_seconds']={v:statistics.median(s['seconds'] for s in report['samples'] if s['variant']==v) for v in ['source','decoded']}
-  report['status']='public-source-decoded-security-and-full-timing-passed';process.save(out/'results.json',report)
+  report['medians_seconds']={};assert not report['samples']
+  report['status']='public-source-decoded-security-and-full-output-passed';process.save(out/'results.json',report)
 if __name__=='__main__':main()

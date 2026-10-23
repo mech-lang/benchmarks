@@ -6,7 +6,8 @@ sys.path.insert(0,str(HERE.parent/'revcomp-streaming-v1'))
 from build_baseline import PLAN,process,WORKSPACE
 EXPECTED='f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
 def main():
- qualified=json.loads((HERE/'qualification-v1/results.json').read_bytes());assert qualified['status']=='public-source-decoded-security-and-full-timing-passed'
+ qualified=json.loads((HERE/'qualification-v1/results.json').read_bytes());assert qualified['status']=='public-source-decoded-security-and-full-output-passed'
+ assert qualified['hash_table_work_preserved'] and qualified['benchmark_admission_allowed'], 'Refuse a benchmark comparison until actual library hash-table work is qualified'
  prepared=json.loads((HERE/'validation-v2/results.json').read_bytes());env={**prepared['environment'],'RUSTUP_TOOLCHAIN':'nightly-2026-03-03'}
  assert not any(k.startswith('DYLD_') for k in env)
  assert subprocess.check_output(['git','-C',str(WORKSPACE),'rev-parse','HEAD'],text=True).strip()==qualified['integration_commit']

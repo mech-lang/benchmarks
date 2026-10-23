@@ -1,0 +1,45 @@
+{
+  "schema": "mech.native-nucleotide-workload-conformance.v1",
+  "status": "counting-kernels-not-compliant-with-required-hash-table-work",
+  "source_commit": "bbd66acb9b3beacdc95356084df259ca172c8b98",
+  "official_specification": {
+    "url": "https://benchmarksgame-team.pages.debian.net/benchmarksgame/description/knucleotide.html",
+    "reviewed_utc_date": "2026-10-23",
+    "acquisition": "Official primary specification opened with the web tool; rendered cached page reported a crawl three days earlier.",
+    "required_work": "Use a built-in or library hash table to look up and update counts for all overlapping windows at lengths 1, 2, 3, 4, 6, 12 and 18; grow the tables and retain the prescribed algorithm, not only its output.",
+    "short_exact_excerpt": "Don't optimize away the work."
+  },
+  "implementation_findings": [
+    "Width-1/2 histogram code uses indexed dense counter storage, not library hash-table entry updates.",
+    "Longer histogram/query proof regions directly count the selected query; the emitted loop has no hash-table call.",
+    "The unchanged Mech source expresses histograms, but generated code removes the benchmark-mandated table work. Generic semantic validity does not establish workload conformance."
+  ],
+  "source_pins": [
+    {
+      "path": "hosts/gpu/src/native_artifact/program_window_codegen.rs",
+      "sha256": "9e4f8962bff2854f04c1d7c2ce901adabd806890e2440eb64f96322489062c91"
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/program_window_query_codegen.rs",
+      "sha256": "38e4fe16d6493b342997fefd0899303e85c1594334201b1aca8db9fe3d06ade6"
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/program_window_histogram_codegen.rs",
+      "sha256": "16dac415fc234f095c7452494e18c9e9aa505ac6b50816baa0efbae19b701665"
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/program_window_codegen_tests.rs",
+      "sha256": "d06ac14cca0374bc25d0d8c4704748164bd338b27ab2118983b7e538d3c64d5c"
+    },
+    {
+      "path": "hosts/gpu/tests/fixtures/native/knucleotide-idiomatic.mec",
+      "sha256": "12cadfcd00e25605f190e9d360f7f7bb661be8a02754961055ee5b6dfa84b60f"
+    }
+  ],
+  "hash_table_work_preserved": false,
+  "benchmark_admission_allowed": false,
+  "matched_benchmark_comparison_allowed": false,
+  "correctness_and_security_qualification_still_useful": true,
+  "canonical_dataset_changed": false,
+  "next_work": "Qualify a generic hash-table-preserving native lowering that fuses window production without removing the actual library entry lookup/update for each required window. Preserve the canonical resource lifecycle, errors, ownership and finite accounting. Do not insert a nucleotide-specific host helper or change protected Rust programs."
+}
