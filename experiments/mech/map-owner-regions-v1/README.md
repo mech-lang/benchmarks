@@ -1,0 +1,15 @@
+# Closed map-state ownership candidates
+
+Compiler revision `bff3176869d7bc8f6d4151d586f205c3f4fbc6cf` derives whole-state candidates for future retained-map lowering. It uses the selected semantic operations, complete original read inventory and per-write old-version facts. The initial supported state family contains one String/U64 map in each active enum arm, optionally paired with fixed U64 fields. The canonical seed and external result stay outside the private component. A future runtime entry must copy the seed; exit must publish an independent canonical result.
+
+The analysis follows local map lineage through projections, copies, constructors and chained insertions. It rejects late reads of previous versions, unknown map consumers, foreign map inputs to a phi/constructor, nested-loop captures and transport/effect escapes. It never recognizes a source name, alphabet, window width or benchmark. These are descriptive compiler candidates, not permission to mutate an owner, select a backend or publish a native value. No runtime representation or execution image changes through the candidate analysis alone.
+
+Predicate-type checkpoint `383fe3c924ff75e6cf21b24e74c3823c3d3a87cb` is committed separately from the candidate analysis.
+
+The first unconditional two-insert state exposed a separate schema-closure gap. Native enum guards require Boolean predicate types, but an unguarded source state previously retained Bool only if some unrelated source expression used it. Structural control now retains its internal predicate type when building canonical source schemas. The source example remains unchanged. Original and bytecode-decoded execution are checked separately; this does not retrofit an older manually constructed artifact that already omitted the type.
+
+Final validation passes 346 distinct checks: eleven map integration checks, 147 source semantics checks and 188 native checks. Three pre-existing native checks remain ignored. The two new candidate checks exercise 22 original/decoded cases, and the unconditional-state regression executes both source and decoded native artifacts.
+
+Intermediate receipts retain the original lowering failure (`regions-v1`, `regions-v2`) and later negative-fixture syntax/schema errors (`regions-v3` through `regions-v5`). `regions-v6` passes all eleven map checks. The first source-semantics probe selected zero tests because its feature gate was absent; it is excluded from passing-check totals. The corrected `source-semantics-v2` runs all 147 checks. Failed attempts do not count as passing validation. Positive candidate cases cover all seven widths and ordinary chained updates. Negative cases distinguish old-version reads, unsupported consumers even when per-write liveness passes, and branches that substitute an unrelated map.
+
+Runtime owner transport/selection, complete live frame geometry and current-site authority, source representation intent, full-input work witnesses and final timings remain unfinished. No quantitative benchmark samples or canonical dataset changes occur. All compiler/test subjects use the existing common mutex and bounded owned-process control.

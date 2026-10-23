@@ -65,6 +65,16 @@ The bridge implements no source traversal or counting. Compiled owner-region
 selection and complete caller geometry/site authority remain unfinished;
 no new benchmark result or performance gain is claimed.
 
+The [closed map-state candidate study](../experiments/mech/map-owner-regions-v1/README.md)
+follows complete map lineage and rejects unknown consumers, old-version reads,
+foreign phi maps and escaping captures. All seven widths and ordinary chained
+updates pass source/bytecode analysis. A separately committed schema-closure fix
+lets unconditional map states compile and execute without an unrelated Boolean
+expression in the source. Validation passes 346 distinct checks: eleven map,
+147 source semantics and 188 native checks, with three pre-existing ignored.
+The candidates select no retained runtime storage; owner transport, complete
+caller authority, full-input qualification and final timings remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)

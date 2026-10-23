@@ -1,0 +1,12 @@
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+    Finished `test` profile [unoptimized] target(s) in 5.57s
+     Running tests/native_map_entries.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/native_map_entries-b2a04874812a9f51)
+
+thread 'native_map_owner_regions_reject_old_aliases_unknown_consumers_and_foreign_phi_maps' (803904) panicked at src/stdlib/tests/native_map_entries.rs:17:5:
+DiagnosticStore { revision: Revision(1), diagnostics: [Diagnostic { id: DiagnosticId(1), code: DiagnosticCode("syntax/unexpected-delimited-content"), phase: Syntax, severity: Error, rule: Some(RuleId(3802762633)), context: None, primary: Element { element: Node(NodeId(986)), relative: TextRange { start: TextSize(0), end: TextSize(12) } }, labels: [], expected: [], found: Some(FoundSyntax { kind: Some(Unknown), text: Some(":= map/new()") }), fixes: [], related: [], recovery: Some(Abandon { rule: RuleId(3802762633), at: TextSize(406) }), tags: DiagnosticTags(0), message: "unexpected source before the closing delimiter" }, Diagnostic { id: DiagnosticId(2), code: DiagnosticCode("syntax/missing-delimiter"), phase: Syntax, severity: Error, rule: Some(RuleId(3802762633)), context: None, primary: Element { element: Node(NodeId(987)), relative: TextRange { start: TextSize(0), end: TextSize(0) } }, labels: [], expected: [Token(RightParen)], found: Some(FoundSyntax { kind: Some(Newline), text: Some("\n") }), fixes: [DiagnosticFix { title: "Insert `)`", applicability: MachineApplicable, edits: [TextEdit { delete: TextRange { start: TextSize(406), end: TextSize(406) }, insert: ")" }] }], related: [], recovery: Some(Insert { syntax: Token(RightParen), at: TextSize(406) }), tags: DiagnosticTags(0), message: "missing closing delimiter" }] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+fatal runtime error: failed to initiate panic, error 5, aborting
+error: test failed, to rerun pass `-p mech-stdlib --test native_map_entries`
+
+Caused by:
+  process didn't exit successfully: `/private/tmp/mech-pidigits-performance/target/debug/deps/native_map_entries-b2a04874812a9f51 --test-threads=1 --nocapture` (signal: 6, SIGABRT: process abort signal)
