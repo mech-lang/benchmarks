@@ -2,6 +2,38 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Narrow helper synchronization
+
+Compiler [`f2bb3c924`](https://github.com/mech-lang/mech/commit/f2bb3c924051524b09c213404dea6a6a63184e47) synchronizes only the private Frame words each checked storage helper reads or changes. The generated refill template stores two words and reloads three; insertion stores six and reloads nine, versus fourteen stores and fourteen reloads previously. Cap-error helpers store two words and reload none. Terminal/error spills, unknown operations and memory-mode fallback retain complete synchronization. IR47 identifies the change; ABI24, work policy64, source, bytecode and finite launch policies remain unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.552 | 1.00× |
+| Previous folded-hash stage, `c871644b0` | 1.968 | 3.57× |
+| Narrow helper synchronization, `f2bb3c924` | 1.998 | 3.62× |
+
+The candidate median is **1.5% slower**. Candidate observations are 1.998, 2.052 and 1.940 seconds; parent observations are 2.013, 1.968 and 1.959 seconds. Their ranges overlap, so these cohorts establish **no runtime gain**. [Full cohort receipts](full-frame-effects-cohort-v1/results.json) retain every observation, order and standard deviation.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, also regresses:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0130 | 1.0× |
+| Previous folded-hash stage | 0.507 | 39.2× |
+| Narrow helper synchronization | 0.529 | 40.8× |
+
+Its median is **4.3% slower**, with candidate observations at 0.528–0.538 seconds and parent observations at 0.499–0.509 seconds. [Prefix receipts](frame-effects-timing-v1/results.json) retain all measurements, including the wider Rust spread: 0.0115, 0.0130 and 0.0208 seconds. No cause is assigned to the regression from these observations alone.
+
+[Actual-emission metadata](frame-effects-timing-v1/emission-audit.json) verifies the exact store/reload word sets for all eight emitted helper operations in each of the two compiled packed-map regions, with object, descriptor and linked-manifest hashes. These are **compiler-emitted template counts**, not measured dynamic call frequencies or post-register-allocation machine-instruction savings. Both regions retain the source-state and scalar proofs. Runtime receipts independently verify seven packed SSA instances, one batch of seven tasks, an observed peak of seven workers, complete output and all **6,999,961 prefix** or **874,999,961 full-input updates**. Subjects run sequentially and include secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/frame-effects-focused-v1/summary.json) passes **two tests** comparing enabled and disabled synchronization across changed inputs, narrow/wide keys, growth, refills, arithmetic failures and exact source work before publication. The [full validation](../native-owner-dispatch-v1/frame-effects-native-v1/summary.json) passes **301 GPU native tests and one standard-library catalog test**, with three existing manual exclusions. Coverage includes exact emitted masks, unknown-operation fallback, unchanged terminal/error spills and original failure locations. Both runs have clean, unchanged before/after source snapshots.
+
+The [profiling build](profile-frame-effects-build-v1/summary.json) matches the timed executable's entire **4,129,412-byte** machine-code section, SHA-256 `656d619fbf2dc8dab4c30ceaf5e657959aa9cb8e0815ced705c0a207bb0f2016`. The [full-input capture](full-profile-frame-effects-v1/summary.json) observes seven workers and 7,163 worker samples: **83.39%** have generated program code as their innermost recorded frame. Inclusive shares are **2.12%** for publication, **4.97%** for library work debits and **7.08%** for waiting. The [prefix capture](prefix-profile-frame-effects-v1/summary.json) observes 649 samples from two remaining workers: **20.80%** include publication, **29.89%** include work debits and **37.44%** include waiting; none have generated program code as their innermost frame. Both ordinary and batched debit APIs are included.
+
+Categories overlap and include waits, partial unwinds and profiling overhead; they are not wall-time shares or matched baseline profiles. The prefix capture covers its tail rather than the earlier counting phase. Guarded-loop normalization and private packed-map retention remain unmeasured at this stage, alongside separate decoded-source executable qualification, secured/trusted comparison and Rust parity.
+
 ## Folded unsigned-product hashing
 
 Compiler [`c871644b0`](https://github.com/mech-lang/mech/commit/c871644b02586b52ffe60aef4a27ea81d0010a78) replaces the packed table's two dependent mixing multiplies with a folded unsigned 128-bit product: multiply the two key words after XOR with fixed constants, then XOR the product's upper and lower halves. The runtime and generated code use the same function. Full-key equality, collision handling, bounded probing, every table entry and all source updates remain. The constants are unchanged; the hash does not depend on benchmark names, query strings or measured input. IR46/ABI24 prevent pairing generated code with the previous runtime hash; work policy64, source, bytecode and finite launch policies remain unchanged.

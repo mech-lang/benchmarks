@@ -18,7 +18,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'require_packed_ssa', 'require_parallel_tasks', 'minimum_parallel_peak',
             'source_edge_facts_qualified', 'compiled_source_edge_facts',
             'qualified_source_edge_regions', 'object_sha256', 'linked_manifest_sha256',
-            'source_tag_threading_qualified', 'compiled_tag_threading', 'qualified_tag_regions']
+            'source_tag_threading_qualified', 'compiled_tag_threading', 'qualified_tag_regions',
+            'source_frame_effects_qualified', 'compiled_frame_effects', 'qualified_frame_regions']
 first = reports[0]
 samples = {}
 receipts = []

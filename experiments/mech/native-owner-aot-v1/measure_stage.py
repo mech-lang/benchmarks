@@ -135,6 +135,35 @@ def require_tag_threading(metadata, descriptor, minimum_branches, minimum_latche
     return qualified
 
 
+def require_frame_effects(metadata, descriptor):
+    """Verify actual narrow synchronization against the ABI24 private helpers."""
+    assert metadata and metadata['complete'] is True, 'Missing or truncated frame-effect receipt'
+    records = metadata['regions']
+    by_header = {record['header']: record for record in records}
+    assert len(by_header) == len(records), 'Duplicate frame-effect headers'
+    expected = {region['tail']['header'] for region in descriptor['closed_tails']['regions']
+                if region.get('map') is not None and region.get('packed') is not None}
+    assert expected and expected == set(by_header), 'Frame-effect headers differ from the exact packed source regions'
+    # Fields are word indices in the explicit nineteen-word ABI24 Frame.
+    # These expectations are deliberately independent of the compiler's masks.
+    effects = {0: ([3, 8], [3, 7, 8]),
+               7: ([3, 4, 5, 6, 7, 8], [0, 1, 2, 4, 7, 15, 16, 17, 18]),
+               6: ([], []), 8: ([], []), 9: ([], []),
+               10: ([3, 8], []), 11: ([3, 8], []), 12: ([3, 8], [])}
+    qualified = []
+    for header in sorted(expected):
+        operations = by_header[header]['operations']
+        by_op = {record['operation']: record for record in operations}
+        assert len(by_op) == len(operations) and set(by_op) == set(effects), 'Missing, duplicate or unproved helper effects'
+        for op, (stores, loads) in effects.items():
+            record = by_op[op]
+            assert type(record['emitted_calls']) is int and record['emitted_calls'] > 0
+            assert record['stored_words'] == stores and record['reloaded_words'] == loads, 'Private helper effects disagree with its exact frame contract'
+        qualified.append(dict(header=header, operations=operations,
+                              scope='Actual compiled call templates; not runtime callback frequencies'))
+    return qualified
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--compiler', required=True)
 parser.add_argument('--parent-receipt', required=True)
@@ -164,6 +193,8 @@ parser.add_argument('--minimum-tag-branches', type=int, default=0,
                     help='Minimum actual folded branches in each compiled state-specialized map entry')
 parser.add_argument('--minimum-tag-latches', type=int, default=0,
                     help='Minimum actual known-state latch routes in each compiled map entry')
+parser.add_argument('--require-frame-effects', action='store_true',
+                    help='Require exact narrow frame synchronization for every compiled packed-map helper')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -173,8 +204,8 @@ if args.minimum_parallel_peak is not None and (
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
 require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
 require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches)
-require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions
-require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -225,6 +256,13 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
+    if args.require_frame_effects:
+        assert manifest['object']['abi_version'] == 24, 'Frame-effect masks require the audited ABI24 Frame'
+        report['compiled_frame_effects'] = manifest['object'].get('compiled_frame_effects')
+        report['qualified_frame_regions'] = require_frame_effects(report['compiled_frame_effects'], descriptor)
+        report['source_frame_effects_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if require_tag_emissions:
         report['compiled_tag_threading'] = manifest['object'].get('compiled_tag_threading')
         report['qualified_tag_regions'] = require_tag_threading(

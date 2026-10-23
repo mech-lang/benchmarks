@@ -49,9 +49,9 @@ targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rus
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
 assert process.sha(targets['mech']) == timing['candidate_sha256']
-if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified'):
+if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified'):
     project = Path(str(targets['mech']) + '.project')
-    for key in ('compiled_source_edge_facts', 'compiled_tag_threading'):
+    for key in ('compiled_source_edge_facts', 'compiled_tag_threading', 'compiled_frame_effects'):
         if timing.get(key) is not None:
             assert timing[key]['complete'] is True
     assert process.sha(project / 'program.o') == timing['object_sha256']
@@ -105,6 +105,10 @@ if timing.get('source_edge_facts_qualified'):
 if timing.get('source_tag_threading_qualified'):
     for key in ('source_tag_threading_qualified', 'compiled_tag_threading',
                 'qualified_tag_regions', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
+if timing.get('source_frame_effects_qualified'):
+    for key in ('source_frame_effects_qualified', 'compiled_frame_effects',
+                'qualified_frame_regions', 'object_sha256', 'linked_manifest_sha256'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
