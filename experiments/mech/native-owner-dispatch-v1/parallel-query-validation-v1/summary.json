@@ -1,0 +1,78 @@
+{
+  "status": "validation-passed",
+  "scope": "Completed small-input compiler regression for source-derived variable-width String queries. This establishes ordered lookup behavior on the fixture, not correctness or performance of a large uncached map.",
+  "benchmark_samples": 0,
+  "validated_change_commit": "f3aabf9b9b65ae504f8713b1c917421a30eb1642",
+  "validated_source_sha256": {
+    "hosts/gpu/src/native_artifact/program_parallel_tests.rs": "3394a5bd242d76bd2dba5ff3aa8b601973375ab80cf0cf2d755ca9871deb0173"
+  },
+  "source_identity_scope": "Validated change identified by committed source hashes after the run; process receipt contains no checkout tree hash",
+  "exit_status": 0,
+  "reaped": true,
+  "group_closed": true,
+  "cleanup_errors": [],
+  "inherited_common_mutex": true,
+  "tests_passed": 1,
+  "tests_failed": 0,
+  "test_summaries": [
+    {
+      "status": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 315
+    },
+    {
+      "status": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 2
+    }
+  ],
+  "passed_tests": [
+    "native_artifact::program_runtime::parallel_tests::parallel_string_query_elements_preserve_variable_widths_and_guarded_map_lookup"
+  ],
+  "verified_assertions": [
+    "One batch covers two source comprehensions and seven tasks",
+    "Seven original maps perform exactly 45 updates",
+    "Present and missing-key branches preserve serial output",
+    "Three parallel invocations preserve output order and release retained memory"
+  ],
+  "command": [
+    "/Users/cim310/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "/private/tmp/mech-native-hashmap-performance/Cargo.toml",
+    "--offline",
+    "--locked",
+    "-p",
+    "mech-stdlib",
+    "-p",
+    "mech-gpu",
+    "--no-default-features",
+    "--features",
+    "mech-stdlib/full_compiler,mech-stdlib/native-artifact,mech-gpu/canonical-native-program-host",
+    "--lib",
+    "parallel_string_query_elements_preserve_variable_widths_and_guarded_map_lookup",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "evidence": {
+    "process.json": {
+      "sha256": "d749b1f961d7c3f521e6e9ad70c8608b1e95f3ae0e49873eb2a84c7923e7940a",
+      "bytes": 1139
+    },
+    "stdout.bin": {
+      "sha256": "2ac1159a0a6d0605b98fbd590c564402f83bac5ad9f5ad4d390314d95bd03997",
+      "bytes": 368
+    },
+    "stderr.bin": {
+      "sha256": "3d11fde05fb7ffd3b192fb5155a41be85f1428c41abee201b62c52aceb00297c",
+      "bytes": 768
+    }
+  }
+}

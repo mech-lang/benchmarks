@@ -1,4 +1,4 @@
-"""Sample the owned full-input AOT process; these are not timing samples."""
+"""Sample an owned qualified-input AOT process; these are not timing samples."""
 import argparse, fcntl, json, os, sys
 from pathlib import Path
 
@@ -11,6 +11,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('receipt', nargs='?', default='full-profile-v2')
 parser.add_argument('build', nargs='?', default='profile-build-v2')
 parser.add_argument('--launch', default='full-timing-v1/launch.json')
+parser.add_argument('--input-mode', choices=('full', 'prefix'), default='full',
+                    help='Qualified 125-million-base input or one-million-base prefix; does not rebuild the executable')
 parser.add_argument('--deadline', type=float, default=45)
 parser.add_argument('--interval', type=float, default=10)
 parser.add_argument('--sample-count', type=int, default=3, help='Maximum captures; a short completed run may yield fewer')
@@ -28,8 +30,18 @@ build_folder = args.build
 build = json.loads((HERE / build_folder / 'results.json').read_bytes())
 binary = Path(build.get('binary', str(HERE / '.build/counting-profile')))
 assert process.sha(binary) == build['binary_sha256']
-inp = ROOT / 'experiments/janet/.build/inputs/fasta-n25000000.stdin'
-assert process.sha(inp) == '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'
+if args.input_mode == 'prefix':
+    inp = HERE / 'rust-span-diagnostic-v2/input.fasta'
+    input_sha256 = 'e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb'
+    expected_output_sha256 = 'f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa'
+    assert process.sha(HERE / 'rust-span-diagnostic-v2/expected.txt') == expected_output_sha256
+    selected_bases, expected_updates = 1000000, 6999961
+else:
+    inp = ROOT / 'experiments/janet/.build/inputs/fasta-n25000000.stdin'
+    input_sha256 = '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'
+    expected_output_sha256 = 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+    selected_bases, expected_updates = 125000000, 874999961
+assert process.sha(inp) == input_sha256
 env = build.get('environment') or json.loads((HERE / 'compiler-v2/results.json').read_bytes())['environment']
 samples = []
 with Path(PLAN['common_mutex']).open('a+') as lock:
@@ -53,7 +65,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         stacks = folder / 'stacks.txt'
         assert 'Call graph:\n' in stacks.read_text(), 'Sampler did not retain a call graph'
         samples.append(dict(pid=int(pid),owned_direct_child=True,stacks=str(stacks),stacks_sha256=process.sha(stacks),all_process_threads=True))
-        print(f'Captured full-input stack sample {len(samples)}.', flush=True)
+        print(f'Captured {args.input_mode} stack sample {len(samples)}.', flush=True)
 
     try:
         r = process.execute([str(binary), str(HERE / args.launch), str(out / 'native.report.json'), '--'], out / 'subject', env, lock, stdin=inp, deadline=args.deadline, monitor=monitor, monitor_interval=args.interval, quantitative=False)
@@ -63,19 +75,19 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     completed = r['exit_status'] == 0
     native = None
     if completed:
-        assert process.sha(out / 'subject/stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+        assert process.sha(out / 'subject/stdout.bin') == expected_output_sha256
         native = json.loads((out / 'native.report.json').read_text())
         assert native['shutdown'] == 'completed'
-        assert native['native_hash_table_regions'] == 7 and native['native_hash_table_updates'] == 874999961
+        assert native['native_hash_table_regions'] == 7 and native['native_hash_table_updates'] == expected_updates
         if args.require_packed_map:
-            assert native['native_packed_map_regions'] == 7 and native['native_packed_map_updates'] == 874999961
+            assert native['native_packed_map_regions'] == 7 and native['native_packed_map_updates'] == expected_updates
         if args.require_packed_ssa:
             assert native['native_packed_ssa_regions'] == 7
         if args.require_parallel:
             assert native['native_parallel_batches'] == 1 and native['native_parallel_regions'] == 2
             assert native['native_parallel_tasks'] == 7 and native['native_parallel_peak_workers'] == 7
     if args.require_completion:
-        assert completed, 'Full profiling execution did not complete successfully'
+        assert completed, 'Profiling execution did not complete successfully'
     assert samples, 'Execution ended before any stacks were captured; reduce --interval'
-    process.save(out / 'results.json', dict(status='profile-captured',source_commit=build.get('source_commit'),binary_sha256=process.sha(binary),object_sha256=build['object_sha256'],input_sha256=process.sha(inp),selected_bases=125000000,profiling_overhead_included=True,benchmark_samples=0,samples=samples,process=r,configuration=vars(args),launch_sha256=process.sha(HERE / args.launch),completed_output_verified=completed,native_counters={key:value for key,value in native.items() if key.startswith('native_')} if native else None,native_report_sha256=process.sha(out / 'native.report.json') if native else None,sampling_scope='All observed process threads; includes parked/waiting threads, partial unwinds and profiling overhead; thread samples must not be added as wall time'))
-    print('Full-input profile complete; subject reaped.', flush=True)
+    process.save(out / 'results.json', dict(status='profile-captured',source_commit=build.get('source_commit'),binary_sha256=process.sha(binary),object_sha256=build['object_sha256'],input_sha256=process.sha(inp),input_mode=args.input_mode,selected_bases=selected_bases,expected_table_updates=expected_updates,expected_output_sha256=expected_output_sha256,profiling_overhead_included=True,benchmark_samples=0,samples=samples,process=r,configuration=vars(args),launch_sha256=process.sha(HERE / args.launch),completed_output_verified=completed,native_counters={key:value for key,value in native.items() if key.startswith('native_')} if native else None,native_report_sha256=process.sha(out / 'native.report.json') if native else None,sampling_scope='All observed process threads; includes parked/waiting threads, partial unwinds and profiling overhead; thread samples must not be added as wall time'))
+    print(f'{args.input_mode.capitalize()} profile complete; subject reaped.', flush=True)

@@ -1,0 +1,112 @@
+{
+  "status": "validation-passed",
+  "scope": "Completed finite-budget regression validation; includes uncached canonical MapKeyAccess under active call limits and the shared root allowance. Build/test process duration is not a benchmark timing.",
+  "benchmark_samples": 0,
+  "validated_change_commit": "a999107959d91428e25ea5a55f6db41ece79ff12",
+  "validated_source_sha256": {
+    "src/engine/src/resident/budget.rs": "49bc4e16b6952f146154d79013363f109da3e330c0bafaa03758cfa7d273c3a6",
+    "src/engine/src/resident/general/native_collection_invocation.rs": "39971185826881af4a139f923b7e2d319142f58665c38b97c8bdea78ae8c9928",
+    "src/engine/src/resident/general/native_incremental_allowance_tests.rs": "94cbd89358a41c8e5b693e2b7abcda89a3cd2c05b3061544706812ac5dba4b70"
+  },
+  "source_identity_scope": "Validated change identified by committed source hashes after the run; process receipt contains no checkout tree hash",
+  "exit_status": 0,
+  "reaped": true,
+  "group_closed": true,
+  "cleanup_errors": [],
+  "inherited_common_mutex": true,
+  "tests_passed": 13,
+  "tests_failed": 0,
+  "test_summaries": [
+    {
+      "status": "ok",
+      "passed": 2,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 326
+    },
+    {
+      "status": "ok",
+      "passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 1024
+    },
+    {
+      "status": "ok",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 315
+    },
+    {
+      "status": "ok",
+      "passed": 0,
+      "failed": 0,
+      "ignored": 0,
+      "measured": 0,
+      "filtered_out": 2
+    }
+  ],
+  "passed_tests": [
+    "snapshot::encoding::tests::incremental_work_matches_canonical_footprint_in_one_pass",
+    "snapshot::encoding::tests::incremental_work_stops_at_the_first_rejected_child",
+    "resident::budget::borrowed_metadata_scan_tests::whole_metadata_scan_matches_incremental_closed_analysis_at_every_boundary",
+    "resident::budget::tests::incremental_allowance_keeps_finite_defaults_for_unspecified_plan_bounds",
+    "resident::budget::tests::incremental_allowance_respects_comparison_and_compute_remainders",
+    "resident::budget::tests::incremental_finalization_uses_large_finite_plan_and_rejects_actual_cap",
+    "resident::budget::tests::incremental_meter_rejects_the_first_over_limit_charge",
+    "resident::budget::tests::incremental_progress_cannot_admit_candidate_publication_facts",
+    "resident::budget::tests::incremental_progress_checks_match_full_admission_without_rebuilding_the_plan",
+    "resident::general::native_collection_calls::invocation::incremental_allowance_tests::uncached_map_lookup_finalization_obeys_actual_finite_allowance_and_root",
+    "resident::numeric::tests::late_map_key_stops_at_the_incremental_comparison_limit",
+    "resident::set::tests::recursively_large_set_candidate_stops_during_incremental_measurement",
+    "native_artifact::program_runtime::session::prefix_tests::original_and_decoded_selected_producer_own_the_incremental_line_storage"
+  ],
+  "verified_assertions": [
+    "Active finite call allowance is used for incremental finalization",
+    "Unspecified limits retain finite defaults",
+    "Actual per-call and shared-root limit failures remain enforced",
+    "Uncached map lookup finalization regression passed"
+  ],
+  "command": [
+    "/Users/cim310/.cargo/bin/cargo",
+    "test",
+    "--manifest-path",
+    "/private/tmp/mech-native-hashmap-performance/Cargo.toml",
+    "--offline",
+    "--locked",
+    "-p",
+    "mech-core",
+    "-p",
+    "mech-engine",
+    "-p",
+    "mech-stdlib",
+    "-p",
+    "mech-gpu",
+    "--no-default-features",
+    "--features",
+    "mech-stdlib/full_compiler,mech-stdlib/native-artifact,mech-gpu/canonical-native-program-host",
+    "--lib",
+    "incremental_",
+    "--",
+    "--test-threads=1",
+    "--nocapture"
+  ],
+  "evidence": {
+    "process.json": {
+      "sha256": "e4ef9321cf4b64257b017facecb196745c922a03cf4f5be5897e55951d3741b7",
+      "bytes": 1127
+    },
+    "stdout.bin": {
+      "sha256": "afc96a4df5d2a8b3639fbb98cd8e5002dd8fb6f3546eabea140ec50697cd00ec",
+      "bytes": 1909
+    },
+    "stderr.bin": {
+      "sha256": "cafd0cf2cc991d789f5680dd4df606b756f6431f61f84a81bd6a04ef0603d2f4",
+      "bytes": 1414
+    }
+  }
+}
