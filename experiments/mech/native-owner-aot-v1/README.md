@@ -2,6 +2,38 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Proved window bounds
+
+Compiler [`99942aea4`](https://github.com/mech-lang/mech/commit/99942aea47a938b30b06196d0fab1d8b88e32962) selects a guarded native version when the source's invariant width and limit fit the actual pinned String. A bounded proof follows the original unsigned stop conditions, exact index recurrence, selected range and unchanged stop payload. The selected version uses one trip-end decision and omits certified range bounds; unsupported conditions retain the original checked graph. Every original header, refill, terminal visit, source count update, overflow check and source error origin remains. IR48/ABI25 identify the actual-selection helper; work policy64, source, bytecode and finite launch policies are unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.555 | 1.00× |
+| Previous helper-synchronization stage, `f2bb3c924` | 2.091 | 3.76× |
+| Proved window bounds, `99942aea4` | 1.977 | 3.56× |
+
+The candidate median is **5.4% lower**. Candidate observations span 1.975–1.980 seconds, below the parent range of 2.010–2.120 seconds. [Full cohort receipts](full-guarded-loop-cohort-v1/results.json) retain all observations and standard deviations. This establishes a gain in these cohorts, not Rust parity or a universal speedup.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, gives:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0214 | 1.0× |
+| Previous helper-synchronization stage | 0.514 | 24.0× |
+| Proved window bounds | 0.497 | 23.3× |
+
+The prefix median is **3.2% lower**, with overlapping ranges: 0.488–0.512 seconds for the candidate versus 0.506–0.535 for its parent. [Prefix receipts](guarded-loop-timing-v1/results.json) retain every observation; the full-input and prefix ratios use their respective Rust cohorts.
+
+[Emission qualification](guarded-loop-timing-v1/emission-audit.json) binds both compiled regions to their exact source guards, carrier projections, invariant width/limit, inclusive range and original recurrence latch. Each region emits 180 checked/fast product nodes, one certified fast range version and 140 bounded fixed-template instructions. These are emitted records rather than dynamic instruction counts. The original Frame synchronization, scalar proofs and complete fallback remain qualified. A separate runtime receipt verifies that **all seven guarded selectors actually chose the fast version** in every candidate warmup and timed run, alongside seven packed SSA maps, seven concurrent workers, complete output and all **6,999,961 prefix** or **874,999,961 full-input updates**. Subjects run sequentially, including secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/guarded-loop-focused-v3/summary.json) passes six tests, including arbitrary seeds, wrong limits, zero/oversized widths, source overflow locations, negative proof cases, decoded/restored artifacts and finite-budget refill boundaries. The [full suite](../native-owner-dispatch-v1/guarded-loop-native-v1/summary.json) passes **307 GPU native tests and one catalog test**, with three existing manual exclusions. The retained [first](../native-owner-dispatch-v1/guarded-loop-focused-v1/summary.json) and [diagnostic](../native-owner-dispatch-v1/guarded-loop-focused-v2/summary.json) failures identify an underfunded expected-success fixture: both implementations reach the same ComparisonWork denial at the unchanged default 65,536 limit with equal errors, origins, work and helper frontiers. Those original denial cases remain; separate explicitly finite test budgets add successful full-loan/refill cases. No production allowance changes.
+
+The [profiling build](profile-guarded-loop-build-v1/summary.json) matches the timed executable's entire **4,132,772-byte** machine-code section, SHA-256 `9ad93a11d8af21a8cfd55b2aadb35da81d14e874726ab13ec0949adb64f9b6f2`. The [full-input capture](full-profile-guarded-loop-v1/summary.json) observes seven workers and 6,480 worker samples: **81.27%** have generated program code as their innermost recorded frame. Inclusive shares are **2.41%** for publication, **6.00%** for library work debits and **8.52%** for waiting. The [prefix capture](prefix-profile-guarded-loop-v1/summary.json) observes two remaining workers and 530 samples: publication appears in **23.40%**, work debits in **28.49%**, and waiting in **38.30%**; none end in generated code. Both executions verify actual guarded selection, complete output and every update. [Offline disassembly](guarded-loop-codegen-audit-v1/results.json) retains the exact entry for further loop-state and register-allocation analysis.
+
+Categories overlap and include waits, partial unwinds and profiling overhead; they are not wall-time shares or matched baseline profiles. The prefix capture covers the tail rather than earlier counting. Remaining targets are generated-loop state/check overhead for the full input and complete packed-map retention for private read-only uses, especially the prefix tail. Packed-map retention, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unqualified at this stage.
+
 ## Narrow helper synchronization
 
 Compiler [`f2bb3c924`](https://github.com/mech-lang/mech/commit/f2bb3c924051524b09c213404dea6a6a63184e47) synchronizes only the private Frame words each checked storage helper reads or changes. The generated refill template stores two words and reloads three; insertion stores six and reloads nine, versus fourteen stores and fourteen reloads previously. Cap-error helpers store two words and reload none. Terminal/error spills, unknown operations and memory-mode fallback retain complete synchronization. IR47 identifies the change; ABI24, work policy64, source, bytecode and finite launch policies remain unchanged.

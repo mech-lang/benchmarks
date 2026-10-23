@@ -19,13 +19,21 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'source_edge_facts_qualified', 'compiled_source_edge_facts',
             'qualified_source_edge_regions', 'object_sha256', 'linked_manifest_sha256',
             'source_tag_threading_qualified', 'compiled_tag_threading', 'qualified_tag_regions',
-            'source_frame_effects_qualified', 'compiled_frame_effects', 'qualified_frame_regions']
+            'source_frame_effects_qualified', 'compiled_frame_effects', 'qualified_frame_regions',
+            'require_guarded_loops', 'source_guarded_loops_qualified',
+            'compiled_guarded_loops', 'qualified_guarded_regions', 'native_descriptor_sha256']
 first = reports[0]
 samples = {}
 receipts = []
 for run, report in zip(args.runs, reports):
     assert report['status'] == 'full-output-and-update-counts-verified'
     assert all(report.get(key) == first.get(key) for key in identity)
+    if report.get('require_guarded_loops'):
+        assert report.get('source_guarded_loops_qualified') is True and report.get('source_tag_threading_qualified') is True
+        assert report['compiled_guarded_loops']['complete'] is True
+        native = json.loads((HERE / run / 'native.report.json').read_text())
+        assert native['native_guarded_loop_regions'] == native['native_packed_ssa_regions'] == native['native_packed_map_regions'] == 7
+        assert native['native_packed_map_updates'] == report['expected_table_updates']
     labels = [sample['label'] for sample in report['samples']]
     assert len(labels) == len(set(labels)) and set(labels) == set(s['label'] for s in first['samples'])
     for sample in report['samples']:

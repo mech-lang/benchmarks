@@ -136,7 +136,7 @@ def require_tag_threading(metadata, descriptor, minimum_branches, minimum_latche
 
 
 def require_frame_effects(metadata, descriptor):
-    """Verify actual narrow synchronization against the ABI24 private helpers."""
+    """Verify narrow synchronization against the unchanged ABI24/25 Frame."""
     assert metadata and metadata['complete'] is True, 'Missing or truncated frame-effect receipt'
     records = metadata['regions']
     by_header = {record['header']: record for record in records}
@@ -144,7 +144,7 @@ def require_frame_effects(metadata, descriptor):
     expected = {region['tail']['header'] for region in descriptor['closed_tails']['regions']
                 if region.get('map') is not None and region.get('packed') is not None}
     assert expected and expected == set(by_header), 'Frame-effect headers differ from the exact packed source regions'
-    # Fields are word indices in the explicit nineteen-word ABI24 Frame.
+    # Fields are word indices in the unchanged nineteen-word ABI24/25 Frame.
     # These expectations are deliberately independent of the compiler's masks.
     effects = {0: ([3, 8], [3, 7, 8]),
                7: ([3, 4, 5, 6, 7, 8], [0, 1, 2, 4, 7, 15, 16, 17, 18]),
@@ -161,6 +161,153 @@ def require_frame_effects(metadata, descriptor):
             assert record['stored_words'] == stores and record['reloaded_words'] == loads, 'Private helper effects disagree with its exact frame contract'
         qualified.append(dict(header=header, operations=operations,
                               scope='Actual compiled call templates; not runtime callback frequencies'))
+    return qualified
+
+
+def require_guarded_loops(metadata, descriptor, tag_metadata):
+    """Bind emitted checked/fast versions to the original guarded source loop."""
+    assert metadata and metadata['complete'] is True, 'Missing or truncated guarded-loop receipt'
+    assert tag_metadata and tag_metadata['complete'] is True, 'Guarded loops require qualified state-threading metadata'
+    closed, plan = descriptor['closed_tails'], descriptor['plan']
+    owners = descriptor['map_owner_words']
+    expected = {region['tail']['header']: index for index, region in enumerate(closed['regions'])
+                if region.get('map') is not None and region.get('packed') is not None}
+    records, tags = metadata['regions'], tag_metadata['regions']
+    by_header = {record['header']: record for record in records}
+    by_tag_header = {record['header']: record for record in tags}
+    assert expected and len(by_header) == len(records) and set(by_header) == set(expected), 'Guarded headers differ from the exact packed source regions'
+    assert len(by_tag_header) == len(tags) and set(by_tag_header) == set(expected), 'Guarded tag graphs differ from the packed source regions'
+    blocks, values = plan['blocks'], plan['values']
+    constants = {record['value']: record['constant']['data'] for record in plan['constants']}
+    definitions = {}
+    for site, block in enumerate(blocks):
+        action = block['action']
+        scalar = action.get('Scalar')
+        if isinstance(scalar, dict):
+            output = next(iter(scalar.values())).get('output')
+        else:
+            output = next(iter(action.values())).get('output') if 'Scalar' not in action else None
+        if output is not None:
+            definitions.setdefault(output, []).append(site)
+
+    def u64(value):
+        assert type(value) is int and 0 <= value < len(values), 'Guarded scalar value is outside its source plan'
+        definition = values[value]['definition']
+        assert definition['dimension_parameters'] == [] and definition['body'] == {'UnsignedInteger': 'W64'}, 'Guarded scalar is not a plain U64'
+
+    qualified = []
+    for header, region_id in expected.items():
+        record, region, tag = by_header[header], closed['regions'][region_id], by_tag_header[header]
+        tail, packed = region['tail'], region['packed']
+        carrier = tail['carrier']
+        slot = owners['aggregates']['slots'][carrier]
+        index, width, limit = (record[key] for key in ('index_word', 'width_word', 'limit_word'))
+        assert slot and type(index) is int and slot[0] < index < slot[0] + slot[1], 'Guarded index is outside the carrier payload'
+        assert tag['carrier_word'] == slot[0]
+        assert width == packed['end_offset'] and packed['inclusive'] is True, 'Guarded width differs from the proved inclusive range'
+        u64(width)
+        u64(limit)
+        variants = values[carrier]['definition']['body']['Enum']['variants']
+        active = record['active_tag']
+        assert type(active) is int and 0 <= active < len(variants) and active in tag['variants'], 'Guarded state is not an actual root enum variant'
+        source_tail = plan['iterations'][region['iteration']]['Tail']
+        assert all(source_tail[key] == tail[key] for key in
+                   ('carrier', 'header', 'latch', 'initialize', 'body', 'exit'))
+        ancestors, current = set(), source_tail['parent']
+        while current is not None:
+            assert current not in ancestors, 'Cyclic source iteration ancestry'
+            ancestors.add(current)
+            control = next(iter(plan['iterations'][current].values()))
+            current = control['parent']
+        for value in (width, limit):
+            scope = plan['value_scopes'][value].get('Immutable')
+            assert scope is not None and (scope['iteration'] is None or scope['iteration'] in ancestors), 'Guarded width/limit is not immutable outside the loop'
+
+        def expression(value, seen=frozenset()):
+            u64(value)
+            assert value not in seen and len(seen) < 32, 'Cyclic or excessive guarded scalar expression'
+            if value == width:
+                return ('width',)
+            if value == limit:
+                return ('limit',)
+            if value in constants:
+                data = constants[value]
+                assert set(data) == {'U64'} and type(data['U64']) is int
+                return ('constant', data['U64'])
+            sites = definitions.get(value, [])
+            assert len(sites) == 1, 'Guarded expression has no unique source producer'
+            site = sites[0]
+            assert closed['sites'][site] == region_id, 'Guarded expression leaves its original region'
+            action = blocks[site]['action']
+            scalar = action.get('Scalar', {})
+            if isinstance(scalar, dict) and 'Copy' in scalar:
+                return expression(scalar['Copy']['source'], seen | {value})
+            if isinstance(scalar, dict) and 'Primitive' in scalar:
+                primitive = scalar['Primitive']
+                assert primitive['op'] in ('U64Add', 'U64Sub') and len(primitive['operands']) == 2
+                return (primitive['op'], *(expression(v, seen | {value}) for v in primitive['operands']))
+            aggregate = (owners['aggregates'] if owners['action_regions'][site] == region['map']
+                         else descriptor['scalar_aggregates'])
+            observed = (aggregate['actions'][site] or {}).get('Observe')
+            structural = action.get('Structural')
+            assert observed and structural and structural['source'] == carrier and structural['observation'] == 'U64', 'Guarded index is not a source U64 payload projection'
+            assert observed['source'] == carrier and observed['ordinal'] is None and observed['output'] == value
+            assert slot[0] + observed['offset'] == index and [0, active] in observed['guards'], 'Guarded index projection differs from the active carrier payload'
+            assert structural['path'] and structural['path'][0] == {'EnumPayload': {'ordinal': active}}
+            return ('index',)
+
+        guards = record['stop_guards']
+        assert len(guards) == 3 and len(set(guards)) == 3, 'Guarded stop sites must be three distinct source guards'
+        expected_ops = ('U64Eq', 'U64Ge', 'U64Gt')
+        for ordinal, site in enumerate(guards):
+            assert type(site) is int and 0 <= site < len(blocks) and closed['sites'][site] == region_id
+            block = blocks[site]
+            primitive = block['action']['Scalar']['Primitive']
+            assert primitive['op'] == expected_ops[ordinal] and len(primitive['operands']) == 2
+            branch = block['terminator']['Scalar']['Branch']
+            assert branch['condition'] == primitive['output'], 'Guarded comparison does not control its source branch'
+            assert branch['yes'] != branch['no'] and all(type(branch[arm]) is int and 0 <= branch[arm] < len(blocks)
+                and closed['sites'][branch[arm]] == region_id for arm in ('yes', 'no'))
+            operands = tuple(expression(v) for v in primitive['operands'])
+            if ordinal == 0:
+                assert operands in ((('width',), ('constant', 0)), (('constant', 0), ('width',))), 'First stop is not width == 0'
+            elif ordinal == 1:
+                assert primitive['operands'][1] == limit and operands == (('index',), ('limit',)), 'Second stop is not index >= limit'
+            else:
+                assert operands == (('width',), ('U64Sub', ('limit',), ('index',))), 'Third stop is not width > limit - index'
+        assert record['recurrence_latches'] == [tail['latch']], 'Guarded recurrence differs from the unique original latch'
+        latch = blocks[tail['latch']]
+        assert latch['action'] == {'Latch': {'iteration': region['iteration']}}
+        assert latch['terminator'] == {'Scalar': {'Jump': header}}
+        site = record['range_site']
+        assert type(site) is int and site == packed['range_site'] and closed['sites'][site] == region_id
+        spans = [span for span in owners['spans'] if span['region'] == region['map'] and span['range_site'] == site]
+        assert len(spans) == 1 and spans[0]['selection_site'] == packed['selection_site']
+        call = blocks[site]['action']['LibraryCall']
+        assert call['operands'] == spans[0]['operands'] and len(call['operands']) == 2
+        selected = call['template']['selected']
+        assert len(selected) == 1 and next(iter(selected.values()))['leaf']['primitive'] == 'RangeInclusive'
+        selection = blocks[packed['selection_site']]['action']['LibraryCall']
+        selected = selection['template']['selected']
+        assert len(selected) == 1 and next(iter(selected.values()))['leaf']['primitive'] == 'StringRangeAccess'
+        assert selection['operands'] == [spans[0]['source'], call['output']] and selection['output'] == spans[0]['output']
+        endpoints = [expression(value) for value in call['operands']]
+        assert endpoints[0] in (('U64Add', ('index',), ('constant', 1)), ('U64Add', ('constant', 1), ('index',)))
+        assert endpoints[1] in (('U64Add', ('index',), ('width',)), ('U64Add', ('width',), ('index',)))
+        nodes = record['emitted_nodes']
+        assert type(nodes) is int and 0 < nodes <= 1024 and nodes % 2 == 0 and nodes == tag['product_nodes'], 'Guarded versions differ from the actual qualified tag graph'
+        certified = record['certified_range_versions']
+        assert certified and len(set(certified)) == len(certified)
+        assert all(type(version) is int and nodes // 2 <= version < nodes for version in certified), 'Range certification escapes the fast half'
+        assert record['checked_fallback'] is True
+        fixed = record['fixed_template_instructions']
+        assert type(fixed) is int and 1 <= fixed <= 1024, 'Guarded fixed templates exceed the unchanged work envelope'
+        qualified.append(dict(header=header, source_region=region_id, index_word=index,
+                              width_word=width, limit_word=limit, active_tag=active,
+                              stop_guards=guards, range_site=site, recurrence_latches=record['recurrence_latches'],
+                              emitted_nodes=nodes, certified_range_versions=certified,
+                              fixed_template_instructions=fixed, checked_fallback=True,
+                              scope='Actual checked/fast emission records; runtime selection is independently required'))
     return qualified
 
 
@@ -195,6 +342,8 @@ parser.add_argument('--minimum-tag-latches', type=int, default=0,
                     help='Minimum actual known-state latch routes in each compiled map entry')
 parser.add_argument('--require-frame-effects', action='store_true',
                     help='Require exact narrow frame synchronization for every compiled packed-map helper')
+parser.add_argument('--require-guarded-loops', action='store_true',
+                    help='Require source-qualified guarded versions and seven actual runtime selections; also require packed storage, SSA and tag metadata')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -203,7 +352,7 @@ if args.minimum_parallel_peak is not None and (
     parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
 require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
-require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches)
+require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches or args.require_guarded_loops)
 require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
 require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
 out = HERE / args.receipt
@@ -238,6 +387,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               expected_table_updates=6999961, samples=[], configuration=vars(args),
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
               require_key_bits=args.require_key_bits,
+              require_guarded_loops=args.require_guarded_loops,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -257,7 +407,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
     if args.require_frame_effects:
-        assert manifest['object']['abi_version'] == 24, 'Frame-effect masks require the audited ABI24 Frame'
+        assert manifest['object']['abi_version'] in (24, 25), 'Frame-effect masks require the audited ABI24/25 Frame'
         report['compiled_frame_effects'] = manifest['object'].get('compiled_frame_effects')
         report['qualified_frame_regions'] = require_frame_effects(report['compiled_frame_effects'], descriptor)
         report['source_frame_effects_qualified'] = True
@@ -269,6 +419,13 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             report['compiled_tag_threading'], descriptor,
             args.minimum_tag_branches, args.minimum_tag_latches)
         report['source_tag_threading_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_guarded_loops:
+        report['compiled_guarded_loops'] = manifest['object'].get('compiled_guarded_loops')
+        report['qualified_guarded_regions'] = require_guarded_loops(
+            report['compiled_guarded_loops'], descriptor, report['compiled_tag_threading'])
+        report['source_guarded_loops_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
@@ -306,7 +463,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             assert native['native_hash_table_regions'] == 7 and native['native_hash_table_updates'] == 6999961
             packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
                           packed_map_updates=native.get('native_packed_map_updates'),
-                          packed_ssa_regions=native.get('native_packed_ssa_regions'))
+                          packed_ssa_regions=native.get('native_packed_ssa_regions'),
+                          guarded_loop_regions=native.get('native_guarded_loop_regions'))
             parallel = dict(parallel_batches=native.get('native_parallel_batches'),
                             parallel_regions=native.get('native_parallel_regions'),
                             parallel_tasks=native.get('native_parallel_tasks'),
@@ -320,6 +478,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                 assert packed['packed_map_updates'] == 6999961, 'Candidate did not complete every update in packed storage'
             if label == 'candidate' and require_packed_ssa:
                 assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
+            if label == 'candidate' and args.require_guarded_loops:
+                assert packed['guarded_loop_regions'] == 7, 'Candidate did not select all seven guarded loop versions'
             if label == 'candidate' and args.require_parallel_tasks:
                 assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
                 assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'
