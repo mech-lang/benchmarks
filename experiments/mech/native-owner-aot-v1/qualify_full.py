@@ -28,6 +28,7 @@ compiler = json.loads((HERE / args.compiler / 'results.json').read_text())
 assert timing['status'] == 'all-outputs-and-update-counts-verified'
 assert compiler['source_commit'] == timing['source_commit']
 require_packed_map = args.require_packed_map or timing.get('require_packed_map', False)
+require_packed_ssa = timing.get('require_packed_ssa', False)
 targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7',
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
@@ -64,7 +65,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               comparison_quota_change=dict(previous=old_comparison,
                                            current=launch['library']['comparison_work']),
               configuration=vars(args), samples=[], native_executions=[],
-              require_packed_map=require_packed_map,
+              require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
               scope='Single serial complete process per executable, including secured Mech startup/shutdown; full-input qualification, not median benchmark timings; no excluded warmup')
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
@@ -89,10 +90,13 @@ try:
                 assert native['native_hash_table_regions'] == 7
                 assert native['native_hash_table_updates'] == 874999961
                 packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
-                              packed_map_updates=native.get('native_packed_map_updates'))
+                              packed_map_updates=native.get('native_packed_map_updates'),
+                              packed_ssa_regions=native.get('native_packed_ssa_regions'))
                 if label == 'mech' and require_packed_map:
                     assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
                     assert packed['packed_map_updates'] == 874999961, 'Candidate did not complete every update in packed storage'
+                if label == 'mech' and require_packed_ssa:
+                    assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
                 report['native_executions'].append(dict(label=label, **packed))
             row = dict(label=label, seconds=result['elapsed_seconds'],
                        maximum_rss_bytes=result['maximum_rss_bytes'])

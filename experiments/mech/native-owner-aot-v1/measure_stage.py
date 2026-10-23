@@ -25,6 +25,8 @@ parser.add_argument('--allow-equal-admissions', action='store_true',
                     help='For improvements inside an already selected closed loop; still reject more admissions')
 parser.add_argument('--require-packed-map', action='store_true',
                     help='Require every candidate execution to select packed storage for all regions and updates')
+parser.add_argument('--require-packed-ssa', action='store_true',
+                    help='Require all seven candidate regions to complete in generated SSA loops')
 args = parser.parse_args()
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
@@ -56,7 +58,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               launch_sha256=process.sha(policy), baseline_sha256=process.sha(targets['baseline']),
               rust_sha256=process.sha(targets['rust']), input_bases=1000000,
               expected_table_updates=6999961, samples=[], configuration=vars(args),
-              require_packed_map=args.require_packed_map, native_executions=[],
+              require_packed_map=args.require_packed_map, require_packed_ssa=args.require_packed_ssa, native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
 process.save(out / 'results.json', report)
 with Path(PLAN['common_mutex']).open('a+') as lock:
@@ -92,10 +94,13 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             assert native['shutdown'] == 'completed'
             assert native['native_hash_table_regions'] == 7 and native['native_hash_table_updates'] == 6999961
             packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
-                          packed_map_updates=native.get('native_packed_map_updates'))
+                          packed_map_updates=native.get('native_packed_map_updates'),
+                          packed_ssa_regions=native.get('native_packed_ssa_regions'))
             if label == 'candidate' and args.require_packed_map:
                 assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
                 assert packed['packed_map_updates'] == 6999961, 'Candidate did not complete every update in packed storage'
+            if label == 'candidate' and args.require_packed_ssa:
+                assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
             report['native_executions'].append(dict(label=label, round=round_number,
                                                      timed=timed, **packed))
             process.save(out / 'results.json', report)

@@ -1,0 +1,21 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0603]: function `emit_entry` is private
+   --> hosts/gpu/src/native_artifact/iteration_compiler.rs:645:63
+    |
+645 |                 super::program_compiler::packed_loop_codegen::emit_entry(
+    |                                                               ^^^^^^^^^^ private function
+    |
+note: the function `emit_entry` is defined here
+   --> hosts/gpu/src/native_artifact/program_packed_loop_codegen.rs:204:1
+    |
+204 | / pub(super) fn emit_entry(b: &mut FunctionBuilder<'_>, frame: Value, locals: Value,
+205 | |     code: CodePlan<'_>, closed: &Layout, owner: Option<&NativeMapOwnerWords>,
+206 | |     aggregates: &NativeScalarAggregates, site: usize, hooks: &Hooks,
+207 | |     ordinary_blocks: &[Option<Block>], error: Block) -> Result<(), NativeCompileError>
+...   |
+333 | |     Ok(())
+334 | | }
+    | |_^
+
+For more information about this error, try `rustc --explain E0603`.
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

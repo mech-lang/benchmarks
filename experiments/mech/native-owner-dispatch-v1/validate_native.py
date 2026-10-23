@@ -3,7 +3,7 @@ from pathlib import Path
 HERE=Path(__file__).resolve().parent
 sys.path.insert(0,str(HERE.parent/'revcomp-streaming-v1'))
 from build_baseline import PLAN,process
-ROOT=Path('/private/tmp/mech-native-hashmap-performance')
+ROOT=Path(sys.argv[3]).resolve() if len(sys.argv)>3 else Path('/private/tmp/mech-native-hashmap-performance')
 out=HERE/sys.argv[1];assert not out.exists()
 env=json.loads((HERE.parent/'canonical-native-integration-v1/validation-v2/results.json').read_text())['environment']
 env['TMPDIR']=str(HERE/'.build/tmp');Path(env['TMPDIR']).mkdir(parents=True,exist_ok=True)

@@ -15,6 +15,7 @@ parser.add_argument('--deadline', type=float, default=45)
 parser.add_argument('--interval', type=float, default=10)
 parser.add_argument('--require-completion', action='store_true')
 parser.add_argument('--require-packed-map', action='store_true')
+parser.add_argument('--require-packed-ssa', action='store_true')
 args = parser.parse_args()
 assert 0 < args.interval < args.deadline
 out = HERE / args.receipt
@@ -59,6 +60,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         assert native['native_hash_table_regions'] == 7 and native['native_hash_table_updates'] == 874999961
         if args.require_packed_map:
             assert native['native_packed_map_regions'] == 7 and native['native_packed_map_updates'] == 874999961
+        if args.require_packed_ssa:
+            assert native['native_packed_ssa_regions'] == 7
     if args.require_completion:
         assert completed, 'Full profiling execution did not complete successfully'
     process.save(out / 'results.json', dict(status='profile-captured',source_commit=build.get('source_commit'),binary_sha256=process.sha(binary),object_sha256=build['object_sha256'],input_sha256=process.sha(inp),selected_bases=125000000,profiling_overhead_included=True,benchmark_samples=0,samples=samples,process=r,configuration=vars(args),launch_sha256=process.sha(HERE / args.launch),completed_output_verified=completed))

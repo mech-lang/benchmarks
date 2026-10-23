@@ -2,6 +2,36 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Native register loops
+
+Compiler [`35da7a27e`](https://github.com/mech-lang/mech/commit/35da7a27ea0f0543ce531544359c1da5c4d12f5a) versions proved closed map loops into native SSA control flow. Source scalar and aggregate values and mutable table state stay in registers between runtime boundaries. Every original branch, checked arithmetic operation, rejection arm and map update remains. Growth, finite fuel refill and failure boundaries synchronize the owned frame. IR38/work policy59/ABI20 identify this stage. The Mech source and program bytecode are unchanged.
+
+Three alternating complete-process measurements on **one million bases** give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0206 | 1.0× |
+| Previous generated table operations, `17938cecd` | 0.451 | 21.9× |
+| Native register loops, `35da7a27e` | 0.361 | 17.5× |
+
+Elapsed time falls **20.0%**, a **1.25× speedup**. All outputs match the independent reference. Every candidate execution reports seven actual SSA regions and all 6,999,961 source updates; a silent fallback fails qualification. Both Mech executables retain 443 admissions. [Prefix receipts](packed-ssa-timing-v1/results.json) include every fresh process and one excluded warmup per executable, all run serially.
+
+A fresh full-input cohort uses one complete process per executable on **125 million bases**:
+
+| Executable | Seconds, one run | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.567 | 1.0× |
+| Previous generated table operations, `17938cecd` | 27.761 | 49.0× |
+| Native register loops, `35da7a27e` | 15.005 | 26.5× |
+
+This single full-input cohort shows a **1.85× speedup**, with elapsed time down **46.0%**. These are single complete processes, not repeated medians; no warmup is excluded. All full outputs match, and the candidate completes seven actual SSA regions and **874,999,961 updates**. Peak RSS is 227.1 MB versus 226.8 MB for the parent. [Full receipts](full-packed-ssa-v1/results.json) retain unchanged executable/input identities and the same finite secured execution policy as the preceding qualification. Startup, shutdown, capability grants and resource checks remain included. The canonical benchmark dataset is unchanged.
+
+[Validation](../native-owner-dispatch-v1/packed-ssa-validation-v5/summary.json) passes **238 native checks**, with three pre-existing manual exclusions. Tests cover original, decoded and restored-descriptor execution, non-DNA inputs, complete maps, caller-produced replacement values, branch joins, multiple growth and refill boundaries, actual path selection, finite limits, fallback and cleanup. Earlier receipts retain compile visibility, source rejection-arm and stale identity-test failures; an interrupted run is excluded from passing evidence.
+
+The [profile build](profile-packed-ssa-build-v1/results.json) has byte-identical complete machine code to the timed executable: 4,010,920 bytes, SHA-256 `86a971df855b19c6699929bf60400f8973803c15dc32f00106c7b18505f1c47f`. Three two-second captures across a completed full execution put 100% of main-thread samples beneath the generated entry; closed-map storage callbacks occupy 0.13–1.02%, and the last capture includes 2.81% canonical map publication. These inclusive categories overlap and do not precisely attribute total runtime. [Profile analysis](full-profile-packed-ssa-v1/analysis.json) verifies exact output and all updates; profiling times are excluded from benchmarks.
+
+Source-derived finite character encoding, SIMD table controls and independent-comprehension parallel execution are separate unfinished stages. Their performance is not included in these measurements. Rust parity, repeated full-input cohorts, a separate decoded-source executable qualification and secured/trusted comparison remain unfinished.
+
 ## Generated compact-key table operations
 
 Compiler [`17938cecd`](https://github.com/mech-lang/mech/commit/17938cecd500bc5a570f3ac15daf3a64d62ad02d) compiles fixed-width ASCII key packing, hashing, table probing, reads and existing-entry updates directly into the native source loop. Source branches, arithmetic and values are unchanged. Distinct-key insertion, growth, finite batch refill and complete canonical publication remain runtime operations. The representation applies to arbitrary ASCII keys of up to 18 characters, without recognizing nucleotide data or requested queries. IR37/work policy58/ABI20 identify the stage; its [design and validation](../native-owner-dispatch-v1/README.md#generated-compact-key-table-operations) describe the proof and budget boundaries.
