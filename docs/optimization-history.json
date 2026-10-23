@@ -933,6 +933,83 @@
         "benchmark_source_commit": "44f48ac24cb833b2d090b560ef994cd35f2fc672",
         "historical_sources_and_samples_preserved": true
       }
+    },
+    {
+      "id": "native-wrap-output-buffer-policies",
+      "date": "2026-10-22",
+      "title": "Reject four native text-output buffer policies",
+      "change_kind": "rejected runtime I/O policy experiment; production and application unchanged",
+      "status": "measured and rejected",
+      "inspiration": "Existing per-record phase diagnostics and the installed Rust BufWriter pass-through contract identified a duplicate output copy.",
+      "mechanism": "Test larger native formatting spans, then smaller outer stream buffers, while preserving application bytes and native compute object. Real generated-kernel pointer/call witnesses prove copy avoidance; full-process measurements reject every tested policy.",
+      "selected_runtime_commit": "fca1ba1f7462a555eb56833ad32135408a140a72",
+      "evidence": [
+        "experiments/mech/revcomp-output-buffer-v1/analysis.json",
+        "experiments/mech/revcomp-output-buffer-v1/run-v1/results.json",
+        "experiments/mech/revcomp-output-buffer-v1/run-v2/results.json",
+        "experiments/mech/revcomp-output-buffer-v1/verification.json",
+        "experiments/mech/revcomp-output-buffer-v1/restored-production.json",
+        "experiments/mech/revcomp-output-buffer-v1/writer-contract.json"
+      ],
+      "frozen_snapshot": "experiments/mech/revcomp-output-buffer-v1/seal.json",
+      "limitations": [
+        "Both cohorts retain all samples; do not pool absolute times across them.",
+        "One original-parent run in cohort one has much higher RSS and elapsed time; it remains retained.",
+        "All four policies reduce median child user CPU slightly, but none improves median whole-process elapsed time. This does not isolate the cause.",
+        "Four-MiB policy has consistently higher child system CPU and observed RSS; allocation/I/O/scheduling causes are not proven.",
+        "Default AC power settings; low power mode disabled; nonzero swap; no temperature/frequency or allocation trace.",
+        "Eleven existing extended FASTA source-contract differences remain identical across each old/new comparison."
+      ],
+      "measurements": [
+        {
+          "label": "two4",
+          "cohort": "run-v1",
+          "before_seconds": 0.123605625,
+          "after_seconds": 0.12523325,
+          "speedup": 0.9870032519318951,
+          "elapsed_change_percent": 1.3167887788278154,
+          "samples_per_variant": 7,
+          "before_x_fresh_mech_aot": 1.0,
+          "after_x_fresh_mech_aot": 1.0131678877882782,
+          "selected": false
+        },
+        {
+          "label": "four4",
+          "cohort": "run-v1",
+          "before_seconds": 0.123605625,
+          "after_seconds": 0.132734125,
+          "speedup": 0.9312271806515467,
+          "elapsed_change_percent": 7.385181701884536,
+          "samples_per_variant": 7,
+          "before_x_fresh_mech_aot": 1.0,
+          "after_x_fresh_mech_aot": 1.0738518170188454,
+          "selected": false
+        },
+        {
+          "label": "quarter4",
+          "cohort": "run-v2",
+          "before_seconds": 0.1234035,
+          "after_seconds": 0.137293666,
+          "speedup": 0.898828792291117,
+          "elapsed_change_percent": 11.255893066242063,
+          "samples_per_variant": 7,
+          "before_x_fresh_mech_aot": 1.0,
+          "after_x_fresh_mech_aot": 1.1125589306624206,
+          "selected": false
+        },
+        {
+          "label": "one4",
+          "cohort": "run-v2",
+          "before_seconds": 0.1234035,
+          "after_seconds": 0.126254083,
+          "speedup": 0.9774218549430992,
+          "elapsed_change_percent": 2.3099693282605305,
+          "samples_per_variant": 7,
+          "before_x_fresh_mech_aot": 1.0,
+          "after_x_fresh_mech_aot": 1.0230996932826053,
+          "selected": false
+        }
+      ]
     }
   ]
 }

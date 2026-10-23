@@ -369,3 +369,27 @@ published](../experiments/mech/revcomp-pages-v1/README.md) as four separate Mech
 runtime configurations with 28 fresh samples. Every historical source, source
 count, attribution record and timing remains intact. Build `5da585f5c98f3a15` is
 live and all 41 served assets match the tested local manifest.
+
+### 2026-10-22 — Rejected native text-output buffer policies
+
+The [output-buffer study](../experiments/mech/revcomp-output-buffer-v1/RESULTS.md)
+confirms a duplicate copy between native formatting spans and a larger stream
+buffer. Real Cranelift-generated kernels and inner-writer pointer/call witnesses
+prove that all four proposed policies can bypass the extra copy. None improves
+whole-process elapsed time, so the compiler checkout is restored to `fca1ba1f7`.
+
+In the first seven-round cohort, current Mech takes **0.1236 s (1.00× fresh Mech
+AOT)**. The 2 MiB and 4 MiB policies take **0.1252 s (1.013×)** and **0.1327 s
+(1.074×)**; Rust takes **0.1108 s (0.897×)**. In a separate seven-round cohort,
+current Mech takes **0.1234 s (1.00×)**, the 256/128 KiB policy **0.1373 s
+(1.113×)**, and the 1 MiB/512 KiB policy **0.1263 s (1.023×)**; Rust takes
+**0.1093 s (0.885×)**. Cohorts are not pooled and no outlier is removed.
+
+All 63 full outputs and nine official small outputs pass. Both three-way input
+comparisons retain identical behavior on 61 cases, including eleven existing
+extended-source limitations. Every candidate passes thirteen runtime tests,
+including 240 generated-kernel boundary checks. All 781 owned processes close.
+Source, compute objects, raw observations, power/swap scope and rejected patches
+remain retained; production and published timings are unchanged. Copy avoidance
+alone does not establish a runtime gain, and allocation/I/O/scheduling causes
+remain unisolated.

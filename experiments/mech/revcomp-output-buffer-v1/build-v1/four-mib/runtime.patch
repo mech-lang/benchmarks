@@ -1,0 +1,186 @@
+diff --git a/hosts/gpu/src/sequence/runtime.rs b/hosts/gpu/src/sequence/runtime.rs
+index 9fa2eae54..e3d74d2ac 100644
+--- a/hosts/gpu/src/sequence/runtime.rs
++++ b/hosts/gpu/src/sequence/runtime.rs
+@@ -186,6 +186,8 @@ impl Value {
+         }
+     }
+ }
++const NATIVE_WRAP_OUTPUT_BUDGET: usize = 4 * 1024 * 1024;
++
+ fn write_wrapped(
+     writer: &mut dyn Write,
+     bytes: &[u8],
+@@ -197,9 +199,13 @@ fn write_wrapped(
+         if !(1..=256).contains(&width) || separator.len() > 8 {
+             return Err("native wrap shape mismatch".into());
+         }
+-        let lines = 262144 / (width + separator.len());
++        // Full spans exceed the stream writer's buffer, so write_all can pass
++        // them through without copying the entire output into another buffer.
++        // Small values allocate only their actual first-span output size.
++        let lines = NATIVE_WRAP_OUTPUT_BUDGET / (width + separator.len());
+         let chunk = lines * width;
+-        let mut buffer = vec![0u8; lines * (width + separator.len())];
++        let first = bytes.len().min(chunk);
++        let mut buffer = vec![0u8; first + first.div_ceil(width) * separator.len()];
+         // SAFETY: exact same-object source-constant width and separator ABI.
+         // Chunks end on full line boundaries except the last; initialized output
+         // capacity is at least len + ceil(len/width)*separator.len(). Buffers are
+@@ -2317,3 +2323,156 @@ mod record_stream_tests {
+ 
+ #[path = "resident.rs"]
+ mod resident;
++
++#[cfg(test)]
++mod wrapped_output_tests {
++    use super::{NATIVE_WRAP_OUTPUT_BUDGET, write_wrapped};
++    use std::io::{self, Write};
++
++    fn native_wrap(width: usize, separator: &str) -> (cranelift_jit::JITModule, usize) {
++        use cranelift_module::default_libcall_names;
++        use mech_engine::native_sequence::{Constant, Program, SequenceKind};
++        let graph = Program {
++            constants: vec![
++                Constant::Integer(width as u64),
++                Constant::Text(separator.to_owned()),
++            ],
++            kinds: vec![SequenceKind::Integer, SequenceKind::Text],
++            nodes: Vec::new(),
++            windows: Default::default(),
++            functions: Default::default(),
++        };
++        let builder = cranelift_jit::JITBuilder::with_flags(
++            &[("opt_level", "speed"), ("is_pic", "true")],
++            default_libcall_names(),
++        )
++        .unwrap();
++        let mut module = cranelift_jit::JITModule::new(builder);
++        let id = super::super::bytes::emit_wrap(&mut module, &graph, &[0, 0, 1], "test_wrap")
++            .unwrap()
++            .unwrap();
++        module.finalize_definitions().unwrap();
++        let address = module.get_finalized_function(id) as usize;
++        (module, address)
++    }
++    fn reference(input: &[u8], width: usize, separator: &[u8]) -> Vec<u8> {
++        let mut output = Vec::new();
++        for row in input.chunks(width) {
++            output.extend_from_slice(row);
++            output.extend_from_slice(separator);
++        }
++        output
++    }
++    #[test]
++    fn emitted_wrap_matches_reference_across_output_span_boundaries() {
++        for width in [1usize, 7, 16, 60, 127, 256] {
++            for separator in ["", "\n", "\r\n", "........"] {
++                let (_module, kernel) = native_wrap(width, separator);
++                let chunk = (NATIVE_WRAP_OUTPUT_BUDGET / (width + separator.len())) * width;
++                for length in [
++                    0,
++                    1,
++                    width - 1,
++                    width,
++                    width + 1,
++                    chunk - 1,
++                    chunk,
++                    chunk + 1,
++                    chunk + width,
++                    2 * chunk + width - 1,
++                ] {
++                    let input: Vec<u8> = (0..length).map(|i| i as u8).collect();
++                    let expected = reference(&input, width, separator.as_bytes());
++                    let mut output = Vec::new();
++                    write_wrapped(&mut output, &input, width, separator.as_bytes(), kernel)
++                        .unwrap();
++                    assert_eq!(
++                        output, expected,
++                        "width={width}, separator={separator:?}, length={length}"
++                    );
++                }
++            }
++        }
++    }
++    #[derive(Default)]
++    struct ObservedWriter {
++        output: Vec<u8>,
++        calls: Vec<(usize, usize)>,
++    }
++    impl Write for ObservedWriter {
++        fn write(&mut self, input: &[u8]) -> io::Result<usize> {
++            self.calls.push((input.as_ptr() as usize, input.len()));
++            self.output.extend_from_slice(input);
++            Ok(input.len())
++        }
++        fn flush(&mut self) -> io::Result<()> {
++            Ok(())
++        }
++    }
++    #[test]
++    fn large_native_spans_bypass_the_outer_buffer_without_losing_header_or_tail() {
++        let (_module, kernel) = native_wrap(60, "\n");
++        let chunk = (NATIVE_WRAP_OUTPUT_BUDGET / 61) * 60;
++        let input = vec![b'A'; 2 * chunk + 17];
++        let mut writer = io::BufWriter::with_capacity(1024 * 1024, ObservedWriter::default());
++        writer.write_all(b"header\n").unwrap();
++        let outer = writer.buffer().as_ptr() as usize;
++        write_wrapped(&mut writer, &input, 60, b"\n", kernel).unwrap();
++        writer.flush().unwrap();
++        let observed = writer
++            .into_inner()
++            .unwrap_or_else(|_| panic!("writer flush failed"));
++        let large: Vec<_> = observed
++            .calls
++            .iter()
++            .filter(|(_, n)| *n >= 1024 * 1024)
++            .collect();
++        assert_eq!(large.len(), 2);
++        assert!(large.iter().all(|(pointer, _)| *pointer != outer));
++        let mut expected = b"header\n".to_vec();
++        expected.extend(reference(&input, 60, b"\n"));
++        assert_eq!(observed.output, expected);
++    }
++    struct LimitedWriter {
++        output: Vec<u8>,
++        fail_after: usize,
++        interrupt: bool,
++    }
++    impl Write for LimitedWriter {
++        fn write(&mut self, input: &[u8]) -> io::Result<usize> {
++            if self.interrupt {
++                self.interrupt = false;
++                return Err(io::ErrorKind::Interrupted.into());
++            }
++            if self.output.len() == self.fail_after {
++                return Err(io::ErrorKind::BrokenPipe.into());
++            }
++            let count = input.len().min(7).min(self.fail_after - self.output.len());
++            self.output.extend_from_slice(&input[..count]);
++            Ok(count)
++        }
++        fn flush(&mut self) -> io::Result<()> {
++            Ok(())
++        }
++    }
++    #[test]
++    fn native_wrapping_retries_short_writes_and_propagates_output_failure() {
++        let (_module, kernel) = native_wrap(7, "\r\n");
++        let input = vec![b'Z'; 1000];
++        let expected = reference(&input, 7, b"\r\n");
++        let mut writer = LimitedWriter {
++            output: Vec::new(),
++            fail_after: usize::MAX,
++            interrupt: true,
++        };
++        write_wrapped(&mut writer, &input, 7, b"\r\n", kernel).unwrap();
++        assert_eq!(writer.output, expected);
++        let mut writer = LimitedWriter {
++            output: Vec::new(),
++            fail_after: 113,
++            interrupt: false,
++        };
++        assert!(write_wrapped(&mut writer, &input, 7, b"\r\n", kernel).is_err());
++        assert_eq!(writer.output, &expected[..113]);
++    }
++}
