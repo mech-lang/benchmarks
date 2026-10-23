@@ -182,6 +182,19 @@ ABI15 remain current. Normal selection is unchanged: owning-session storage,
 helper routing and conditional opaque-word transport remain to be connected,
 followed by full-input qualification and fresh timings.
 
+The [session ownership study](../experiments/mech/native-owner-session-v1/README.md)
+carries a lazy retained-map lane in the actual owning invocation and entry
+context. Fresh initializers admit its metadata only when requested; refused
+allocation preserves canonical execution and rejects same-visit replay. The
+source-produced reads/writes and final maps agree for original/decoded artifacts.
+An injected failure with an unpublished live table releases all memory and
+snapshot claims. All 208 native checks pass, with three pre-existing exclusions;
+map integration validation is recorded in the study. Work policy46 supersedes
+policy45 for the fixed session metadata; IR30 and ABI15 are unchanged. Generated
+code still uses canonical transport. Production helper routing, conditional
+opaque words, the source hash contract and complete-input qualification precede
+fresh timings. No new runtime result or website dataset change is admitted.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
