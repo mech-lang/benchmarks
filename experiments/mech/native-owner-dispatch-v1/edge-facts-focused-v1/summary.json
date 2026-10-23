@@ -1,0 +1,57 @@
+{
+  "status": "focused-validation-failed-test-oracle",
+  "source_commit": "de668fb6415efb39e662a1af9a97f2f7e1c2d8f1",
+  "source_commit_provenance": "Reconstructed from the recorded validation orchestration; the original process receipt does not contain a source revision. This revision includes the scalar-edge implementation and a documentation-only follow-up.",
+  "passed": 5,
+  "failed": 1,
+  "ignored": 0,
+  "benchmark_samples": 0,
+  "process_elapsed_seconds": 97.694867541,
+  "elapsed_scope": "Build and serial test execution, not benchmark timing",
+  "all_owned_processes_reaped_and_groups_closed": true,
+  "failure": {
+    "test": "current_edge_facts_preserve_changed_inputs_source_names_and_exact_work",
+    "input": {
+      "text": "abcabc",
+      "extent": 1,
+      "n": 6
+    },
+    "optimized_work": 35428404,
+    "unsubstituted_work": 35428436,
+    "compute_difference": 32,
+    "comparison_work_both": 17465,
+    "updates_both": 6,
+    "canonical_output_both": {
+      "a": 2,
+      "b": 2,
+      "c": 2
+    },
+    "identical_observations": [
+      "canonical output",
+      "status and error origin",
+      "visits and transport bytes",
+      "map/packed/SSA region and update counts",
+      "comparison work"
+    ],
+    "diagnosis": "Whole-invocation work equality compared independently seeded hash-map publication orders. OwnedStringMap creates a fresh default foldhash RandomState; publication heapsort charges 32 compute units for each sift iteration. The observed difference is consistent with one extra sift iteration, not a source-body work change.",
+    "diagnosis_basis": "Static trace of retained sources and dependency implementations; this failed run did not record the pre-publication frontier."
+  },
+  "corrected_oracle": {
+    "exact_checks_for_all_cases": [
+      "source result/status/error origin",
+      "map contents and complete update counts",
+      "pre-CLOSED_TAIL_END source site and remaining traversal fuel",
+      "native and library compute/comparison spend before table import/publication"
+    ],
+    "additional_exact_end_to_end_checks": "Empty/one-key outputs and source failures retain full report and terminal work equality.",
+    "multi_key_publication": "Complete canonical contents and structural execution counters remain equal; independently seeded publication work is not compared as a deterministic source-body invariant.",
+    "production_charges_changed": false,
+    "delta_subtraction_or_budget_relaxation": false,
+    "followup_receipt": "../edge-facts-focused-v2/summary.json"
+  },
+  "evidence_sha256": {
+    "process.json": "1735507d37d8d710cda34d2293d00ca938b61db05b9437f4d2ee430eff4e59f7",
+    "stdout.bin": "38ef2b8aaf298aead67ba9b3bf022a07fbb362e39ece03b41eca8a363e6135bb",
+    "stderr.bin": "6145c7df3d474ea82874219803973aa0cb67399a879ae99a61707c34c5650c91"
+  }
+}

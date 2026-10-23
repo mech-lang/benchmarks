@@ -47,6 +47,50 @@ def require_key_domains(regions, bits):
         assert len(codes) == len(symbols), 'Packed domain bit window loses character identity'
 
 
+def require_edge_facts(metadata, descriptor, minimum_guards, minimum_arithmetic):
+    """Qualify actual emitted substitutions against the retained source CFG."""
+    assert metadata and metadata['complete'] is True, 'Missing or truncated emission receipt'
+    regions = metadata['regions']
+    by_header = {region['header']: region for region in regions}
+    assert len(by_header) == len(regions), 'Duplicate compiled region headers'
+    closed = descriptor['closed_tails']
+    expected = {region['tail']['header']: index for index, region in enumerate(closed['regions'])
+                if region.get('map') is not None and region.get('packed') is not None}
+    assert expected and set(expected) <= set(by_header), 'Packed source region lacks emission receipt'
+    qualified = []
+    for header, owner in expected.items():
+        region = by_header[header]
+        guards, arithmetic = region['guards'], region['arithmetic']
+        assert len(guards) >= minimum_guards, 'Too few actual field-guard substitutions'
+        assert len(arithmetic) >= minimum_arithmetic, 'Too few actual arithmetic substitutions'
+        records = [json.dumps(record, sort_keys=True) for record in guards + arithmetic]
+        assert len(records) == len(set(records)), 'Duplicate emission records'
+        for record in guards + arithmetic:
+            site = record['site']
+            assert type(site) is int and 0 <= site < len(closed['sites'])
+            assert closed['sites'][site] == owner, 'Substitution belongs to another source region'
+        for record in guards:
+            site = record['site']
+            owner_words = descriptor['map_owner_words']
+            layout = (owner_words['aggregates']
+                      if owner_words['action_regions'][site] == closed['regions'][owner]['map']
+                      else descriptor['scalar_aggregates'])
+            encoded = layout['actions'][site]
+            assert encoded and len(encoded) == 1
+            kind, action = next(iter(encoded.items()))
+            assert kind in ('Observe', 'Project'), 'Guard is not an actual aggregate projection'
+            assert action['source'] == record['source']
+            assert type(record['offset']) is int and record['offset'] >= 0
+            assert [record['offset'], record['ordinal']] in action['guards'], 'Guard does not match its exact projection'
+        for record in arithmetic:
+            action = descriptor['plan']['blocks'][record['site']]['action']['Scalar']['Primitive']
+            assert record['op'] in ('U64Add', 'U64Sub')
+            assert action['op'] == record['op'] and action['operands'] == record['operands']
+        qualified.append(dict(header=header, source_region=owner,
+                              field_guards=len(guards), arithmetic=len(arithmetic)))
+    return qualified
+
+
 parser = argparse.ArgumentParser()
 parser.add_argument('--compiler', required=True)
 parser.add_argument('--parent-receipt', required=True)
@@ -68,13 +112,20 @@ parser.add_argument('--require-parallel-tasks', type=int, choices=[7],
                     help='Require one combined batch, two source regions and seven tasks; also require packed storage and SSA')
 parser.add_argument('--minimum-parallel-peak', type=int,
                     help='Minimum observed simultaneous workers (1–7; defaults to 1 when parallel tasks are required)')
+parser.add_argument('--minimum-edge-guards', type=int, default=0,
+                    help='Minimum actual field-guard substitutions in each compiled packed map region')
+parser.add_argument('--minimum-edge-arithmetic', type=int, default=0,
+                    help='Minimum actual checked-arithmetic substitutions in each compiled packed map region')
 args = parser.parse_args()
+if min(args.minimum_edge_guards, args.minimum_edge_arithmetic) < 0:
+    parser.error('Emission receipt requirements must be nonnegative')
 if args.minimum_parallel_peak is not None and (
         args.require_parallel_tasks is None or not 1 <= args.minimum_parallel_peak <= args.require_parallel_tasks):
     parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
-require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None
-require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None
+require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -125,6 +176,14 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
+    if args.minimum_edge_guards or args.minimum_edge_arithmetic:
+        report['compiled_source_edge_facts'] = manifest['object'].get('compiled_source_edge_facts')
+        report['qualified_source_edge_regions'] = require_edge_facts(
+            report['compiled_source_edge_facts'], descriptor,
+            args.minimum_edge_guards, args.minimum_edge_arithmetic)
+        report['source_edge_facts_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     report['native_descriptor_sha256'] = process.sha(project / 'native-descriptor.json')
     report['closed_key_domains'] = closed_key_domains(descriptor)
     report['closed_map_regions'] = sum(region.get('map') is not None

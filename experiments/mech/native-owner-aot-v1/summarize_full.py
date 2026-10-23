@@ -15,7 +15,9 @@ reports = [json.loads((HERE / run / 'results.json').read_text()) for run in args
 identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_sha256',
             'candidate_sha256', 'baseline_sha256', 'rust_sha256', 'launch_sha256',
             'selected_bases', 'expected_table_updates', 'require_packed_map',
-            'require_packed_ssa', 'require_parallel_tasks', 'minimum_parallel_peak']
+            'require_packed_ssa', 'require_parallel_tasks', 'minimum_parallel_peak',
+            'source_edge_facts_qualified', 'compiled_source_edge_facts',
+            'qualified_source_edge_regions', 'object_sha256', 'linked_manifest_sha256']
 first = reports[0]
 samples = {}
 receipts = []

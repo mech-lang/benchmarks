@@ -49,6 +49,11 @@ targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rus
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
 assert process.sha(targets['mech']) == timing['candidate_sha256']
+if timing.get('source_edge_facts_qualified'):
+    project = Path(str(targets['mech']) + '.project')
+    assert timing['compiled_source_edge_facts']['complete'] is True
+    assert process.sha(project / 'program.o') == timing['object_sha256']
+    assert process.sha(project / 'linked-manifest.json') == timing['linked_manifest_sha256']
 parent = None
 if args.parent_receipt:
     parent = json.loads((HERE / args.parent_receipt / 'results.json').read_text())
@@ -91,6 +96,10 @@ report = dict(status='running', source_commit=timing['source_commit'],
               native_descriptor_sha256=timing.get('native_descriptor_sha256'),
               require_parallel_tasks=require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               scope='Single serial complete process per executable, including secured Mech startup/shutdown; full-input qualification, not median benchmark timings; no excluded warmup')
+if timing.get('source_edge_facts_qualified'):
+    for key in ('source_edge_facts_qualified', 'compiled_source_edge_facts',
+                'qualified_source_edge_regions', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
     report['baseline_sha256'] = parent['candidate_sha256']

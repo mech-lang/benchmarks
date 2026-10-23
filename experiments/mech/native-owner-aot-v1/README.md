@@ -2,6 +2,40 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Current-traversal scalar proofs
+
+Compiler [`b08ab3cda`](https://github.com/mech-lang/mech/commit/b08ab3cdae723fa760ba7d0000db920977de7c0d) uses preceding source control flow to prove enum payload access and unsigned index arithmetic within the current loop traversal. Proven checks are omitted from the generated packed SSA loop; unknown facts, invalid enum alternatives, changed aliases and unsupported arithmetic retain the checked path. String bounds and count-increment overflow checks remain. Source operations, every table update and finite work accounting are preserved. IR43 identifies the generated-code change; work policy63 and ABI22 remain unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.552 | 1.00× |
+| Previous publication-debit stage, `5e92487ad` | 2.685 | 4.86× |
+| Current-traversal scalar proofs, `b08ab3cda` | 2.222 | 4.02× |
+
+The observed median speedup is **1.21×**, reducing elapsed time by **17.2%**. Candidate samples are 2.222, 2.204 and 2.229 seconds; parent samples are 2.685, 2.570 and 2.693 seconds. All three candidate observations are below all three parent observations. [Full cohort receipts](full-source-edge-facts-cohort-v1/results.json) retain samples, standard deviations, execution orders and evidence hashes. This establishes a gain in these cohorts, not Rust parity or a universal speedup.
+
+The **one-million-base prefix** regresses, with three alternating observations and one excluded warmup per executable:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0224 | 1.0× |
+| Previous publication-debit stage | 0.477 | 21.3× |
+| Current-traversal scalar proofs | 0.508 | 22.6× |
+
+Its median is **6.4% slower**. Candidate observations span 0.494–0.523 seconds; parent observations span 0.464–0.485 seconds. The [prefix receipts](source-edge-facts-timing-v1/results.json) retain all observations; this stage does not establish a prefix improvement.
+
+[Actual-emission records](source-edge-facts-timing-v1/emission-audit.json) identify **nine omitted payload guards and four proved arithmetic substitutions in each of two compiled source regions**, at headers 173 and 284. Every record is checked against its exact source site, aggregate guard offset/ordinal or scalar operation/operands. These are two compiled bodies used by seven runtime tasks, not seven separately compiled bodies. Object, descriptor and linked-manifest hashes pin the records to the measured executable; runtime receipts separately verify seven packed SSA instances, a peak of seven workers, complete outputs and all **6,999,961 prefix** or **874,999,961 full-input updates**. Source, bytecode, inputs and finite launch policies match the parent. Subjects execute sequentially, including secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/edge-facts-focused-v2/summary.json) passes seven tests, and the [full native suite](../native-owner-dispatch-v1/edge-facts-native-v1/summary.json) passes **281 tests**, with three pre-existing manual exclusions. The [first focused run](../native-owner-dispatch-v1/edge-facts-focused-v1/summary.json) failed an equality assertion because independently seeded map-publication orders changed heapsort work by 32 compute units. The corrected test checks exact source work and remaining fuel before publication for all cases; empty/one-key results and source failures also retain exact end-to-end work equality. Complete outputs, update counts and original error locations remain checked. No production debit or limit was relaxed, and no observed difference was subtracted.
+
+The [profiling build](profile-source-edge-facts-build-v1/summary.json) preserves the timed executable's entire **4,131,568-byte** machine-code section, SHA-256 `65d23784cb2c63c9ac33dc7dc81ae4c73c0f0e3e1f8d441dd02721797a82735b`. A [completed full-input capture](full-profile-source-edge-facts-v1/summary.json) observes seven workers and 8,206 worker samples: **86.64%** have generated program code as their innermost recorded frame. Inclusive shares are **1.49%** for publication, **4.42%** for library work debits and **5.41%** for waiting. Both ordinary and batched debit APIs are included.
+
+The [prefix capture](prefix-profile-source-edge-facts-v1/summary.json) observes 526 samples from two remaining workers: **21.86%** include publication, **27.38%** include library work debits and **37.45%** include waiting; none have generated program code as their innermost frame. Both profiling executions verify complete output and every update. The prefix capture does not cover the earlier counting phase or establish the cause of the 6.4% elapsed-time regression. Categories overlap and include waits, partial unwinds and profiling overhead; these are not wall-time shares, independent benchmark observations or matched baseline profiles.
+
+Narrower table slots and private packed-map retention remain unmeasured in this stage, alongside separate decoded-source executable qualification, secured/trusted comparison and Rust parity.
+
 ## Bounded publication debit batches
 
 Compiler [`5e92487ad`](https://github.com/mech-lang/mech/commit/5e92487ad02e776baa7ed938154ad206b8325518) reuses the shared worker-account lock across bounded groups of publication-sort debits. Every original debit is still checked and committed individually; no allowance is reserved or renewed. The lock is released after at most 32 charges or 32,768 charged work units, and on denial or unwind. Sorting, complete map publication and source operations remain unchanged. The generated program object, descriptor and bytecode are byte-identical to the SIMD parent; IR42/work policy63/ABI22 remain valid.
@@ -32,7 +66,7 @@ The [profiling build](profile-publication-batches-build-v1/summary.json) preserv
 
 A [prefix capture](prefix-profile-publication-batches-v1/summary.json) records 535 observations across two remaining workers: **22.06%** include publication, **28.41%** include library debits and **39.63%** include waiting, with no generated-entry innermost observations. The [innermost-function inventory](prefix-profile-publication-batches-v1/innermost-functions.json) also identifies memory-budget evaluation and planning. Their caller stacks include the original guarded map lookup and canonical footprint measurement after histogram publication. Retaining packed maps through private reads or reusing proved footprint metadata are possible targets; neither is measured in this stage. All profile executions verify complete outputs and updates. Categories overlap and include waiting, partial unwinds and profiling overhead; these percentages are not wall-time shares or directly recoverable speedups.
 
-The full-input profile still places most observed worker frames in generated counting code. Further loop proofs and narrower slots remain separate candidates, as do representation retention, decoded-source executable qualification, secured/trusted comparison and Rust parity.
+At this stage, the full-input profile still places most observed worker frames in generated counting code. Current-traversal loop proofs are measured in the subsequent stage above. Narrower slots, representation retention, decoded-source executable qualification, secured/trusted comparison and Rust parity remained separate work.
 
 ## SIMD hash-table controls
 
