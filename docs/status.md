@@ -26,9 +26,16 @@ executes as native machine code for all seven widths and three input cases,
 including original and bytecode-decoded artifacts (42 cases). Build-owned
 images round-trip, emitted objects use IR28/work policy41/ABI15, and 418 focused
 checks pass with four pre-existing ignored checks. The invocation ledger retains
-spent comparison work on failed preflight and retry. Standalone executables,
-physical hash-table representation and complete-input qualification remain pending;
-no new benchmark result is admitted. The [preceding native entry study](../experiments/mech/native-map-entries-v1/README.md)
+spent comparison work on failed preflight and retry.
+
+The [standalone source-map AOT study](../experiments/mech/native-state-aot-v1/README.md)
+qualifies the complete FASTA procedure through public source and bytecode builds.
+Both produce identical executables; all fourteen bounded output cases and four
+I/O permission denials pass. Runtime receipts confirm AOT without JIT, source
+parsing or resident body evaluation. A follow-up corrects an accumulator metadata
+label when no window region is selected. Physical hash-table storage, complete-input
+work qualification and secured/trusted timing cohorts remain pending. No new
+benchmark result is admitted. The [preceding native entry study](../experiments/mech/native-map-entries-v1/README.md)
 retains the intermediate per-entry qualification and resolved gap evidence.
 
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
