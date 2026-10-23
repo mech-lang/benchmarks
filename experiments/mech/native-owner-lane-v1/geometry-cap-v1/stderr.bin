@@ -1,0 +1,20 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+warning: method `retained_nodes` is never used
+   --> hosts/gpu/src/native_artifact/owned_map_binding.rs:323:19
+    |
+156 | impl<'plan> Binding<'plan> {
+    | -------------------------- method in this implementation
+...
+323 |     pub(super) fn retained_nodes(&self) -> Result<u64, Error> {
+    |                   ^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-gpu` (lib test) generated 1 warning
+    Finished `test` profile [unoptimized] target(s) in 7.81s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+
+thread 'native_artifact::program_runtime::caller_geometry::tests::generated_caller_geometry_covers_live_collection_builder_families' (968077) panicked at hosts/gpu/src/native_artifact/program_caller_geometry_tests.rs:151:13:
+small live callers must fit the unchanged node cap 65536: [Row { snapshot_nodes: 10, nodes: 3626, bytes: 7651, work: 4864, activation: true, builders: 0, wrong_site_denied: true }, Row { snapshot_nodes: 10, nodes: 3628, bytes: 7651, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 10, nodes: 3628, bytes: 7651, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 12, nodes: 3630, bytes: 9284, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747091, bytes: 3754371, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747092, bytes: 3754635, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747092, bytes: 3754637, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747092, bytes: 3754637, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747093, bytes: 3754645, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747093, bytes: 3754643, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 14, nodes: 3747093, bytes: 3754643, work: 4864, activation: true, builders: 1, wrong_site_denied: true }, Row { snapshot_nodes: 12, nodes: 3747092, bytes: 3753018, work: 4864, activation: true, builders: 1, wrong_site_denied: true }]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p mech-gpu --lib`

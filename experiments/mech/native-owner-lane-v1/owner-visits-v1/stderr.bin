@@ -1,0 +1,26 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0559]: variant `native_artifact::runtime::NativeExecutionError::Memory` has no field named `phase`
+  --> hosts/gpu/src/native_artifact/program_map_owner_runtime.rs:26:71
+   |
+26 |         StorageError::Memory(error) => NativeExecutionError::Memory { phase: Phase::Setup, error }.into(),
+   |                                                                       ^^^^^ `native_artifact::runtime::NativeExecutionError::Memory` does not have this field
+   |
+   = note: all struct fields are already assigned
+
+error[E0369]: binary operation `!=` cannot be applied to type `&mech_core::ValueData`
+   --> hosts/gpu/src/native_artifact/program_map_owner_runtime_tests.rs:59:26
+    |
+ 59 |         if actual.data() != expected.data() { record(|r| r.mismatches += 1); }
+    |            ------------- ^^ --------------- &mech_core::ValueData
+    |            |
+    |            &mech_core::ValueData
+    |
+note: `mech_core::ValueData` does not implement `PartialEq`
+   --> src/core/src/snapshot/data.rs:151:1
+    |
+151 | pub enum ValueData {
+    | ^^^^^^^^^^^^^^^^^^ `mech_core::ValueData` is defined in another crate
+
+Some errors have detailed explanations: E0369, E0559.
+For more information about an error, try `rustc --explain E0369`.
+error: could not compile `mech-gpu` (lib test) due to 2 previous errors

@@ -169,6 +169,19 @@ combined before checked entry/call/exit routing can use complete geometry.
 IR30/work policy44/ABI15 and normal selection are unchanged. Full-input work
 qualification and fresh timings remain unfinished.
 
+The [invocation-bound map lane study](../experiments/mech/native-owner-lane-v1/README.md)
+binds retained tables to the exact descriptor, invocation ledger and fresh
+generated visit, with owning-loop checks and replay rejection. Test-only runs
+alongside real generated canonical code agree on reads and published maps;
+foreign descriptors/ledgers, stale tokens and repeats are rejected, and refused
+entry preserves canonical execution. Metadata demand now uses established node
+witnesses instead of unused reserved bytes, fitting the unchanged 65,536-node
+cap. All 206 native and eleven map checks pass (217 distinct; three pre-existing
+native exclusions). Work policy45 fences the cached witness storage; IR30 and
+ABI15 remain current. Normal selection is unchanged: owning-session storage,
+helper routing and conditional opaque-word transport remain to be connected,
+followed by full-input qualification and fresh timings.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
