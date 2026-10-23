@@ -2,6 +2,34 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Source-derived character encoding
+
+Compiler [`100f2ec89`](https://github.com/mech-lang/mech/commit/100f2ec894424b7b54f5e4c602e5a9aeb2916cdb) derives finite character alphabets from immutable source maps, copies and joins. When a shift-and-mask encoding is injective for that alphabet, generated loops pack each character into fewer bits and decode every retained key during canonical publication. Unknown or unsupported producers retain the full ASCII representation. This is a source proof, not a scan for nucleotide data. The unchanged program selects two-bit keys in all seven workers; cold failure origins remain active. IR41/work policy62/ABI21 identify the stage.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.551 | 1.00× |
+| Previous cold-origin stage, `8afcd192c` | 3.393 | 6.15× |
+| Source-derived character encoding, `100f2ec89` | 3.234 | 5.87× |
+
+The observed median speedup is **1.05×**, a **4.7%** reduction in elapsed time. Candidate samples are 3.340, 3.234 and 3.214 seconds; parent samples are 3.393, 3.617 and 3.298 seconds. Their ranges overlap. This is a modest gain in three cohorts, not evidence of a large or universal improvement. The [cohort results](full-parallel-compact-cohort-v1/results.json) retain all samples, standard deviations, execution orders and receipt hashes.
+
+The **one-million-base prefix** has three alternating complete-process measurements per executable, with one excluded warmup each:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0209 | 1.0× |
+| Previous cold-origin stage | 0.781 | 37.3× |
+| Source-derived character encoding | 0.824 | 39.3× |
+
+Its candidate median is **5.4% slower**, with overlapping ranges: 0.795–0.855 seconds versus 0.752–0.808 seconds for the parent. [Prefix receipts](parallel-compact-timing-v1/results.json) retain all nine timed processes. These measurements do not establish a prefix improvement or resolve the earlier slowdown relative to serial execution.
+
+Qualification records both selected map-region proofs: **two bits per character, shift one**, with a lossless alphabet mapping and no ASCII fallback. Every candidate run verifies exact output, seven actual packed SSA regions, one batch of seven tasks, a peak of seven concurrent workers and all **6,999,961 prefix** or **874,999,961 full-input updates**. Source, program bytecode, inputs and finite launch policies match the parent. Secured startup, shutdown, capability checks and shared resource accounting remain included; subjects run sequentially under the common lock.
+
+[Validation](../native-owner-dispatch-v1/parallel-compact-validation-v1/summary.json) passes **268 native tests**, with three pre-existing manual exclusions. Coverage includes original and decoded programs, restored descriptors, non-nucleotide alphabets, unused codes, word-boundary widths, fallback, complete map publication, seven-worker composition and shared cleanup. Earlier profiles concern earlier executables; no profile of this compact candidate is claimed here. SIMD probing, publication/budget contention, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished.
+
 ## Cold failure origins
 
 Compiler [`8afcd192c`](https://github.com/mech-lang/mech/commit/8afcd192c708f450136d939769ca8b7c4edbfaf7) moves error-location writes from successful packed SSA blocks to their failing edges. Source arithmetic, branches, bounds, map operations, work charges and rejection behavior are unchanged. Each failure still reports its original source location. Seven-worker execution and IR40/work policy61/ABI21 remain in use.
@@ -22,7 +50,7 @@ The [one-million-base prefix](cold-origin-timing-v1/results.json) has three alte
 
 All 255 existing native tests passed with the compiler change. The new failure-origin fixture initially contained a misplaced source terminator in its direct-lookup case; after that fixture was corrected, its focused test passed for original, decoded and restored execution, including arithmetic, rejection, selection, missing-key, malformed-helper and finite-budget failures with cleanup. [Initial validation](../native-owner-dispatch-v1/cold-origin-validation-v1/summary.json) and [corrected fixture validation](../native-owner-dispatch-v1/cold-origin-validation-v2/summary.json) preserve that distinction. The preceding stage's exact-code profiles motivated the change; they are not profiles of this new executable.
 
-Compact source-derived key domains, SIMD probing and reducing measured publication/budget contention remain subsequent stages. Rust parity and secured/trusted comparison remain unfinished.
+At the cold-origin stage, compact source-derived key domains were a subsequent stage; their measurements now appear above. SIMD probing and reducing measured publication/budget contention remain subsequent stages. Rust parity and secured/trusted comparison remain unfinished.
 
 ## Parallel source comprehensions
 
@@ -58,7 +86,7 @@ A [prefix capture of the same executable](prefix-profile-parallel-v1/summary.jso
 
 These profile categories overlap. The observations include waits, partial unwinds and profiling overhead; their percentages are neither CPU utilization nor wall-time shares, and thread totals cannot be added as elapsed time. An [earlier profiling attempt](full-profile-parallel-v2/summary.json) failed when the sandbox denied process inventory, captured no stacks and cleaned up its owned processes; it supplies no profiling or timing evidence.
 
-At this stage, repeated full-input cohorts and moving error-origin stores off the hot loop were unfinished; the subsequent stage above measures both. Isolation and correction of the prefix regression, compact character encoding, SIMD table controls, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished. Historical sections retain the results and limitations of their respective compiler stages.
+At this stage, repeated full-input cohorts, moving error-origin stores off the hot loop and compact character encoding were unfinished; subsequent stages above measure them. Isolation and correction of the prefix regression, SIMD table controls, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished. Historical sections retain the results and limitations of their respective compiler stages.
 
 ## Native register loops
 
@@ -404,7 +432,7 @@ That profile selected per-window range/String materialization and library invoca
 
 ## Evidence and reproduction scope
 
-- `compiler-v2` through `compiler-v16` pin successive compiler builds and their environments, including the native register-loop and parallel stages. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
+- `compiler-v2` through `compiler-v18` pin successive compiler builds and their environments, including native register loops, parallel execution, cold failure origins and compact character encoding. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
 - `build_and_time.py`, `measure_cache.py`, `measure_scale.py`, `measure_spans.py`, `compare_rust_spans.py`, `measure_admission.py` and `measure_stage.py` retain the exact build/run procedures. Output directories are versioned and guard against overwriting samples. `measure_stage.py` uses the configuration saved in each result and verifies its parent executable against the parent cohort's recorded hash. `measure_cache.py` reuses the candidate build receipt from `cache-timing-v1`; that attempted cohort stopped before quantitative timing because unmodified Rust used a different tie order on the synthetic input. Rust is excluded from that diagnostic, and its full standard-input output passes.
 - `profile_full.py`, `build_profile.py` and `analyze_profile.py` retain the sampled process procedure, matching-link settings and code-identity check. Earlier `profile-build-v2`, `full-profile-v2` and `profile-cache-build-v1` used a ThinLTO final link and are explicitly marked as exploratory mismatches. Their percentages are not a matched before/after comparison. `profile-build-v1` and `full-profile-v1` retain failed preparation/monitor diagnostics, not benchmark samples.
 - `profile_rust.py` and `analyze_rust_profile.py` capture and summarize the exact timed upstream Rust binary on the complete input; the original program and binary are unchanged. Profiling process durations are excluded from benchmark cohorts.
