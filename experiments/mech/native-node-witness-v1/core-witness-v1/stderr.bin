@@ -1,0 +1,34 @@
+   Compiling mech-core v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/core)
+error[E0027]: pattern does not mention field `retained_nodes`
+   --> src/core/src/snapshot/owned_string.rs:181:13
+    |
+181 |           let SnapshotBudgetOwnership {
+    |  _____________^
+182 | |             registration,
+183 | |             schemas: admitted_schemas,
+184 | |             required_bytes: _,
+185 | |             reservation,
+186 | |         } = ownership;
+    | |_________^ missing field `retained_nodes`
+    |
+help: include the missing field in the pattern
+    |
+185 -             reservation,
+186 -         } = ownership;
+185 +             reservation, retained_nodes } = ownership;
+    |
+help: if you don't care about this missing field, you can explicitly ignore it
+    |
+185 -             reservation,
+186 -         } = ownership;
+185 +             reservation, retained_nodes: _ } = ownership;
+    |
+help: or always ignore missing fields here
+    |
+185 -             reservation,
+186 -         } = ownership;
+185 +             reservation, .. } = ownership;
+    |
+
+For more information about this error, try `rustc --explain E0027`.
+error: could not compile `mech-core` (lib) due to 1 previous error

@@ -96,6 +96,16 @@ storage layer, not current-visit authority or normal program activation. The
 checked generated caller, complete frame geometry, version-fenced protocol,
 full-input work qualification and performance measurements remain unfinished.
 
+The [admitted node witness study](../experiments/mech/native-node-witness-v1/README.md)
+removes a duplicate snapshot admission traversal and maintains a conservative
+native arena node total without scanning payloads on each read. Validation
+passes 530 distinct checks (320 core, two catalog, 197 native and eleven map;
+three pre-existing native exclusions). Work policy42 funds the additional
+metadata and rejects preceding objects; IR28 and ABI15 are unchanged. The
+arena total does not include all private builders or external caller roots.
+Normal generated programs still use canonical maps; complete caller geometry,
+retained-map activation, full-input qualification and fresh timings remain pending.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
