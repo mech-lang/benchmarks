@@ -1,5 +1,17 @@
 # Benchmark coverage
 
+The [canonical Mech nucleotide study](../experiments/mech/native-hashmap-work-v1/README.md)
+restores mandatory library hash-table work in [compiler PR #911](https://github.com/mech-lang/mech/pull/911).
+All 166 native regression tests pass. Original and decoded standalone builds
+have identical binaries, pass capability denials, and verify seven complete
+tables and 874,999,961 updates on each standard full input. Seven shuffled serial
+rounds give canonical secured Mech AOT **9.39939 s (1.00000× this Mech)** and
+unchanged Rust #7 **0.54998 s (0.05851×)**. Mech is currently 17.09× slower;
+process CPU evidence shows approximately one core versus Rust's 4.35. These
+measurements establish a conforming compiler baseline for further optimization;
+the canonical dataset and website are unchanged.
+
+
 The [Mech pi-digits study](../experiments/mech/pidigits-performance-v1/RESULTS.md)
 reuses the extraction numerator, reducing the current AOT median from 0.3128s
 (1.08× optimized Mech) to 0.2901s (1.00×). In seven fresh shuffled rounds, unchanged

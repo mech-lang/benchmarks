@@ -13,7 +13,8 @@ def main():
  assert not subprocess.check_output(['git','-C',str(WORKSPACE),'status','--porcelain'])
  log=(HERE/'tests-v6/stdout.bin').read_text();assert '166 passed; 0 failed' in log
  r=json.loads((HERE/'tests-v6/process.json').read_bytes());assert r['exit_status']==0 and r['reaped'] and r['group_closed'] and not r['cleanup_errors']
- out=HERE/'qualification-v1';out.mkdir(exist_ok=False);b=HERE/'.build';env=prepared['environment'];cli=b/'mech-canonical'
+ resume='--resume-preparation' in sys.argv
+ out=HERE/('qualification-v2' if resume else 'qualification-v1');out.mkdir(exist_ok=False);b=HERE/'.build';env=prepared['environment'];cli=b/'mech-canonical'
  assert process.sha(cli)==prepared['compiler_sha256']
  source=out/'knucleotide.mec';shutil.copyfile(WORKSPACE/'hosts/gpu/tests/fixtures/native/knucleotide-idiomatic.mec',source)
  assert process.sha(source)=='12cadfcd00e25605f190e9d360f7f7bb661be8a02754961055ee5b6dfa84b60f'
@@ -34,18 +35,30 @@ def main():
    for label,command in [('hardware',['/usr/sbin/sysctl','machdep.cpu.brand_string','hw.model','hw.memsize','hw.ncpu']),('os',['/usr/bin/sw_vers']),('power-source',['/usr/bin/pmset','-g','batt']),('power-settings',['/usr/bin/pmset','-g','custom'])]:
     r=execute(command,out/label,deadline=30);assert r['exit_status']==0,(out/label/'stderr.bin').read_text()
    bytecode=b/'knucleotide.mecb'
-   r=execute([str(cli),'--no-config','build',str(source),'--name','canonical-knucleotide','--emit','bytecode','--offline','--workspace-root',str(WORKSPACE),'-o',str(bytecode)],out/'bytecode')
-   assert r['exit_status']==0,(out/'bytecode/stderr.bin').read_text()[-5000:]
+   if resume:
+    seed=HERE/'qualification-v1'
+    assert json.loads((seed/'results.json').read_bytes())['status']=='failed'
+    assert process.sha(seed/'knucleotide.mec')==process.sha(source)
+    for label in ['bytecode','build-source']:
+     previous=json.loads((seed/label/'process.json').read_bytes())
+     assert previous['exit_status']==0 and previous['reaped'] and previous['group_closed'] and not previous['cleanup_errors']
+    report['reused_preparation']=dict(directory=str(seed),bytecode_sha256=process.sha(bytecode))
+   else:
+    r=execute([str(cli),'--no-config','build',str(source),'--name','canonical-knucleotide','--emit','bytecode','--offline','--workspace-root',str(WORKSPACE),'-o',str(bytecode)],out/'bytecode')
+    assert r['exit_status']==0,(out/'bytecode/stderr.bin').read_text()[-5000:]
    for variant,src in [('source',source),('decoded',bytecode)]:
     binary=b/('knucleotide-'+variant)
     cmd=[str(cli),'--no-config','build',str(src),'--backend','cranelift','--profile','release','--keep-project','--offline','--workspace-root',str(WORKSPACE),'--name','canonical-knucleotide','-o',str(binary)]
-    print('Build',variant,flush=True);r=execute(cmd,out/('build-'+variant),deadline=3600)
-    assert r['exit_status']==0,(out/('build-'+variant)/'stderr.bin').read_text()[-6000:]
+    if resume and variant=='source':
+     print('Reuse verified completed source build',flush=True)
+    else:
+     print('Build',variant,flush=True);r=execute(cmd,out/('build-'+variant),deadline=3600)
+     assert r['exit_status']==0,(out/('build-'+variant)/'stderr.bin').read_text()[-6000:]
     project=Path(str(binary)+'.project');manifest=json.loads((project/'linked-manifest.json').read_bytes())
     for relative,pin in manifest['pins'].items():assert process.sha(project/relative)==pin,relative
     metadata=manifest['object'];assert metadata['compiled_window_accumulator']=='hashbrown-0.15.5-entry-updates'
-    assert metadata['compiled_window_query_regions']==5 and metadata['compiled_window_histogram_regions']==2
-    report['variants'][variant]=dict(binary_sha256=process.sha(binary),build_command=cmd,manifest=manifest)
+    assert metadata['compiled_window_query_regions']==1 and metadata['compiled_window_histogram_regions']==1 # two static functions, seven dynamic invocations
+    report['variants'][variant]=dict(binary_sha256=process.sha(binary),build_command=cmd,manifest=manifest,build_reused_from=str(HERE/'qualification-v1/build-source/process.json') if resume and variant=='source' else None)
     for index,raw in enumerate(cases):
      inp=out/f'input-{index}.fasta'
      if not inp.exists():inp.write_bytes(raw)
