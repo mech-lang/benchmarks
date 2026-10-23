@@ -1,0 +1,904 @@
+{
+  "status": "offline-narrow-slot-layout-and-linked-code-verified",
+  "executed_subject": false,
+  "benchmark_samples": 0,
+  "source_commit": "ee2e5ed39b2e39f65061fe01c6c18ec7f208ab08",
+  "ir_version": 44,
+  "abi_version": 23,
+  "work_policy_version": 64,
+  "source_sha256": "ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da",
+  "program_bytecode_sha256": "050db3a016f0caea04900d48940db5bbefc880c3ada507eff82c22c5b84418b0",
+  "native_descriptor_sha256": "15f7eb26c5f462eee8d23389f58dc90300f47280e3a4c53e4e456827d94318b2",
+  "linked_manifest_sha256": "2a19728b9446515a9079dd7e7bcb0d2107abfc88f489a6e517a4a913fe97730b",
+  "source_key_domains": [
+    {
+      "region": 1,
+      "map_owner": 0,
+      "packed_proof": true,
+      "source_domain": {
+        "alphabet": [
+          0,
+          1048714
+        ],
+        "bits": 2,
+        "shift": 1
+      },
+      "packing_domain": {
+        "alphabet": [
+          0,
+          1048714
+        ],
+        "bits": 2,
+        "shift": 1
+      }
+    },
+    {
+      "region": 2,
+      "map_owner": 1,
+      "packed_proof": true,
+      "source_domain": {
+        "alphabet": [
+          0,
+          1048714
+        ],
+        "bits": 2,
+        "shift": 1
+      },
+      "packing_domain": {
+        "alphabet": [
+          0,
+          1048714
+        ],
+        "bits": 2,
+        "shift": 1
+      }
+    }
+  ],
+  "assets": {
+    "candidate": {
+      "binary_sha256": "523a896e2afdc25918631763c7a3505d5be559f2b2f14332d8f31e864bf26653",
+      "object_sha256": "e935164e0865dd8ad44751ebf68bf9535bcefccd3c64db5c4b88d2f93e39a4e1",
+      "machine_code_bytes": 4132912,
+      "machine_code_sha256": "be0e0c52b5ed47b1d3178559d2152bf4341e128cab35f8afb388e9592f682339",
+      "text_virtual_address": "0x100003c00"
+    },
+    "parent": {
+      "binary_sha256": "3ceb420dd7dbe5f7168872d8402ded60640b08b9a3c5a1800481c333c9a5a7d0",
+      "object_sha256": "b13101dc276221f1c15f4dc4ca84890ad6e179f6d61e4b59e379221113dec2ce",
+      "machine_code_bytes": 4131568,
+      "machine_code_sha256": "65d23784cb2c63c9ac33dc7dc81ae4c73c0f0e3e1f8d441dd02721797a82735b",
+      "text_virtual_address": "0x100004380"
+    }
+  },
+  "source_file_sha256": {
+    "hosts/gpu/src/native_artifact/program_packed_slots.rs": "e7582f7e68b416bf0a2933a8f36b109079c4bf3b6b7130e1f28c7f4819fe6951",
+    "hosts/gpu/src/native_artifact/program_packed_map_codegen.rs": "97251c52fb35de3fb4c837e9309eb8c3de2b8c1862f069ce078fa91b7c4e1081",
+    "hosts/gpu/src/native_artifact/program_packed_map.rs": "e853212abeb42318874edad7eec11b9e5e90587d0bf5d76d279affba05377ac8"
+  },
+  "layout_proof": {
+    "predicate": "packing_bits * MAX_WIDTH <= 64",
+    "max_width": 18,
+    "selected_bits": 2,
+    "selected_max_key_bits": 36,
+    "runtime_value_selects_layout": false,
+    "payload_bytes": 16,
+    "count_offset_bytes": 8,
+    "count_bits": 64,
+    "fallback_payload_bytes": 24,
+    "previous_backing_bytes": "25 * capacity + 7",
+    "current_backing_bytes": "17 * capacity + 7",
+    "scope": "The same source-derived predicate selects runtime storage and generated addressing for all admitted widths; counts remain u64. Canonical publication and all entries/updates remain."
+  },
+  "instruction_windows": {
+    "candidate": {
+      "slot_bytes": 16,
+      "count_offset_bytes": 8,
+      "probe_windows": [
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x6408",
+          "object_end_exclusive": "0x6440",
+          "bytes": 56,
+          "sha256": "71c4c6cfe142ac648cab528986003c133b0bcbad0a35e500edc39ed2b45acff0",
+          "linked_text_virtual_addresses": [
+            "0x1003d2188"
+          ],
+          "instructions": [
+            "0000000000006408\tcmeq.8b\tv1, v1, v0",
+            "000000000000640c\tmov.d\tx8, v1[0]",
+            "0000000000006410\tand\tx8, x8, #0x101010101010101",
+            "0000000000006414\tcbz\tx8, 0x644c",
+            "0000000000006418\trbit\tx9, x8",
+            "000000000000641c\tclz\tx9, x9",
+            "0000000000006420\tlsr\tx9, x9, #3",
+            "0000000000006424\tadd\tx9, x6, x9",
+            "0000000000006428\tand\tx9, x9, x4",
+            "000000000000642c\tlsl\tx10, x9, #4",
+            "0000000000006430\tadd\tx9, x2, x9, lsl #4",
+            "0000000000006434\tldr\tx10, [x2, x10]",
+            "0000000000006438\tcmp\tx1, x10",
+            "000000000000643c\tb.eq\t0x64bc"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x68fc",
+          "object_end_exclusive": "0x6934",
+          "bytes": 56,
+          "sha256": "15e25c9e3e8772633d9290ca4ff75b810954b0132127640f64c905a7adb39cb5",
+          "linked_text_virtual_addresses": [
+            "0x1003d267c"
+          ],
+          "instructions": [
+            "00000000000068fc\tcmeq.8b\tv1, v1, v0",
+            "0000000000006900\tmov.d\tx8, v1[0]",
+            "0000000000006904\tand\tx9, x8, #0x101010101010101",
+            "0000000000006908\tcbz\tx9, 0x6940",
+            "000000000000690c\trbit\tx8, x9",
+            "0000000000006910\tclz\tx8, x8",
+            "0000000000006914\tlsr\tx8, x8, #3",
+            "0000000000006918\tadd\tx8, x6, x8",
+            "000000000000691c\tand\tx8, x8, x4",
+            "0000000000006920\tlsl\tx10, x8, #4",
+            "0000000000006924\tadd\tx8, x2, x8, lsl #4",
+            "0000000000006928\tldr\tx10, [x2, x10]",
+            "000000000000692c\tcmp\tx1, x10",
+            "0000000000006930\tb.eq\t0x69b0"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x6d54",
+          "object_end_exclusive": "0x6d8c",
+          "bytes": 56,
+          "sha256": "4d50374e5539f624bb7e2b5cee67b6994140b5c84f400f2aea9b13d949471348",
+          "linked_text_virtual_addresses": [
+            "0x1003d2ad4"
+          ],
+          "instructions": [
+            "0000000000006d54\tcmeq.8b\tv1, v1, v0",
+            "0000000000006d58\tmov.d\tx8, v1[0]",
+            "0000000000006d5c\tand\tx8, x8, #0x101010101010101",
+            "0000000000006d60\tcbz\tx8, 0x6d98",
+            "0000000000006d64\trbit\tx9, x8",
+            "0000000000006d68\tclz\tx9, x9",
+            "0000000000006d6c\tlsr\tx9, x9, #3",
+            "0000000000006d70\tadd\tx9, x6, x9",
+            "0000000000006d74\tand\tx9, x9, x4",
+            "0000000000006d78\tlsl\tx10, x9, #4",
+            "0000000000006d7c\tadd\tx21, x2, x9, lsl #4",
+            "0000000000006d80\tldr\tx9, [x2, x10]",
+            "0000000000006d84\tcmp\tx1, x9",
+            "0000000000006d88\tb.eq\t0x6e08"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x85b8",
+          "object_end_exclusive": "0x85f0",
+          "bytes": 56,
+          "sha256": "84451bce50937dc1eee7e7437a44cef0bf5a214ac24c420e63d2e62f4af8fb99",
+          "linked_text_virtual_addresses": [
+            "0x1003d4338"
+          ],
+          "instructions": [
+            "00000000000085b8\tcmeq.8b\tv1, v1, v0",
+            "00000000000085bc\tmov.d\tx7, v1[0]",
+            "00000000000085c0\tand\tx7, x7, #0x101010101010101",
+            "00000000000085c4\tcbz\tx7, 0x85fc",
+            "00000000000085c8\trbit\tx8, x7",
+            "00000000000085cc\tclz\tx8, x8",
+            "00000000000085d0\tlsr\tx8, x8, #3",
+            "00000000000085d4\tadd\tx8, x3, x8",
+            "00000000000085d8\tand\tx8, x8, x1",
+            "00000000000085dc\tlsl\tx9, x8, #4",
+            "00000000000085e0\tadd\tx22, x20, x8, lsl #4",
+            "00000000000085e4\tldr\tx8, [x20, x9]",
+            "00000000000085e8\tcmp\tx25, x8",
+            "00000000000085ec\tb.eq\t0x873c"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x8914",
+          "object_end_exclusive": "0x894c",
+          "bytes": 56,
+          "sha256": "a8c1e7127de5efd5524456f3bcf6c6040a62d3d6e48d74642a5b519bd3714e60",
+          "linked_text_virtual_addresses": [
+            "0x1003d4694"
+          ],
+          "instructions": [
+            "0000000000008914\tcmeq.8b\tv17, v17, v16",
+            "0000000000008918\tmov.d\tx13, v17[0]",
+            "000000000000891c\tand\tx5, x13, #0x101010101010101",
+            "0000000000008920\tcbz\tx5, 0x8958",
+            "0000000000008924\trbit\tx14, x5",
+            "0000000000008928\tclz\tx6, x14",
+            "000000000000892c\tlsr\tx15, x6, #3",
+            "0000000000008930\tadd\tx15, x1, x15",
+            "0000000000008934\tand\tx15, x15, x11",
+            "0000000000008938\tlsl\tx6, x15, #4",
+            "000000000000893c\tadd\tx27, x20, x15, lsl #4",
+            "0000000000008940\tldr\tx15, [x20, x6]",
+            "0000000000008944\tcmp\tx25, x15",
+            "0000000000008948\tb.eq\t0x8a98"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x8d84",
+          "object_end_exclusive": "0x8dbc",
+          "bytes": 56,
+          "sha256": "415e7c534c8f870dfe9c7ba95f11f0017dd9390f4e50de5e14ffc81ddc0ee73d",
+          "linked_text_virtual_addresses": [
+            "0x1003d4b04"
+          ],
+          "instructions": [
+            "0000000000008d84\tcmeq.8b\tv1, v1, v0",
+            "0000000000008d88\tmov.d\tx7, v1[0]",
+            "0000000000008d8c\tand\tx7, x7, #0x101010101010101",
+            "0000000000008d90\tcbz\tx7, 0x8dc8",
+            "0000000000008d94\trbit\tx8, x7",
+            "0000000000008d98\tclz\tx8, x8",
+            "0000000000008d9c\tlsr\tx8, x8, #3",
+            "0000000000008da0\tadd\tx8, x3, x8",
+            "0000000000008da4\tand\tx8, x8, x1",
+            "0000000000008da8\tlsl\tx9, x8, #4",
+            "0000000000008dac\tadd\tx27, x20, x8, lsl #4",
+            "0000000000008db0\tldr\tx8, [x20, x9]",
+            "0000000000008db4\tcmp\tx25, x8",
+            "0000000000008db8\tb.eq\t0x8f08"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xadcc",
+          "object_end_exclusive": "0xae04",
+          "bytes": 56,
+          "sha256": "3b8137e9bde0bb43c5aec7d6868738bae6c116a1d4959ea861d19863d9f5588b",
+          "linked_text_virtual_addresses": [
+            "0x1003d6b4c"
+          ],
+          "instructions": [
+            "000000000000adcc\tcmeq.8b\tv19, v19, v18",
+            "000000000000add0\tmov.d\tx7, v19[0]",
+            "000000000000add4\tand\tx7, x7, #0x101010101010101",
+            "000000000000add8\tcbz\tx7, 0xae10",
+            "000000000000addc\trbit\tx8, x7",
+            "000000000000ade0\tclz\tx8, x8",
+            "000000000000ade4\tlsr\tx8, x8, #3",
+            "000000000000ade8\tadd\tx8, x5, x8",
+            "000000000000adec\tand\tx8, x8, x3",
+            "000000000000adf0\tlsl\tx9, x8, #4",
+            "000000000000adf4\tadd\tx8, x1, x8, lsl #4",
+            "000000000000adf8\tldr\tx9, [x1, x9]",
+            "000000000000adfc\tcmp\tx0, x9",
+            "000000000000ae00\tb.eq\t0xae80"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xb2c0",
+          "object_end_exclusive": "0xb2f8",
+          "bytes": 56,
+          "sha256": "2013a27bb6ff4a7bc4cb89d08688e9685ced7814424dda14d3f11ce8e70d342d",
+          "linked_text_virtual_addresses": [
+            "0x1003d7040"
+          ],
+          "instructions": [
+            "000000000000b2c0\tcmeq.8b\tv1, v1, v0",
+            "000000000000b2c4\tmov.d\tx6, v1[0]",
+            "000000000000b2c8\tand\tx7, x6, #0x101010101010101",
+            "000000000000b2cc\tcbz\tx7, 0xb304",
+            "000000000000b2d0\trbit\tx6, x7",
+            "000000000000b2d4\tclz\tx6, x6",
+            "000000000000b2d8\tlsr\tx6, x6, #3",
+            "000000000000b2dc\tadd\tx6, x11, x6",
+            "000000000000b2e0\tand\tx6, x6, x4",
+            "000000000000b2e4\tlsl\tx8, x6, #4",
+            "000000000000b2e8\tadd\tx6, x2, x6, lsl #4",
+            "000000000000b2ec\tldr\tx8, [x2, x8]",
+            "000000000000b2f0\tcmp\tx1, x8",
+            "000000000000b2f4\tb.eq\t0xb374"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xb718",
+          "object_end_exclusive": "0xb750",
+          "bytes": 56,
+          "sha256": "5933ae74602ead89663f4a814d7e00d15f8116b10eea5a5eaacbd899b51bd761",
+          "linked_text_virtual_addresses": [
+            "0x1003d7498"
+          ],
+          "instructions": [
+            "000000000000b718\tcmeq.8b\tv4, v4, v3",
+            "000000000000b71c\tmov.d\tx8, v4[0]",
+            "000000000000b720\tand\tx8, x8, #0x101010101010101",
+            "000000000000b724\tcbz\tx8, 0xb75c",
+            "000000000000b728\trbit\tx9, x8",
+            "000000000000b72c\tclz\tx9, x9",
+            "000000000000b730\tlsr\tx9, x9, #3",
+            "000000000000b734\tadd\tx9, x2, x9",
+            "000000000000b738\tand\tx9, x9, x6",
+            "000000000000b73c\tlsl\tx10, x9, #4",
+            "000000000000b740\tadd\tx23, x4, x9, lsl #4",
+            "000000000000b744\tldr\tx9, [x4, x10]",
+            "000000000000b748\tcmp\tx3, x9",
+            "000000000000b74c\tb.eq\t0xb7cc"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xd49c",
+          "object_end_exclusive": "0xd4d4",
+          "bytes": 56,
+          "sha256": "ed3452e503ae84ac7bc13c90e63833cabbf251daaf2faf994e01f150e5b36b49",
+          "linked_text_virtual_addresses": [
+            "0x1003d921c"
+          ],
+          "instructions": [
+            "000000000000d49c\tcmeq.8b\tv25, v25, v24",
+            "000000000000d4a0\tmov.d\tx7, v25[0]",
+            "000000000000d4a4\tand\tx7, x7, #0x101010101010101",
+            "000000000000d4a8\tcbz\tx7, 0xd4e0",
+            "000000000000d4ac\trbit\tx8, x7",
+            "000000000000d4b0\tclz\tx8, x8",
+            "000000000000d4b4\tlsr\tx8, x8, #3",
+            "000000000000d4b8\tadd\tx8, x2, x8",
+            "000000000000d4bc\tand\tx8, x8, x0",
+            "000000000000d4c0\tlsl\tx9, x8, #4",
+            "000000000000d4c4\tadd\tx22, x20, x8, lsl #4",
+            "000000000000d4c8\tldr\tx8, [x20, x9]",
+            "000000000000d4cc\tcmp\tx24, x8",
+            "000000000000d4d0\tb.eq\t0xd620"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xd7f8",
+          "object_end_exclusive": "0xd830",
+          "bytes": 56,
+          "sha256": "f87030af99ff73fd84b494745112acc0158d872ad23cf10a224908669379c3ed",
+          "linked_text_virtual_addresses": [
+            "0x1003d9578"
+          ],
+          "instructions": [
+            "000000000000d7f8\tcmeq.8b\tv1, v1, v0",
+            "000000000000d7fc\tmov.d\tx7, v1[0]",
+            "000000000000d800\tand\tx7, x7, #0x101010101010101",
+            "000000000000d804\tcbz\tx7, 0xd83c",
+            "000000000000d808\trbit\tx8, x7",
+            "000000000000d80c\tclz\tx8, x8",
+            "000000000000d810\tlsr\tx8, x8, #3",
+            "000000000000d814\tadd\tx8, x2, x8",
+            "000000000000d818\tand\tx8, x8, x0",
+            "000000000000d81c\tlsl\tx9, x8, #4",
+            "000000000000d820\tadd\tx27, x20, x8, lsl #4",
+            "000000000000d824\tldr\tx8, [x20, x9]",
+            "000000000000d828\tcmp\tx24, x8",
+            "000000000000d82c\tb.eq\t0xd97c"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xdc64",
+          "object_end_exclusive": "0xdc9c",
+          "bytes": 56,
+          "sha256": "60511b8eaa564811a2882455eacfae8b0a4809fa1a6dfc811c1f685b4ec871b1",
+          "linked_text_virtual_addresses": [
+            "0x1003d99e4"
+          ],
+          "instructions": [
+            "000000000000dc64\tcmeq.8b\tv17, v17, v16",
+            "000000000000dc68\tmov.d\tx11, v17[0]",
+            "000000000000dc6c\tand\tx11, x11, #0x101010101010101",
+            "000000000000dc70\tcbz\tx11, 0xdca8",
+            "000000000000dc74\trbit\tx12, x11",
+            "000000000000dc78\tclz\tx14, x12",
+            "000000000000dc7c\tlsr\tx13, x14, #3",
+            "000000000000dc80\tadd\tx13, x2, x13",
+            "000000000000dc84\tand\tx13, x13, x9",
+            "000000000000dc88\tlsl\tx14, x13, #4",
+            "000000000000dc8c\tadd\tx27, x20, x13, lsl #4",
+            "000000000000dc90\tldr\tx13, [x20, x14]",
+            "000000000000dc94\tcmp\tx24, x13",
+            "000000000000dc98\tb.eq\t0xdde8"
+          ]
+        }
+      ],
+      "count_windows": [
+        {
+          "kind": "SSA u64 count load",
+          "object_start": "0x8bd0",
+          "object_end_exclusive": "0x8be0",
+          "bytes": 16,
+          "sha256": "76b24205c1d9d7e2b8229f8a2278b59637f13e912a6d0d2853dab68c513a8287",
+          "linked_text_virtual_addresses": [
+            "0x1003d4950"
+          ],
+          "instructions": [
+            "0000000000008bd0\tldr\tx8, [x22, #0x8]",
+            "0000000000008bd4\tstur\tx8, [sp, #0x18]",
+            "0000000000008bd8\tmov\tx22, x27",
+            "0000000000008bdc\tldur\tx1, [sp, #0x18]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count store",
+          "object_start": "0x912c",
+          "object_end_exclusive": "0x913c",
+          "bytes": 16,
+          "sha256": "129211e4523c8cfc8dad0c4e59f7eb2394e48f6bf64375adc1cdbf79a967e0a3",
+          "linked_text_virtual_addresses": [
+            "0x1003d4eac"
+          ],
+          "instructions": [
+            "000000000000912c\tstr\tx5, [x22, #0x8]",
+            "0000000000009130\tldur\tx0, [sp, #0x10]",
+            "0000000000009134\tadd\tx0, x0, #0x1",
+            "0000000000009138\tstur\tx0, [sp, #0x10]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count load",
+          "object_start": "0xdab0",
+          "object_end_exclusive": "0xdac0",
+          "bytes": 16,
+          "sha256": "385bfeedea747a17c74b7c2a49fbf89c0036adbcd1655eac2f2b894ec2f5a1bf",
+          "linked_text_virtual_addresses": [
+            "0x1003d9830"
+          ],
+          "instructions": [
+            "000000000000dab0\tldr\tx5, [x22, #0x8]",
+            "000000000000dab4\tstur\tx5, [sp, #0x20]",
+            "000000000000dab8\tmov\tx22, x27",
+            "000000000000dabc\tldur\tx0, [sp, #0x20]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count store",
+          "object_start": "0xe0dc",
+          "object_end_exclusive": "0xe0ec",
+          "bytes": 16,
+          "sha256": "50dc6cb5172289452c6c208570463bd7dd524f0450a76f37138acf776c4bfe59",
+          "linked_text_virtual_addresses": [
+            "0x1003d9e5c"
+          ],
+          "instructions": [
+            "000000000000e0dc\tstr\tx5, [x22, #0x8]",
+            "000000000000e0e0\tldur\tx0, [sp, #0x18]",
+            "000000000000e0e4\tadd\tx0, x0, #0x1",
+            "000000000000e0e8\tstur\tx0, [sp, #0x18]"
+          ]
+        }
+      ],
+      "overflow_window": {
+        "kind": "Original count-increment overflow check remains",
+        "object_start": "0x8bec",
+        "object_end_exclusive": "0x8c04",
+        "bytes": 24,
+        "sha256": "8b162d2189fd82a68a432d47147e6234b2c022e3289ee8cf1e2d39b6643c68fb",
+        "linked_text_virtual_addresses": [
+          "0x1003d496c"
+        ],
+        "instructions": [
+          "0000000000008bec\tadds\tx5, x1, x13",
+          "0000000000008bf0\tstur\tx5, [sp, #0xa0]",
+          "0000000000008bf4\tcset\tx14, hs",
+          "0000000000008bf8\tuxtb\tw13, w14",
+          "0000000000008bfc\tcmp\tw13, #0x0",
+          "0000000000008c00\tb.ne\t0xf254"
+        ]
+      }
+    },
+    "parent": {
+      "slot_bytes": 24,
+      "count_offset_bytes": 16,
+      "probe_windows": [
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x640c",
+          "object_end_exclusive": "0x6448",
+          "bytes": 60,
+          "sha256": "ffd899635e99c610b319e94b6090d6b041bd27314f6c726f4ab12218ddafcdac",
+          "linked_text_virtual_addresses": [
+            "0x1003d230c"
+          ],
+          "instructions": [
+            "000000000000640c\tcmeq.8b\tv7, v7, v6",
+            "0000000000006410\tmov.d\tx11, v7[0]",
+            "0000000000006414\tand\tx2, x11, #0x101010101010101",
+            "0000000000006418\tmov\tx11, #0x18",
+            "000000000000641c\tcbz\tx2, 0x6454",
+            "0000000000006420\trbit\tx12, x2",
+            "0000000000006424\tclz\tx12, x12",
+            "0000000000006428\tlsr\tx12, x12, #3",
+            "000000000000642c\tadd\tx12, x1, x12",
+            "0000000000006430\tand\tx12, x12, x9",
+            "0000000000006434\tmul\tx13, x12, x11",
+            "0000000000006438\tmadd\tx12, x12, x11, x7",
+            "000000000000643c\tldr\tx13, [x7, x13]",
+            "0000000000006440\tcmp\tx6, x13",
+            "0000000000006444\tb.eq\t0x64c4"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x6904",
+          "object_end_exclusive": "0x6940",
+          "bytes": 60,
+          "sha256": "6977eab90dd61f2695decb2651a402db0a4d638caa620ac2f01d1259efc38b77",
+          "linked_text_virtual_addresses": [
+            "0x1003d2804"
+          ],
+          "instructions": [
+            "0000000000006904\tcmeq.8b\tv1, v1, v0",
+            "0000000000006908\tmov.d\tx8, v1[0]",
+            "000000000000690c\tand\tx8, x8, #0x101010101010101",
+            "0000000000006910\tmov\tx9, #0x18",
+            "0000000000006914\tcbz\tx8, 0x694c",
+            "0000000000006918\trbit\tx10, x8",
+            "000000000000691c\tclz\tx10, x10",
+            "0000000000006920\tlsr\tx10, x10, #3",
+            "0000000000006924\tadd\tx10, x6, x10",
+            "0000000000006928\tand\tx10, x10, x4",
+            "000000000000692c\tmul\tx11, x10, x9",
+            "0000000000006930\tmadd\tx10, x10, x9, x2",
+            "0000000000006934\tldr\tx11, [x2, x11]",
+            "0000000000006938\tcmp\tx1, x11",
+            "000000000000693c\tb.eq\t0x69bc"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x6d60",
+          "object_end_exclusive": "0x6d9c",
+          "bytes": 60,
+          "sha256": "8eb92ed09e4ad4ac416f0a5ebf16c2f4cd9ccf7aa09f7ed5fa9ddacbfb963f71",
+          "linked_text_virtual_addresses": [
+            "0x1003d2c60"
+          ],
+          "instructions": [
+            "0000000000006d60\tcmeq.8b\tv1, v1, v0",
+            "0000000000006d64\tmov.d\tx8, v1[0]",
+            "0000000000006d68\tand\tx8, x8, #0x101010101010101",
+            "0000000000006d6c\tmov\tx9, #0x18",
+            "0000000000006d70\tcbz\tx8, 0x6da8",
+            "0000000000006d74\trbit\tx10, x8",
+            "0000000000006d78\tclz\tx10, x10",
+            "0000000000006d7c\tlsr\tx10, x10, #3",
+            "0000000000006d80\tadd\tx10, x6, x10",
+            "0000000000006d84\tand\tx10, x10, x4",
+            "0000000000006d88\tmul\tx11, x10, x9",
+            "0000000000006d8c\tmadd\tx23, x10, x9, x2",
+            "0000000000006d90\tldr\tx10, [x2, x11]",
+            "0000000000006d94\tcmp\tx1, x10",
+            "0000000000006d98\tb.eq\t0x6e18"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x85c8",
+          "object_end_exclusive": "0x8604",
+          "bytes": 60,
+          "sha256": "00b8039ff8a6fba3be4a3405539b1aa9dded4032c6754a12dc38afe853697704",
+          "linked_text_virtual_addresses": [
+            "0x1003d44c8"
+          ],
+          "instructions": [
+            "00000000000085c8\tcmeq.8b\tv17, v17, v16",
+            "00000000000085cc\tmov.d\tx11, v17[0]",
+            "00000000000085d0\tand\tx5, x11, #0x101010101010101",
+            "00000000000085d4\tmov\tx11, #0x18",
+            "00000000000085d8\tcbz\tx5, 0x8610",
+            "00000000000085dc\trbit\tx12, x5",
+            "00000000000085e0\tclz\tx14, x12",
+            "00000000000085e4\tlsr\tx13, x14, #3",
+            "00000000000085e8\tadd\tx13, x2, x13",
+            "00000000000085ec\tand\tx13, x13, x9",
+            "00000000000085f0\tmul\tx14, x13, x11",
+            "00000000000085f4\tmadd\tx21, x13, x11, x26",
+            "00000000000085f8\tldr\tx13, [x26, x14]",
+            "00000000000085fc\tcmp\tx23, x13",
+            "0000000000008600\tb.eq\t0x8750"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x8924",
+          "object_end_exclusive": "0x8960",
+          "bytes": 60,
+          "sha256": "b282a4fe88e84cac4dd8ce7613ed4085ca7fbab7543f44feeecb22ed8f9abd0e",
+          "linked_text_virtual_addresses": [
+            "0x1003d4824"
+          ],
+          "instructions": [
+            "0000000000008924\tcmeq.8b\tv24, v24, v23",
+            "0000000000008928\tmov.d\tx7, v24[0]",
+            "000000000000892c\tand\tx7, x7, #0x101010101010101",
+            "0000000000008930\tmov\tx8, #0x18",
+            "0000000000008934\tcbz\tx7, 0x896c",
+            "0000000000008938\trbit\tx9, x7",
+            "000000000000893c\tclz\tx9, x9",
+            "0000000000008940\tlsr\tx9, x9, #3",
+            "0000000000008944\tadd\tx9, x2, x9",
+            "0000000000008948\tand\tx9, x9, x0",
+            "000000000000894c\tmul\tx10, x9, x8",
+            "0000000000008950\tmadd\tx25, x9, x8, x26",
+            "0000000000008954\tldr\tx9, [x26, x10]",
+            "0000000000008958\tcmp\tx23, x9",
+            "000000000000895c\tb.eq\t0x8aac"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0x8d98",
+          "object_end_exclusive": "0x8dd4",
+          "bytes": 60,
+          "sha256": "d40d287de80d437f4903a342deb7a14906603166e4267f30d7137e26539ea87b",
+          "linked_text_virtual_addresses": [
+            "0x1003d4c98"
+          ],
+          "instructions": [
+            "0000000000008d98\tcmeq.8b\tv1, v1, v0",
+            "0000000000008d9c\tmov.d\tx7, v1[0]",
+            "0000000000008da0\tand\tx7, x7, #0x101010101010101",
+            "0000000000008da4\tmov\tx8, #0x18",
+            "0000000000008da8\tcbz\tx7, 0x8de0",
+            "0000000000008dac\trbit\tx9, x7",
+            "0000000000008db0\tclz\tx9, x9",
+            "0000000000008db4\tlsr\tx9, x9, #3",
+            "0000000000008db8\tadd\tx9, x3, x9",
+            "0000000000008dbc\tand\tx9, x9, x1",
+            "0000000000008dc0\tmul\tx10, x9, x8",
+            "0000000000008dc4\tmadd\tx25, x9, x8, x26",
+            "0000000000008dc8\tldr\tx9, [x26, x10]",
+            "0000000000008dcc\tcmp\tx23, x9",
+            "0000000000008dd0\tb.eq\t0x8f20"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xadf0",
+          "object_end_exclusive": "0xae2c",
+          "bytes": 60,
+          "sha256": "6406b28b7c479934046699d4e70a2c501074caebe4a1189ce358fd6b18699fb9",
+          "linked_text_virtual_addresses": [
+            "0x1003d6cf0"
+          ],
+          "instructions": [
+            "000000000000adf0\tcmeq.8b\tv31, v31, v30",
+            "000000000000adf4\tmov.d\tx8, v31[0]",
+            "000000000000adf8\tand\tx8, x8, #0x101010101010101",
+            "000000000000adfc\tmov\tx9, #0x18",
+            "000000000000ae00\tcbz\tx8, 0xae38",
+            "000000000000ae04\trbit\tx10, x8",
+            "000000000000ae08\tclz\tx10, x10",
+            "000000000000ae0c\tlsr\tx10, x10, #3",
+            "000000000000ae10\tadd\tx10, x6, x10",
+            "000000000000ae14\tand\tx10, x10, x4",
+            "000000000000ae18\tmul\tx11, x10, x9",
+            "000000000000ae1c\tmadd\tx10, x10, x9, x2",
+            "000000000000ae20\tldr\tx11, [x2, x11]",
+            "000000000000ae24\tcmp\tx1, x11",
+            "000000000000ae28\tb.eq\t0xaea8"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xb2e8",
+          "object_end_exclusive": "0xb324",
+          "bytes": 60,
+          "sha256": "92081df25ef5eaa36603fd4f6de8ca2132dbd6494e7d8deb3d8facaa16d3bd89",
+          "linked_text_virtual_addresses": [
+            "0x1003d71e8"
+          ],
+          "instructions": [
+            "000000000000b2e8\tcmeq.8b\tv6, v6, v5",
+            "000000000000b2ec\tmov.d\tx10, v6[0]",
+            "000000000000b2f0\tand\tx3, x10, #0x101010101010101",
+            "000000000000b2f4\tmov\tx10, #0x18",
+            "000000000000b2f8\tcbz\tx3, 0xb330",
+            "000000000000b2fc\trbit\tx11, x3",
+            "000000000000b300\tclz\tx11, x11",
+            "000000000000b304\tlsr\tx11, x11, #3",
+            "000000000000b308\tadd\tx11, x1, x11",
+            "000000000000b30c\tand\tx11, x11, x8",
+            "000000000000b310\tmul\tx12, x11, x10",
+            "000000000000b314\tmadd\tx4, x11, x10, x6",
+            "000000000000b318\tldr\tx11, [x6, x12]",
+            "000000000000b31c\tcmp\tx5, x11",
+            "000000000000b320\tb.eq\t0xb3a0"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xb744",
+          "object_end_exclusive": "0xb780",
+          "bytes": 60,
+          "sha256": "f49676d4def4fba9ffd5587b977bf8334dd6c32e385df1507757dada59980c63",
+          "linked_text_virtual_addresses": [
+            "0x1003d7644"
+          ],
+          "instructions": [
+            "000000000000b744\tcmeq.8b\tv17, v17, v16",
+            "000000000000b748\tmov.d\tx6, v17[0]",
+            "000000000000b74c\tand\tx6, x6, #0x101010101010101",
+            "000000000000b750\tmov\tx7, #0x18",
+            "000000000000b754\tcbz\tx6, 0xb78c",
+            "000000000000b758\trbit\tx8, x6",
+            "000000000000b75c\tclz\tx8, x8",
+            "000000000000b760\tlsr\tx8, x8, #3",
+            "000000000000b764\tadd\tx8, x4, x8",
+            "000000000000b768\tand\tx8, x8, x2",
+            "000000000000b76c\tmul\tx9, x8, x7",
+            "000000000000b770\tmadd\tx23, x8, x7, x0",
+            "000000000000b774\tldr\tx8, [x0, x9]",
+            "000000000000b778\tcmp\tx15, x8",
+            "000000000000b77c\tb.eq\t0xb7fc"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xd4bc",
+          "object_end_exclusive": "0xd4f8",
+          "bytes": 60,
+          "sha256": "0634975356af5fbd17fc0617ba4b8717349a3ece37514964f472a44c07f8a17b",
+          "linked_text_virtual_addresses": [
+            "0x1003d93bc"
+          ],
+          "instructions": [
+            "000000000000d4bc\tcmeq.8b\tv1, v1, v0",
+            "000000000000d4c0\tmov.d\tx4, v1[0]",
+            "000000000000d4c4\tand\tx4, x4, #0x101010101010101",
+            "000000000000d4c8\tmov\tx5, #0x18",
+            "000000000000d4cc\tcbz\tx4, 0xd504",
+            "000000000000d4d0\trbit\tx6, x4",
+            "000000000000d4d4\tclz\tx6, x6",
+            "000000000000d4d8\tlsr\tx6, x6, #3",
+            "000000000000d4dc\tadd\tx6, x1, x6",
+            "000000000000d4e0\tand\tx6, x6, x0",
+            "000000000000d4e4\tmul\tx7, x6, x5",
+            "000000000000d4e8\tmadd\tx21, x6, x5, x26",
+            "000000000000d4ec\tldr\tx6, [x26, x7]",
+            "000000000000d4f0\tcmp\tx20, x6",
+            "000000000000d4f4\tb.eq\t0xd644"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xd814",
+          "object_end_exclusive": "0xd850",
+          "bytes": 60,
+          "sha256": "5e7e0474cddaad60bd0113ee5543d4166862181efa17c9289a7b8cbea9a75bfa",
+          "linked_text_virtual_addresses": [
+            "0x1003d9714"
+          ],
+          "instructions": [
+            "000000000000d814\tcmeq.8b\tv1, v1, v0",
+            "000000000000d818\tmov.d\tx4, v1[0]",
+            "000000000000d81c\tand\tx4, x4, #0x101010101010101",
+            "000000000000d820\tmov\tx5, #0x18",
+            "000000000000d824\tcbz\tx4, 0xd85c",
+            "000000000000d828\trbit\tx6, x4",
+            "000000000000d82c\tclz\tx6, x6",
+            "000000000000d830\tlsr\tx6, x6, #3",
+            "000000000000d834\tadd\tx6, x8, x6",
+            "000000000000d838\tand\tx6, x6, x0",
+            "000000000000d83c\tmul\tx7, x6, x5",
+            "000000000000d840\tmadd\tx25, x6, x5, x26",
+            "000000000000d844\tldr\tx6, [x26, x7]",
+            "000000000000d848\tcmp\tx20, x6",
+            "000000000000d84c\tb.eq\t0xd99c"
+          ]
+        },
+        {
+          "kind": "SIMD shortlist, bucket scaling and complete packed-low-key comparison",
+          "object_start": "0xdc88",
+          "object_end_exclusive": "0xdcc4",
+          "bytes": 60,
+          "sha256": "9b198b7c2b20dd099e5d7e97c0a4c177717cf4cbdcce28cabd50bbede799a9be",
+          "linked_text_virtual_addresses": [
+            "0x1003d9b88"
+          ],
+          "instructions": [
+            "000000000000dc88\tcmeq.8b\tv22, v22, v21",
+            "000000000000dc8c\tmov.d\tx6, v22[0]",
+            "000000000000dc90\tand\tx6, x6, #0x101010101010101",
+            "000000000000dc94\tmov\tx7, #0x18",
+            "000000000000dc98\tcbz\tx6, 0xdcd0",
+            "000000000000dc9c\trbit\tx9, x6",
+            "000000000000dca0\tclz\tx9, x9",
+            "000000000000dca4\tlsr\tx9, x9, #3",
+            "000000000000dca8\tadd\tx9, x2, x9",
+            "000000000000dcac\tand\tx9, x9, x0",
+            "000000000000dcb0\tmul\tx10, x9, x7",
+            "000000000000dcb4\tmadd\tx25, x9, x7, x26",
+            "000000000000dcb8\tldr\tx9, [x26, x10]",
+            "000000000000dcbc\tcmp\tx20, x9",
+            "000000000000dcc0\tb.eq\t0xde10"
+          ]
+        }
+      ],
+      "count_windows": [
+        {
+          "kind": "SSA u64 count load",
+          "object_start": "0x8be4",
+          "object_end_exclusive": "0x8bf4",
+          "bytes": 16,
+          "sha256": "61e38c0a8d177c55dc6627c21d4efbe9053779e29d09a3754d57880c8a7758bb",
+          "linked_text_virtual_addresses": [
+            "0x1003d4ae4"
+          ],
+          "instructions": [
+            "0000000000008be4\tldr\tx0, [x21, #0x10]",
+            "0000000000008be8\tstur\tx0, [sp, #0x18]",
+            "0000000000008bec\tmov\tx21, x25",
+            "0000000000008bf0\tldur\tx5, [sp, #0x18]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count store",
+          "object_start": "0x9144",
+          "object_end_exclusive": "0x9154",
+          "bytes": 16,
+          "sha256": "e45c2b0d797d748dc1d75e78afea95e05eec9fb6d89b5ecebab942d6ca4b8230",
+          "linked_text_virtual_addresses": [
+            "0x1003d5044"
+          ],
+          "instructions": [
+            "0000000000009144\tstr\tx5, [x21, #0x10]",
+            "0000000000009148\tldur\tx6, [sp, #0x10]",
+            "000000000000914c\tadd\tx6, x6, #0x1",
+            "0000000000009150\tstur\tx6, [sp, #0x10]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count load",
+          "object_start": "0xdad4",
+          "object_end_exclusive": "0xdae4",
+          "bytes": 16,
+          "sha256": "e57252918e19f906eff7ecb47a81ba152162225c4c3a5cfdea24ad17d997fa1d",
+          "linked_text_virtual_addresses": [
+            "0x1003d99d4"
+          ],
+          "instructions": [
+            "000000000000dad4\tldr\tx0, [x21, #0x10]",
+            "000000000000dad8\tstur\tx0, [sp, #0x20]",
+            "000000000000dadc\tmov\tx21, x25",
+            "000000000000dae0\tldur\tx0, [sp, #0x20]"
+          ]
+        },
+        {
+          "kind": "SSA u64 count store",
+          "object_start": "0xe0fc",
+          "object_end_exclusive": "0xe10c",
+          "bytes": 16,
+          "sha256": "d091a763ddf0d2ffe6203256bf80e81c73a638ee1e8f27b02df49141814213f8",
+          "linked_text_virtual_addresses": [
+            "0x1003d9ffc"
+          ],
+          "instructions": [
+            "000000000000e0fc\tstr\tx5, [x21, #0x10]",
+            "000000000000e100\tldur\tx0, [sp, #0x18]",
+            "000000000000e104\tadd\tx0, x0, #0x1",
+            "000000000000e108\tstur\tx0, [sp, #0x18]"
+          ]
+        }
+      ],
+      "overflow_window": null
+    }
+  },
+  "runtime_selection": "Separate completed timing receipts verify seven packed SSA regions, seven concurrent workers and every update; disassembly alone does not establish execution counts.",
+  "scope": "Offline object disassembly and exact instruction-byte windows matched into each linked timed executable. This proves emitted slot layout and retained full-key/count checks, not an isolated speedup, instruction frequency or wall-time share.",
+  "evidence_sha256": {
+    "candidate-inspection.json": "aa96dc3c14839b4b1f76893b0069ab1735192a02442e6c0eb699260b9e9ccc10",
+    "candidate-object.disassembly.txt": "b15d56b20d90ed228797e11462fadede35727d5a617050dda61cd658c885197c",
+    "candidate-object.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "excerpts.txt": "65bbe4a0c93e1517916685a6256f41bc935297f6e16a7a6c2f3ccbac4738c542",
+    "parent-inspection.json": "56eba2f674b91faf365af3831b64392937aeca2c8994fe73274a7171198c8db5",
+    "parent-object.disassembly.txt": "4b337df8530d7579ddda6491aa67a569d4ce90138592a6da36bcbe1651b6c8e4",
+    "parent-object.stderr.txt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

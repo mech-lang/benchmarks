@@ -1,0 +1,36 @@
+{
+  "status": "full-native-validation-failed-stale-abi-expectations",
+  "source_commit": "d7b1f19092d3bb6b329e3f1d386a9534127d916a",
+  "source_tree": "3ce93df2d4818824a1d6b801a89bf91027088c98",
+  "source_commit_provenance": "Direct before/after clean revision snapshots retained in source-provenance.json; the original process receipt remains unchanged.",
+  "passed": 285,
+  "failed": 2,
+  "ignored": 3,
+  "filtered_out": 58,
+  "benchmark_samples": 0,
+  "process_elapsed_seconds": 97.83109525,
+  "elapsed_scope": "Build and serial test execution, not benchmark timing",
+  "all_owned_processes_reaped_and_groups_closed": true,
+  "validator_sha256": "08224fb31664ad0e2951fdb2bb82c2f66992958b81e5fc79cce9b278185a636c",
+  "failures": [
+    {
+      "test": "worker_abi_keeps_the_frozen_scalar_prefix_and_disjoint_helper_lanes",
+      "source": "hosts/gpu/src/native_artifact/program_runtime.rs:4418",
+      "actual_abi": 23,
+      "expected_abi": 22
+    },
+    {
+      "test": "compact_range_layout_and_identity_preserve_original_decoded_library_visits",
+      "source": "hosts/gpu/src/native_artifact/program_selected_join_layout_tests.rs:84",
+      "actual_abi": 23,
+      "expected_abi": 22
+    }
+  ],
+  "interpretation": "Both failures are assertions retaining the prior ABI number. They must be corrected and the suite rerun before this stage is qualified; the other 285 passing tests do not convert this run into a passing validation.",
+  "evidence_sha256": {
+    "process.json": "7f187301a8766435c49933540c658153e1cf3451a5adc36c56dcff2cdd42c852",
+    "source-provenance.json": "6a8a56ecc3a83b0d189a97caf35efd7c4f65fda14a0e883df2c9887ed07797e0",
+    "stdout.bin": "a6407a4c51b8f53c2c2e879babae0c497ec3ec7c7c2c87fe24cc7cec4e27f09c",
+    "stderr.bin": "0da0c5dbaf558069ffda2018a3a402f0cb1917f478b95322988b9a3124e58f6d"
+  }
+}

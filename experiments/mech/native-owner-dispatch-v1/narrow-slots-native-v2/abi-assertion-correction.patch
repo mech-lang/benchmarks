@@ -1,0 +1,26 @@
+diff --git a/hosts/gpu/src/native_artifact/program_runtime.rs b/hosts/gpu/src/native_artifact/program_runtime.rs
+index 1a39997e0..f2c149645 100644
+--- a/hosts/gpu/src/native_artifact/program_runtime.rs
++++ b/hosts/gpu/src/native_artifact/program_runtime.rs
+@@ -4415,7 +4415,7 @@ mod tests {
+     }
+     #[test]
+     fn worker_abi_keeps_the_frozen_scalar_prefix_and_disjoint_helper_lanes() {
+-        assert_eq!(VERSION, 22);
++        assert_eq!(VERSION, 23);
+         assert_eq!(super::super::program_abi::PHASE_CAPTURE_TAIL, 3);
+         assert_eq!(super::super::program_abi::STATUS_INPUT_SCANNED, 7);
+         assert_eq!(core::mem::offset_of!(Frame, base), 0);
+diff --git a/hosts/gpu/src/native_artifact/program_selected_join_layout_tests.rs b/hosts/gpu/src/native_artifact/program_selected_join_layout_tests.rs
+index bc3fcebd6..9862d44b4 100644
+--- a/hosts/gpu/src/native_artifact/program_selected_join_layout_tests.rs
++++ b/hosts/gpu/src/native_artifact/program_selected_join_layout_tests.rs
+@@ -81,7 +81,7 @@ fn compact_range_layout_and_identity_preserve_original_decoded_library_visits()
+                 u64::from_le_bytes(current[16..24].try_into().unwrap()),
+                 NATIVE_PROGRAM_TYPED_IR_VERSION
+             );
+-            assert_eq!(u64::from_le_bytes(current[24..32].try_into().unwrap()), 22);
++            assert_eq!(u64::from_le_bytes(current[24..32].try_into().unwrap()), 23);
+             assert_eq!(
+                 u64::from_le_bytes(current[32..40].try_into().unwrap()),
+                 NATIVE_PROGRAM_WORK_POLICY_VERSION

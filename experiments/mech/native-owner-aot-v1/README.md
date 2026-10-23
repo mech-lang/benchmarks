@@ -2,6 +2,42 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Narrow table payloads
+
+Compiler [`ee2e5ed39`](https://github.com/mech-lang/mech/commit/ee2e5ed39b2e39f65061fe01c6c18ec7f208ab08) stores a packed key and its **64-bit count in 16 bytes**, instead of a 24-byte payload with an unused high key word. The source-derived alphabet proof must fit every admitted width into one key word; other domains retain the wider layout. Hashing, full-key comparison, collision handling, count-overflow checks and complete map publication remain. IR44/work policy64/ABI23 identify the layout and accounting change; the Mech source and program bytecode are unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.554 | 1.00× |
+| Previous scalar-proof stage, `b08ab3cda` | 2.221 | 4.01× |
+| Narrow table payloads, `ee2e5ed39` | 2.229 | 4.03× |
+
+The candidate median is **0.4% slower**, with overlapping ranges: 2.184–2.261 seconds versus 2.191–2.313 seconds. These cohorts establish **no runtime improvement**. [Full cohort receipts](full-narrow-slots-cohort-v1/results.json) retain all observations, execution orders and standard deviations.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, also regresses:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0205 | 1.0× |
+| Previous scalar-proof stage | 0.507 | 24.7× |
+| Narrow table payloads | 0.524 | 25.5× |
+
+Its median is **3.3% slower**; candidate observations span 0.517–0.538 seconds, above all parent observations at 0.488–0.511 seconds. The [prefix receipts](narrow-slots-timing-v1/results.json) retain every observation. No cause is assigned to the regression from these timings alone.
+
+The payload reduction is real: slot/control backing changes from **`25 × capacity + 7` to `17 × capacity + 7` bytes**. This is not a one-third reduction in whole-process memory. The [measured full-process RSS medians](full-narrow-slots-cohort-v1/summary.json) are **233.3 MB** for the candidate and **235.9 MB** for its parent, using decimal MB. Captured inputs, canonical publication, worker contexts and other allocations remain.
+
+[Offline code inspection](narrow-slots-codegen-audit-v1/summary.json) verifies twelve generated SIMD probe windows using 16-byte bucket strides, plus SSA count loads/stores at offset eight; the parent's corresponding windows use 24-byte strides and offset sixteen. The instruction bytes match the exact linked timing executables. Both compiled regions retain the two-bit source alphabet proof and [nine omitted payload guards plus four proved arithmetic substitutions](narrow-slots-timing-v1/emission-audit.json). Runtime receipts separately verify seven packed SSA instances, one batch of seven tasks, a peak of seven workers, exact outputs and all **6,999,961 prefix** or **874,999,961 full-input updates**. Inputs and finite launch policies match the parent. Subjects run sequentially, including secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/narrow-slots-focused-v1/summary.json) passes eight tests, including one unrelated test matched by the broad filter. The [first full run](../native-owner-dispatch-v1/narrow-slots-native-v1/summary.json) passes 285 tests but fails two assertions still expecting ABI22. A test-only correction updates them to ABI23; the [repeated full suite](../native-owner-dispatch-v1/narrow-slots-native-v2/summary.json) passes **287 tests**, with three pre-existing manual exclusions. Before/after source-provenance sidecars pin each run to its clean, unchanged compiler revision; the original process receipts remain intact.
+
+The [profiling build](profile-narrow-slots-build-v1/summary.json) preserves the timed executable's entire **4,132,912-byte** machine-code section, SHA-256 `be0e0c52b5ed47b1d3178559d2152bf4341e128cab35f8afb388e9592f682339`. A [full-input capture](full-profile-narrow-slots-v1/summary.json) observes seven workers and 8,123 worker samples: **85.20%** have generated program code as their innermost recorded frame. Inclusive shares are **1.83%** for publication, **5.38%** for library work debits and **6.59%** for waiting. Both ordinary and batched debit APIs are included.
+
+The [prefix capture](prefix-profile-narrow-slots-v1/summary.json) observes 652 samples from two remaining workers: **21.32%** include publication, **30.21%** include library work debits and **35.58%** include waiting; none have generated program code as their innermost frame. Both profile executions verify complete output and every update. Categories overlap and include waits, partial unwinds and profiling overhead; these are not wall-time shares or matched baseline profiles. The prefix capture covers the tail rather than the earlier counting phase and does not establish the cause of the 3.3% regression.
+
+Further loop simplification and private packed-map retention remain unmeasured in this stage, alongside separate decoded-source executable qualification, secured/trusted comparison and Rust parity.
+
 ## Current-traversal scalar proofs
 
 Compiler [`b08ab3cda`](https://github.com/mech-lang/mech/commit/b08ab3cdae723fa760ba7d0000db920977de7c0d) uses preceding source control flow to prove enum payload access and unsigned index arithmetic within the current loop traversal. Proven checks are omitted from the generated packed SSA loop; unknown facts, invalid enum alternatives, changed aliases and unsupported arithmetic retain the checked path. String bounds and count-increment overflow checks remain. Source operations, every table update and finite work accounting are preserved. IR43 identifies the generated-code change; work policy63 and ABI22 remain unchanged.
