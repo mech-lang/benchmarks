@@ -38,6 +38,15 @@ work qualification and secured/trusted timing cohorts remain pending. No new
 benchmark result is admitted. The [preceding native entry study](../experiments/mech/native-map-entries-v1/README.md)
 retains the intermediate per-entry qualification and resolved gap evidence.
 
+The [owned hash-map storage study](../experiments/mech/owned-hash-map-v1/README.md)
+adds a retained standard-library table whose writes accept caller-supplied values.
+Nine storage checks pass within 179 native checks (three pre-existing ignored),
+including complete collisions, growth, exact/one-short memory boundaries and
+work denial before hashing. The backend is not yet selected by compiled programs;
+source representation intent, owner/alias lowering and complete caller geometry
+must be proved before it can replace canonical map copies. No runtime improvement
+or new benchmark result is claimed for the isolated storage implementation.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
