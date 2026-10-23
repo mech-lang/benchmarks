@@ -1,0 +1,12 @@
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+    Finished `test` profile [unoptimized] target(s) in 5.32s
+     Running tests/native_map_entries.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/native_map_entries-b2a04874812a9f51)
+
+thread 'native_map_write_use_analysis_does_not_confuse_a_local_map_with_the_carrier' (776283) panicked at src/stdlib/tests/native_map_entries.rs:17:5:
+DiagnosticStore { revision: Revision(1), diagnostics: [Diagnostic { id: DiagnosticId(1), code: DiagnosticCode("syntax/unexpected-document-source"), phase: Syntax, severity: Error, rule: Some(RuleId(1111180012)), context: None, primary: Element { element: Node(NodeId(954)), relative: TextRange { start: TextSize(0), end: TextSize(407) } }, labels: [], expected: [], found: Some(FoundSyntax { kind: Some(Unknown), text: Some("<{string:u64}>) => (found<bool>) :=\n  local<{string:u64}> := map/new()\n  next := map/insert(local, \"1\", 1u64)\n  found := (\"1\" ∈ next)? | true => \"1\" ∈ h | false => false.\n#Check(initial<{string:u64}>) => <bool>\n  | :Run(h<{string:u64}>)\n  | :Done(found<bool>).\n#Check(initial) -> :Run(initial)\n  :Run(h)\n    | * -> :Done(check(h))\n  :Done(found) => found.\nempty<{string:u64}> := map/new()\n#Check(empty)\n") }), fixes: [], related: [], recovery: Some(Abandon { rule: RuleId(1111180012), at: TextSize(431) }), tags: DiagnosticTags(0), message: "unexpected source after the canonical document" }] }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+fatal runtime error: failed to initiate panic, error 5, aborting
+error: test failed, to rerun pass `-p mech-stdlib --test native_map_entries`
+
+Caused by:
+  process didn't exit successfully: `/private/tmp/mech-pidigits-performance/target/debug/deps/native_map_entries-b2a04874812a9f51 --test-threads=1 --nocapture` (signal: 6, SIGABRT: process abort signal)

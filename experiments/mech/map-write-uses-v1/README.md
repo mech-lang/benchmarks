@@ -1,0 +1,13 @@
+# Old-map-version use analysis
+
+Compiler revision `013f1a8a4c2ce143cdbaeb4e0d91c31f6ce815a3` exposes per-insertion use facts for String/U64 maps. The analysis follows map leaves through tuples, enum payloads, structural projections and scalar copies, expands fused semantic actions, and includes implicit loop-carried reads. It distinguishes the insertion's new map version from the input version. Control-flow propagation uses strong updates so an inactive enum arm does not manufacture an old-version alias on the actual update path. The owning loop's latch is checked before traversal stops at its backedge.
+
+These facts are a necessary input to future ownership lowering, not permission to mutate storage. They do not establish caller aliases, owner lifetime, allocation coexistence, publication authority or a source hash representation contract. No generated program selects the retained hash backend through this change; no execution ABI, native image format or benchmark result changes.
+
+The final validation passes 208 distinct checks: nine integration checks, 198 native engine checks and one native catalog check. Four of the integration checks exercise 22 original/decoded analysis cases.
+
+The integration checks cover all seven nucleotide widths, direct and tuple-carried later reads of the previous version, reads of the updated version, and an independent locally constructed map that must not be mistaken for the loop carrier. Each case uses both the original and bytecode-decoded source artifact. Existing entry identity, scalar arithmetic, source state lowering and funded canonical publication checks run in the same integration suite.
+
+Intermediate attempts are retained. `uses-v1` compiled the analysis and passed the updated-version case, then exposed an existing source-frontend limitation: repeated application (`|19>`) rejects map-valued carriers. That syntax is not qualified by this study. `uses-v2` passed the first three analysis checks using supported state-machine syntax. `uses-v3` and `uses-v4` rejected an invalid independent-map fixture at parsing; its final form uses a direct membership expression. `uses-v5` passes all nine integration checks; `engine-guards-v1` passes all 199 broader checks. Failed attempts are excluded from passing-test totals.
+
+All compiler/test subjects run serially under the shared benchmark mutex, with bounded owned-process control and retained cleanup receipts. There are zero quantitative benchmark samples. Full owner-region lowering, source representation intent, complete-input work qualification and performance measurements remain unfinished.

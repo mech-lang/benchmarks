@@ -47,6 +47,15 @@ source representation intent, owner/alias lowering and complete caller geometry
 must be proved before it can replace canonical map copies. No runtime improvement
 or new benchmark result is claimed for the isolated storage implementation.
 
+The [map version-use study](../experiments/mech/map-write-uses-v1/README.md)
+adds per-insertion facts for future storage reuse. It follows maps through tuple
+and enum fields, checks implicit loop transfers, and detects later reads of the
+previous map version. Four new integration checks cover 22 original/decoded
+cases, including all seven widths; the validation passes 208 distinct checks.
+These facts do not establish complete ownership or select a runtime backend.
+Map-valued repeated application remains rejected by the existing frontend;
+supported state-machine syntax passes. No new benchmark samples are collected.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
