@@ -130,13 +130,14 @@ nucleotide input/block handling, ordinary and source-generated managed regex,
 and reverse-complement short reads. A private-helper diagnostic is prepared;
 no new native execution, timing or source-count qualification is claimed.
 
-The additive [source-review coverage report](../experiments/implementation-audit/coverage-v4/README.md)
-reconciles the later TypeScript, Odin, OCaml, C# and F# inspections with the exact current
-catalog. It records 334 reviewed and 305 unreviewed editable profiles, 46
-unresolved ownership records and 385 protected published profiles. A captured-source
-identity reconciliation protects 34 additional profiles despite broad adaptation
-metadata; it grants no new source-inspection or native qualification. These are
-inspection counts, not completed optimization or native qualification totals.
+The additive [source-review coverage report](../experiments/implementation-audit/coverage-v5/README.md)
+reconciles all 1,077 current profiles. It records 336 reviewed and 305 unreviewed
+editable profiles, 51 unresolved ownership records and 385 protected published
+profiles, with 572 distinct editable source bundles. The seven recent Mech
+profiles comprise five exact-source inspection reuses and two inspected local
+pi-digits derivatives. All 1,070 earlier coverage records remain unchanged;
+source-origin and licensing gaps are preserved. These are inspection counts,
+not completed optimization or native qualification totals.
 
 
 Explorer rollover and highlighting now batch pointer changes once per animation frame and update language groups instead of individual dots. Opacity animations and repeated ranking readouts are removed. The [matched profile](../site/publications/chart-hover-v1/comparison.json) and [performance notes](explorer-performance.md#rollover-and-highlighting) retain the measurements; browser data and reproduction payloads are byte-identical. Build `f360c8bf40c2e010` is [live and verified](../site/publications/chart-hover-v1/deployment.json), with all 41 public assets matching and all 42 [live browser checks](../site/publications/chart-hover-v1/live-browser.json) passing.
