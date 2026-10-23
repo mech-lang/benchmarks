@@ -106,3 +106,19 @@ Compiler `30dd67991bfb03a24c36303115f33f5ece78cc24` retains the last successful 
 | Reused range shapes `30dd67991` | 1.230 | 60.0× |
 
 [Fresh paired measurements](../native-owner-aot-v1/shape-timing-v1/results.json) show 37.8% less elapsed time. All nine outputs match the independent reference, source and bytecode are unchanged, and both Mech executables perform seven tables and 6,999,961 updates with 443 runtime admissions. The harness explicitly permits equal admissions for this optimization within an already selected closed loop; its earlier strict-reduction check remains the default. Full-input qualification and Rust parity remain unfinished.
+
+## Combined native call setup
+
+Compiler `cb9d6913c129c217cf96c8ad7e7c35174b41213c` retains the thread-local account, observer and relative-limit addresses across each native library call. It preserves all three scopes and their reverse-order restoration, including unwinding, while removing repeated address lookups. All charges and account/cap checks remain active. IR36/work policy55/ABI20 identify the version.
+
+Validation passes [53 budget checks](call-scope-budget-v1/summary.json), [67 collection checks](call-scope-collection-v1/summary.json), and [218 native checks](call-scope-native-v1/summary.json), with three pre-existing native exclusions. The initial eight focused work checks are included in the 53 budget checks. The new unwind case checks parent observations and caps, foreign-account rejection, spent-work retention and cleanup.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0207 | 1.00× |
+| Previous Mech AOT `30dd67991` | 1.224 | 59.0× |
+| Combined call setup `cb9d6913c` | 1.160 | 56.0× |
+
+[Paired timings](../native-owner-aot-v1/call-scope-timing-v1/results.json) improve by 5.2%. All nine outputs match the independent reference, source and bytecode are unchanged, and both Mech executables perform seven tables and 6,999,961 updates with 443 runtime admissions.
+
+The same binary also completes one full **125-million-base** qualification: Mech **118.601 s (216.2× Rust)** and Rust **0.549 s (1.00×)**. Both outputs match the full independent reference; Mech reports all seven tables and **874,999,961 updates**. These are single complete processes rather than repeated medians. [Full receipts and policy](../native-owner-aot-v1/full-call-scope-v2/results.json) retain the increased finite compute/comparison allowances; capability grants, memory limits and accounting stay active. The earlier comparison-quota failure is excluded. The 56.0× prefix ratio does not describe full-size performance. Rust parity and repeated full-input timing remain unfinished.

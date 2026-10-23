@@ -4,6 +4,35 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Current measured improvement
 
+Compiler [`cb9d6913c`](https://github.com/mech-lang/mech/commit/cb9d6913c129c217cf96c8ad7e7c35174b41213c) combines native library-call setup and teardown. The call retains the three thread-local addresses for its account, work observer and relative limits, avoiding repeated address lookups during setup and restoration. The same work debits, fresh per-call observation, foreign-account rejection and enclosing caps remain in force. Stack guards restore the caller's state on normal return and unwinding. IR36, work policy55 and ABI20 identify this version.
+
+Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0207 | 1.00× |
+| Previous Mech AOT, `30dd67991` | 1.224 | 59.0× |
+| Combined call setup, `cb9d6913c` | 1.160 | 56.0× |
+
+Elapsed time falls by **5.2%**. All nine outputs match the independent reference; both Mech executables perform seven tables and 6,999,961 updates with 443 runtime admissions. Source and program bytecode are unchanged. Runs are serial and include secured startup/shutdown, with one excluded warmup per executable. [Raw measurements](call-scope-timing-v1/results.json) retain every sample and identity. Each comparison uses Rust from its own cohort.
+
+Validation passes [53 budget tests](../native-owner-dispatch-v1/call-scope-budget-v1/summary.json), [67 collection tests](../native-owner-dispatch-v1/call-scope-collection-v1/summary.json) and [218 native tests](../native-owner-dispatch-v1/call-scope-native-v1/summary.json), with three pre-existing native exclusions. The new unwind case verifies the parent's observation high-water mark, relative limits and account restoration after an inner failure, including foreign-account rejection and no work refund. The eight focused native-work checks are included in the 53-test budget total.
+
+The same executable also completes the **125-million-base** workload. This first full qualification uses one serial complete process per executable, with no excluded warmup:
+
+| Executable | Seconds, one run | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.549 | 1.00× |
+| Mech AOT, `cb9d6913c` | 118.601 | 216.2× |
+
+Both complete outputs match the independent full-input reference. Mech reports seven tables and **874,999,961 actual updates**, with 443 runtime admissions and 220.3 MB peak RSS. [Full qualification](full-call-scope-v2/results.json) retains the exact executable, input, command, resource policy and process receipts. This is a single full-input pair, not a repeated median result. The full-size gap is 216.2×; the 56.0× prefix ratio must not be presented as the full-input ratio.
+
+The full run retains secured startup/shutdown, capability grants, memory limits and all work checks. Its finite root compute allowance is increased from 2^56 to 2^60, and its comparison allowance from 2^50 to 2^56. Actual reported use is 242,638,720,263,944,870 compute units and 3,789,652,434,638,483 comparison units. The [first full attempt](full-call-scope-v1/results.json) retained the earlier comparison allowance and stopped at that limit after 94.827 seconds; it is excluded from completed timings. Only execution allowances change; the executable is identical to the prefix-timed candidate. Repeated full-input measurements, separate decoded-source build qualification, secured/trusted comparison and Rust parity remain unfinished.
+
+The [matching profiling executable](profile-call-scope-build-v1/results.json) has identical complete machine code to the timed candidate: 3,968,100 bytes, SHA-256 `ffe1ee366898112d85d4ec69576946477ab31f5a254f7e167f51c2f1011ef425`. Its [full execution profile](full-profile-call-scope-v1/analysis.json) takes three two-second captures at roughly 30, 62 and 94 seconds, then completes with exact full output and all updates verified. Map storage calls occupy 77–81% of main-thread samples, including reads at 21–26%, insertions at 21–22%, selected range/endpoints at 10–12%, and work debits at 12–13%. Categories overlap and cannot be added. Profiling elapsed time is excluded from timing results. Repeated lookup of the same immutable key across membership, access and insertion is the next target.
+
+## Reused range shapes
+
 Compiler [`30dd67991`](https://github.com/mech-lang/mech/commit/30dd67991bfb03a24c36303115f33f5ece78cc24) reuses a successfully validated range shape within a closed native map loop. Every call still computes the current range cardinality with the maintained endpoint semantics and checks current String bounds. Reuse requires the exact output schema key and cardinality; a changed width runs the full shape/layout resolver. The invocation-owned selector retains only that shape proof, with the original scratch reservation and full work debit. IR36, work policy54 and ABI20 identify the protocol.
 
 Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
