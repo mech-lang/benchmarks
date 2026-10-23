@@ -2,6 +2,38 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Bounded publication debit batches
+
+Compiler [`5e92487ad`](https://github.com/mech-lang/mech/commit/5e92487ad02e776baa7ed938154ad206b8325518) reuses the shared worker-account lock across bounded groups of publication-sort debits. Every original debit is still checked and committed individually; no allowance is reserved or renewed. The lock is released after at most 32 charges or 32,768 charged work units, and on denial or unwind. Sorting, complete map publication and source operations remain unchanged. The generated program object, descriptor and bytecode are byte-identical to the SIMD parent; IR42/work policy63/ABI22 remain valid.
+
+Three **125-million-base** cohorts rotate execution order and retain all observations, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.585 | 1.00× |
+| Previous SIMD stage, `d760b334f` | 2.986 | 5.10× |
+| Publication debit batches, `5e92487ad` | 2.690 | 4.59× |
+
+The observed median speedup is **1.11×**, reducing elapsed time by **9.9%**. Candidate samples are 2.732, 2.690 and 2.579 seconds; parent samples are 3.004, 2.949 and 2.986 seconds. Rust varies from 0.552 to 0.753 seconds; all three Rust observations, including 0.585 seconds, are retained. Ratios use the median Rust observation from this same cohort. [Full cohort receipts](full-publication-batches-cohort-v1/results.json) retain all samples, standard deviations and orders.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, improves more:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0208 | 1.0× |
+| Previous SIMD stage | 0.818 | 39.4× |
+| Publication debit batches | 0.471 | 22.7× |
+
+The prefix median falls **42.4%**, a **1.74× speedup**. Candidate observations span 0.459–0.496 seconds; parent observations span 0.808–0.837 seconds. [Prefix receipts](publication-batches-timing-v1/results.json) retain every observation. This improvement does not establish parity with Rust or eliminate the earlier regression relative to the historical serial stage.
+
+Every candidate run verifies exact output, all seven tables and packed SSA regions, seven actual concurrent workers, and **6,999,961 prefix** or **874,999,961 full-input updates**. Source, inputs and finite launch policies match the parent. Subjects run serially, including secured startup/shutdown and capability checks. [Native validation](../native-owner-dispatch-v1/publication-debit-native-v1/summary.json) passes **273 tests**, with three pre-existing manual exclusions. [Resource validation](../native-owner-dispatch-v1/publication-debit-resources-v1/provenance.json) passes **43 checks**, including exact local/call/shared denials, concurrent batches, lock-release bounds, unwind behavior and publication order/work preservation.
+
+The [profiling build](profile-publication-batches-build-v1/summary.json) preserves the timed executable's entire **4,132,524-byte** machine-code section, SHA-256 `035b11e0203ee3bd08f97366a77433aa154e4ca8987e700b3daaf3e63a54f4e0`. The [full capture](full-profile-publication-batches-v1/summary.json) observes seven workers and 9,999 worker samples: **88.59%** have generated program code as their innermost recorded frame. Inclusive shares are **1.23%** for publication, **3.62%** for library debits and **4.67%** for waiting. The debit category includes the new batched meter as well as the existing API; omitting its new symbol would undercount debit observations.
+
+A [prefix capture](prefix-profile-publication-batches-v1/summary.json) records 535 observations across two remaining workers: **22.06%** include publication, **28.41%** include library debits and **39.63%** include waiting, with no generated-entry innermost observations. The [innermost-function inventory](prefix-profile-publication-batches-v1/innermost-functions.json) also identifies memory-budget evaluation and planning. Their caller stacks include the original guarded map lookup and canonical footprint measurement after histogram publication. Retaining packed maps through private reads or reusing proved footprint metadata are possible targets; neither is measured in this stage. All profile executions verify complete outputs and updates. Categories overlap and include waiting, partial unwinds and profiling overhead; these percentages are not wall-time shares or directly recoverable speedups.
+
+The full-input profile still places most observed worker frames in generated counting code. Further loop proofs and narrower slots remain separate candidates, as do representation retention, decoded-source executable qualification, secured/trusted comparison and Rust parity.
+
 ## SIMD hash-table controls
 
 Compiler [`d760b334f`](https://github.com/mech-lang/mech/commit/d760b334f148d2b7fb05abea64f874613e56e38e) compares eight hash-control bytes together, then checks each matching full key. A separate control array replaces the occupancy word, reducing table slots from 32 to 24 bytes. Bounded probing, collision checks, insertion/growth, source errors and shared finite accounting remain. The unchanged program still computes all seven histograms. IR42/work policy63/ABI22 identify this stage.
@@ -26,7 +58,7 @@ The [profiling build](profile-parallel-simd-build-v1/summary.json) has identical
 
 [Mapping the retained worker offsets](simd-loop-profile-audit-v1/summary.json) identifies count stores, window bounds/overflow checks, SIMD match extraction and a fuel/refill guard in the generated loop. The sampler merges and truncates instruction offsets within each symbol node, so its counts cannot rank these individual operations or measure their separate costs.
 
-Publication/debit improvements, additional loop simplification, narrower storage, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain unfinished at this stage.
+Publication/debit improvements were a subsequent stage, measured above. Additional loop simplification, narrower storage, separate decoded-source executable qualification, secured/trusted comparison and Rust parity remained unfinished at this stage.
 
 ## Source-derived character encoding
 

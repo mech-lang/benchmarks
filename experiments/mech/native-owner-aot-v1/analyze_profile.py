@@ -162,6 +162,9 @@ def main():
     }
     # Keep the established category names while accepting either symbol style.
     patterns = {label: (pattern,) for label, pattern in patterns.items()}
+    # Lock reuse moves the same checked debits into a distinct leaf meter.
+    # Include it so a new symbol does not masquerade as eliminated debit work.
+    patterns['library_work_debit'] += ('NativeWorkDebitBatch6charge', '::NativeWorkDebitBatch::charge')
     patterns.update({
         'parallel_worker_entry': ('10run_worker', '::run_worker'),
         'parallel_dispatch': ('12run_parallel', '::run_parallel'),

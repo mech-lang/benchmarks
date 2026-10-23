@@ -1,0 +1,83 @@
+{
+  "status": "all-resource-validation-groups-passed",
+  "source_commit": "5e92487ad02e776baa7ed938154ad206b8325518",
+  "passed": 43,
+  "failed": 0,
+  "ignored": 0,
+  "benchmark_samples": 0,
+  "scope": "Six serial resource-check groups including seven shared worker debit batch checks; no subject benchmarking",
+  "harness_path": "../validate_worker_resources.py",
+  "harness_sha256": "c20a27b62c10b34de615008b43d8bc8c72e2bffc5284140bf98a6d028559b20e",
+  "groups": [
+    {
+      "name": "core-memory",
+      "passed": 12,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "memory_runtime::budget::tests"
+    },
+    {
+      "name": "worker-fuel",
+      "passed": 11,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "resident::budget::workers::tests"
+    },
+    {
+      "name": "worker-debit-batches",
+      "passed": 7,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "resident::budget::workers::debit_batch::tests"
+    },
+    {
+      "name": "text-cache",
+      "passed": 8,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "resident::text_index::snapshot::tests"
+    },
+    {
+      "name": "binding-cache",
+      "passed": 4,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "resident::general::native_collection_calls::invocation::data_footprint_tests::boundary_tests"
+    },
+    {
+      "name": "plan-cache",
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "test_filter": "resident::budget::native_turn_plan_cache::tests"
+    }
+  ],
+  "all_owned_processes_reaped_and_groups_closed": true,
+  "coverage": [
+    "Exact local/call/shared compute and comparison denials",
+    "Concurrent batches cannot overspend or reserve unused fuel",
+    "Unwind, sealed groups and foreign/nested batch rejection",
+    "Existing shared memory, worker fuel and lazy cache admission checks"
+  ],
+  "evidence_sha256": {
+    "binding-cache/process.json": "02616b41b3a87c648ec0f1307f4ec109127fc73eadd2ee334fb3d9d2e5092d83",
+    "binding-cache/stderr.bin": "69b7e4111ffd6919f47238d71921160c7936930ea2977b8945592fa9e994e849",
+    "binding-cache/stdout.bin": "e4afd051064a26535d5341bf3fa5105f0a86327b3a8d9f2aea3d4802887baac2",
+    "core-memory/process.json": "496a8aab275d19d4bb3308cdf46d401811eabc9f59b04247f7a53613539075e6",
+    "core-memory/stderr.bin": "00217579055aef98720c761a9c1c52684885cd88eed0670be34c567de56c2f88",
+    "core-memory/stdout.bin": "93d57e31fae7941f6c006540b652a33cd5416c6b864a1a592c12855f1852ab35",
+    "plan-cache/process.json": "80357193562f9315b6afc8d5fba4d4262d6f337ea62b59bf6fe5ce86f60c5d06",
+    "plan-cache/stderr.bin": "ca73f68e15271c37139cacd60c03aa2531d2ff409bf3528ebfb745782ba9167e",
+    "plan-cache/stdout.bin": "a3b42cecd720ba8d43d97a649963168c61c1ace784aaadfb452928cf04411c27",
+    "text-cache/process.json": "8f97c24f307ccdf8b67093e34ac20e1ed215a7707507155160fdfe441657b3b6",
+    "text-cache/stderr.bin": "b729bb0381ad5226ce24938a91fdd20135befdeda8f009821fdcc0e133701e94",
+    "text-cache/stdout.bin": "6441c3d1e44b6a2d0c6c63968c1ddaa5e3ec54d39b85991e413176415d3ce914",
+    "worker-debit-batches/process.json": "ecf56607bd4a98b9322f579da63e2a55926b55aedaa4e66df33fafc52dfdce1c",
+    "worker-debit-batches/stderr.bin": "a8f87c1e4dc1a66e4c7ca1432ba9ced386bb2c5c3dd3a30346551ac07201d293",
+    "worker-debit-batches/stdout.bin": "636e6d5659486524d7aef881e9e0daadcd8bd24d30ccd5323b66947b73b1b3c9",
+    "worker-fuel/process.json": "5f64fab556d884c6758e19cb57d49562969955c19d2894fb71cd8158ecadeb12",
+    "worker-fuel/stderr.bin": "2d415de5d5805a9036e1d1344249a860b9389a4a6b788cda8f2d3dc98594a370",
+    "worker-fuel/stdout.bin": "686d388b8c3e0fc547a7966065faec6e7c2c664615d0c71d8be63497af52ffd6",
+    "summary.json": "1090bff356f53729e3b3b4ae9df4b4d1e03463cd85ec3b4a9b9d9565b6d8b9d3"
+  }
+}

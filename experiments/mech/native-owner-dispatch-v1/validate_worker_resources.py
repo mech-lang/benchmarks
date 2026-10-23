@@ -17,6 +17,7 @@ env['TMPDIR'] = str(HERE / '.build/tmp')
 filters = [
     ('core-memory', 'memory_runtime::budget::tests', 12),
     ('worker-fuel', 'resident::budget::workers::tests', 11),
+    ('worker-debit-batches', 'resident::budget::workers::debit_batch::tests', 7),
     ('text-cache', 'resident::text_index::snapshot::tests', 8),
     ('binding-cache', 'resident::general::native_collection_calls::invocation::data_footprint_tests::boundary_tests', 4),
     ('plan-cache', 'resident::budget::native_turn_plan_cache::tests', 1),
