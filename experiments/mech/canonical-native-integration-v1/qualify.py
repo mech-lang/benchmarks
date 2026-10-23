@@ -46,7 +46,7 @@ def main():
    r=process.execute(cmd,dest,{**env,**(extra or {})},lock,stdin=stdin,deadline=deadline,quantitative=quant)
    return r
   bytecode=b/'knucleotide.mecb'
-  r=execute([str(cli),'--no-config','build',str(source),'--emit','bytecode','--offline','--workspace-root',str(WORKSPACE),'-o',str(bytecode)],out/'bytecode')
+  r=execute([str(cli),'--no-config','build',str(source),'--name','canonical-knucleotide','--emit','bytecode','--offline','--workspace-root',str(WORKSPACE),'-o',str(bytecode)],out/'bytecode')
   assert r['exit_status']==0,(out/'bytecode/stderr.bin').read_text()[-5000:]
   for variant,src in [('source',source),('decoded',bytecode)]:
    binary=b/('knucleotide-'+variant)
