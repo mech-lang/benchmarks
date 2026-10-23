@@ -4,6 +4,36 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Current measured improvement
 
+Compiler [`7091f025d`](https://github.com/mech-lang/mech/commit/7091f025d2489ef511c4650b2c5e6d6dfe29102b) binds a proved closed map loop to invocation-owned storage and a pinned String. The generated Mech code still traverses the input, chooses branches, computes counts and updates every window. Private storage calls use the existing hash library. Entry validates the source representation and caller ownership; the same finite work account funds bounded batches of generated iterations and individual storage operations. Unsupported representations retain canonical execution. A suspended parent comprehension does not prevent a closed child map loop from selecting this path. IR36, work policy53 and ABI20 identify the protocol.
+
+Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0211 | 1.00× |
+| Previous Mech AOT, `32a3a7b44` | 7.336 | 347× |
+| Closed map loops, `7091f025d` | 1.985 | 94× |
+
+The new executable is **3.70 times faster**, reducing elapsed time by **72.9%**. All nine timed outputs exactly match the independent reference. Both Mech executables perform seven tables and 6,999,961 updates. Runtime admissions fall from 55,717,707 to 443; individual private storage calls remain. Source and program bytecode are unchanged. Runs are serial, include secured startup/shutdown, and exclude one warmup per executable. [Raw measurements](closed-map-timing-v2/results.json) retain every sample and identity. Ratios use Rust from this cohort; its changing short-run denominator does not establish a change in the unchanged parent. This diagnostic is not full-input qualification, Rust parity or a comparison with interpreted execution.
+
+[Validation](../native-owner-dispatch-v1/closed-map-nested-validation-v1/summary.json) records 217 native checks passing with three pre-existing exclusions. New original/decoded and restored-image tests cover ordinary non-DNA keys and caller-produced increments, finite fuel, admission refusal, repeated nested invocations, protocol rejection and complete cleanup. The 84 counting cases also execute through guarded, native and restored-image paths, including empty strings, Unicode and CRLF. An [IR36 follow-up](../native-owner-dispatch-v1/closed-map-nested-identity-v1/process.json) follows the version-only identity update.
+
+The [matching profiling build](profile-closed-build-v1/results.json) has identical complete machine code to the timed executable: 3,949,076 bytes, SHA-256 `10a1b5d0337d396ccbffcb1449673930d47229dc5835d4c027438cc717c8b33f`. Three two-second samples during the beginning of full-input counting show:
+
+| Path | Inclusive main-thread sample share |
+|---|---:|
+| Private map/key storage binding | 88–90% |
+| Selected range cardinality/shape validation | 43–46% |
+| Private map reads | 13–14% |
+| Private map insertions | 12–13% |
+| Library work debits | 5.5–6.2% |
+
+Categories overlap and must not be added. [Analysis](full-profile-closed-v1/analysis.json) counts unions of matching stacks and uses all main-thread samples, including partial unwinds. The subject was stopped and reaped at its planned 45-second deadline. These are bounded profiles, not completed full-input timings. Repeated range shape/cardinality validation is the largest identified remaining category; reducing it must preserve the maintained range semantics and failure behavior. Packed keys, independent-loop parallelism, full-input qualification and same-binary secured/trusted measurements remain unfinished.
+
+The preceding [`bc6fdbce8` attempt](closed-map-timing-v1/results.json) measured 7.634 seconds against a 7.356-second parent and selected no closed map regions. Its top-level-only admission restriction missed both counting loops inside parent comprehensions. The [selection analysis](closed-map-timing-v1/selection-analysis.json) retains that failed optimization result; it is not counted as a gain. The corrected timing harness requires both closed map regions and an actual reduction in runtime admissions before collecting the reported cohort.
+
+## Native paths and fused helper admission
+
 Compiler [`32a3a7b44`](https://github.com/mech-lang/mech/commit/32a3a7b449f64740ecf137ba3539a08cda2240e2) prepays native paths across scalar branches and joins between runtime boundaries. Every interior has the same entry; headers cut backedges, and helpers cut effects. A native Tail latch retains its original retirement at the following header. The next callback must match a proved frontier, and arithmetic failures retain their original source location. Selected map and key helpers admit their own boundary in the helper callback, eliminating the separate admission round trip. Refused owner entry preserves canonical execution. IR34, work policy52 and ABI19 identify this protocol.
 
 Three alternating complete-process measurements on the first **one million bases** of the standard THREE record give:
@@ -172,7 +202,7 @@ That profile selected per-window range/String materialization and library invoca
 
 ## Evidence and reproduction scope
 
-- `compiler-v2` through `compiler-v7` pin the retained-map, cache-total, selected-key, admission-group, caller-inventory and native-path compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
+- `compiler-v2` through `compiler-v9` pin the retained-map, cache-total, selected-key, admission-group, caller-inventory, native-path and closed-map compiler builds and their environments. Generated standalone binaries and retained Cargo projects are local build artifacts under `.build`; their hashes and build commands are in the receipts.
 - `build_and_time.py`, `measure_cache.py`, `measure_scale.py`, `measure_spans.py`, `compare_rust_spans.py`, `measure_admission.py` and `measure_stage.py` retain the exact build/run procedures. Output directories are versioned and guard against overwriting samples. `measure_stage.py` uses the configuration saved in each result and verifies its parent executable against the parent cohort's recorded hash. `measure_cache.py` reuses the candidate build receipt from `cache-timing-v1`; that attempted cohort stopped before quantitative timing because unmodified Rust used a different tie order on the synthetic input. Rust is excluded from that diagnostic, and its full standard-input output passes.
 - `profile_full.py`, `build_profile.py` and `analyze_profile.py` retain the sampled process procedure, matching-link settings and code-identity check. Earlier `profile-build-v2`, `full-profile-v2` and `profile-cache-build-v1` used a ThinLTO final link and are explicitly marked as exploratory mismatches. Their percentages are not a matched before/after comparison. `profile-build-v1` and `full-profile-v1` retain failed preparation/monitor diagnostics, not benchmark samples.
 - `profile_rust.py` and `analyze_rust_profile.py` capture and summarize the exact timed upstream Rust binary on the complete input; the original program and binary are unchanged. Profiling process durations are excluded from benchmark cohorts.

@@ -1,0 +1,458 @@
+Analysis of sampling counting-closed-profile-matched (pid 97619) every 1 millisecond
+Process:         counting-closed-profile-matched [97619]
+Path:            /private/tmp/*/counting-closed-profile-matched
+Load Address:    0x100fb4000
+Identifier:      counting-closed-profile-matched
+Version:         0
+Code Type:       ARM64
+Platform:        macOS
+Parent Process:  Python [97605]
+Target Type:     live task
+
+Date/Time:       2026-10-23 16:25:02.236 +0000
+Launch Time:     2026-10-23 16:24:27.841 +0000
+OS Version:      macOS 26.2 (25C56)
+Report Version:  7
+Analysis Tool:   /usr/bin/sample
+
+Physical footprint:         135.5M
+Physical footprint (peak):  138.9M
+Idle exit:                  untracked
+----
+
+Call graph:
+    1553 Thread_1281044   DispatchQueue_1: com.apple.main-thread  (serial)
+      1552 start  (in dyld) + 7184  [0x1969e5d54]
+      + 1552 main  (in counting-closed-profile-matched) + 872  [0x100ff2394]
+      +   1552 _RINvNtNtCsgirOGyZpP7g_3std3sys9backtrace28___rust_begin_short_backtraceFEuuECs6lCVcwZmYaC_19owner_closed_nested  (in counting-closed-profile-matched) + 12  [0x100fc80e0]
+      +     1552 _RNvCs6lCVcwZmYaC_19owner_closed_nested4main  (in counting-closed-profile-matched) + 24  [0x100fdc414]
+      +       1552 _RNvCs6lCVcwZmYaC_19owner_closed_nested3run  (in counting-closed-profile-matched) + 4596  [0x100fda7c8]
+      +         1552 _RNCNvCs6lCVcwZmYaC_19owner_closed_nested3runs7_0B3_  (in counting-closed-profile-matched) + 13108  [0x100fd7cf4]
+      +           1552 _RNCNCNvCs6lCVcwZmYaC_19owner_closed_nested3runs7_0s0_0B5_  (in counting-closed-profile-matched) + 7120  [0x100fd35a8]
+      +             1552 _RINvMs_NtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime7sessionNtB5_8Prepared19resume_capture_tailNCNvMNtB5_12capture_hostNtB5_29NativeProgramExecutionSession19finish_text_captures5_0EBb_  (in counting-closed-profile-matched) + 1756  [0x10125d930]
+      +               888 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 33552  [0x101361390]
+      +               ! 785 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1752  [0x101227ed4]
+      +               ! : 751 _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched) + 156  [0x10112ec04]
+      +               ! : | 608 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 404  [0x10112ee0c]
+      +               ! : | + 200 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 60  [0x1010873cc]
+      +               ! : | + ! 83 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched) + 248  [0x1010879d8]
+      +               ! : | + ! : 60 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 260  [0x101082098]
+      +               ! : | + ! : | 25 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 84,336,...  [0x10103fbe8,0x10103fce4,...]
+      +               ! : | + ! : | 18 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 324  [0x10103fcd8]
+      +               ! : | + ! : | + 18 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,148,...  [0x10103e120,0x10103e190,...]
+      +               ! : | + ! : | 13 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 268  [0x10103fca0]
+      +               ! : | + ! : | + 13 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 52,0,...  [0x10103fbc8,0x10103fb94,...]
+      +               ! : | + ! : | 4 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672,680  [0x10103e39c,0x10103e3a4]
+      +               ! : | + ! : 10 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 136  [0x10108201c]
+      +               ! : | + ! : | 10 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,148,...  [0x10103e120,0x10103e190,...]
+      +               ! : | + ! : 7 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 96,112,...  [0x101081ff4,0x101082004,...]
+      +               ! : | + ! : 5 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 84  [0x10103fbe8]
+      +               ! : | + ! : 1 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + ! 32 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched) + 104  [0x101087948]
+      +               ! : | + ! : 14 _xzm_malloc_zone_malloc_type_calloc_entry  (in libsystem_malloc.dylib) + 48,12,...  [0x196bd918c,0x196bd9168,...]
+      +               ! : | + ! : 8 _malloc_zone_calloc  (in libsystem_malloc.dylib) + 84,44  [0x196bda088,0x196bda060]
+      +               ! : | + ! : 8 _xzm_xzone_malloc  (in libsystem_malloc.dylib) + 132,32,...  [0x196bcd110,0x196bcd0ac,...]
+      +               ! : | + ! : 2 DYLD-STUB$$calloc  (in counting-closed-profile-matched) + 4  [0x10137b438]
+      +               ! : | + ! 25 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 200  [0x101087458]
+      +               ! : | + ! : 9 <deduplicated_symbol>  (in libsystem_malloc.dylib) + 108,208,...  [0x196bccc8c,0x196bcccf0,...]
+      +               ! : | + ! : 9 _malloc_zone_malloc  (in libsystem_malloc.dylib) + 92,12,...  [0x196bd9e60,0x196bd9e10,...]
+      +               ! : | + ! : 7 _xzm_xzone_malloc  (in libsystem_malloc.dylib) + 8,132,...  [0x196bcd094,0x196bcd110,...]
+      +               ! : | + ! 18 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 240  [0x101087480]
+      +               ! : | + ! : 11 _free  (in libsystem_malloc.dylib) + 0,96,...  [0x196bdaa2c,0x196bdaa8c,...]
+      +               ! : | + ! : 7 DYLD-STUB$$free  (in counting-closed-profile-matched) + 4,0  [0x10137b4c8,0x10137b4c4]
+      +               ! : | + ! 18 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched) + 36,0,...  [0x101087904,0x1010878e0,...]
+      +               ! : | + ! 9 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched) + 168  [0x101087988]
+      +               ! : | + ! : 9 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,148  [0x10103e120,0x10103e190]
+      +               ! : | + ! 8 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 232  [0x101087478]
+      +               ! : | + ! : 7 _platform_memmove  (in libsystem_platform.dylib) + 428,460,...  [0x196db750c,0x196db752c,...]
+      +               ! : | + ! : 1 DYLD-STUB$$memcpy  (in counting-closed-profile-matched) + 4  [0x10137b534]
+      +               ! : | + ! 3 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 380  [0x101082110]
+      +               ! : | + ! 3 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + ! 1 _RNvMs_NtCsgKscDXrlV49_5alloc3vecINtB4_3VecNtNtNtCsetd7qX7E4oI_9mech_core8snapshot4data7F64BitsE16into_boxed_sliceBK_  (in counting-closed-profile-matched) + 112  [0x1010107f4]
+      +               ! : | + 181 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 872  [0x1010876f8]
+      +               ! : | + ! 68 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 140,124,...  [0x101087b44,0x101087b34,...]
+      +               ! : | + ! 36 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 68  [0x101087afc]
+      +               ! : | + ! : 15 _xzm_xzone_malloc  (in libsystem_malloc.dylib) + 64,32,...  [0x196bcd0cc,0x196bcd0ac,...]
+      +               ! : | + ! : 14 _xzm_malloc_zone_malloc_type_calloc_entry  (in libsystem_malloc.dylib) + 156,280,...  [0x196bd91f8,0x196bd9274,...]
+      +               ! : | + ! : 7 _malloc_zone_calloc  (in libsystem_malloc.dylib) + 100,64,...  [0x196bda098,0x196bda074,...]
+      +               ! : | + ! 30 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 588  [0x101087d04]
+      +               ! : | + ! : 16 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value35assign_dimension_witness_preserving  (in counting-closed-profile-matched) + 76  [0x101082964]
+      +               ! : | + ! : | 16 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,308,...  [0x10103e120,0x10103e230,...]
+      +               ! : | + ! : 9 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value35assign_dimension_witness_preserving  (in counting-closed-profile-matched) + 88,16  [0x101082970,0x101082928]
+      +               ! : | + ! : 5 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + ! 27 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 628  [0x101087d2c]
+      +               ! : | + ! : 19 _xzm_free  (in libsystem_malloc.dylib) + 240,388,...  [0x196bcd834,0x196bcd8c8,...]
+      +               ! : | + ! : 7 _free  (in libsystem_malloc.dylib) + 0,44,...  [0x196bdaa2c,0x196bdaa58,...]
+      +               ! : | + ! : 1 DYLD-STUB$$free  (in counting-closed-profile-matched) + 4  [0x10137b4c8]
+      +               ! : | + ! 12 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 524  [0x101087cc4]
+      +               ! : | + ! : 7 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 56  [0x1010833e8]
+      +               ! : | + ! : | 7 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 0,36,...  [0x10103e0fc,0x10103e120,...]
+      +               ! : | + ! : 3 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + ! : 2 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 72  [0x1010833f8]
+      +               ! : | + ! 4 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 308  [0x101087bec]
+      +               ! : | + ! : 4 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value22dimension_is_injective  (in counting-closed-profile-matched) + 40,0  [0x101087fdc,0x101087fb4]
+      +               ! : | + ! 2 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 284  [0x1010834cc]
+      +               ! : | + ! 1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value22dimension_is_injective  (in counting-closed-profile-matched) + 516  [0x1010881b8]
+      +               ! : | + ! 1 _xzm_free  (in libsystem_malloc.dylib) + 1344  [0x196bcdc84]
+      +               ! : | + 57 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 928  [0x101087730]
+      +               ! : | + ! 29 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 260  [0x101082098]
+      +               ! : | + ! : 10 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 324  [0x10103fcd8]
+      +               ! : | + ! : | 10 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,0,...  [0x10103e120,0x10103e0fc,...]
+      +               ! : | + ! : 7 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 680,672  [0x10103e3a4,0x10103e39c]
+      +               ! : | + ! : 7 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 84,336,...  [0x10103fbe8,0x10103fce4,...]
+      +               ! : | + ! : 5 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 268  [0x10103fca0]
+      +               ! : | + ! :   5 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 52,0,...  [0x10103fbc8,0x10103fb94,...]
+      +               ! : | + ! 11 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 44,96,...  [0x101081fc0,0x101081ff4,...]
+      +               ! : | + ! 11 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 84  [0x10103fbe8]
+      +               ! : | + ! 4 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 136  [0x10108201c]
+      +               ! : | + ! : 4 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 12,36,...  [0x10103e108,0x10103e120,...]
+      +               ! : | + ! 2 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + 44 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 240  [0x101087480]
+      +               ! : | + ! 29 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 576  [0x1010875d0]
+      +               ! : | + ! : 14 _xzm_xzone_malloc  (in libsystem_malloc.dylib) + 8,132,...  [0x196bcd094,0x196bcd110,...]
+      +               ! : | + ! : 8 _malloc_zone_malloc  (in libsystem_malloc.dylib) + 92,72,...  [0x196bd9e60,0x196bd9e4c,...]
+      +               ! : | + ! : 7 <deduplicated_symbol>  (in libsystem_malloc.dylib) + 108,208  [0x196bccc8c,0x196bcccf0]
+      +               ! : | + ! 14 _xzm_free  (in libsystem_malloc.dylib) + 1312,204,...  [0x196bcdc64,0x196bcd810,...]
+      +               ! : | + ! 1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 628  [0x101087d2c]
+      +               ! : | + !   1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 872  [0x1010876f8]
+      +               ! : | + !     1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 24  [0x101087ad0]
+      +               ! : | + 29 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 976  [0x101087760]
+      +               ! : | + ! 21 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 56  [0x1010833e8]
+      +               ! : | + ! : 18 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 36,12,...  [0x10103e120,0x10103e108,...]
+      +               ! : | + ! : 3 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 976  [0x101087760]
+      +               ! : | + ! :   3 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 16  [0x1010833c0]
+      +               ! : | + ! 5 _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 672  [0x10103e39c]
+      +               ! : | + ! 3 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 56  [0x1010833e8]
+      +               ! : | + 24 _xzm_free  (in libsystem_malloc.dylib) + 204,240,...  [0x196bcd810,0x196bcd834,...]
+      +               ! : | + 19 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 988,24,...  [0x10108776c,0x1010873a8,...]
+      +               ! : | + 17 _xzm_free  (in libsystem_malloc.dylib) + 348  [0x196bcd8a0]
+      +               ! : | + ! 13 _platform_memset  (in libsystem_platform.dylib) + 180,208  [0x196db7144,0x196db7160]
+      +               ! : | + ! 2 DYLD-STUB$$_platform_bzero  (in libsystem_malloc.dylib) + 8  [0x196be245c]
+      +               ! : | + ! 2 __bzero  (in libsystem_platform.dylib) + 0  [0x196db7030]
+      +               ! : | + 12 _free  (in libsystem_malloc.dylib) + 0,24,...  [0x196bdaa2c,0x196bdaa44,...]
+      +               ! : | + 5 DYLD-STUB$$free  (in counting-closed-profile-matched) + 4  [0x10137b4c8]
+      +               ! : | + 5 _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched) + 380  [0x101082110]
+      +               ! : | + 4 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 284  [0x1010834cc]
+      +               ! : | + 3 _RNvMs_NtCsgKscDXrlV49_5alloc3vecINtB4_3VecNtNtNtCsetd7qX7E4oI_9mech_core8snapshot4data7F64BitsE16into_boxed_sliceBK_  (in counting-closed-profile-matched) + 108  [0x1010107f0]
+      +               ! : | + 3 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched) + 648  [0x101087d40]
+      +               ! : | + 3 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 904  [0x101087718]
+      +               ! : | + ! 3 _RNvMs_NtCsgKscDXrlV49_5alloc3vecINtB4_3VecNtNtNtCsetd7qX7E4oI_9mech_core8snapshot4data7F64BitsE16into_boxed_sliceBK_  (in counting-closed-profile-matched) + 24  [0x10101079c]
+      +               ! : | + 2 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched) + 396,400  [0x101087a6c,0x101087a70]
+      +               ! : | 31 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 432  [0x10112ee28]
+      +               ! : | + 19 _xzm_free  (in libsystem_malloc.dylib) + 204,352,...  [0x196bcd810,0x196bcd8a4,...]
+      +               ! : | + 9 _free  (in libsystem_malloc.dylib) + 76,12,...  [0x196bdaa78,0x196bdaa38,...]
+      +               ! : | + 3 DYLD-STUB$$free  (in counting-closed-profile-matched) + 4  [0x10137b4c8]
+      +               ! : | 19 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 200  [0x10112ed40]
+      +               ! : | + 19 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric33canonical_range_draft_cardinality  (in counting-closed-profile-matched) + 1204,8,...  [0x1010d6134,0x1010d5c88,...]
+      +               ! : | 13 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 264  [0x10112ed80]
+      +               ! : | + 13 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCsetd7qX7E4oI_9mech_core8snapshot5draft14ValueDataDraftECs97pdNyvJG81_11mech_engine.10788  (in counting-closed-profile-matched) + 28,72,...  [0x10112ef10,0x10112ef3c,...]
+      +               ! : | 13 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 32,220,...  [0x10112ec98,0x10112ed54,...]
+      +               ! : | 11 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCsetd7qX7E4oI_9mech_core8snapshot5draft14ValueDataDraftECs97pdNyvJG81_11mech_engine.10788  (in counting-closed-profile-matched) + 104,108  [0x10112ef5c,0x10112ef60]
+      +               ! : | 10 _xzm_free  (in libsystem_malloc.dylib) + 1344,1340,...  [0x196bcdc84,0x196bcdc80,...]
+      +               ! : | 8 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 128  [0x10112ecf8]
+      +               ! : | + 8 _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 88,20,...  [0x101126964,0x101126920,...]
+      +               ! : | 7 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 444  [0x10112ee34]
+      +               ! : | + 4 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric43canonical_u64_range_selector_representation  (in counting-closed-profile-matched) + 56  [0x1010e4184]
+      +               ! : | + ! 4 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric36snapshot_fixed_element_encoded_bytes  (in counting-closed-profile-matched) + 24  [0x1010c7f58]
+      +               ! : | + 2 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric36snapshot_fixed_element_encoded_bytes  (in counting-closed-profile-matched) + 336  [0x1010c8090]
+      +               ! : | + 1 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric43canonical_u64_range_selector_representation  (in counting-closed-profile-matched) + 56  [0x1010e4184]
+      +               ! : | 5 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 236  [0x10112ed64]
+      +               ! : | + 5 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls10invocation31NativeCollectionInvocationErrorEBQ_  (in counting-closed-profile-matched) + 40,12  [0x101122510,0x1011224f4]
+      +               ! : | 5 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 288  [0x10112ed98]
+      +               ! : | + 5 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtCsetd7qX7E4oI_9mech_core6schema10SchemaBodyECs97pdNyvJG81_11mech_engine.10601  (in counting-closed-profile-matched) + 24  [0x101114264]
+      +               ! : | 4 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls10invocation31NativeCollectionInvocationErrorEBQ_  (in counting-closed-profile-matched) + 404  [0x10112267c]
+      +               ! : | 4 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 152  [0x10112ed10]
+      +               ! : | + 4 _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 88,32,...  [0x101126964,0x10112692c,...]
+      +               ! : | 4 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric43canonical_u64_range_selector_representation  (in counting-closed-profile-matched) + 116  [0x1010e41c0]
+      +               ! : | 4 _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 80  [0x10112695c]
+      +               ! : | 2 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtCsetd7qX7E4oI_9mech_core6schema10SchemaBodyECs97pdNyvJG81_11mech_engine.10601  (in counting-closed-profile-matched) + 624  [0x1011144bc]
+      +               ! : | 2 _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric33canonical_range_draft_cardinality  (in counting-closed-profile-matched) + 1832,1836  [0x1010d63a8,0x1010d63ac]
+      +               ! : | 1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 1216  [0x101087850]
+      +               ! : 15 _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched) + 116  [0x10112ebdc]
+      +               ! : | 15 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtCsetd7qX7E4oI_9mech_core6schema10SchemaBodyECs97pdNyvJG81_11mech_engine.10601  (in counting-closed-profile-matched) + 24,0,...  [0x101114264,0x10111424c,...]
+      +               ! : 9 _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched) + 84  [0x10112ebbc]
+      +               ! : | 9 _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 20,88,...  [0x101126920,0x101126964,...]
+      +               ! : 5 _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 80  [0x10112695c]
+      +               ! : 4 _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched) + 40,156  [0x10112eb90,0x10112ec04]
+      +               ! : 1 _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched) + 316  [0x10112edb4]
+      +               ! 35 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 364,1688,...  [0x101227968,0x101227e94,...]
+      +               ! 20 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1580  [0x101227e28]
+      +               ! : 13 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 176  [0x1011328f0]
+      +               ! : | 10 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 32,164,...  [0x1011691c0,0x101169244,...]
+      +               ! : | 3 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 40  [0x1011691c8]
+      +               ! : |   3 _tlv_get_addr  (in libdyld.dylib) + 20,12  [0x1969af30c,0x1969af304]
+      +               ! : 5 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 136,96  [0x1011328c8,0x1011328a0]
+      +               ! : 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 180  [0x101169254]
+      +               ! : 1 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 36  [0x101132864]
+      +               ! :   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! 19 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1720  [0x101227eb4]
+      +               ! : 11 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 220,40,...  [0x10111c6a4,0x10111c5f0,...]
+      +               ! : 7 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+      +               ! : | 7 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 1 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 40  [0x10111c5f0]
+      +               ! :   1 _tlv_get_addr  (in libdyld.dylib) + 12  [0x1969af304]
+      +               ! 12 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 2084  [0x101228020]
+      +               ! : 10 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 28,104,...  [0x101168480,0x1011684cc,...]
+      +               ! : 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 36  [0x101168488]
+      +               ! :   2 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! 7 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 2048  [0x101227ffc]
+      +               ! : 6 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 104,28,...  [0x101169408,0x1011693bc,...]
+      +               ! : 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 36  [0x1011693c4]
+      +               ! :   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! 3 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 172  [0x101168510]
+      +               ! 3 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 180  [0x1011328f4]
+      +               ! 2 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 432  [0x1012279ac]
+      +               ! : 2 _tlv_get_addr  (in libdyld.dylib) + 12,20  [0x1969af304,0x1969af30c]
+      +               ! 1 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 340  [0x10111c71c]
+      +               ! 1 _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched) + 124  [0x10112ebe4]
+      +               235 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 35432  [0x101361ae8]
+      +               ! 196 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1348  [0x101227d40]
+      +               ! : 50 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 684  [0x101228988]
+      +               ! : | 19 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap6insertB9_  (in counting-closed-profile-matched) + 148  [0x101225f78]
+      +               ! : | + 15 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 32,220,...  [0x10111c5e8,0x10111c6a4,...]
+      +               ! : | + 3 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 40  [0x10111c5f0]
+      +               ! : | + ! 3 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : | + 1 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+      +               ! : | +   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : | 18 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap6insertB9_  (in counting-closed-profile-matched) + 100,160,...  [0x101225f48,0x101225f84,...]
+      +               ! : | 10 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap6insertB9_  (in counting-closed-profile-matched) + 580  [0x101226128]
+      +               ! : | + 8 _platform_memcmp  (in libsystem_platform.dylib) + 168,260,...  [0x196db4f78,0x196db4fd4,...]
+      +               ! : | + 2 DYLD-STUB$$memcmp  (in counting-closed-profile-matched) + 4  [0x10137b528]
+      +               ! : | 3 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 340  [0x10111c71c]
+      +               ! : 40 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 496  [0x1012288cc]
+      +               ! : | 15 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 136  [0x101225c84]
+      +               ! : | + 13 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 220,108,...  [0x10111c6a4,0x10111c634,...]
+      +               ! : | + 1 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 40  [0x10111c5f0]
+      +               ! : | + ! 1 _tlv_get_addr  (in libdyld.dylib) + 28  [0x1969af314]
+      +               ! : | + 1 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+      +               ! : | +   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : | 13 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 540  [0x101225e18]
+      +               ! : | + 11 _platform_memcmp  (in libsystem_platform.dylib) + 260,272,...  [0x196db4fd4,0x196db4fe0,...]
+      +               ! : | + 2 DYLD-STUB$$memcmp  (in counting-closed-profile-matched) + 4  [0x10137b528]
+      +               ! : | 12 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 540,180,...  [0x101225e18,0x101225cb0,...]
+      +               ! : 32 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 580  [0x101228920]
+      +               ! : | 22 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding8geometry  (in counting-closed-profile-matched) + 136,48,...  [0x101225530,0x1012254d8,...]
+      +               ! : | 4 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 580  [0x101228920]
+      +               ! : | + 4 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding8geometry  (in counting-closed-profile-matched) + 416,576  [0x101225648,0x1012256e8]
+      +               ! : | 2 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_map5ErrorEBM_  (in counting-closed-profile-matched) + 180  [0x1012202b0]
+      +               ! : | 2 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding8geometry  (in counting-closed-profile-matched) + 620  [0x101225714]
+      +               ! : | + 2 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_map5ErrorEBM_  (in counting-closed-profile-matched) + 32  [0x10122021c]
+      +               ! : | 2 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding8geometry  (in counting-closed-profile-matched) + 636  [0x101225724]
+      +               ! : |   2 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_map5ErrorEBM_  (in counting-closed-profile-matched) + 32  [0x10122021c]
+      +               ! : 28 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 964,4,...  [0x101228aa0,0x1012286e0,...]
+      +               ! : 16 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 328  [0x101228824]
+      +               ! : | 9 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 176  [0x1011328f0]
+      +               ! : | + 7 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 128,32,...  [0x101169220,0x1011691c0,...]
+      +               ! : | + 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 40  [0x1011691c8]
+      +               ! : | +   2 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : | 4 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 36  [0x101132864]
+      +               ! : | + 4 _tlv_get_addr  (in libdyld.dylib) + 12,20  [0x1969af304,0x1969af30c]
+      +               ! : | 3 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 120,28  [0x1011328b8,0x10113285c]
+      +               ! : 6 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 648  [0x101228964]
+      +               ! : | 6 _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_map5ErrorEBM_  (in counting-closed-profile-matched) + 12  [0x101220208]
+      +               ! : 6 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 908  [0x101228a68]
+      +               ! : | 6 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 28,136  [0x101168480,0x1011684ec]
+      +               ! : 5 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 872  [0x101228a44]
+      +               ! : | 4 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 28,104  [0x1011693bc,0x101169408]
+      +               ! : | 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 36  [0x1011693c4]
+      +               ! : |   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 5 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 664  [0x101225e94]
+      +               ! : 3 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 180  [0x101169454]
+      +               ! : 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 172  [0x101168510]
+      +               ! : 2 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap6insertB9_  (in counting-closed-profile-matched) + 2076  [0x101226700]
+      +               ! : 1 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 180  [0x1011328f4]
+      +               ! 31 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 996,1340,...  [0x101227be0,0x101227d38,...]
+      +               ! 4 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1128  [0x101227c64]
+      +               ! : 4 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget13memory_budget  (in counting-closed-profile-matched) + 56,12  [0x10112bc5c,0x10112bc30]
+      +               ! 3 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget13memory_budget  (in counting-closed-profile-matched) + 76  [0x10112bc70]
+      +               ! 1 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched) + 216  [0x1012287b4]
+      +               143 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 34128  [0x1013615d0]
+      +               ! 112 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1088  [0x101227c3c]
+      +               ! : 47 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 460  [0x101228414]
+      +               ! : | 19 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 540  [0x101225e18]
+      +               ! : | + 19 _platform_memcmp  (in libsystem_platform.dylib) + 272,260,...  [0x196db4fe0,0x196db4fd4,...]
+      +               ! : | 18 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 136  [0x101225c84]
+      +               ! : | + 16 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 220,32,...  [0x10111c6a4,0x10111c5e8,...]
+      +               ! : | + 2 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+      +               ! : | +   2 _tlv_get_addr  (in libdyld.dylib) + 12,20  [0x1969af304,0x1969af30c]
+      +               ! : | 10 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 180,540,...  [0x101225cb0,0x101225e18,...]
+      +               ! : 19 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 12,420,...  [0x101228254,0x1012283ec,...]
+      +               ! : 14 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 312  [0x101228380]
+      +               ! : | 7 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 36,120,...  [0x101132864,0x1011328b8,...]
+      +               ! : | 6 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 176  [0x1011328f0]
+      +               ! : | + 4 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 8,32,...  [0x1011691a8,0x1011691c0,...]
+      +               ! : | + 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 40  [0x1011691c8]
+      +               ! : | +   2 _tlv_get_addr  (in libdyld.dylib) + 12  [0x1969af304]
+      +               ! : | 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 180  [0x101169254]
+      +               ! : 11 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 624  [0x1012284b8]
+      +               ! : | 9 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 28,136,...  [0x1011693bc,0x101169428,...]
+      +               ! : | 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 36  [0x1011693c4]
+      +               ! : |   2 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 8 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 660  [0x1012284dc]
+      +               ! : | 6 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 28,136  [0x101168480,0x1011684ec]
+      +               ! : | 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 36  [0x101168488]
+      +               ! : |   2 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 4 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 664,660  [0x101225e94,0x101225e90]
+      +               ! : 3 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 360  [0x1012283b0]
+      +               ! : | 3 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 172  [0x101168510]
+      +               ! : 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 176  [0x101169450]
+      +               ! : 1 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 84  [0x10122829c]
+      +               ! : | 1 _tlv_get_addr  (in libdyld.dylib) + 24  [0x1969af310]
+      +               ! : 1 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 180  [0x1011328f4]
+      +               ! 28 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 20,968,...  [0x101227810,0x101227bc4,...]
+      +               ! 3 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 160,144  [0x1012282e8,0x1012282d8]
+      +               133 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 35808,28544,...  [0x101361c60,0x101360000,...]
+      +               127 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 34884  [0x1013618c4]
+      +               ! 95 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 1088  [0x101227c3c]
+      +               ! : 27 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 420,12,...  [0x1012283ec,0x101228254,...]
+      +               ! : 25 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 460  [0x101228414]
+      +               ! : | 9 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 136  [0x101225c84]
+      +               ! : | + 7 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 164,172,...  [0x10111c66c,0x10111c674,...]
+      +               ! : | + 2 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+      +               ! : | +   2 _tlv_get_addr  (in libdyld.dylib) + 12,20  [0x1969af304,0x1969af30c]
+      +               ! : | 8 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 468,180,...  [0x101225dd0,0x101225cb0,...]
+      +               ! : | 6 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 540  [0x101225e18]
+      +               ! : | + 6 _platform_memcmp  (in libsystem_platform.dylib) + 260,140,...  [0x196db4fd4,0x196db4f5c,...]
+      +               ! : | 2 _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 340  [0x10111c71c]
+      +               ! : 18 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 312  [0x101228380]
+      +               ! : | 10 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 36,96,...  [0x101132864,0x1011328a0,...]
+      +               ! : | 6 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 176  [0x1011328f0]
+      +               ! : | + 6 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 164,8,...  [0x101169244,0x1011691a8,...]
+      +               ! : | 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 180  [0x101169254]
+      +               ! : | 1 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 36  [0x101132864]
+      +               ! : |   1 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 9 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 660  [0x1012284dc]
+      +               ! : | 5 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 104,28,...  [0x1011684cc,0x101168480,...]
+      +               ! : | 4 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 36  [0x101168488]
+      +               ! : |   4 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 4 _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 664,660  [0x101225e94,0x101225e90]
+      +               ! : 3 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 84  [0x10122829c]
+      +               ! : | 3 _tlv_get_addr  (in libdyld.dylib) + 24  [0x1969af310]
+      +               ! : 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 180  [0x101169454]
+      +               ! : 2 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 360  [0x1012283b0]
+      +               ! : | 2 _tlv_get_addr  (in libdyld.dylib) + 20  [0x1969af30c]
+      +               ! : 2 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 624  [0x1012284b8]
+      +               ! : | 2 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 28,104  [0x1011693bc,0x101169408]
+      +               ! : 2 _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 180  [0x1011328f4]
+      +               ! : 1 _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 172  [0x101168510]
+      +               ! 23 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 216,824,...  [0x1012278d4,0x101227b34,...]
+      +               ! 9 _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched) + 160,144  [0x1012282e8,0x1012282d8]
+      +               18 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 208,200,...  [0x1012278cc,0x1012278c4,...]
+      +               8 mech_canonical_program_entry_v1  (in counting-closed-profile-matched) + 33820  [0x10136149c]
+      +                 8 _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 216,536,...  [0x1012278d4,0x101227a14,...]
+      1 _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched) + 240  [0x101087480]
+        1 _xzm_free  (in libsystem_malloc.dylib) + 28  [0x196bcd760]
+
+Total number in stack (recursive counted multiple, when >=5):
+        25       _tlv_get_addr  (in libdyld.dylib) + 0  [0x1969af2f8]
+        16       _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched) + 0  [0x10103e0fc]
+        8       _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched) + 0  [0x101168464]
+        8       _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 0  [0x10111c5c8]
+        8       _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched) + 0  [0x101132840]
+        7       _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched) + 0  [0x1011691a0]
+        7       _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched) + 0  [0x1011693a0]
+        7       _xzm_free  (in libsystem_malloc.dylib) + 0  [0x196bcd744]
+        6       _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched) + 0  [0x101225bfc]
+        6       _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched) + 0  [0x10103fb94]
+        6       _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched) + 0  [0x1012277fc]
+        5       _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched) + 172  [0x10111c674]
+        5       _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched) + 0  [0x1010833b0]
+        5       _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched) + 0  [0x10112690c]
+
+Sort by top of stack, same collapsed (when >= 5):
+        _RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call  (in counting-closed-profile-matched)        143
+        mech_canonical_program_entry_v1  (in counting-closed-profile-matched)        133
+        _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape18evaluate_dimension  (in counting-closed-profile-matched)        122
+        _xzm_free  (in libsystem_malloc.dylib)        88
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26assign_dimension_witnesses  (in counting-closed-profile-matched)        72
+        _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge  (in counting-closed-profile-matched)        68
+        _RNvNtNtCsetd7qX7E4oI_9mech_core6schema5shape21evaluate_body_extents  (in counting-closed-profile-matched)        66
+        _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding11native_read  (in counting-closed-profile-matched)        58
+        _tlv_get_addr  (in libdyld.dylib)        54
+        _platform_memcmp  (in libsystem_platform.dylib)        44
+        _xzm_xzone_malloc  (in libsystem_malloc.dylib)        44
+        _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap3getB9_  (in counting-closed-profile-matched)        43
+        _free  (in libsystem_malloc.dylib)        39
+        _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionINtNtCsgKscDXrlV49_5alloc2rc2RcIBV_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget18ControlWorkAccountEEEEE4withNCNvXNvMs0_B2s_NtB2s_23NativeLibraryWorkBudget10with_scopeNtB3M_5GuardNtNtNtBZ_3ops4drop4Drop4drop0uEB2w_  (in counting-closed-profile-matched)        35
+        _RNvMs1_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_21ControlWorkScopeGuard5enter  (in counting-closed-profile-matched)        32
+        _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvMs1_B1T_NtB1T_21ControlWorkScopeGuard5enters0_0B1v_EB1X_  (in counting-closed-profile-matched)        30
+        _RNvXsl_NtCsetd7qX7E4oI_9mech_core6schemaNtB5_10SchemaBodyNtNtCsgDHHaSskbIF_4core3cmp9PartialEq2eq.10759  (in counting-closed-profile-matched)        30
+        _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding13native_insert  (in counting-closed-profile-matched)        29
+        _RINvMs2_NtNtCsgirOGyZpP7g_3std6thread5localINtB6_8LocalKeyINtNtCsgDHHaSskbIF_4core4cell7RefCellINtNtBZ_6option6OptionNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget16ControlWorkScopeEEE4withNCNvXs2_B1T_NtB1T_21ControlWorkScopeGuardNtNtNtBZ_3ops4drop4Drop4drop0uEB1X_  (in counting-closed-profile-matched)        28
+        _xzm_malloc_zone_malloc_type_calloc_entry  (in libsystem_malloc.dylib)        28
+        _RNvMNtNtCsetd7qX7E4oI_9mech_core6schema5shapeNtB4_6Schema17instantiate_shape  (in counting-closed-profile-matched)        26
+        _RNvMs0_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17owned_map_bindingNtB5_7Binding8geometry  (in counting-closed-profile-matched)        26
+        _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCsetd7qX7E4oI_9mech_core8snapshot5draft14ValueDataDraftECs97pdNyvJG81_11mech_engine.10788  (in counting-closed-profile-matched)        24
+        _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtCsetd7qX7E4oI_9mech_core6schema10SchemaBodyECs97pdNyvJG81_11mech_engine.10601  (in counting-closed-profile-matched)        22
+        _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric33canonical_range_draft_cardinality  (in counting-closed-profile-matched)        21
+        _RNvMs3_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_mapNtB5_14OwnedStringMap6insertB9_  (in counting-closed-profile-matched)        20
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26shape_for_resolved_extents  (in counting-closed-profile-matched)        20
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value31shape_for_declared_lower_bounds  (in counting-closed-profile-matched)        20
+        _malloc_zone_malloc  (in libsystem_malloc.dylib)        17
+        <deduplicated_symbol>  (in libsystem_malloc.dylib)        16
+        DYLD-STUB$$free  (in counting-closed-profile-matched)        16
+        _malloc_zone_calloc  (in libsystem_malloc.dylib)        15
+        _RNvMs_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8preparedNtB4_25NativePreparedLibraryCall30selected_u64_range_cardinality  (in counting-closed-profile-matched)        14
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value26dimension_witness_mismatch  (in counting-closed-profile-matched)        14
+        _platform_memset  (in libsystem_platform.dylib)        13
+        _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact16owned_string_map5ErrorEBM_  (in counting-closed-profile-matched)        12
+        _RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls10invocation31NativeCollectionInvocationErrorEBQ_  (in counting-closed-profile-matched)        9
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value35assign_dimension_witness_preserving  (in counting-closed-profile-matched)        9
+        _RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget13memory_budget  (in counting-closed-profile-matched)        7
+        _RNvMs_NtCsgKscDXrlV49_5alloc3vecINtB4_3VecNtNtNtCsetd7qX7E4oI_9mech_core8snapshot4data7F64BitsE16into_boxed_sliceBK_  (in counting-closed-profile-matched)        7
+        _platform_memmove  (in libsystem_platform.dylib)        7
+        _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric36snapshot_fixed_element_encoded_bytes  (in counting-closed-profile-matched)        6
+        _RNvMs0_NtNtNtNtNtCs97pdNyvJG81_11mech_engine8resident7general23native_collection_calls8prepared11string_spanNtB7_25NativePreparedLibraryCall33selected_u64_string_span_selector  (in counting-closed-profile-matched)        5
+        _RNvNtNtCs97pdNyvJG81_11mech_engine8resident7numeric43canonical_u64_range_selector_representation  (in counting-closed-profile-matched)        5
+        _RNvNtNtCsetd7qX7E4oI_9mech_core11type_system14resolved_value22dimension_is_injective  (in counting-closed-profile-matched)        5
+
+Binary Images:
+       0x100fb4000 -        0x10145bfaf +counting-closed-profile-matched (0) <C8A49484-0483-3C75-B5F3-E19A4B99500E> /tmp/*/counting-closed-profile-matched
+       0x196958000 -        0x1969ab48b  libobjc.A.dylib (951.1) <1E0A4B36-0701-3482-AA51-000F0ECC7506> /usr/lib/libobjc.A.dylib
+       0x1969ac000 -        0x1969dcbcb  libdyld.dylib (1335) <3A7FDAA5-69EC-3846-AA49-DE7BDEE00285> /usr/lib/system/libdyld.dylib
+       0x1969dd000 -        0x196a7bfc3  dyld (1.0.0 - 1335) <0975AFBA-C46B-364C-BD84-A75DAA9E455A> /usr/lib/dyld
+       0x196a7c000 -        0x196a7f1d0  libsystem_blocks.dylib (96) <B64F976B-5966-3643-9B57-0EB17D149482> /usr/lib/system/libsystem_blocks.dylib
+       0x196a80000 -        0x196ad4f7f  libxpc.dylib (3089.60.7) <4DB07AE5-6544-3D18-B44B-DCACA4D02FB8> /usr/lib/system/libxpc.dylib
+       0x196ad5000 -        0x196af58df  libsystem_trace.dylib (1815.61.1) <16F2ABF3-27FC-3B12-AE3C-F039C083AE7B> /usr/lib/system/libsystem_trace.dylib
+       0x196af6000 -        0x196ba296f  libcorecrypto.dylib (1922.60.11) <A925150E-A21F-3273-A38D-EB304C5D2D18> /usr/lib/system/libcorecrypto.dylib
+       0x196ba3000 -        0x196beebff  libsystem_malloc.dylib (792.60.6) <F68E01CC-EC92-3F25-BAC8-956A3DE42627> /usr/lib/system/libsystem_malloc.dylib
+       0x196bef000 -        0x196c35e5f  libdispatch.dylib (1542.0.4) <A4B349E8-DD6F-3B71-84D9-34F3B4ACD849> /usr/lib/system/libdispatch.dylib
+       0x196c36000 -        0x196c38feb  libsystem_featureflags.dylib (101) <6AD11065-D06A-3212-97FC-4EEC4AC48F51> /usr/lib/system/libsystem_featureflags.dylib
+       0x196c39000 -        0x196cbb047  libsystem_c.dylib (1725.40.4) <FB5569A9-CB26-36C2-AA05-E99243692B60> /usr/lib/system/libsystem_c.dylib
+       0x196cbc000 -        0x196d4eea3  libc++.1.dylib (2000.67) <BEBE1F75-49D4-32E9-9978-FF8D0E799801> /usr/lib/libc++.1.dylib
+       0x196d4f000 -        0x196d6992f  libc++abi.dylib (2000.67) <51C9FB66-83AA-3C40-A806-99BC96BAFD7F> /usr/lib/libc++abi.dylib
+       0x196d6a000 -        0x196da649f  libsystem_kernel.dylib (12377.61.12) <548C45C8-9733-3F0D-8EF4-C06DF1DF2AD0> /usr/lib/system/libsystem_kernel.dylib
+       0x196da7000 -        0x196db3abb  libsystem_pthread.dylib (539) <527C4BA0-91A5-378B-B3E2-D38269CA5A66> /usr/lib/system/libsystem_pthread.dylib
+       0x196db4000 -        0x196dbc3ef  libsystem_platform.dylib (359.60.3) <4DBAF982-1576-3FFC-86BE-03A9D2C96BE5> /usr/lib/system/libsystem_platform.dylib
+       0x196dbd000 -        0x196dece23  libsystem_info.dylib (600) <363CFE03-0003-3DA6-BE41-820B917B7955> /usr/lib/system/libsystem_info.dylib
+       0x19ad60000 -        0x19ad6a397  libsystem_darwin.dylib (1725.40.4) <C25292BB-AA30-37D2-8001-E7276ADBAF1E> /usr/lib/system/libsystem_darwin.dylib
+       0x19b1d1000 -        0x19b1e2ff3  libsystem_notify.dylib (344.0.1) <DF1ED23D-F338-306D-BD06-A7F9B4534B23> /usr/lib/system/libsystem_notify.dylib
+       0x19d4b0000 -        0x19d4cafdb  libsystem_networkextension.dylib (2205.60.9.0.1) <C2085EB4-0A94-3D87-94ED-D5555D3FA837> /usr/lib/system/libsystem_networkextension.dylib
+       0x19d54e000 -        0x19d565ff3  libsystem_asl.dylib (406) <867E699E-8CC6-3792-AC6E-35C5769FADBA> /usr/lib/system/libsystem_asl.dylib
+       0x19f0fb000 -        0x19f1033b7  libsystem_symptoms.dylib (2158.60.3) <8D869291-11B3-3D2A-BFDF-F1C1688E19F1> /usr/lib/system/libsystem_symptoms.dylib
+       0x1a307d000 -        0x1a30b52b7  libsystem_containermanager.dylib (725.60.4) <FA1FC4AB-E5A0-391C-8951-41EFEE847E0D> /usr/lib/system/libsystem_containermanager.dylib
+       0x1a44cb000 -        0x1a44cf66f  libsystem_configuration.dylib (1385.60.3) <11F5CF47-6E93-3FF7-8E5E-E98F69742465> /usr/lib/system/libsystem_configuration.dylib
+       0x1a44d0000 -        0x1a44d66a7  libsystem_sandbox.dylib (2680.60.11) <FD4A58D2-D1AB-3936-86EE-CCB6852E0761> /usr/lib/system/libsystem_sandbox.dylib
+       0x1a5a4a000 -        0x1a5a4d1fb  libquarantine.dylib (196.40.3) <18BE2FA3-66CE-3EBF-9E13-8478DF73E146> /usr/lib/system/libquarantine.dylib
+       0x1a61cd000 -        0x1a61d3f4f  libsystem_coreservices.dylib (191.2.4) <0646DDBF-346D-3273-9C9B-968121293B8A> /usr/lib/system/libsystem_coreservices.dylib
+       0x1a6720000 -        0x1a675d8b7  libsystem_m.dylib (3309) <42E15F5C-02B8-3B56-9889-5B59CADD45EB> /usr/lib/system/libsystem_m.dylib
+       0x1a675e000 -        0x1a675ec9b  libcharset.1.dylib (113) <0673192D-5966-307F-B6D1-80F6524E8256> /usr/lib/libcharset.1.dylib
+       0x1a675f000 -        0x1a6762537  libmacho.dylib (1030.6.3) <D1DA6556-F3D8-3A33-96FF-0B8876A1F0B6> /usr/lib/system/libmacho.dylib
+       0x1a677c000 -        0x1a678961f  libcommonCrypto.dylib (600035) <87FEBA92-8FE5-32C3-8317-F6F86489CCFB> /usr/lib/system/libcommonCrypto.dylib
+       0x1a678a000 -        0x1a6793b0b  libunwind.dylib (1900.125) <33789B37-0F3B-389C-BF0A-80FB03A2FB31> /usr/lib/system/libunwind.dylib
+       0x1a679c000 -        0x1a67a66ff  libcopyfile.dylib (230.0.1.0.1) <317DAF5E-A6BB-3DFF-BCA1-8053DE7A8A2C> /usr/lib/system/libcopyfile.dylib
+       0x1a67a7000 -        0x1a67aa95f  libcompiler_rt.dylib (103.3) <E54BAD88-9E9A-3A4D-8E4A-6146B120C1EC> /usr/lib/system/libcompiler_rt.dylib
+       0x1a67ab000 -        0x1a67afa1b  libsystem_collections.dylib (1725.40.4) <90FA7AF0-2D12-3FC1-A87A-C4EDE396FDC5> /usr/lib/system/libsystem_collections.dylib
+       0x1a67b0000 -        0x1a67b34bf  libsystem_secinit.dylib (168.40.2) <755B9674-5B57-39CE-B247-4183C3ED6613> /usr/lib/system/libsystem_secinit.dylib
+       0x1a67b4000 -        0x1a67b6b57  libremovefile.dylib (84) <2F92CF32-4C5F-3D57-AEBC-9655B810A23C> /usr/lib/system/libremovefile.dylib
+       0x1a67b7000 -        0x1a67b7f27  libkeymgr.dylib (31) <FBDDA038-D728-3E69-815A-333D6B00BBDF> /usr/lib/system/libkeymgr.dylib
+       0x1a67b8000 -        0x1a67c0f87  libsystem_dnssd.dylib (2881.60.4) <5DF6DD6A-358E-3170-97D7-EB2107F4DB89> /usr/lib/system/libsystem_dnssd.dylib
+       0x1a67c1000 -        0x1a67c60b3  libcache.dylib (95) <C8B9304A-229B-3775-B353-2333D154987B> /usr/lib/system/libcache.dylib
+       0x1a67c7000 -        0x1a67c8cf3  libSystem.B.dylib (1356) <EF46521E-50DB-3B5D-A1F5-5294C83D9B25> /usr/lib/libSystem.B.dylib
+       0x1a6802000 -        0x1a68091bb  libiconv.2.dylib (113) <CFA46448-594D-3CDB-B136-104EFF00478B> /usr/lib/libiconv.2.dylib
+       0x291274000 -        0x29127b319  libRosetta.dylib (365.3) <4B2D840F-AD4B-3A47-9749-3CB480DF3717> /usr/lib/libRosetta.dylib
+       0x292981000 -        0x292984deb  libsystem_darwindirectory.dylib (122) <B6309151-0733-31ED-8150-92CE2BB7FEA5> /usr/lib/system/libsystem_darwindirectory.dylib
+       0x292985000 -        0x29298e117  libsystem_eligibility.dylib (286.60.23) <65295E08-697D-334C-8A97-B6FE0D9797A0> /usr/lib/system/libsystem_eligibility.dylib
+       0x29298f000 -        0x292996873  libsystem_sanitizers.dylib (25) <D81DCFCF-61F5-3C56-ACA1-42C900E5364D> /usr/lib/system/libsystem_sanitizers.dylib
+       0x292997000 -        0x292997bb7  libsystem_trial.dylib (474.2.0.5) <820D601F-6489-32A9-9405-ECD7378C3570> /usr/lib/system/libsystem_trial.dylib

@@ -60,6 +60,10 @@ def main():
         "range_snapshot": "range_snapshot",
         "canonical_string_selection": "canonical_string_selection",
         "retained_map_helper": "retained_map_helper",
+        "closed_map_storage_binding": "10map_owners6closed",
+        "private_map_read": "11native_read",
+        "private_map_insert": "13native_insert",
+        "library_work_scope": "16with_call_limits",
         "selected_key_projection": "State11project_key",
         "selected_range_cardinality": "selected_u64_range_cardinality",
         "generated_block_admission": "program_runtime5admit",
@@ -74,6 +78,7 @@ def main():
         graph = content.split("Call graph:\n", 1)[1].split("Total number in stack", 1)[0]
         counts = {label: 0 for label in patterns}
         total = None
+        entry_samples = None
         ancestors = []
         for line in graph.splitlines():
             match = re.match(r"^[\s+!:|]*(\d+) (\S+)", line)
@@ -83,9 +88,12 @@ def main():
             depth = match.start(1)
             while ancestors and ancestors[-1][0] >= depth:
                 ancestors.pop()
-            if symbol == "start":
+            if symbol.startswith("Thread_") and "com.apple.main-thread" in line:
                 assert total is None
                 total = count
+            if symbol == "start":
+                assert entry_samples is None
+                entry_samples = count
             active = set().union(*(labels for _, labels in ancestors))
             matched = set()
             for label, pattern in patterns.items():
@@ -101,7 +109,8 @@ def main():
         summaries.append({
             "stacks": str(path.relative_to(HERE)),
             "stacks_sha256": sha(path.read_bytes()),
-            "main_entry_samples": total,
+            "main_thread_samples": total,
+            "samples_unwound_to_start": entry_samples,
             "inclusive_samples": counts,
             "inclusive_percent": {key: 100 * value / total for key, value in counts.items()},
         })
@@ -117,7 +126,7 @@ def main():
         "machine_code_sha256": sha(timed_code),
         "machine_code_identical": True,
         "symbol_patterns": patterns,
-        "aggregation": "Union of matching subtrees within each category; categories overlap",
+        "aggregation": "Union of matching subtrees within each category; categories overlap; denominator includes all main-thread samples, including partial unwinds",
         "samples": summaries,
     }
     output = HERE / args.samples / 'analysis.json'

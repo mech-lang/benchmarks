@@ -20,6 +20,7 @@ parser.add_argument('--binary', required=True)
 parser.add_argument('--package', required=True)
 parser.add_argument('--work-policy', required=True, type=int)
 parser.add_argument('--receipt', required=True)
+parser.add_argument('--minimum-closed-map-regions', type=int, default=0)
 args = parser.parse_args()
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
@@ -66,6 +67,10 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     manifest = json.loads((project / 'linked-manifest.json').read_text())
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
+    descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
+    report['closed_map_regions'] = sum(region.get('map') is not None
+                                      for region in descriptor['closed_tails']['regions'])
+    assert report['closed_map_regions'] >= args.minimum_closed_map_regions
     process.save(out / 'results.json', report)
 
     def run(label, round_number, timed):
@@ -89,6 +94,10 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
 
     for label in targets:
         run(label, 'warmup', False)
+    if args.minimum_closed_map_regions:
+        candidate = json.loads((out / 'warmup-candidate.report.json').read_text())
+        baseline = json.loads((out / 'warmup-baseline.report.json').read_text())
+        assert candidate['native_visits'] < baseline['native_visits'], 'The new path did not reduce runtime admissions'
     for index, order in enumerate([['candidate', 'baseline', 'rust'], ['rust', 'baseline', 'candidate'], ['baseline', 'candidate', 'rust']]):
         for label in order:
             run(label, index, True)

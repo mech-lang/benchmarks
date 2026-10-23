@@ -78,3 +78,17 @@ Compiler `32a3a7b449f64740ecf137ba3539a08cda2240e2` replaces straight-line group
 | Native paths `32a3a7b44` | 7.331 | 330× |
 
 [Fresh paired measurements](../native-owner-aot-v1/map-path-timing-v1/results.json) show 18.4% less elapsed time. All outputs match and both Mech binaries perform seven tables and 6,999,961 updates. Admitted runtime boundaries fall from 139,717,328 to 55,717,707; the new count includes fused helper admissions and should not be described as standalone callback calls. The source and program image are unchanged. [Matching executable profiles](../native-owner-aot-v1/full-profile-path-v1/analysis.json) identify retained map/key helpers as the largest remaining sampled category. Full-input qualification and Rust parity remain unfinished.
+
+## Closed native map loops
+
+Compiler `7091f025d2489ef511c4650b2c5e6d6dfe29102b` binds a closed generated map loop to private invocation-owned storage. Mech retains traversal, branching, scalar arithmetic and all caller-produced map updates. Entry pins and validates the source String, ownership and account; private general map calls retain checked growth and finite work on that same account. Generated iterations use bounded prepaid fuel, never renewed allowances. Unicode/CRLF and refused admission retain the guarded path. A suspended outer comprehension permits a closed map child; child control inside the map body still declines this optimization. IR36/work policy53/ABI20 fence the selected layout and protocol.
+
+[closed-map-nested-validation-v1](closed-map-nested-validation-v1/summary.json) records 217 passing native checks with three pre-existing exclusions. New original/decoded/restored-image cases use non-DNA keys and caller increments, nested repeated invocations, actual admission reduction, refused entry, exhausted/renewed fuel and invalid callback rejection. All 84 counting cases exercise guarded, native and restored metadata, with independent count oracles and complete cleanup. The version-only IR36 update has its own [identity/counting follow-up](closed-map-nested-identity-v1/process.json). Earlier failing preparation and frontier/geometry diagnostics remain separately retained.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0211 | 1.00× |
+| Previous Mech AOT `32a3a7b44` | 7.336 | 347× |
+| Closed map loops `7091f025d` | 1.985 | 94× |
+
+[Fresh paired measurements](../native-owner-aot-v1/closed-map-timing-v2/results.json) show a 3.70× speedup with unchanged source and program bytecode. All nine complete outputs match; both Mech executables perform seven tables and 6,999,961 updates. Admissions fall from 55,717,707 to 443. The initial top-level-only attempt selected no closed map loops and produced no gain; its [receipt](../native-owner-aot-v1/closed-map-timing-v1/results.json) and selection analysis remain explicit. The final harness requires two selected regions and fewer actual admissions before timing. [Matching profiles](../native-owner-aot-v1/full-profile-closed-v1/analysis.json) now identify repeated range shape/cardinality validation as the largest remaining category. Full-input qualification and Rust parity remain unfinished.
