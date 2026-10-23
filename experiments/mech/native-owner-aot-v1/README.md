@@ -2,6 +2,38 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Retaining complete maps for private reads
+
+Compiler [`78007ae6f`](https://github.com/mech-lang/mech/commit/78007ae6f26e5bb8f7d1c2fec318e5b102304e7d) retains an entire immutable packed map when a complete-use proof permits only private membership and scalar lookup operations in its original parent visit. Every key and count remains, including entries never queried. The five query histograms select this representation; the two frequency histograms still publish canonical maps because they enumerate their keys and values. Source, bytecode, inputs and finite launch limits are unchanged. IR49/ABI26 identify the implementation. Work policy65 prices complete packed-table validation and actual bounded queries; physically removed decoding, copying and sorting no longer incur their old implementation charges. Mutation-body charges and logical result limits remain.
+
+Six **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.556 | 1.00× |
+| Previous proved-window stage, `99942aea4` | 1.927 | 3.46× |
+| Complete private maps, `78007ae6f` | 1.536 | 2.76× |
+
+The candidate median is **20.3% lower**, a **1.25× speedup**. Candidate observations span 1.518–1.569 seconds, below the parent range of 1.906–1.987 seconds. A slow Rust observation of 1.351 seconds in the first three cohorts prompted three additional balanced cohorts; all six observations per executable remain, including that observation. The [initial three-cohort aggregate](full-frozen-map-cohort-v1/results.json) and [complete six-cohort aggregate](full-frozen-map-cohort-v2/results.json) retain observations, execution order, standard deviations and qualification. This establishes a gain in these cohorts, not Rust parity or a universal speedup.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, gives:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0209 | 1.00× |
+| Previous proved-window stage | 0.492 | 23.58× |
+| Complete private maps | 0.0968 | 4.64× |
+
+The prefix median is **80.3% lower**, a **5.08× speedup**. Candidate observations span 0.0967–0.1011 seconds, below the parent range of 0.479–0.508 seconds. Median peak resident memory is 28.6 MB for the candidate versus 101.8 MB for its parent. [Prefix receipts](frozen-map-timing-v1/results.json) retain every observation; prefix and full-input ratios use their respective Rust cohorts.
+
+[Emission qualification](frozen-map-timing-v1/emission-audit.json) identifies the complete-use layout, original parent/exit/read sites and prior guarded-loop, scalar-state and Frame proofs. Runtime receipts independently verify **five frozen maps and ten frozen reads**, seven packed SSA maps, seven selected guarded loops, one batch with an observed peak of seven workers, complete output and all **6,999,961 prefix** or **874,999,961 full-input updates** in every candidate run. The frontend elides the source alias in this plan; no private-copy-hook execution is claimed. Complete key/control/fingerprint, uniqueness and probe-reachability validation precedes later source actions. Logical result checks stay at their original result-copy boundary after its source debit. Subjects run sequentially, including secured startup/shutdown and capability checks.
+
+[Focused validation](../native-owner-dispatch-v1/frozen-map-focused-v5/summary.json) passes **14 tests**; the [full native suite](../native-owner-dispatch-v1/frozen-map-native-v1/summary.json) passes **319 GPU tests and one catalog test**, with three existing manual exclusions. Coverage includes runtime queries, missing versus zero-valued entries, corruption, proof rejection, finite accounting, private lifetime/retirement, original/decoded/restored plans and concurrent workers. Earlier [compile](../native-owner-dispatch-v1/frozen-map-focused-v1/summary.json), [fixture](../native-owner-dispatch-v1/frozen-map-focused-v2/summary.json), [diagnostic](../native-owner-dispatch-v1/frozen-map-focused-v3/summary.json) and [remaining fixture](../native-owner-dispatch-v1/frozen-map-focused-v4/summary.json) failures remain. In particular, a map crossing an activation boundary correctly declines freezing; it is retained as an executing canonical-fallback case. These receipts do not claim that unsupported function-local captured collection forms gained native lowering.
+
+The [profiling build](profile-frozen-map-build-v1/summary.json) matches the timed executable's entire **4,277,028-byte** machine-code section, SHA-256 `255614b3f5a2f21f53f8c67fa100c79526e6aa7a406957ae6b997864a1508972`. The [full-input capture](full-profile-frozen-map-v1/summary.json) observes seven workers and 6,117 worker samples: **90.76%** have generated program code as their innermost recorded frame. Inclusive shares are **3.63%** for library work debits and **4.69%** for waiting. No canonical publication appears in this capture; the two frequency maps still perform it. Both [prefix](prefix-profile-frozen-map-v1/summary.json) [attempts](prefix-profile-frozen-map-v2/summary.json) complete correctly but capture empty call graphs, so they provide no hotspot observations. Categories overlap and include waits, partial unwinds and profiling overhead; they are not elapsed-time shares or matched baseline profiles.
+
+[Exact-code disassembly](frozen-map-codegen-audit-v1/results.json) maps the retained full-input sampled-PC groups to SIMD table probing, entry-presence tests and stack reloads, including a duplicated entry-pointer reload before a count store. A collapsed group's count cannot be assigned to each listed instruction. The remaining priority is to simplify the generated counting loop: prove cache state across source calls, reduce loop-carried state and stack traffic, and remove repeated checks only where their original behavior is proved. These are next targets, not measured speedups. Separate decoded-source executable qualification, secured/trusted comparison and Rust parity remain incomplete.
+
 ## Proved window bounds
 
 Compiler [`99942aea4`](https://github.com/mech-lang/mech/commit/99942aea47a938b30b06196d0fab1d8b88e32962) selects a guarded native version when the source's invariant width and limit fit the actual pinned String. A bounded proof follows the original unsigned stop conditions, exact index recurrence, selected range and unchanged stop payload. The selected version uses one trip-end decision and omits certified range bounds; unsupported conditions retain the original checked graph. Every original header, refill, terminal visit, source count update, overflow check and source error origin remains. IR48/ABI25 identify the actual-selection helper; work policy64, source, bytecode and finite launch policies are unchanged.

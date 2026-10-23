@@ -1,0 +1,61 @@
+   Compiling mech-core v0.3.5 (/private/tmp/mech-native-frozen-integration/src/core)
+   Compiling mech-syntax v0.3.5 (/private/tmp/mech-native-frozen-integration/src/syntax)
+   Compiling mech-bytecode v0.3.5 (/private/tmp/mech-native-frozen-integration/src/bytecode)
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-frozen-integration/src/engine)
+   Compiling mech-compute v0.3.5 (/private/tmp/mech-native-frozen-integration/src/compute)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-frozen-integration/src/stdlib)
+   Compiling mech-runtime v0.3.5 (/private/tmp/mech-native-frozen-integration/src/runtime)
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/combinatorics)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/math)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/set)
+   Compiling mech-logic v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/logic)
+   Compiling mech-matrix v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/matrix)
+   Compiling mech-range v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/range)
+   Compiling mech-string v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/string)
+   Compiling mech-stats v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/stats)
+   Compiling mech-compare v0.3.5 (/private/tmp/mech-native-frozen-integration/machines/compare)
+   Compiling mech-build v0.3.5 (/private/tmp/mech-native-frozen-integration/src/build)
+   Compiling mech-terminal v0.3.5 (/private/tmp/mech-native-frozen-integration/hosts/terminal)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-frozen-integration/hosts/gpu)
+error[E0282]: type annotations needed
+  --> hosts/gpu/src/native_artifact/program_frozen_map_runtime.rs:97:21
+   |
+97 |                     Ok(word)
+   |                     ^^ cannot infer type of the type parameter `E` declared on the enum `Result`
+   |
+help: consider specifying the generic arguments
+   |
+97 |                     Ok::<u64, E>(word)
+   |                       ++++++++++
+
+error[E0283]: type annotations needed
+   --> hosts/gpu/src/native_artifact/program_frozen_map_runtime.rs:97:21
+    |
+ 97 |                     Ok(word)
+    |                     ^^ cannot infer type of the type parameter `E` declared on the enum `Result`
+ 98 |                 }).map_err(|error| storage_error(super::StorageError::Work(error)))??
+    |                                                                                     - type must be known at this point
+    |
+note: multiple `impl`s satisfying `program_runtime::NativeProgramExecutionError: From<_>` found
+   --> hosts/gpu/src/native_artifact/program_runtime.rs:90:1
+    |
+ 90 | impl From<NativeExecutionError> for NativeProgramExecutionError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+ 95 | impl From<NativeIterationExecutionError> for NativeProgramExecutionError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+100 | impl From<NativeValueError> for NativeProgramExecutionError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+...
+105 | impl From<mech_core::MemoryRuntimeError> for NativeProgramExecutionError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    = note: and another `impl` found in the `core` crate: `impl<T> From<T> for T;`
+help: consider specifying the generic arguments
+    |
+ 97 |                     Ok::<u64, E>(word)
+    |                       ++++++++++
+
+Some errors have detailed explanations: E0282, E0283.
+For more information about an error, try `rustc --explain E0282`.
+error: could not compile `mech-gpu` (lib test) due to 2 previous errors

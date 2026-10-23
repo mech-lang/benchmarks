@@ -38,6 +38,9 @@ require_guarded_loops = timing.get('require_guarded_loops', False)
 if require_guarded_loops:
     assert timing.get('source_guarded_loops_qualified') is True
     assert timing.get('source_tag_threading_qualified') is True
+require_frozen_maps = timing.get('require_frozen_maps', False)
+if require_frozen_maps:
+    assert timing.get('source_frozen_maps_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -46,14 +49,14 @@ if args.minimum_parallel_peak is not None and (
 minimum_parallel_peak = max(args.minimum_parallel_peak or 1,
                             timing.get('minimum_parallel_peak') or 1) if require_parallel_tasks else None
 assert minimum_parallel_peak is None or 1 <= minimum_parallel_peak <= require_parallel_tasks
-require_packed_map = args.require_packed_map or timing.get('require_packed_map', False) or require_parallel_tasks is not None or require_guarded_loops
-require_packed_ssa = timing.get('require_packed_ssa', False) or require_parallel_tasks is not None or require_guarded_loops
+require_packed_map = args.require_packed_map or timing.get('require_packed_map', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps
+require_packed_ssa = timing.get('require_packed_ssa', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps
 out.mkdir(exist_ok=False)
 targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7',
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
 assert process.sha(targets['mech']) == timing['candidate_sha256']
-if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops:
+if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops or require_frozen_maps:
     project = Path(str(targets['mech']) + '.project')
     for key in ('compiled_source_edge_facts', 'compiled_tag_threading', 'compiled_frame_effects', 'compiled_guarded_loops'):
         if timing.get(key) is not None:
@@ -98,6 +101,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               configuration=vars(args), samples=[], native_executions=[],
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
               require_guarded_loops=require_guarded_loops,
+              require_frozen_maps=require_frozen_maps,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -119,6 +123,10 @@ if timing.get('source_frame_effects_qualified'):
 if require_guarded_loops:
     for key in ('source_guarded_loops_qualified', 'compiled_guarded_loops',
                 'qualified_guarded_regions', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
+if require_frozen_maps:
+    for key in ('source_frozen_maps_qualified', 'frozen_map_layout',
+                'qualified_frozen_regions', 'object_sha256', 'linked_manifest_sha256'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
@@ -146,7 +154,9 @@ try:
                 packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
                               packed_map_updates=native.get('native_packed_map_updates'),
                               packed_ssa_regions=native.get('native_packed_ssa_regions'),
-                              guarded_loop_regions=native.get('native_guarded_loop_regions'))
+                              guarded_loop_regions=native.get('native_guarded_loop_regions'),
+                              frozen_map_regions=native.get('native_frozen_map_regions'),
+                              frozen_map_reads=native.get('native_frozen_map_reads'))
                 parallel = dict(parallel_batches=native.get('native_parallel_batches'),
                                 parallel_regions=native.get('native_parallel_regions'),
                                 parallel_tasks=native.get('native_parallel_tasks'),
@@ -160,6 +170,8 @@ try:
                     assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
                 if label == 'mech' and require_guarded_loops:
                     assert packed['guarded_loop_regions'] == 7, 'Candidate did not select all seven guarded loop versions'
+                if label == 'mech' and require_frozen_maps:
+                    assert packed['frozen_map_regions'] == 5 and packed['frozen_map_reads'] == 10, 'Candidate did not retain five complete query maps and perform ten original reads'
                 if label == 'mech' and require_parallel_tasks:
                     assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
                     assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'

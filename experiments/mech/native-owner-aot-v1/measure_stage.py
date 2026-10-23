@@ -136,7 +136,7 @@ def require_tag_threading(metadata, descriptor, minimum_branches, minimum_latche
 
 
 def require_frame_effects(metadata, descriptor):
-    """Verify narrow synchronization against the unchanged ABI24/25 Frame."""
+    """Verify narrow synchronization against the unchanged ABI24–26 Frame."""
     assert metadata and metadata['complete'] is True, 'Missing or truncated frame-effect receipt'
     records = metadata['regions']
     by_header = {record['header']: record for record in records}
@@ -144,7 +144,7 @@ def require_frame_effects(metadata, descriptor):
     expected = {region['tail']['header'] for region in descriptor['closed_tails']['regions']
                 if region.get('map') is not None and region.get('packed') is not None}
     assert expected and expected == set(by_header), 'Frame-effect headers differ from the exact packed source regions'
-    # Fields are word indices in the unchanged nineteen-word ABI24/25 Frame.
+    # Fields are word indices in the unchanged nineteen-word ABI24–26 Frame.
     # These expectations are deliberately independent of the compiler's masks.
     effects = {0: ([3, 8], [3, 7, 8]),
                7: ([3, 4, 5, 6, 7, 8], [0, 1, 2, 4, 7, 15, 16, 17, 18]),
@@ -161,6 +161,67 @@ def require_frame_effects(metadata, descriptor):
             assert record['stored_words'] == stores and record['reloaded_words'] == loads, 'Private helper effects disagree with its exact frame contract'
         qualified.append(dict(header=header, operations=operations,
                               scope='Actual compiled call templates; not runtime callback frequencies'))
+    return qualified
+
+
+def require_frozen_maps(candidate_count, descriptor):
+    """Bind private-map inventory to source sites; loaders rederive its proof."""
+    layout, plan = descriptor['frozen_maps'], descriptor['plan']
+    regions, closed = layout['regions'], descriptor['closed_tails']['regions']
+    owners = descriptor['map_owner_words']['regions']
+    assert type(candidate_count) is int and candidate_count == len(regions) == 1
+    assert all(len(layout[key]) == len(plan['blocks']) for key in ('exits', 'copies', 'reads'))
+    qualified = []
+    for index, region in enumerate(regions):
+        assert type(region['closed']) is int and 0 <= region['closed'] < len(closed)
+        source = closed[region['closed']]
+        assert source['packed'] is not None and source['map'] == region['owner']
+        assert type(region['owner']) is int and 0 <= region['owner'] < len(owners)
+        tail = source['tail']
+        assert owners[region['owner']]['tail'] == tail
+        assert region['exit'] == tail['exit'] and region['output'] == tail['result']
+        assert region['parent'] == plan['iterations'][source['iteration']]['Tail']['parent']
+        aliases = region['aliases']
+        assert aliases and aliases == sorted(set(aliases)) and region['output'] in aliases
+        result_type = plan['values'][region['output']]
+        body = result_type['definition']['body']['Map']
+        assert body['key'] == 'String' and body['value'] == {'UnsignedInteger': 'W64'}
+        for alias in aliases:
+            assert type(alias) is int and 0 <= alias < len(plan['values'])
+            assert plan['values'][alias] == result_type
+            assert plan['value_scopes'][alias] == {'Immutable': {'iteration': region['parent']}}
+        exit_sites = [site for site, selected in enumerate(layout['exits']) if selected == index]
+        assert exit_sites == [region['exit']]
+        exit_block = plan['blocks'][region['exit']]
+        assert exit_block['iteration'] == region['parent']
+        assert exit_block['action'] == {'Scalar': {'Copy': {'source': tail['returned'], 'output': tail['result']}}}
+        copies = [site for site, selected in enumerate(layout['copies']) if selected == index]
+        reads = [site for site, selected in enumerate(layout['reads']) if selected == index]
+        assert reads
+        primitives = []
+        for site in copies:
+            block = plan['blocks'][site]
+            assert block['iteration'] == region['parent']
+            copy = block['action']['Scalar']['Copy']
+            assert copy['source'] in aliases and copy['output'] in aliases
+        for site in reads:
+            block = plan['blocks'][site]
+            assert block['iteration'] == region['parent']
+            call = block['action']['LibraryCall']
+            assert len(call['operands']) == 2 and call['operands'][0] in aliases
+            assert plan['values'][call['operands'][1]]['definition']['body'] == 'String'
+            selected = call['template']['selected']
+            assert len(selected) == 1
+            primitive = next(iter(selected.values()))['leaf']['primitive']
+            assert primitive in ('MapContainsKey', 'MapKeyAccess')
+            primitives.append(primitive)
+        assert sorted(primitives) == ['MapContainsKey', 'MapKeyAccess']
+        qualified.append(dict(owner=region['owner'], closed=region['closed'], header=tail['header'],
+                              parent=region['parent'], exit=region['exit'], output=region['output'],
+                              aliases=aliases, copies=copies, reads=reads,
+                              scope='Source-bound complete-map candidates; actual retention and reads are separately required'))
+    for key in ('exits', 'copies', 'reads'):
+        assert all(value is None or type(value) is int and 0 <= value < len(regions) for value in layout[key])
     return qualified
 
 
@@ -344,6 +405,8 @@ parser.add_argument('--require-frame-effects', action='store_true',
                     help='Require exact narrow frame synchronization for every compiled packed-map helper')
 parser.add_argument('--require-guarded-loops', action='store_true',
                     help='Require source-qualified guarded versions and seven actual runtime selections; also require packed storage, SSA and tag metadata')
+parser.add_argument('--require-frozen-maps', action='store_true',
+                    help='Require source-qualified private maps, five actual retained maps and ten original source queries')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -353,8 +416,8 @@ if args.minimum_parallel_peak is not None and (
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
 require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
 require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches or args.require_guarded_loops)
-require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
-require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects or args.require_frozen_maps
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects or args.require_frozen_maps
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -388,6 +451,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
               require_key_bits=args.require_key_bits,
               require_guarded_loops=args.require_guarded_loops,
+              require_frozen_maps=args.require_frozen_maps,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -407,7 +471,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
     if args.require_frame_effects:
-        assert manifest['object']['abi_version'] in (24, 25), 'Frame-effect masks require the audited ABI24/25 Frame'
+        assert manifest['object']['abi_version'] in (24, 25, 26), 'Frame-effect masks require the audited ABI24–26 Frame'
         report['compiled_frame_effects'] = manifest['object'].get('compiled_frame_effects')
         report['qualified_frame_regions'] = require_frame_effects(report['compiled_frame_effects'], descriptor)
         report['source_frame_effects_qualified'] = True
@@ -426,6 +490,14 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['qualified_guarded_regions'] = require_guarded_loops(
             report['compiled_guarded_loops'], descriptor, report['compiled_tag_threading'])
         report['source_guarded_loops_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_frozen_maps:
+        assert manifest['object']['abi_version'] == 26 and manifest['object']['work_policy_version'] == 65
+        report['frozen_map_layout'] = descriptor['frozen_maps']
+        report['qualified_frozen_regions'] = require_frozen_maps(
+            manifest['object'].get('private_frozen_map_candidates'), descriptor)
+        report['source_frozen_maps_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
@@ -464,7 +536,9 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
                           packed_map_updates=native.get('native_packed_map_updates'),
                           packed_ssa_regions=native.get('native_packed_ssa_regions'),
-                          guarded_loop_regions=native.get('native_guarded_loop_regions'))
+                          guarded_loop_regions=native.get('native_guarded_loop_regions'),
+                          frozen_map_regions=native.get('native_frozen_map_regions'),
+                          frozen_map_reads=native.get('native_frozen_map_reads'))
             parallel = dict(parallel_batches=native.get('native_parallel_batches'),
                             parallel_regions=native.get('native_parallel_regions'),
                             parallel_tasks=native.get('native_parallel_tasks'),
@@ -480,6 +554,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                 assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
             if label == 'candidate' and args.require_guarded_loops:
                 assert packed['guarded_loop_regions'] == 7, 'Candidate did not select all seven guarded loop versions'
+            if label == 'candidate' and args.require_frozen_maps:
+                assert packed['frozen_map_regions'] == 5 and packed['frozen_map_reads'] == 10, 'Candidate did not retain five complete query maps and perform ten original reads'
             if label == 'candidate' and args.require_parallel_tasks:
                 assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
                 assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'

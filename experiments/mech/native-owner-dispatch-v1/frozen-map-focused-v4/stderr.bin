@@ -1,0 +1,127 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-frozen-integration/hosts/gpu)
+    Finished `test` profile [unoptimized] target(s) in 9.78s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+FROZEN_NEGATIVE_CASE 0: 
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#Accumulate(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Advance(index<u64>, counts<{string:u64}>)
+  | :Finish(counts<{string:u64}>).
+#Accumulate(s, width, n, initial) -> :Advance(0u64, initial)
+  :Advance(index, counts)
+    | width == 0u64 -> :Finish(counts)
+    | index >= n -> :Finish(counts)
+    | width > n - index -> :Finish(counts)
+    | * -> :Advance(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Finish(counts) => counts.
+empty<{string:u64}> := map/new()
+
+#Accumulate(text<string>, 1u64, 6u64, empty)
+
+FROZEN_NEGATIVE_CASE 1: 
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#Accumulate(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Advance(index<u64>, counts<{string:u64}>)
+  | :Finish(counts<{string:u64}>).
+#Accumulate(s, width, n, initial) -> :Advance(0u64, initial)
+  :Advance(index, counts)
+    | width == 0u64 -> :Finish(counts)
+    | index >= n -> :Finish(counts)
+    | width > n - index -> :Finish(counts)
+    | * -> :Advance(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Finish(counts) => counts.
+empty<{string:u64}> := map/new()
+
+lookup(s<string>, query<string>) => (result<u64>) :=
+  counts := #Accumulate(s, 1u64, 6u64, empty)
+  changed := map/insert(counts, query, 7u64)
+  result := changed{query}.
+lookup(text<string>, query<string>)
+
+FROZEN_NEGATIVE_CASE 2: 
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#Accumulate(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Advance(index<u64>, counts<{string:u64}>)
+  | :Finish(counts<{string:u64}>).
+#Accumulate(s, width, n, initial) -> :Advance(0u64, initial)
+  :Advance(index, counts)
+    | width == 0u64 -> :Finish(counts)
+    | index >= n -> :Finish(counts)
+    | width > n - index -> :Finish(counts)
+    | * -> :Advance(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Finish(counts) => counts.
+empty<{string:u64}> := map/new()
+
+lookup(s<string>, query<string>) => (result<u64>) :=
+  counts := #Accumulate(s, 1u64, 6u64, empty)
+  keys := map/keys(counts)
+  result := sequence/length(keys) + counts{query}.
+lookup(text<string>, query<string>)
+
+FROZEN_NEGATIVE_CASE 3: 
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#Accumulate(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Advance(index<u64>, counts<{string:u64}>)
+  | :Finish(counts<{string:u64}>).
+#Accumulate(s, width, n, initial) -> :Advance(0u64, initial)
+  :Advance(index, counts)
+    | width == 0u64 -> :Finish(counts)
+    | index >= n -> :Finish(counts)
+    | width > n - index -> :Finish(counts)
+    | * -> :Advance(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Finish(counts) => counts.
+empty<{string:u64}> := map/new()
+
+lookup(s<string>, query<string>) => (result<u64>) :=
+  counts := #Accumulate(s, 1u64, 6u64, empty)
+  chosen := (query == "a")? | true => counts | false => empty.
+  result := chosen{query}.
+lookup(text<string>, query<string>)
+
+FROZEN_NEGATIVE_CASE 4: 
++> map
++> sequence
+increment(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#Accumulate(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Advance(index<u64>, counts<{string:u64}>)
+  | :Finish(counts<{string:u64}>).
+#Accumulate(s, width, n, initial) -> :Advance(0u64, initial)
+  :Advance(index, counts)
+    | width == 0u64 -> :Finish(counts)
+    | index >= n -> :Finish(counts)
+    | width > n - index -> :Finish(counts)
+    | * -> :Advance(index + 1u64, increment(counts, s[(index + 1u64)..=(index + width)]))
+  :Finish(counts) => counts.
+empty<{string:u64}> := map/new()
+
+lookup(s<string>, query<string>) => (result<u64>) :=
+  counts := #Accumulate(s, 1u64, 6u64, empty)
+  values := [counts{q} | q <- [query]]
+  result := sequence/length(values).
+lookup(text<string>, query<string>)
+
+
+thread 'native_artifact::program_frozen_map_layout::tests::frozen_map_proof_rejects_any_unsupported_use_before_selecting_storage' (1790908) panicked at hosts/gpu/src/native_artifact/program_frozen_map_layout.rs:323:122:
+called `Result::unwrap()` on an `Err` value: MissingSemanticWitness { node: NodeId(4) }
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'native_artifact::program_runtime::frozen_map_tests::frozen_unsupported_enumeration_executes_canonical_fallback_and_wire_proof_cannot_be_forged' (1790953) panicked at hosts/gpu/src/native_artifact/program_runtime.rs:3482:14:
+called `Result::unwrap()` on an `Err` value: SourceSemanticError { code: "source-semantics/unknown-function", message: "function sequence/length is not visible with declared source semantics", anchor: SourceSemanticAnchor { document: DocumentId(1347571540), revision: Revision(1), range: TextRange { start: TextSize(795), end: TextSize(810) } } }
+error: test failed, to rerun pass `-p mech-gpu --lib`

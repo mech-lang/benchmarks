@@ -21,7 +21,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'source_tag_threading_qualified', 'compiled_tag_threading', 'qualified_tag_regions',
             'source_frame_effects_qualified', 'compiled_frame_effects', 'qualified_frame_regions',
             'require_guarded_loops', 'source_guarded_loops_qualified',
-            'compiled_guarded_loops', 'qualified_guarded_regions', 'native_descriptor_sha256']
+            'compiled_guarded_loops', 'qualified_guarded_regions', 'native_descriptor_sha256',
+            'require_frozen_maps', 'source_frozen_maps_qualified', 'frozen_map_layout', 'qualified_frozen_regions']
 first = reports[0]
 samples = {}
 receipts = []
@@ -34,6 +35,10 @@ for run, report in zip(args.runs, reports):
         native = json.loads((HERE / run / 'native.report.json').read_text())
         assert native['native_guarded_loop_regions'] == native['native_packed_ssa_regions'] == native['native_packed_map_regions'] == 7
         assert native['native_packed_map_updates'] == report['expected_table_updates']
+    if report.get('require_frozen_maps'):
+        assert report.get('source_frozen_maps_qualified') is True
+        native = json.loads((HERE / run / 'native.report.json').read_text())
+        assert native['native_frozen_map_regions'] == 5 and native['native_frozen_map_reads'] == 10
     labels = [sample['label'] for sample in report['samples']]
     assert len(labels) == len(set(labels)) and set(labels) == set(s['label'] for s in first['samples'])
     for sample in report['samples']:
