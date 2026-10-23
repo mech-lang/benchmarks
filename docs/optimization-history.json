@@ -792,7 +792,7 @@
       "date": "2026-10-22",
       "title": "Share pi-digit extraction numerators in Mech source",
       "change_kind": "source-level arithmetic reuse; compiler/runtime unchanged",
-      "status": "measured experimental; canonical catalog unchanged",
+      "status": "measured; admitted as separately retained source cohorts",
       "inspiration": "The qualified Janet implementation forms 4*q+r by adding q to the preserved 3*q+r extraction numerator.",
       "mechanism": "Reuse the mutable scratch bigint through existing general addition and floor-to-u64 operations, retaining both actual unbounded divisions. Inline the first extraction for a shorter source form. The same-sign quotient-only runtime path already existed.",
       "evidence": [
@@ -822,14 +822,20 @@
           "before_x_optimized_mech_aot": 1.0782662480208989,
           "after_x_optimized_mech_aot": 1.0
         }
-      ]
+      ],
+      "publication": {
+        "admission": "experiments/mech/pidigits-publication-v1/cohort.json",
+        "deployment": "experiments/mech/pidigits-pages-v1/live-verification.json",
+        "benchmark_source_commit": "7e7033fb4656b8b5088f4e73666c44016ee2dff5",
+        "historical_sources_and_samples_preserved": true
+      }
     },
     {
       "id": "record-streaming-compaction",
       "date": "2026-10-22",
       "title": "Compact streamed record bodies directly from buffered input",
       "change_kind": "generic runtime input compaction; application and native object unchanged",
-      "status": "measured experimental; canonical catalog unchanged",
+      "status": "measured; admitted as separately retained runtime cohorts",
       "inspiration": "Rust comparison and audit of record reading memory passes; published Rust source remains unchanged.",
       "mechanism": "Recognize single-byte record prefixes at physical line starts and append body spans directly without LF or one trailing CR. Preserve generic semantics and fallback for other prefixes/separators.",
       "compiler_commit": "6634f1f4d59c0a2eebee44065f236f8647703464",
@@ -861,14 +867,22 @@
           "after_x_optimized_mech_aot": 1.0
         }
       ],
-      "pull_request": "https://github.com/mech-lang/mech/pull/910"
+      "pull_request": "https://github.com/mech-lang/mech/pull/910",
+      "publication": {
+        "admission": "experiments/mech/revcomp-publication-v1/cohort.json",
+        "admission_sha256": "e9e3227b08982f7e8d4fffbfe723ffb72feed1ccdb5c654d342c69a448c0f608",
+        "deployment": "experiments/mech/revcomp-pages-v1/live-verification.json",
+        "deployment_sha256": "dcae0b55a469fbe94fccbcf9a9ad39b29dcf8ddce2b1c1941186b0180774a0aa",
+        "benchmark_source_commit": "44f48ac24cb833b2d090b560ef994cd35f2fc672",
+        "historical_sources_and_samples_preserved": true
+      }
     },
     {
       "id": "record-completed-buffer-reuse",
       "date": "2026-10-22",
       "title": "Reuse completed uniquely owned record storage",
       "change_kind": "generic runtime allocation reuse; application and native compute object unchanged",
-      "status": "measured experimental; canonical catalog unchanged",
+      "status": "measured; admitted as separately retained runtime cohorts",
       "inspiration": "Existing read/compute/write phase diagnostics and source-level allocation audit after record compaction.",
       "mechanism": "After a mapped result has been written, reclaim only uniquely owned byte storage from completed values and formatting views. Retain at most one largest allocation in the streaming reader and grow it normally for subsequent records. Live aliases and captures remain untouched.",
       "compiler_commit": "fca1ba1f7462a555eb56833ad32135408a140a72",
@@ -910,7 +924,15 @@
           "before_x_optimized_mech_aot": 1.166534680990999,
           "after_x_optimized_mech_aot": 1.0
         }
-      ]
+      ],
+      "publication": {
+        "admission": "experiments/mech/revcomp-publication-v1/cohort.json",
+        "admission_sha256": "e9e3227b08982f7e8d4fffbfe723ffb72feed1ccdb5c654d342c69a448c0f608",
+        "deployment": "experiments/mech/revcomp-pages-v1/live-verification.json",
+        "deployment_sha256": "dcae0b55a469fbe94fccbcf9a9ad39b29dcf8ddce2b1c1941186b0180774a0aa",
+        "benchmark_source_commit": "44f48ac24cb833b2d090b560ef994cd35f2fc672",
+        "historical_sources_and_samples_preserved": true
+      }
     }
   ]
 }

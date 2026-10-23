@@ -316,7 +316,9 @@ The shorter form changes physical rows 38 → 37, UTF-8 bytes 2,050 → 2,045,
 deterministic gzip bytes 726 → 713, and BPE tokens 715 → 713. These do not establish
 normalized LOC or minimal source. The original sources, unsuccessful diagnostic
 attempt, all samples, library captures and generated objects remain retained;
-the canonical historical website catalog is unchanged pending admission.
+the experiment itself did not change the canonical catalog. Its three Mech
+cohorts were subsequently [admitted and published](../experiments/mech/pidigits-pages-v1/README.md),
+retaining all older samples and source forms.
 
 ### 2026-10-22 — Streamed record compaction
 
@@ -361,3 +363,9 @@ first rebuild refusal and successful corrected rebuild are preserved. Default
 power settings, nonzero changing swap, and missing frequency/temperature traces
 limit extrapolation. [Compiler PR #910](https://github.com/mech-lang/mech/pull/910)
 contains both runtime improvements. No website timings are replaced by this packet.
+
+The two streamed-record improvements were subsequently [admitted and
+published](../experiments/mech/revcomp-pages-v1/README.md) as four separate Mech
+runtime configurations with 28 fresh samples. Every historical source, source
+count, attribution record and timing remains intact. Build `5da585f5c98f3a15` is
+live and all 41 served assets match the tested local manifest.
