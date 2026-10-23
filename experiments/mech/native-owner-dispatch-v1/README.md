@@ -19,3 +19,20 @@ The explicit source hash-table contract, full-input source/decoded standalone wo
 Compiler `f6ee09e631048fb831d2032e8013a56d876efc63` replaces repeated whole-cache metadata scans with totals reconciled at each cache mutation. The lane retains the exact library account and rejects a foreign account or invalid total. Reconciliation also runs after a failed operation; a failed reconciliation leaves the total unusable. Original/decoded caller-geometry observations independently recompute the complete inventory and compare it with both the per-cache values and aggregate, including selected String projections. Work policy 48 identifies this accounting change; IR31 and ABI16 are unchanged.
 
 [cache-census-v1](cache-census-v1) passes all 209 native checks with three pre-existing exclusions. Fresh complete-process source-map measurements on a 100,000-base prefix improve from 8.4683 seconds (1.81× current Mech AOT) to 4.6755 seconds (1.00×); every output matches the independent reference. The [standalone study](../native-owner-aot-v1/README.md) retains paired timings, the matched executable profile and the distinction between historical #909 and its source rebuilt with the current compiler. These diagnostic gains do not qualify the full 125-million-base source-map workload.
+
+## Borrowed selected String keys
+
+Compiler `7aa1bea1b5565113cd07ddeaeea2bed30ed84a54` projects nonescaping selected String keys through the existing maintained String index. The original range and selection visits remain checked. The selected key retains a strong source owner and validated byte bounds until the owning state transition retires the view. Every consumer must be a membership, lookup or insertion in the same map region; other observers decline the optimization. Hash storage receives the caller's computed values and does not implement the source traversal or counting algorithm.
+
+The image includes the selection proof and constant-time indices. The lane accounts for fixed metadata and live pins; bounds/cardinality errors, Unicode/CRLF semantics, account identity, finite work limits, helper freshness and refused owner entry remain enforced. IR32, work policy49 and ABI17 reject stale images and host protocols. The scalar frame prefix is unchanged. Execution reports now count actual retained-map imports and successful updates.
+
+| Compiler | Input | Median seconds | × `7aa1bea1b` Mech AOT |
+|---|---:|---:|---:|
+| Parent `f6ee09e63` | 100,000 bases | 4.686 | 3.40× |
+| Selected keys `7aa1bea1b` | 100,000 bases | 1.380 | 1.00× |
+
+Each row contains three alternating fresh secured processes, with startup/shutdown included and one excluded warmup. All outputs match the independent reference. The candidate reports seven tables and 699,961 actual updates on every run. [Standalone receipts](../native-owner-aot-v1/key-span-timing-v1/results.json) retain raw samples and exact artifact identities. This diagnostic does not qualify full-input performance.
+
+[key-span-validation-v2](key-span-validation-v2) passes 211 native checks with three pre-existing exclusions. The source counting fixture covers 84 original/decoded cases: seven widths and six inputs, including Unicode, CRLF and an empty input. It independently checks returned maps, actual update counts, both projection visits and the absence of canonical range/key calls. Additional checks cover extra key observers, invalid bounds, refused owner entry, stale or substituted helpers, corrupted map references and cleanup after failure.
+
+The retained failed diagnostics are not passing evidence: `key-span-count-v1` exposed an incorrect assumption about Tail iteration counters, corrected by retiring views at the actual Tail latch/exit boundary; `key-span-validation-v1` failed an obsolete ABI16 assertion, updated to ABI17 before the complete rerun. `key-span-count-v2` and `key-span-validation-v2` contain the corrected passing records.
