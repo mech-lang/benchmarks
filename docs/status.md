@@ -138,6 +138,16 @@ metadata still need separate accounting before complete caller geometry and
 retained-map routing can be qualified. Full-input qualification and fresh timings
 remain pending.
 
+The [arena census removal study](../experiments/mech/arena-census-elision-v1/README.md)
+removes the superseded per-slot node counter and duplicate running sum, saving
+eight bytes of word backing and eight setup work units per arena slot. The
+shared-account witness still retains admitted caller roots outside the arena.
+All 201 native checks pass, with three pre-existing exclusions, including
+replacement/retirement/transfer and final external-root release. Work policy44
+distinguishes the reduced prices; IR30 and ABI15 remain unchanged. No measured
+runtime improvement or new benchmark result is claimed. Complete caller
+geometry and retained-map execution remain unfinished.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
