@@ -1,0 +1,87 @@
+Static inspection of the exact Rust #7 comparison executable
+
+Binary SHA-256: f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763
+Source SHA-256: 47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851
+Commands, paths, tool hashes and extraction ranges are in receipt.json.
+No benchmark, build, test or profile was executed. These are observations about
+generated instructions, not measurements of hotspot proportions or speedups.
+
+Observed in the binary
+
+1. The counting path uses a rolling integer key and an inlined map update.
+   In worker-u64.s, 0x100006fe0 loads the next encoded byte and advances the
+   iterator; 0x100006fe4 uses ubfiz x10,x27,#2,#34, then ORs the byte into the
+   shifted/masked key. This retains a 36-bit key for an 18-character window.
+   The u32 worker similarly uses ubfiz with #22 for its 24-bit/12-character key
+   (0x100008ef4). No substring allocation or character decoding occurs on this
+   existing-key path. These operations are inside the future's poll function;
+   there is no freq/helper call per item. The u8 version remains a standalone
+   freq function, but its map/hash operations are also inlined.
+
+2. Hashing is an inlined folded multiply, not repeated String hashing.
+   At 0x100006ff4..0x100007000 the machine XORs the key with a seed, computes
+   mul and umulh, and XORs the low/high products. The high seven hash bits form
+   a control-byte fingerprint. Symbol names identify this build's hashbrown
+   hasher as foldhash::fast::RandomState. This identifies the actual compiled
+   dependency behavior; it is not an assumption about the original submission's
+   historical dependency versions.
+
+3. The hash table checks eight control bytes with SIMD before comparing keys.
+   worker-u64.s at 0x100006ee4..0x100006f14 loads eight bytes, uses cmeq.8b to
+   compare all fingerprints, then rbit/clz to choose candidates. The full key
+   is one 64-bit comparison. An existing entry increments its u32 value with
+   load/add/store at 0x100006f44..0x100006f4c. The u8/u16/u32 table entries use
+   an eight-byte stride, while u64 entries use sixteen bytes; control bytes
+   are separate. This is materially different from comparing two key words
+   and an occupancy word in each 32-byte packed Mech entry.
+
+4. The ordinary successful counting iteration has no function call.
+   When the first fingerprint candidate is the existing key, the u64 loop's
+   path 0x100006fdc..0x100007014 -> 0x100006ee0..0x100006f14 ->
+   0x100006f44..0x100006f54 contains 34 instructions, including branches.
+   This is a static path count, not a retired-instruction or cycle measurement.
+   Allocation/rehashing calls are on the growth path (0x10000706c and
+   0x100007080). A non-growing new-entry path is also emitted inline.
+
+5. Bounds checks are reduced to iterator termination in the steady loop.
+   The existing-key update ends with cmp x24,x26 / b.ne to the next byte.
+   There is no separate slice-index bounds-check/panic call on that path.
+   Short-input checks remain in initial key construction; the 17-byte initial
+   fill in the u64 worker is unrolled. The recurring counting loop still
+   processes one input byte per iteration, so it should not be described as
+   SIMD-vectorized across multiple histogram updates or generally unrolled.
+
+6. Input encoding does contain SIMD and unrolling.
+   input-vectorized.s at 0x100000bc4..0x100000bf8 loads four 16-byte vectors,
+   shifts every byte right by one, masks with 3, stores the four vectors, and
+   advances by 64 bytes. This is input normalization, distinct from the
+   hash-control SIMD in the counting loop.
+
+7. This executable submits seven independent tasks to a thread pool.
+   task-submission.s contains seven calls to tokio's Executor::spawn, plus
+   ThreadPool::new. threadpool-new.s calls num_cpus::get_num_cpus and passes
+   a value of at least one to Builder::build. This proves a parallel-capable
+   route and seven task submissions, not seven threads simultaneously running
+   in any particular measurement. Actual active worker counts require runtime
+   evidence, which was deliberately not collected here.
+
+Source interpretation (kept separate from binary evidence)
+
+The archived source constructs a two-bit DNA encoding once, uses u8 keys for
+widths 1/2/3/4, u16 for width 6, u32 for width 12, and u64 for width 18, with
+u32 counts. Each of seven tasks independently builds a full histogram. The
+source calls h.entry(a).or_insert(0), rather than a contains/get/insert sequence.
+The seven tasks share immutable input via Arc. This explains the source-level
+structure seen in the disassembly, but does not establish its measured cost.
+
+Implications for Mech optimization
+
+The current packed path addresses per-window allocation and runtime callbacks.
+Remaining concrete differences include narrow keys/entries, SIMD control-byte
+probing, generated state held in registers, one combined entry operation, and
+parallel execution of independent source computations. Any compiler change
+must prove those transformations generally, retain the source's updates and
+errors, and preserve Mech's finite budgets. Rust's observed fast path contains
+no equivalent Mech capability/work-meter checks; its throughput alone cannot
+establish the cost of retaining those checks. The disassembly does not justify
+removing them or attributing a numerical fraction of the timing gap to them.

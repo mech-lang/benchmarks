@@ -17,6 +17,8 @@ parser.add_argument('--receipt', required=True)
 parser.add_argument('--comparison-work', type=int)
 parser.add_argument('--parent-receipt')
 parser.add_argument('--parent-binary')
+parser.add_argument('--require-packed-map', action='store_true',
+                    help='Require the candidate to select packed storage for all regions and updates; also inherited from its prefix receipt')
 args = parser.parse_args()
 assert bool(args.parent_receipt) == bool(args.parent_binary)
 out = HERE / args.receipt
@@ -25,6 +27,7 @@ timing = json.loads((HERE / args.timing / 'results.json').read_text())
 compiler = json.loads((HERE / args.compiler / 'results.json').read_text())
 assert timing['status'] == 'all-outputs-and-update-counts-verified'
 assert compiler['source_commit'] == timing['source_commit']
+require_packed_map = args.require_packed_map or timing.get('require_packed_map', False)
 targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7',
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
@@ -60,7 +63,8 @@ report = dict(status='running', source_commit=timing['source_commit'],
               root_work_quota_change=dict(previous=old_work, current=launch['work']),
               comparison_quota_change=dict(previous=old_comparison,
                                            current=launch['library']['comparison_work']),
-              configuration=vars(args), samples=[],
+              configuration=vars(args), samples=[], native_executions=[],
+              require_packed_map=require_packed_map,
               scope='Single serial complete process per executable, including secured Mech startup/shutdown; full-input qualification, not median benchmark timings; no excluded warmup')
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
@@ -84,6 +88,12 @@ try:
                 assert native['shutdown'] == 'completed'
                 assert native['native_hash_table_regions'] == 7
                 assert native['native_hash_table_updates'] == 874999961
+                packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
+                              packed_map_updates=native.get('native_packed_map_updates'))
+                if label == 'mech' and require_packed_map:
+                    assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
+                    assert packed['packed_map_updates'] == 874999961, 'Candidate did not complete every update in packed storage'
+                report['native_executions'].append(dict(label=label, **packed))
             row = dict(label=label, seconds=result['elapsed_seconds'],
                        maximum_rss_bytes=result['maximum_rss_bytes'])
             report['samples'].append(row)

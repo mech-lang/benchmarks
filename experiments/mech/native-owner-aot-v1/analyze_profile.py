@@ -54,6 +54,8 @@ def main():
     assert timed_code == profile_code
 
     patterns = {
+        "generated_program_entry": "mech_canonical_program_entry_v1",
+        "packed_map_runtime": "program_packed_map",
         "ordinary_library_invocation": "CallCacheLane6invoke",
         "caller_cache_metadata_total": "CallCacheLane21caller_retained_nodes",
         "changed_cache_metadata_demand": "retained_metadata_demand",

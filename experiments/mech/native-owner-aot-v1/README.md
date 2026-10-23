@@ -2,6 +2,34 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Generated compact-key table operations
+
+Compiler [`17938cecd`](https://github.com/mech-lang/mech/commit/17938cecd500bc5a570f3ac15daf3a64d62ad02d) compiles fixed-width ASCII key packing, hashing, table probing, reads and existing-entry updates directly into the native source loop. Source branches, arithmetic and values are unchanged. Distinct-key insertion, growth, finite batch refill and complete canonical publication remain runtime operations. The representation applies to arbitrary ASCII keys of up to 18 characters, without recognizing nucleotide data or requested queries. IR37/work policy58/ABI20 identify the stage; its [design and validation](../native-owner-dispatch-v1/README.md#generated-compact-key-table-operations) describe the proof and budget boundaries.
+
+Three alternating complete-process measurements on **one million bases** give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0208 | 1.0× |
+| Previous Mech AOT, `e4d3ed4da` | 1.147 | 55.2× |
+| Generated table operations, `17938cecd` | 0.451 | 21.7× |
+
+The measured prefix speedup is **2.54×**. All nine outputs match the independent reference. Every candidate run reports seven actual packed regions and all 6,999,961 source updates; this rules out silent fallback. Both Mech binaries retain 443 admissions. The source and program bytecode are identical. [Raw prefix receipts](packed-timing-v1/results.json) include fresh secured startup/shutdown and one excluded warmup per executable; all subjects run serially.
+
+A fresh full-input cohort uses one complete process per executable on **125 million bases**:
+
+| Executable | Seconds, one run | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.564 | 1.0× |
+| Previous Mech AOT, `e4d3ed4da` | 117.186 | 207.8× |
+| Generated table operations, `17938cecd` | 27.491 | 48.7× |
+
+The observed full-input speedup is **4.26×**. These are single complete processes, not repeated medians, with no excluded warmup. All outputs match the full independent reference, and the candidate reports seven actual packed regions and **874,999,961 updates**. Peak RSS is 226.9 MB versus 220.3 MB for the previous Mech binary. The [full receipts](full-packed-v1/results.json) retain the identical finite policy used by the prior successful full qualifications. Capability grants and all resource accounting remain active; the canonical benchmark dataset is unchanged.
+
+[Validation](../native-owner-dispatch-v1/packed-map-validation-v3/summary.json) passes **237 native checks**, with three pre-existing exclusions. The [profiling executable](profile-packed-build-v1/results.json) has exactly the same complete machine code as the timed binary: 4,000,248 bytes, SHA-256 `977eda9f056eb0114291d839b02488595a06b42f131b75f11c708d7a9a18d461`. Three two-second captures across a completed full-input execution place **99.9–100%** of main-thread samples beneath the generated entry, with the former closed-map callback category at **0–0.13%**. Categories are inclusive; this is sample evidence, not a precise attribution of total runtime. [Profile analysis](full-profile-packed-v1/analysis.json) verifies exact code identity, complete output and every source update; profiling elapsed time is excluded from timings.
+
+[Inspection of the exact Rust executable](rust-codegen-audit-v1/findings.txt) confirms rolling two-bit integer keys, inlined hashing/updates, SIMD hash-control probing, SIMD input encoding and seven task submissions. The common first-candidate existing-key path has 34 instructions counted statically, not measured cycles. The current Mech path remains serial and uses two-word ASCII keys. General native-loop SSA improvements, compact domains/SIMD probing, and independent-comprehension parallelism are the next implementation targets. No timing benefit is claimed for those unfinished changes. Rust parity, repeated full-input cohorts, separate decoded-source executable qualification and secured/trusted comparison remain unfinished.
+
 ## Same-key lookup reuse
 
 Compiler [`e4d3ed4da`](https://github.com/mech-lang/mech/commit/e4d3ed4da3aec10a70dfb17d58442bafa78d3ec3) retains the last lookup result for an immutable pinned key inside a closed map loop. Reuse requires the same table token, mutation version, key address and key length. Every mutation invalidates the observation; each cache hit still pays the complete original lookup debit under the same call and root limits. The generated caller still computes every inserted value. IR36/work policy56/ABI20 identify this stage.
@@ -28,7 +56,7 @@ This single pair is **1.1%** lower; repeated full-input measurements are needed 
 
 [Native validation](../native-owner-dispatch-v1/lookup-reuse-validation-v1/summary.json) passes **220 tests**, with three pre-existing exclusions. Tests check equal debit for cold and cached reads, stale mutation versions, foreign tables, zero values, missing keys, exhausted comparison limits, growth and actual generated use through original/decoded/restored execution. Every reservation is released after completion. An independent read-only review found no correctness issue.
 
-The [matching profiling build](profile-lookup-build-v1/results.json) has byte-identical complete machine code to the timed executable: 3,969,308 bytes, SHA-256 `002e696eb34e421109fd6fa42d8a3fe50ac7a2b1d5b1c4224f90de6499e95652`. Three captures across a completed full execution show [map storage calls at 76–78%](full-profile-lookup-v1/analysis.json) of main-thread samples, reads at 20–25%, insertions at 18–20%, selected ranges/endpoints at 10–13%, and work debits at 11–12%. Categories overlap. This profile also verifies exact full output and all updates; profiling elapsed time is excluded from timing results. Remaining overhead includes repeated runtime calls and per-call work scopes. Combining the already-proved adjacent range and String selection is the next measured stage; native entry operations and generated packed-key storage are larger follow-on targets.
+The [matching profiling build](profile-lookup-build-v1/results.json) has byte-identical complete machine code to the timed executable: 3,969,308 bytes, SHA-256 `002e696eb34e421109fd6fa42d8a3fe50ac7a2b1d5b1c4224f90de6499e95652`. Three captures across a completed full execution show [map storage calls at 76–78%](full-profile-lookup-v1/analysis.json) of main-thread samples, reads at 20–25%, insertions at 18–20%, selected ranges/endpoints at 10–13%, and work debits at 11–12%. Categories overlap. This profile also verifies exact full output and all updates; profiling elapsed time is excluded from timing results. It motivated the generated compact-key stage above; the small intermediate range/selection fusion was validated but not separately timed.
 
 ## Combined native library-call setup
 
