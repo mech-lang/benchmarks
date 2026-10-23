@@ -10,16 +10,16 @@ separate diagnostic; final timing runs are deferred while optimization continues
 The preceding canonical-native branch retains ordinary dense-counter and
 direct-query optimization. No new nucleotide profile or website result is admitted.
 
-The [pure map entry study](../experiments/mech/general-map-entry-v1/README.md)
-adds generic functional insertion so a Mech state machine can express overlapping
-window traversal, presence handling and count arithmetic itself. The committed
-candidate passes 146 distinct focused runtime/source/type/catalog/linkage tests;
-independent canonicalizer cases verify the tighter string-entry work bound.
-A larger source probe still exceeds the default resident comparison budget;
-its exact denial is retained. Direct lookup/default support, an explicit general
-hash-table contract, native lowering and full-work qualification remain pending.
-There are no new benchmark samples or admitted nucleotide results.
-The [preceding map audit](../experiments/mech/general-map-counting-v1/README.md)
+The [direct map membership study](../experiments/mech/general-map-lookup-v1/README.md)
+removes key-set construction from the Mech counting procedure. All seven widths
+now pass the same 26-character diagnostic under the unchanged resident work
+limit, including bytecode round-trip execution and every-key reference checks.
+The candidate passes 151 distinct focused runtime/source/type/catalog/linkage
+tests. The [preceding pure-entry study](../experiments/mech/general-map-entry-v1/README.md)
+retains the earlier resource-denial evidence. An explicit general hash-table
+contract, native ownership/lowering and complete-input work qualification remain
+pending. No new benchmark timings or nucleotide results are admitted.
+The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
 is retained as historical evidence, not a final performance result.
