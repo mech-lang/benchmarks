@@ -36,6 +36,80 @@ def text_section(path):
     raise AssertionError("Missing machine-code section")
 
 
+def stack_threads(content, patterns):
+    """Retain each thread's denominator; union inclusive subtrees per category."""
+    graph = content.split("Call graph:\n", 1)[1].split("Total number in stack", 1)[0]
+    threads = []
+    ancestors = []
+
+    def finish_node():
+        _, count, children, labels = ancestors.pop()
+        assert 0 <= children <= count, "Stack children exceed their parent sample count"
+        for label in labels:
+            threads[-1]['exclusive_samples'][label] += count - children
+
+    for line in graph.splitlines():
+        match = re.match(r"^[\s+!:|]*(\d+) (\S+)", line)
+        if not match:
+            continue
+        count, symbol = int(match[1]), match[2]
+        depth = match.start(1)
+        if symbol.startswith("Thread_"):
+            while ancestors:
+                finish_node()
+            threads.append({
+                'thread': symbol,
+                'header': line.strip(),
+                'main_thread': 'com.apple.main-thread' in line,
+                'samples': count,
+                'samples_unwound_to_start': 0,
+                'inclusive_samples': {label: 0 for label in patterns},
+                'exclusive_samples': {label: 0 for label in patterns},
+            })
+            continue
+        assert threads, "Stack node precedes its thread root"
+        while ancestors and ancestors[-1][0] >= depth:
+            finish_node()
+        if ancestors:
+            ancestors[-1][2] += count
+        active = set().union(*(node[3] for node in ancestors))
+        matched = {label for label, choices in patterns.items()
+                   if any(pattern in symbol for pattern in choices)}
+        for label in matched - active:
+            threads[-1]['inclusive_samples'][label] += count
+        if symbol == 'start':
+            threads[-1]['samples_unwound_to_start'] += count
+        ancestors.append([depth, count, 0, matched])
+    while ancestors:
+        finish_node()
+    assert threads and sum(thread['main_thread'] for thread in threads) == 1
+    for thread in threads:
+        total = thread['samples']
+        assert total > 0 and all(0 <= count <= total for kind in ('inclusive_samples', 'exclusive_samples')
+                                 for count in thread[kind].values())
+        for kind in ('inclusive', 'exclusive'):
+            thread[f'{kind}_percent'] = {label: 100 * count / total
+                                        for label, count in thread[f'{kind}_samples'].items()}
+        counts = thread['inclusive_samples']
+        evidence = [label for label in ('generated_program_entry', 'parallel_worker_entry', 'parallel_dispatch')
+                    if counts.get(label, 0) > 0]
+        thread['worker_evidence_categories'] = evidence if not thread['main_thread'] else []
+        thread['observed_native_worker'] = not thread['main_thread'] and bool(evidence)
+    return threads
+
+
+def thread_totals(threads, patterns):
+    total = sum(thread['samples'] for thread in threads)
+    result = {'thread_count': len(threads), 'thread_samples': total}
+    for kind in ('inclusive', 'exclusive'):
+        counts = {label: sum(thread[f'{kind}_samples'][label] for thread in threads)
+                  for label in patterns}
+        result[f'{kind}_samples'] = counts
+        result[f'{kind}_percent'] = {label: 100 * count / total if total else None
+                                     for label, count in counts.items()}
+    return result
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--timing', default='cache-timing-v2')
@@ -45,10 +119,13 @@ def main():
     args = parser.parse_args()
     timing = json.loads((HERE / args.timing / 'results.json').read_text())
     profile = json.loads((HERE / args.profile_build / 'results.json').read_text())
+    capture = json.loads((HERE / args.samples / 'results.json').read_text())
     timed_binary = HERE / '.build' / args.binary
     profile_binary = Path(profile["binary"])
     assert sha(timed_binary.read_bytes()) == timing["candidate_sha256"]
     assert sha(profile_binary.read_bytes()) == profile["binary_sha256"]
+    assert capture['binary_sha256'] == profile['binary_sha256']
+    assert capture['object_sha256'] == profile['object_sha256']
     timed_code = text_section(timed_binary)
     profile_code = text_section(profile_binary)
     assert timed_code == profile_code
@@ -83,52 +160,45 @@ def main():
         "native_work_debit": "NativeWorkMeter6charge",
         "library_work_debit": "NativeLibraryWorkBudget6charge",
     }
+    # Keep the established category names while accepting either symbol style.
+    patterns = {label: (pattern,) for label, pattern in patterns.items()}
+    patterns.update({
+        'parallel_worker_entry': ('10run_worker', '::run_worker'),
+        'parallel_dispatch': ('12run_parallel', '::run_parallel'),
+        'thread_wait': ('__psynch_cvwait', '__psynch_mutexwait', '__ulock_wait',
+                        'semaphore_wait_trap', '__semwait_signal', 'mach_msg2_trap'),
+        'thread_join': ('pthread_join', 'JoinInner', 'join_unchecked'),
+    })
     summaries = []
-    for path in sorted((HERE / args.samples).glob("sample-*/stacks.txt")):
-        content = path.read_text()
-        graph = content.split("Call graph:\n", 1)[1].split("Total number in stack", 1)[0]
-        counts = {label: 0 for label in patterns}
-        total = None
-        entry_samples = None
-        ancestors = []
-        for line in graph.splitlines():
-            match = re.match(r"^[\s+!:|]*(\d+) (\S+)", line)
-            if not match:
-                continue
-            count, symbol = int(match[1]), match[2]
-            depth = match.start(1)
-            while ancestors and ancestors[-1][0] >= depth:
-                ancestors.pop()
-            if symbol.startswith("Thread_") and "com.apple.main-thread" in line:
-                assert total is None
-                total = count
-            if symbol == "start":
-                assert entry_samples is None
-                entry_samples = count
-            active = set().union(*(labels for _, labels in ancestors))
-            matched = set()
-            for label, pattern in patterns.items():
-                if pattern in symbol:
-                    # A generic Rust symbol can contain its parent closure's
-                    # name. Count the union of matching subtrees, so the same
-                    # observed stack never counts twice within a category.
-                    if label not in active:
-                        counts[label] += count
-                    matched.add(label)
-            ancestors.append((depth, matched))
-        assert total and all(count <= total for count in counts.values())
+    for item in capture['samples']:
+        # Use only capture-owned paths, not unrelated files in the directory.
+        # Rebase the recorded sample name so archived receipts remain readable
+        # after moving the checkout from its original absolute path.
+        recorded = Path(item['stacks'])
+        assert recorded.name == 'stacks.txt' and re.fullmatch(r'sample-\d+', recorded.parent.name)
+        path = HERE / args.samples / recorded.parent.name / recorded.name
+        if 'stacks_sha256' in item:
+            assert sha(path.read_bytes()) == item['stacks_sha256']
+        threads = stack_threads(path.read_text(), patterns)
+        main_thread = next(thread for thread in threads if thread['main_thread'])
+        workers = [thread for thread in threads if thread['observed_native_worker']]
         summaries.append({
             "stacks": str(path.relative_to(HERE)),
             "stacks_sha256": sha(path.read_bytes()),
-            "main_thread_samples": total,
-            "samples_unwound_to_start": entry_samples,
-            "inclusive_samples": counts,
-            "inclusive_percent": {key: 100 * value / total for key, value in counts.items()},
+            # Preserve historical serial/SSA report fields as main-only values.
+            "main_thread_samples": main_thread['samples'],
+            "samples_unwound_to_start": main_thread['samples_unwound_to_start'],
+            "inclusive_samples": main_thread['inclusive_samples'],
+            "inclusive_percent": main_thread['inclusive_percent'],
+            "main_thread": main_thread,
+            "all_threads": thread_totals(threads, patterns),
+            "observed_workers": thread_totals(workers, patterns),
+            "threads": threads,
         })
-    assert len(summaries) == 3
+    assert summaries, "No retained stack captures"
     result = {
         "status": "machine-code-identity-verified",
-        "scope": "Current candidate only; samples are inclusive, overlap, and are not benchmark timings or a matched baseline profile",
+        "scope": "Current candidate only; observations include running and waiting threads, partial unwinds and profiling overhead. Summed thread samples are not wall time, CPU utilization, benchmark timings, or a matched baseline profile",
         "source_commit": timing["source_commit"],
         "timed_binary_sha256": timing["candidate_sha256"],
         "profiling_binary_sha256": profile["binary_sha256"],
@@ -137,7 +207,10 @@ def main():
         "machine_code_sha256": sha(timed_code),
         "machine_code_identical": True,
         "symbol_patterns": patterns,
-        "aggregation": "Union of matching subtrees within each category; categories overlap; denominator includes all main-thread samples, including partial unwinds",
+        "aggregation": "Inclusive counts union matching subtrees within each category and thread; exclusive counts use node count minus immediate children. Categories may overlap. Per-thread denominators are that thread's observations; all-thread and observed-worker denominators sum only their listed thread observations. Legacy top-level sample fields remain main-thread only",
+        "worker_identification": "Non-main threads with observed generated-program, run_worker or run_parallel frames; threads that ended before sampling or whose stacks omit all identifying frames cannot be inferred",
+        "completed_output_verified": capture.get('completed_output_verified'),
+        "native_counters": capture.get('native_counters'),
         "samples": summaries,
     }
     output = HERE / args.samples / 'analysis.json'
