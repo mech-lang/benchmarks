@@ -47,7 +47,7 @@ def require_key_domains(regions, bits):
         assert len(codes) == len(symbols), 'Packed domain bit window loses character identity'
 
 
-def require_edge_facts(metadata, descriptor, minimum_guards, minimum_arithmetic):
+def require_edge_facts(metadata, descriptor, minimum_guards, minimum_arithmetic, threaded_headers=frozenset()):
     """Qualify actual emitted substitutions against the retained source CFG."""
     assert metadata and metadata['complete'] is True, 'Missing or truncated emission receipt'
     regions = metadata['regions']
@@ -61,10 +61,12 @@ def require_edge_facts(metadata, descriptor, minimum_guards, minimum_arithmetic)
     for header, owner in expected.items():
         region = by_header[header]
         guards, arithmetic = region['guards'], region['arithmetic']
-        assert len(guards) >= minimum_guards, 'Too few actual field-guard substitutions'
-        assert len(arithmetic) >= minimum_arithmetic, 'Too few actual arithmetic substitutions'
-        records = [json.dumps(record, sort_keys=True) for record in guards + arithmetic]
-        assert len(records) == len(set(records)), 'Duplicate emission records'
+        distinct_guards = {json.dumps(record, sort_keys=True) for record in guards}
+        distinct_arithmetic = {json.dumps(record, sort_keys=True) for record in arithmetic}
+        assert len(distinct_guards) >= minimum_guards, 'Too few distinct actual field-guard substitutions'
+        assert len(distinct_arithmetic) >= minimum_arithmetic, 'Too few distinct actual arithmetic substitutions'
+        if header not in threaded_headers:
+            assert len(guards) == len(distinct_guards) and len(arithmetic) == len(distinct_arithmetic), 'Duplicate emission records without qualified state versions'
         for record in guards + arithmetic:
             site = record['site']
             assert type(site) is int and 0 <= site < len(closed['sites'])
@@ -87,7 +89,49 @@ def require_edge_facts(metadata, descriptor, minimum_guards, minimum_arithmetic)
             assert record['op'] in ('U64Add', 'U64Sub')
             assert action['op'] == record['op'] and action['operands'] == record['operands']
         qualified.append(dict(header=header, source_region=owner,
-                              field_guards=len(guards), arithmetic=len(arithmetic)))
+                              field_guards=len(distinct_guards), arithmetic=len(distinct_arithmetic),
+                              emitted_field_guards=len(guards), emitted_arithmetic=len(arithmetic)))
+    return qualified
+
+
+def require_tag_threading(metadata, descriptor, minimum_branches, minimum_latches):
+    """Tie actual emitted state-specialized entries to their original CFG."""
+    assert metadata and metadata['complete'] is True, 'Missing or truncated state-threading receipt'
+    records = metadata['regions']
+    by_header = {record['header']: record for record in records}
+    assert len(by_header) == len(records), 'Duplicate state-threading headers'
+    closed, owner_words = descriptor['closed_tails'], descriptor['map_owner_words']
+    expected = {region['tail']['header']: index for index, region in enumerate(closed['regions'])
+                if region.get('map') is not None and region.get('packed') is not None}
+    assert expected and set(expected) <= set(by_header), 'Packed source region lacks state-threading receipt'
+    qualified = []
+    for header, owner in expected.items():
+        record, tail = by_header[header], closed['regions'][owner]['tail']
+        carrier = tail['carrier']
+        slot = owner_words['aggregates']['slots'][carrier]
+        assert slot and record['carrier_word'] == slot[0]
+        ordinals = set()
+        for site, action in enumerate(owner_words['aggregates']['actions']):
+            if closed['sites'][site] != owner or not action:
+                continue
+            observe = action.get('Observe')
+            if observe and observe['source'] == carrier and observe['offset'] == 0 and observe['ordinal'] is not None:
+                ordinals.add(observe['ordinal'])
+        assert ordinals and record['variants'] == sorted(ordinals), 'Unexpected specialized enum variants'
+        assert record['source_sites'] == sum(value == owner for value in closed['sites'])
+        assert 0 < record['source_sites'] <= 256 and 0 < record['product_nodes'] <= 1024
+        assert record['header_versions'] >= 3, 'Missing initial, recurring or terminal entry'
+        branches, latches = record['folded_branches'], record['known_latches']
+        assert len(branches) >= minimum_branches and len(latches) >= minimum_latches
+        for site in branches:
+            assert type(site) is int and 0 <= site < len(closed['sites'])
+            assert closed['sites'][site] == owner
+            branch = descriptor['plan']['blocks'][site]['terminator'].get('Scalar', {})
+            assert 'Branch' in branch or 'LiteralBranch' in branch, 'Folded site is not an original branch'
+        assert all(site == tail['latch'] for site in latches), 'Known latch differs from source latch'
+        qualified.append(dict(header=header, source_region=owner,
+                              folded_branches=len(branches), known_latches=len(latches),
+                              header_versions=record['header_versions'], product_nodes=record['product_nodes']))
     return qualified
 
 
@@ -116,16 +160,21 @@ parser.add_argument('--minimum-edge-guards', type=int, default=0,
                     help='Minimum actual field-guard substitutions in each compiled packed map region')
 parser.add_argument('--minimum-edge-arithmetic', type=int, default=0,
                     help='Minimum actual checked-arithmetic substitutions in each compiled packed map region')
+parser.add_argument('--minimum-tag-branches', type=int, default=0,
+                    help='Minimum actual folded branches in each compiled state-specialized map entry')
+parser.add_argument('--minimum-tag-latches', type=int, default=0,
+                    help='Minimum actual known-state latch routes in each compiled map entry')
 args = parser.parse_args()
-if min(args.minimum_edge_guards, args.minimum_edge_arithmetic) < 0:
+if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
 if args.minimum_parallel_peak is not None and (
         args.require_parallel_tasks is None or not 1 <= args.minimum_parallel_peak <= args.require_parallel_tasks):
     parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
 require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
-require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions
-require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions
+require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches)
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -176,11 +225,20 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
+    if require_tag_emissions:
+        report['compiled_tag_threading'] = manifest['object'].get('compiled_tag_threading')
+        report['qualified_tag_regions'] = require_tag_threading(
+            report['compiled_tag_threading'], descriptor,
+            args.minimum_tag_branches, args.minimum_tag_latches)
+        report['source_tag_threading_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
         report['compiled_source_edge_facts'] = manifest['object'].get('compiled_source_edge_facts')
         report['qualified_source_edge_regions'] = require_edge_facts(
             report['compiled_source_edge_facts'], descriptor,
-            args.minimum_edge_guards, args.minimum_edge_arithmetic)
+            args.minimum_edge_guards, args.minimum_edge_arithmetic,
+            {region['header'] for region in report.get('qualified_tag_regions', [])})
         report['source_edge_facts_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')

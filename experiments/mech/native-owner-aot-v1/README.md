@@ -2,6 +2,42 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Paths specialized by source state
+
+Compiler [`d9cc2f6dc`](https://github.com/mech-lang/mech/commit/d9cc2f6dc6dbd43152fa75a5707310addf921876) carries proved enum state across loop latches and emits separate paths for known states. It specializes the original Mech control flow; unknown or invalid tags retain checked behavior. Each new traversal discards other transient facts, and original header visits, work charges, table updates and error locations remain. The source, bytecode and finite launch policies match the narrow-slot parent. IR45 identifies this code-generation change; ABI23 and work policy64 remain unchanged.
+
+Three **125-million-base** cohorts rotate execution order and retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.559 | 1.00× |
+| Previous narrow-slot stage, `ee2e5ed39` | 2.194 | 3.92× |
+| Paths specialized by source state, `d9cc2f6dc` | 2.059 | 3.68× |
+
+The observed median speedup is **1.07×**, reducing elapsed time by **6.1%**. Candidate observations are 1.985, 2.059 and 2.099 seconds, below all parent observations at 2.142, 2.194 and 2.225 seconds. [Full cohort receipts](full-tag-threading-cohort-v1/results.json) retain every observation, execution order, standard deviation and evidence hash. This establishes a gain in these cohorts, not Rust parity or a universal speedup.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, regresses:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0208 | 1.0× |
+| Previous narrow-slot stage | 0.500 | 24.1× |
+| Paths specialized by source state | 0.566 | 27.3× |
+
+Its median is **13.2% slower**. Candidate observations span 0.547–0.570 seconds, above all parent observations at 0.498–0.523 seconds. [Prefix receipts](tag-threading-timing-v1/results.json) retain all observations; these measurements do not establish a prefix improvement or explain its regression.
+
+[Actual-emission metadata](tag-threading-timing-v1/emission-audit.json) identifies two compiled regions, at headers 173 and 284. Each contains **90 specialized nodes over 67 source sites**, with three header versions. Its **14 folded-branch emission records** cover **five distinct original branch sites** across state versions; four known-state routes lead to its single original latch. These are emitted specializations, not fourteen branches removed from every runtime iteration. Each compiled region also retains nine distinct payload-guard substitutions and four proved arithmetic substitutions, the two-bit source alphabet proof and narrow slots. Object, descriptor and linked-manifest hashes pin the records to the timed executable.
+
+Runtime receipts independently verify seven packed SSA instances, one batch of seven tasks, a peak of seven workers, exact outputs and all **6,999,961 prefix** or **874,999,961 full-input updates**. Subjects execute sequentially, including secured startup/shutdown and capability checks. The remaining gap to Rust is not attributed wholesale to those checks.
+
+[Focused validation](../native-owner-dispatch-v1/tag-threading-focused-v1/summary.json) passes **eight tests**, and the [full native suite](../native-owner-dispatch-v1/tag-threading-native-v1/summary.json) passes **295 tests**, with three pre-existing manual exclusions. Coverage includes conservative unknown/invalid states, simultaneous carrier copies, latch fact reset, renamed and reordered variants, initial terminal states, original later-iteration error locations, exact source work before publication and actual-emission records. Clean, unchanged source snapshots bracket both runs.
+
+The [profiling build](profile-tag-threading-build-v1/summary.json) preserves the timed executable's entire **4,133,580-byte** machine-code section, SHA-256 `49cb949d13095e582d73fac08846a31d4e47bd43f93a193e726f9f292758b9e7`. A [full-input capture](full-profile-tag-threading-v1/summary.json) observes seven workers and 7,110 worker samples: **83.07%** have generated program code as their innermost recorded frame. Inclusive shares are **2.14%** for publication, **5.34%** for library work debits and **7.40%** for waiting. Both ordinary and batched debit APIs are included.
+
+The [prefix capture](prefix-profile-tag-threading-v1/summary.json) observes 634 samples from two remaining workers: **21.92%** include publication, **31.55%** include library work debits and **36.44%** include waiting; none have generated program code as their innermost frame. Both executions verify complete output and every update. Categories overlap and include waits, partial unwinds and profiling overhead; these are not wall-time shares or matched baseline profiles. The prefix capture covers the tail, not the earlier counting phase, and does not establish the cause of the 13.2% regression.
+
+Hashing, further loop simplification and private packed-map retention remain separate optimization candidates. Separate decoded-source executable qualification, secured/trusted comparison and Rust parity also remain unfinished at this stage.
+
 ## Narrow table payloads
 
 Compiler [`ee2e5ed39`](https://github.com/mech-lang/mech/commit/ee2e5ed39b2e39f65061fe01c6c18ec7f208ab08) stores a packed key and its **64-bit count in 16 bytes**, instead of a 24-byte payload with an unused high key word. The source-derived alphabet proof must fit every admitted width into one key word; other domains retain the wider layout. Hashing, full-key comparison, collision handling, count-overflow checks and complete map publication remain. IR44/work policy64/ABI23 identify the layout and accounting change; the Mech source and program bytecode are unchanged.
