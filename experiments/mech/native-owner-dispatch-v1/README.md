@@ -50,3 +50,17 @@ Compiler `a3b1ddfcdf501f4bc3c6eb81a7e975849295fcc4` groups consecutive native ow
 | Grouped Mech AOT `a3b1ddfcd` | 9.600 | 521× |
 
 Three fresh complete processes per executable run serially in alternating order, after excluded warmups. Every stdout matches the independent reference. Both Mech executables perform seven tables and 6,999,961 updates; actual admission callbacks fall from 321,998,942 to 139,717,328. The [standalone receipts](../native-owner-aot-v1/map-admission-timing-v1/results.json) retain all samples and identities. This 23.6% improvement leaves a substantial gap to Rust and does not qualify the full-input source-map workload.
+
+## Stable caller inventory
+
+Compiler `913450a68c609070b2f12f8f5f5bbf742fa11b75` hoists the caller's fixed node census to entry of a closed native map loop. A paid scan rejects nested control and nonselected managed operations. Only the outer fixed holdings are retained: snapshot owners, call-cache metadata, map entries, key views and actual memory use remain fresh observations. Each loop invocation gets its own census and releases it at exit. Work policy51 funds the changed setup/accounting; IR33 and ABI18 are unchanged.
+
+[caller-census-validation-v2](caller-census-validation-v2) passes 215 native checks with three pre-existing exclusions. Every cached observation in generated-code tests is checked against a fresh complete inventory. The original/decoded counting cases exercise cache population, table growth and view retirement, including Unicode and CRLF. Managed key construction and nested scalar control both decline the cache and preserve correct output. The earlier `caller-census-validation-v1` record retains a syntax failure in the newly added nested-control fixture; the corrected binding syntax passes in the full rerun.
+
+| Executable, one million bases | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0208 | 1.00× |
+| Previous Mech AOT `a3b1ddfcd` | 9.679 | 465× |
+| Cached caller inventory `913450a68` | 8.944 | 430× |
+
+The [fresh paired measurements](../native-owner-aot-v1/caller-census-timing-v1/results.json) show 7.6% less elapsed time. All nine complete-process outputs match, and both Mech binaries perform seven tables and 6,999,961 updates. Source and program bytecode are unchanged. Ratios use Rust from this same cohort; this is a diagnostic result, not full-input qualification or Rust parity.
