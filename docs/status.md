@@ -148,6 +148,16 @@ distinguishes the reduced prices; IR30 and ABI15 remain unchanged. No measured
 runtime improvement or new benchmark result is claimed. Complete caller
 geometry and retained-map execution remain unfinished.
 
+The [call-cache demand study](../experiments/mech/native-cache-demand-v1/README.md)
+exposes admitted binding/planner metadata and String-index demand without payload
+inspection, allocation or a new work allowance. Static metadata capacities bound
+their node populations; dynamic indexes retain their existing node witnesses.
+All 202 native checks pass, with three pre-existing exclusions. Original/decoded
+cases cover exact retained-byte reporting, nested work denial, foreign ledgers
+and demand after caller-payload retirement. IR30/work policy44/ABI15 are unchanged.
+Private-builder/frame geometry and checked retained-map routing remain unfinished;
+full-input qualification and fresh timings are still pending.
+
 The [original map audit](../experiments/mech/general-map-counting-v1/README.md)
 retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
