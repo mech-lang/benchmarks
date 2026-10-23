@@ -209,6 +209,10 @@ def check_model_evidence(root, data, key, program, source_models):
             and authorship.get('source_sha256') == program['files'],
             f'Authorship source binding differs: {key}')
     bound = {
+        'revcomp:mech-revcomp-parent-20261022': 'import_mech_revcomp',
+        'revcomp:mech-revcomp-compacted-20261022': 'import_mech_revcomp',
+        'revcomp:mech-revcomp-reused-4-20261022': 'import_mech_revcomp',
+        'revcomp:mech-revcomp-reused-8-20261022': 'import_mech_revcomp',
         'pidigits:mech-pi-advance-parent-20261022': 'import_mech_pidigits',
         'pidigits:mech-pi-shared-numerator-20261022': 'import_mech_pidigits',
         'pidigits:mech-pi-compact-shared-20261022': 'import_mech_pidigits',

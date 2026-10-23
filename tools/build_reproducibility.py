@@ -212,6 +212,9 @@ def build(data):
         # Mixed-language reports often pin Mech's development compiler. Those
         # pins are report context, not the compiler identity of every competitor.
         compiler_identity=report_compiler_context.copy() if lang.startswith('mech') else {}
+        if lang.startswith('mech') and row.get('runtime_commit'):
+            compiler_identity['runtime_source_commit']=row['runtime_commit']
+            if row.get('runtime_source'):compiler_identity['runtime_source']=row['runtime_source']
         # Match build receipts by executable hash, not by a neighboring version
         # number or a source filename shared by successive builds.
         if lang=='julia-aot':

@@ -20,5 +20,9 @@ Recorded source bundles, grouped by workload. Each bundle has exact source hashe
 | pidigits | [mech-pi-final-compact-signed](pidigits/mech-pi-final-compact-signed/program.json) | 35 | 0.396614 | 5 |
 | pidigits | [mech-pi-shared-numerator-20261022](pidigits/mech-pi-shared-numerator-20261022/program.json) | 39 | 0.291547 | 7 |
 | regexredux | [mech-regex-final-reuse-signed](regexredux/mech-regex-final-reuse-signed/program.json) | 24 | 0.489612 | 3 |
+| revcomp | [mech-revcomp-compacted-20261022](revcomp/mech-revcomp-compacted-20261022/program.json) | 7 | 0.129337 | 7 |
 | revcomp | [mech-revcomp-optimized](revcomp/mech-revcomp-optimized/program.json) | 7 | 0.149273 | 3 |
+| revcomp | [mech-revcomp-parent-20261022](revcomp/mech-revcomp-parent-20261022/program.json) | 7 | 0.14332 | 7 |
+| revcomp | [mech-revcomp-reused-4-20261022](revcomp/mech-revcomp-reused-4-20261022/program.json) | 7 | 0.122859 | 7 |
+| revcomp | [mech-revcomp-reused-8-20261022](revcomp/mech-revcomp-reused-8-20261022/program.json) | 7 | 0.123299 | 7 |
 | spectralnorm | [mech-integer-simd1-u4-r4-p8-g8](spectralnorm/mech-integer-simd1-u4-r4-p8-g8/program.json) | 12 | 0.0860753 | 3 |

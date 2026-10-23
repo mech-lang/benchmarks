@@ -97,4 +97,19 @@ class Reproduction(unittest.TestCase):
             self.assertNotIn('build_commands',summary);self.assertNotIn('dependencies',summary)
             self.assertEqual(summary['version_label'],full['programs'][key]['version_label'])
 
+class MechRuntimeIdentity(unittest.TestCase):
+    def test_emitter_and_linked_runtime_commits_remain_distinct(self):
+        with tempfile.TemporaryDirectory() as temp,patch.object(audit,'ROOT',Path(temp)):
+            key='nbody:test';emitter='a'*40;runtime='b'*40
+            version='Mech 0.3.6 development (emitter '+emitter[:9]+', runtime '+runtime[:9]+')'
+            row=dict(key=key,id='test',source_sha256='c'*64,samples_seconds=[1,2,3],runtime_commit=runtime,runtime_source=dict(path='runtime.rs',sha256='d'*64),runtime_version=version)
+            report=dict(compiler_source_commit=emitter,programs={key:row},hardware='Apple M3',os='macOS')
+            Path(temp,'report.json').write_text(json.dumps(report))
+            data=dict(languages=[dict(key='mech')],benchmarks=[dict(key='nbody',workload='N = 1')],programs={key:dict(key=key,id='test',language='mech',benchmark='nbody',files=['c'*64],samples=[1,2,3],seconds=2,report='report.json',execution_mode='aot',measured_backend=dict(evidence=dict(runtime_receipt=dict(report='report.json',field='/programs/'+key+'/runtime_version',value=version))))})
+            result=audit.build(data)['programs'][key]
+            self.assertEqual(result['compiler_identity']['compiler_source_commit'],emitter)
+            self.assertEqual(result['compiler_identity']['runtime_source_commit'],runtime)
+            self.assertEqual(result['compiler_identity']['runtime_source'],row['runtime_source'])
+            self.assertEqual(result['version_label'],version)
+
 if __name__=='__main__':unittest.main()

@@ -240,6 +240,9 @@ def audit(data,models):
         if key in {'pidigits:mech-pi-advance-parent-20261022', 'pidigits:mech-pi-shared-numerator-20261022', 'pidigits:mech-pi-compact-shared-20261022'}:
             from qualification.import_mech_pidigits import bound_authorship
             records[key]=bound_authorship(data,p,ROOT)
+        if key in {'revcomp:mech-revcomp-parent-20261022', 'revcomp:mech-revcomp-compacted-20261022', 'revcomp:mech-revcomp-reused-4-20261022', 'revcomp:mech-revcomp-reused-8-20261022'}:
+            from qualification.import_mech_revcomp import bound_authorship
+            records[key]=bound_authorship(data,p,ROOT)
     return records
 
 def main():

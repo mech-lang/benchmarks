@@ -1,0 +1,1059 @@
+{
+  "schema": "mech-record-runtime-publication-cohort.v1",
+  "status": "verified-retained-seven-round-cohort",
+  "full_workload_n": 25000000,
+  "compiler_source_commit": "6de19875e2266f39c93712800c400672a44b98c9",
+  "compiler_sha256": "5445d4b291972badef19ac655728675ee972618fbe47c899ecfd5c514a2582fa",
+  "toolchains": {
+    "cranelift": "0.131.3",
+    "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)"
+  },
+  "hardware": "Mac15,13\nApple M3\n17179869184\n",
+  "os": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56\n",
+  "input": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+    "bytes": 254166745,
+    "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+    "generator": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+      "bytes": 254166745,
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "generator": "experiments/janet/fasta-search-v1/sources/linear.janet",
+      "generator_sha256": "5dd672e6767fefbcc6a1aa40aea8ad261e6ba5c1799a9b27ca2188613079a738",
+      "runtime_sha256": "6732dd0bb37de61676bbdb3a8d3fb14b76b3a39fc9852e2b1f060dd21a9bc765",
+      "preparation_only": true,
+      "benchmark_samples": 0,
+      "full_payload_relocated_after_closed_process": true,
+      "source_evidence": {
+        "path": "experiments/janet/fasta-search-v1/sources/linear.janet",
+        "sha256": "5dd672e6767fefbcc6a1aa40aea8ad261e6ba5c1799a9b27ca2188613079a738"
+      },
+      "receipt": {
+        "path": "experiments/janet/knucleotide-bytes-v1/input-generation-v1/input.json",
+        "sha256": "4c88319ecc1bda75add5756d65e212ef9cd2aff35ec38576533514d88b6a1503"
+      },
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/janet/.build/local-runtime-v1/janet",
+        "-R",
+        "-n",
+        "/private/tmp/mech-benchmark-publication/experiments/janet/fasta-search-v1/sources/linear.janet",
+        "25000000"
+      ]
+    },
+    "generated_bases": 250000000
+  },
+  "timing_boundary": "Fresh process from monotonic clock before fork through independently observed exit. Includes startup, input reading, native transformation, complete output, flush and shutdown. Full output validation and owned cleanup follow exit; no phase subtraction.",
+  "power": {
+    "policy": "Default; AC power; low power mode disabled",
+    "first_swap": "vm.swapusage: total = 3072.00M  used = 1889.12M  free = 1182.88M  (encrypted)\n",
+    "last_swap": "vm.swapusage: total = 3072.00M  used = 1865.12M  free = 1206.88M  (encrypted)\n",
+    "temperature_frequency_trace": false
+  },
+  "library_pins": {
+    "gmp": {
+      "version": "6.3.0",
+      "path": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "sha256": "571ffb9eb5b5110cda32f62197c1f039e5627d66524ba47bb0774eca184532b9",
+      "scope": "Installed build dependency pin from the frozen emitter study; no new revcomp loader trace."
+    }
+  },
+  "runtime_details": {
+    "compiler_build": {
+      "compiler_commit": "6de19875e2266f39c93712800c400672a44b98c9",
+      "compiler_workspace_clean": true,
+      "files": {
+        "Cargo.toml": "54e8bd61742bb076ed2c746a25cd9c9461cc2c7b804e6a2d97a9a8d8d107fdf8",
+        "Cargo.lock": "b70413d037a8cfbea0f1a851036ba14564ea43121ded258d605ebaf78b4f554e",
+        "hosts/gpu/Cargo.toml": "9faa45b59de0e61faa8e6349b28487731519cc98391899dfb6d88bdd20b7f747",
+        "hosts/gpu/src/control/bigint.rs": "6ce0cc68231cbbe541c5299ce9105acbe6e960282ad9e0dbd493b9f6aca053b5",
+        "hosts/gpu/src/control/compiler.rs": "2a1880702b9a7c548b7117bbe4cf4b00c929df1399c49044b80e7f2d61d7c323",
+        "hosts/gpu/src/control/runtime.rs": "b25f410af29acb6e9305cb81838d6a4e973a6efc5e272c5d43ac3c1baf4762e2",
+        "hosts/gpu/src/native_build.rs": "95c10966bc713ea9a401dab4c628c4bf55c1be3b28f4d89cb52c2ff483cf8281",
+        "src/stdlib/src/native_sequence.rs": "af67c3044b938b3ffabb73a05284aff8af64ccad446ec76af677d4c3a27a4d36"
+      },
+      "installed_gmp": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "root_compiler_build_features": "cli_core,standard_compiler,cranelift_build,system_gmp,mech-build/standard-hosts",
+      "root_build_environment": {
+        "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+        "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+        "RUSTFLAGS": "-L native=/opt/homebrew/Cellar/gmp/6.3.0/lib"
+      },
+      "root_build_command": [
+        "/Users/cim310/.cargo/bin/cargo",
+        "build",
+        "--release",
+        "--offline",
+        "--locked",
+        "--bin",
+        "mech",
+        "--no-default-features",
+        "--features",
+        "cli_core,standard_compiler,cranelift_build,system_gmp,mech-build/standard-hosts"
+      ]
+    },
+    "compiler_build_evidence": {
+      "path": "experiments/mech/pidigits-performance-v1/compiler-source.json",
+      "sha256": "8a7f4bb702208ec3d083ffcd2ff67050fc25d46e951eb8d8301d675c9744f0b1"
+    },
+    "application_build_environment": {
+      "PATH": "/Users/cim310/.cargo/bin:/usr/bin:/bin",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "TZ": "UTC",
+      "NO_COLOR": "1",
+      "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+      "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "HOME": "/Users/cim310",
+      "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "RUSTFLAGS": "-L native=/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "CARGO_TARGET_DIR": "/private/tmp/mech-pidigits-performance/target"
+    },
+    "compiler_cli": {
+      "path": "experiments/mech/revcomp-streaming-v1/compiler.json",
+      "sha256": "1fa3ac86a1a1aabacf46029354eaab7ed0169f8cf8cb36f31e1e5f2fdb2fd129"
+    },
+    "runtime_build": {
+      "path": "experiments/mech/revcomp-buffer-reuse-v1/compiler.json",
+      "sha256": "1912b5390cb98fb42c14aeb3232c06f77a78be72c0608a95b7c7d75354e33e9b"
+    },
+    "test_refinement": {
+      "path": "experiments/mech/revcomp-buffer-reuse-v1/test-refinement-v2/results.json",
+      "sha256": "ba0719551fe925aa04e736d3aced7079615e92ee85074667bb4dc38366b6e04a"
+    },
+    "reproduction": "Restore the emitter CLI at its source commit, then the per-program runtime checkout commit before its saved build command. Adapt recorded absolute paths and restore the input/toolchain caches."
+  },
+  "source_count": {
+    "policy": "Inherited unchanged-source count; not newly qualified logical units or native formatted LOC",
+    "loc": 7,
+    "source_sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d"
+  },
+  "correctness_scope": "Official generated workload; eleven pre-existing broader FASTA source limitations retained explicitly.",
+  "bounded_source_limitations": [
+    "comment-crlf-eof",
+    "preheader-ignored",
+    "specified-record-boundaries-and-cr",
+    "extended-no-header",
+    "extended-empty-records",
+    "extended-mixed-records",
+    "extended-comments-and-blanks",
+    "extended-line-endings-lf",
+    "extended-line-endings-cr",
+    "extended-line-endings-crlf",
+    "extended-long-comment"
+  ],
+  "programs": {
+    "revcomp:mech-revcomp-parent-20261022": {
+      "key": "revcomp:mech-revcomp-parent-20261022",
+      "id": "mech-revcomp-parent-20261022",
+      "source": "archive/workloads/revcomp/revcomp.mec",
+      "source_sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d",
+      "loc": 7,
+      "samples_seconds": [
+        0.14326275,
+        0.141360458,
+        0.143391584,
+        0.143319625,
+        0.144865917,
+        0.141564042,
+        0.144538584
+      ],
+      "median_seconds": 0.143319625,
+      "sample_sd_seconds": 0.0013342267925654482,
+      "sample_execution_metadata": [
+        {
+          "seconds": 0.14326275,
+          "round": 1,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/01-original4/process.json",
+            "sha256": "2f0f9363fd30bb458c9098f934ba1c03a9b5dafc4b9fd9c54634aaa38dd49f35"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260194304,
+          "user_cpu_seconds": 0.082776,
+          "system_cpu_seconds": 0.043061999999999996
+        },
+        {
+          "seconds": 0.141360458,
+          "round": 2,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/02-original4/process.json",
+            "sha256": "8df8e1bfb02c7b79d87e6592f15e6f62ae4748fe26c3dbde60c329af442af1fb"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260194304,
+          "user_cpu_seconds": 0.083203,
+          "system_cpu_seconds": 0.043054999999999996
+        },
+        {
+          "seconds": 0.143391584,
+          "round": 3,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/03-original4/process.json",
+            "sha256": "71c2f29181b4227e5b7598da2761d96633a83505cc9c31dbede1763ffad42fd8"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260161536,
+          "user_cpu_seconds": 0.083033,
+          "system_cpu_seconds": 0.042545
+        },
+        {
+          "seconds": 0.143319625,
+          "round": 4,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/04-original4/process.json",
+            "sha256": "1ae8c00dd5e6e04f3955bd23036b828d55f47a2b10ec2c1985d96fd5e601a3ce"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260194304,
+          "user_cpu_seconds": 0.083012,
+          "system_cpu_seconds": 0.041814
+        },
+        {
+          "seconds": 0.144865917,
+          "round": 5,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/05-original4/process.json",
+            "sha256": "398f136a6898a2e269c73d3c3411ad69c8967adc8db84bade544d82fb6ff2034"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260227072,
+          "user_cpu_seconds": 0.083522,
+          "system_cpu_seconds": 0.043404
+        },
+        {
+          "seconds": 0.141564042,
+          "round": 6,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/06-original4/process.json",
+            "sha256": "c037cbd56c0da1992eb8c5b159c292cb6e13fbebf4e013f65c40e746fe769fe9"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260472832,
+          "user_cpu_seconds": 0.082767,
+          "system_cpu_seconds": 0.043258
+        },
+        {
+          "seconds": 0.144538584,
+          "round": 7,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/07-original4/process.json",
+            "sha256": "139e976a3981e9071185be125adfed8d62641a1c51c1976d57e21aa1e38301d6"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 260194304,
+          "user_cpu_seconds": 0.082788,
+          "system_cpu_seconds": 0.042172999999999995
+        }
+      ],
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-pidigits-performance/target/release/mech",
+        "build",
+        "/private/tmp/mech-benchmark-publication/archive/workloads/revcomp/revcomp.mec",
+        "--backend",
+        "cranelift",
+        "--offline",
+        "--keep-project",
+        "--no-config",
+        "--name",
+        "mech-revcomp-parent",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-parent"
+      ],
+      "binary_sha256": "dc9a3513a9e2bbf624c755e8840d43e72cf4f7763991c3fead57373210e96664",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "NO_COLOR": "1",
+        "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+        "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+        "RAYON_NUM_THREADS": "8",
+        "MECH_SEQUENCE_PARTITIONS": "4"
+      },
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "runtime_commit": "6de19875e2266f39c93712800c400672a44b98c9",
+      "runtime_source": {
+        "path": "experiments/mech/revcomp-streaming-v1/compiler-snapshot/runtime-parent.rs",
+        "sha256": "a20568dfb1a5ebbb19518367465236302007a226cd2dfb3e9e8d977645f4d60f"
+      },
+      "build_evidence": {
+        "path": "experiments/mech/revcomp-streaming-v1/baseline-build-v1/results.json",
+        "sha256": "f744806a130abaf3bf9d32e3907f2c4f2828b9ba8b0e6e97d2358509e752c377"
+      },
+      "runtime_version": "Mech 0.3.6 development (emitter 6de19875e, runtime 6de19875e)",
+      "full_validation": {
+        "kind": "complete-output-sha256-receipt",
+        "bytes": 254166745,
+        "sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+        "all_seven_samples_verified": true,
+        "full_output_omitted_after_hash": true
+      }
+    },
+    "revcomp:mech-revcomp-compacted-20261022": {
+      "key": "revcomp:mech-revcomp-compacted-20261022",
+      "id": "mech-revcomp-compacted-20261022",
+      "source": "archive/workloads/revcomp/revcomp.mec",
+      "source_sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d",
+      "loc": 7,
+      "samples_seconds": [
+        0.13107425,
+        0.130742917,
+        0.129337041,
+        0.12827475,
+        0.128085834,
+        0.129644167,
+        0.128248083
+      ],
+      "median_seconds": 0.129337041,
+      "sample_sd_seconds": 0.001222578809783838,
+      "sample_execution_metadata": [
+        {
+          "seconds": 0.13107425,
+          "round": 1,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/01-compacted4/process.json",
+            "sha256": "2315d81e9176222bdd43a9b78f71343bb52d512bf4f2193bef9d0b4f12140752"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255950848,
+          "user_cpu_seconds": 0.069572,
+          "system_cpu_seconds": 0.042446
+        },
+        {
+          "seconds": 0.130742917,
+          "round": 2,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/02-compacted4/process.json",
+            "sha256": "fd91737c5006eaf9f2f2dea4aede0b99f31aff0ff9646230bcac7e1c4fcac190"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 256229376,
+          "user_cpu_seconds": 0.070851,
+          "system_cpu_seconds": 0.043657
+        },
+        {
+          "seconds": 0.129337041,
+          "round": 3,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/03-compacted4/process.json",
+            "sha256": "7e10547f22f6796db335ed5294f024405b705c0abc7dff5b7e34e8435c0ec38b"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255950848,
+          "user_cpu_seconds": 0.06838999999999999,
+          "system_cpu_seconds": 0.041761
+        },
+        {
+          "seconds": 0.12827475,
+          "round": 4,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/04-compacted4/process.json",
+            "sha256": "1515ac23746ed206d403a87998753bc08262a9da4942491142855825179f5e3e"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255967232,
+          "user_cpu_seconds": 0.067855,
+          "system_cpu_seconds": 0.041478
+        },
+        {
+          "seconds": 0.128085834,
+          "round": 5,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/05-compacted4/process.json",
+            "sha256": "6b94c1e044648a024bd07b4696dec4eaa1bf1fc6a07f23ce36bc72a4038605b6"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255950848,
+          "user_cpu_seconds": 0.067881,
+          "system_cpu_seconds": 0.042089
+        },
+        {
+          "seconds": 0.129644167,
+          "round": 6,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/06-compacted4/process.json",
+            "sha256": "236e3e37b3705584d58e5893cb7dcfe7537a45b34f0c1da60b7ef44a11915a96"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255950848,
+          "user_cpu_seconds": 0.067762,
+          "system_cpu_seconds": 0.041483
+        },
+        {
+          "seconds": 0.128248083,
+          "round": 7,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/07-compacted4/process.json",
+            "sha256": "550312527d3e380c6ad50bcf91ac274d009008c16de9e0af446acc11131b6fb3"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 255983616,
+          "user_cpu_seconds": 0.06841,
+          "system_cpu_seconds": 0.041409999999999995
+        }
+      ],
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-pidigits-performance/target/release/mech",
+        "build",
+        "/private/tmp/mech-benchmark-publication/archive/workloads/revcomp/revcomp.mec",
+        "--backend",
+        "cranelift",
+        "--offline",
+        "--keep-project",
+        "--no-config",
+        "--name",
+        "mech-revcomp-candidate",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-streaming-v1/.build/mech-revcomp-candidate"
+      ],
+      "binary_sha256": "b847855142c91189ba48640705981822184c9d196b291c6d9741ed5fdcd8fa24",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "NO_COLOR": "1",
+        "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+        "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+        "RAYON_NUM_THREADS": "8",
+        "MECH_SEQUENCE_PARTITIONS": "4"
+      },
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "runtime_commit": "6634f1f4d59c0a2eebee44065f236f8647703464",
+      "runtime_source": {
+        "path": "experiments/mech/revcomp-streaming-v1/compiler-snapshot/runtime-candidate.rs",
+        "sha256": "16b7398967149c2abd465e65394009c83f2183fd3fc414a27182de47297ce67a"
+      },
+      "build_evidence": {
+        "path": "experiments/mech/revcomp-streaming-v1/candidate-build-v1/results.json",
+        "sha256": "c3525ec9959a50bea3cdf55206dbb9ba4db0e7bad75ef6ca19b9a7c41187eab4"
+      },
+      "runtime_version": "Mech 0.3.6 development (emitter 6de19875e, runtime 6634f1f4d)",
+      "full_validation": {
+        "kind": "complete-output-sha256-receipt",
+        "bytes": 254166745,
+        "sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+        "all_seven_samples_verified": true,
+        "full_output_omitted_after_hash": true
+      }
+    },
+    "revcomp:mech-revcomp-reused-4-20261022": {
+      "key": "revcomp:mech-revcomp-reused-4-20261022",
+      "id": "mech-revcomp-reused-4-20261022",
+      "source": "archive/workloads/revcomp/revcomp.mec",
+      "source_sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d",
+      "loc": 7,
+      "samples_seconds": [
+        0.1217705,
+        0.12292025,
+        0.12032725,
+        0.122859292,
+        0.122049875,
+        0.123491666,
+        0.125192459
+      ],
+      "median_seconds": 0.122859292,
+      "sample_sd_seconds": 0.0015175440016341115,
+      "sample_execution_metadata": [
+        {
+          "seconds": 0.1217705,
+          "round": 1,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/01-reuse4/process.json",
+            "sha256": "06216cf9595a77f8631b034ff004b1e519abd094bc2482b6665f07a4d2e23122"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130924544,
+          "user_cpu_seconds": 0.067901,
+          "system_cpu_seconds": 0.038224999999999995
+        },
+        {
+          "seconds": 0.12292025,
+          "round": 2,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/02-reuse4/process.json",
+            "sha256": "fb4631a13c5533ebe370070e9455e6528dc878089bdb2a39c0ec6d6e9084fb4a"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 131170304,
+          "user_cpu_seconds": 0.06697499999999999,
+          "system_cpu_seconds": 0.038383
+        },
+        {
+          "seconds": 0.12032725,
+          "round": 3,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/03-reuse4/process.json",
+            "sha256": "2bba21d22e5adcc1cc0382b21e211037e5adcf55b6e2784a8ec513b6f46dcca0"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130973696,
+          "user_cpu_seconds": 0.066951,
+          "system_cpu_seconds": 0.038178
+        },
+        {
+          "seconds": 0.122859292,
+          "round": 4,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/04-reuse4/process.json",
+            "sha256": "4a9949d949d577ec7ff42ea08514158122ef2f5817c97c91fb4e84f8c7285067"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130957312,
+          "user_cpu_seconds": 0.06712599999999999,
+          "system_cpu_seconds": 0.037926999999999995
+        },
+        {
+          "seconds": 0.122049875,
+          "round": 5,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/05-reuse4/process.json",
+            "sha256": "d3b25c841ec075f6bdb4de3ffb2a9b1514220c681bf8ba472cbfe5c40bc2e087"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130940928,
+          "user_cpu_seconds": 0.06701599999999999,
+          "system_cpu_seconds": 0.037972
+        },
+        {
+          "seconds": 0.123491666,
+          "round": 6,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/06-reuse4/process.json",
+            "sha256": "af80aae6de522c55491bb2c00428c8db468642336923789e36b3e6a6800fb42e"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130924544,
+          "user_cpu_seconds": 0.066927,
+          "system_cpu_seconds": 0.038173
+        },
+        {
+          "seconds": 0.125192459,
+          "round": 7,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/07-reuse4/process.json",
+            "sha256": "2ae2302c923867c49cf52ada14249873886f179f6c5325ffa7e91b83d78f5c31"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130924544,
+          "user_cpu_seconds": 0.067637,
+          "system_cpu_seconds": 0.038217999999999995
+        }
+      ],
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-pidigits-performance/target/release/mech",
+        "build",
+        "/private/tmp/mech-benchmark-publication/archive/workloads/revcomp/revcomp.mec",
+        "--backend",
+        "cranelift",
+        "--offline",
+        "--keep-project",
+        "--no-config",
+        "--name",
+        "mech-revcomp-reuse",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+      ],
+      "binary_sha256": "66d41d60520ce8b1d3f00e53928fd82f4141f42379fb71fd89209a59276ac4ee",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "NO_COLOR": "1",
+        "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+        "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+        "RAYON_NUM_THREADS": "8",
+        "MECH_SEQUENCE_PARTITIONS": "4"
+      },
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "runtime_commit": "fca1ba1f7462a555eb56833ad32135408a140a72",
+      "runtime_source": {
+        "path": "experiments/mech/revcomp-buffer-reuse-v1/test-refinement-v1/runtime-candidate.rs",
+        "sha256": "3a2b67d7a8440d54d2373b861cc5c4b8cbab9a982d2260a9904d0aa0216a7238"
+      },
+      "build_evidence": {
+        "path": "experiments/mech/revcomp-buffer-reuse-v1/build-v1/results.json",
+        "sha256": "7fee9080753d765e8a8d6818d38d778cad52aa38bf7be9b9b4bf07ea38b76676"
+      },
+      "runtime_version": "Mech 0.3.6 development (emitter 6de19875e, runtime fca1ba1f7)",
+      "full_validation": {
+        "kind": "complete-output-sha256-receipt",
+        "bytes": 254166745,
+        "sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+        "all_seven_samples_verified": true,
+        "full_output_omitted_after_hash": true
+      }
+    },
+    "revcomp:mech-revcomp-reused-8-20261022": {
+      "key": "revcomp:mech-revcomp-reused-8-20261022",
+      "id": "mech-revcomp-reused-8-20261022",
+      "source": "archive/workloads/revcomp/revcomp.mec",
+      "source_sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d",
+      "loc": 7,
+      "samples_seconds": [
+        0.124602583,
+        0.121578166,
+        0.123298583,
+        0.121971875,
+        0.123951666,
+        0.123080208,
+        0.124261917
+      ],
+      "median_seconds": 0.123298583,
+      "sample_sd_seconds": 0.0011405854095143232,
+      "sample_execution_metadata": [
+        {
+          "seconds": 0.124602583,
+          "round": 1,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/01-reuse8/process.json",
+            "sha256": "3dbeb2ce67af5fc1ac91ace07a5452a303ffceab0f57c348f45e16a7a9d7d5d7"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130908160,
+          "user_cpu_seconds": 0.082771,
+          "system_cpu_seconds": 0.040264
+        },
+        {
+          "seconds": 0.121578166,
+          "round": 2,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/02-reuse8/process.json",
+            "sha256": "1f9c1e7a9333fde83b04aa64eaa216d05d446e331cdbaa358e460f90a6b3d859"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130957312,
+          "user_cpu_seconds": 0.079696,
+          "system_cpu_seconds": 0.039288
+        },
+        {
+          "seconds": 0.123298583,
+          "round": 3,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/03-reuse8/process.json",
+            "sha256": "975b4df1f61facad5aa6fa7cc5f812ae7b6280d72dd8516a0ab012e1fbdc53d6"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130957312,
+          "user_cpu_seconds": 0.07886399999999999,
+          "system_cpu_seconds": 0.039477
+        },
+        {
+          "seconds": 0.121971875,
+          "round": 4,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/04-reuse8/process.json",
+            "sha256": "bcd5441562a2451808ea690990a9582e506b80cd00cc531ae1c1973e8edef81e"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130973696,
+          "user_cpu_seconds": 0.079451,
+          "system_cpu_seconds": 0.039295
+        },
+        {
+          "seconds": 0.123951666,
+          "round": 5,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/05-reuse8/process.json",
+            "sha256": "c323cc5934a473fbbf700ba5aa7b2017d1e8a39c24583ad4e1149fd6893c4e6c"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130924544,
+          "user_cpu_seconds": 0.08041799999999999,
+          "system_cpu_seconds": 0.038854
+        },
+        {
+          "seconds": 0.123080208,
+          "round": 6,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/06-reuse8/process.json",
+            "sha256": "798a8b0fd9a86903a0f2b06fa7ee7285c85da128fc70d04fa6000ed1c5be15c7"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 131219456,
+          "user_cpu_seconds": 0.079012,
+          "system_cpu_seconds": 0.038645
+        },
+        {
+          "seconds": 0.124261917,
+          "round": 7,
+          "workload_n": 25000000,
+          "command": [
+            "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+          ],
+          "exit_status": 0,
+          "stdin": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+            "bytes": 254166745,
+            "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa"
+          },
+          "raw_evidence": {
+            "path": "experiments/mech/revcomp-buffer-reuse-v1/run-v1/07-reuse8/process.json",
+            "sha256": "c83f606d85c46031eeaf642cf626aa0f1123c72c5946ca990aaf620d8dce0940"
+          },
+          "stdout_bytes": 254166745,
+          "stdout_sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+          "maximum_rss_bytes": 130924544,
+          "user_cpu_seconds": 0.079057,
+          "system_cpu_seconds": 0.039067
+        }
+      ],
+      "command": [
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+      ],
+      "compile_command": [
+        "/private/tmp/mech-pidigits-performance/target/release/mech",
+        "build",
+        "/private/tmp/mech-benchmark-publication/archive/workloads/revcomp/revcomp.mec",
+        "--backend",
+        "cranelift",
+        "--offline",
+        "--keep-project",
+        "--no-config",
+        "--name",
+        "mech-revcomp-reuse",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/revcomp-buffer-reuse-v1/.build/mech-revcomp-reuse"
+      ],
+      "binary_sha256": "66d41d60520ce8b1d3f00e53928fd82f4141f42379fb71fd89209a59276ac4ee",
+      "runtime_environment": {
+        "PATH": "/usr/bin:/bin",
+        "LC_ALL": "C",
+        "LANG": "C",
+        "TZ": "UTC",
+        "NO_COLOR": "1",
+        "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+        "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+        "RAYON_NUM_THREADS": "8",
+        "MECH_SEQUENCE_PARTITIONS": "8"
+      },
+      "cwd": "/private/tmp/mech-benchmark-publication",
+      "runtime_commit": "fca1ba1f7462a555eb56833ad32135408a140a72",
+      "runtime_source": {
+        "path": "experiments/mech/revcomp-buffer-reuse-v1/test-refinement-v1/runtime-candidate.rs",
+        "sha256": "3a2b67d7a8440d54d2373b861cc5c4b8cbab9a982d2260a9904d0aa0216a7238"
+      },
+      "build_evidence": {
+        "path": "experiments/mech/revcomp-buffer-reuse-v1/build-v1/results.json",
+        "sha256": "7fee9080753d765e8a8d6818d38d778cad52aa38bf7be9b9b4bf07ea38b76676"
+      },
+      "runtime_version": "Mech 0.3.6 development (emitter 6de19875e, runtime fca1ba1f7)",
+      "full_validation": {
+        "kind": "complete-output-sha256-receipt",
+        "bytes": 254166745,
+        "sha256": "e5730d4fd55c464f276e5c6062c80f46e0a735281de15d8c957e2731a9baf70e",
+        "all_seven_samples_verified": true,
+        "full_output_omitted_after_hash": true
+      }
+    }
+  }
+}
