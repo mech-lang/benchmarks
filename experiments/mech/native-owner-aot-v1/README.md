@@ -2,7 +2,35 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current measured improvement
+## Same-key lookup reuse
+
+Compiler [`e4d3ed4da`](https://github.com/mech-lang/mech/commit/e4d3ed4da3aec10a70dfb17d58442bafa78d3ec3) retains the last lookup result for an immutable pinned key inside a closed map loop. Reuse requires the same table token, mutation version, key address and key length. Every mutation invalidates the observation; each cache hit still pays the complete original lookup debit under the same call and root limits. The generated caller still computes every inserted value. IR36/work policy56/ABI20 identify this stage.
+
+Three alternating complete-process measurements on the **one-million-base** prefix give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0209 | 1.0× |
+| Previous Mech AOT, `cb9d6913c` | 1.154 | 55.2× |
+| Lookup reuse, `e4d3ed4da` | 1.151 | 55.1× |
+
+The observed reduction is only **0.3%**, with overlapping samples; this does not establish a material speedup. All nine outputs match the independent reference, with seven tables and 6,999,961 updates for each Mech execution. Both retain 443 admissions. Source and program bytecode are unchanged. [Raw prefix measurements](lookup-timing-v1/results.json) include three fresh processes per executable and one excluded warmup, executed serially with secured startup/shutdown included.
+
+A fresh full-input comparison uses one complete process per executable on **125 million bases**, with no excluded warmup:
+
+| Executable | Seconds, one run | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.551 | 1.0× |
+| Previous Mech AOT, `cb9d6913c` | 119.059 | 216.0× |
+| Lookup reuse, `e4d3ed4da` | 117.746 | 213.6× |
+
+This single pair is **1.1%** lower; repeated full-input measurements are needed to distinguish a small gain from variation. Every output matches the independent full reference, and both Mech executions perform seven tables and **874,999,961 updates**. The [full receipt](full-lookup-v1/results.json) preserves all executable identities, inputs, policies and process records. The finite execution policy is identical to the preceding successful full qualification. The lookup candidate uses 220.3 MB peak RSS. Rust parity remains unfinished.
+
+[Native validation](../native-owner-dispatch-v1/lookup-reuse-validation-v1/summary.json) passes **220 tests**, with three pre-existing exclusions. Tests check equal debit for cold and cached reads, stale mutation versions, foreign tables, zero values, missing keys, exhausted comparison limits, growth and actual generated use through original/decoded/restored execution. Every reservation is released after completion. An independent read-only review found no correctness issue.
+
+The [matching profiling build](profile-lookup-build-v1/results.json) has byte-identical complete machine code to the timed executable: 3,969,308 bytes, SHA-256 `002e696eb34e421109fd6fa42d8a3fe50ac7a2b1d5b1c4224f90de6499e95652`. Three captures across a completed full execution show [map storage calls at 76–78%](full-profile-lookup-v1/analysis.json) of main-thread samples, reads at 20–25%, insertions at 18–20%, selected ranges/endpoints at 10–13%, and work debits at 11–12%. Categories overlap. This profile also verifies exact full output and all updates; profiling elapsed time is excluded from timing results. Remaining overhead includes repeated runtime calls and per-call work scopes. Combining the already-proved adjacent range and String selection is the next measured stage; native entry operations and generated packed-key storage are larger follow-on targets.
+
+## Combined native library-call setup
 
 Compiler [`cb9d6913c`](https://github.com/mech-lang/mech/commit/cb9d6913c129c217cf96c8ad7e7c35174b41213c) combines native library-call setup and teardown. The call retains the three thread-local addresses for its account, work observer and relative limits, avoiding repeated address lookups during setup and restoration. The same work debits, fresh per-call observation, foreign-account rejection and enclosing caps remain in force. Stack guards restore the caller's state on normal return and unwinding. IR36, work policy55 and ABI20 identify this version.
 

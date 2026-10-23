@@ -122,3 +122,11 @@ Validation passes [53 budget checks](call-scope-budget-v1/summary.json), [67 col
 [Paired timings](../native-owner-aot-v1/call-scope-timing-v1/results.json) improve by 5.2%. All nine outputs match the independent reference, source and bytecode are unchanged, and both Mech executables perform seven tables and 6,999,961 updates with 443 runtime admissions.
 
 The same binary also completes one full **125-million-base** qualification: Mech **118.601 s (216.2× Rust)** and Rust **0.549 s (1.00×)**. Both outputs match the full independent reference; Mech reports all seven tables and **874,999,961 updates**. These are single complete processes rather than repeated medians. [Full receipts and policy](../native-owner-aot-v1/full-call-scope-v2/results.json) retain the increased finite compute/comparison allowances; capability grants, memory limits and accounting stay active. The earlier comparison-quota failure is excluded. The 56.0× prefix ratio does not describe full-size performance. Rust parity and repeated full-input timing remain unfinished.
+
+## Same-key lookup reuse
+
+Compiler `e4d3ed4da3aec10a70dfb17d58442bafa78d3ec3` retains a private observation of the current pinned immutable key. Table identity, mutation version and exact key span must match. Every insertion or replacement invalidates the observation before mutation; cached reads retain the complete lookup debit and all current caps. Additional fixed metadata is covered by existing owner/binding reservations. IR36/work policy56/ABI20 identify the stage.
+
+[Full native validation](lookup-reuse-validation-v1/summary.json) passes 220 tests with three pre-existing exclusions, including stale and foreign tables, zero values, missing keys, comparison exhaustion and growth. Original/decoded/restored generated execution checks actual cache use and independently expected maps.
+
+The [standalone measurements](../native-owner-aot-v1/README.md#same-key-lookup-reuse) show no material prefix improvement: 1.151 versus 1.154 seconds, or 55.1× versus 55.2× Rust. A fresh single full-input pair gives 117.746 versus 119.059 seconds, or 213.6× versus 216.0× Rust. The 0.3% prefix and 1.1% full reductions are too small to establish a robust gain from these samples. All outputs and every expected table update are verified. Source and program bytecode are unchanged.
