@@ -1,0 +1,43 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+error[E0716]: temporary value dropped while borrowed
+  --> src/engine/src/intrinsics/map_insert.rs:91:54
+   |
+91 |                     .map_err(|error| super::invalid(&format!("map entry snapshot: {error:?}")))?
+   |                                      ----------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+   |                                      |               |                                       |
+   |                                      |               |                                       temporary value is freed at the end of this statement
+   |                                      |               creates a temporary value which is freed while still in use
+   |                                      argument requires that borrow lasts for `'static`
+
+error[E0716]: temporary value dropped while borrowed
+  --> src/engine/src/intrinsics/map_insert.rs:98:41
+   |
+98 |                         super::invalid(&format!("map entry snapshot: {error:?}"))
+   |                         ----------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+   |                         |               |                                       |
+   |                         |               |                                       temporary value is freed at the end of this statement
+   |                         |               creates a temporary value which is freed while still in use
+   |                         argument requires that borrow lasts for `'static`
+
+error[E0716]: temporary value dropped while borrowed
+   --> src/engine/src/intrinsics/map_insert.rs:117:41
+    |
+117 |                         super::invalid(&format!("map entry snapshot: {error:?}"))
+    |                         ----------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+    |                         |               |                                       |
+    |                         |               |                                       temporary value is freed at the end of this statement
+    |                         |               creates a temporary value which is freed while still in use
+    |                         argument requires that borrow lasts for `'static`
+
+error[E0716]: temporary value dropped while borrowed
+   --> src/engine/src/intrinsics/map_insert.rs:121:41
+    |
+121 |                         super::invalid(&format!("map entry snapshot: {error:?}"))
+    |                         ----------------^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^-
+    |                         |               |                                       |
+    |                         |               |                                       temporary value is freed at the end of this statement
+    |                         |               creates a temporary value which is freed while still in use
+    |                         argument requires that borrow lasts for `'static`
+
+For more information about this error, try `rustc --explain E0716`.
+error: could not compile `mech-engine` (lib) due to 4 previous errors

@@ -10,14 +10,17 @@ separate diagnostic; final timing runs are deferred while optimization continues
 The preceding canonical-native branch retains ordinary dense-counter and
 direct-query optimization. No new nucleotide profile or website result is admitted.
 
-The [general map source audit](../experiments/mech/general-map-counting-v1/README.md)
-keeps the counting algorithm in Mech. The library candidate adds a generic empty
-map constructor and missing-key insertion, with source execution checks for both
-string and integer keys, replacement and fixed-cardinality rejection. Shared
-solver, map-runtime and compiler-free linkage checks are retained in that study.
-A pure state-machine entry operation and explicit hash-table representation
-contract remain work before the counting source can qualify. These library
-checks add no quantitative samples or catalog results.
+The [pure map entry study](../experiments/mech/general-map-entry-v1/README.md)
+adds generic functional insertion so a Mech state machine can express overlapping
+window traversal, presence handling and count arithmetic itself. The committed
+candidate passes 146 distinct focused runtime/source/type/catalog/linkage tests;
+independent canonicalizer cases verify the tighter string-entry work bound.
+A larger source probe still exceeds the default resident comparison budget;
+its exact denial is retained. Direct lookup/default support, an explicit general
+hash-table contract, native lowering and full-work qualification remain pending.
+There are no new benchmark samples or admitted nucleotide results.
+The [preceding map audit](../experiments/mech/general-map-counting-v1/README.md)
+retains the empty-map constructor and assignment-gap evidence.
 The [initial conforming baseline](../experiments/mech/native-hashmap-work-v1/README.md)
 is retained as historical evidence, not a final performance result.
 

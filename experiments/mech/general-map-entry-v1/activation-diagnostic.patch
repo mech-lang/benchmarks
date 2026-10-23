@@ -1,0 +1,19 @@
+diff --git a/src/engine/src/resident/general/mod.rs b/src/engine/src/resident/general/mod.rs
+index b013c802f..bebdafeb2 100644
+--- a/src/engine/src/resident/general/mod.rs
++++ b/src/engine/src/resident/general/mod.rs
+@@ -2729,12 +2729,12 @@ fn activate_internal(
+             let node = step.artifact_node;
+             instance
+                 .execute_activation_control(control)
+-                .map_err(|error| match error {
++                .map_err(|error| { eprintln!("MAP_ENTRY_ACTIVATION_DIAGNOSTIC {error:?}"); match error {
+                     ResidentExecutionError::MemoryRuntime { error } => {
+                         ResidentActivationError::MemoryRuntime { error }
+                     }
+                     _ => ResidentActivationError::ActivationKernel { node },
+-                })?;
++                } })?;
+         } else {
+             super::budget::charge_planning_step().map_err(|_| {
+                 ResidentActivationError::ActivationKernel {

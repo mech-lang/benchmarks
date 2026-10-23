@@ -1,0 +1,135 @@
+   Compiling mech-core v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/core)
+   Compiling mech-syntax v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/syntax)
+   Compiling mech-bytecode v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/bytecode)
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+error[E0277]: `?` couldn't convert the error to `mech_core::MechError`
+   --> src/engine/src/intrinsics/map_insert.rs:89:78
+    |
+ 89 |                 let ValueDataDraft::Map(entries) = map.canonical_data_draft()? else {
+    |                                                        ----------------------^ the trait `From<SnapshotValueError>` is not implemented for `mech_core::MechError`
+    |                                                        |
+    |                                                        this can't be annotated with `?` because it has type `Result<_, SnapshotValueError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the following other types implement trait `From<T>`
+   --> src/core/src/semantic_error.rs:150:1
+    |
+150 | impl From<SemanticModelError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<SemanticModelError>`
+    |
+   ::: src/core/src/type_system/diagnostic.rs:277:1
+    |
+277 | impl From<TypeResolutionError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<TypeResolutionError>`
+    |
+   ::: src/core/src/memory_runtime/error.rs:127:1
+    |
+127 | impl From<MemoryRuntimeError> for crate::MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<mech_core::MemoryRuntimeError>`
+    |
+   ::: src/core/src/error.rs:335:1
+    |
+335 | impl From<std::io::Error> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<std::io::Error>`
+
+error[E0277]: `?` couldn't convert the error to `mech_core::MechError`
+   --> src/engine/src/intrinsics/map_insert.rs:98:56
+    |
+ 98 |                         selected.canonical_data_draft()?,
+    |                                  ----------------------^ the trait `From<SnapshotValueError>` is not implemented for `mech_core::MechError`
+    |                                  |
+    |                                  this can't be annotated with `?` because it has type `Result<_, SnapshotValueError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the following other types implement trait `From<T>`
+   --> src/core/src/semantic_error.rs:150:1
+    |
+150 | impl From<SemanticModelError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<SemanticModelError>`
+    |
+   ::: src/core/src/type_system/diagnostic.rs:277:1
+    |
+277 | impl From<TypeResolutionError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<TypeResolutionError>`
+    |
+   ::: src/core/src/memory_runtime/error.rs:127:1
+    |
+127 | impl From<MemoryRuntimeError> for crate::MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<mech_core::MemoryRuntimeError>`
+    |
+   ::: src/core/src/error.rs:335:1
+    |
+335 | impl From<std::io::Error> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<std::io::Error>`
+
+error[E0277]: `?` couldn't convert the error to `mech_core::MechError`
+   --> src/engine/src/intrinsics/map_insert.rs:110:78
+    |
+110 |                 let mut replacement = Some(replacement.canonical_data_draft()?);
+    |                                                        ----------------------^ the trait `From<SnapshotValueError>` is not implemented for `mech_core::MechError`
+    |                                                        |
+    |                                                        this can't be annotated with `?` because it has type `Result<_, SnapshotValueError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the following other types implement trait `From<T>`
+   --> src/core/src/semantic_error.rs:150:1
+    |
+150 | impl From<SemanticModelError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<SemanticModelError>`
+    |
+   ::: src/core/src/type_system/diagnostic.rs:277:1
+    |
+277 | impl From<TypeResolutionError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<TypeResolutionError>`
+    |
+   ::: src/core/src/memory_runtime/error.rs:127:1
+    |
+127 | impl From<MemoryRuntimeError> for crate::MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<mech_core::MemoryRuntimeError>`
+    |
+   ::: src/core/src/error.rs:335:1
+    |
+335 | impl From<std::io::Error> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<std::io::Error>`
+
+error[E0277]: `?` couldn't convert the error to `mech_core::MechError`
+   --> src/engine/src/intrinsics/map_insert.rs:111:72
+    |
+111 |                 let mut selected = Some(selected.canonical_data_draft()?);
+    |                                                  ----------------------^ the trait `From<SnapshotValueError>` is not implemented for `mech_core::MechError`
+    |                                                  |
+    |                                                  this can't be annotated with `?` because it has type `Result<_, SnapshotValueError>`
+    |
+    = note: the question mark operation (`?`) implicitly performs a conversion on the error value using the `From` trait
+help: the following other types implement trait `From<T>`
+   --> src/core/src/semantic_error.rs:150:1
+    |
+150 | impl From<SemanticModelError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<SemanticModelError>`
+    |
+   ::: src/core/src/type_system/diagnostic.rs:277:1
+    |
+277 | impl From<TypeResolutionError> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<TypeResolutionError>`
+    |
+   ::: src/core/src/memory_runtime/error.rs:127:1
+    |
+127 | impl From<MemoryRuntimeError> for crate::MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<mech_core::MemoryRuntimeError>`
+    |
+   ::: src/core/src/error.rs:335:1
+    |
+335 | impl From<std::io::Error> for MechError {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ `mech_core::MechError` implements `From<std::io::Error>`
+
+warning: unused variable: `plan`
+     --> src/engine/src/resident/numeric/mod.rs:10597:9
+      |
+10597 |     let plan = kernel
+      |         ^^^^ help: if this is intentional, prefix it with an underscore: `_plan`
+      |
+      = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0277`.
+warning: `mech-engine` (lib) generated 1 warning
+error: could not compile `mech-engine` (lib) due to 4 previous errors; 1 warning emitted
