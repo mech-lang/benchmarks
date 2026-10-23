@@ -27,7 +27,17 @@ parser.add_argument('--require-packed-map', action='store_true',
                     help='Require every candidate execution to select packed storage for all regions and updates')
 parser.add_argument('--require-packed-ssa', action='store_true',
                     help='Require all seven candidate regions to complete in generated SSA loops')
+parser.add_argument('--require-parallel-tasks', type=int, choices=[7],
+                    help='Require one combined batch, two source regions and seven tasks; also require packed storage and SSA')
+parser.add_argument('--minimum-parallel-peak', type=int,
+                    help='Minimum observed simultaneous workers (1–7; defaults to 1 when parallel tasks are required)')
 args = parser.parse_args()
+if args.minimum_parallel_peak is not None and (
+        args.require_parallel_tasks is None or not 1 <= args.minimum_parallel_peak <= args.require_parallel_tasks):
+    parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
+minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
+require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None
+require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 prepared = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -58,7 +68,9 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               launch_sha256=process.sha(policy), baseline_sha256=process.sha(targets['baseline']),
               rust_sha256=process.sha(targets['rust']), input_bases=1000000,
               expected_table_updates=6999961, samples=[], configuration=vars(args),
-              require_packed_map=args.require_packed_map, require_packed_ssa=args.require_packed_ssa, native_executions=[],
+              require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
+              require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
+              native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
 process.save(out / 'results.json', report)
 with Path(PLAN['common_mutex']).open('a+') as lock:
@@ -96,14 +108,24 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
                           packed_map_updates=native.get('native_packed_map_updates'),
                           packed_ssa_regions=native.get('native_packed_ssa_regions'))
-            if label == 'candidate' and args.require_packed_map:
+            parallel = dict(parallel_batches=native.get('native_parallel_batches'),
+                            parallel_regions=native.get('native_parallel_regions'),
+                            parallel_tasks=native.get('native_parallel_tasks'),
+                            parallel_peak_workers=native.get('native_parallel_peak_workers'))
+            report['native_executions'].append(dict(label=label, round=round_number,
+                                                     timed=timed, native_visits=native['native_visits'],
+                                                     **packed, **parallel))
+            process.save(out / 'results.json', report)
+            if label == 'candidate' and require_packed_map:
                 assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
                 assert packed['packed_map_updates'] == 6999961, 'Candidate did not complete every update in packed storage'
-            if label == 'candidate' and args.require_packed_ssa:
+            if label == 'candidate' and require_packed_ssa:
                 assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
-            report['native_executions'].append(dict(label=label, round=round_number,
-                                                     timed=timed, **packed))
-            process.save(out / 'results.json', report)
+            if label == 'candidate' and args.require_parallel_tasks:
+                assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
+                assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'
+                assert parallel['parallel_tasks'] == args.require_parallel_tasks, 'Candidate did not complete all seven parallel tasks'
+                assert isinstance(parallel['parallel_peak_workers'], int) and minimum_parallel_peak <= parallel['parallel_peak_workers'] <= args.require_parallel_tasks, 'Candidate did not reach the required simultaneous worker count'
         if timed:
             row = dict(label=label, seconds=result['elapsed_seconds'], maximum_rss_bytes=result['maximum_rss_bytes'])
             report['samples'].append(row)
@@ -112,15 +134,20 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
 
     for label in targets:
         run(label, 'warmup', False)
-    if args.minimum_closed_map_regions:
+    if args.minimum_closed_map_regions or args.require_parallel_tasks:
         candidate = json.loads((out / 'warmup-candidate.report.json').read_text())
         baseline = json.loads((out / 'warmup-baseline.report.json').read_text())
-        if args.allow_equal_admissions:
+        if args.require_parallel_tasks:
+            # Scheduling and original worker preludes add legitimate boundaries.
+            # Actual receipts above prove the required execution strategy.
+            report['admission_comparison'] = 'record-only: required parallel execution'
+        elif args.allow_equal_admissions:
             assert candidate['native_visits'] <= baseline['native_visits'], 'The candidate added runtime admissions'
         else:
             assert candidate['native_visits'] < baseline['native_visits'], 'The new path did not reduce runtime admissions'
         report['warmup_native_visits'] = {label: native['native_visits']
                                          for label, native in [('candidate', candidate), ('baseline', baseline)]}
+        process.save(out / 'results.json', report)
     for index, order in enumerate([['candidate', 'baseline', 'rust'], ['rust', 'baseline', 'candidate'], ['baseline', 'candidate', 'rust']]):
         for label in order:
             run(label, index, True)

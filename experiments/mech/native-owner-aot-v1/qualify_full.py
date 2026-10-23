@@ -19,16 +19,28 @@ parser.add_argument('--parent-receipt')
 parser.add_argument('--parent-binary')
 parser.add_argument('--require-packed-map', action='store_true',
                     help='Require the candidate to select packed storage for all regions and updates; also inherited from its prefix receipt')
+parser.add_argument('--require-parallel-tasks', type=int, choices=[7],
+                    help='Require one combined batch, two source regions and seven tasks; also inherited from the prefix receipt')
+parser.add_argument('--minimum-parallel-peak', type=int,
+                    help='Minimum observed simultaneous workers (1–7); cannot weaken the prefix requirement')
 args = parser.parse_args()
 assert bool(args.parent_receipt) == bool(args.parent_binary)
 out = HERE / args.receipt
-out.mkdir(exist_ok=False)
 timing = json.loads((HERE / args.timing / 'results.json').read_text())
 compiler = json.loads((HERE / args.compiler / 'results.json').read_text())
 assert timing['status'] == 'all-outputs-and-update-counts-verified'
 assert compiler['source_commit'] == timing['source_commit']
-require_packed_map = args.require_packed_map or timing.get('require_packed_map', False)
-require_packed_ssa = timing.get('require_packed_ssa', False)
+require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
+assert require_parallel_tasks in (None, 7)
+if args.minimum_parallel_peak is not None and (
+        require_parallel_tasks is None or not 1 <= args.minimum_parallel_peak <= require_parallel_tasks):
+    parser.error('--minimum-parallel-peak requires seven parallel tasks, explicitly or from the prefix receipt, and a value from 1 to 7')
+minimum_parallel_peak = max(args.minimum_parallel_peak or 1,
+                            timing.get('minimum_parallel_peak') or 1) if require_parallel_tasks else None
+assert minimum_parallel_peak is None or 1 <= minimum_parallel_peak <= require_parallel_tasks
+require_packed_map = args.require_packed_map or timing.get('require_packed_map', False) or require_parallel_tasks is not None
+require_packed_ssa = timing.get('require_packed_ssa', False) or require_parallel_tasks is not None
+out.mkdir(exist_ok=False)
 targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7',
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
@@ -66,6 +78,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
                                            current=launch['library']['comparison_work']),
               configuration=vars(args), samples=[], native_executions=[],
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
+              require_parallel_tasks=require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               scope='Single serial complete process per executable, including secured Mech startup/shutdown; full-input qualification, not median benchmark timings; no excluded warmup')
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
@@ -92,12 +105,22 @@ try:
                 packed = dict(packed_map_regions=native.get('native_packed_map_regions'),
                               packed_map_updates=native.get('native_packed_map_updates'),
                               packed_ssa_regions=native.get('native_packed_ssa_regions'))
+                parallel = dict(parallel_batches=native.get('native_parallel_batches'),
+                                parallel_regions=native.get('native_parallel_regions'),
+                                parallel_tasks=native.get('native_parallel_tasks'),
+                                parallel_peak_workers=native.get('native_parallel_peak_workers'))
+                report['native_executions'].append(dict(label=label, native_visits=native['native_visits'],
+                                                         **packed, **parallel))
                 if label == 'mech' and require_packed_map:
                     assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
                     assert packed['packed_map_updates'] == 874999961, 'Candidate did not complete every update in packed storage'
                 if label == 'mech' and require_packed_ssa:
                     assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
-                report['native_executions'].append(dict(label=label, **packed))
+                if label == 'mech' and require_parallel_tasks:
+                    assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
+                    assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'
+                    assert parallel['parallel_tasks'] == require_parallel_tasks, 'Candidate did not complete all seven parallel tasks'
+                    assert isinstance(parallel['parallel_peak_workers'], int) and minimum_parallel_peak <= parallel['parallel_peak_workers'] <= require_parallel_tasks, 'Candidate did not reach the required simultaneous worker count'
             row = dict(label=label, seconds=result['elapsed_seconds'],
                        maximum_rss_bytes=result['maximum_rss_bytes'])
             report['samples'].append(row)
