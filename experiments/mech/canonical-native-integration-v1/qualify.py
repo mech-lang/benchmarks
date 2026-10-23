@@ -25,7 +25,7 @@ def oracle(raw):
  return out.encode()
 
 def main():
- validation=json.loads((HERE/'validation-v1/results.json').read_bytes());assert validation['status']=='integration-tests-and-compiler-build-passed'
+ validation=json.loads((HERE/'validation-v2/results.json').read_bytes());assert validation['status']=='integration-tests-and-compiler-build-passed'
  correction=json.loads((HERE/'corrected-contracts-v1/results.json').read_bytes());assert correction['status']=='final-head-native-contracts-passed'
  assert subprocess.check_output(['git','-C',str(WORKSPACE),'rev-parse','HEAD'],text=True).strip()==correction['source_commit']
  assert not subprocess.check_output(['git','-C',str(WORKSPACE),'status','--porcelain'])
