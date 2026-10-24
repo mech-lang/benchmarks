@@ -1,0 +1,147 @@
+{
+  "status": "bounded-backoff-trial-verified",
+  "evidence": {
+    "escrow-backoff8": {
+      "source_commit": "2ac58b364c22be15aa0ba0e232409c1ce8c93327",
+      "batches": {
+        "cohort-v1": {
+          "median_seconds": {
+            "rust": 0.560987375,
+            "mech": 0.734799,
+            "baseline": 0.7507954585000001
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.3098316160858345,
+            "baseline": 1.3383464440710455
+          },
+          "faster_pairs": 5,
+          "candidate_change_percent": -2.130601393348741
+        },
+        "replication-v1": {
+          "median_seconds": {
+            "rust": 0.5621331039999999,
+            "mech": 0.7437742494999999,
+            "baseline": 0.760745104
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.3231283555575835,
+            "baseline": 1.3533184553386488
+          },
+          "faster_pairs": 5,
+          "candidate_change_percent": -2.2308200750510543
+        }
+      },
+      "decision": "retain",
+      "hardware_medians": {
+        "mech": {
+          "instructions": 26771400915,
+          "cycles": 7636507470,
+          "real_seconds": 0.73,
+          "user_seconds": 2.11,
+          "system_seconds": 0.11
+        },
+        "baseline": {
+          "instructions": 26881293124,
+          "cycles": 7595975284,
+          "real_seconds": 0.74,
+          "user_seconds": 2.04,
+          "system_seconds": 0.16
+        },
+        "rust": {
+          "instructions": 33190982264,
+          "cycles": 8021187771,
+          "real_seconds": 0.54,
+          "user_seconds": 2.37,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 4929,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3421,
+          "work_budget_active": 670,
+          "work_budget_wait": 278,
+          "storage_helper_active": 350,
+          "generated_helper_bridge": 93,
+          "other_active": 116,
+          "other_wait": 1
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 473
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 197
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 174
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 67
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 22
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 13
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 1
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "frozen_map_charge",
+            "observations": 1
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 69.40555893690404,
+          "work_budget_active": 13.593020896733618,
+          "work_budget_wait": 5.640089267599919,
+          "storage_helper_active": 7.100831811726517,
+          "generated_helper_bridge": 1.8867924528301887,
+          "other_active": 2.353418543315074,
+          "other_wait": 0.02028809089064719
+        }
+      },
+      "instruction_range": [
+        16,
+        39
+      ]
+    }
+  },
+  "validation": {
+    "escrow-backoff8-engine-v1": 26,
+    "escrow-backoff8-native-v1": 377,
+    "escrow-backoff8-catalog-v1": 1
+  },
+  "negative_qualification_fixtures": 18,
+  "primary_full_observations": 18,
+  "replication_full_observations": 18,
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 78,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "88e608f0ecb81564a2d0cad2ffef7a50c82f29641339dcc36a32f1145c328997",
+  "validation_commit": "2ac58b364c22be15aa0ba0e232409c1ce8c93327",
+  "changed_paths": [
+    "src/engine/src/resident/native_worker_budget.rs"
+  ],
+  "scope": "Two separately reported sets of six balanced complete-process cohorts; all observations retained separately, all complete outputs and physical updates, four bounded emitted lookup functions, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Full validation uses the exact timed revision. The generated Mech object matches the parent; the only runtime source change extends the existing bounded spin from six to eight rounds. All finite debit logic is unchanged. Six thread-lifetime diagnostic processes remain separate from primary samples. One cached function uses ordinary source/live exit snapshots after optional recipe metadata admission declined. No Rust runtime parity is established."
+}

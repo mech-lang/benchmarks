@@ -2,6 +2,23 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Current bounded budget-mutex backoff
+
+Extending the existing bounded retry from six to eight rounds reduces the full-input
+median **2.13% initially and 2.23% in an independent repeat**, with five faster
+matched pairs in each six-order batch. The repeat gives Rust **0.5621 s / 1.000×**,
+six-round Mech **0.7607 s / 1.353×**, and current Mech **0.7438 s / 1.323×**.
+Kernel CPU falls from 0.16 to 0.11 seconds and involuntary switches about 29%;
+user CPU rises. The change is retained, with every budget check unchanged.
+
+The [report](escrow-backoff8-checkpoint-v1/README.md) records both batches,
+exact-code profiles, separate counters and the remaining serial-preparation gap.
+All 26 worker-budget tests, 377 native checks and one catalog check pass at the
+exact timed revision. [Verification](escrow-backoff8-checkpoint-v1/results.json)
+checks 36 full-input observations, three exact-code profiles and 78 terminal
+processes. The generated Mech object, performance source, bytecode and canonical
+data remain unchanged; Rust parity is incomplete.
+
 ## Rejected runtime refill experiment
 
 Precomputing full-batch charges outside the budget mutex initially reduced the
@@ -13,7 +30,7 @@ validation are retained in the [experiment report](refill-fastpath-checkpoint-v1
 Worker stacks identify budget-mutex parking/waking as a remaining hypothesis;
 those samples do not establish how much elapsed time can be saved.
 
-## Current separate lookup functions
+## Earlier separate lookup functions
 
 IR78 separates admitted cached and ordinary hash loops. Six balanced full-input
 cohorts give Rust **0.5517 s / 1.000×**, IR77 parent **0.7614 s / 1.380×**, and
