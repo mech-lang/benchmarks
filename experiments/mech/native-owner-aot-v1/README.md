@@ -2,7 +2,41 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current result: direct SIMD control loads and remaining loop costs
+## Caller-owned loop constants: full-input gain with a prefix regression
+
+Compiler candidate [`f1b49a5da`](https://github.com/mech-lang/mech/commit/f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd), **IR62 / ABI27 / work65**, initializes the existing folded-hash constants and the source-certified loop endpoint in **24 caller-owned stack bytes** before invoking each outlined counting function. Hash literals are unchanged; the endpoint is computed at runtime from the actual source width/limit words. The local native function receives a seventh pointer argument, while the original Rust helper ABI and 19-word packed frame remain. Helpers never receive the packet pointer, and no write aliases it during the callee's lifetime, satisfying the backend's readonly-load contract. Inline or disabled outlining retains the prior arithmetic. Source, bytecode, all window/map operations and finite launch policies are unchanged.
+
+Three rotated **125-million-base** cohorts retain every complete process, including secured startup/shutdown, with no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.557 | 1.00× |
+| IR60 reference Mech | 1.092 | 1.96× |
+| IR62 caller-constant candidate | 1.021 | 1.83× |
+
+The candidate median is **6.5% lower**, a **1.07× speedup**. Candidate/reference ranges are **1.003–1.029 / 1.092–1.101 seconds**, with candidate lower in every paired cohort. Sample standard deviations are **0.014 / 0.005 seconds**. The [full aggregate](full-loop-constants-cohort-v1/results.json) retains all observations, orders and identities. Every Mech process verifies output, all **874,999,961 updates**, seven packed SSA maps, seven guarded bounds/call entries, five complete frozen maps, ten original reads and seven peak workers. Subjects execute sequentially under the common lock.
+
+The separate one-million-base protocol **regresses**. Both the [initial batch](loop-constants-timing-v1/results.json) and [repeat using only the pinned existing build](loop-constants-timing-v2/results.json) retain three fresh observations per executable and one excluded warmup per executable. The [six-observation aggregate](loop-constants-prefix-cohort-v1/results.json) excludes no timed observation:
+
+| One-million-base prefix | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.0193 | 1.00× |
+| IR60 reference Mech | 0.0896 | 4.65× |
+| IR62 caller-constant candidate | 0.1133 | 5.88× |
+
+The candidate median is **26.4% higher**. This remains a **draft candidate with an unresolved prefix regression**; the canonical benchmark dataset is unchanged. Full and prefix inputs and denominators remain separate.
+
+[Full-input counters](loop-constants-hardware-v1/results.json), nine separate serial diagnostic executions, give candidate **66.1 billion instructions / 13.9 billion cycles**, reference **76.4 billion / 15.1 billion**, and Rust **33.1 billion / 8.35 billion**. Instructions decrease **13.6%**, cycles **7.9%**; candidate instructions remain **1.99× Rust**. The [specified successful first-lane path](loop-constants-codegen-audit-v1/steady-path-comparison.json) falls **78 → 66 instructions** and **nine → three stack accesses**, retaining eight branches. Hash-constant reconstruction and `n-width+1` rematerialization leave that path; the source index stays in a register. Rust's comparable path has 34 instructions, four branches and two stack accesses. Static paths do not represent every dynamic iteration or assign individual-instruction costs.
+
+Each loop has **6,024 code bytes / 256 stack bytes**, versus reference **6,176 / 240**. Actual root caller templates use **28 instructions** within the unchanged 64-instruction lane. Combined native stack metadata increases **1,088 → 1,152 bytes**, including caller packet storage and actual callee/bridge requirements. No production allowance or work price is raised. The [full native suite](../native-owner-dispatch-v1/loop-constants-native-v1/summary.json) passes **359 GPU checks plus one catalog check**, with three existing exclusions. Its [five focused checks](../native-owner-dispatch-v1/loop-constants-focused-v1/summary.json) are included, covering actual packet/load metadata, original/decoded changed inputs, complete maps, wide keys, arbitrary starts/seeds, terminal/full-refill headers, finite caps and original failures. Exact and one-short native stack/code limits also pass.
+
+[Three full-input profiles](loop-constants-remaining-profile-v1/results.json) verify seven workers and complete output each. The [profiling copy](profile-loop-constants-build-v1/results.json) matches all **4,273,704 machine-code bytes** of the timed executable, SHA-256 `b66881135523d8baaaff0f2fc48d4a870cb37ba5d0d8f43d08f69af7f4144696`. [Three Rust captures](rust-full-profile-v13/analysis.json) retain its exact timed executable. Of **10,321** Mech worker observations, **77.9%** are in generated loops, **14.1%** waiting for work-budget escrow, **4.1%** active in accounting and **2.3%** in storage helpers. These include waits and differing windows; they are not wall-time shares or CPU utilization. [Reference captures reclassified with the same taxonomy](vector-control-remaining-profile-v3/results.json) retain the earlier distribution.
+
+The short-input investigation remains limited. A normal attachment missed the completed subject; pre-arming `sample -wait` for an exact executable copy captured workers. Startup/queue sections repeat a thread ID, so the updated parser and classifier taxonomy 4 merge disjoint root phases, normalize the colon suffix and preserve observation totals; a regression fixture verifies this. An initial controller PID-field error and empty/partial later captures remain retained. The [prefix comparison](loop-constants-prefix-comparison-v1/results.json) explicitly selects the first seven-worker capture per subject, **125 / 148 observations**, and records that explicit selection alongside all attempted captures. Cold-copy loader/sampler overhead limits causal conclusions. These worker captures concentrate in storage/accounting. [Separate prefix counters](loop-constants-prefix-hardware-v1/results.json) have fewer instructions/cycles and faster wrapped elapsed time, while both primary direct-launch batches regress; diagnostic elapsed times do not replace primary measurements.
+
+The [source-bound diagnosis](loop-constants-remaining-profile-v1/diagnosis.json) prioritizes resolving this discrepancy and the prefix cost, then reducing the remaining source-state/index-address overhead and shared accounting. Source-certified affine cursor/index representation, SSA copy coalescing and cost-guided launch ordering remain unimplemented candidates with no assigned gains. Rust parity, separate decoded-source standalone qualification and secured/trusted comparison remain incomplete.
+
+## Direct SIMD control loads and remaining loop costs (IR60 reference)
 
 Compiler [`83012637f`](https://github.com/mech-lang/mech/commit/83012637fb0f5fab98460385fbde822a263fa3c4), **IR60 / ABI27 / work65**, reads an admitted eight-byte AArch64 control group directly into a vector register. The original path loaded an integer and transferred it to SIMD before comparing fingerprints. The current code emits `ldr d1; cmeq` and converts the raw controls to an integer only on the empty-mask path. The memory extent, byte masks, lane order, storage semantics and original work debits remain unchanged. x86 retains its existing bounded eight-byte load. This follows the optional source-count proof described below.
 

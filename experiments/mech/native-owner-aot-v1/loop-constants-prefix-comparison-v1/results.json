@@ -1,0 +1,435 @@
+{
+  "status": "diagnostic-first-prefix-captures-compared",
+  "selected_bases": 1000000,
+  "reports": {
+    "candidate": {
+      "source_commit": "f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd",
+      "timed_binary_sha256": "b842025e5d0f84329b2991e51f9960c0f9ec56a72c2242065d3738fa68c20074",
+      "profile_analysis": "prefix-profile-loop-constants-candidate-v3/analysis.json",
+      "profile_analysis_sha256": "6420059828b209ece588a5da497bec27bcd7ef2b90c751ea66d383307beccfb0",
+      "worker_observations": 125,
+      "buckets": {
+        "work_budget_wait": 24,
+        "work_budget_active": 20,
+        "storage_helper_active": 53,
+        "generated_helper_bridge": 9,
+        "generated_counting_loop": 16,
+        "other_active": 3
+      },
+      "percent": {
+        "work_budget_wait": 19.2,
+        "work_budget_active": 16.0,
+        "storage_helper_active": 42.4,
+        "generated_helper_bridge": 7.2,
+        "generated_counting_loop": 12.8,
+        "other_active": 2.4
+      },
+      "samples": [
+        {
+          "stacks": "prefix-profile-loop-constants-candidate-v3/sample-0/stacks.txt",
+          "stacks_sha256": "732241c0862d9167dc6850e77bc600d4d7ba3e763322f8fe848920cb454c343a",
+          "observed_worker_threads": 7,
+          "worker_observations": 125,
+          "exclusive_buckets": {
+            "work_budget_wait": 24,
+            "work_budget_active": 20,
+            "storage_helper_active": 53,
+            "generated_helper_bridge": 9,
+            "generated_counting_loop": 16,
+            "other_active": 3
+          },
+          "exclusive_percent": {
+            "work_budget_wait": 19.2,
+            "work_budget_active": 16.0,
+            "storage_helper_active": 42.4,
+            "generated_helper_bridge": 7.2,
+            "generated_counting_loop": 12.8,
+            "other_active": 2.4
+          },
+          "work_budget_routes": [
+            {
+              "category": "work_budget_wait",
+              "route": "loop_refill",
+              "observations": 13
+            },
+            {
+              "category": "work_budget_wait",
+              "route": "missing_key_charge",
+              "observations": 10
+            },
+            {
+              "category": "work_budget_active",
+              "route": "frozen_map_charge",
+              "observations": 9
+            },
+            {
+              "category": "work_budget_active",
+              "route": "missing_key_charge",
+              "observations": 5
+            },
+            {
+              "category": "work_budget_active",
+              "route": "loop_refill",
+              "observations": 5
+            },
+            {
+              "category": "work_budget_active",
+              "route": "other_budget_operation",
+              "observations": 1
+            },
+            {
+              "category": "work_budget_wait",
+              "route": "other_budget_operation",
+              "observations": 1
+            }
+          ],
+          "top_wait_contexts": [
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "mech_canonical_program_entry_v1",
+                "mech_canonical_program_entry_v1_packed_loop_284",
+                "mech_canonical_program_entry_v1_preserving_bound_call",
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap6refill",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 11
+            },
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap14insert_missing",
+                "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge",
+                "_RNvNtNtCs97pdNyvJG81_11mech_engine8resident6budget22charge_control_account",
+                "_RNvMs1_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workersNtB5_20NativeWorkerWorkLoan6charge",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 10
+            },
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "mech_canonical_program_entry_v1",
+                "mech_canonical_program_entry_v1_packed_loop_173",
+                "mech_canonical_program_entry_v1_preserving_bound_call",
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap6refill",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 2
+            },
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "_RNvMs2_NtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact17iteration_runtimeINtB5_7ContextNtNtB7_18program_descriptor23NativeProgramDescriptorE16visit_from_entryB9_",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact4workNtB2_15NativeWorkMeter6charge",
+                "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge",
+                "_RNvNtNtCs97pdNyvJG81_11mech_engine8resident6budget22charge_control_account",
+                "_RNvMs1_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workersNtB5_20NativeWorkerWorkLoan6charge",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 1
+            }
+          ],
+          "top_exclusive_symbols": [
+            {
+              "symbol": "__psynch_mutexwait",
+              "observations": 24
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap14insert_missing",
+              "observations": 12
+            },
+            {
+              "symbol": "mech_canonical_program_entry_v1_packed_loop_284",
+              "observations": 12
+            },
+            {
+              "symbol": "__psynch_mutexdrop",
+              "observations": 10
+            },
+            {
+              "symbol": "mech_canonical_program_entry_v1_preserving_bound_call",
+              "observations": 9
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap5probe",
+              "observations": 8
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap9valid_key",
+              "observations": 6
+            },
+            {
+              "symbol": "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget13memory_budget",
+              "observations": 5
+            },
+            {
+              "symbol": "_RNvMs3_NtNtCsetd7qX7E4oI_9mech_core14memory_runtime6budgetNtB5_22ManagedNodeReservation5merge",
+              "observations": 5
+            },
+            {
+              "symbol": "_RNCNCNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map6frozenNtB8_9PackedMap6freeze00Bc_",
+              "observations": 4
+            },
+            {
+              "symbol": "_RNvMs0_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workers11debit_batchNtB5_20NativeWorkDebitBatch6charge",
+              "observations": 4
+            },
+            {
+              "symbol": "mech_canonical_program_entry_v1_packed_loop_173",
+              "observations": 4
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap5price",
+              "observations": 3
+            },
+            {
+              "symbol": "_RNvXs_NtNtNtCsgDHHaSskbIF_4core4iter8adapters9enumerateINtB4_9EnumerateINtNtB6_3map3MapINtNtNtBa_3ops5range5RangejENCNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map7payloadNtB1U_5Slots4iter0EENtNtNtB8_6traits8iterator8Iterator4nextB20_",
+              "observations": 3
+            },
+            {
+              "symbol": "_RNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map7payloadNtB2_5Slots3put",
+              "observations": 2
+            },
+            {
+              "symbol": "_RNvMs0_NtNtCsetd7qX7E4oI_9mech_core14memory_runtime6budgetNtB5_19ManagedMemoryBudget13reserve_nodes",
+              "observations": 2
+            },
+            {
+              "symbol": "pthread_mutex_unlock",
+              "observations": 1
+            },
+            {
+              "symbol": "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge",
+              "observations": 1
+            },
+            {
+              "symbol": "_RNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map7payloadNtB2_5Slots3new",
+              "observations": 1
+            },
+            {
+              "symbol": "pthread_mutex_lock",
+              "observations": 1
+            }
+          ]
+        }
+      ]
+    },
+    "baseline": {
+      "source_commit": "83012637fb0f5fab98460385fbde822a263fa3c4",
+      "timed_binary_sha256": "bf136a855696d74393bf9c317b81e8d6eb1df65d92ddf40fd0d5729544292fe6",
+      "profile_analysis": "prefix-profile-loop-constants-baseline-v2/analysis.json",
+      "profile_analysis_sha256": "0d0c4487ff23ee6c409c1cb3be41e0d39bd44a67f3fce1d9fe42bb5f797e6713",
+      "worker_observations": 148,
+      "buckets": {
+        "storage_helper_active": 65,
+        "work_budget_wait": 18,
+        "work_budget_active": 16,
+        "generated_helper_bridge": 10,
+        "generated_counting_loop": 29,
+        "other_active": 10
+      },
+      "percent": {
+        "storage_helper_active": 43.91891891891892,
+        "work_budget_wait": 12.162162162162161,
+        "work_budget_active": 10.81081081081081,
+        "generated_helper_bridge": 6.756756756756757,
+        "generated_counting_loop": 19.594594594594593,
+        "other_active": 6.756756756756757
+      },
+      "samples": [
+        {
+          "stacks": "prefix-profile-loop-constants-baseline-v2/sample-0/stacks.txt",
+          "stacks_sha256": "1297fdeea3b76582a4313477bec3d76e3c4bfbbeb50924284b9d44fcee6992a8",
+          "observed_worker_threads": 7,
+          "worker_observations": 148,
+          "exclusive_buckets": {
+            "storage_helper_active": 65,
+            "work_budget_wait": 18,
+            "work_budget_active": 16,
+            "generated_helper_bridge": 10,
+            "generated_counting_loop": 29,
+            "other_active": 10
+          },
+          "exclusive_percent": {
+            "storage_helper_active": 43.91891891891892,
+            "work_budget_wait": 12.162162162162161,
+            "work_budget_active": 10.81081081081081,
+            "generated_helper_bridge": 6.756756756756757,
+            "generated_counting_loop": 19.594594594594593,
+            "other_active": 6.756756756756757
+          },
+          "work_budget_routes": [
+            {
+              "category": "work_budget_wait",
+              "route": "missing_key_charge",
+              "observations": 9
+            },
+            {
+              "category": "work_budget_wait",
+              "route": "loop_refill",
+              "observations": 9
+            },
+            {
+              "category": "work_budget_active",
+              "route": "frozen_map_charge",
+              "observations": 9
+            },
+            {
+              "category": "work_budget_active",
+              "route": "missing_key_charge",
+              "observations": 5
+            },
+            {
+              "category": "work_budget_active",
+              "route": "loop_refill",
+              "observations": 2
+            }
+          ],
+          "top_wait_contexts": [
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap14insert_missing",
+                "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge",
+                "_RNvNtNtCs97pdNyvJG81_11mech_engine8resident6budget22charge_control_account",
+                "_RNvMs1_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workersNtB5_20NativeWorkerWorkLoan6charge",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 9
+            },
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "mech_canonical_program_entry_v1",
+                "mech_canonical_program_entry_v1_packed_loop_284",
+                "mech_canonical_program_entry_v1_preserving_bound_call",
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap6refill",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 8
+            },
+            {
+              "category": "work_budget_wait",
+              "ancestors": [
+                "mech_canonical_program_entry_v1",
+                "mech_canonical_program_entry_v1_packed_loop_173",
+                "mech_canonical_program_entry_v1_preserving_bound_call",
+                "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+                "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap6refill",
+                "_pthread_mutex_firstfit_lock_slow",
+                "_pthread_mutex_firstfit_lock_wait",
+                "__psynch_mutexwait"
+              ],
+              "observations": 1
+            }
+          ],
+          "top_exclusive_symbols": [
+            {
+              "symbol": "mech_canonical_program_entry_v1_packed_loop_284",
+              "observations": 21
+            },
+            {
+              "symbol": "__psynch_mutexwait",
+              "observations": 18
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap9valid_key",
+              "observations": 14
+            },
+            {
+              "symbol": "_RNvMs0_NtNtCsetd7qX7E4oI_9mech_core14memory_runtime6budgetNtB5_19ManagedMemoryBudget13reserve_nodes",
+              "observations": 11
+            },
+            {
+              "symbol": "mech_canonical_program_entry_v1_preserving_bound_call",
+              "observations": 10
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap14insert_missing",
+              "observations": 9
+            },
+            {
+              "symbol": "mech_canonical_program_entry_v1_packed_loop_173",
+              "observations": 8
+            },
+            {
+              "symbol": "_RINvNtCsgDHHaSskbIF_4core3ptr13drop_in_placeNtNtNtCsetd7qX7E4oI_9mech_core14memory_runtime6budget22ManagedNodeReservationECs5MWvb3T4wzJ_8mech_gpu.23442",
+              "observations": 7
+            },
+            {
+              "symbol": "_RNvMs0_NtNtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workers11debit_batchNtB5_20NativeWorkDebitBatch6charge",
+              "observations": 7
+            },
+            {
+              "symbol": "_xzm_xzone_malloc_tiny",
+              "observations": 6
+            },
+            {
+              "symbol": "_RNvMs3_NtNtCsetd7qX7E4oI_9mech_core14memory_runtime6budgetNtB5_22ManagedNodeReservation5merge",
+              "observations": 6
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap5probe",
+              "observations": 5
+            },
+            {
+              "symbol": "__psynch_mutexdrop",
+              "observations": 4
+            },
+            {
+              "symbol": "_RNvNtNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact15program_runtime10map_owners6closed4call",
+              "observations": 4
+            },
+            {
+              "symbol": "_RNCNCNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map6frozenNtB8_9PackedMap6freeze00Bc_",
+              "observations": 4
+            },
+            {
+              "symbol": "_RNvMNtNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_map7payloadNtB2_5Slots3put",
+              "observations": 2
+            },
+            {
+              "symbol": "pthread_mutex_lock",
+              "observations": 2
+            },
+            {
+              "symbol": "_RNvMs1_NtNtNtCs97pdNyvJG81_11mech_engine8resident6budget7workersNtB5_20NativeWorkerWorkLoan6charge",
+              "observations": 1
+            },
+            {
+              "symbol": "_RNvMs0_NtNtCs97pdNyvJG81_11mech_engine8resident6budgetNtB5_23NativeLibraryWorkBudget6charge",
+              "observations": 1
+            },
+            {
+              "symbol": "_RNvMNtNtCs5MWvb3T4wzJ_8mech_gpu15native_artifact18program_packed_mapNtB2_9PackedMap10call_flags",
+              "observations": 1
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "script_sha256": "700e15e13045048401b85624336aad4d0cf5723c75b3f8df3a48cdc2efebe361",
+  "classifier_sha256": "b47684e488292da1fff09e70f1658a82b8fd28c02ae00986ef3abf2316f5be6a",
+  "taxonomy_version": 4,
+  "benchmark_samples": 0,
+  "scope": "First pre-armed exact-byte executable-copy capture per subject, each observing seven workers. Each job attempted three captures; later empty/partial traces remain retained and are excluded by explicit index selection for coverage, never by timing. Cold-copy loader/sampler overhead and low observation counts limit causal claims; worker percentages include waits, are not wall-time shares and do not explain the entire warm-process regression. Rust full-input profiles are not mixed into this prefix comparison."
+}

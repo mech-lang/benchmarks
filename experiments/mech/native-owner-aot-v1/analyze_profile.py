@@ -58,9 +58,9 @@ def stack_threads(content, patterns):
             while ancestors:
                 finish_node()
             threads.append({
-                'thread': symbol,
+                'thread': symbol.rstrip(':'),
                 'header': line.strip(),
-                'main_thread': 'com.apple.main-thread' in line,
+                'main_thread': 'com.apple.main-thread' in line or bool(re.search(r'\bMain Thread\b', line)),
                 'samples': count,
                 'samples_unwound_to_start': 0,
                 'inclusive_samples': {label: 0 for label in patterns},
@@ -82,6 +82,23 @@ def stack_threads(content, patterns):
         ancestors.append([depth, count, 0, matched])
     while ancestors:
         finish_node()
+    # A pre-armed trace can repeat one thread ID when its label changes from
+    # startup to a dispatch queue. Each root is a disjoint observed phase.
+    merged = {}
+    for phase in threads:
+        key = phase['thread']
+        if key not in merged:
+            merged[key] = phase
+            continue
+        thread = merged[key]
+        thread.setdefault('header_phases', [thread['header']]).append(phase['header'])
+        thread['main_thread'] |= phase['main_thread']
+        for label in ('samples', 'samples_unwound_to_start'):
+            thread[label] += phase[label]
+        for kind in ('inclusive_samples', 'exclusive_samples'):
+            for label, count in phase[kind].items():
+                thread[kind][label] += count
+    threads = list(merged.values())
     assert threads and sum(thread['main_thread'] for thread in threads) == 1
     for thread in threads:
         total = thread['samples']
@@ -116,6 +133,7 @@ def main():
     parser.add_argument('--profile-build', default='profile-cache-build-v2')
     parser.add_argument('--samples', default='full-profile-cache-v1')
     parser.add_argument('--binary', default='counting-cache')
+    parser.add_argument('--sample-index', type=int, action='append', help='Explicit diagnostic capture selection; recorded in analysis; never filters timing observations')
     args = parser.parse_args()
     timing = json.loads((HERE / args.timing / 'results.json').read_text())
     profile = json.loads((HERE / args.profile_build / 'results.json').read_text())
@@ -173,7 +191,10 @@ def main():
         'thread_join': ('pthread_join', 'JoinInner', 'join_unchecked'),
     })
     summaries = []
-    for item in capture['samples']:
+    selected = args.sample_index if args.sample_index is not None else list(range(len(capture['samples'])))
+    assert selected and len(selected) == len(set(selected)) and all(0 <= i < len(capture['samples']) for i in selected)
+    for index in selected:
+        item = capture['samples'][index]
         # Use only capture-owned paths, not unrelated files in the directory.
         # Rebase the recorded sample name so archived receipts remain readable
         # after moving the checkout from its original absolute path.
@@ -215,6 +236,9 @@ def main():
         "completed_output_verified": capture.get('completed_output_verified'),
         "native_counters": capture.get('native_counters'),
         "samples": summaries,
+        "selected_capture_indices": selected,
+        "attempted_capture_count": len(capture["samples"]),
+        "analysis_script_sha256": sha(Path(__file__).read_bytes()),
     }
     output = HERE / args.samples / 'analysis.json'
     output.write_text(json.dumps(result, indent=2) + "\n")

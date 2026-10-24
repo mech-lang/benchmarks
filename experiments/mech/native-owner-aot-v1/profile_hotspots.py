@@ -45,9 +45,8 @@ def leaves(content):
         if symbol.startswith('Thread_'):
             while stack:
                 finish()
-            thread = symbol
-            assert thread not in roots
-            roots[thread] = count
+            thread = symbol.rstrip(':')
+            roots[thread] = roots.get(thread, 0) + count
             continue
         assert thread is not None
         while stack and stack[-1][0] >= depth:
@@ -130,56 +129,61 @@ def summarize(path, workers, language, expected):
                                        for symbol, count in symbols.most_common(20)])
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--mech', nargs='+', required=True)
-parser.add_argument('--rust', required=True)
-parser.add_argument('--receipt', required=True)
-args = parser.parse_args()
-out = HERE / args.receipt
-out.mkdir(exist_ok=False)
-evidence, samples = [], dict(mech=[], rust=[])
-for folder in args.mech:
-    path = HERE / folder / 'analysis.json'
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--mech', nargs='+', required=True)
+    parser.add_argument('--rust', required=True)
+    parser.add_argument('--receipt', required=True)
+    args = parser.parse_args()
+    out = HERE / args.receipt
+    out.mkdir(exist_ok=False)
+    evidence, samples = [], dict(mech=[], rust=[])
+    for folder in args.mech:
+        path = HERE / folder / 'analysis.json'
+        report = json.loads(path.read_text())
+        assert report['machine_code_identical'] and report['completed_output_verified']
+        evidence.append(dict(path=str(path.relative_to(HERE)), sha256=sha(path.read_bytes())))
+        for item in report['samples']:
+            workers = {thread['thread'] for thread in item['threads'] if thread['observed_native_worker']}
+            sample = summarize(HERE / item['stacks'], workers, 'mech', item['observed_workers']['thread_samples'])
+            assert sample['stacks_sha256'] == item['stacks_sha256']
+            sample['main_observations'] = item['main_thread']['samples']
+            sample['main_join_observations'] = item['main_thread']['inclusive_samples']['thread_join']
+            samples['mech'].append(sample)
+    path = HERE / args.rust / 'analysis.json'
     report = json.loads(path.read_text())
-    assert report['machine_code_identical'] and report['completed_output_verified']
+    assert report['status'] == 'exact-timed-rust-binary-profiled'
     evidence.append(dict(path=str(path.relative_to(HERE)), sha256=sha(path.read_bytes())))
     for item in report['samples']:
-        workers = {thread['thread'] for thread in item['threads'] if thread['observed_native_worker']}
-        sample = summarize(HERE / item['stacks'], workers, 'mech', item['observed_workers']['thread_samples'])
+        workers = {thread['thread'] for thread in item['threads'] if thread['counting_task_samples'] > 0}
+        expected = sum(thread['samples'] for thread in item['threads'] if thread['thread'] in workers)
+        sample = summarize(HERE / item['stacks'], workers, 'rust', expected)
         assert sample['stacks_sha256'] == item['stacks_sha256']
-        sample['main_observations'] = item['main_thread']['samples']
-        sample['main_join_observations'] = item['main_thread']['inclusive_samples']['thread_join']
-        samples['mech'].append(sample)
-path = HERE / args.rust / 'analysis.json'
-report = json.loads(path.read_text())
-assert report['status'] == 'exact-timed-rust-binary-profiled'
-evidence.append(dict(path=str(path.relative_to(HERE)), sha256=sha(path.read_bytes())))
-for item in report['samples']:
-    workers = {thread['thread'] for thread in item['threads'] if thread['counting_task_samples'] > 0}
-    expected = sum(thread['samples'] for thread in item['threads'] if thread['thread'] in workers)
-    sample = summarize(HERE / item['stacks'], workers, 'rust', expected)
-    assert sample['stacks_sha256'] == item['stacks_sha256']
-    samples['rust'].append(sample)
-aggregates = {}
-for language, observations in samples.items():
-    counts, routes, total = Counter(), Counter(), 0
-    for sample in observations:
-        counts.update(sample['exclusive_buckets'])
-        routes.update({(item['category'], item['route']): item['observations']
-                       for item in sample['work_budget_routes']})
-        total += sample['worker_observations']
-    assert sum(counts.values()) == total
-    assert sum(routes.values()) == sum(counts[key] for key in
-                                      ('work_budget_wait', 'work_budget_active'))
-    aggregates[language] = dict(worker_observations=total, exclusive_buckets=dict(counts),
-                               work_budget_routes=[dict(category=label, route=route, observations=count)
-                                                   for (label, route), count in routes.most_common()],
-                               exclusive_percent={key: 100 * count / total for key, count in counts.items()})
-result = dict(status='exclusive-worker-observations-partitioned', samples=samples,
-              aggregates=aggregates, evidence=evidence, script_sha256=sha(Path(__file__).read_bytes()),
-              taxonomy_version=3,
-              taxonomy_change='Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.',
-              scope='Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.',
-              benchmark_samples=0)
-(out / 'results.json').write_text(json.dumps(result, indent=2) + '\n')
-print(json.dumps(aggregates, indent=2))
+        samples['rust'].append(sample)
+    aggregates = {}
+    for language, observations in samples.items():
+        counts, routes, total = Counter(), Counter(), 0
+        for sample in observations:
+            counts.update(sample['exclusive_buckets'])
+            routes.update({(item['category'], item['route']): item['observations']
+                           for item in sample['work_budget_routes']})
+            total += sample['worker_observations']
+        assert sum(counts.values()) == total
+        assert sum(routes.values()) == sum(counts[key] for key in
+                                          ('work_budget_wait', 'work_budget_active'))
+        aggregates[language] = dict(worker_observations=total, exclusive_buckets=dict(counts),
+                                   work_budget_routes=[dict(category=label, route=route, observations=count)
+                                                       for (label, route), count in routes.most_common()],
+                                   exclusive_percent={key: 100 * count / total for key, count in counts.items()})
+    result = dict(status='exclusive-worker-observations-partitioned', samples=samples,
+                  aggregates=aggregates, evidence=evidence, script_sha256=sha(Path(__file__).read_bytes()),
+                  taxonomy_version=4,
+                  taxonomy_change='Repeated thread-ID roots are disjoint observed phases and are merged without double counting. Main-thread flags accept both startup and dispatch-queue labels. Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.',
+                  scope='Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.',
+                  benchmark_samples=0)
+    (out / 'results.json').write_text(json.dumps(result, indent=2) + '\n')
+    print(json.dumps(aggregates, indent=2))
+
+
+if __name__ == "__main__":
+    main()

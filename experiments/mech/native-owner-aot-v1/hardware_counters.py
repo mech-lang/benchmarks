@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--receipt', required=True)
 parser.add_argument('--timing', required=True)
 parser.add_argument('--compiler', required=True)
+parser.add_argument('--input-mode', choices=('full', 'prefix'), default='full')
 args = parser.parse_args()
 timing = json.loads((HERE / args.timing / 'results.json').read_text())
 compiler = json.loads((HERE / args.compiler / 'results.json').read_text())
@@ -26,10 +27,21 @@ targets = dict(mech=HERE / '.build' / config['binary'],
                rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7')
 for label, key in [('mech', 'candidate_sha256'), ('baseline', 'baseline_sha256'), ('rust', 'rust_sha256')]:
     assert process.sha(targets[label]) == timing[key]
-inp = HERE.parents[2] / 'experiments/janet/.build/inputs/fasta-n25000000.stdin'
-assert process.sha(inp) == '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'
-launch = HERE / 'full-lookup-facts-v1/launch.json'
-assert process.sha(launch) == '73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9'
+if args.input_mode == 'full':
+    inp = HERE.parents[2] / 'experiments/janet/.build/inputs/fasta-n25000000.stdin'
+    input_sha = '3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa'
+    launch = HERE / 'full-lookup-facts-v1/launch.json'
+    launch_sha = '73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9'
+    bases, updates = 125000000, 874999961
+    output_sha = 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+else:
+    inp = HERE / 'rust-span-diagnostic-v2/input.fasta'
+    input_sha = 'e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb'
+    launch = HERE / 'full-timing-v1/launch.json'
+    launch_sha = '3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2fd0daf57cdb43ec'
+    bases, updates = 1000000, 6999961
+    output_sha = 'f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa'
+assert process.sha(inp) == input_sha and process.sha(launch) == launch_sha
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 report = dict(status='running', source_commit=timing['source_commit'],
@@ -37,7 +49,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               rust_sha256=timing['rust_sha256'], input_sha256=process.sha(inp),
               source_sha256=timing['source_sha256'], baseline_source_sha256=timing.get('baseline_source_sha256', timing['source_sha256']),
               source_comparison=timing.get('source_comparison', 'unchanged-source'), launch_sha256=process.sha(launch),
-              timer='/usr/bin/time -l', selected_bases=125000000, expected_table_updates=874999961,
+              timer='/usr/bin/time -l', input_mode=args.input_mode, selected_bases=bases, expected_table_updates=updates,
               observations=[], benchmark_samples=0, script_sha256=process.sha(Path(__file__)),
               scope='macOS whole-process counters reported by time -l, including startup/shutdown and all target threads; diagnostic executions under the shared serial lock, not additional benchmark timing observations.')
 process.save(out / 'results.json', report)
@@ -51,7 +63,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             folder = out / f'{index}-{label}'
             result = process.execute(command, folder, compiler['environment'], lock, stdin=inp, deadline=60, quantitative=False)
             assert result['exit_status'] == 0
-            assert process.sha(folder / 'stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+            assert process.sha(folder / 'stdout.bin') == output_sha
             if label != 'rust':
                 native = json.loads(native_path.read_text())
                 assert native['shutdown'] == 'completed'
@@ -66,7 +78,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                 assert native['native_guarded_loop_regions'] in expected_guards
                 if label == 'baseline' or timing.get('require_guarded_loops'):
                     assert native['native_guarded_loop_regions'] == 7
-                assert native['native_packed_map_updates'] == 874999961
+                assert native['native_packed_map_updates'] == updates
                 assert native['native_frozen_map_regions'] == 5 and native['native_frozen_map_reads'] == 10
                 assert native['native_parallel_tasks'] == native['native_parallel_peak_workers'] == 7
                 if label == 'mech' and timing.get('require_loop_invariants'):
