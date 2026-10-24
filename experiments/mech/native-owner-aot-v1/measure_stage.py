@@ -451,6 +451,8 @@ parser.add_argument('--require-frozen-maps', action='store_true',
                     help='Require source-qualified private maps, five actual retained maps and ten original source queries')
 parser.add_argument('--require-lookup-facts', action='store_true',
                     help='Require exact-source current-key substitutions in both emitted packed regions')
+parser.add_argument('--require-cfg-cleanup', action='store_true',
+                    help='Require bounded constant-branch cleanup in the exact emitted native function')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -497,6 +499,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_guarded_loops=args.require_guarded_loops,
               require_frozen_maps=args.require_frozen_maps,
               require_lookup_facts=args.require_lookup_facts,
+              require_cfg_cleanup=args.require_cfg_cleanup,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -546,11 +549,24 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] == 50 and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'))
         report['source_lookup_facts_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_cfg_cleanup:
+        assert manifest['object']['typed_ir_version'] == 51 and manifest['object']['work_policy_version'] == 65
+        cleanup = manifest['object'].get('compiled_cfg_cleanup')
+        assert isinstance(cleanup, dict) and cleanup['enabled'] is True
+        assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
+        assert type(cleanup['constant_branches_removed']) is int and cleanup['constant_branches_removed'] > 0
+        assert type(cleanup['fixed_point']) is bool
+        for key in ('before_blocks', 'before_instructions', 'after_blocks', 'after_instructions'):
+            assert type(cleanup[key]) is int and cleanup[key] > 0
+        report['compiled_cfg_cleanup'] = cleanup
+        report['cfg_cleanup_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:

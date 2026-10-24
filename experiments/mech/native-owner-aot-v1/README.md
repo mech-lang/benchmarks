@@ -2,6 +2,28 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Bounded constant control-flow cleanup
+
+Compiler [`40e86c965`](https://github.com/mech-lang/mech/commit/40e86c965464d18a6ca990fa9e4b7a0c6af51e1b) runs bounded constant-branch cleanup after Cranelift data optimization. It folds only literal integer conditions, preserves the selected edge's arguments, and uses the backend's unreachable-block and constant-phi cleanup before register allocation. Dynamic conditions, source effects, failures, capabilities and finite work remain. The ordinary final speed pipeline still runs. IR51 identifies the change; ABI26, work65, source, bytecode, inputs and launch policies are unchanged.
+
+Six rotated **125-million-base** cohorts retain every complete-process observation, with no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.550 | 1.00× |
+| Previous current-key lookup stage, `bebf57769` | 1.538 | 2.80× |
+| Constant CFG cleanup, `40e86c965` | 1.463 | 2.66× |
+
+The median is **4.9% lower**, a **1.05× speedup**. Candidate observations span 1.451–1.481 seconds, below the parent's 1.525–1.550 seconds. A 0.991-second Rust observation in the first three cohorts prompted three additional balanced cohorts; all six observations remain in the [aggregate](full-cfg-cleanup-cohort-v1/results.json). This remains far from Rust parity.
+
+The [one-million-base prefix](cfg-cleanup-timing-v1/results.json), with three alternating observations and one excluded warmup per executable, gives 0.0209 seconds for Rust, 0.0937 for the parent (**4.49× Rust**) and 0.0964 for the candidate (**4.62× Rust**). The candidate median is **2.9% higher**, with overlapping ranges, so this protocol establishes no prefix gain. Every candidate execution independently verifies seven packed SSA maps, seven selected guarded loops, five entire frozen maps, ten original reads, seven peak workers, complete output and all **6,999,961 prefix** or **874,999,961 full-input updates**. Subjects execute sequentially under the shared lock, including secured startup/shutdown.
+
+[Four focused tests](../native-owner-dispatch-v1/cfg-cleanup-focused-v2/summary.json) compare enabled and disabled compilation across selected effects, noncanonical boolean words, block arguments, runtime inputs, growth/refills, finite limits and source errors. The [full suite](../native-owner-dispatch-v1/cfg-cleanup-native-v1/summary.json) passes **329 GPU tests and one catalog test**, with three existing exclusions. A [retained compile failure](../native-owner-dispatch-v1/cfg-cleanup-focused-v1/summary.json) exposed entry-point visibility before tests ran; the correction changes no runtime behavior. No production allowances changed.
+
+The emitted function reports 56 literal branches removed in two rounds. Its combined data/control optimization reports 3,249 remaining blocks and 12,073 instructions, versus 3,643 and 17,183 before those passes. Those compiler counts are not machine instructions or isolated CFG-pass savings. [Separate macOS hardware-counter executions](cfg-cleanup-hardware-v1/results.json) give medians of **111.6 billion instructions and 22.6 billion cycles** for the candidate, versus **119.9 billion / 24.0 billion** for its parent and **33.1 billion / 7.86 billion** for Rust. Candidate instructions are 7.0% lower than the parent and still **3.37× Rust**. These complete-process diagnostic counters include every target thread and startup/shutdown; they are not extra timing-cohort observations.
+
+The [fresh full-input profile](full-profile-cfg-cleanup-v1/analysis.json) observes seven workers and 5,328 worker samples; 4,740 (**88.96%**) end in generated code. Inclusive library-debit and wait shares are **4.41%** and **5.69%**, with no publication observed. Categories overlap and are not elapsed-time shares. The profiling copy matches the timed executable's entire **4,273,372-byte** machine-code section, SHA-256 `4e6a88d11058f18ae23b487c9fc0976a99b0467c147373ea10a43129a5579b4c`. [Exact-entry disassembly and sampled-PC groups](cfg-cleanup-codegen-audit-v1/results.json) still identify stack reloads in the counting loop. The next structural candidate isolates each proved closed loop in its own emitted native function to reduce unrelated live state; it has no assigned gain. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Current-key lookup facts and the remaining instruction gap
 
 Compiler [`bebf57769`](https://github.com/mech-lang/mech/commit/bebf5776902092e13bececb99aaed3e8a5f14fc8) derives bounded facts about the current selected key's cache and presence through the original tag graph. A new range or header invalidates the corresponding facts; membership branches establish presence/absence; insertion refreshes the pointer and invalidates old predicates. Copies are simultaneous and joins retain only common facts. Unknown or unsupported cases keep the original lookup. Original per-call checks, arithmetic, errors, source updates and work charges remain. IR50 identifies the change; ABI26, work65, source, bytecode, inputs and finite launch limits are unchanged.

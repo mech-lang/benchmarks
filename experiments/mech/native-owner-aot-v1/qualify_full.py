@@ -44,6 +44,11 @@ if require_frozen_maps:
 require_lookup_facts = timing.get('require_lookup_facts', False)
 if require_lookup_facts:
     assert timing.get('source_lookup_facts_qualified') is True
+require_cfg_cleanup = timing.get('require_cfg_cleanup', False)
+if require_cfg_cleanup:
+    assert timing.get('cfg_cleanup_qualified') is True
+    assert timing['compiled_cfg_cleanup']['enabled'] is True
+    assert timing['compiled_cfg_cleanup']['constant_branches_removed'] > 0
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -59,7 +64,7 @@ targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rus
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
 assert process.sha(targets['mech']) == timing['candidate_sha256']
-if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops or require_frozen_maps or require_lookup_facts:
+if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops or require_frozen_maps or require_lookup_facts or require_cfg_cleanup:
     project = Path(str(targets['mech']) + '.project')
     for key in ('compiled_source_edge_facts', 'compiled_tag_threading', 'compiled_frame_effects', 'compiled_guarded_loops', 'compiled_lookup_facts'):
         if timing.get(key) is not None:
@@ -106,6 +111,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_guarded_loops=require_guarded_loops,
               require_frozen_maps=require_frozen_maps,
               require_lookup_facts=require_lookup_facts,
+              require_cfg_cleanup=require_cfg_cleanup,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -135,6 +141,9 @@ if require_frozen_maps:
 if require_lookup_facts:
     for key in ('source_lookup_facts_qualified', 'compiled_lookup_facts',
                 'qualified_lookup_regions', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
+if require_cfg_cleanup:
+    for key in ('cfg_cleanup_qualified', 'compiled_cfg_cleanup', 'object_sha256', 'linked_manifest_sha256'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
