@@ -1,0 +1,135 @@
+{
+  "schema": "mech.rust-strategy-diagnostic.v1",
+  "source_sha256": "47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851",
+  "rust_binary_sha256": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763",
+  "mech_binary_sha256": "86f3a407052eb265930aab5a74235dec3ca29abc04a0d277ebfa5f41b8f162c5",
+  "source_tree": "90395fc5a8486a5c040c99a9c023b47de10bc968",
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "variants": {
+    "rebuild_control": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/rebuild_control.rs",
+      "sha256": "47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851"
+    },
+    "wide_keys": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/wide_keys.rs",
+      "sha256": "3f4f62dd873f80c89cdd9f67eba1af20bc046f5eb4bc2ce0fabf74e28d757e35"
+    },
+    "wide_counts": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/wide_counts.rs",
+      "sha256": "fb21ef4f6d9d4ee1885230008c3f0d82c1b15fa6eeb56b4d45204df7fd1fb3bd"
+    },
+    "wide_both": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/wide_both.rs",
+      "sha256": "538dab1f8f39988399369328d040379bb236db8159c5526eafa6999149ba38d6"
+    },
+    "decode_each": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/decode_each.rs",
+      "sha256": "9f78d05f3811cd9647a48dce7ee80e3c843086138553cc6f3d8489e4ce18af5e"
+    },
+    "wide_decode": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/wide_decode.rs",
+      "sha256": "669f8bbfb09cbbfabfdcd647b9fa2c39e1ad81887d6d21397c775bcffdb29eb7"
+    },
+    "scoped_threads": {
+      "source": "experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/scoped_threads.rs",
+      "sha256": "5da22e34db50dd384db3c578b4c9524121929cb82cc0f8ce129f488bc5f5f917"
+    }
+  },
+  "orders": [
+    [
+      "wide_counts",
+      "wide_both",
+      "wide_decode",
+      "scoped_threads",
+      "rust",
+      "decode_each",
+      "mech",
+      "rebuild_control",
+      "wide_keys"
+    ],
+    [
+      "wide_keys",
+      "rebuild_control",
+      "mech",
+      "decode_each",
+      "rust",
+      "scoped_threads",
+      "wide_decode",
+      "wide_both",
+      "wide_counts"
+    ],
+    [
+      "wide_counts",
+      "rust",
+      "scoped_threads",
+      "wide_decode",
+      "decode_each",
+      "wide_both",
+      "wide_keys",
+      "rebuild_control",
+      "mech"
+    ],
+    [
+      "mech",
+      "rebuild_control",
+      "wide_keys",
+      "wide_both",
+      "decode_each",
+      "wide_decode",
+      "scoped_threads",
+      "rust",
+      "wide_counts"
+    ],
+    [
+      "rust",
+      "decode_each",
+      "rebuild_control",
+      "mech",
+      "wide_both",
+      "wide_decode",
+      "wide_counts",
+      "scoped_threads",
+      "wide_keys"
+    ],
+    [
+      "wide_keys",
+      "scoped_threads",
+      "wide_counts",
+      "wide_decode",
+      "wide_both",
+      "mech",
+      "rebuild_control",
+      "decode_each",
+      "rust"
+    ]
+  ],
+  "inputs": {
+    "full": {
+      "path": "experiments/janet/.build/inputs/fasta-n25000000.stdin",
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "output": "f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7",
+      "policy": "full-launch-order-v1/launch.json",
+      "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+      "updates": 874999961
+    },
+    "prefix": {
+      "path": "experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/input.fasta",
+      "sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+      "output": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+      "policy": "full-timing-v1/launch.json",
+      "policy_sha256": "3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2fd0daf57cdb43ec",
+      "updates": 6999961
+    }
+  },
+  "scope": "Diagnostic variants only; six predeclared complete-process observations per subject/input, three random orders paired with their reverses, no excluded warmup or outlier. Inputs are separate cohorts. All subjects run serially under the original common mutex. Exact upstream Rust and retained secured Mech are unchanged controls. Every variant retains seven complete typed tables and all source windows; no new benchmark sample is published.",
+  "limitations": "Changing types can affect hashing monomorphization, arithmetic and layout together. Decoding moves work between input and workers; it is not a pure instruction microbenchmark. Scoped-thread diagnostic preserves reverse-width submission but does not reproduce every Mech runtime scheduling decision. Counterfactuals do not establish an optimization benefit for Mech.",
+  "interpretation": {
+    "wide_keys": "Use u64 keys for all seven maps; retain u32 counts.",
+    "wide_counts": "Use u64 counts; retain original u8/u16/u32/u64 keys.",
+    "wide_both": "Use u64 keys/counts for all maps, matching Mech narrow payload width.",
+    "decode_each": "Keep ASCII input; move identical shift/mask into each worker.",
+    "wide_decode": "Combine u64 keys/counts and per-worker byte decoding.",
+    "scoped_threads": "Replace Tokio pool with seven scoped OS threads; preserve reverse-width spawn and source-order result printing.",
+    "rebuild_control": "Unmodified protected Rust source, same pinned dependencies/toolchain/flags; rebuild at separate output path."
+  }
+}

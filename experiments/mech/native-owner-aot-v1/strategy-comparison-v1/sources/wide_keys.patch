@@ -1,0 +1,42 @@
+--- protected-original
++++ wide_keys
+@@ -69,7 +69,7 @@
+     }
+ }
+ 
+-fn print_stat(h: Map<u8>, seq_len: usize) {
++fn print_stat(h: Map<u64>, seq_len: usize) {
+     let total = h.values().sum::<u32>();
+ 
+     h.into_iter()
+@@ -83,12 +83,12 @@
+         })
+         .for_each(|(k, v)| {
+             if seq_len == 1 {
+-                println!("{} {:.3}", match_key(k), (100 * v) as f32 / total as f32);
++                println!("{} {:.3}", match_key(k as u8), (100 * v) as f32 / total as f32);
+             } else {
+                 println!(
+                     "{}{} {:.3}",
+-                    match_key(k >> 2),
+-                    match_key(0b11 & k),
++                    match_key((k >> 2) as u8),
++                    match_key((0b11 & k) as u8),
+                     (100 * v) as f32 / total as f32
+                 );
+             };
+@@ -175,10 +175,10 @@
+     let f1 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s7, 1))));
+     print_stat(f1.wait().unwrap(), 1);
+     print_stat(f2.wait().unwrap(), 2);
+-    print::<u8>(f3.wait().unwrap(), "GGT");
+-    print::<u8>(f4.wait().unwrap(), "GGTA");
+-    print::<u16>(f5.wait().unwrap(), "GGTATT");
+-    print::<u32>(f6.wait().unwrap(), "GGTATTTTAATT");
++    print::<u64>(f3.wait().unwrap(), "GGT");
++    print::<u64>(f4.wait().unwrap(), "GGTA");
++    print::<u64>(f5.wait().unwrap(), "GGTATT");
++    print::<u64>(f6.wait().unwrap(), "GGTATTTTAATT");
+     print::<u64>(f7.wait().unwrap(), "GGTATTTTAATTTATAGT");
+ }
+ 

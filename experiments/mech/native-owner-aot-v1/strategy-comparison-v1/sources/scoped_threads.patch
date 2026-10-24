@@ -1,0 +1,47 @@
+--- protected-original
++++ scoped_threads
+@@ -156,7 +156,6 @@
+ pub fn calc<R: std::io::BufRead>(r: R) {
+     let s_vec = get_seq(r, b">THREE");
+ 
+-    let pool = ThreadPool::new();
+ 
+     let arc_vec = Arc::new(s_vec);
+     let s1 = arc_vec.clone();
+@@ -166,20 +165,22 @@
+     let s5 = arc_vec.clone();
+     let s6 = arc_vec.clone();
+     let s7 = arc_vec.clone();
+-    let f7 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s1, 18))));
+-    let f6 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s2, 12))));
+-    let f5 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s3, 6))));
+-    let f4 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s4, 4))));
+-    let f3 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s5, 3))));
+-    let f2 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s6, 2))));
+-    let f1 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s7, 1))));
+-    print_stat(f1.wait().unwrap(), 1);
+-    print_stat(f2.wait().unwrap(), 2);
+-    print::<u8>(f3.wait().unwrap(), "GGT");
+-    print::<u8>(f4.wait().unwrap(), "GGTA");
+-    print::<u16>(f5.wait().unwrap(), "GGTATT");
+-    print::<u32>(f6.wait().unwrap(), "GGTATTTTAATT");
+-    print::<u64>(f7.wait().unwrap(), "GGTATTTTAATTTATAGT");
++    std::thread::scope(|scope| {
++    let f7 = scope.spawn(move || freq(&s1, 18));
++    let f6 = scope.spawn(move || freq(&s2, 12));
++    let f5 = scope.spawn(move || freq(&s3, 6));
++    let f4 = scope.spawn(move || freq(&s4, 4));
++    let f3 = scope.spawn(move || freq(&s5, 3));
++    let f2 = scope.spawn(move || freq(&s6, 2));
++    let f1 = scope.spawn(move || freq(&s7, 1));
++    print_stat(f1.join().unwrap(), 1);
++    print_stat(f2.join().unwrap(), 2);
++    print::<u8>(f3.join().unwrap(), "GGT");
++    print::<u8>(f4.join().unwrap(), "GGTA");
++    print::<u16>(f5.join().unwrap(), "GGTATT");
++    print::<u32>(f6.join().unwrap(), "GGTATTTTAATT");
++    print::<u64>(f7.join().unwrap(), "GGTATTTTAATTTATAGT");
++    });
+ }
+ 
+ fn main() {

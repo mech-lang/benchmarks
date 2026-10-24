@@ -1,0 +1,20 @@
+--- protected-original
++++ wide_counts
+@@ -16,7 +16,7 @@
+ use std::cmp::Ordering;
+ use std::sync::Arc;
+ 
+-type Map<T> = hashbrown::HashMap<T, u32>;
++type Map<T> = hashbrown::HashMap<T, u64>;
+ 
+ trait ShlXorMsk<T> {
+     fn sh(a: T, x: u8, m: T) -> T;
+@@ -70,7 +70,7 @@
+ }
+ 
+ fn print_stat(h: Map<u8>, seq_len: usize) {
+-    let total = h.values().sum::<u32>();
++    let total = h.values().sum::<u64>();
+ 
+     h.into_iter()
+         .sorted_by(|&(ref a, x), &(ref b, y)| {
