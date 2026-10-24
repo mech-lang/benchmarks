@@ -179,7 +179,7 @@ def require_lookup_facts(metadata, descriptor, tags):
         record = by_header[header]
         assert 1 <= record['source_nodes'] <= 1024
         assert record['emitted_nodes'] == tag_headers[header]['product_nodes']
-        assert record['emitted_nodes'] in (record['source_nodes'], 2 * record['source_nodes'])
+        assert record['emitted_nodes'] in (record['source_nodes'], 2 * record['source_nodes'], 4 * record['source_nodes'])
         region_id = descriptor['closed_tails']['sites'][header]
         substitutions = record['substitutions']
         seen, facts, sites = set(), set(), set()
@@ -267,7 +267,7 @@ def require_frozen_maps(candidate_count, descriptor):
     return qualified
 
 
-def require_guarded_loops(metadata, descriptor, tag_metadata):
+def require_guarded_loops(metadata, descriptor, tag_metadata, invariant_metadata=()):
     """Bind emitted checked/fast versions to the original guarded source loop."""
     assert metadata and metadata['complete'] is True, 'Missing or truncated guarded-loop receipt'
     assert tag_metadata and tag_metadata['complete'] is True, 'Guarded loops require qualified state-threading metadata'
@@ -401,7 +401,10 @@ def require_guarded_loops(metadata, descriptor, tag_metadata):
         assert type(nodes) is int and 0 < nodes <= 1024 and nodes % 2 == 0 and nodes == tag['product_nodes'], 'Guarded versions differ from the actual qualified tag graph'
         certified = record['certified_range_versions']
         assert certified and len(set(certified)) == len(certified)
-        assert all(type(version) is int and nodes // 2 <= version < nodes for version in certified), 'Range certification escapes the fast half'
+        invariant = next((r for r in invariant_metadata if r['header'] == header), None)
+        first_guarded = invariant['version_stride'] if invariant else nodes // 2
+        if invariant: assert nodes == 4 * first_guarded
+        assert all(type(version) is int and first_guarded <= version < nodes for version in certified), 'Range certification escapes the guarded versions'
         assert record['checked_fallback'] is True
         fixed = record['fixed_template_instructions']
         assert type(fixed) is int and 1 <= fixed <= 1024, 'Guarded fixed templates exceed the unchanged work envelope'
@@ -411,6 +414,53 @@ def require_guarded_loops(metadata, descriptor, tag_metadata):
                               emitted_nodes=nodes, certified_range_versions=certified,
                               fixed_template_instructions=fixed, checked_fallback=True,
                               scope='Actual checked/fast emission records; runtime selection is independently required'))
+    return qualified
+
+
+def require_loop_invariants(records, descriptor, lookups, guarded):
+    assert isinstance(records, list) and 0 < len(records) <= 256
+    by_header = {r['header']: r for r in records}
+    lookup = {r['header']: r for r in lookups}
+    bounds = {r['header']: r for r in guarded}
+    assert len(by_header) == len(records) and set(by_header) == set(lookup) == set(bounds)
+    qualified = []
+    blocks = descriptor['plan']['blocks']
+    for header, record in sorted(by_header.items()):
+        stride, nodes = record['version_stride'], record['emitted_nodes']
+        assert type(stride) is int and 0 < stride <= 256
+        assert stride == lookup[header]['source_nodes'] and nodes == 4 * stride == bounds[header]['emitted_nodes']
+        assert record['fixed_template_work'] == bounds[header]['fixed_template_instructions'] <= 1024
+        calls, sites, seen = {}, set(), set()
+        for node, site, op in record['call_substitutions']:
+            assert type(node) is int and 2 * stride <= node < nodes and node not in seen
+            seen.add(node)
+            if op == 10: assert site == bounds[header]['range_site']
+            else:
+                call = blocks[site]['action']['LibraryCall']
+                selected = call['template']['selected']
+                assert len(selected) == 1
+                primitive = next(iter(selected.values()))['leaf']['primitive']
+                assert op == {'MapContainsKey': 3, 'MapKeyAccess': 4, 'MapInsert': 5}[primitive]
+            calls.setdefault((node % stride, site, op), set()).add(node // stride)
+            sites.add(op)
+        assert all(modes == {2, 3} for modes in calls.values()) and {3, 4, 5, 10} <= sites
+        rolling = record['rolling_substitutions']
+        assert rolling and len({n for n,s in rolling}) == len(rolling)
+        assert all(3 * stride <= n < nodes and site == bounds[header]['range_site'] for n,site in rolling)
+        expected_ranges = {n % stride + mode * stride for n,site in rolling for mode in (1, 2, 3)}
+        assert expected_ranges == set(bounds[header]['certified_range_versions'])
+        latches = record['steady_latches']
+        assert latches and all(2 * stride <= n < nodes and site in bounds[header]['recurrence_latches'] for n,site in latches)
+        refreshes = {}
+        for node, site in record['refreshes']:
+            assert stride <= node < nodes
+            call = blocks[site]['action']['LibraryCall']
+            selected = call['template']['selected']
+            assert len(selected) == 1 and next(iter(selected.values()))['leaf']['primitive'] == 'MapInsert'
+            refreshes.setdefault((node % stride, site), set()).add(node // stride)
+        assert refreshes and all(modes == {1, 2, 3} for modes in refreshes.values())
+        assert set(refreshes) == {(n,site) for n,site,op in calls if op == 5}
+        qualified.append(dict(record, scope='Source-bound emitted call guards, peeled ranges, proved recurrence entries and exact post-insertion redispatch sites; not dynamic per-substitution frequencies. Initial guarded-call selection is independently required.'))
     return qualified
 
 
@@ -455,6 +505,8 @@ parser.add_argument('--require-cfg-cleanup', action='store_true',
                     help='Require bounded constant-branch cleanup in the exact emitted native function')
 parser.add_argument('--require-outlined-loops', action='store_true',
                     help='Require source-bound local native functions for every emitted packed loop')
+parser.add_argument('--require-loop-invariants', action='store_true',
+                    help='Require source-bound guarded calls, steady rolling and seven actual initial call-guard selections')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -503,6 +555,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_lookup_facts=args.require_lookup_facts,
               require_cfg_cleanup=args.require_cfg_cleanup,
               require_outlined_loops=args.require_outlined_loops,
+              require_loop_invariants=args.require_loop_invariants,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -522,7 +575,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
     descriptor = json.loads((project / 'native-descriptor.json').read_text())['descriptor']
     if args.require_frame_effects:
-        assert manifest['object']['abi_version'] in (24, 25, 26), 'Frame-effect masks require the audited ABI24–26 Frame'
+        assert manifest['object']['abi_version'] in (24, 25, 26, 27), 'Frame-effect masks require the audited ABI24–27 Frame'
         report['compiled_frame_effects'] = manifest['object'].get('compiled_frame_effects')
         report['qualified_frame_regions'] = require_frame_effects(report['compiled_frame_effects'], descriptor)
         report['source_frame_effects_qualified'] = True
@@ -539,12 +592,13 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     if args.require_guarded_loops:
         report['compiled_guarded_loops'] = manifest['object'].get('compiled_guarded_loops')
         report['qualified_guarded_regions'] = require_guarded_loops(
-            report['compiled_guarded_loops'], descriptor, report['compiled_tag_threading'])
+            report['compiled_guarded_loops'], descriptor, report['compiled_tag_threading'],
+            manifest['object'].get('compiled_loop_invariants', []))
         report['source_guarded_loops_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_frozen_maps:
-        assert manifest['object']['abi_version'] == 26 and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['abi_version'] in (26, 27) and manifest['object']['work_policy_version'] == 65
         report['frozen_map_layout'] = descriptor['frozen_maps']
         report['qualified_frozen_regions'] = require_frozen_maps(
             manifest['object'].get('private_frozen_map_candidates'), descriptor)
@@ -552,7 +606,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51, 52) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'))
@@ -560,7 +614,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] in (51, 52) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54) and manifest['object']['work_policy_version'] == 65
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
@@ -574,7 +628,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_outlined_loops:
         assert args.require_cfg_cleanup and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] == 52
+        assert manifest['object']['typed_ir_version'] in (52, 53, 54)
         loops = manifest['object'].get('compiled_outlined_loops')
         assert isinstance(loops, list) and 0 < len(loops) <= 256
         expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
@@ -595,6 +649,18 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
         assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
         report['cfg_cleanup_removed_total'] = removed
+        if manifest['object']['typed_ir_version'] == 54:
+            functions = [report['compiled_cfg_cleanup']] + [loop['cleanup'] for loop in report.get('compiled_outlined_loops', [])]
+            assert all(function['pre_codegen_data_passes'] == 0 for function in functions)
+            report['single_data_pass_qualified'] = True
+
+    if args.require_loop_invariants:
+        assert args.require_outlined_loops and args.require_guarded_loops and args.require_lookup_facts
+        assert manifest['object']['typed_ir_version'] in (53, 54) and manifest['object']['abi_version'] == 27
+        report['compiled_loop_invariants'] = manifest['object'].get('compiled_loop_invariants')
+        report['qualified_invariant_regions'] = require_loop_invariants(report['compiled_loop_invariants'], descriptor,
+            report['qualified_lookup_regions'], report['qualified_guarded_regions'])
+        report['loop_invariants_qualified'] = True
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
         report['compiled_source_edge_facts'] = manifest['object'].get('compiled_source_edge_facts')
         report['qualified_source_edge_regions'] = require_edge_facts(
@@ -632,6 +698,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                           packed_map_updates=native.get('native_packed_map_updates'),
                           packed_ssa_regions=native.get('native_packed_ssa_regions'),
                           guarded_loop_regions=native.get('native_guarded_loop_regions'),
+                          guarded_call_regions=native.get('native_guarded_call_regions'),
                           frozen_map_regions=native.get('native_frozen_map_regions'),
                           frozen_map_reads=native.get('native_frozen_map_reads'))
             parallel = dict(parallel_batches=native.get('native_parallel_batches'),
@@ -649,6 +716,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                 assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'
             if label == 'candidate' and args.require_guarded_loops:
                 assert packed['guarded_loop_regions'] == 7, 'Candidate did not select all seven guarded loop versions'
+            if label == 'candidate' and args.require_loop_invariants:
+                assert packed['guarded_call_regions'] == 7, 'Candidate did not select all seven guarded-call entries'
             if label == 'candidate' and args.require_frozen_maps:
                 assert packed['frozen_map_regions'] == 5 and packed['frozen_map_reads'] == 10, 'Candidate did not retain five complete query maps and perform ten original reads'
             if label == 'candidate' and args.require_parallel_tasks:

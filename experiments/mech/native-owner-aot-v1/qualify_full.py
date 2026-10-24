@@ -52,6 +52,9 @@ if require_cfg_cleanup:
 require_outlined_loops = timing.get('require_outlined_loops', False)
 if require_outlined_loops:
     assert timing.get('outlined_loops_qualified') is True
+require_loop_invariants = timing.get('require_loop_invariants', False)
+if require_loop_invariants:
+    assert timing.get('loop_invariants_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -116,6 +119,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_lookup_facts=require_lookup_facts,
               require_cfg_cleanup=require_cfg_cleanup,
               require_outlined_loops=require_outlined_loops,
+              require_loop_invariants=require_loop_invariants,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -150,8 +154,12 @@ if require_cfg_cleanup:
     for key in ('cfg_cleanup_qualified', 'compiled_cfg_cleanup', 'object_sha256', 'linked_manifest_sha256'):
         report[key] = timing[key]
     report['cfg_cleanup_removed_total'] = timing.get('cfg_cleanup_removed_total', timing['compiled_cfg_cleanup']['constant_branches_removed'])
+    report['single_data_pass_qualified'] = timing.get('single_data_pass_qualified')
 if require_outlined_loops:
     for key in ('outlined_loops_qualified', 'compiled_outlined_loops'):
+        report[key] = timing[key]
+if require_loop_invariants:
+    for key in ('loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
@@ -180,6 +188,7 @@ try:
                               packed_map_updates=native.get('native_packed_map_updates'),
                               packed_ssa_regions=native.get('native_packed_ssa_regions'),
                               guarded_loop_regions=native.get('native_guarded_loop_regions'),
+                              guarded_call_regions=native.get('native_guarded_call_regions'),
                               frozen_map_regions=native.get('native_frozen_map_regions'),
                               frozen_map_reads=native.get('native_frozen_map_reads'))
                 parallel = dict(parallel_batches=native.get('native_parallel_batches'),
@@ -197,6 +206,8 @@ try:
                     assert packed['guarded_loop_regions'] == 7, 'Candidate did not select all seven guarded loop versions'
                 if label == 'mech' and require_frozen_maps:
                     assert packed['frozen_map_regions'] == 5 and packed['frozen_map_reads'] == 10, 'Candidate did not retain five complete query maps and perform ten original reads'
+                if label == 'mech' and require_loop_invariants:
+                    assert packed['guarded_call_regions'] == 7, 'Candidate did not select seven guarded-call entries'
                 if label == 'mech' and require_parallel_tasks:
                     assert parallel['parallel_batches'] == 1, 'Candidate did not combine work into one batch'
                     assert parallel['parallel_regions'] == 2, 'Candidate did not complete both source comprehensions in parallel'

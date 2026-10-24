@@ -2,6 +2,52 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Control cleanup before one backend data pass: identical hot loops
+
+Compiler [`59782769d`](https://github.com/mech-lang/mech/commit/59782769d0ebb27fc8edc93e6e3620e65d8bf8ac) performs bounded literal control cleanup before the backend's single ordinary data/speed pass. It no longer invokes the full egraph repeatedly during cleanup. IR54 identifies the order; ABI27, work65, source, bytecode, inputs and finite launch limits are unchanged.
+
+[Four cleanup checks](../native-owner-dispatch-v1/cfg-prepass-focused-v1/summary.json) and [four loop-invariant checks](../native-owner-dispatch-v1/loop-invariants-prepass-v1/summary.json) pass, including source effects, dynamic conditions, edge arguments, exact work, arithmetic errors, runtime seeds, refills and actual call-limit transitions. The [full native suite](../native-owner-dispatch-v1/cfg-prepass-native-v2/summary.json) passes **337 GPU tests and one catalog test**, with three existing exclusions. A [retained first attempt](../native-owner-dispatch-v1/cfg-prepass-native-v1/summary.json) passed 336 tests and stopped at a stale guarded-range metadata expectation. The test-only correction in [`75609235b`](https://github.com/mech-lang/mech/commit/75609235ba6301952d63315413b827ac337f3fea) binds that expectation to the actual emitted version stride; production code is unchanged.
+
+Three rotated **125-million-base** cohorts retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.554 | 1.00× |
+| Previous guarded steady loops | 1.455 | 2.63× |
+| Cleanup before data optimization | 1.466 | 2.65× |
+
+The candidate median is **0.8% higher**, with overlapping ranges; **no runtime gain** is established. The [aggregate](full-cfg-prepass-cohort-v1/results.json) retains raw observations and standard deviations. The [one-million-base prefix](cfg-prepass-timing-v1/results.json) gives 0.0193 seconds for Rust, 0.1071 for the parent (**5.55× Rust**) and 0.1103 for the candidate (**5.71× Rust**). All output/update, seven initial guarded-call selections, bounds/SSA selection, full-map, original-read and peak-worker checks pass. Secured startup/shutdown are included and subjects execute serially.
+
+[Exact object-text comparison](cfg-prepass-code-identity-v1/results.json) shows that **both 7,612-byte hot-loop functions are byte-for-byte identical** to the prior stage. The complete generated program text differs elsewhere (58,712 versus 58,764 bytes), so no whole-program identity is claimed. A new matched hot-loop profile is unnecessary for this order change: it cannot explain or fix the already observed steady-loop duplication and stack accesses. No instruction-counter gain is inferred.
+
+The [prior exact steady-path comparison](loop-invariants-codegen-audit-v1/steady-path-comparison.json) counts **110 instructions, ten branches and 34 stack-access instructions** in Mech, versus **34 instructions, four branches and two stack accesses** in Rust, under its explicitly stated first-key-hit, productive, funded conditions. These are static paths, not dynamic frequencies. The next structural target is state kept live across fail-only callbacks, followed by isolating cold callbacks from the hot native loop if necessary. These targets have no assigned gain. Rust parity, full qualification of subsequent changes, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
+## Guarded calls and peeled rolling keys: no runtime gain
+
+Compiler [`f0ae06384`](https://github.com/mech-lang/mech/commit/f0ae063843856d45ac09eb3cf7a917c07ebfd702) emits four bounded source-graph versions: checked; proved bounds; proved bounds/call flags; and proved bounds/call flags/steady adjacency. The first selection retains its original rolling check. Only certified index+1 active recurrence edges enter the steady version. Every storage-changing insertion, including a non-growing insertion, refreshes to its exact source successor with current call flags; it cannot repeat or skip a funded header or source operation. Invalid or unsupported proofs retain the checked graph. Generated spills retire every generated Frame word; runtime-owned words are already current in memory and cannot be written by the generated setter.
+
+IR53 and ABI27 identify the change. The existing op14 receipt records the actual initial call-guard selection and independently validates all three flags; source, bytecode, inputs, work65 and finite launch limits remain unchanged. Emission qualification binds each removed call check, steady range, certified latch and post-insertion refresh to the original sites. Each of the two compiled regions has 360 product nodes (stride90) and 224 fixed template instructions within the unchanged 1,024-unit envelope.
+
+Three rotated **125-million-base** cohorts retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.551 | 1.00× |
+| Previous isolated loops, `7f0bf64de` | 1.437 | 2.61× |
+| Guarded steady loops, `f0ae06384` | 1.442 | 2.62× |
+
+The candidate median is **0.4% higher**, with overlapping ranges. This establishes **no runtime gain**. The [aggregate](full-loop-invariants-cohort-v1/results.json) retains all raw observations and standard deviations. The [one-million-base prefix](loop-invariants-timing-v1/results.json) gives 0.0115 seconds for Rust, 0.0915 for the parent (**7.95× Rust**) and 0.1083 for the candidate (**9.41× Rust**): the candidate median is **18.3% higher** in that protocol. Each protocol uses its own Rust cohort.
+
+Every candidate execution verifies seven actual initial guarded-call selections alongside seven packed SSA maps, seven selected bounds guards, five complete frozen maps, ten original reads, seven peak workers, complete output and all **6,999,961 prefix / 874,999,961 full updates**. Subjects execute serially under the shared lock, including secured startup/shutdown. No production allowance changes.
+
+[Four focused tests](../native-owner-dispatch-v1/loop-invariants-focused-v3/summary.json) pass across original/decoded source, arbitrary seeds, changed runtime inputs, growth/full-loan refills, exact work, original arithmetic failures and declined proofs. The width18 transition fixture funds the first 278-unit missing-key insertion, which raises the next write price to 300; the following existing-key write fails at its original source site, with equal reference work, status, origin and helper frontiers. The [first retained attempt](../native-owner-dispatch-v1/loop-invariants-focused-v1/summary.json) stopped at an old one-versus-three emitted-range expectation. The [second](../native-owner-dispatch-v1/loop-invariants-focused-v2/summary.json) exposed an underfunded transition fixture that could not pay its original missing-key maintenance. Both failures remain. A full native-suite qualification for this revision is not claimed.
+
+[Separate hardware-counter executions](loop-invariants-hardware-v1/results.json) show **104.4 billion instructions / 21.7 billion cycles**, versus **107.9 billion / 21.5 billion** for the parent and **33.1 billion / 7.94 billion** for Rust. Instructions decrease only **3.2%**, cycles rise slightly, and Mech still retires **3.15× Rust's instructions**. Diagnostic executions are separate from the timing cohorts. Each compiled loop still uses 336 stack bytes, with code increasing from 5,136 to 7,612 bytes.
+
+The [fresh full profile](full-profile-loop-invariants-v1/analysis.json) observes seven workers and 5,111 worker samples; 4,551 (**89.04%**) end in generated code. Inclusive library-debit/wait shares are **4.48% / 5.73%**, with no publication observed. Categories overlap and are not elapsed-time shares. The profiling copy matches the timed executable's entire **4,271,068-byte** code section, SHA-256 `33a9255451ab414294feb55d59835f3cb9c44cc3b573d8f39d85ae828e79abad`. [Exact disassembly](loop-invariants-codegen-audit-v1/results.json) shows the remaining fuel/induction bookkeeping, stack traffic, hash-constant materialization, and a repeated rolling-key expression on the successful steady path. Removing source-level checks did not by itself produce efficient machine code.
+
+The subsequent prepass trial above moves literal CFG cleanup before the single ordinary backend data pass and establishes no runtime gain. Further failure-path live ranges remain a target, without an assigned gain. Rust parity, full qualification of subsequent candidates, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Isolated closed-loop functions
 
 Compiler [`7f0bf64de`](https://github.com/mech-lang/mech/commit/7f0bf64dee07734402d4c00c25ac3fe392038adc) isolates each eligible closed packed loop in a local native function emitted from the same source body as its inline fallback. The caller retains the original selector and one packed-SSA receipt. Each synchronous call returns only at its original exit/error boundary; the original source locals, private owner, helper/context, transport context and finite loan remain. Total stack admission includes the parent plus the largest emitted callee, and total code includes every callee. Fixed caller/loader/return templates fit the unchanged per-traversal work envelope. IR52 identifies the change; ABI26 and work65 remain.

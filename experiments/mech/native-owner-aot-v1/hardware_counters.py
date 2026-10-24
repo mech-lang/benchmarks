@@ -57,6 +57,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
                 assert native['native_packed_map_updates'] == 874999961
                 assert native['native_frozen_map_regions'] == 5 and native['native_frozen_map_reads'] == 10
                 assert native['native_parallel_tasks'] == native['native_parallel_peak_workers'] == 7
+                if label == 'mech' and timing.get('require_loop_invariants'):
+                    assert native['native_guarded_call_regions'] == 7
             raw = (folder / 'stderr.bin').read_text()
             def counter(name):
                 found = re.findall(r'^\s*(\d+)\s+' + re.escape(name) + r'\s*$', raw, re.M)
