@@ -2,6 +2,55 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Certified insertion progress and nonempty storage
+
+Compiler [`5474f214a`](https://github.com/mech-lang/mech/commit/5474f214a78f711880ce266637ef35d2f3a6e5bc), IR58/ABI27/work65, uses a bounded source-CFG proof of exactly one insertion before each index+1 recurrence. Productive prefixes may not insert twice; stop paths remain total; certified insertion nodes are dominated by the original source guards; other state variants may not enter the active recurrence. For an active initial state, a runtime guard checks equality between the source index and private update tally. Unaligned entries retain the checked native path.
+
+Under that certificate, active guarded headers reuse the exact source index for the internal tally. A productive index is below the proved endpoint, so its corresponding insertion tally cannot overflow. Only a certified completed insertion establishes nonempty storage for the next steady iteration. Every actual key lookup, count computation, map write and original fuel debit remains. Steady adjacency also now uses certified product-graph nodes rather than source sites that different state variants can share. Source, bytecode, inputs, capabilities and finite policies are unchanged.
+
+Three rotated **125-million-base** cohorts retain every complete process, with secured startup/shutdown and no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.552 | 1.00× |
+| Previous invocation-binding Mech, IR57 | 1.243 | 2.25× |
+| Certified-progress Mech, IR58 | 1.149 | 2.08× |
+
+The median is **7.6% lower**, a **1.08× speedup**. Candidate observations span **1.142–1.150 seconds**, below the control's **1.243–1.270 seconds**. The [aggregate](full-mutation-facts-cohort-v1/results.json) retains every observation, standard deviation, order and identity. Complete output and the aggregate **874,999,961 updates** pass; all seven packed SSA maps, seven guarded bounds/call entries, five complete frozen maps, ten original reads and seven peak workers are verified. Subjects execute serially under the common lock. The original one-million-base and full inputs remain separate protocols.
+
+The [one-million-base prefix](mutation-facts-timing-v1/results.json), with one excluded warmup per executable and three timed observations, gives Rust **0.0194 seconds**, parent **0.0921 seconds / 4.75× Rust**, and candidate **0.0920 seconds / 4.75× Rust**. Its approximately 0.1% median change and overlapping ranges establish no prefix gain.
+
+[Five focused checks](../native-owner-dispatch-v1/mutation-facts-focused-v3/summary.json) and the [full native suite](../native-owner-dispatch-v1/mutation-facts-native-v1/summary.json), **348 GPU tests plus one catalog test**, pass; three existing exclusions remain. Original/decoded programs cover runtime inputs, arbitrary seeds and starting indices, narrow/wide keys, growth, complete refills, finite caps and original arithmetic/error frontiers. Three negative source variants exercise skipped insertions, double insertions and entry from another state: their complete maps match independent expected keys/counts and their actual insertion tallies are **3, 10 and 4**, rather than being inferred from window count. All decline the new proof. Exact source work and remaining fuel are compared before independently hash-seeded publication. Existing exact/one-short stack/code checks run in the full suite.
+
+Two unsuccessful fixture attempts remain: [first](../native-owner-dispatch-v1/mutation-facts-focused-v1/summary.json), four checks passed and one negative fixture stopped at malformed match syntax; [second](../native-owner-dispatch-v1/mutation-facts-focused-v2/summary.json), the skipped-insertion case produced the correct map/tally but a post-publication total-work assertion included independently seeded sorting. The corrected fixture checks the exact pre-publication work/fuel frontier, structural receipts and every final key/count.
+
+[Build qualification](mutation-facts-timing-v1/results.json) binds both actual mutation regions to their original source headers, U64 index words and insertion sites. Each records three guarded counter headers, three omitted private counter-overflow checks and one steady nonempty probe. All seven runtime guarded entries must be selected before a timing can succeed. These are static emission records plus runtime entry receipts, not dynamic per-substitution frequencies. Counting functions shrink from **6,740 code bytes / 256 stack bytes** to **6,280 / 240**. Each emits 36 preserving-call templates rather than 39; the existing largest source template is **472**, within the unchanged 512-unit lane. The entry guard fits the unchanged fixed traversal envelope. No production allowance is raised.
+
+[Nine separate whole-process counter executions](mutation-facts-hardware-v1/results.json) give candidate **80.2 billion instructions / 16.3 billion cycles**, parent **88.1 billion / 17.9 billion**, and Rust **33.1 billion / 7.88 billion**. Candidate instructions decrease **8.9%**, cycles decrease **9.1%**, and candidate instructions remain **2.42× Rust**. These diagnostic executions include all target threads and startup/shutdown and are not additional timing-cohort samples.
+
+Three initial profiles ([first](full-profile-mutation-facts-v1/analysis.json), [second](full-profile-mutation-facts-v2/analysis.json), [third](full-profile-mutation-facts-v3/analysis.json)) and three repeated captures ([fourth](full-profile-mutation-facts-v4/analysis.json), [fifth](full-profile-mutation-facts-v5/analysis.json), [sixth](full-profile-mutation-facts-v6/analysis.json)) each observe seven workers and verify complete output. The [profiling copy](profile-mutation-facts-build-v1/results.json) matches the timed executable's entire **4,269,072-byte** code section, SHA-256 `5400e0eb58b07d28910f46e68fff2f455aa4d67549e1fa4e94a2b8e8e241d0eb`. [Three repeated Rust captures](rust-full-profile-v7/analysis.json) also use the exact unchanged executable and observe seven counting workers each. Every subject is complete and reaped before the next execution.
+
+The [repeated exclusive partition](mutation-remaining-profile-v3/results.json) combines **12,154 Mech worker observations**:
+
+| Observed worker location | Observations | Share |
+|---|---:|---:|
+| Generated counting loops | 9,581 | 78.8% |
+| Waiting for the shared work-budget mutex | 1,578 | 13.0% |
+| Active work-budget operations | 452 | 3.7% |
+| Active storage helpers | 336 | 2.8% |
+| Generated helper bridge | 104 | 0.9% |
+| Other active frames | 103 | 0.8% |
+
+These are sampled thread observations, including waits, rather than elapsed-time shares or instruction costs. The main thread is in worker joins for **90.8%** of its combined observations. The five query-histogram workers contribute **7,320 generated-loop observations / 60.2%** of all worker observations, and the two frequency-histogram workers contribute **2,261 / 18.6%**. Samples from a shared generated function do not identify an individual query width.
+
+The refined taxonomy recognizes remaining-work queries as work-budget operations. The [initial partition](mutation-remaining-profile-v1/results.json) and [unrefined repeated partition](mutation-remaining-profile-v2/results.json) counted their mutex waits as `other_wait` and their active query frames as storage helpers. The raw stacks are retained. In the corrected repeated partition, **1,029** waits originate in `PackedMap::refill → unscoped_remaining → NativeWorkerWorkLoan::remaining`, **331** in a missing-key debit, **217** in a refill debit, and **one** in frozen-map accounting. All use the same worker-group escrow mutex. Budget operations total **16.7%** of observations, with **13.0%** blocked; this is a classification correction, not a compiler or runtime change.
+
+The [source-bound diagnosis](mutation-remaining-profile-v3/diagnosis.json) retains the relevant code hashes and static evidence. A current refill independently locks the shared escrow to query remaining work and then locks it again to commit its already bounded charge. The existing batch is at most **1,024 traversals**. Combining these operations under one checked transaction is a concrete contention candidate; changing the finite allowance or omitting debits is not required. Its performance effect remains unmeasured. Larger generated-loop work remains the primary target: stack state traffic, repeated hash-constant materialization, dynamic width/end calculations and presence/error branches still exceed the Rust path.
+
+[Exact disassembly and sampled-PC groups](mutation-facts-codegen-audit-v1/results.json), [second](mutation-facts-codegen-audit-v2/results.json), [third](mutation-facts-codegen-audit-v3/results.json), retain the remaining probe/count path. The [specified first-hit successful iteration](mutation-facts-codegen-audit-v1/steady-path-comparison.json) drops from **91 to 82 instructions** and **ten to nine branches**. Rolling-key construction appears once rather than twice. Stack accesses rise from **seven to eight**, despite the smaller frame; the new path reloads/stores source-index state. Rust retains **34 instructions, four branches and two stack accesses**. Static paths and collapsed groups do not assign individual-instruction runtime costs.
+
+A [separate task-order observation](mutation-facts-codegen-audit-v1/task-order-evidence.json) records an Apple M3 with four performance and four efficiency cores. The unmodified Rust source launches widths **18, 12, 6, 4, 3, 2, 1**; Mech's current scheduler traverses source regions/indices in **1, 2, 3, 4, 6, 12, 18** order. CPU placement and the performance effect of this difference are unmeasured. A future cost-guided scheduling candidate must retain source-order admission, result/error replay and the existing worker/resource bounds. Remaining loop costs include source checks, hash-constant materialization and source-state spills. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Invocation-constant helper bindings
 
 Compiler [`ba2db6d9b`](https://github.com/mech-lang/mech/commit/ba2db6d9b4f94a9a149edac21c0a3bb18758de18), IR57/ABI27/work65, initializes the private helper function, context and result-pointer words once in each caller-owned scratch area. Source sites, operations and operands remain per call. Only the exact original SSA function/context pair can reuse those words; a distinct pair calls its supplied helper through the ordinary C ABI. The bridge writes only its separate status word. Original source, bytecode, input and finite policies remain unchanged.

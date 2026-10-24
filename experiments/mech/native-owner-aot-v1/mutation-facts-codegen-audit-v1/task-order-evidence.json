@@ -1,0 +1,42 @@
+{
+  "schema": "mech.parallel-order-observation.v1",
+  "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+  "runner": {
+    "command": [
+      "/usr/sbin/sysctl",
+      "-n",
+      "machdep.cpu.brand_string",
+      "hw.perflevel0.logicalcpu",
+      "hw.perflevel1.logicalcpu"
+    ],
+    "stdout": "Apple M3\n4\n4\n",
+    "cpu": "Apple M3",
+    "performance_cores": 4,
+    "efficiency_cores": 4
+  },
+  "rust_source_sha256": "47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851",
+  "rust_launch_widths": [
+    18,
+    12,
+    6,
+    4,
+    3,
+    2,
+    1
+  ],
+  "mech_source_sha256": "ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da",
+  "mech_source_widths": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    12,
+    18
+  ],
+  "scheduler_source_path": "hosts/gpu/src/native_artifact/program_parallel_runtime.rs",
+  "scheduler_source_sha256": "4926c104f9d873f39bbaaf4897d14b2b2de3e8b39d55f9573039fa908c396ab3",
+  "scheduler_order": "Ready regions and their source indices are traversed in order; jobs are spawned in that order; joins/results replay in source order.",
+  "scope": "CPU fields read from this runner. Launch orders are derived from the pinned sources and scheduler construction; CPU placement and timing effect are unmeasured. A future scheduling candidate must preserve source-order admission/results/errors and the existing worker/resource bounds.",
+  "benchmark_samples": 0
+}

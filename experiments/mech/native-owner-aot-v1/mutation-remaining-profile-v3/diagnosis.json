@@ -1,0 +1,219 @@
+{
+  "status": "exact-current-code-profile-diagnosed",
+  "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+  "selected_bases": 125000000,
+  "complete_output_verified": true,
+  "worker_count_each_capture": 7,
+  "mech_capture_count": 3,
+  "rust_capture_count": 3,
+  "exclusive_worker_partition": {
+    "worker_observations": 12154,
+    "exclusive_buckets": {
+      "generated_counting_loop": 9581,
+      "work_budget_wait": 1578,
+      "work_budget_active": 452,
+      "storage_helper_active": 336,
+      "generated_helper_bridge": 104,
+      "other_active": 103
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "remaining_work_query",
+        "observations": 1029
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 331
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill_charge",
+        "observations": 229
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill_charge",
+        "observations": 217
+      },
+      {
+        "category": "work_budget_active",
+        "route": "remaining_work_query",
+        "observations": 118
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 84
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 17
+      },
+      {
+        "category": "work_budget_active",
+        "route": "other_budget_operation",
+        "observations": 4
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "frozen_map_charge",
+        "observations": 1
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 78.83001480993912,
+      "work_budget_wait": 12.983379957215732,
+      "work_budget_active": 3.718940266578904,
+      "storage_helper_active": 2.7645219680763535,
+      "generated_helper_bridge": 0.8556853710712523,
+      "other_active": 0.847457627118644
+    }
+  },
+  "generated_loop_symbols": {
+    "mech_canonical_program_entry_v1_packed_loop_284": 7320,
+    "mech_canonical_program_entry_v1_packed_loop_173": 2261
+  },
+  "main_observations": 2522,
+  "main_join_observations": 2290,
+  "main_join_percent": 90.8009516256939,
+  "taxonomy_correction": {
+    "remaining_query_waits_reclassified": 1029,
+    "active_remaining_queries_reclassified": 118,
+    "raw_samples_unchanged": true
+  },
+  "separate_unprofiled_timing": {
+    "evidence": "full-mutation-facts-cohort-v1/results.json",
+    "median_seconds": {
+      "rust": 0.551978542,
+      "mech": 1.148507042,
+      "baseline": 1.243181541
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 2.080709583091004,
+      "baseline": 2.2522280241104013
+    }
+  },
+  "static_successful_existing_key_iteration": {
+    "scope": "Static successful funded productive narrow-key iteration, first fingerprint lane is a full-key hit; no source/count/receipt overflow. Not a dynamic frequency or timing claim. Every branch decision is retained.",
+    "mech": {
+      "instructions": 82,
+      "branches": 9,
+      "stack_load_instructions": 5,
+      "stack_store_instructions": 3
+    },
+    "rust": {
+      "instructions": 34,
+      "branches": 4,
+      "stack_load_instructions": 2,
+      "stack_store_instructions": 0
+    }
+  },
+  "separate_whole_process_hardware": {
+    "evidence": "mutation-facts-hardware-v1/results.json",
+    "medians": {
+      "mech": {
+        "instructions": 80226198108,
+        "cycles": 16300355292,
+        "real_seconds": 1.14,
+        "user_seconds": 4.29,
+        "system_seconds": 0.55
+      },
+      "baseline": {
+        "instructions": 88061832163,
+        "cycles": 17933425291,
+        "real_seconds": 1.23,
+        "user_seconds": 4.79,
+        "system_seconds": 0.53
+      },
+      "rust": {
+        "instructions": 33135857212,
+        "cycles": 7877410712,
+        "real_seconds": 0.54,
+        "user_seconds": 2.33,
+        "system_seconds": 0.03
+      }
+    }
+  },
+  "source_evidence": [
+    {
+      "repository": "mech-lang/mech",
+      "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+      "path": "hosts/gpu/src/native_artifact/program_packed_map.rs",
+      "sha256": "0054f3832fc4f8461b1ded13789b525baddc22072f94f5dc2fcef8ae596c919e",
+      "line": 313,
+      "excerpt": "    pub(super) fn refill(&mut self) -> Result<u64, Error> {\n        self.validate_frame()?;\n        if self.frame.fuel != 0 { return Err(Error::Binding(\"packed-map fuel was renewed\")); }\n        let remaining = self.work.unscoped_remaining()\n            .ok_or(Error::Binding(\"packed-map entered a foreign work scope\"))?;\n        let price = self.price(self.frame.capacity, self.frame.len)?;\n        // Leave room on both dimensions for distinct-key insertion, table\n        // growth and the corresponding remaining-body price increases.\n        let count = (remaining.0 / price.compute.max(1) / 4)\n            .min(remaining.1 / price.comparison.max(1) / 4).min(BATCH).max(1);\n        let funded = add(self.funded, count)?;\n        self.work.charge(mul(price.compute, count)?, mul(price.comparison, count)?)?;\n        self.frame.fuel = count;\n        self.issued = count;\n        self.funded = funded;\n        self.frame.entry_known = 0;\n        self.frame.entry_pointer = 0;\n        Ok(count)"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+      "path": "src/engine/src/resident/budget.rs",
+      "sha256": "7827559001327bedd0c39113e0d2a72c15f0f402650e1930bd12f7c28dd6d5f0",
+      "line": 306,
+      "excerpt": "    pub fn unscoped_remaining(&self) -> Option<(u64, u64)> {\n        if CONTROL_WORK.with(|v| v.borrow().is_some())\n            || CONTROL_WORK_SCOPE.with(|v| v.borrow().is_some())\n        {\n            return None;\n        }\n        let root = CONTROL_ROOT_LIMITS\n            .with(|v| v.get())\n            .unwrap_or((u64::MAX, u64::MAX));\n        let state = self.account.borrow();\n        let local = (\n            state\n                .compute_limit\n                .min(root.0)\n                .checked_sub(state.used.compute)?.checked_sub(state.reserved.compute)?,\n            state\n                .comparison_limit\n                .min(root.1)"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "sha256": "85f93d6dd11e56a3fae84615dc0d27ad4b50df530766e65d6e4ec9b692ed69a7",
+      "line": 70,
+      "excerpt": "    pub(super) fn remaining(&self) -> Option<(u64, u64)> {\n        let state = self.shared.lock().unwrap_or_else(|error| error.into_inner());\n        if state.sealed { return None; }\n        Some((state.limit.compute - state.used.compute, state.limit.comparison - state.used.comparison))\n    }\n    pub(super) fn preview(&self, compute: u64, comparison: u64) -> Result<(), ResidentKernelError> {\n        self.shared.lock().unwrap_or_else(|error| error.into_inner()).next(compute, comparison).map(drop)\n    }\n    pub(super) fn charge(&self, compute: u64, comparison: u64) -> Result<(), ResidentKernelError> {\n        let mut state = self.shared.lock().unwrap_or_else(|error| error.into_inner());\n        state.used = state.next(compute, comparison)?;\n        Ok(())\n    }\n}\nimpl Drop for NativeWorkerWorkLoan {\n    fn drop(&mut self) {\n        let mut state = self.shared.lock().unwrap_or_else(|error| error.into_inner());\n        state.live = state.live.checked_sub(1).expect(\"worker loan retired once\");"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "sha256": "85f93d6dd11e56a3fae84615dc0d27ad4b50df530766e65d6e4ec9b692ed69a7",
+      "line": 78,
+      "excerpt": "    pub(super) fn charge(&self, compute: u64, comparison: u64) -> Result<(), ResidentKernelError> {\n        let mut state = self.shared.lock().unwrap_or_else(|error| error.into_inner());\n        state.used = state.next(compute, comparison)?;\n        Ok(())\n    }\n}\nimpl Drop for NativeWorkerWorkLoan {\n    fn drop(&mut self) {\n        let mut state = self.shared.lock().unwrap_or_else(|error| error.into_inner());\n        state.live = state.live.checked_sub(1).expect(\"worker loan retired once\");\n    }\n}\n\nimpl NativeLibraryWorkBudget {\n    /// Reserve existing invocation fuel, also bounded by an enclosing call's\n    /// remaining allowance. The parent must join workers before publication.\n    /// Outstanding reservations count against parent charges/restrictions.\n    /// Nested parallel groups currently decline; child code may run serially."
+    }
+  ],
+  "evidence": [
+    {
+      "path": "mutation-remaining-profile-v3/results.json",
+      "sha256": "ef96ae83a4fabfd2e0fb1dea365d89eba40d47ea6aad97f2ab134657e4db6fce"
+    },
+    {
+      "path": "mutation-remaining-profile-v2/results.json",
+      "sha256": "62f5b2f7a52a8ff54e8f87f088b4ea99fbdc2286b414daed65771d1d01e8bdcd"
+    },
+    {
+      "path": "full-mutation-facts-cohort-v1/results.json",
+      "sha256": "46d4d7db44c128c70c1f2735a2c49a0ef98fa9528cc14f004943e41a11252982"
+    },
+    {
+      "path": "mutation-facts-codegen-audit-v1/steady-path-comparison.json",
+      "sha256": "fea3035fa221fd2c91b2fd1375d904b77251a9a191017892ba5997d92b772d08"
+    },
+    {
+      "path": "mutation-facts-hardware-v1/results.json",
+      "sha256": "06f759b029d0acff71b749772bb9eadaf06065736e62bbd35072eb98768eaad7"
+    },
+    {
+      "path": "profile-mutation-facts-build-v1/results.json",
+      "sha256": "c6774f2b60bb15204fc03f7fdffccb5f79ae3d724e6e513d737490347249b1aa"
+    }
+  ],
+  "priorities": [
+    {
+      "target": "Generated counting-loop code",
+      "observed_worker_share_percent": 78.83001480993912,
+      "evidence": "82 versus 34 instructions, nine versus four branches, eight versus two stack accesses on the specified existing-key path; current hash constants, bounds state and presence checks remain in the loop.",
+      "limitation": "Static paths and collapsed sampled-PC groups cannot attribute wall time or cycle cost to each instruction."
+    },
+    {
+      "target": "Shared worker-escrow contention",
+      "observed_worker_share_percent": 16.702320223794636,
+      "blocked_worker_share_percent": 12.983379957215732,
+      "evidence": "Refill queries remaining work and commits its charge through separate acquisitions of the same group escrow mutex. Maximum current fuel batch is 1024 traversals. Missing-key debits share the mutex.",
+      "candidate": "Combine a bounded remaining-work decision and its original debit into one checked transaction while preserving local/shared finite caps, original errors, debits and shutdown reconciliation.",
+      "candidate_measured": false
+    }
+  ],
+  "benchmark_samples": 0,
+  "scope": "Diagnosis uses fresh exact-code samples and source/disassembly inspection. Worker observations include waits and profiling overhead, and are not percentages of elapsed time. Timing and hardware cohorts are existing separate executions, not the profiled executions. No source or compiler change is made by this diagnosis."
+}

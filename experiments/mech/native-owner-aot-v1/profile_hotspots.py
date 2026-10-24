@@ -11,7 +11,11 @@ HERE = Path(__file__).resolve().parent
 WAIT = ('__psynch_cvwait', '__psynch_mutexwait', '__ulock_wait',
         'semaphore_wait_trap', '__semwait_signal', 'mach_msg2_trap')
 BUDGET = ('NativeLibraryWorkBudget6charge', 'NativeWorkDebitBatch6charge',
-          '::NativeWorkDebitBatch::charge', 'NativeWorkMeter6charge')
+          '::NativeWorkDebitBatch::charge', 'NativeWorkMeter6charge',
+          'NativeLibraryWorkBudget18unscoped_remaining',
+          '::NativeLibraryWorkBudget::unscoped_remaining',
+          'NativeWorkerWorkLoan9remaining', '::NativeWorkerWorkLoan::remaining',
+          'NativeWorkerWorkLoan6charge', '::NativeWorkerWorkLoan::charge')
 STORAGE = ('program_packed_map', '10map_owners6closed')
 
 
@@ -85,16 +89,38 @@ def summarize(path, workers, language, expected):
     content = path.read_text()
     entries = leaves(content)
     buckets, symbols, by_thread = Counter(), Counter(), Counter()
+    budget_routes, wait_contexts = Counter(), Counter()
     for thread, symbol, count, context in entries:
         if thread in workers:
-            buckets[category(symbol, context, language)] += count
+            label = category(symbol, context, language)
+            buckets[label] += count
             symbols[symbol] += count
             by_thread[thread] += count
+            if label in ('work_budget_wait', 'work_budget_active'):
+                if matches(context, ('18unscoped_remaining', '::unscoped_remaining')):
+                    route = 'remaining_work_query'
+                elif matches(context, ('14insert_missing', '::insert_missing')):
+                    route = 'missing_key_charge'
+                elif matches(context, ('9PackedMap6refill', '::PackedMap::refill')):
+                    route = 'loop_refill_charge'
+                elif matches(context, ('6frozen', '::frozen::')):
+                    route = 'frozen_map_charge'
+                else:
+                    route = 'other_budget_operation'
+                budget_routes[(label, route)] += count
+            if label.endswith('_wait'):
+                wait_contexts[(label, tuple(context[-8:]))] += count
     assert set(by_thread) == workers and sum(by_thread.values()) == expected
+    assert sum(budget_routes.values()) == sum(buckets[key] for key in
+                                              ('work_budget_wait', 'work_budget_active'))
     return dict(stacks=str(path.relative_to(HERE)), stacks_sha256=sha(path.read_bytes()),
                 observed_worker_threads=len(workers), worker_observations=expected,
                 exclusive_buckets=dict(buckets),
                 exclusive_percent={key: 100 * count / expected for key, count in buckets.items()},
+                work_budget_routes=[dict(category=label, route=route, observations=count)
+                                    for (label, route), count in budget_routes.most_common()],
+                top_wait_contexts=[dict(category=label, ancestors=context, observations=count)
+                                   for (label, context), count in wait_contexts.most_common(10)],
                 top_exclusive_symbols=[dict(symbol=symbol, observations=count)
                                        for symbol, count in symbols.most_common(20)])
 
@@ -131,15 +157,23 @@ for item in report['samples']:
     samples['rust'].append(sample)
 aggregates = {}
 for language, observations in samples.items():
-    counts, total = Counter(), 0
+    counts, routes, total = Counter(), Counter(), 0
     for sample in observations:
         counts.update(sample['exclusive_buckets'])
+        routes.update({(item['category'], item['route']): item['observations']
+                       for item in sample['work_budget_routes']})
         total += sample['worker_observations']
     assert sum(counts.values()) == total
+    assert sum(routes.values()) == sum(counts[key] for key in
+                                      ('work_budget_wait', 'work_budget_active'))
     aggregates[language] = dict(worker_observations=total, exclusive_buckets=dict(counts),
+                               work_budget_routes=[dict(category=label, route=route, observations=count)
+                                                   for (label, route), count in routes.most_common()],
                                exclusive_percent={key: 100 * count / total for key, count in counts.items()})
 result = dict(status='exclusive-worker-observations-partitioned', samples=samples,
               aggregates=aggregates, evidence=evidence, script_sha256=sha(Path(__file__).read_bytes()),
+              taxonomy_version=2,
+              taxonomy_change='Work-budget observations include remaining-work queries as well as charges. Earlier taxonomy classified mutex waits under unscoped_remaining as other_wait, and its active query frames as storage helpers. Retained context identifies the shared worker escrow in both cases.',
               scope='Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.',
               benchmark_samples=0)
 (out / 'results.json').write_text(json.dumps(result, indent=2) + '\n')
