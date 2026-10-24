@@ -2,6 +2,47 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Strategy comparison with the exact Rust implementation
+
+The retained Mech source tree remains `90395fc5a8486a5c040c99a9c023b47de10bc968`, the bounded-backoff implementation below. The branch head `0f623b9b8` restores that exact tree after two rejected follow-ups. The following experiments broaden the search across representations, input processing, table algorithms and execution topology. They establish **no new Mech speedup** and change no canonical benchmark data.
+
+The [protected upstream Rust source](../../../archive/workloads/knucleotide/upstream/knucleotide-rust-7.rs) decodes input bytes once, shares that buffer through `Arc`, constructs seven complete maps with `entry(...).or_insert(...)`, and submits decreasing widths to a Tokio pool. Keys use `u8` for widths 1–4, `u16` for 6, `u32` for 12 and `u64` for 18; counts use `u32`. Its [exact dependency manifest and lock](../../../archive/workloads/knucleotide/rust-deps/Cargo.toml) select hashbrown 0.15.5, foldhash 0.1.5 and tokio-threadpool 0.1.18. The recorded Rust build uses native CPU targeting, optimization level 3 and one codegen unit. Mech already has source-derived rolling keys, folded-product hashing, eight-byte SIMD control probes, cached entries and seven workers. Hashbrown uses quadratic group advances; Mech advances groups linearly. The [upstream table implementation](https://github.com/rust-lang/hashbrown/blob/v0.15.5/src/raw/mod.rs) supplies the comparison algorithm; the exact local dependency source supplies the architecture-specific eight-byte NEON implementation.
+
+[Representation/decoding/thread diagnostics](strategy-comparison-v3/results.json) retain **108 complete process observations**: six per executable for each of two separate inputs. Three predeclared random orders are paired with their reverses. All full-input medians below use this batch's own Rust denominator:
+
+| 125-million-base executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.551 | 1.00× |
+| Unchanged-source Rust rebuild | 0.554 | 1.00× |
+| Rust with all keys widened to `u64` | 0.554 | 1.01× |
+| Rust with counts widened to `u64` | 0.566 | 1.03× |
+| Rust with both widened | 0.561 | 1.02× |
+| Rust decoding each byte in each worker | 0.554 | 1.01× |
+| Rust combining wide keys/counts and per-worker decoding | 0.561 | 1.02× |
+| Rust using seven scoped threads | 0.569 | 1.03× |
+| Retained secured Mech AOT | 0.902 | 1.64× |
+
+The small differences overlap and are not established gains or precise causal cost estimates. Newly built variants include slower first launches; **no warmup, outlier or process is excluded**. Candidate maxima reach 0.748–1.107 seconds, while the exact Rust range is 0.545–0.562 seconds. The combination that resembles Mech's payload width and decoding placement still does not reproduce Mech's large slowdown. Rust keeps seven complete tables and every window/update in all variants. [Generated source copies and exact diffs](strategy-comparison-v1/sources/) preserve the transformations. The prefix cohort has its own denominator: exact Rust **0.0177 seconds**, unchanged rebuild **0.0191 / 1.08×**, combined wide/decoding variant **0.0193 / 1.09×**, scoped threads **0.0196 / 1.11×**, Mech **0.0867 / 4.89×**. Prefix observations are not pooled with full input.
+
+A second, independent [table-algorithm comparison](table-strategy-v1/results.json) retains **72 complete process observations**. A [diagnostic table written in Rust](diagnostic_packed_table.rs) reproduces Mech's 16-byte key/count payloads, folded constants, eight-byte NEON groups, mirrored controls and 7/8 growth threshold. It retains all windows and complete histograms. One variant uses linear group probing, one uses quadratic advances, and one combines linear probing with seven scoped threads started in ascending-width source order. All use wide keys/counts and decode bytes in each worker.
+
+| Separate 125-million-base cohort | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.554 | 1.00× |
+| Hashbrown with wide payloads and per-worker decoding | 0.555 | 1.00× |
+| Diagnostic Mech table algorithm compiled by Rust | 0.547 | 0.99× |
+| Diagnostic quadratic probing | 0.549 | 0.99× |
+| Diagnostic linear probing and source-order scoped threads | 0.543 | 0.98× |
+| Retained secured Mech AOT | 0.903 | 1.63× |
+
+These overlapping small differences do not establish that either probe policy is faster. The important finding is that the table algorithm itself does not reproduce the large gap. Diagnostic table ranges include first-launch observations up to 0.733–0.741 seconds; all remain. Its separate prefix medians are Rust **0.0177 seconds**, hashbrown control **0.0191 / 1.08×**, linear table **0.0177 / 1.00×**, quadratic table **0.0177 / 1.00×**, linear/scoped **0.0200 / 1.12×**, and Mech **0.0865 / 4.88×**.
+
+The diagnostic table is **never linked into Mech**. It omits Mech's source-state transport, precise source failures, managed memory and finite work accounting, capability startup and publication. The residual gap cannot be assigned to one of those components by this experiment. [Nine storage checks](table-strategy-v1/checks-linear/stdout.bin), three per compiled variant, verify complete maps against a separate ordered-map oracle, repeated replacements including zero/maximum values, growth, colliding fingerprints, wraparound and payload/group geometry. Every timed process verifies complete output. Every Mech full execution still reports all **874,999,961 physical updates**, seven packed SSA maps, seven peak workers, guarded bounds/calls, five full frozen maps and ten original reads. Short prefix processes may observe fewer overlapping workers while retaining all seven source tasks; one observed six and is retained.
+
+Two initial setup failures collected no timings: a [sandbox-denied hardware query](strategy-comparison-v1/failure.json), then a [missing receipt parent directory after successful compilation](strategy-comparison-v2/failure.json). The representation study subsequently paused after 81 recorded observations because its prefix qualifier unnecessarily demanded all seven workers overlap. The [initial report](strategy-comparison-v3/pre-resume-results.json) and controller remain; the resumed run retains every earlier process, includes the completed six-worker prefix observation and runs only the remaining planned processes. No observation was rerun or discarded. [Checkpoint verification](strategy-diagnosis-v1/results.json) recomputes both cohorts' statistics, parses 254 JSON artifacts, checks **219 terminal owned process receipts**, retains all **180 quantitative observations**, verifies source/input/binary/policy/data pins and confirms the unchanged compiler tree and lock inode. It also verifies the exact initial/resume controllers and all nine storage checks.
+
+The next structural compiler target is a **separate funded counting function with rare source continuations**. Rust's short iterator/entry loop does not carry Mech's multiple state/mode joins through each update. A source-derived version can return to an outer continuation for original refill, growth, cap and error operations, reducing live source/frame state and repeated moves. Every original action, physical map update, terminal traversal, finite debit and error origin must remain; storage-moving helpers require pointer refresh before reentry. Affine cursor representation and state coalescing are related compiler options. These are design candidates, **not implemented or measured improvements**. Shared decoded input, narrower storage and work-stealing remain possible general features, but these diagnostics do not support prioritizing them as the main route to closing the current full-input gap.
+
 ## Bounded escrow backoff and current profile
 
 Current compiler/runtime candidate [`dae3141ba`](https://github.com/mech-lang/mech/commit/dae3141bae18edca1ac67a181df49b9ca5438c82) retains **IR62 / ABI27 / work65** and the previous stage's byte-identical generated Object. The runtime tries the original escrow mutex at most six times, with at most 63 bounded pause hints, before using its original blocking lock. Poison recovery is unchanged. Every debit still reaches the same finite ledgers; the 1,024-traversal refill bound and 32-charge/32,768-work leaf lock-release bounds remain. Source, bytecode, every window/map update, launch allowances and worker count are unchanged.
