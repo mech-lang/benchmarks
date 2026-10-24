@@ -1,0 +1,269 @@
+{
+  "schema": "mech.preparation-interactions.plan.v1",
+  "source_commit": "e82ed4d54d4490102ac41192d1fcbf492d467e08",
+  "accepted_commit": "438646017717a5c4392721f13c6f935e88c59527",
+  "factors": [
+    "line-offset/CRLF payload scan fusion",
+    "disjoint private codegen metadata"
+  ],
+  "subjects": [
+    "baseline",
+    "scan",
+    "alias",
+    "combined",
+    "rust"
+  ],
+  "existing_binary_pins": [
+    {
+      "label": "baseline",
+      "receipt": "escrow-backoff12-timing-v1",
+      "receipt_sha256": "2d0d2a4647f39927441a5c42b609cea5df0759650d970855d07792c30397e315",
+      "binary": "counting-escrow-backoff12",
+      "binary_sha256": "e92c3cbb4a94b78bd2c54e008f16a8d34dc92daf0a82bc3d0aad4a68261366fb",
+      "source_commit": "438646017717a5c4392721f13c6f935e88c59527"
+    },
+    {
+      "label": "scan",
+      "receipt": "line-offset-crlf-timing-v1",
+      "receipt_sha256": "675f967264cdbeb57f66104daf6544dce0edce25fc2fe37750df9e31efbc9d76",
+      "binary": "counting-line-offset-crlf",
+      "binary_sha256": "60509c6bb55434b14bad4e423c182554f379627263f34d50481357ae9cf21aef",
+      "source_commit": "8c9713b5a77e44175609d5dadef5d86a8b480593"
+    },
+    {
+      "label": "alias",
+      "receipt": "disjoint-state-timing-v1",
+      "receipt_sha256": "749776327a72549f40e6affa28f3b961fbff1be84d119aad408fd1194ae930d0",
+      "binary": "counting-disjoint-state",
+      "binary_sha256": "080ed1c0685241422a5ef6295188058fef374d5322614ffeb8f70f77006bf7e7",
+      "source_commit": "a94d34d60ab7bc503603217d0baa49397143eb09"
+    }
+  ],
+  "combined_binary": "counting-preparation-combined",
+  "combined_receipt": "preparation-combined-timing-v1",
+  "compiler": "compiler-v69",
+  "seed": 2026102402,
+  "orders": [
+    [
+      "combined",
+      "rust",
+      "alias",
+      "baseline",
+      "scan"
+    ],
+    [
+      "rust",
+      "baseline",
+      "combined",
+      "scan",
+      "alias"
+    ],
+    [
+      "alias",
+      "combined",
+      "scan",
+      "rust",
+      "baseline"
+    ],
+    [
+      "scan",
+      "baseline",
+      "alias",
+      "rust",
+      "combined"
+    ],
+    [
+      "rust",
+      "combined",
+      "baseline",
+      "alias",
+      "scan"
+    ],
+    [
+      "combined",
+      "alias",
+      "rust",
+      "scan",
+      "baseline"
+    ],
+    [
+      "baseline",
+      "rust",
+      "scan",
+      "combined",
+      "alias"
+    ],
+    [
+      "scan",
+      "alias",
+      "baseline",
+      "combined",
+      "rust"
+    ],
+    [
+      "baseline",
+      "scan",
+      "rust",
+      "alias",
+      "combined"
+    ],
+    [
+      "alias",
+      "scan",
+      "combined",
+      "baseline",
+      "rust"
+    ],
+    [
+      "scan",
+      "baseline",
+      "alias",
+      "rust",
+      "combined"
+    ],
+    [
+      "scan",
+      "alias",
+      "baseline",
+      "combined",
+      "rust"
+    ],
+    [
+      "rust",
+      "baseline",
+      "combined",
+      "scan",
+      "alias"
+    ],
+    [
+      "alias",
+      "scan",
+      "combined",
+      "baseline",
+      "rust"
+    ],
+    [
+      "combined",
+      "alias",
+      "rust",
+      "scan",
+      "baseline"
+    ],
+    [
+      "baseline",
+      "scan",
+      "rust",
+      "alias",
+      "combined"
+    ],
+    [
+      "baseline",
+      "rust",
+      "scan",
+      "combined",
+      "alias"
+    ],
+    [
+      "combined",
+      "rust",
+      "alias",
+      "baseline",
+      "scan"
+    ],
+    [
+      "alias",
+      "combined",
+      "scan",
+      "rust",
+      "baseline"
+    ],
+    [
+      "rust",
+      "combined",
+      "baseline",
+      "alias",
+      "scan"
+    ]
+  ],
+  "observations_per_subject": 20,
+  "design": "Two separately shuffled ten-order odd Williams blocks. Every subject appears equally often in every position; ordered adjacent pairs are balanced within each ten-order block. All five executables run serially, with no exclusions.",
+  "excluded_warmups": 0,
+  "excluded_outliers": 0,
+  "source_program": "unchanged",
+  "input_selected_bases": 125000000,
+  "expected_source_table_updates": 874999961,
+  "workers": 7,
+  "analysis": "Report raw medians, all paired ratios and nonparametric paired log-ratio bootstrap intervals. Interaction is log(combined/baseline)-log(scan/baseline)-log(alias/baseline), calculated by matched block. Also report the combined-versus-best-single ratio; do not require each individual factor to pass a speed threshold. Preserve every variant and all outcomes.",
+  "decision": "Run both separately reported twenty-order batches regardless of the first result. Report paired uncertainty for both factors and their interaction. Do not require each factor to pass the previous 1% cutoff. Consider promotion only after complete correctness and consistent combined-versus-baseline improvement; otherwise retain the combination as an available experiment rather than deleting it.",
+  "bootstrap_seed": 2026102403,
+  "bootstrap_resamples": 20000,
+  "independent_batches": 2,
+  "factor_source_blobs": {
+    "hosts/gpu/src/native_artifact/compiler.rs": {
+      "baseline": "c4c15e2432d816c2cde14f93e7eda028fbd5160c",
+      "scan": "c4c15e2432d816c2cde14f93e7eda028fbd5160c",
+      "alias": "4e027342d023fd63521144b2ad769337ed04a1a8",
+      "combined": "4e027342d023fd63521144b2ad769337ed04a1a8"
+    },
+    "hosts/gpu/src/native_artifact/compiler_memory_regions.rs": {
+      "baseline": null,
+      "scan": null,
+      "alias": "f6e3faa23f9bc1baf5c789edeae0a88dfcb8b487",
+      "combined": "f6e3faa23f9bc1baf5c789edeae0a88dfcb8b487"
+    },
+    "hosts/gpu/src/native_artifact/iteration_compiler.rs": {
+      "baseline": "abe4b0605f4151bbb3cba754040ad43b8db1bcfe",
+      "scan": "abe4b0605f4151bbb3cba754040ad43b8db1bcfe",
+      "alias": "32eb6fc101a78a30f86cfdb2b2455396060c9e4b",
+      "combined": "32eb6fc101a78a30f86cfdb2b2455396060c9e4b"
+    },
+    "hosts/gpu/src/native_artifact/program_borrowed_codegen.rs": {
+      "baseline": "da55a2f9578002c36851bbda2ad9a9138cd38e89",
+      "scan": "da55a2f9578002c36851bbda2ad9a9138cd38e89",
+      "alias": "61eb1ea24a9648f63499983369127a17d43b98ac",
+      "combined": "61eb1ea24a9648f63499983369127a17d43b98ac"
+    },
+    "hosts/gpu/src/native_artifact/program_identity.rs": {
+      "baseline": "c6b288529cf4af73af51ee8929482e3731a857b3",
+      "scan": "c6b288529cf4af73af51ee8929482e3731a857b3",
+      "alias": "d478423a670e15a231d08ed23fd2d144f6679a7b",
+      "combined": "d478423a670e15a231d08ed23fd2d144f6679a7b"
+    },
+    "hosts/gpu/src/native_artifact/program_prefix_codegen.rs": {
+      "baseline": "084c32c359951170f585bdb2829bf2ed9d01af33",
+      "scan": "084c32c359951170f585bdb2829bf2ed9d01af33",
+      "alias": "54f339a46834519c2bc498de950b49188ea47094",
+      "combined": "54f339a46834519c2bc498de950b49188ea47094"
+    },
+    "hosts/gpu/src/native_artifact/program_prefix_window_tests.rs": {
+      "baseline": "95e0f4a645f08d5097ebcbccdd1cfe9dfb7da509",
+      "scan": "95e0f4a645f08d5097ebcbccdd1cfe9dfb7da509",
+      "alias": "65bf3521c505a6151ca961865ebcafa1bfda9cfc",
+      "combined": "65bf3521c505a6151ca961865ebcafa1bfda9cfc"
+    },
+    "hosts/gpu/src/native_artifact/program_tail_codegen.rs": {
+      "baseline": "f41a6bb612290d024e02661927f7d5f756ce4c1b",
+      "scan": "f41a6bb612290d024e02661927f7d5f756ce4c1b",
+      "alias": "292d2ec562cb6b2128dcc925b5417185fc39165a",
+      "combined": "292d2ec562cb6b2128dcc925b5417185fc39165a"
+    },
+    "src/engine/src/resident/general/native_text_line_chunk_allocation.rs": {
+      "baseline": "a0d0704d9867b4ecd359115b24d48935bfa1130c",
+      "scan": "4150fa7771c1ae779a25b057a6c1fb39aa185926",
+      "alias": "a0d0704d9867b4ecd359115b24d48935bfa1130c",
+      "combined": "4150fa7771c1ae779a25b057a6c1fb39aa185926"
+    },
+    "src/engine/src/resident/general/native_text_line_chunks.rs": {
+      "baseline": "43f2b620101ff3cff4af2ff5b658bec079659b56",
+      "scan": "466a7b33a8180424f2012f340096d037fe44a488",
+      "alias": "43f2b620101ff3cff4af2ff5b658bec079659b56",
+      "combined": "466a7b33a8180424f2012f340096d037fe44a488"
+    },
+    "src/engine/src/resident/general/native_text_line_offset_tests.rs": {
+      "baseline": "c1f7b40c36653390e7d66f1be97d6c3de989247b",
+      "scan": "b788437338185c28caf1388b1fb0ff453f9c590a",
+      "alias": "c1f7b40c36653390e7d66f1be97d6c3de989247b",
+      "combined": "b788437338185c28caf1388b1fb0ff453f9c590a"
+    }
+  }
+}
