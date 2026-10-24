@@ -259,6 +259,8 @@ try:
                                                          **packed, **parallel))
                 if label == 'mech' and require_packed_map:
                     assert packed['packed_map_regions'] == 7, 'Candidate fell back from packed map regions'
+                    if timing.get('require_direct_lookup_regions') is not None:
+                        assert native.get('native_direct_lookup_regions') == timing['require_direct_lookup_regions'], 'Candidate did not admit its bounded lookup caches'
                     assert packed['packed_map_updates'] == 874999961, 'Candidate did not complete every update in packed storage'
                 if label == 'mech' and require_packed_ssa:
                     assert packed['packed_ssa_regions'] == 7, 'Candidate fell back from generated SSA loops'

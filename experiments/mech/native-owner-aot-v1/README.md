@@ -2,7 +2,31 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current cold-reconstruction experiments and profile
+## Current bounded lookup-cache experiment
+
+IR77 / ABI28 / work66 adds an admitted cache over a complete finite key domain,
+while retaining the underlying hash maps and every original update. Six balanced
+complete-process cohorts give Rust **0.5580 s / 1.000×**, IR76 parent
+**0.7854 s / 1.407×**, and candidate **0.7740 s / 1.387×**. The median improves
+**1.45%**, with six faster pairs and slightly overlapping ranges. Separate
+counters fall **24.3% in instructions** and **26.3% in cycles** against the
+parent; the candidate now retires fewer instructions than Rust while remaining
+slower in elapsed time. The separate prefix cohort regresses 14.2% and remains.
+
+Three exact-code profiles show more work-budget contention. Static examination
+also finds a newly spilled hashing constant in large-domain loops and redundant
+join work in some cached paths. Read-only thread observations motivate checking
+preparation and the longest workers. These are hypotheses, not established cost
+attributions. The [report](direct-lookup-cache-checkpoint-v1/README.md) records
+all results, failed attempts and remaining options. Production-equivalent full
+validation passes **374 native checks plus one catalog check**; its revision
+differs from the timed production source only in an exact-memory test fixture.
+[Verification](direct-lookup-cache-checkpoint-v1/results.json) checks 18 primary
+full observations, three exact-code profiles and 69 terminal owned processes.
+Canonical benchmark data and the performance source are unchanged; Rust parity
+is incomplete.
+
+## Earlier cold-reconstruction experiments and profile
 
 IR75 and IR76 attempt to reconstruct original source/frame values at cold exits. Neither produces a measurable improvement. In the latest independent six-cohort comparison, Rust is **0.5577 s / 1.00×**, IR75 control **0.7848 s / 1.407×**, and IR76 candidate **0.7847 s / 1.407×**, with only three faster pairs. Three exact-code Mech captures put **84.75%** of worker observations in generated counting loops; the source-index reconstruction remains on the actual hot path. Separate counters give **39.750 billion instructions** against Rust's **33.153 billion**. Three fresh protected Rust profiles accompany the comparison. Worker samples include waits and are not elapsed-time shares.
 

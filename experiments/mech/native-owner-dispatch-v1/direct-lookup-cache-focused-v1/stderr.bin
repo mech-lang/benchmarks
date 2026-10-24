@@ -1,0 +1,15 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0502]: cannot borrow `self.slots` as mutable because it is also borrowed as immutable
+   --> hosts/gpu/src/native_artifact/program_packed_map.rs:515:48
+    |
+513 |                 for (at, slot) in self.slots.iter().enumerate() {
+    |                                   -----------------------------
+    |                                   |
+    |                                   immutable borrow occurs here
+    |                                   immutable borrow later used here
+514 |                     if self.controls[at] != EMPTY {
+515 |                         cache.insert(slot.low, self.slots.entry_address(at));
+    |                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ mutable borrow occurs here
+
+For more information about this error, try `rustc --explain E0502`.
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

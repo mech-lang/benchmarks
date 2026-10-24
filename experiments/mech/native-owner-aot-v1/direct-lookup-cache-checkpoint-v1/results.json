@@ -1,0 +1,120 @@
+{
+  "status": "bounded-lookup-cache-trial-verified",
+  "evidence": {
+    "direct-lookup-cache": {
+      "source_commit": "c7cda2018917a75bd014c07ee2777305d88832e7",
+      "median_seconds": {
+        "rust": 0.557985979,
+        "mech": 0.7740117295,
+        "baseline": 0.785364146
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3871526501206224,
+        "baseline": 1.4074979937802343
+      },
+      "faster_pairs": 6,
+      "hardware_medians": {
+        "mech": {
+          "instructions": 30061446496,
+          "cycles": 7753596001,
+          "real_seconds": 0.76,
+          "user_seconds": 2.11,
+          "system_seconds": 0.13
+        },
+        "baseline": {
+          "instructions": 39706500502,
+          "cycles": 10516367142,
+          "real_seconds": 0.77,
+          "user_seconds": 3.07,
+          "system_seconds": 0.06
+        },
+        "rust": {
+          "instructions": 33131074478,
+          "cycles": 7902471468,
+          "real_seconds": 0.54,
+          "user_seconds": 2.33,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 5006,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3561,
+          "work_budget_wait": 374,
+          "work_budget_active": 520,
+          "storage_helper_active": 328,
+          "generated_helper_bridge": 124,
+          "other_active": 98,
+          "generated_root": 1
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 367
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 268
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 133
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 106
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 18
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 2
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 71.13463843387935,
+          "work_budget_wait": 7.471034758290052,
+          "work_budget_active": 10.38753495805034,
+          "storage_helper_active": 6.552137435077906,
+          "generated_helper_bridge": 2.477027566919696,
+          "other_active": 1.9576508190171793,
+          "generated_root": 0.01997602876548142
+        }
+      },
+      "instruction_range": [
+        19,
+        38
+      ]
+    }
+  },
+  "validation": {
+    "direct-lookup-cache-focused-v2": 5,
+    "direct-lookup-cache-steady-v1": 6,
+    "direct-lookup-cache-growth-v1": 1,
+    "direct-lookup-cache-native-v2": 374,
+    "direct-lookup-cache-catalog-v1": 1
+  },
+  "negative_qualification_fixtures": 11,
+  "primary_full_observations": 18,
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 69,
+  "thread_observation_processes": 6,
+  "retained_monitor_setup_attempts": 5,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "69a9a20c585a264d3c59e7fd282b5a1b73d13bb3c527dbc06c2bcf37407a6570",
+  "production_equivalent_validation_commit": "49bdf267dfdab441c69007b4f04b4088be0a0337",
+  "production_diff": [
+    "hosts/gpu/src/native_artifact/program_packed_narrow_tests.rs"
+  ],
+  "scope": "Six balanced complete-process cohorts, all complete outputs and physical updates, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Full validation differs from timed source only in the fixture that now counts owned cache bytes. The initial borrow error and stale exact-byte fixture failure remain. No Rust runtime parity is established."
+}
