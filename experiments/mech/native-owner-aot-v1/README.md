@@ -2,7 +2,27 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current bounded lookup-cache experiment
+## Current separate lookup functions
+
+IR78 separates admitted cached and ordinary hash loops. Six balanced full-input
+cohorts give Rust **0.5517 s / 1.000×**, IR77 parent **0.7614 s / 1.380×**, and
+candidate **0.7490 s / 1.358×**: **1.64% lower median**, with six faster pairs
+and overlapping ranges. Full output, 874,999,961 updates, seven maps/workers and
+five cache admissions are verified. The separate prefix improves 10.52%.
+
+Fresh exact-code inspection confirms **zero stack accesses** on all fifty
+audited cycles; cached paths have 16–17 instructions and ordinary paths 36–39.
+Whole-process instructions fall another 10.4%, but elapsed time remains above
+Rust. Work accounting and waits occupy 19.31% of fresh worker observations;
+these are not wall-time shares. **377 native checks plus one catalog check pass
+at the exact timed revision.** The [report](lookup-split-checkpoint-v1/README.md)
+records the profile, resource admission, optional snapshot fallback and initial
+qualification failure. [Verification](lookup-split-checkpoint-v1/results.json)
+checks 18 primary full observations, three exact-code profiles, eighteen malformed
+metadata rejections and 54 terminal owned processes. Source and canonical data
+are unchanged; Rust parity remains incomplete.
+
+## Earlier bounded lookup-cache experiment
 
 IR77 / ABI28 / work66 adds an admitted cache over a complete finite key domain,
 while retaining the underlying hash maps and every original update. Six balanced

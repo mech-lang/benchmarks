@@ -24,6 +24,7 @@ assert text_section(binary) == text_section(HERE / '.build' / args.binary)
 assert analysis['machine_code_identical'] and analysis['completed_output_verified']
 symbols = ['mech_canonical_program_entry_v1'] + [loop['symbol'] for loop in timing.get('compiled_outlined_loops', [])]
 symbols += [loop['symbol'] for loop in timing.get('compiled_steady_loops', [])]
+symbols += [loop['lookup_cache_function']['symbol'] for loop in timing.get('compiled_steady_loops', []) if loop.get('lookup_cache_function')]
 if timing.get('compiled_bound_call_shim'):
     symbols.append(timing['compiled_bound_call_shim']['symbol'])
 assert len(symbols) == len(set(symbols))

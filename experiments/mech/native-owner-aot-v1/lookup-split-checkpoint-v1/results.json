@@ -1,0 +1,124 @@
+{
+  "status": "separate-lookup-functions-trial-verified",
+  "evidence": {
+    "lookup-split": {
+      "source_commit": "65dfd8bef29a8aef4cddd6926ff6461a959c24be",
+      "median_seconds": {
+        "rust": 0.5516818960000001,
+        "mech": 0.7489572499999999,
+        "baseline": 0.7614198125
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3575889573871387,
+        "baseline": 1.380179081497356
+      },
+      "faster_pairs": 6,
+      "hardware_medians": {
+        "mech": {
+          "instructions": 26934090923,
+          "cycles": 7502579132,
+          "real_seconds": 0.73,
+          "user_seconds": 2.0,
+          "system_seconds": 0.16
+        },
+        "baseline": {
+          "instructions": 30076189173,
+          "cycles": 7749309197,
+          "real_seconds": 0.75,
+          "user_seconds": 2.1,
+          "system_seconds": 0.14
+        },
+        "rust": {
+          "instructions": 33162675520,
+          "cycles": 7938734555,
+          "real_seconds": 0.54,
+          "user_seconds": 2.34,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 5131,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3591,
+          "work_budget_wait": 432,
+          "work_budget_active": 559,
+          "storage_helper_active": 339,
+          "generated_helper_bridge": 105,
+          "other_active": 104,
+          "other_wait": 1
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 385
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 287
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 141
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 119
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 32
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 14
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "frozen_map_charge",
+            "observations": 12
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 1
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 69.98635743519782,
+          "work_budget_wait": 8.419411420775678,
+          "work_budget_active": 10.894562463457415,
+          "storage_helper_active": 6.606899239914247,
+          "generated_helper_bridge": 2.0463847203274215,
+          "other_active": 2.026895342038589,
+          "other_wait": 0.019489378288832588
+        }
+      },
+      "instruction_range": [
+        16,
+        39
+      ]
+    }
+  },
+  "validation": {
+    "lookup-split-focused-v1": 3,
+    "lookup-split-native-v1": 377,
+    "lookup-split-catalog-v1": 1
+  },
+  "negative_qualification_fixtures": 18,
+  "primary_full_observations": 18,
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 54,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "c9d965747625334dc5d57311d1cb6fe750b05faa1d122b7b6a264635fbcb4504",
+  "validation_commit": "65dfd8bef29a8aef4cddd6926ff6461a959c24be",
+  "production_diff": [],
+  "scope": "Six balanced complete-process cohorts, all complete outputs and physical updates, four bounded emitted lookup functions, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Full validation uses the exact timed revision. The initial qualification failure and reuse of its completed build remain; no observations were reused. One cached function uses ordinary source/live exit snapshots after optional recipe metadata admission declined. No Rust runtime parity is established."
+}

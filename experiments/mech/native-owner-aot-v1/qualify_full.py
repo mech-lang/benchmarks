@@ -62,6 +62,8 @@ require_loop_constants = timing.get('require_loop_constants', False)
 require_steady_loops = timing.get('require_steady_loops', False)
 if require_steady_loops:
     assert timing.get('steady_loops_qualified') is True and timing.get('require_loop_constants')
+    if any(r.get('lookup_cache_function') for r in timing['compiled_steady_loops']):
+        assert timing.get('lookup_split_qualified') is True
 if require_loop_constants:
     assert timing.get('loop_constants_qualified') is True and timing.get('require_outlined_loops')
 require_header_cache = timing.get('require_header_cache', False)
