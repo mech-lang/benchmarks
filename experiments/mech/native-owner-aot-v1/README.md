@@ -2,7 +2,13 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current cursor experiment and profile
+## Current cold-reconstruction experiments and profile
+
+IR75 and IR76 attempt to reconstruct original source/frame values at cold exits. Neither produces a measurable improvement. In the latest independent six-cohort comparison, Rust is **0.5577 s / 1.00×**, IR75 control **0.7848 s / 1.407×**, and IR76 candidate **0.7847 s / 1.407×**, with only three faster pairs. Three exact-code Mech captures put **84.75%** of worker observations in generated counting loops; the source-index reconstruction remains on the actual hot path. Separate counters give **39.750 billion instructions** against Rust's **33.153 billion**. Three fresh protected Rust profiles accompany the comparison. Worker samples include waits and are not elapsed-time shares.
+
+At the exact IR76 revision, **369 native checks plus one catalog check pass**, with three existing manual exclusions. The [profile report](cold-reconstruction-checkpoint-v1/README.md) records both separate cohorts, all six Mech profiles, fresh Rust profiles, counter comparisons and remaining hypotheses. [Verification](cold-reconstruction-checkpoint-v1/results.json) checks 36 complete-process primary observations, 21 malformed metadata rejections and 117 terminal owned processes. Canonical benchmark data is unchanged; no speedup or Rust parity is established.
+
+## Earlier cursor experiment and profile
 
 Compiler [`c7574fa95`](https://github.com/mech-lang/mech/commit/c7574fa952a9981e1b2b0659a510fc05eff1c2ff), **IR74 / ABI27 / work65**, uses the source-certified adjacent byte cursor while preserving the original scalar continuations and exact finite fuel. Six balanced [full-input cohorts](full-affine-cursor-cohort-v1/results.json) give Rust **0.562 s / 1.00×**, IR73 parent **0.798 s / 1.42×**, and cursor candidate **0.786 s / 1.40×**. The candidate median is 1.52% lower, with only three faster pairs and overlapping ranges; no robust speedup is established. Every full Mech execution verifies complete output, 874,999,961 physical updates, seven maps and peak workers, and secured startup/shutdown.
 

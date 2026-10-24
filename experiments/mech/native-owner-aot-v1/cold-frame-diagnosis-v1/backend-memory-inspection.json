@@ -1,0 +1,10 @@
+{
+  "status": "local-primary-backend-source-inspected",
+  "crate": "cranelift-codegen",
+  "version": "0.131.3",
+  "source_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cranelift-codegen-0.131.3/src/alias_analysis.rs",
+  "source_sha256": "b806b468ec10deff039f3700d7f2292577077a654d0d05c4a7ab3caf6acde6b1",
+  "finding": "The backend tracks last stores and known values separately for memory alias regions. Both existing packed-table stores and ordinary frame loads use the default region. A later store changes the memory-value key for a following ordinary load.",
+  "interpretation": "Recovering bias from the actual immutable frame in a cold block may avoid sharing the original hot arithmetic expression. This is a hypothesis tested by the next exact disassembly; source inspection alone does not prove the cause of placement or a speedup.",
+  "benchmark_samples": 0
+}
