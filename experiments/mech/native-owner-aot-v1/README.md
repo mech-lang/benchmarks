@@ -2,6 +2,28 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Isolated closed-loop functions
+
+Compiler [`7f0bf64de`](https://github.com/mech-lang/mech/commit/7f0bf64dee07734402d4c00c25ac3fe392038adc) isolates each eligible closed packed loop in a local native function emitted from the same source body as its inline fallback. The caller retains the original selector and one packed-SSA receipt. Each synchronous call returns only at its original exit/error boundary; the original source locals, private owner, helper/context, transport context and finite loan remain. Total stack admission includes the parent plus the largest emitted callee, and total code includes every callee. Fixed caller/loader/return templates fit the unchanged per-traversal work envelope. IR52 identifies the change; ABI26 and work65 remain.
+
+Three rotated **125-million-base** cohorts retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.548 | 1.00× |
+| Previous CFG cleanup, `40e86c965` | 1.455 | 2.66× |
+| Isolated loops, `7f0bf64de` | 1.405 | 2.56× |
+
+The candidate median is **3.4% lower**, with overlapping candidate/parent ranges (1.379–1.430 versus 1.420–1.472 seconds). This is a small observed gain. The [aggregate](full-loop-outlining-cohort-v1/results.json) retains raw observations and standard deviations. The [one-million-base prefix](loop-outlining-timing-v1/results.json) gives 0.0195 seconds for Rust, 0.0965 for the parent (**4.94× Rust**) and 0.0994 for the candidate (**5.08× Rust**), with overlapping ranges and no established prefix gain. All candidate executions verify every output and **6,999,961 prefix / 874,999,961 full updates**, seven packed SSA maps, seven guarded selections, five complete frozen maps, ten original reads and seven peak workers. Source, bytecode, inputs and finite launch limits match the parent. Subjects execute serially, including secured startup/shutdown.
+
+[Four focused tests](../native-owner-dispatch-v1/loop-outlining-focused-v1/summary.json) compare inline and outlined execution across runtime inputs, arbitrary seeds, source overflow/errors, growth, full-loan/refill and exact-work boundaries. Metadata/admission checks accept exact combined stack/code limits and reject each one short. The [full native suite](../native-owner-dispatch-v1/loop-outlining-native-v1/summary.json) passes **333 GPU tests and one catalog test**, with three existing exclusions.
+
+Two source-bound functions are emitted, at headers 173 and 284, each with 336 stack bytes and 5,136 code bytes. Their bounded cleanup reports 17 constant branches removed each. [Separate hardware-counter executions](loop-outlining-hardware-v1/results.json) give medians of **107.9 billion instructions / 21.5 billion cycles**, versus **111.5 billion / 22.3 billion** for the parent and **33.2 billion / 7.98 billion** for Rust. Mech still retires **3.26× Rust's instructions**. These complete-process diagnostic counters are separate from the timing cohorts.
+
+The [fresh full profile](full-profile-loop-outlining-v1/analysis.json) observes seven workers and 5,042 worker samples; 4,449 (**88.24%**) end in generated code. Inclusive library-debit/wait shares are **4.86% / 6.27%**, with no publication observed. Categories overlap and are not elapsed-time shares. The profiling executable matches the timed executable's entire **4,263,740-byte** code section, SHA-256 `e8fd6ee9be7e88e8e7c431823da431dd2e7cda749fe99695f07386c8ed9e7462`. [Exact disassembly](loop-outlining-codegen-audit-v1/results.json) covers the parent entry and both local loop functions; sampled-PC groups resolve into those actual functions, including stack reloads and SIMD probing.
+
+Isolation alone leaves most of the gap. The next candidate targets repeated call-limit checks and rolling-window adjacency checks through guarded loop versions, with rechecks after storage-changing callbacks and the original checked path retained. No gain is assigned to that candidate. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Bounded constant control-flow cleanup
 
 Compiler [`40e86c965`](https://github.com/mech-lang/mech/commit/40e86c965464d18a6ca990fa9e4b7a0c6af51e1b) runs bounded constant-branch cleanup after Cranelift data optimization. It folds only literal integer conditions, preserves the selected edge's arguments, and uses the backend's unreachable-block and constant-phi cleanup before register allocation. Dynamic conditions, source effects, failures, capabilities and finite work remain. The ordinary final speed pipeline still runs. IR51 identifies the change; ABI26, work65, source, bytecode, inputs and launch policies are unchanged.

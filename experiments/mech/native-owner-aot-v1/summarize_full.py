@@ -24,7 +24,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'compiled_guarded_loops', 'qualified_guarded_regions', 'native_descriptor_sha256',
             'require_frozen_maps', 'source_frozen_maps_qualified', 'frozen_map_layout', 'qualified_frozen_regions',
             'require_lookup_facts', 'source_lookup_facts_qualified', 'compiled_lookup_facts', 'qualified_lookup_regions',
-            'require_cfg_cleanup', 'cfg_cleanup_qualified', 'compiled_cfg_cleanup']
+            'require_cfg_cleanup', 'cfg_cleanup_qualified', 'compiled_cfg_cleanup', 'cfg_cleanup_removed_total',
+            'require_outlined_loops', 'outlined_loops_qualified', 'compiled_outlined_loops']
 first = reports[0]
 samples = {}
 receipts = []
@@ -34,7 +35,7 @@ for run, report in zip(args.runs, reports):
     if report.get('require_cfg_cleanup'):
         assert report.get('cfg_cleanup_qualified') is True
         assert report['compiled_cfg_cleanup']['enabled'] is True
-        assert report['compiled_cfg_cleanup']['constant_branches_removed'] > 0
+        assert report.get('cfg_cleanup_removed_total', report['compiled_cfg_cleanup']['constant_branches_removed']) > 0
     if report.get('require_guarded_loops'):
         assert report.get('source_guarded_loops_qualified') is True and report.get('source_tag_threading_qualified') is True
         assert report['compiled_guarded_loops']['complete'] is True

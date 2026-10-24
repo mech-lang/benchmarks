@@ -453,6 +453,8 @@ parser.add_argument('--require-lookup-facts', action='store_true',
                     help='Require exact-source current-key substitutions in both emitted packed regions')
 parser.add_argument('--require-cfg-cleanup', action='store_true',
                     help='Require bounded constant-branch cleanup in the exact emitted native function')
+parser.add_argument('--require-outlined-loops', action='store_true',
+                    help='Require source-bound local native functions for every emitted packed loop')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -500,6 +502,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_frozen_maps=args.require_frozen_maps,
               require_lookup_facts=args.require_lookup_facts,
               require_cfg_cleanup=args.require_cfg_cleanup,
+              require_outlined_loops=args.require_outlined_loops,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -549,7 +552,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'))
@@ -557,11 +560,11 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] == 51 and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (51, 52) and manifest['object']['work_policy_version'] == 65
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
-        assert type(cleanup['constant_branches_removed']) is int and cleanup['constant_branches_removed'] > 0
+        assert type(cleanup['constant_branches_removed']) is int and cleanup['constant_branches_removed'] >= 0
         assert type(cleanup['fixed_point']) is bool
         for key in ('before_blocks', 'before_instructions', 'after_blocks', 'after_instructions'):
             assert type(cleanup[key]) is int and cleanup[key] > 0
@@ -569,6 +572,29 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['cfg_cleanup_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_outlined_loops:
+        assert args.require_cfg_cleanup and args.require_lookup_facts
+        assert manifest['object']['typed_ir_version'] == 52
+        loops = manifest['object'].get('compiled_outlined_loops')
+        assert isinstance(loops, list) and 0 < len(loops) <= 256
+        expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
+        assert len(loops) == len(expected_headers) and {loop['header'] for loop in loops} == expected_headers
+        for loop in loops:
+            assert loop['symbol'] == f"mech_canonical_program_entry_v1_packed_loop_{loop['header']}"
+            assert loop['caller_template_bound'] == 64
+            assert type(loop['stack_bytes']) is int and 0 <= loop['stack_bytes'] <= manifest['object']['stack_bytes']
+            assert type(loop['code_bytes']) is int and 0 < loop['code_bytes'] < manifest['object']['code_bytes']
+            cleanup = loop['cleanup']
+            assert cleanup['enabled'] is True and type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
+            assert type(cleanup['constant_branches_removed']) is int and cleanup['constant_branches_removed'] > 0
+        assert sum(loop['code_bytes'] for loop in loops) < manifest['object']['code_bytes']
+        report['compiled_outlined_loops'] = loops
+        report['outlined_loops_qualified'] = True
+    if args.require_cfg_cleanup:
+        removed = report['compiled_cfg_cleanup']['constant_branches_removed'] + sum(
+            loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
+        assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
+        report['cfg_cleanup_removed_total'] = removed
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
         report['compiled_source_edge_facts'] = manifest['object'].get('compiled_source_edge_facts')
         report['qualified_source_edge_regions'] = require_edge_facts(

@@ -48,7 +48,10 @@ require_cfg_cleanup = timing.get('require_cfg_cleanup', False)
 if require_cfg_cleanup:
     assert timing.get('cfg_cleanup_qualified') is True
     assert timing['compiled_cfg_cleanup']['enabled'] is True
-    assert timing['compiled_cfg_cleanup']['constant_branches_removed'] > 0
+    assert timing.get('cfg_cleanup_removed_total', timing['compiled_cfg_cleanup']['constant_branches_removed']) > 0
+require_outlined_loops = timing.get('require_outlined_loops', False)
+if require_outlined_loops:
+    assert timing.get('outlined_loops_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -112,6 +115,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_frozen_maps=require_frozen_maps,
               require_lookup_facts=require_lookup_facts,
               require_cfg_cleanup=require_cfg_cleanup,
+              require_outlined_loops=require_outlined_loops,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -144,6 +148,10 @@ if require_lookup_facts:
         report[key] = timing[key]
 if require_cfg_cleanup:
     for key in ('cfg_cleanup_qualified', 'compiled_cfg_cleanup', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
+    report['cfg_cleanup_removed_total'] = timing.get('cfg_cleanup_removed_total', timing['compiled_cfg_cleanup']['constant_branches_removed'])
+if require_outlined_loops:
+    for key in ('outlined_loops_qualified', 'compiled_outlined_loops'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']
