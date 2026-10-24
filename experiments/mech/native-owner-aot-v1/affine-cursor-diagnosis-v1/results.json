@@ -1,0 +1,123 @@
+{
+  "source_commit": "c7574fa952a9981e1b2b0659a510fc05eff1c2ff",
+  "median_seconds": {
+    "rust": 0.561850604,
+    "mech": 0.7857693125,
+    "baseline": 0.7978733125
+  },
+  "x_rust": {
+    "rust": 1.0,
+    "mech": 1.398537808637828,
+    "baseline": 1.4200809019687377
+  },
+  "faster_pairs": 3,
+  "hardware_medians": {
+    "mech": {
+      "instructions": 39857840768,
+      "cycles": 10505024903,
+      "real_seconds": 0.78,
+      "user_seconds": 3.05,
+      "system_seconds": 0.07
+    },
+    "baseline": {
+      "instructions": 39967031742,
+      "cycles": 10571546263,
+      "real_seconds": 0.77,
+      "user_seconds": 3.07,
+      "system_seconds": 0.06
+    },
+    "rust": {
+      "instructions": 33139271512,
+      "cycles": 7927899195,
+      "real_seconds": 0.55,
+      "user_seconds": 2.34,
+      "system_seconds": 0.03
+    }
+  },
+  "profile": {
+    "worker_observations": 6844,
+    "exclusive_buckets": {
+      "generated_counting_loop": 5776,
+      "work_budget_wait": 102,
+      "work_budget_active": 299,
+      "storage_helper_active": 468,
+      "generated_helper_bridge": 88,
+      "other_active": 110,
+      "other_wait": 1
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 198
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 86
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 52
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 36
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 14
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "frozen_map_charge",
+        "observations": 12
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 2
+      },
+      {
+        "category": "work_budget_active",
+        "route": "other_budget_operation",
+        "observations": 1
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 84.39509059029807,
+      "work_budget_wait": 1.4903565166569257,
+      "work_budget_active": 4.3687901811805965,
+      "storage_helper_active": 6.838106370543541,
+      "generated_helper_bridge": 1.2857977790765633,
+      "other_active": 1.6072472238457043,
+      "other_wait": 0.014611338398597311
+    }
+  },
+  "status": "correctness-validated-performance-tentative",
+  "source_comparison": "unchanged-source-and-bytecode",
+  "full_primary_observations": 18,
+  "full_expected_physical_updates": 874999961,
+  "full_selected_bases": 125000000,
+  "source_sha256": "ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da",
+  "bytecode_sha256": "050db3a016f0caea04900d48940db5bbefc880c3ada507eff82c22c5b84418b0",
+  "full_launch_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+  "static_success_path_instruction_range": [
+    37,
+    39
+  ],
+  "static_success_path_branches": 5,
+  "source_counter_reconstruction_still_in_loop": true,
+  "next_hypothesis": "Cold continuation-specific scalar/frame recipes derived from the original source graph. Distinguish initial and completed edges, retain unknown state and exact source failures. No projected gain.",
+  "validation": {
+    "native": 365,
+    "catalog": 1,
+    "existing_ignored": 3,
+    "targeted": 6
+  },
+  "canonical_benchmark_samples": 0,
+  "scope": "Six balanced full-input cohorts with mixed timing pairs, three fresh exact-code profiles and separate hardware diagnostics. Correctness is validated; the 1.52% median reduction does not establish a robust speedup. No pooled timings, excluded full-input outliers or skipped map work."
+}

@@ -2,7 +2,15 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current counting-loop checkpoint
+## Current cursor experiment and profile
+
+Compiler [`c7574fa95`](https://github.com/mech-lang/mech/commit/c7574fa952a9981e1b2b0659a510fc05eff1c2ff), **IR74 / ABI27 / work65**, uses the source-certified adjacent byte cursor while preserving the original scalar continuations and exact finite fuel. Six balanced [full-input cohorts](full-affine-cursor-cohort-v1/results.json) give Rust **0.562 s / 1.00×**, IR73 parent **0.798 s / 1.42×**, and cursor candidate **0.786 s / 1.40×**. The candidate median is 1.52% lower, with only three faster pairs and overlapping ranges; no robust speedup is established. Every full Mech execution verifies complete output, 874,999,961 physical updates, seven maps and peak workers, and secured startup/shutdown.
+
+Three fresh [exact-code profiles](affine-cursor-remaining-profile-v1/results.json) contain 6,844 worker observations: **84.40%** generated loops, **6.84%** storage, **4.37%** active accounting, **1.49%** accounting waits and **2.91%** bridge/other work. These are thread samples including waits, not wall-time shares. The [static paths](affine-cursor-codegen-audit-v1/steady-paths-v2.json) remain **37–39 instructions/five branches/no stack accesses**: source-counter reconstruction is still present inside the native loop. Separate counters fall only 0.27% in instructions and 0.63% in cycles. Explicit cold source-state recipes remain the next unimplemented hypothesis.
+
+At the exact timed revision, **365 native checks plus one catalog check pass**, with three existing manual exclusions. [The profile report](cursor-profile-checkpoint-v1/README.md) records the tentative timing result, admitted code/stack and remaining machine instructions. [Verification](cursor-profile-checkpoint-v1/results.json) checks 36 full-input observations across two independent trials, four completed exact-code profiles, twelve malformed-metadata rejection cases and 106 terminal owned-process receipts. The preceding source-alphabet scan trial regresses 1.54% and is reverted; its raw evidence remains. Canonical benchmark data is unchanged and Rust parity remains incomplete.
+
+## Retained counting-loop checkpoint
 
 Compiler [`393d23b24`](https://github.com/mech-lang/mech/commit/393d23b24b80cad13e2c2b0284823290d7bafacf), **IR73 / ABI27 / work65**, retains the unchanged string/map source and bytecode. It adds separate precise cold snapshots, direct entry/update continuations, a peeled first probe group and a caller-bound prepaid stopping extent. The [full strategy report](strategy-search-v2/README.md) records each stage, the rejected callee-bound extent and the exact-code evidence.
 
