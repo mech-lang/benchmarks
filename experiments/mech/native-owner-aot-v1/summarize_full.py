@@ -30,7 +30,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'require_loop_invariants', 'loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions',
             'require_preserving_calls', 'preserving_calls_qualified', 'compiled_bound_call_shim', 'compiled_preserving_call_regions',
             'require_mutation_facts', 'mutation_facts_qualified', 'compiled_mutation_loops', 'qualified_mutation_regions',
-            'require_count_values', 'count_values_qualified', 'compiled_count_value_loops', 'qualified_count_value_regions']
+            'require_count_values', 'count_values_qualified', 'compiled_count_value_loops', 'qualified_count_value_regions',
+            'require_header_cache', 'header_cache_qualified', 'compiled_header_cache_loops', 'qualified_header_cache_regions']
 first = reports[0]
 samples = {}
 receipts = []
@@ -43,6 +44,9 @@ for run, report in zip(args.runs, reports):
     if report.get('require_mutation_facts'):
         assert report.get('mutation_facts_qualified') is True
         assert report['compiled_mutation_loops'] and report['qualified_mutation_regions']
+    if report.get('require_header_cache'):
+        assert report.get('header_cache_qualified') is True and report.get('require_lookup_facts')
+        assert report['compiled_header_cache_loops'] and report['qualified_header_cache_regions']
     if report.get('require_count_values'):
         assert report.get('count_values_qualified') is True and report.get('require_mutation_facts')
         assert report['compiled_count_value_loops'] and report['qualified_count_value_regions']

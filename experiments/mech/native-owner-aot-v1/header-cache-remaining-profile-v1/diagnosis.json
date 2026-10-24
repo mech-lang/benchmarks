@@ -1,0 +1,175 @@
+{
+  "status": "candidate-rejected-no-established-full-input-runtime-gain",
+  "candidate_source_commit": "8e171088092df6f5a8841c328985b834c8510ca0",
+  "retained_best_source_commit": "83012637fb0f5fab98460385fbde822a263fa3c4",
+  "selected_bases": 125000000,
+  "benchmark_samples": 0,
+  "timing_receipt": "full-header-cache-cohort-v1/results.json",
+  "median_seconds": {
+    "rust": 0.570816875,
+    "mech": 1.084609459,
+    "baseline": 1.083310542
+  },
+  "x_rust": {
+    "rust": 1.0,
+    "mech": 1.9001005515122515,
+    "baseline": 1.8978250108671015
+  },
+  "samples_seconds": {
+    "rust": [
+      0.544994,
+      0.570816875,
+      1.357172292
+    ],
+    "mech": [
+      1.089884125,
+      1.084609459,
+      1.059628958
+    ],
+    "baseline": [
+      1.091002375,
+      1.053346625,
+      1.083310542
+    ]
+  },
+  "stdev_seconds": {
+    "rust": 0.4616375274885674,
+    "mech": 0.01616179992977495,
+    "baseline": 0.019895376870625255
+  },
+  "full_runtime_change_percent": 0.11990255329759059,
+  "all_observations_retained": true,
+  "rust_high_observation_seconds": 1.357172292,
+  "prefix_receipt": "header-cache-timing-v1/results.json",
+  "prefix_median_seconds": {
+    "candidate": 0.110333667,
+    "baseline": 0.089190459,
+    "rust": 0.019344167
+  },
+  "prefix_x_rust": {
+    "candidate": 5.703717663314218,
+    "baseline": 4.610715933128576,
+    "rust": 1.0
+  },
+  "hardware_evidence": "header-cache-hardware-v1/results.json",
+  "hardware_medians": {
+    "mech": {
+      "instructions": 75583976914,
+      "cycles": 14862295945,
+      "real_seconds": 1.07,
+      "user_seconds": 3.9,
+      "system_seconds": 0.5
+    },
+    "baseline": {
+      "instructions": 76438650123,
+      "cycles": 15275880058,
+      "real_seconds": 1.06,
+      "user_seconds": 4.04,
+      "system_seconds": 0.48
+    },
+    "rust": {
+      "instructions": 33200219590,
+      "cycles": 8056043491,
+      "real_seconds": 0.55,
+      "user_seconds": 2.37,
+      "system_seconds": 0.03
+    }
+  },
+  "profile_evidence": [
+    {
+      "path": "full-profile-header-cache-v1/analysis.json",
+      "sha256": "f17b9c43a3c12c9d4457a910fb6fd7568f92049a71844d3af91893f395a5cb18"
+    },
+    {
+      "path": "full-profile-header-cache-v2/analysis.json",
+      "sha256": "1dd994b7fa20709784bc98a2d747fafa9e7c09386801c3d7f773364b22f0cd2b"
+    },
+    {
+      "path": "full-profile-header-cache-v3/analysis.json",
+      "sha256": "35553d0b03b306aa6e5865a6c5f9f09ab2dd08394c3ae51da82fceb5fa731ed8"
+    },
+    {
+      "path": "rust-full-profile-v12/analysis.json",
+      "sha256": "745631358e529605c132edd43d6e0714790f981634b6f4838cf1b8de5eb3053e"
+    }
+  ],
+  "worker_observations": {
+    "worker_observations": 11003,
+    "exclusive_buckets": {
+      "generated_counting_loop": 8655,
+      "work_budget_wait": 1409,
+      "work_budget_active": 476,
+      "storage_helper_active": 280,
+      "generated_helper_bridge": 79,
+      "other_active": 104
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 1089
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 386
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 315
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 69
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 18
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 5
+      },
+      {
+        "category": "work_budget_active",
+        "route": "other_budget_operation",
+        "observations": 3
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 78.6603653549032,
+      "work_budget_wait": 12.805598473143688,
+      "work_budget_active": 4.3260928837589745,
+      "storage_helper_active": 2.5447605198582206,
+      "generated_helper_bridge": 0.7179860038171407,
+      "other_active": 0.9451967645187677
+    }
+  },
+  "static_path_evidence": "header-cache-codegen-audit-v1/steady-path-comparison.json",
+  "static_path_counts": {
+    "instructions": 77,
+    "branches": 8,
+    "stack_load_instructions": 5,
+    "stack_store_instructions": 4
+  },
+  "prior_path_counts": {
+    "instructions": 78,
+    "branches": 8,
+    "stack_load_instructions": 5,
+    "stack_store_instructions": 4
+  },
+  "validation": "../native-owner-dispatch-v1/header-cache-focused-v1/summary.json",
+  "validation_scope": "Five focused source-bound metadata and original/decoded runtime equivalence checks pass. The candidate is not promoted and has no full native-suite run.",
+  "finding": "Cache invalidation removes one carried-state move from this selected path. All nine stack accesses, eight hash-constant construction instructions and source endpoint rematerialization remain; no full-input elapsed-time improvement is established.",
+  "decision": "Revert the compiler candidate to the exact prior-best source tree, retaining this failed optimization and all measurements in history. Do not change canonical benchmark data.",
+  "next_target": "Bind immutable hash constants and, under the existing source-loop certificate, the guarded trip endpoint in the owned caller before invoking the counting loop. Verify actual removal of rematerialization, exact native stack/work admission and measured runtime before promotion.",
+  "limitations": [
+    "Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.",
+    "Separate hardware-counter executions are not timing-cohort observations.",
+    "Static first-lane success paths do not represent all dynamic iterations."
+  ]
+}

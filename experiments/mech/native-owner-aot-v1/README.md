@@ -37,7 +37,29 @@ The denominator is **11,255 worker observations**. These include waits and are n
 
 The [source-bound diagnosis](vector-control-remaining-profile-v2/diagnosis.json) prioritizes generated-loop state traffic and invariant handling, followed by shared accounting. The [specified successful first-lane iteration](vector-control-codegen-audit-v1/steady-path-comparison.json) still has **78 instructions, eight branches and nine stack accesses**, versus Rust's **34, four and two**. IR59 has 78/eight/eight: the direct vector load removes one transfer, but changed allocation adds state traffic. Eight instructions still reconstruct two hash constants on each specified iteration; endpoint calculations and private cache/source-state traffic recur. Current loops retain **6,176 code bytes / 240 stack bytes**. [Fresh sampled-PC groups](vector-control-codegen-audit-v4/hot-offset-groups.json) repeatedly list fingerprint preparation and full-key slot loads, but collapse other addresses and cannot assign a unique cost to either instruction.
 
-A concrete next candidate is to canonicalize private cached-entry state at each generated header. Lookup analysis already resets its fact there because a refill can invalidate the cache; emitted code still carries cache fields across the header. This candidate and caller-owned invariant bindings remain **unimplemented and unmeasured**. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+A subsequent private-cache canonicalization experiment is measured and rejected below. The next target is binding immutable hash constants and the guarded source endpoint in the owned caller before entering the loop, rather than relying on backend placement to retain them. Caller-owned invariant bindings remain **unimplemented and unmeasured**. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
+## Rejected experiment: clearing the cache at every header
+
+Experimental compiler [`8e1710880`](https://github.com/mech-lang/mech/commit/8e171088092df6f5a8841c328985b834c8510ca0), IR61/ABI27/work65, cleared both private entry-pointer/cache-known fields at every emitted header when lookup analysis proved its header invalidation. The intended effect was reducing carried SSA state. [Five focused checks](../native-owner-dispatch-v1/header-cache-focused-v1/summary.json) passed, including actual source-bound emission metadata and original/decoded runtime equivalence across changed inputs, complete maps, narrow/wide keys, arbitrary starts/seeds, refills, terminal headers, finite caps and exact arithmetic/failure frontiers. The experiment was not promoted and did not run the full native suite.
+
+Three rotated complete-process **125-million-base** cohorts retain all observations and include secured startup/shutdown:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.571 | 1.00× |
+| Retained best Mech, IR60 | 1.083 | 1.90× |
+| Header-cache experiment, IR61 | 1.085 | 1.90× |
+
+The experimental median is **0.12% higher**. Overlapping ranges and mixed paired observations establish **no runtime gain**. The **1.357-second Rust observation remains included**; these ratios use this cohort's own median. The [full aggregate](full-header-cache-cohort-v1/results.json) retains every observation and execution order. All candidate executions verify output, all 874,999,961 updates, seven packed SSA maps, seven guarded bounds/call entries, five complete frozen maps, ten original reads and seven peak workers. Subjects execute sequentially under the original shared lock, with unchanged source, bytecode, inputs and finite policies.
+
+The separate [one-million-base prefix](header-cache-timing-v1/results.json), with one excluded warmup per executable and three observations, gives Rust **0.0193 seconds**, prior best **0.0892 seconds / 4.61× Rust**, and experiment **0.1103 seconds / 5.70× Rust**. Its median is **23.7% higher**. These prefix observations do not enter the full-input cohort.
+
+[Nine serial diagnostic executions](header-cache-hardware-v1/results.json) give experimental **75.6 billion instructions / 14.9 billion cycles**, prior best **76.4 billion / 15.3 billion**, and Rust **33.2 billion / 8.06 billion**. Retired instructions decrease **1.1%** and cycles **2.7%**, while full-process elapsed improvement remains unestablished. These are separate counter runs rather than additional timing-cohort observations.
+
+[Three exact-code profiles](header-cache-remaining-profile-v1/results.json) verify complete output and seven workers each; [three Rust captures](rust-full-profile-v12/analysis.json) use its unchanged timed binary. Of **11,003** Mech worker observations, **78.7%** are in generated loops, **12.8%** waiting for work-budget escrow, **4.3%** active in accounting and **2.5%** in storage helpers. The observations include waits and are not elapsed-time fractions. The [static successful path](header-cache-codegen-audit-v1/steady-path-comparison.json) falls from **78 to 77 instructions** while retaining **eight branches and nine stack accesses**. It removes only one carried-state move; all eight hash-constant construction instructions, endpoint rematerialization and stack traffic remain. Each loop grows from **6,176 to 6,308 code bytes**, with the same **240-byte stack**.
+
+The [rejection diagnosis](header-cache-remaining-profile-v1/diagnosis.json) binds these distinct findings. Revert [`0e8d2d933`](https://github.com/mech-lang/mech/commit/0e8d2d933) restores the **exact source tree** of prior best `83012637f`, retaining the experiment and its measurements in history. The canonical dataset is unchanged. The next candidate will bind invariant values outside the counting function and verify actual machine-code placement, native stack/work admission and measured runtime before promotion.
 
 ## Optional source-count bounds: fewer instructions without a full runtime gain
 
