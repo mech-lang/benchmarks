@@ -143,7 +143,9 @@ def main():
                     native_sha256=process.sha(native_path) if native else None))
                 process.save(out / 'results.json', report)
             print('order', index + 1, 'of', len(orders), 'verified', flush=True)
-    assert source_state() == before and process.sha(canonical) == DATA_SHA
+    after = source_state()
+    assert after == before and process.sha(canonical) == DATA_SHA
+    report['source_after'] = after
     values = {s: [r['seconds'] for r in report['samples'] if r['subject'] == s] for s in subjects}
     assert all(len(v) == 20 for v in values.values())
     report['samples_seconds'] = values
