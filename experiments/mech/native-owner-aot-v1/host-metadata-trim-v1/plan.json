@@ -1,0 +1,34 @@
+{
+  "source_commit": "e939c8002793c03cf63a31eeb13dd78fb8855064",
+  "parent_source_commit": "e82ed4d54d4490102ac41192d1fcbf492d467e08",
+  "compiler": "compiler-v70",
+  "receipt": "host-metadata-trim-timing-v1",
+  "binary": "counting-host-metadata-trim",
+  "parent_receipt": "preparation-combined-timing-v1",
+  "parent_binary": "counting-preparation-combined",
+  "changes": [
+    "Reuse selected immutable library metadata instead of retaining redundant deep copies",
+    "Borrow redundant outer image fields for equality checks instead of decoding an additional owned tree"
+  ],
+  "unchanged": [
+    "Mech source, bytecode, descriptor wire format and order, native Object/identity and code version",
+    "Schema finalizers, actual factory witnesses, metadata consistency checks, runtime capability admission",
+    "Finite launch policy, work-accounting prices, seven-worker count and physical table updates"
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": ["rust", "parent", "candidate"],
+  "orders": [
+    ["rust", "parent", "candidate"],
+    ["parent", "candidate", "rust"],
+    ["candidate", "rust", "parent"],
+    ["candidate", "parent", "rust"],
+    ["parent", "rust", "candidate"],
+    ["rust", "candidate", "parent"]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Host phase markers, size accounting and memory observations remain separate from primary timings",
+  "decision": "Retain the candidate and both preparation factors even if individual effects are small or uncertain; report both full-input sessions, memory and binary size before interpreting the change. No automatic rollback or Rust-parity claim."
+}
