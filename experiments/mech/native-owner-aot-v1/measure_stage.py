@@ -654,7 +654,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56, 57) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'), bool(args.source_variant))
@@ -662,7 +662,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56, 57) and manifest['object']['work_policy_version'] == 65
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
@@ -676,7 +676,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_outlined_loops:
         assert args.require_cfg_cleanup and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56)
+        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56, 57)
         loops = manifest['object'].get('compiled_outlined_loops')
         assert isinstance(loops, list) and 0 < len(loops) <= 256
         expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
@@ -697,21 +697,21 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
         assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
         report['cfg_cleanup_removed_total'] = removed
-        if manifest['object']['typed_ir_version'] in (54, 55, 56):
+        if manifest['object']['typed_ir_version'] in (54, 55, 56, 57):
             functions = [report['compiled_cfg_cleanup']] + [loop['cleanup'] for loop in report.get('compiled_outlined_loops', [])]
             assert all(function['pre_codegen_data_passes'] == 0 for function in functions)
             report['single_data_pass_qualified'] = True
 
     if args.require_loop_invariants:
         assert args.require_outlined_loops and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56, 57) and manifest['object']['abi_version'] == 27
         report['compiled_loop_invariants'] = manifest['object'].get('compiled_loop_invariants')
         report['qualified_invariant_regions'] = require_loop_invariants(report['compiled_loop_invariants'], descriptor,
             report['qualified_lookup_regions'], report['qualified_guarded_regions'])
         report['loop_invariants_qualified'] = True
     if args.require_preserving_calls:
         assert args.require_loop_invariants and args.require_outlined_loops
-        assert manifest['object']['typed_ir_version'] in (55, 56) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (55, 56, 57) and manifest['object']['abi_version'] == 27
         shim = manifest['object'].get('compiled_bound_call_shim')
         regions = manifest['object'].get('compiled_preserving_call_regions')
         assert isinstance(shim, dict) and shim['symbol'] == 'mech_canonical_program_entry_v1_preserving_bound_call'
