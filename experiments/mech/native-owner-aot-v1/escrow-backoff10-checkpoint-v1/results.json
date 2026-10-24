@@ -1,0 +1,173 @@
+{
+  "status": "bounded-backoff-trial-verified",
+  "evidence": {
+    "escrow-backoff10": {
+      "source_commit": "0b4ce3e7c316ae4248399c3ce1b2ed14b8eb65e2",
+      "batches": {
+        "cohort-v1": {
+          "median_seconds": {
+            "rust": 0.558089396,
+            "mech": 0.7243799790000001,
+            "baseline": 0.7435761665
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.297964061298882,
+            "baseline": 1.332360320460201
+          },
+          "faster_pairs": 4,
+          "candidate_change_percent": -2.5816033870956434
+        },
+        "replication-v1": {
+          "median_seconds": {
+            "rust": 0.554472292,
+            "mech": 0.73793675,
+            "baseline": 0.743453
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.3308812011836293,
+            "baseline": 1.3408298497988786
+          },
+          "faster_pairs": 5,
+          "candidate_change_percent": -0.7419769642465601
+        }
+      },
+      "decision": "retain",
+      "hardware_medians": {
+        "mech": {
+          "instructions": 26632428257,
+          "cycles": 7486269767,
+          "real_seconds": 0.73,
+          "user_seconds": 2.13,
+          "system_seconds": 0.06
+        },
+        "baseline": {
+          "instructions": 26769823239,
+          "cycles": 7621574305,
+          "real_seconds": 0.73,
+          "user_seconds": 2.1,
+          "system_seconds": 0.1
+        },
+        "rust": {
+          "instructions": 33139702873,
+          "cycles": 7930497849,
+          "real_seconds": 0.54,
+          "user_seconds": 2.35,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 4824,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3419,
+          "work_budget_active": 724,
+          "work_budget_wait": 88,
+          "storage_helper_active": 410,
+          "generated_helper_bridge": 87,
+          "other_active": 96
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 518
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 187
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 56
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 20
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 17
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "frozen_map_charge",
+            "observations": 11
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 2
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 1
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 70.87479270315092,
+          "work_budget_active": 15.008291873963516,
+          "work_budget_wait": 1.824212271973466,
+          "storage_helper_active": 8.499170812603648,
+          "generated_helper_bridge": 1.8034825870646767,
+          "other_active": 1.9900497512437811
+        }
+      },
+      "instruction_range": [
+        16,
+        39
+      ]
+    }
+  },
+  "validation": {
+    "escrow-backoff10-engine-v1": 26,
+    "escrow-backoff10-native-v1": 377,
+    "escrow-backoff10-catalog-v1": 1
+  },
+  "prefix_batches": {
+    "escrow-backoff10-timing-v1": {
+      "median_seconds": {
+        "candidate": 0.109768417,
+        "baseline": 0.08909975,
+        "rust": 0.012703333
+      },
+      "x_rust": {
+        "candidate": 8.64091471112345,
+        "baseline": 7.013887615163674,
+        "rust": 1.0
+      },
+      "change_percent": 23.197222214428194
+    },
+    "escrow-backoff10-prefix-repeat-v1": {
+      "median_seconds": {
+        "candidate": 0.0883175,
+        "baseline": 0.106991417,
+        "rust": 0.022191334
+      },
+      "x_rust": {
+        "candidate": 3.9798193294733877,
+        "baseline": 4.8213152485560355,
+        "rust": 1.0
+      },
+      "change_percent": -17.453658922939596
+    }
+  },
+  "negative_qualification_fixtures": 18,
+  "primary_full_observations": 18,
+  "replication_full_observations": 18,
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 84,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "933deac355844d6c20aebe865c7fa438aafcc425519c296d6047c1f23a4854eb",
+  "validation_commit": "0b4ce3e7c316ae4248399c3ce1b2ed14b8eb65e2",
+  "changed_paths": [
+    "src/engine/src/resident/native_worker_budget.rs"
+  ],
+  "scope": "Two separately reported sets of six balanced complete-process cohorts; all observations retained separately, all complete outputs and physical updates, four bounded emitted lookup functions, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Full validation uses the exact timed revision. The generated Mech object matches the parent; the only runtime source change extends the existing bounded spin from eight to ten rounds. All finite debit logic is unchanged. Two separate prefix batches with opposing directions are retained, each with one excluded warmup and three observations per subject; no small-input gain is established. One cached function uses ordinary source/live exit snapshots after optional recipe metadata admission declined. No Rust runtime parity is established."
+}

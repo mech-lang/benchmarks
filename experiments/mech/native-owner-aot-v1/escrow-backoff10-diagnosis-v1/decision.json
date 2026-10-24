@@ -1,0 +1,76 @@
+{
+  "source_commit": "0b4ce3e7c316ae4248399c3ce1b2ed14b8eb65e2",
+  "parent_commit": "2ac58b364c22be15aa0ba0e232409c1ce8c93327",
+  "decision": "retain",
+  "reason": "Both separately reported full-input cohorts improve, accompanied by lower kernel CPU, involuntary switches and sampled budget waits. The replication gain is smaller; small-input direction reverses between batches, so no small-input gain is established.",
+  "full_batches": [
+    {
+      "batch": "cohort",
+      "median_seconds": {
+        "rust": 0.558089396,
+        "mech": 0.7243799790000001,
+        "baseline": 0.7435761665
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.297964061298882,
+        "baseline": 1.332360320460201
+      },
+      "faster_pairs": 4,
+      "candidate_change_percent": -2.5816033870956434
+    },
+    {
+      "batch": "replication",
+      "median_seconds": {
+        "rust": 0.554472292,
+        "mech": 0.73793675,
+        "baseline": 0.743453
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3308812011836293,
+        "baseline": 1.3408298497988786
+      },
+      "faster_pairs": 5,
+      "candidate_change_percent": -0.7419769642465601
+    }
+  ],
+  "prefix_batches": [
+    {
+      "receipt": "escrow-backoff10-timing-v1",
+      "median_seconds": {
+        "candidate": 0.109768417,
+        "baseline": 0.08909975,
+        "rust": 0.012703333
+      },
+      "x_rust": {
+        "candidate": 8.64091471112345,
+        "baseline": 7.013887615163674,
+        "rust": 1.0
+      },
+      "candidate_change_percent": 23.197222214428194
+    },
+    {
+      "receipt": "escrow-backoff10-prefix-repeat-v1",
+      "median_seconds": {
+        "candidate": 0.0883175,
+        "baseline": 0.106991417,
+        "rust": 0.022191334
+      },
+      "x_rust": {
+        "candidate": 3.9798193294733877,
+        "baseline": 4.8213152485560355,
+        "rust": 1.0
+      },
+      "candidate_change_percent": -17.453658922939596
+    }
+  ],
+  "limitations": [
+    "Full-input ranges overlap; 4/6 initial and 5/6 repeat matched pairs are faster.",
+    "Rust has high observations in both full batches; every observation is retained, with separate batch medians and denominators.",
+    "Prefix medians reverse direction across three-observation batches; they are not pooled or discarded.",
+    "Kernel CPU is aggregate across threads; sampled waits do not apportion system CPU or wall time.",
+    "No worker count, power, affinity, source, bytecode, generated object, finite debit or launch policy changes."
+  ],
+  "next_target": "Remaining budget-mutex parking/waking; evaluate further bounded retry changes only against total runtime and CPU cost. Preparation work remains deferred."
+}

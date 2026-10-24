@@ -2,7 +2,23 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current bounded budget-mutex backoff
+## Current ten-round budget-mutex retry
+
+Extending bounded retry from eight to ten rounds cuts kernel CPU from **0.10 to
+0.06 seconds** and involuntary switches from **19,421 to 9,621** in separate
+counter runs. Full-input medians improve **2.58% initially and 0.74% in a separate
+repeat**. The repeat gives Rust **0.5545 s / 1.000×**, eight-round Mech
+**0.7435 s / 1.341×**, and current Mech **0.7379 s / 1.331×**.
+
+The change is retained. Small-input direction reverses between two separate
+batches, so no prefix gain is established. The [report](escrow-backoff10-checkpoint-v1/README.md)
+retains both full-input batches, both prefix batches, fresh profiles, counters
+and limitations. All 26 worker-budget tests, 377 native tests and one catalog
+check pass at the exact timed revision. [Verification](escrow-backoff10-checkpoint-v1/results.json)
+checks 84 terminal owned processes. Source, bytecode, generated object, debit
+logic and canonical data remain unchanged; Rust parity is incomplete.
+
+## Earlier eight-round budget-mutex backoff
 
 Extending the existing bounded retry from six to eight rounds reduces the full-input
 median **2.13% initially and 2.23% in an independent repeat**, with five faster
