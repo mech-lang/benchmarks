@@ -164,7 +164,7 @@ def require_frame_effects(metadata, descriptor):
     return qualified
 
 
-def require_lookup_facts(metadata, descriptor, tags):
+def require_lookup_facts(metadata, descriptor, tags, explicit_source_variant=False):
     """Bind emitted lookup substitutions to exact original map operations."""
     assert metadata and metadata['complete'] is True
     records = metadata['regions']
@@ -198,7 +198,15 @@ def require_lookup_facts(metadata, descriptor, tags):
             assert fact in ('Fresh', 'Cached', 'Present', 'Absent')
             facts.add(fact)
             sites.add(site)
-        assert {'Fresh', 'Present', 'Cached'} <= facts
+        if explicit_source_variant:
+            # A branch-local insert can retain Present/Absent rather than the
+            # weaker Cached fact required by the original merged-count source.
+            assert any(s['operation'] == 3 and s['fact'] == 'Fresh' for s in substitutions)
+            assert any(s['operation'] == 4 and s['fact'] == 'Present' for s in substitutions)
+            inserts = [s for s in substitutions if s['operation'] == 5]
+            assert inserts and all(s['fact'] in ('Cached', 'Present', 'Absent') for s in inserts)
+        else:
+            assert {'Fresh', 'Present', 'Cached'} <= facts
         assert len(sites) >= 3
         qualified.append(dict(header=header, source_nodes=record['source_nodes'], emitted_nodes=record['emitted_nodes'],
                               substitutions=substitutions,
@@ -466,6 +474,9 @@ def require_loop_invariants(records, descriptor, lookups, guarded):
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--compiler', required=True)
+parser.add_argument('--reuse-build-receipt', help='Reuse an owned completed build from a pinned failed qualification attempt; never reuse timing observations')
+parser.add_argument('--source-variant', help='Explicit candidate Mech source, relative to this study directory; the unchanged parent remains separately pinned')
+parser.add_argument('--source-variant-sha256', help='Required exact SHA-256 for an explicitly changed candidate source')
 parser.add_argument('--parent-receipt', required=True)
 parser.add_argument('--parent-binary', required=True)
 parser.add_argument('--binary', required=True)
@@ -508,6 +519,8 @@ parser.add_argument('--require-outlined-loops', action='store_true',
 parser.add_argument('--require-loop-invariants', action='store_true',
                     help='Require source-bound guarded calls, steady rolling and seven actual initial call-guard selections')
 args = parser.parse_args()
+if bool(args.source_variant) != bool(args.source_variant_sha256):
+    parser.error('--source-variant and --source-variant-sha256 must be supplied together')
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
 if args.minimum_parallel_peak is not None and (
@@ -529,12 +542,28 @@ assert not subprocess.check_output(['git', '-C', str(WORKSPACE), 'status', '--po
 env = prepared['environment']
 cli = HERE / '.build/mech-canonical'
 assert process.sha(cli) == prepared['compiler_sha256']
-source = HERE / 'knucleotide-source-map.mec'
-assert process.sha(source) == parent['source_sha256'] == 'ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da'
+original_source = HERE / 'knucleotide-source-map.mec'
+assert process.sha(original_source) == parent['source_sha256'] == 'ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da'
+source = HERE / args.source_variant if args.source_variant else original_source
+if args.source_variant:
+    assert process.sha(source) == args.source_variant_sha256
+else:
+    assert process.sha(source) == parent['source_sha256']
 targets = dict(candidate=HERE / '.build' / args.binary,
                baseline=HERE / '.build' / args.parent_binary,
                rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7')
-assert not targets['candidate'].exists()
+if args.reuse_build_receipt:
+    previous_build = HERE / args.reuse_build_receipt
+    previous = json.loads((previous_build / 'results.json').read_text())
+    built = json.loads((previous_build / 'build/process.json').read_text())
+    assert built['exit_status'] == 0 and built['reaped'] and built['group_closed'] and not built['cleanup_errors']
+    assert previous['source_commit'] == prepared['source_commit']
+    assert previous['source_sha256'] == process.sha(source) == process.sha(previous_build / 'candidate.mec')
+    assert previous['configuration']['compiler'] == args.compiler
+    assert previous['configuration']['binary'] == args.binary and previous['configuration']['package'] == args.package
+    assert process.sha(targets['candidate']) == previous['candidate_sha256']
+else:
+    assert not targets['candidate'].exists()
 assert process.sha(targets['baseline']) == parent['candidate_sha256']
 assert process.sha(targets['rust']) == parent['rust_sha256'] == 'f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763'
 inp = HERE / 'rust-span-diagnostic-v2/input.fasta'
@@ -544,7 +573,9 @@ assert process.sha(policy) == '3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2
 expected = (HERE / 'rust-span-diagnostic-v2/expected.txt').read_bytes()
 report = dict(status='building', source_commit=prepared['source_commit'],
               baseline_source_commit=parent['source_commit'],
-              source_sha256=process.sha(source), input_sha256=process.sha(inp),
+              source_sha256=process.sha(source), baseline_source_sha256=parent['source_sha256'],
+              source_comparison='explicit-source-variant' if args.source_variant else 'unchanged-source',
+              input_sha256=process.sha(inp),
               launch_sha256=process.sha(policy), baseline_sha256=process.sha(targets['baseline']),
               rust_sha256=process.sha(targets['rust']), input_bases=1000000,
               expected_table_updates=6999961, samples=[], configuration=vars(args),
@@ -560,16 +591,31 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
 process.save(out / 'results.json', report)
+(out / 'candidate.mec').write_bytes(source.read_bytes())
+report['study_driver_sha256'] = process.sha(Path(__file__))
+process.save(out / 'results.json', report)
 with Path(PLAN['common_mutex']).open('a+') as lock:
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
     command = [str(cli), '--no-config', 'build', str(source), '--backend', 'cranelift',
                '--profile', 'release', '--keep-project', '--offline', '--workspace-root',
                str(WORKSPACE), '--name', args.package, '-o', str(targets['candidate'])]
-    result = process.execute(command, out / 'build', env, lock, deadline=1800)
-    assert result['exit_status'] == 0, (out / 'build/stderr.bin').read_text()[-5000:]
+    if args.reuse_build_receipt:
+        process.save(out / 'reused-build.json', dict(receipt=args.reuse_build_receipt,
+                     source_results_sha256=process.sha(previous_build / 'results.json'),
+                     process_receipt_sha256=process.sha(previous_build / 'build/process.json'),
+                     executable_sha256=process.sha(targets['candidate']), timing_observations_reused=0))
+    else:
+        result = process.execute(command, out / 'build', env, lock, deadline=1800)
+        assert result['exit_status'] == 0, (out / 'build/stderr.bin').read_text()[-5000:]
     report['candidate_sha256'] = process.sha(targets['candidate'])
     project = Path(str(targets['candidate']) + '.project')
-    assert process.sha(project / 'program.mecb') == process.sha(Path(str(targets['baseline']) + '.project/program.mecb'))
+    report['bytecode_sha256'] = process.sha(project / 'program.mecb')
+    report['baseline_bytecode_sha256'] = process.sha(Path(str(targets['baseline']) + '.project/program.mecb'))
+    report['same_bytecode_as_baseline'] = report['bytecode_sha256'] == report['baseline_bytecode_sha256']
+    assert report['baseline_bytecode_sha256'] == '050db3a016f0caea04900d48940db5bbefc880c3ada507eff82c22c5b84418b0'
+    if not args.source_variant:
+        assert report['same_bytecode_as_baseline']
+    process.save(out / 'results.json', report)
     manifest = json.loads((project / 'linked-manifest.json').read_text())
     assert manifest['object']['work_policy_version'] == args.work_policy
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
@@ -609,7 +655,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
-                                                                  manifest['object'].get('compiled_tag_threading'))
+                                                                  manifest['object'].get('compiled_tag_threading'), bool(args.source_variant))
         report['source_lookup_facts_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')

@@ -2,6 +2,44 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+
+## Source-shape comparison: no established full-input gain
+
+Three sources are compiled with the **same compiler**, [`75609235b`](https://github.com/mech-lang/mech/commit/75609235ba6301952d63315413b827ac337f3fea), IR54/ABI27/work65. This revision changes only a test relative to `59782769d`; the [rebuilt public compiler](compiler-v33/results.json) has the same executable SHA-256 as compiler-v32. The [new original-source control](source-control-timing-v1/results.json) retains the original source and bytecode hashes. Both changed sources and their different bytecodes are explicitly pinned rather than represented as unchanged-source compiler improvements:
+
+- [Direct-match insertion](knucleotide-source-match-insert.mec) makes each membership branch return its updated map. It removes the intermediate previous-count binding and retains `Present`/`Absent` facts through the corresponding insertion, instead of merging to `Cached`.
+- [Precomputed loop end](knucleotide-source-loop-end.mec) calculates the number of valid windows once, with guarded handling of zero/oversized widths. The state machine has one stopping comparison. Its increment function is unchanged.
+
+Both still traverse every overlapping window, store every key, perform every count update and build all seven histograms. Neither changes the input, queries, compiler, executable launch policy or security/accounting machinery. Each candidate is compared separately with the freshly built original-source control and upstream Rust #7.
+
+Each row below aggregates three rotated **125-million-base** cohorts, retaining every complete-process observation with no excluded warmup. The Rust denominator is from that row's own cohort:
+
+| Source change | Rust seconds | Original Mech seconds | Changed Mech seconds | Original × Rust | Changed × Rust |
+|---|---:|---:|---:|---:|---:|
+| Direct-match insertion | 0.564 | 1.438 | 1.454 | 2.55× | 2.58× |
+| Precomputed loop end | 0.557 | 1.435 | 1.432 | 2.57× | 2.57× |
+
+The direct-match median is **1.1% higher**; the precomputed-end median is **0.2% lower**. Both candidate/control ranges overlap, so **neither establishes a full-input runtime gain**. [Direct-match aggregate](full-source-match-insert-cohort-v1/results.json) and [precomputed-end aggregate](full-source-loop-end-cohort-v1/results.json) retain all seconds, standard deviations, identities and executable receipts. Secured startup/shutdown are included and subjects execute serially under the shared lock. Every full execution verifies output, all **874,999,961 updates**, seven packed SSA maps, five complete frozen query maps, ten original reads and seven peak workers.
+
+The [direct-match prefix trial](source-match-insert-timing-v3/results.json) gives Rust **0.0209 s**, original Mech **0.0981 s / 4.70× Rust**, and changed Mech **0.0921 s / 4.41× Rust**. Its approximately 6% prefix reduction does not carry over to the full-input cohorts. The [precomputed-end prefix](source-loop-end-timing-v1/results.json) gives Rust **0.0208 s**, original **0.0937 s / 4.51× Rust**, and changed **0.0952 s / 4.58× Rust**. Prefix observations include one excluded warmup per executable, unlike the full cohorts.
+
+An [independent all-entry validation](source-variants-correctness-v3/results.json) executes all three actual histogram definitions against seven runtime-supplied strings and nine widths: **189 histograms**, with every key and count compared with Python `Counter` over all overlapping windows. Cases include empty input, zero width, oversized width, repetitive data, random DNA and a fifth ASCII symbol. The fixture reads its inputs at runtime. [Two retained all-constant fixture failures](source-variants-correctness-v1/results.json), [second attempt](source-variants-correctness-v2/results.json), stopped during canonical resource planning before execution; they are not counted as correctness passes.
+
+The direct-match source has 91 graph nodes per original region instead of 90, and each outlined loop has **8,020 code bytes / 336 stack bytes**, versus **7,612 / 336** for the control. It retains all seven actual bounds/call-guard selections. Precomputing the end reduces the graph to 59 nodes and each loop to **2,620 code bytes / 288 stack bytes**, but produces **zero** bounds/call-guard selections. The current proof recognizes the original three-stop shape; the precomputed-end variant uses checked code, with its original per-call checks active. Smaller generated code is not evidence of fewer executed instructions.
+
+Separate hardware-counter runs verify every output/update and retain all nine diagnostic executions per source trial:
+
+| Diagnostic cohort | Rust instructions | Original Mech instructions | Changed Mech instructions | Changed / Rust instructions |
+|---|---:|---:|---:|---:|
+| [Direct-match](source-match-insert-hardware-v1/results.json) | 33.14 billion | 104.38 billion | 102.65 billion | 3.10× |
+| [Precomputed end](source-loop-end-hardware-v1/results.json) | 33.14 billion | 104.41 billion | 122.77 billion | 3.70× |
+
+Direct-match instructions decrease **1.7%**, while cycles rise from **21.70 to 22.35 billion**. Precomputed-end instructions increase **17.6%**, with cycles rising from **21.80 to 22.38 billion**. These counters include all target threads and startup/shutdown and are not additional timing-cohort samples. No fresh sampled profile or reduced dynamic-check frequency is claimed for either source rewrite.
+
+The [first direct-match attempt](source-match-insert-timing-v1/results.json) failed source parsing before compilation; its original candidate is retained. The [next attempt](source-match-insert-timing-v2/results.json) built successfully but encountered an original-source qualification rule requiring a `Cached` insertion. The changed source legitimately emits stronger `Present`/`Absent` insertions. The successful retry checks those facts against their exact source operations, reuses only the pinned completed build, and takes entirely fresh timing observations. No timing observation is reused or silently discarded.
+
+Source simplification remains useful for clarity and for exposing compiler gaps: presence through joins and precomputed-end range proofs should not require a particular source spelling. These trials do not establish a performance win or Rust parity. The original source remains the optimization control; canonical published benchmark data and historical timings are unchanged.
+
 ## Control cleanup before one backend data pass: identical hot loops
 
 Compiler [`59782769d`](https://github.com/mech-lang/mech/commit/59782769d0ebb27fc8edc93e6e3620e65d8bf8ac) performs bounded literal control cleanup before the backend's single ordinary data/speed pass. It no longer invokes the full egraph repeatedly during cleanup. IR54 identifies the order; ABI27, work65, source, bytecode, inputs and finite launch limits are unchanged.

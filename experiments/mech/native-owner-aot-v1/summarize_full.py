@@ -13,6 +13,7 @@ args = parser.parse_args()
 assert len(args.runs) >= 3 and len(set(args.runs)) == len(args.runs)
 reports = [json.loads((HERE / run / 'results.json').read_text()) for run in args.runs]
 identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_sha256',
+            'source_comparison', 'baseline_source_sha256', 'bytecode_sha256', 'baseline_bytecode_sha256',
             'candidate_sha256', 'baseline_sha256', 'rust_sha256', 'launch_sha256',
             'selected_bases', 'expected_table_updates', 'require_packed_map',
             'require_packed_ssa', 'require_parallel_tasks', 'minimum_parallel_peak',

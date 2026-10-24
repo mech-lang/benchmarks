@@ -1,0 +1,76 @@
++> map
++> number
++> sequence
++> text
++> @out := cli/stdout
+
+increment-original(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#CountOriginal(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Next(index<u64>, counts<{string:u64}>)
+  | :Done(counts<{string:u64}>).
+#CountOriginal(s, width, n, initial) -> :Next(0u64, initial)
+  :Next(index, counts)
+    | width == 0u64 -> :Done(counts)
+    | index >= n -> :Done(counts)
+    | width > n - index -> :Done(counts)
+    | * -> :Next(index + 1u64, increment-original(counts, s[(index + 1u64)..=(index + width)]))
+  :Done(counts) => counts.
+
+histogram-original(s<string>, width<u64>) => (counts<{string:u64}>) :=
+  empty<{string:u64}> := map/new()
+  counts := #CountOriginal(s, width, sequence/length(s), empty).
+
+increment-match(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  out := ((key ∈ h)?
+    | true => map/insert(h, key, h{key} + 1u64)
+    | false => map/insert(h, key, 1u64)
+  ).
+#CountMatch(s<string>, width<u64>, n<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Next(index<u64>, counts<{string:u64}>)
+  | :Done(counts<{string:u64}>).
+#CountMatch(s, width, n, initial) -> :Next(0u64, initial)
+  :Next(index, counts)
+    | width == 0u64 -> :Done(counts)
+    | index >= n -> :Done(counts)
+    | width > n - index -> :Done(counts)
+    | * -> :Next(index + 1u64, increment-match(counts, s[(index + 1u64)..=(index + width)]))
+  :Done(counts) => counts.
+
+histogram-match(s<string>, width<u64>) => (counts<{string:u64}>) :=
+  empty<{string:u64}> := map/new()
+  counts := #CountMatch(s, width, sequence/length(s), empty).
+
+increment-end(h<{string:u64}>, key<string>) => (out<{string:u64}>) :=
+  previous := (key ∈ h)? | true => h{key} | false => 0u64.
+  out := map/insert(h, key, previous + 1u64).
+#CountEnd(s<string>, width<u64>, end<u64>, initial<{string:u64}>) => <{string:u64}>
+  | :Next(index<u64>, counts<{string:u64}>)
+  | :Done(counts<{string:u64}>).
+#CountEnd(s, width, end, initial) -> :Next(0u64, initial)
+  :Next(index, counts)
+    | index >= end -> :Done(counts)
+    | * -> :Next(index + 1u64, increment-end(counts, s[(index + 1u64)..=(index + width)]))
+  :Done(counts) => counts.
+
+histogram-end(s<string>, width<u64>) => (counts<{string:u64}>) :=
+  empty<{string:u64}> := map/new()
+  n := sequence/length(s)
+  end := ((width == 0u64)?
+    | true => 0u64
+    | false => (width > n)?
+      | true => 0u64
+      | false => n - width + 1u64
+  )
+  counts := #CountEnd(s, width, end, empty).
+
+dump(h<{string:u64}>) => (out<string>) :=
+  keys := h_keys
+  out := text/join([key + "=" + number/format(h{key}, 0u64) | key <- keys], ";").
+texts := ["" "A" "AAAAAA" "ACGTACGT" "GGTAGGT" "GTCATCCCCTTTCGTGGCTCCAAACATATGGCACTGGCTGGATATGACTTATGGCATCTCCATCCCTCAGAAGTTACTTTGGA" "TCTNNGGNTAGTNNGTNNTCACNNTTGNCTCTGGCAATNATAAAGACCCTCANANCAACACCTGNANCNCANNGGCGAGCATANAGNGACAAATGANNGTGGGTGNAGGCTCGCAACGNAGNGGCGGANGGCTTTNGANACCGTNNCNAGAGATATTCNNCTCGTACANCGTGTCNNGANGNCCNGCGTNNGNGAGAGNCNNGTCACGANANNNTCNGCAATGTGAGTGNAGCAACTNANTGTATNNCANAGNGTATAGTATNTTTGCGCNAGNATANNTGGNATGTTCCNNCNNGNGGNANTGANNATNNACCTACGNGGCATTGANTCTCAGTAGNTAGCGCAATGTTANCGTGGTNCGTNTCAGNTCCTGGCGCNGCTANNTNNATTAACGTCNNGANGGCNAGGTNANTGNAAAGGCAGNCGTTCGNATANAAATGTATACTTGANACTGNCCGANCCANTNCTCACCNGTATTNCCCATTTCNAGACGCNCGAAANAGGTGTTGCANGCGATGTCA"]
+widths := [0u64 1u64 2u64 3u64 4u64 6u64 12u64 18u64 522u64]
+original-output := text/join([text/join([dump(histogram-original(s, width)) | width <- widths], "\n#\n") | s <- texts], "\n@\n")
+match-output := text/join([text/join([dump(histogram-match(s, width)) | width <- widths], "\n#\n") | s <- texts], "\n@\n")
+end-output := text/join([text/join([dump(histogram-end(s, width)) | width <- widths], "\n#\n") | s <- texts], "\n@\n")
+@out/text <- original-output + "\n===\n" + match-output + "\n===\n" + end-output

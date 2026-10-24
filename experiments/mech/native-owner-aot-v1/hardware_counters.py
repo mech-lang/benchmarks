@@ -34,7 +34,9 @@ out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 report = dict(status='running', source_commit=timing['source_commit'],
               candidate_sha256=timing['candidate_sha256'], baseline_sha256=timing['baseline_sha256'],
-              rust_sha256=timing['rust_sha256'], input_sha256=process.sha(inp), launch_sha256=process.sha(launch),
+              rust_sha256=timing['rust_sha256'], input_sha256=process.sha(inp),
+              source_sha256=timing['source_sha256'], baseline_source_sha256=timing.get('baseline_source_sha256', timing['source_sha256']),
+              source_comparison=timing.get('source_comparison', 'unchanged-source'), launch_sha256=process.sha(launch),
               timer='/usr/bin/time -l', selected_bases=125000000, expected_table_updates=874999961,
               observations=[], benchmark_samples=0, script_sha256=process.sha(Path(__file__)),
               scope='macOS whole-process counters reported by time -l, including startup/shutdown and all target threads; diagnostic executions under the shared serial lock, not additional benchmark timing observations.')
@@ -53,7 +55,17 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             if label != 'rust':
                 native = json.loads(native_path.read_text())
                 assert native['shutdown'] == 'completed'
-                assert native['native_packed_map_regions'] == native['native_packed_ssa_regions'] == native['native_guarded_loop_regions'] == 7
+                assert native['native_packed_map_regions'] == native['native_packed_ssa_regions'] == 7
+                # Explicit source studies can intentionally change which loop
+                # certificates apply. Require the independently observed prefix
+                # strategy, and retain the original seven-guard requirement.
+                prefix_label = 'candidate' if label == 'mech' else 'baseline'
+                entries = [row for row in timing['native_executions'] if row['label'] == prefix_label]
+                expected_guards = {row['guarded_loop_regions'] for row in entries}
+                assert len(expected_guards) == 1
+                assert native['native_guarded_loop_regions'] in expected_guards
+                if label == 'baseline' or timing.get('require_guarded_loops'):
+                    assert native['native_guarded_loop_regions'] == 7
                 assert native['native_packed_map_updates'] == 874999961
                 assert native['native_frozen_map_regions'] == 5 and native['native_frozen_map_reads'] == 10
                 assert native['native_parallel_tasks'] == native['native_parallel_peak_workers'] == 7

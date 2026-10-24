@@ -82,7 +82,13 @@ parent = None
 if args.parent_receipt:
     parent = json.loads((HERE / args.parent_receipt / 'results.json').read_text())
     assert parent['status'] == 'all-outputs-and-update-counts-verified'
-    assert parent['source_sha256'] == timing['source_sha256']
+    if timing.get('source_comparison') == 'explicit-source-variant':
+        assert timing['source_sha256'] == timing['configuration']['source_variant_sha256']
+        assert parent['source_sha256'] == timing['baseline_source_sha256']
+        assert parent['bytecode_sha256'] == timing['baseline_bytecode_sha256']
+        assert parent['source_commit'] == timing['source_commit'], 'Source variants must use the same compiler revision'
+    else:
+        assert parent['source_sha256'] == timing['source_sha256']
     assert parent['rust_sha256'] == timing['rust_sha256']
     targets['baseline'] = HERE / '.build' / args.parent_binary
     assert process.sha(targets['baseline']) == parent['candidate_sha256']
@@ -105,7 +111,12 @@ if args.comparison_work is not None:
     launch['library']['comparison_work'] = args.comparison_work
 process.save(out / 'launch.json', launch)
 report = dict(status='running', source_commit=timing['source_commit'],
-              source_sha256=timing['source_sha256'], input_sha256=process.sha(inp),
+              source_sha256=timing['source_sha256'],
+              source_comparison=timing.get('source_comparison', 'unchanged-source'),
+              baseline_source_sha256=timing.get('baseline_source_sha256', timing['source_sha256']),
+              bytecode_sha256=timing.get('bytecode_sha256'),
+              baseline_bytecode_sha256=timing.get('baseline_bytecode_sha256'),
+              input_sha256=process.sha(inp),
               selected_bases=125000000, expected_table_updates=874999961,
               candidate_sha256=process.sha(targets['mech']), rust_sha256=process.sha(targets['rust']),
               launch_sha256=process.sha(out / 'launch.json'),
