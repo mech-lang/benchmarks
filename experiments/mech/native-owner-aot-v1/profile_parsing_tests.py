@@ -1,6 +1,6 @@
 """Regression coverage for actual macOS startup/queue trace phase headers."""
 from analyze_profile import stack_threads
-from profile_hotspots import leaves
+from profile_hotspots import leaves, category
 
 trace = """Call graph:
     4 Thread_1: Main Thread
@@ -20,3 +20,9 @@ assert threads[1]['inclusive_samples']['generated_program_entry'] == 3
 assert sum(row[2] for row in leaves(trace)) == 10
 assert sum(row['samples'] for row in threads) == 10
 print('Thread-phase parsing: 10 observations preserved, two threads, one main thread.')
+
+for helper in ['_ZN11mech_engine8resident6budget7workers11lock_escrow17habcE',
+               'mech_engine::resident::budget::workers::lock_escrow']:
+    assert category('core::hint::spin_loop', (helper, 'core::hint::spin_loop'), 'mech') == 'work_budget_active'
+    assert category('__ulock_wait', (helper, '__ulock_wait'), 'mech') == 'work_budget_wait'
+print('Escrow helper accounting classification covers both spins and blocked fallback.')

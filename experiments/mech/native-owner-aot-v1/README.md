@@ -2,7 +2,53 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Caller-owned loop constants: full-input gain with a prefix regression
+## Bounded escrow backoff and current profile
+
+Current compiler/runtime candidate [`dae3141ba`](https://github.com/mech-lang/mech/commit/dae3141bae18edca1ac67a181df49b9ca5438c82) retains **IR62 / ABI27 / work65** and the previous stage's byte-identical generated Object. The runtime tries the original escrow mutex at most six times, with at most 63 bounded pause hints, before using its original blocking lock. Poison recovery is unchanged. Every debit still reaches the same finite ledgers; the 1,024-traversal refill bound and 32-charge/32,768-work leaf lock-release bounds remain. Source, bytecode, every window/map update, launch allowances and worker count are unchanged.
+
+Three rotated **125-million-base** cohorts retain every complete process, including secured startup/shutdown, with no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.557 | 1.00× |
+| Previous IR62 runtime | 1.009 | 1.81× |
+| Current bounded-backoff runtime | 0.891 | 1.60× |
+
+The median is **11.8% lower**, a **1.13× speedup**. Current/previous ranges are **0.890–0.916 / 1.001–1.025 seconds**; current is lower in every paired cohort. Sample standard deviations are **0.015 / 0.012 seconds**. The [full aggregate](full-escrow-spin-cohort-v1/results.json) retains all observations, orders and identities. Every Mech process verifies output, all **874,999,961 updates**, seven packed SSA maps, seven guarded bounds/call entries, five complete frozen maps, ten original reads and seven peak workers. Subjects run sequentially under the common lock.
+
+The [one-million-base comparison against the previous IR62 runtime](escrow-spin-timing-v1/results.json) excludes one warmup per executable and retains three fresh complete processes per executable:
+
+| One-million-base prefix | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.0131 | 1.00× |
+| Previous IR62 runtime | 0.1072 | 8.18× |
+| Current bounded-backoff runtime | 0.0845 | 6.45× |
+
+The median is **21.2% lower**. A [separate fresh prefix comparison against the earlier IR60 reference](escrow-spin-reference-timing-v1/results.json), reusing only the pinned current build, gives Rust **0.0199 seconds**, reference **0.1117 seconds / 5.61× Rust**, and current **0.0965 seconds / 4.84× Rust**: **13.7% lower**, with current lower in every pair and nonoverlapping ranges. These batches have separate Rust denominators and are not pooled. Small absolute times vary between batches. The previous caller-constant stage's six-observation prefix regression remains documented below; the new runtime improves on both controls in these fresh matched comparisons. Canonical benchmark data remains unchanged.
+
+Three [fresh full-input profiles](escrow-spin-remaining-profile-v1/results.json) each verify complete output and seven workers. All **4,276,008 machine-code bytes** of the [profiling copy](profile-escrow-spin-build-v1/results.json) match the timed executable, SHA-256 `8183eaec66499ffc41ca587b1e48dbb3f3f3140e7128703b80318fccc88f8dce`. Three fresh Rust captures retain its exact unchanged timed executable. The current partition contains **8,351 worker observations**:
+
+| Observed worker location | Observations | Share |
+|---|---:|---:|
+| Generated counting loops | 7,426 | 88.9% |
+| Active storage helpers | 388 | 4.6% |
+| Active work accounting | 263 | 3.1% |
+| Waiting for work-budget escrow | 95 | 1.1% |
+| Helper bridge and other active frames | 179 | 2.1% |
+
+These are sampled thread observations including waits, rather than wall-time shares or CPU utilization. The [previous runtime captures reclassified with the same taxonomy](loop-constants-remaining-profile-v2/results.json) have **14.1% escrow waits**, versus **1.1%** now. Current blocked observations originate in refill (68) and missing-key charging (27). The five query-histogram workers contribute 5,917 generated-loop observations, and the two frequency-histogram workers contribute 1,509; shared functions do not identify individual query widths. Taxonomy 5 recognizes active spins and blocked fallback through the new lock helper. The parser fixture covers both cases and preserves repeated thread-phase denominators.
+
+[Separate full-input counter executions](escrow-spin-hardware-v1/results.json), nine serial diagnostic processes, give current **64.8 billion instructions / 12.6 billion cycles**, previous **66.0 billion / 14.0 billion**, and Rust **33.1 billion / 7.91 billion**. Instructions decrease **1.8%**, cycles **9.9%**; current instructions remain **1.96× Rust**. System CPU time falls **0.53 → 0.05 seconds**. User CPU increases **3.61 → 3.69 seconds**, while total CPU decreases **4.14 → 3.74 seconds**. These all-thread CPU times are not elapsed times, and counter executions are separate from primary timing cohorts.
+
+The [exact successful generated path](escrow-spin-codegen-audit-v1/steady-path-comparison.json) is unchanged: **66 instructions, eight branches and three stack reads**, versus Rust's **34, four and two**. Every relocated instruction and branch target matches the parent; the complete generated Object has SHA-256 `115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3`. Remaining source-state moves, index/width address arithmetic, stack reads and repeated present-entry branches are visible in that path. Collapsed sampled PCs cannot assign individual-instruction costs. Each loop remains 6,024 code bytes / 256 stack bytes, and combined native stack metadata remains 1,152 bytes.
+
+The [full native suite](../native-owner-dispatch-v1/escrow-spin-native-v1/summary.json) passes **359 GPU checks plus one catalog check**, with three existing exclusions. The [worker-budget suite](../native-owner-dispatch-v1/escrow-spin-engine-v1/summary.json) passes **26 checks**, including uncontended acquisition, deterministic exhausted-backoff/blocking fallback, exact ledger reconciliation and poison recovery. All bind clean immutable current source and finish with owned groups reaped. Existing original/decoded changed-input, full-map, growth/refill, arbitrary seed/start, wide-key, finite-cap, overflow/failure and exact/one-short code/stack checks remain.
+
+The [prefix diagnostic comparison](escrow-spin-prefix-comparison-v1/results.json) contains one prearmed exact-code executable-copy capture per subject: **139 current / 128 previous worker observations**, with seven workers each. Cold-copy loader/sampler overhead and low counts limit causal attribution. [Prefix counters](escrow-spin-prefix-hardware-v1/results.json) remain separate from direct-launch observations.
+
+The [source-bound diagnosis](escrow-spin-remaining-profile-v1/diagnosis.json) now prioritizes the generated steady loop. Source-certified affine cursor/index representation, SSA coalescing and separating a pure present-entry trace from rare helper paths are candidates for reducing repeated state/address work and live values. They are **unimplemented and unmeasured**. Every source window, actual map update, finite work debit, original continuation and error frontier must remain. Rust parity, separate decoded-source standalone qualification and secured/trusted comparison remain incomplete.
+
+## Previous stage: caller-owned loop constants and a prefix regression
 
 Compiler candidate [`f1b49a5da`](https://github.com/mech-lang/mech/commit/f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd), **IR62 / ABI27 / work65**, initializes the existing folded-hash constants and the source-certified loop endpoint in **24 caller-owned stack bytes** before invoking each outlined counting function. Hash literals are unchanged; the endpoint is computed at runtime from the actual source width/limit words. The local native function receives a seventh pointer argument, while the original Rust helper ABI and 19-word packed frame remain. Helpers never receive the packet pointer, and no write aliases it during the callee's lifetime, satisfying the backend's readonly-load contract. Inline or disabled outlining retains the prior arithmetic. Source, bytecode, all window/map operations and finite launch policies are unchanged.
 
@@ -24,7 +70,7 @@ The separate one-million-base protocol **regresses**. Both the [initial batch](l
 | IR60 reference Mech | 0.0896 | 4.65× |
 | IR62 caller-constant candidate | 0.1133 | 5.88× |
 
-The candidate median is **26.4% higher**. This remains a **draft candidate with an unresolved prefix regression**; the canonical benchmark dataset is unchanged. Full and prefix inputs and denominators remain separate.
+The candidate median is **26.4% higher**. At this stage, the draft candidate had an **unresolved prefix regression**; the subsequent bounded-backoff stage above improves fresh matched prefix comparisons. The historical observations remain intact, and the canonical benchmark dataset is unchanged. Full and prefix inputs and denominators remain separate.
 
 [Full-input counters](loop-constants-hardware-v1/results.json), nine separate serial diagnostic executions, give candidate **66.1 billion instructions / 13.9 billion cycles**, reference **76.4 billion / 15.1 billion**, and Rust **33.1 billion / 8.35 billion**. Instructions decrease **13.6%**, cycles **7.9%**; candidate instructions remain **1.99× Rust**. The [specified successful first-lane path](loop-constants-codegen-audit-v1/steady-path-comparison.json) falls **78 → 66 instructions** and **nine → three stack accesses**, retaining eight branches. Hash-constant reconstruction and `n-width+1` rematerialization leave that path; the source index stays in a register. Rust's comparable path has 34 instructions, four branches and two stack accesses. Static paths do not represent every dynamic iteration or assign individual-instruction costs.
 
@@ -34,7 +80,7 @@ Each loop has **6,024 code bytes / 256 stack bytes**, versus reference **6,176 /
 
 The short-input investigation remains limited. A normal attachment missed the completed subject; pre-arming `sample -wait` for an exact executable copy captured workers. Startup/queue sections repeat a thread ID, so the updated parser and classifier taxonomy 4 merge disjoint root phases, normalize the colon suffix and preserve observation totals; a regression fixture verifies this. An initial controller PID-field error and empty/partial later captures remain retained. The [prefix comparison](loop-constants-prefix-comparison-v1/results.json) explicitly selects the first seven-worker capture per subject, **125 / 148 observations**, and records that explicit selection alongside all attempted captures. Cold-copy loader/sampler overhead limits causal conclusions. These worker captures concentrate in storage/accounting. [Separate prefix counters](loop-constants-prefix-hardware-v1/results.json) have fewer instructions/cycles and faster wrapped elapsed time, while both primary direct-launch batches regress; diagnostic elapsed times do not replace primary measurements.
 
-The [source-bound diagnosis](loop-constants-remaining-profile-v1/diagnosis.json) prioritizes resolving this discrepancy and the prefix cost, then reducing the remaining source-state/index-address overhead and shared accounting. Source-certified affine cursor/index representation, SSA copy coalescing and cost-guided launch ordering remain unimplemented candidates with no assigned gains. Rust parity, separate decoded-source standalone qualification and secured/trusted comparison remain incomplete.
+The [source-bound diagnosis at this stage](loop-constants-remaining-profile-v1/diagnosis.json) prioritized resolving this discrepancy and the prefix cost, then reducing the remaining source-state/index-address overhead and shared accounting. The later bounded-backoff stage above measures a runtime improvement; source-certified affine cursor/index representation, SSA copy coalescing and cost-guided launch ordering remain unimplemented candidates with no assigned gains. Rust parity, separate decoded-source standalone qualification and secured/trusted comparison remain incomplete.
 
 ## Direct SIMD control loads and remaining loop costs (IR60 reference)
 

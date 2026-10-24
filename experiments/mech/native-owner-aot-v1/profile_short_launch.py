@@ -14,7 +14,9 @@ from build_baseline import PLAN, process
 parser = argparse.ArgumentParser()
 parser.add_argument('--receipt', required=True)
 parser.add_argument('--build', required=True)
+parser.add_argument('--captures', type=int, default=3)
 args = parser.parse_args()
+assert 1 <= args.captures <= 10
 out = HERE / args.receipt
 out.mkdir(exist_ok=False)
 build = json.loads((HERE / args.build / 'results.json').read_text())
@@ -35,7 +37,7 @@ report = dict(status='sampling', source_commit=build['source_commit'],
               binary_sha256=build['binary_sha256'], binary_path=str(binary),
               object_sha256=build['object_sha256'], selected_bases=1000000,
               input_sha256=process.sha(inp), launch_sha256=process.sha(launch),
-              expected_table_updates=6999961, completed_output_verified=False,
+              expected_table_updates=6999961, requested_captures=args.captures, completed_output_verified=False,
               samples=samples, subjects=subjects, native_counters=None,
               profiling_overhead_included=True, benchmark_samples=0,
               script_sha256=process.sha(Path(__file__)),
@@ -43,7 +45,7 @@ report = dict(status='sampling', source_commit=build['source_commit'],
 process.save(out / 'results.json', report)
 with Path(PLAN['common_mutex']).open('a+') as lock:
     fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-    for index in range(3):
+    for index in range(args.captures):
         folder = out / f'sample-{index}'
         folder.mkdir()
         launched = []

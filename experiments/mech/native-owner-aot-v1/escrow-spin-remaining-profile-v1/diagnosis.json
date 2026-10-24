@@ -1,0 +1,512 @@
+{
+  "status": "runtime-backoff-improves-full-and-both-matched-prefix-controls",
+  "source_commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+  "parent_source_commit": "f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd",
+  "native_ir_abi_work_versions": [
+    62,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "implementation": {
+    "scope": "Runtime escrow-lock acquisition only; generated benchmark Object is byte-identical to the parent.",
+    "explicit_try_attempts": 6,
+    "maximum_pause_hints": 63,
+    "blocking_fallback": "Original std::sync::Mutex and poison recovery; no custom lock or unrestricted spin.",
+    "unchanged": [
+      "source and bytecode",
+      "every input window and physical map update",
+      "actual source work debits and error frontiers",
+      "finite work and memory allowances",
+      "1024-traversal refill bound",
+      "32-charge/32768-work leaf lock-release bounds",
+      "worker count, QoS, affinity and power policy"
+    ]
+  },
+  "full_timing": {
+    "median_seconds": {
+      "rust": 0.556717459,
+      "mech": 0.89073475,
+      "baseline": 1.009354417
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 1.599976317609971,
+      "baseline": 1.8130460984878147
+    },
+    "scope": "Fresh complete processes, including secured startup/shutdown; no excluded warmups or outliers; cohorts run serially in their recorded orders",
+    "evidence": {
+      "path": "full-escrow-spin-cohort-v1/results.json",
+      "sha256": "f1cb7f181c023b0fbd1de3a561b5b5cc43468dbf26c3c90092fe5476994169c1"
+    },
+    "reduction_percent": 11.752033280100061,
+    "samples_seconds": {
+      "rust": [
+        0.560992292,
+        0.556717459,
+        0.543076125
+      ],
+      "mech": [
+        0.89073475,
+        0.915718333,
+        0.890114791
+      ],
+      "baseline": [
+        1.009354417,
+        1.001199042,
+        1.024679417
+      ]
+    },
+    "stdev_seconds": {
+      "rust": 0.009357254141835034,
+      "mech": 0.014606534677016638,
+      "baseline": 0.01192122600330494
+    },
+    "excluded_warmups_per_subject": 0,
+    "excluded_timed_observations": 0,
+    "observations_per_subject": 3,
+    "selected_bases": 125000000,
+    "baseline_source_commit": "f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd"
+  },
+  "prefix_timing_vs_parent": {
+    "median_seconds": {
+      "candidate": 0.084483708,
+      "baseline": 0.10723375,
+      "rust": 0.013106833
+    },
+    "x_rust": {
+      "candidate": 6.44577587888699,
+      "baseline": 8.181514939573885,
+      "rust": 1.0
+    },
+    "scope": "One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only",
+    "evidence": {
+      "path": "escrow-spin-timing-v1/results.json",
+      "sha256": "f3ee7e3ae7df658cb9d0619fec43061c2d03474b0c62b5d0ea25f2bb2387fb82"
+    },
+    "reduction_percent": 21.215374823691235,
+    "samples_seconds": {
+      "candidate": [
+        0.088868875,
+        0.081192333,
+        0.084483708
+      ],
+      "baseline": [
+        0.11011725,
+        0.092846,
+        0.10723375
+      ],
+      "rust": [
+        0.013106833,
+        0.012998916,
+        0.022240208
+      ]
+    },
+    "stdev_seconds": null,
+    "excluded_warmups_per_subject": 1,
+    "excluded_timed_observations": 0,
+    "observations_per_subject": 3,
+    "selected_bases": 1000000,
+    "baseline_source_commit": "f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd"
+  },
+  "prefix_timing_vs_ir60": {
+    "median_seconds": {
+      "candidate": 0.096468959,
+      "baseline": 0.111723916,
+      "rust": 0.019929375
+    },
+    "x_rust": {
+      "candidate": 4.8405411107975045,
+      "baseline": 5.605991959105592,
+      "rust": 1.0
+    },
+    "scope": "One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only",
+    "evidence": {
+      "path": "escrow-spin-reference-timing-v1/results.json",
+      "sha256": "bb348b31ee6788e64e39fa6518f17ddaf0c1b3ab5a9e2f2b700ccd240fcc052d"
+    },
+    "reduction_percent": 13.654155301896143,
+    "samples_seconds": {
+      "candidate": [
+        0.087636583,
+        0.096468959,
+        0.099876875
+      ],
+      "baseline": [
+        0.120830625,
+        0.109563291,
+        0.111723916
+      ],
+      "rust": [
+        0.019343042,
+        0.019929375,
+        0.020925708
+      ]
+    },
+    "stdev_seconds": null,
+    "excluded_warmups_per_subject": 1,
+    "excluded_timed_observations": 0,
+    "observations_per_subject": 3,
+    "selected_bases": 1000000,
+    "baseline_source_commit": "83012637fb0f5fab98460385fbde822a263fa3c4"
+  },
+  "prefix_scope": "Two separate matched cohorts, each with its own Rust denominator; no pooling. The second reuses only the identical completed candidate build. Earlier IR62 prefix regression remains in historical evidence; these fresh comparisons improve on both controls. Small absolute times vary between batches.",
+  "profile_identity": {
+    "status": "profile-binary-built",
+    "source_commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+    "binary": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-escrow-spin-profile",
+    "binary_sha256": "6b1983d626fd97aeec55828156a8054ab5be2ac0b24118a1e85fe98e808a29fb",
+    "object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "candidate_object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "machine_code_bytes": 4276008,
+    "machine_code_sha256": "8183eaec66499ffc41ca587b1e48dbb3f3f3140e7128703b80318fccc88f8dce",
+    "whole_machine_code_matches_timed": true,
+    "host_optimization": "release opt-level=3; final host lto=fat and codegen-units=1; dependency ThinLTO; same as public CLI",
+    "only_package_profile_override": "strip=none for owner-counting-escrow-spin",
+    "environment": {
+      "PATH": "/Users/cim310/.cargo/bin:/usr/bin:/bin",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "TZ": "UTC",
+      "NO_COLOR": "1",
+      "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+      "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "HOME": "/Users/cim310",
+      "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "TMPDIR": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/tmp"
+    },
+    "benchmark_samples": 0
+  },
+  "profile_identity_evidence": {
+    "path": "profile-escrow-spin-build-v1/results.json",
+    "sha256": "402fa1c10ac6eec7d26f95cc54aebd4422e0d3b5e805455c886e71d4de923633"
+  },
+  "full_worker_partition": {
+    "worker_observations": 8351,
+    "exclusive_buckets": {
+      "generated_counting_loop": 7426,
+      "work_budget_wait": 95,
+      "work_budget_active": 263,
+      "storage_helper_active": 388,
+      "generated_helper_bridge": 72,
+      "other_active": 107
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 172
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 72
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 68
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 27
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 19
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 88.92348221769848,
+      "work_budget_wait": 1.1375883127769129,
+      "work_budget_active": 3.149323434319243,
+      "storage_helper_active": 4.646150161657286,
+      "generated_helper_bridge": 0.8621721949467129,
+      "other_active": 1.281283678601365
+    }
+  },
+  "parent_same_taxonomy_partition": {
+    "worker_observations": 10321,
+    "exclusive_buckets": {
+      "generated_counting_loop": 8041,
+      "work_budget_wait": 1452,
+      "work_budget_active": 423,
+      "storage_helper_active": 233,
+      "generated_helper_bridge": 71,
+      "other_active": 101
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 1127
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 325
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 316
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 78
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 19
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 9
+      },
+      {
+        "category": "work_budget_active",
+        "route": "other_budget_operation",
+        "observations": 1
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 77.90911733359171,
+      "work_budget_wait": 14.068404224396861,
+      "work_budget_active": 4.098440073636276,
+      "storage_helper_active": 2.257533184768918,
+      "generated_helper_bridge": 0.6879178374188548,
+      "other_active": 0.978587346187385
+    }
+  },
+  "rust_worker_partition": {
+    "worker_observations": 6965,
+    "exclusive_buckets": {
+      "rust_counting_task_active": 5470,
+      "other_wait": 1494,
+      "other_active": 1
+    },
+    "work_budget_routes": [],
+    "exclusive_percent": {
+      "rust_counting_task_active": 78.53553481694185,
+      "other_wait": 21.45010768126346,
+      "other_active": 0.014357501794687724
+    }
+  },
+  "taxonomy_version": 5,
+  "classifier_sha256": "cd5271ad53dc3cdf224b5673bbacf9788087dd38f87a81426f959ada9e1479b4",
+  "profile_evidence": [
+    {
+      "path": "full-profile-escrow-spin-v1/analysis.json",
+      "sha256": "6fda473d4d10c337b187de0cd12b68a9056b32f4d06e283266cddb16a7640cf9"
+    },
+    {
+      "path": "full-profile-escrow-spin-v2/analysis.json",
+      "sha256": "71a2b22f94add19e54f30549b6248b580383f31a838350a51dd9257d281daaf3"
+    },
+    {
+      "path": "full-profile-escrow-spin-v3/analysis.json",
+      "sha256": "0fc35926f433d54922006e6935fe514fc8abcd06ffcf76f2b0c7f29a3c400a4c"
+    },
+    {
+      "path": "rust-full-profile-v14/analysis.json",
+      "sha256": "08abb3df5ac4e7a95c6e91e6a12dbec0ae6506ab6f669f83f1205d0dee11476a"
+    }
+  ],
+  "parent_partition_evidence": {
+    "path": "loop-constants-remaining-profile-v2/results.json",
+    "sha256": "7db6b10f954122c9730b084ca38d67a1979dd3ff087a4560fb50262d351399bb"
+  },
+  "generated_loop_observations": {
+    "query_histogram_shared_loop": 5917,
+    "frequency_histogram_shared_loop": 1509
+  },
+  "main_join_observations": {
+    "count": 1733,
+    "denominator": 2183,
+    "percent": 79.3861658268438
+  },
+  "static_path": {
+    "evidence": {
+      "path": "escrow-spin-codegen-audit-v1/steady-path-comparison.json",
+      "sha256": "d28b98ebdf107e67a6188348cef7f1055b43fa440ae4453144ffa857b22a4d3a"
+    },
+    "object_identical_to_parent": true,
+    "object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "mech": {
+      "instructions": 66,
+      "branches": 8,
+      "stack_load_instructions": 3,
+      "stack_store_instructions": 0
+    },
+    "rust": {
+      "instructions": 34,
+      "branches": 4,
+      "stack_load_instructions": 2,
+      "stack_store_instructions": 0
+    },
+    "finding": "The same successful iteration still has source-state register moves, index-plus-width address arithmetic, three stack reads and repeated present-entry branches. Cold helper paths share the containing function. Counts are static, not individual-instruction costs or dynamic frequencies."
+  },
+  "full_hardware": {
+    "evidence": {
+      "path": "escrow-spin-hardware-v1/results.json",
+      "sha256": "2b6ad78160e2de6f6f80814912377e0cd96fa952ac69492c41c874b2765cf853"
+    },
+    "medians": {
+      "mech": {
+        "instructions": 64819710230,
+        "cycles": 12582081976,
+        "real_seconds": 0.88,
+        "user_seconds": 3.69,
+        "system_seconds": 0.05
+      },
+      "baseline": {
+        "instructions": 66013133765,
+        "cycles": 13957112484,
+        "real_seconds": 1.02,
+        "user_seconds": 3.61,
+        "system_seconds": 0.53
+      },
+      "rust": {
+        "instructions": 33147499804,
+        "cycles": 7913135269,
+        "real_seconds": 0.53,
+        "user_seconds": 2.34,
+        "system_seconds": 0.02
+      }
+    },
+    "instruction_reduction_percent": 1.807857720023509,
+    "cycle_reduction_percent": 9.851826511939999,
+    "instruction_x_rust": 1.9554931929489905,
+    "scope": "Separate complete-process counter executions, including all threads and startup/shutdown; not additional primary timing observations."
+  },
+  "prefix_diagnostics": {
+    "profile_evidence": {
+      "path": "escrow-spin-prefix-comparison-v1/results.json",
+      "sha256": "ac5a3c5852742309c789aa979d2d4ce70c46872f1d0995550ddcdcdcab17cf45"
+    },
+    "counter_evidence": {
+      "path": "escrow-spin-prefix-hardware-v1/results.json",
+      "sha256": "cbb01db93d26cfefdd97862d46b3a748de14981257d8e81a52c3419546497b9d"
+    },
+    "scope": "One prearmed exact-code executable-copy capture per subject, 139 candidate / 128 parent worker observations; seven workers each. Cold-copy loader/sampler effects and small counts limit causal attribution. Counter wrapped wall times do not replace direct-launch timing observations."
+  },
+  "validation": [
+    {
+      "evidence": {
+        "path": "../native-owner-dispatch-v1/escrow-spin-native-v1/summary.json",
+        "sha256": "9ed82f622daa7ec9b2ed09380345f3c6049885ae96923a960b24cfeb030eaa06"
+      },
+      "source_commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "passed": 360,
+      "failed": 0,
+      "ignored": 3,
+      "status": "passed"
+    },
+    {
+      "evidence": {
+        "path": "../native-owner-dispatch-v1/escrow-spin-engine-v1/summary.json",
+        "sha256": "d62997a98c265242bfda807b9ff1ff8ee59b5eee04a50818b9874f2d8cdf7965"
+      },
+      "source_commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "passed": 26,
+      "failed": 0,
+      "ignored": 0,
+      "status": "passed"
+    }
+  ],
+  "source_records": [
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "line": 16,
+      "anchor": "fn lock_escrow(",
+      "sha256": "96163b86b201d8b51c8e921d36d98b8d61084d68dc5a51cd28c9880326486402"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "line": 69,
+      "anchor": "fn next(",
+      "sha256": "96163b86b201d8b51c8e921d36d98b8d61084d68dc5a51cd28c9880326486402"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "line": 142,
+      "anchor": "pub fn with_unscoped_debit",
+      "sha256": "96163b86b201d8b51c8e921d36d98b8d61084d68dc5a51cd28c9880326486402"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "src/engine/src/resident/native_work_debit_batch.rs",
+      "line": 6,
+      "anchor": "const MAX_CHARGES",
+      "sha256": "22bcd146dfaf96a4b4731d0f93f0e1f04d2735d6bf893c080648a235c22eb1c5"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "src/engine/src/resident/native_work_debit_batch.rs",
+      "line": 41,
+      "anchor": "let shared_next = state.next",
+      "sha256": "22bcd146dfaf96a4b4731d0f93f0e1f04d2735d6bf893c080648a235c22eb1c5"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+      "path": "hosts/gpu/src/native_artifact/program_packed_loop_codegen.rs",
+      "line": 492,
+      "anchor": "let end = if let Some(packet) = constant_packet",
+      "sha256": "3df28d24c1f1fa519a00dc75c3c9d2fb2011bec534aa8a1043b016b2a5c4844e"
+    }
+  ],
+  "remaining_targets": [
+    {
+      "priority": 1,
+      "target": "Reduce generated steady-loop state, address and control overhead",
+      "evidence": "88.9% of current worker observations are generated counting loops; whole-process instruction count remains 1.96 times Rust. The specified successful path remains 66 instructions/eight branches/three stack reads versus Rust 34/four/two.",
+      "candidate_actions": [
+        "Use source-certified affine cursor/index representation and SSA coalescing to reduce repeated state/address work.",
+        "Investigate separating a pure source-derived present-entry trace from existing rare growth/refill/cap/error paths, so cold helper values need not stay live through every hit."
+      ],
+      "constraints": [
+        "No workload/function-name recognition, precomputed results, generator-period shortcuts or queried-only counting.",
+        "Retain every source window and physical update, overflow/terminal frontiers and original finite work debits.",
+        "Exit before a helper that may move storage; preserve exact source continuation and refresh pointers before reentry.",
+        "Use existing proofs or checked fallback for arbitrary inputs, seeds, starts, wide keys, caps, declined proofs and original/decoded programs."
+      ],
+      "implementation_status": "Unimplemented; a candidate inferred from the profile and exact disassembly, not an established causal attribution or measured gain.",
+      "measured_additional_gain": null
+    },
+    {
+      "priority": 2,
+      "target": "Storage setup, missing keys and publication",
+      "evidence": "4.6% of full-input worker observations are active storage helpers. Single cold-copy prefix captures concentrate in these paths, with low sample counts.",
+      "measured_additional_gain": null
+    },
+    {
+      "priority": 3,
+      "target": "Residual work accounting",
+      "evidence": "1.1% of current full-input worker observations wait for escrow, down from 14.1% in parent captures classified by the same taxonomy; 3.1% are active accounting. This is now smaller than generated-loop work.",
+      "constraint": "Retain finite limits, accounting checks and bounded fallback.",
+      "measured_additional_gain": null
+    }
+  ],
+  "limitations": [
+    "Rust parity is not achieved.",
+    "Worker observations include waits and differing capture windows; they cannot be converted to wall seconds or CPU utilization.",
+    "Collapsed sampled PCs do not assign individual-instruction costs.",
+    "Timing cohorts, counter executions and profile observations remain separate.",
+    "Canonical benchmark data is unchanged; separate decoded-source standalone qualification and secured/trusted comparison remain incomplete."
+  ]
+}

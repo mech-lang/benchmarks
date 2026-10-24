@@ -8,9 +8,11 @@ from pathlib import Path
 from analyze_profile import sha
 
 HERE = Path(__file__).resolve().parent
+TAXONOMY_VERSION = 5
 WAIT = ('__psynch_cvwait', '__psynch_mutexwait', '__ulock_wait',
         'semaphore_wait_trap', '__semwait_signal', 'mach_msg2_trap')
-BUDGET = ('NativeLibraryWorkBudget6charge', 'NativeWorkDebitBatch6charge',
+BUDGET = ('7workers11lock_escrow', '::budget::workers::lock_escrow',
+          'NativeLibraryWorkBudget6charge', 'NativeWorkDebitBatch6charge',
           '::NativeWorkDebitBatch::charge', 'NativeWorkMeter6charge',
           'NativeLibraryWorkBudget18unscoped_remaining',
           '::NativeLibraryWorkBudget::unscoped_remaining',
@@ -177,8 +179,8 @@ def main():
                                    exclusive_percent={key: 100 * count / total for key, count in counts.items()})
     result = dict(status='exclusive-worker-observations-partitioned', samples=samples,
                   aggregates=aggregates, evidence=evidence, script_sha256=sha(Path(__file__).read_bytes()),
-                  taxonomy_version=4,
-                  taxonomy_change='Repeated thread-ID roots are disjoint observed phases and are merged without double counting. Main-thread flags accept both startup and dispatch-queue labels. Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.',
+                  taxonomy_version=TAXONOMY_VERSION,
+                  taxonomy_change='The shared worker-escrow lock helper is accounting, including active bounded spins and blocked fallback frames. Repeated thread-ID roots are disjoint observed phases and are merged without double counting. Main-thread flags accept both startup and dispatch-queue labels. Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.',
                   scope='Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.',
                   benchmark_samples=0)
     (out / 'results.json').write_text(json.dumps(result, indent=2) + '\n')
