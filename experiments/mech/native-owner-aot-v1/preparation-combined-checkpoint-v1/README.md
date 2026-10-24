@@ -1,5 +1,9 @@
 # Preparation interactions, memory and binary size
 
+A later [compact host-metadata trial](../host-metadata-trim-v1/README.md) builds
+on this combination without removing either factor. This report preserves the
+original four-configuration interaction study and memory audit.
+
 The two preparation changes are retained together on
 `codex/native-preparation-interactions` at `e82ed4d54d4490102ac41192d1fcbf492d467e08`.
 The combined configuration has lower medians than either change alone in both

@@ -2,6 +2,24 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Compact host metadata
+
+`codex/native-host-startup-trimming` at `e939c8002` builds on the retained
+preparation combination. Reusing selected call metadata and borrowing redundant
+image fields lowers full-input medians **1.86% initially and 1.06% in a separate
+repeat**. The repeat gives parent **0.7068 s / 1.284× Rust**, compact metadata
+**0.6993 s / 1.271×**, and Rust **0.5503 s / 1.000×**; its paired interval includes
+zero, so the size of a repeatable gain remains uncertain.
+
+The [report](host-metadata-trim-v1/README.md) records descriptor restoration
+**7.8 → 7.0 ms**, actual binary size **5.501 → 5.468 MB**, and repeat peak RSS
+**161.93 → 161.54 MB**. Mech Object, descriptor, bytecode and resource metadata
+remain byte-identical; capability admission, validation and finite prices stay
+enabled. All **464 checks** pass, with fresh exact-code profiles and
+[verification](host-metadata-trim-v1/verification.json) of 97 terminal process
+receipts. All prior configurations remain available. Most of the Rust elapsed
+gap remains beyond host setup; canonical data is unchanged.
+
 ## Retained preparation combination, memory and binary size
 
 A predeclared two-factor study retains both preparation changes together on
