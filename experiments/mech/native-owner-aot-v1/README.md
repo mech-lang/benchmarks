@@ -1,6 +1,33 @@
 # Source-map standalone performance
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
+
+## Caller-owned words for cold helper calls
+
+Compiler [`0eb2745bc`](https://github.com/mech-lang/mech/commit/0eb2745bcededcbe2f4a265fb8bc61d6f06b8b28), IR56/ABI27/work65, passes one invocation-local scratch pointer to the preserving bridge. The scratch contains the original function pointer, context, source site, operation, three arguments, result pointer and a separate status word. The installed Rust helper retains its original seven-argument C ABI. The change reduces argument-register demand without changing the source, bytecode, operations, errors or launch policies.
+
+Three rotated **125-million-base** cohorts retain every complete process, with secured startup/shutdown and no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.550 | 1.00× |
+| Previous preserving-call Mech, IR55 | 1.306 | 2.37× |
+| Scratch-call Mech, IR56 | 1.256 | 2.28× |
+
+The median is **3.8% lower**, a **1.04× speedup**. Candidate observations span 1.253–1.263 seconds, below the parent's 1.291–1.317 seconds. The [aggregate](full-scratch-calls-cohort-v1/results.json) retains raw observations, standard deviations, execution order and identities. Every candidate execution verifies complete output, all **874,999,961 updates**, seven packed SSA maps, seven bounds/call-guard entries, five complete frozen query maps, ten original reads and seven peak workers. Subjects execute serially under the common lock.
+
+The [one-million-base prefix](scratch-calls-timing-v1/results.json), with one excluded warmup per executable and three timed observations, gives Rust **0.0131 seconds**, parent **0.0914 seconds / 6.95× Rust**, and candidate **0.0937 seconds / 7.13× Rust**. The candidate median is **2.5% higher**, with overlapping ranges; this protocol establishes no prefix gain. Its denominator remains separate from the full-input cohort.
+
+[Five focused checks](../native-owner-dispatch-v1/scratch-calls-focused-v1/summary.json), the [full native suite](../native-owner-dispatch-v1/scratch-calls-native-v1/summary.json), **342 GPU tests**, and the [catalog test](../native-owner-dispatch-v1/scratch-calls-catalog-v1/summary.json) pass; three existing exclusions remain. They execute live scalar/vector values across the real bridge and a helper that overwrites their backing memory; independent result/status words and argument order; changed runtime inputs, seeds, growth/refills, exact work, original errors, declined proofs and exact/one-short stack/code limits. Each loop now has **7,252 code bytes / 256 stack bytes**, versus the parent's **7,256 / 288**. The **72-byte caller scratch** is included in the actual compiled frame. The bridge has **408 code bytes / 688 stack bytes**, within its checked 128-instruction bound. All emitted source-site templates remain within the original 512-unit lane, with an observed maximum of **481**; the extra initial bridge work remains **128**, within the existing 1,024-unit lane. No production allowance changes.
+
+[Nine separate whole-process counter executions](scratch-calls-hardware-v1/results.json) give candidate **94.2 billion instructions / 18.3 billion cycles**, parent **96.8 billion / 18.9 billion**, and Rust **33.2 billion / 8.15 billion**. Candidate instructions decrease **2.7%**, cycles decrease **3.3%**, and candidate instructions remain **2.84× Rust**. These diagnostic executions include all threads and startup/shutdown and are not extra timing-cohort samples.
+
+Three fresh full-input profiles ([first](full-profile-scratch-calls-v1/analysis.json), [second](full-profile-scratch-calls-v2/analysis.json), [third](full-profile-scratch-calls-v3/analysis.json)) each observe seven workers. The [profiling copy](profile-scratch-calls-build-v1/results.json) matches all **4,270,864 machine-code bytes** of the timed executable, SHA-256 `586963dfdde80440b1f10c5822c9be049891a62a8d67149b5c125386178ed462`. The [exclusive partition](scratch-remaining-profile-v1/results.json) combines **13,309 worker observations**: **82.5%** generated counting loops, **6.4%** work accounting including its waits, **6.3%** other waits, **3.3%** active storage helpers, **0.6%** generated bridge and **0.9%** other active frames. These are sampled thread observations, not elapsed-time shares or instruction costs. [Three new captures](rust-full-profile-v4/analysis.json) verify the exact unchanged Rust executable and seven counting workers each.
+
+[Exact disassembly and sampled-PC groups](scratch-calls-codegen-audit-v1/results.json), [second](scratch-calls-codegen-audit-v2/results.json), [third](scratch-calls-codegen-audit-v3/results.json), retain the remaining counting-loop loads and probe/count sequence. The [specified first-hit successful path](scratch-calls-codegen-audit-v1/steady-path-comparison.json) decreases from **101 to 98 instructions** and **19 to 14 stack-access instructions**; ten branches remain. The corresponding Rust path retains **34 instructions, two stack accesses and four branches**. Static paths and collapsed PC groups do not establish per-instruction runtime costs.
+
+The remaining gap is concentrated in generated counting code. It still rematerializes hash constants, reconstructs the rolling key twice and reloads invariant/source state. Hoisting immutable cold-call bindings is a further register-pressure candidate; reducing per-window bookkeeping needs separate source and resource proofs. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Validated-head profiles and remaining costs
 
 Compiler [`0aab5c81b`](https://github.com/mech-lang/mech/commit/0aab5c81b0b989b3c7b6ff78abc84ef06df844aa), IR55/ABI27/work65, passes the [full native suite](../native-owner-dispatch-v1/preserving-calls-native-v3/summary.json): **342 GPU tests and one catalog test**, with three existing exclusions. It restricts preserving helper calls to loops with the required proofs and charges nested stack only for the bridge actually used. Unsupported or disabled proofs retain ordinary calls and the original limits. The final test correction verifies both eligible and declined fixtures.
