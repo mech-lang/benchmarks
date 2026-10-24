@@ -1,0 +1,200 @@
+{
+  "status": "constant-width-specialization-does-not-close-rust-gap",
+  "source_commit": "601144c0fd5379ad178aa6fb44d926dd48f66466",
+  "versions": [
+    67,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "full_median_seconds": {
+    "rust": 0.5587121669999999,
+    "mech": 0.8574987919999999,
+    "baseline": 0.870526667
+  },
+  "full_x_rust": {
+    "rust": 1.0,
+    "mech": 1.5347773731227872,
+    "baseline": 1.558095059347437
+  },
+  "full_samples_seconds": {
+    "rust": [
+      0.551001834,
+      0.564750792,
+      0.7033595,
+      0.564813625,
+      0.552673542,
+      0.545714833
+    ],
+    "mech": [
+      0.851904959,
+      0.863092625,
+      0.846839209,
+      0.847144917,
+      0.878834666,
+      0.8710765
+    ],
+    "baseline": [
+      0.877074959,
+      0.883656959,
+      0.887459458,
+      0.853043625,
+      0.853944958,
+      0.863978375
+    ]
+  },
+  "full_reduction_percent": 1.4965509379392894,
+  "faster_pairs": 4,
+  "excluded_observations": 0,
+  "prefix_median_seconds": {
+    "candidate": 0.090367292,
+    "baseline": 0.105578542,
+    "rust": 0.02084425
+  },
+  "prefix_x_rust": {
+    "candidate": 4.335358288256953,
+    "baseline": 5.0651158952708775,
+    "rust": 1.0
+  },
+  "profile": {
+    "worker_observations": 7602,
+    "exclusive_buckets": {
+      "generated_counting_loop": 6619,
+      "storage_helper_active": 453,
+      "work_budget_active": 269,
+      "work_budget_wait": 80,
+      "generated_helper_bridge": 92,
+      "other_active": 89
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 177
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 81
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 61
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 19
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 11
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 87.0691923178111,
+      "storage_helper_active": 5.95895816890292,
+      "work_budget_active": 3.538542488818732,
+      "work_budget_wait": 1.0523546435148645,
+      "generated_helper_bridge": 1.2102078400420941,
+      "other_active": 1.1707445409102868
+    }
+  },
+  "hardware_medians": {
+    "mech": {
+      "instructions": 51674819802,
+      "cycles": 11590326799,
+      "real_seconds": 0.85,
+      "user_seconds": 3.39,
+      "system_seconds": 0.06
+    },
+    "baseline": {
+      "instructions": 55395455193,
+      "cycles": 11905579134,
+      "real_seconds": 0.85,
+      "user_seconds": 3.48,
+      "system_seconds": 0.05
+    },
+    "rust": {
+      "instructions": 33157852777,
+      "cycles": 7926887929,
+      "real_seconds": 0.54,
+      "user_seconds": 2.34,
+      "system_seconds": 0.03
+    }
+  },
+  "instruction_reduction_percent": 6.716499355474481,
+  "cycle_reduction_percent": 2.6479378403332032,
+  "functions": [
+    {
+      "header": 173,
+      "specialized_widths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "entry_instructions": 82,
+      "maximum_source_instructions": 48,
+      "maximum_snapshot_instructions": 20,
+      "caller_instructions": 50,
+      "code_bytes": 17916,
+      "stack_bytes": 96
+    },
+    {
+      "header": 284,
+      "specialized_widths": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18
+      ],
+      "entry_instructions": 82,
+      "maximum_source_instructions": 48,
+      "maximum_snapshot_instructions": 20,
+      "caller_instructions": 50,
+      "code_bytes": 17916,
+      "stack_bytes": 96
+    }
+  ],
+  "correctness": {
+    "focused_tests_passed": 6,
+    "all_admitted_widths_executed": true,
+    "source_and_decoded": true,
+    "complete_maps_and_exact_work": true,
+    "full_native_suite_for_this_revision": false
+  },
+  "interpretation": "Four full pairs improve and two regress; ranges overlap. The 1.50 percent full median reduction is small for the 18-fold code growth. Pure constant-width cloning is not the missing Rust strategy by itself. The subsequent source-equivalent fuel-edge experiment remains separately measured.",
+  "source_input_policy_and_canonical_data_unchanged": true,
+  "scope": "Stage-specific statistics, counter diagnostics and three exact-code profiles. Prefix, full and counters are separate cohorts; thread observations are not wall-time shares."
+}

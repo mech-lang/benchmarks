@@ -1,0 +1,296 @@
+{
+  "status": "validated-modest-full-input-gain-rust-parity-incomplete",
+  "source_commit": "9dd35e68a5e46b77823ce86c98a2252bdb2be9fe",
+  "native_ir_abi_work_versions": [
+    69,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "implementation": {
+    "actual_immutable_width_versions": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      17,
+      18
+    ],
+    "generic_width_fallback": true,
+    "original_source_graph": true,
+    "native_helper_calls": 0,
+    "header_fuel_checks_on_incoming_edges": true,
+    "productive_entry_proved_from_original_index_width_and_limit": true,
+    "terminal_returns_before_original_header": true,
+    "source_terminal_debit_and_visit_performed_by_outer_cfg": true,
+    "all_physical_map_updates_retained": true,
+    "finite_allowances_and_pricing_policy_unchanged": true
+  },
+  "full": {
+    "median_seconds": {
+      "rust": 0.557797042,
+      "mech": 0.8321683745,
+      "baseline": 0.8703969795
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 1.4918838069062403,
+      "baseline": 1.5604187795244706
+    },
+    "samples_seconds": {
+      "rust": [
+        0.558484417,
+        0.557109667,
+        0.546506041,
+        0.545292583,
+        0.568439625,
+        0.588679583
+      ],
+      "mech": [
+        0.838093417,
+        0.824984625,
+        0.831256458,
+        0.833080291,
+        0.846303542,
+        0.815716333
+      ],
+      "baseline": [
+        0.857321666,
+        0.884201,
+        0.868051084,
+        0.845543792,
+        0.87339225,
+        0.872742875
+      ]
+    },
+    "stdev_seconds": {
+      "rust": 0.016120787291665908,
+      "mech": 0.010551942021268109,
+      "baseline": 0.01359975424941584
+    },
+    "reduction_percent": 4.392088426359242,
+    "faster_pairs": 6,
+    "observations_per_subject": 6,
+    "excluded_warmups": 0,
+    "excluded_outliers": 0,
+    "selected_bases": 125000000,
+    "physical_updates": 874999961,
+    "peak_workers": 7,
+    "source_control": "IR65 f02fbe82 production code; validated unchanged at 8eb6db853"
+  },
+  "original_prefix": {
+    "median_seconds": {
+      "candidate": 0.120722459,
+      "baseline": 0.108717292,
+      "rust": 0.01767
+    },
+    "x_rust": {
+      "candidate": 6.832057668364459,
+      "baseline": 6.152648104131295,
+      "rust": 1.0
+    },
+    "control": "IR68 fuel-edge stage",
+    "runtime_increase_percent": 11.04255521743498
+  },
+  "direct_reference_prefix": {
+    "median_seconds": {
+      "candidate": 0.085569167,
+      "baseline": 0.099758625,
+      "rust": 0.01308825
+    },
+    "x_rust": {
+      "candidate": 6.537861593413941,
+      "baseline": 7.62199873932726,
+      "rust": 1.0
+    },
+    "control": "IR65 retained source",
+    "runtime_reduction_percent": 14.223790674741155
+  },
+  "prefix_scope": "Separate fresh cohorts, each with one excluded warmup and three observations per executable. The original parent comparison regresses; the direct IR65 comparison improves. Observations overlap and absolute times vary substantially. No pooling or dropped observations.",
+  "exact_code_profile": {
+    "machine_code_bytes": 4312408,
+    "entire_machine_code_matches_timed": true,
+    "three_captures": true,
+    "worker_partition": {
+      "worker_observations": 7372,
+      "exclusive_buckets": {
+        "generated_counting_loop": 6337,
+        "work_budget_active": 311,
+        "work_budget_wait": 99,
+        "storage_helper_active": 433,
+        "generated_helper_bridge": 91,
+        "other_active": 101
+      },
+      "work_budget_routes": [
+        {
+          "category": "work_budget_active",
+          "route": "loop_refill",
+          "observations": 204
+        },
+        {
+          "category": "work_budget_active",
+          "route": "missing_key_charge",
+          "observations": 87
+        },
+        {
+          "category": "work_budget_wait",
+          "route": "loop_refill",
+          "observations": 51
+        },
+        {
+          "category": "work_budget_wait",
+          "route": "missing_key_charge",
+          "observations": 35
+        },
+        {
+          "category": "work_budget_active",
+          "route": "frozen_map_charge",
+          "observations": 16
+        },
+        {
+          "category": "work_budget_wait",
+          "route": "frozen_map_charge",
+          "observations": 11
+        },
+        {
+          "category": "work_budget_active",
+          "route": "other_budget_operation",
+          "observations": 4
+        },
+        {
+          "category": "work_budget_wait",
+          "route": "other_budget_operation",
+          "observations": 2
+        }
+      ],
+      "exclusive_percent": {
+        "generated_counting_loop": 85.96039066739013,
+        "work_budget_active": 4.218665219750407,
+        "work_budget_wait": 1.3429191535539882,
+        "storage_helper_active": 5.8735756918068365,
+        "generated_helper_bridge": 1.234400434074878,
+        "other_active": 1.3700488334237655
+      }
+    }
+  },
+  "static_paths": {
+    "evidence": "productive-entry-codegen-audit-v1/steady-paths.json",
+    "native_loops": 19,
+    "instruction_range": [
+      44,
+      48
+    ],
+    "branches": 6,
+    "stack_accesses": 0,
+    "zero_one_move_counts": [
+      3,
+      5
+    ],
+    "scope": "All nineteen actual native loops. Static productive, funded, first-fingerprint/full-key-hit paths only. No source-width assignment is inferred from layout, and no dynamic frequency or time share is assigned."
+  },
+  "hardware": {
+    "medians": {
+      "mech": {
+        "instructions": 46697734896,
+        "cycles": 11308897052,
+        "real_seconds": 0.82,
+        "user_seconds": 3.3,
+        "system_seconds": 0.06
+      },
+      "baseline": {
+        "instructions": 46920359665,
+        "cycles": 11396792471,
+        "real_seconds": 0.82,
+        "user_seconds": 3.34,
+        "system_seconds": 0.05
+      },
+      "rust": {
+        "instructions": 33138506705,
+        "cycles": 7890083914,
+        "real_seconds": 0.54,
+        "user_seconds": 2.33,
+        "system_seconds": 0.03
+      }
+    },
+    "control": "IR68 fuel-edge parent, distinct from the primary full cohort IR65 control",
+    "scope": "Separate complete-process counter diagnostics; rounded counter timers are not primary elapsed-time observations."
+  },
+  "admission": {
+    "code_bytes": 92272,
+    "stack_bytes": 1232,
+    "funded_function_code_bytes": 17092,
+    "funded_function_stack_bytes": 96,
+    "caller_template_instructions": 48,
+    "entry_template_instructions": 85,
+    "maximum_source_template_instructions": 51,
+    "maximum_snapshot_template_instructions": 20,
+    "maximum_entry_edge_template_instructions": 3,
+    "fixed_template_work": 518,
+    "unchanged_fixed_envelope": 1024,
+    "unchanged_source_envelope": 512
+  },
+  "validation": {
+    "native_tests_passed": 364,
+    "catalog_tests_passed": 1,
+    "existing_manual_exclusions": 3,
+    "all_admitted_widths_executed": true,
+    "source_and_decoded": true,
+    "complete_maps": true,
+    "exact_finite_debits_and_failure_frontiers": true,
+    "source_commit": "9dd35e68a5e46b77823ce86c98a2252bdb2be9fe"
+  },
+  "checkpoint": {
+    "evidence": "strategy-compiler-checkpoint-v1/results.json",
+    "terminal_owned_process_receipts": 193,
+    "full_observations": 72,
+    "full_observations_excluded": 0
+  },
+  "next_candidates": [
+    {
+      "priority": 1,
+      "name": "Cold source-state reconstruction",
+      "status": "unimplemented-unmeasured",
+      "evidence": "Actual hot paths materialize three or five zero/one constants for cold state and keep invocation-owned base pointers available for snapshots.",
+      "options": [
+        "Separate cold header snapshots for distinct incoming edges, avoiding exit phis that move constant initialization into the loop.",
+        "Keep cold context pointers in admitted callee stack storage and reload them only when retiring an exit.",
+        "Reconstruct certified affine source/frame relationships, such as previous selection index, at exact cold continuations.",
+        "Propagate valid private-buffer memory facts to permit elimination of unused loads when the ownership proof establishes nontrapping access."
+      ],
+      "constraints": "Exact source continuations, native stack/code accounting, finite debit order and every physical map update must remain."
+    },
+    {
+      "priority": 2,
+      "name": "Source-certified cursor and induction representation",
+      "status": "unimplemented-unmeasured",
+      "evidence": "Original source index and width address calculations remain; Rust iterator code uses a cursor.",
+      "constraints": "Reconstruct precise source words before every exit; retain checked fallback and source error order."
+    },
+    {
+      "priority": 3,
+      "name": "Generic native instruction selection and probe control",
+      "status": "unimplemented-unmeasured",
+      "evidence": "Pinned backend inspection and exact disassembly retain byte extension/shift/mask, redundant address work and a nullable-pointer merge after a successful full-key match.",
+      "options": [
+        "Minimized CLIF reproducer for AArch64 shift/mask and shared address selection.",
+        "Direct found/missing probe continuations or bounded first-group peeling.",
+        "Controlled backend update, if the relevant source changes demonstrably improve the isolated reproducer."
+      ],
+      "constraints": "No Rust whole-workload kernel, benchmark-name match, input-period assumption or quota increase."
+    }
+  ],
+  "source_input_bytecode_policy_and_canonical_data_unchanged": true,
+  "interpretation": "The broader search yields a reliable but modest full-input improvement. Smaller code, fewer instructions or constant-width specialization alone did not supply the missing Rust-sized gain. The remaining candidates are structural compiler work and have no assigned speedup."
+}

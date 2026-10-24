@@ -1,0 +1,142 @@
+{
+  "status": "small-full-input-gain-before-productive-entry-peeling",
+  "source_commit": "28eef294fe316d5b08a5bd09d059da334356f08e",
+  "versions": [
+    68,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "full_median_seconds": {
+    "rust": 0.5557261874999999,
+    "mech": 0.8377641665,
+    "baseline": 0.8588937505
+  },
+  "full_x_rust": {
+    "rust": 1.0,
+    "mech": 1.5075124860838056,
+    "baseline": 1.5455340594328213
+  },
+  "full_samples_seconds": {
+    "rust": [
+      0.563636625,
+      0.562390042,
+      0.554300375,
+      0.557152,
+      0.553602167,
+      0.549479083
+    ],
+    "mech": [
+      0.839921458,
+      0.835606875,
+      0.822369542,
+      0.853589042,
+      0.868310083,
+      0.820032542
+    ],
+    "baseline": [
+      0.844107291,
+      0.860376834,
+      0.857193459,
+      0.857410667,
+      0.861995708,
+      0.8858415
+    ]
+  },
+  "full_reduction_percent": 2.4600928796722044,
+  "faster_pairs": 5,
+  "excluded_observations": 0,
+  "prefix_median_seconds": {
+    "candidate": 0.105585041,
+    "baseline": 0.092100292,
+    "rust": 0.020844542
+  },
+  "prefix_x_rust": {
+    "candidate": 5.065356725036223,
+    "baseline": 4.418436826292465,
+    "rust": 1.0
+  },
+  "profile": {
+    "worker_observations": 2446,
+    "exclusive_buckets": {
+      "generated_counting_loop": 2114,
+      "work_budget_wait": 32,
+      "work_budget_active": 90,
+      "storage_helper_active": 131,
+      "generated_helper_bridge": 33,
+      "other_active": 45,
+      "other_wait": 1
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 64
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 26
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 17
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 15
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 86.42681929681112,
+      "work_budget_wait": 1.3082583810302535,
+      "work_budget_active": 3.679476696647588,
+      "storage_helper_active": 5.3556827473426,
+      "generated_helper_bridge": 1.3491414554374488,
+      "other_active": 1.839738348323794,
+      "other_wait": 0.04088307440719542
+    }
+  },
+  "implementation": "The identical update alignment and fuel test execute on every incoming active-header edge. The debit remains at the header and each failure returns to its exact original header. No debit or terminal traversal is omitted.",
+  "functions": [
+    {
+      "header": 173,
+      "fuel_check_edges": [
+        null,
+        88
+      ],
+      "maximum_fuel_check_instructions": 1,
+      "entry_instructions": 83,
+      "maximum_source_instructions": 49,
+      "maximum_snapshot_instructions": 20,
+      "caller_instructions": 50,
+      "code_bytes": 18148,
+      "stack_bytes": 96
+    },
+    {
+      "header": 284,
+      "fuel_check_edges": [
+        null,
+        88
+      ],
+      "maximum_fuel_check_instructions": 1,
+      "entry_instructions": 83,
+      "maximum_source_instructions": 49,
+      "maximum_snapshot_instructions": 20,
+      "caller_instructions": 50,
+      "code_bytes": 18148,
+      "stack_bytes": 96
+    }
+  ],
+  "correctness": {
+    "focused_tests_passed": 6,
+    "all_admitted_widths_executed": true,
+    "complete_maps_and_exact_work": true,
+    "full_native_suite_for_this_revision": false
+  },
+  "interpretation": "Five full pairs improve, one regresses, and ranges overlap. The full median reduction is 2.46 percent; the separate prefix median regresses. A final terminal side exit still keeps previous state live at the header. The next independently measured stage guards productive entry and delegates terminal traversal before the original header.",
+  "source_input_policy_and_canonical_data_unchanged": true,
+  "scope": "Separate full, prefix and single-profile cohorts, including secured startup. Sampled worker observations are not wall-time shares."
+}

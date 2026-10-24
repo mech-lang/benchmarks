@@ -1,0 +1,70 @@
+{
+  "status": "backend-and-loop-strategy-inspection",
+  "benchmark_samples": 0,
+  "crate": "cranelift-codegen",
+  "version": "0.131.3",
+  "upstream_commit": "33fc269856f52a27777f11e3a4e77f7d0b2777cd",
+  "sources": [
+    {
+      "path": "src/remove_constant_phis.rs",
+      "sha256": "28210ee1156fbd1b41ba1de8623ec820305290a00d6194f88b96c57d0f8f5f82",
+      "url": "https://github.com/bytecodealliance/wasmtime/blob/33fc269856f52a27777f11e3a4e77f7d0b2777cd/cranelift/codegen/src/remove_constant_phis.rs"
+    },
+    {
+      "path": "src/isa/aarch64/lower.isle",
+      "sha256": "93c4fa5a25a1954db2027808e8cb6f41e1b72a7ff6622e1f0ceef4bfcb818a0b",
+      "url": "https://github.com/bytecodealliance/wasmtime/blob/33fc269856f52a27777f11e3a4e77f7d0b2777cd/cranelift/codegen/src/isa/aarch64/lower.isle"
+    },
+    {
+      "path": "src/isa/aarch64/inst/mod.rs",
+      "sha256": "0928d4d4aed3f84f0f9902696144b91ddf9c7985d889b573829e2dccf2343f26",
+      "url": "https://github.com/bytecodealliance/wasmtime/blob/33fc269856f52a27777f11e3a4e77f7d0b2777cd/cranelift/codegen/src/isa/aarch64/inst/mod.rs"
+    },
+    {
+      "path": "src/context.rs",
+      "sha256": "62fbe41eaf5634cb5ba020d591d11b2a0bcf0a7d60bb90e16abbecaf45d56895",
+      "url": "https://github.com/bytecodealliance/wasmtime/blob/33fc269856f52a27777f11e3a4e77f7d0b2777cd/cranelift/codegen/src/context.rs"
+    }
+  ],
+  "findings": [
+    {
+      "area": "Phi propagation",
+      "finding": "The existing constant-phi pass already propagates any single instruction/entry value through block-parameter cycles; it is not limited to integer literals. A new generic copy-phi pass would duplicate existing behavior.",
+      "decision": "Do not prioritize an unsupported assumption that loop-copy propagation is absent."
+    },
+    {
+      "area": "Constant-width code",
+      "finding": "Nineteen actual query loops retain 48\u201351 instructions/six branches/no stack accesses on specified productive first-hit paths, versus IR65 55/six/zero and Rust 34/four/two.",
+      "evidence": "width-specialization-codegen-audit-v1/steady-paths.json",
+      "decision": "Width cloning alone is insufficient; its measured median gain is small for 18-fold function growth."
+    },
+    {
+      "area": "Cold-state liveness",
+      "finding": "Original fuel and terminal side exits occur after merging previous state at the loop header. Incoming-edge tests can return exact original header continuations while avoiding loop-carried cold snapshots.",
+      "decision": "Measure fuel-only placement, then productive-entry peeling independently; no gain assumed."
+    },
+    {
+      "area": "AArch64 selection",
+      "finding": "The pinned lowering source uses a generic scalar band rule and separate shift lowering. Exact generated paths still contain byte extension plus shift/mask rather than the short native bitfield forms seen in Rust.",
+      "decision": "Investigate a minimized IR reproducer and generic backend patterns; source inspection does not establish a speedup or prove the optimizer lacks every equivalent pattern."
+    },
+    {
+      "area": "Induction representation",
+      "finding": "Source-certified index/width addressing remains in Mech; Rust iterator code uses cursor-based traversal.",
+      "decision": "A bounded affine cursor/index representation with exact deoptimization remains a structural candidate."
+    },
+    {
+      "area": "Backend release",
+      "finding": "Newer official Wasmtime release notes list AArch64 load common-subexpression and dead-store work.",
+      "url": "https://github.com/bytecodealliance/wasmtime/releases/tag/v48.0.0",
+      "decision": "A backend upgrade is a possible controlled experiment, not an assumed optimization."
+    }
+  ],
+  "techniques": [
+    {
+      "name": "Loop strength reduction, rotation and invariant specialization",
+      "url": "https://llvm.org/docs/Passes.html"
+    }
+  ],
+  "scope": "Read-only inspection of the exact pinned backend and exact-code artifacts. No dependency or power/security setting changed; unmeasured candidates have no assigned gains."
+}
