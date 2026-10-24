@@ -1,0 +1,136 @@
+{
+  "schema": "mech.rust-table-strategy-diagnostic.v1",
+  "variants": {
+    "linear": {
+      "source": "experiments/mech/native-owner-aot-v1/table-strategy-v1/sources/linear.rs",
+      "sha256": "bf7d2793373eada7dd2c13f8072ffae1703044e34b96968ffd3d4db5b6354bfa",
+      "cfg": []
+    },
+    "quadratic": {
+      "source": "experiments/mech/native-owner-aot-v1/table-strategy-v1/sources/quadratic.rs",
+      "sha256": "bf7d2793373eada7dd2c13f8072ffae1703044e34b96968ffd3d4db5b6354bfa",
+      "cfg": [
+        "--cfg",
+        "quadratic_probe"
+      ]
+    },
+    "linear_scoped": {
+      "source": "experiments/mech/native-owner-aot-v1/table-strategy-v1/sources/linear_scoped.rs",
+      "sha256": "34a048ad8801fcb0a332f413cd6ca15b62a77f0c1457900d774513ce6d6cb897",
+      "cfg": []
+    }
+  },
+  "table": {
+    "path": "experiments/mech/native-owner-aot-v1/table-strategy-v1/sources/diagnostic_packed_table.rs",
+    "sha256": "e8981685a4ae6ff90f84bfb7768ccac74a9f52f2ac01f3326a716c7b040ce655"
+  },
+  "controls": {
+    "rust": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/knucleotide-rust-7",
+      "sha256": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763"
+    },
+    "mech": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-escrow-spin",
+      "sha256": "86f3a407052eb265930aab5a74235dec3ca29abc04a0d277ebfa5f41b8f162c5"
+    },
+    "hashbrown_wide_decode": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/strategy-comparison-v3-wide_decode",
+      "sha256": "18bbca814678320bdf3ec95d267fa7a21f2b2bec17e7e00b475056c9d5729368",
+      "source_sha256": "669f8bbfb09cbbfabfdcd647b9fa2c39e1ad81887d6d21397c775bcffdb29eb7",
+      "command": [
+        "/Users/cim310/.cargo/bin/rustc",
+        "--edition=2021",
+        "-Copt-level=3",
+        "-Ctarget-cpu=native",
+        "-Ccodegen-units=1",
+        "-Ldependency=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps",
+        "--extern",
+        "futures=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libfutures-6d9979a0e9a0489d.rlib",
+        "--extern",
+        "tokio_threadpool=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libtokio_threadpool-dead00269b02d28d.rlib",
+        "--extern",
+        "itertools=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libitertools-f13fe1908f7d2158.rlib",
+        "--extern",
+        "num=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libnum-4c82bed52f6b3872.rlib",
+        "--extern",
+        "hashbrown=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libhashbrown-85f11e69d704a89a.rlib",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/strategy-comparison-v1/sources/wide_decode.rs",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/strategy-comparison-v3-wide_decode"
+      ]
+    }
+  },
+  "inputs": {
+    "full": {
+      "path": "experiments/janet/.build/inputs/fasta-n25000000.stdin",
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "output": "f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7",
+      "policy": "full-launch-order-v1/launch.json",
+      "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+      "updates": 874999961
+    },
+    "prefix": {
+      "path": "experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/input.fasta",
+      "sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+      "output": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+      "policy": "full-timing-v1/launch.json",
+      "policy_sha256": "3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2fd0daf57cdb43ec",
+      "updates": 6999961
+    }
+  },
+  "orders": [
+    [
+      "hashbrown_wide_decode",
+      "linear",
+      "quadratic",
+      "mech",
+      "rust",
+      "linear_scoped"
+    ],
+    [
+      "linear_scoped",
+      "rust",
+      "mech",
+      "quadratic",
+      "linear",
+      "hashbrown_wide_decode"
+    ],
+    [
+      "linear",
+      "linear_scoped",
+      "hashbrown_wide_decode",
+      "quadratic",
+      "rust",
+      "mech"
+    ],
+    [
+      "mech",
+      "rust",
+      "quadratic",
+      "hashbrown_wide_decode",
+      "linear_scoped",
+      "linear"
+    ],
+    [
+      "mech",
+      "linear_scoped",
+      "linear",
+      "rust",
+      "quadratic",
+      "hashbrown_wide_decode"
+    ],
+    [
+      "hashbrown_wide_decode",
+      "quadratic",
+      "rust",
+      "linear",
+      "linear_scoped",
+      "mech"
+    ]
+  ],
+  "source_tree": "90395fc5a8486a5c040c99a9c023b47de10bc968",
+  "scope": "Six complete-process observations per subject/input; three fixed random permutations paired with their reverses. No excluded warmup or outlier. Inputs are independent cohorts. Every subject executes serially under the common lock. Canonical data and both protected executables remain unchanged.",
+  "algorithm": "Diagnostic Rust table uses u64 keys/counts, sixteen-byte positive payloads, eight-byte NEON control groups, seven mirrored controls, the same folded constants and 7/8 load threshold as Mech. Linear probing advances eight controls; quadratic variant advances triangular groups. Every source window updates its actual full table. Input remains ASCII and each worker performs its own bit decoding. Linear/scoped also starts the seven jobs in ascending-width source order.",
+  "limitations": "This Rust diagnostic omits Mech source-state transport, precise source errors, managed memory and finite work accounting, capability startup and runtime publication. It tests whether the storage/probing algorithm alone reproduces the large gap. It cannot measure a compiler gain, replace a Mech program or attribute all residual time to any one omitted component. Growth uses ordinary Rust allocation; deterministic folded constants differ from hashbrown random seeds.",
+  "canonical_benchmark_samples": 0
+}
