@@ -32,6 +32,7 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'require_mutation_facts', 'mutation_facts_qualified', 'compiled_mutation_loops', 'qualified_mutation_regions',
             'require_count_values', 'count_values_qualified', 'compiled_count_value_loops', 'qualified_count_value_regions',
             'require_header_cache', 'header_cache_qualified', 'compiled_header_cache_loops', 'qualified_header_cache_regions',
+            'require_lookup_threading', 'lookup_threading_qualified', 'qualified_lookup_thread_regions',
             'require_loop_constants', 'loop_constants_qualified', 'compiled_loop_constants', 'qualified_loop_constant_regions']
 first = reports[0]
 samples = {}
@@ -45,6 +46,9 @@ for run, report in zip(args.runs, reports):
     if report.get('require_mutation_facts'):
         assert report.get('mutation_facts_qualified') is True
         assert report['compiled_mutation_loops'] and report['qualified_mutation_regions']
+    if report.get('require_lookup_threading'):
+        assert report.get('lookup_threading_qualified') is True and report.get('require_lookup_facts')
+        assert report['qualified_lookup_thread_regions']
     if report.get('require_loop_constants'):
         assert report.get('loop_constants_qualified') is True and report.get('require_outlined_loops')
         assert report['compiled_loop_constants']['complete'] is True and report['qualified_loop_constant_regions']

@@ -48,6 +48,52 @@ The [prefix diagnostic comparison](escrow-spin-prefix-comparison-v1/results.json
 
 The [source-bound diagnosis](escrow-spin-remaining-profile-v1/diagnosis.json) now prioritizes the generated steady loop. Source-certified affine cursor/index representation, SSA coalescing and separating a pure present-entry trace from rare helper paths are candidates for reducing repeated state/address work and live values. They are **unimplemented and unmeasured**. Every source window, actual map update, finite work debit, original continuation and error frontier must remain. Rust parity, separate decoded-source standalone qualification and secured/trusted comparison remain incomplete.
 
+## Rejected experiment: current-key states at source joins
+
+Experimental compiler [`4b52fcaaa`](https://github.com/mech-lang/mech/commit/4b52fcaaa452a3f31c00b8e435faf97ec217c4e0), **IR63 / ABI27 / work65**, kept present/absent current-key states separate through source joins. Each product node emitted its original action and successor. Selection/header cleared old predicates; insertion refreshed the entry and invalidated earlier membership aliases. Expansion retained the existing 256-base/1,024-versioned-node and 4,096-record limits. Original source, bytecode, every map update and finite policies were unchanged.
+
+The [initial three full-input cohorts](full-lookup-thread-cohort-v1/results.json) had a 2.5% lower median, with overlapping ranges. A second complete balanced cycle followed that uncertainty. The [complete six-cohort aggregate](full-lookup-thread-cohort-v2/results.json), with no excluded warmup or timed observation, gives:
+
+| 125-million-base executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.547 | 1.00× |
+| Previous bounded-backoff runtime | 0.897 | 1.64× |
+| Current-key state experiment | 0.895 | 1.64× |
+
+The difference is only **0.3%**, with three faster and three slower pairs. Candidate/control ranges **0.866–0.911 / 0.880–0.923 seconds** overlap; sample standard deviations are **0.020 / 0.014 seconds**. This establishes **no useful runtime gain**. All complete processes include secured startup/shutdown, run sequentially under the common lock and verify all **874,999,961 updates**, seven packed SSA maps and workers, guarded bounds/calls, five full frozen maps and ten original reads.
+
+The separate [one-million-base cohort](lookup-thread-timing-v1/results.json), three observations and one excluded warmup per executable, gives Rust **0.0208 seconds**, control **0.0841 seconds / 4.05× Rust**, and candidate **0.0844 seconds / 4.06× Rust**. The overlapping 0.3% difference establishes no prefix gain. Its denominator is separate from the full input.
+
+[Whole-process counters](lookup-thread-hardware-v2/results.json), nine separate diagnostic executions, show only **1.3% fewer instructions**. The [exact successful path](lookup-thread-codegen-audit-v1/steady-path-comparison.json) changes **66 → 65 instructions** and **eight → seven branches**, but stack accesses increase **three → six**: four loads and two stores. Source-index traffic offsets the removed present-entry branch. Each loop has 5,996 code bytes / 256 stack bytes; its base graph grows 90 → 92 nodes, and actual fixed-template work grows 365 → 389 within the unchanged envelope.
+
+Three [fresh candidate profiles](lookup-thread-remaining-profile-v1/results.json) verify complete output and seven workers, with exact profiling/timed machine-code identity. Of **8,162 worker observations**, **87.7%** remain in counting loops, **5.7%** in storage helpers, **3.4%** in active accounting, **1.2%** in escrow waits and **2.1%** in bridge/other frames. Three fresh Rust captures use its unchanged executable. These are thread observations including waits, not wall-time shares; collapsed PCs cannot assign instruction costs.
+
+[Six focused checks](../native-owner-dispatch-v1/lookup-thread-focused-v3/summary.json) pass, including actual source-bound product metadata, original/decoded changed inputs, complete maps, growth/refills, finite caps, arbitrary indices/seeds, original overflows/errors, stale-predicate invalidation and bounded expansion. The rejected candidate did not proceed to the full native suite. Earlier fixture failures remain: [an outdated receipt-call API](../native-owner-dispatch-v1/lookup-thread-focused-v1/summary.json), then [five passes and an incorrect baseline selector expectation](../native-owner-dispatch-v1/lookup-thread-focused-v2/summary.json), corrected before the successful run. An [initial counter attempt](lookup-thread-hardware-v1/failure.json) completed its owned Rust child but the sandbox denied `kern.clockrate`; its terminal receipt remains, and the successful counter retry uses read-only escalated access.
+
+The experiment was [reverted](https://github.com/mech-lang/mech/commit/4269694e9f2bfb9a208a4f9a9152b412c8fad6c7) to the exact previously validated bounded-backoff tree. The [diagnosis](lookup-thread-remaining-profile-v1/diagnosis.json) prioritizes reducing steady-loop state/address traffic through separation from rare helper paths. Generic task launch ordering and source-proved narrower storage remain independent unmeasured candidates. Canonical benchmark data is unchanged.
+
+## Rejected experiment: reverse task launch
+
+Runtime candidate [`6721ccc72`](https://github.com/mech-lang/mech/commit/6721ccc72c3e2e2688e34f2f7d9426353666e435) retained **IR62 / ABI27 / work65** and the original generated Object byte-for-byte. All finite worker loans, captures and constructor claims remained in source order. The bounded independent job batch launched in reverse order, then reversed handle iteration again to preserve source-order results/errors. No task, worker, allocation container, allowance, QoS, affinity or power setting changed.
+
+Three rotated [125-million-base cohorts](full-launch-order-cohort-v1/results.json), including complete secured startup/shutdown with no excluded warmup or outlier, give:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.552 | 1.00× |
+| Existing source-order launch | 0.899 | 1.63× |
+| Reverse-launch experiment | 0.918 | 1.66× |
+
+The candidate is slower in every paired cohort, with a **2.1% higher median** and overlapping ranges. Sample standard deviations are **0.012 / 0.009 seconds** for candidate/control. The **0.666-second Rust observation is retained**. Every Mech process completes all **874,999,961 updates** with seven packed SSA maps and active workers, guarded bounds/calls, five complete frozen maps and ten original reads. Subjects execute sequentially under the common lock.
+
+The separate [one-million-base cohort](launch-order-timing-v1/results.json), three observations and one excluded warmup per executable, gives Rust **0.0224 seconds**, existing Mech **0.0889 seconds / 3.97× Rust**, and candidate **0.1129 seconds / 5.04× Rust**: a **27.0% higher median**. Its denominator is separate from the full cohort. The regression does not justify further runs seeking a favorable subset.
+
+Three [fresh profiles](launch-order-remaining-profile-v1/results.json) verify complete output and seven workers each. The [profiling copy](profile-launch-order-build-v1/results.json) matches the timed executable's entire machine-code section. Of **9,049 worker observations**, **88.4%** are in generated loops, **3.2%** in storage helpers, **3.6%** in active accounting, **3.0%** in accounting waits and **1.8%** in bridge/other frames. Three fresh Rust captures use the unchanged reference. These are thread observations including waits, not wall-time shares. The [successful generated path](launch-order-codegen-audit-v1/steady-path-comparison.json) remains **66 instructions, eight branches and three stack reads**; all relocated instructions/branch targets and the complete generated Object match the reference.
+
+[Eleven existing parallel checks](../native-owner-dispatch-v1/launch-order-focused-v1/summary.json) pass, covering actual original/decoded source and checked images, all source maps/updates, captures, source-order values/errors, earlier parent push versus later worker arithmetic failure, finite admission/fallback, child authority and cleanup. The rejected variant did not proceed to the full native suite.
+
+The change was [reverted](https://github.com/mech-lang/mech/commit/0f623b9b860cac388ba270bb43ae97a5adf3b12a) to the exact previously validated bounded-backoff tree, `90395fc5a8486a5c040c99a9c023b47de10bc968`. The [diagnosis](launch-order-remaining-profile-v1/diagnosis.json) rejects plain reverse launch; broader cost-guided scheduling remains unimplemented and unmeasured. The main remaining target is generated-loop state/address traffic. Source-certified direct storage for small packed key spaces and narrower key/count storage are additional unimplemented representation candidates. No gain is assigned to them, and every actual map update, membership/value semantic, finite resource check and fallback must remain. Rust parity is incomplete; canonical benchmark data is unchanged.
+
 ## Previous stage: caller-owned loop constants and a prefix regression
 
 Compiler candidate [`f1b49a5da`](https://github.com/mech-lang/mech/commit/f1b49a5da39b1a11ed5c6a0755ce054ad02a6dfd), **IR62 / ABI27 / work65**, initializes the existing folded-hash constants and the source-certified loop endpoint in **24 caller-owned stack bytes** before invoking each outlined counting function. Hash literals are unchanged; the endpoint is computed at runtime from the actual source width/limit words. The local native function receives a seventh pointer argument, while the original Rust helper ABI and 19-word packed frame remain. Helpers never receive the packet pointer, and no write aliases it during the callee's lifetime, satisfying the backend's readonly-load contract. Inline or disabled outlining retains the prior arithmetic. Source, bytecode, all window/map operations and finite launch policies are unchanged.

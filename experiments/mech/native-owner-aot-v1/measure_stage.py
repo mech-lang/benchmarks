@@ -198,7 +198,12 @@ def require_lookup_facts(metadata, descriptor, tags, explicit_source_variant=Fal
             assert fact in ('Fresh', 'Cached', 'Present', 'Absent')
             facts.add(fact)
             sites.add(site)
-        if explicit_source_variant:
+        if record.get('state_threading') is not None:
+            # The ORIGINAL merged-count source now has distinct compiled
+            # Present/Absent continuations; qualify their exact nodes below.
+            assert {'Fresh', 'Present', 'Absent'} <= facts
+            require_lookup_threading(dict(complete=True, regions=[record]), descriptor)
+        elif explicit_source_variant:
             # A branch-local insert can retain Present/Absent rather than the
             # weaker Cached fact required by the original merged-count source.
             assert any(s['operation'] == 3 and s['fact'] == 'Fresh' for s in substitutions)
@@ -212,6 +217,51 @@ def require_lookup_facts(metadata, descriptor, tags, explicit_source_variant=Fal
                               substitutions=substitutions,
                               scope='Actual compiled current-key substitutions; not dynamic per-path frequencies. Runtime packed SSA selection is separately required.'))
     return qualified
+
+
+def require_lookup_threading(metadata, descriptor):
+    """Bind bounded current-key product nodes to original source operations."""
+    assert metadata and metadata['complete'] is True
+    result = []
+    for region in metadata['regions']:
+        proof = region.get('state_threading')
+        assert isinstance(proof, dict), 'Current-key state expansion was not emitted'
+        states = proof['states']
+        assert 0 < proof['original_tag_nodes'] <= 256
+        assert 0 < len(states) == region['source_nodes'] <= 256
+        assert region['emitted_nodes'] <= 1024
+        source_region = descriptor['closed_tails']['sites'][region['header']]
+        original_sites, by_original = {}, {}
+        for node, state in enumerate(states):
+            assert len(state) == 4 and state[0] == node
+            _, original, site, fact = state
+            assert type(original) is int and 0 <= original < proof['original_tag_nodes']
+            assert descriptor['closed_tails']['sites'][site] == source_region
+            assert original_sites.setdefault(original, site) == site
+            assert fact in ('Unknown', 'Fresh', 'Cached', 'Present', 'Absent')
+            by_original.setdefault(original, set()).add(fact)
+        split_inserts = []
+        for original, facts in by_original.items():
+            site = original_sites[original]
+            call = descriptor['plan']['blocks'][site]['action'].get('LibraryCall')
+            if call and {'Present', 'Absent'} <= facts:
+                selected = call['template']['selected']
+                primitive = next(iter(selected.values()))['leaf']['primitive']
+                if primitive == 'MapInsert':
+                    split_inserts.append(dict(original_node=original, source_site=site))
+        assert split_inserts, 'No original insertion join retains both source-derived states'
+        for substitution in region['substitutions']:
+            state = states[substitution['node'] % len(states)]
+            assert (state[2], state[3]) == (substitution['site'], substitution['fact'])
+        for node, site in proof['folded_predicate_branches']:
+            assert states[node][2] == site
+            branch = descriptor['plan']['blocks'][site]['terminator'].get('Scalar', {})
+            assert 'Branch' in branch or 'LiteralBranch' in branch
+        result.append(dict(header=region['header'], original_tag_nodes=proof['original_tag_nodes'],
+                           product_nodes=len(states), split_insert_joins=split_inserts,
+                           scope='Actual compiled current-key versions and source sites; not dynamic path frequencies.'))
+    assert result
+    return result
 
 
 def require_frozen_maps(candidate_count, descriptor):
@@ -678,6 +728,7 @@ parser.add_argument('--require-preserving-calls', action='store_true', help='Req
 parser.add_argument('--require-mutation-facts', action='store_true', help='Require guarded source progress and completed-insertion storage facts')
 parser.add_argument('--require-count-values', action='store_true', help='Require source-qualified count-value overflow substitutions')
 parser.add_argument('--require-header-cache', action='store_true', help='Require proof-gated private lookup-cache invalidation at every emitted header')
+parser.add_argument('--require-lookup-threading', action='store_true', help='Require source-bound present/absent continuations at original insertion joins')
 parser.add_argument('--require-loop-constants', action='store_true', help='Require owned caller storage for immutable hashes and source loop endpoints')
 parser.add_argument('--require-loop-invariants', action='store_true',
                     help='Require source-bound guarded calls, steady rolling and seven actual initial call-guard selections')
@@ -754,6 +805,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_mutation_facts=args.require_mutation_facts,
               require_count_values=args.require_count_values,
               require_header_cache=args.require_header_cache,
+              require_lookup_threading=args.require_lookup_threading,
               require_loop_constants=args.require_loop_constants,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
@@ -820,15 +872,19 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'), bool(args.source_variant))
         report['source_lookup_facts_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_lookup_threading:
+        assert args.require_lookup_facts and manifest['object']['typed_ir_version'] == 63
+        report['qualified_lookup_thread_regions'] = require_lookup_threading(report['compiled_lookup_facts'], descriptor)
+        report['lookup_threading_qualified'] = True
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63) and manifest['object']['work_policy_version'] == 65
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
@@ -842,7 +898,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_outlined_loops:
         assert args.require_cfg_cleanup and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62)
+        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63)
         loops = manifest['object'].get('compiled_outlined_loops')
         assert isinstance(loops, list) and 0 < len(loops) <= 256
         expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
@@ -863,21 +919,21 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
         assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
         report['cfg_cleanup_removed_total'] = removed
-        if manifest['object']['typed_ir_version'] in (54, 55, 56, 57, 58, 59, 60, 61, 62):
+        if manifest['object']['typed_ir_version'] in (54, 55, 56, 57, 58, 59, 60, 61, 62, 63):
             functions = [report['compiled_cfg_cleanup']] + [loop['cleanup'] for loop in report.get('compiled_outlined_loops', [])]
             assert all(function['pre_codegen_data_passes'] == 0 for function in functions)
             report['single_data_pass_qualified'] = True
 
     if args.require_loop_invariants:
         assert args.require_outlined_loops and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56, 57, 58, 59, 60, 61, 62) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63) and manifest['object']['abi_version'] == 27
         report['compiled_loop_invariants'] = manifest['object'].get('compiled_loop_invariants')
         report['qualified_invariant_regions'] = require_loop_invariants(report['compiled_loop_invariants'], descriptor,
             report['qualified_lookup_regions'], report['qualified_guarded_regions'])
         report['loop_invariants_qualified'] = True
     if args.require_preserving_calls:
         assert args.require_loop_invariants and args.require_outlined_loops
-        assert manifest['object']['typed_ir_version'] in (55, 56, 57, 58, 59, 60, 61, 62) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (55, 56, 57, 58, 59, 60, 61, 62, 63) and manifest['object']['abi_version'] == 27
         shim = manifest['object'].get('compiled_bound_call_shim')
         regions = manifest['object'].get('compiled_preserving_call_regions')
         assert isinstance(shim, dict) and shim['symbol'] == 'mech_canonical_program_entry_v1_preserving_bound_call'
@@ -897,7 +953,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['preserving_calls_qualified'] = True
     if args.require_mutation_facts:
         assert args.require_loop_invariants and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (58, 59, 60, 61, 62) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (58, 59, 60, 61, 62, 63) and manifest['object']['abi_version'] == 27
         report['compiled_mutation_loops'] = manifest['object'].get('compiled_mutation_loops')
         report['qualified_mutation_regions'] = require_mutation_facts(report['compiled_mutation_loops'], descriptor,
             manifest['object']['compiled_tag_threading'], report['qualified_guarded_regions'],
@@ -905,7 +961,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['mutation_facts_qualified'] = True
     if args.require_count_values:
         assert args.require_mutation_facts and args.require_guarded_loops and args.require_loop_invariants
-        assert manifest['object']['typed_ir_version'] in (59, 60, 61, 62) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (59, 60, 61, 62, 63) and manifest['object']['abi_version'] == 27
         report['compiled_count_value_loops'] = manifest['object'].get('compiled_count_value_loops')
         report['qualified_count_value_regions'] = require_count_values(
             report['compiled_count_value_loops'], descriptor, report['compiled_mutation_loops'])
@@ -919,7 +975,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['header_cache_qualified'] = True
     if args.require_loop_constants:
         assert args.require_outlined_loops and args.require_guarded_loops
-        assert manifest['object']['typed_ir_version'] == 62 and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (62, 63) and manifest['object']['abi_version'] == 27
         report['compiled_loop_constants'] = manifest['object'].get('compiled_loop_constants')
         report['qualified_loop_constant_regions'] = require_loop_constants(report['compiled_loop_constants'],
             report['compiled_outlined_loops'], report['compiled_guarded_loops'], descriptor, manifest['object']['stack_bytes'])

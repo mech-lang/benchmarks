@@ -1,0 +1,325 @@
+{
+  "status": "rejected-and-reverted-no-useful-full-input-gain",
+  "source_commit": "4b52fcaaa452a3f31c00b8e435faf97ec217c4e0",
+  "revert_commit": "4269694e9f2bfb9a208a4f9a9152b412c8fad6c7",
+  "native_ir_abi_work_versions": [
+    63,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "implementation": "Bounded current-key fact product over the original source/tag graph. Present and absent versions retain original actions and invalidate aliases at selection/header/insertion. No benchmark source rewrite or table update is omitted.",
+  "source_scope": "Mech source, bytecode, inputs, Rust reference, source work debits and finite policies remain unchanged. Expansion fits the existing 256-base/1024-versioned-node bounds and 4096-record metadata bound.",
+  "full_timing": {
+    "evidence": {
+      "path": "full-lookup-thread-cohort-v2/results.json",
+      "sha256": "7210267b0ca7ac2210ddde067faeb9172b37aa7472781f0126f5b4a0be77ab8d"
+    },
+    "median_seconds": {
+      "rust": 0.5466243120000001,
+      "mech": 0.894599521,
+      "baseline": 0.8972384585
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 1.6365893381632097,
+      "baseline": 1.6414170368990098
+    },
+    "samples_seconds": {
+      "rust": [
+        0.546879083,
+        0.55345675,
+        0.542597792,
+        0.556677792,
+        0.546369541,
+        0.544082833
+      ],
+      "mech": [
+        0.866402875,
+        0.867701083,
+        0.898042583,
+        0.910999209,
+        0.90908,
+        0.891156459
+      ],
+      "baseline": [
+        0.90053375,
+        0.889640459,
+        0.880193458,
+        0.895786167,
+        0.89869075,
+        0.922798791
+      ]
+    },
+    "stdev_seconds": {
+      "rust": 0.0055283491639947415,
+      "mech": 0.019612206243603228,
+      "baseline": 0.014238762467774885
+    },
+    "reduction_percent": 0.29411774261345336,
+    "cohort_count": 6,
+    "initial_three_cohorts": {
+      "path": "full-lookup-thread-cohort-v1/results.json",
+      "sha256": "f3319c349623bad36ee653ffd83f91813e8f8e06745d217bfbfa86d12c1d5d18"
+    },
+    "scope": "Fresh complete processes, including secured startup/shutdown; no excluded warmups or outliers; cohorts run serially in their recorded orders",
+    "finding": "Initial three-cohort median was 2.5% lower with overlap. A second balanced cycle reduces the six-cohort difference to 0.3%, with three faster and three slower pairs and overlapping ranges. No timed observation is excluded; no useful runtime gain is established."
+  },
+  "prefix_timing": {
+    "evidence": {
+      "path": "lookup-thread-timing-v1/results.json",
+      "sha256": "c9e98b7d3d0b14b6cdc83f9b95cbc07847cf5467c559872a2aede564cc7e115f"
+    },
+    "median_seconds": {
+      "candidate": 0.084359834,
+      "baseline": 0.084104792,
+      "rust": 0.020760334
+    },
+    "x_rust": {
+      "candidate": 4.063510442558391,
+      "baseline": 4.0512253800926326,
+      "rust": 1.0
+    },
+    "change_percent": 0.30324312555223276,
+    "scope": "Separate one-million-base complete-process cohort, three observations and one excluded warmup per executable; not pooled with full input. Overlapping small differences establish no prefix gain."
+  },
+  "qualification": {
+    "evidence": {
+      "path": "lookup-thread-timing-v1/results.json",
+      "sha256": "c9e98b7d3d0b14b6cdc83f9b95cbc07847cf5467c559872a2aede564cc7e115f"
+    },
+    "state_product_nodes": 92,
+    "original_tag_nodes": 90,
+    "emitted_nodes": 368,
+    "loop_code_bytes": 5996,
+    "loop_stack_bytes": 256,
+    "fixed_template_work": 389,
+    "source_bound_threading_qualified": true,
+    "all_other_requirements_qualified": true
+  },
+  "profile_identity": {
+    "evidence": {
+      "path": "profile-lookup-thread-build-v1/results.json",
+      "sha256": "051a7e8b2ce7d633ae9d321afdee3d6108b7056011b8e341a396ea9607089bd9"
+    },
+    "status": "profile-binary-built",
+    "source_commit": "4b52fcaaa452a3f31c00b8e435faf97ec217c4e0",
+    "binary": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-lookup-thread-profile",
+    "binary_sha256": "fff7a9860dc6c27eda2c2f573e74801681c3f82d52ccfee7d521a8d708450b9c",
+    "object_sha256": "7f0d7058b7dfe473a31c02a3401e6b0d2cc5baa3f5d743234596d117569e737f",
+    "candidate_object_sha256": "7f0d7058b7dfe473a31c02a3401e6b0d2cc5baa3f5d743234596d117569e737f",
+    "machine_code_bytes": 4275752,
+    "machine_code_sha256": "8c2f6ff04c1549597b2790db137bc2ea5fdddebb8aa7c561e90c683f89529a68",
+    "whole_machine_code_matches_timed": true,
+    "host_optimization": "release opt-level=3; final host lto=fat and codegen-units=1; dependency ThinLTO; same as public CLI",
+    "only_package_profile_override": "strip=none for owner-counting-lookup-thread",
+    "environment": {
+      "PATH": "/Users/cim310/.cargo/bin:/usr/bin:/bin",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "TZ": "UTC",
+      "NO_COLOR": "1",
+      "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+      "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "HOME": "/Users/cim310",
+      "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "TMPDIR": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/tmp"
+    },
+    "benchmark_samples": 0
+  },
+  "full_worker_partition": {
+    "worker_observations": 8162,
+    "exclusive_buckets": {
+      "generated_counting_loop": 7159,
+      "storage_helper_active": 463,
+      "work_budget_active": 274,
+      "work_budget_wait": 95,
+      "generated_helper_bridge": 86,
+      "other_active": 85
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 190
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 74
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 64
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 21
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 20
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 87.71134525851507,
+      "storage_helper_active": 5.6726292575349175,
+      "work_budget_active": 3.3570203381524135,
+      "work_budget_wait": 1.1639304092134282,
+      "generated_helper_bridge": 1.0536633178142611,
+      "other_active": 1.0414114187699093
+    }
+  },
+  "rust_worker_partition": {
+    "worker_observations": 7931,
+    "exclusive_buckets": {
+      "rust_counting_task_active": 5742,
+      "other_wait": 2189
+    },
+    "work_budget_routes": [],
+    "exclusive_percent": {
+      "rust_counting_task_active": 72.3994452149792,
+      "other_wait": 27.600554785020805
+    }
+  },
+  "taxonomy_version": 5,
+  "profile_evidence": [
+    {
+      "path": "full-profile-lookup-thread-v1/analysis.json",
+      "sha256": "02e7cb435f9e057361a67761fe4c2fa10c7fd0ce7325f7f836d00d58d7e617eb"
+    },
+    {
+      "path": "full-profile-lookup-thread-v2/analysis.json",
+      "sha256": "8a07fc265b76dadc1976e3dcc6f350218a44c58d28e95c603cfe91a818a77d4d"
+    },
+    {
+      "path": "full-profile-lookup-thread-v3/analysis.json",
+      "sha256": "49bf366af04b68f98f1b5c082b897b121d442f1394dc1022ba2561c558f13a59"
+    },
+    {
+      "path": "rust-full-profile-v15/analysis.json",
+      "sha256": "ccb4854be2c0c41ce4d6980072aa969caff65c63520d65fffeaee4509e2b32ac"
+    }
+  ],
+  "static_path": {
+    "evidence": {
+      "path": "lookup-thread-codegen-audit-v1/steady-path-comparison.json",
+      "sha256": "302b6764bece7fb505feff97ae5505463fe99dc614ec0f39125d74db6de4173c"
+    },
+    "candidate": {
+      "instructions": 65,
+      "branches": 7,
+      "stack_load_instructions": 4,
+      "stack_store_instructions": 2
+    },
+    "parent": {
+      "instructions": 66,
+      "branches": 8,
+      "stack_load_instructions": 3,
+      "stack_store_instructions": 0
+    },
+    "rust": {
+      "instructions": 34,
+      "branches": 4,
+      "stack_load_instructions": 2,
+      "stack_store_instructions": 0
+    },
+    "finding": "One repeated present-entry branch is removed, but source-index stack traffic increases. The aggregate primary timing gain is only 0.3%; this candidate is rejected as a standalone optimization."
+  },
+  "hardware": {
+    "evidence": {
+      "path": "lookup-thread-hardware-v2/results.json",
+      "sha256": "8051555e2c6e340e5d92878d7eb6d63d1cb17f2c3acccf141470b50f9c71dc20"
+    },
+    "medians": {
+      "mech": {
+        "instructions": 63949916518,
+        "cycles": 12290423637,
+        "real_seconds": 0.89,
+        "user_seconds": 3.6,
+        "system_seconds": 0.06
+      },
+      "baseline": {
+        "instructions": 64820556512,
+        "cycles": 12658083204,
+        "real_seconds": 0.89,
+        "user_seconds": 3.72,
+        "system_seconds": 0.05
+      },
+      "rust": {
+        "instructions": 33141367351,
+        "cycles": 7865812962,
+        "real_seconds": 0.54,
+        "user_seconds": 2.31,
+        "system_seconds": 0.03
+      }
+    },
+    "instruction_reduction_percent": 1.3431541486979115,
+    "cycle_reduction_percent": 2.90454376918472,
+    "instruction_x_rust": 1.9296100803780019,
+    "scope": "macOS whole-process counters reported by time -l, including startup/shutdown and all target threads; diagnostic executions under the shared serial lock, not additional benchmark timing observations."
+  },
+  "validation": {
+    "evidence": {
+      "path": "../native-owner-dispatch-v1/lookup-thread-focused-v3/summary.json",
+      "sha256": "df15b25c819f5db37f98b7210a983cfc6b5a288a38fffe4466fd987ecb21a65e"
+    },
+    "passed": 6,
+    "failed": 0,
+    "scope": "Focused source/decoded full-map, growth/refill, finite-cap, arbitrary-index/seed, overflow/error, stale-predicate and bounded-expansion checks. Rejected candidate did not proceed to the full native suite. Revert restores the exact previously validated dae3141ba source tree.",
+    "failed_attempts": [
+      {
+        "evidence": {
+          "path": "../native-owner-dispatch-v1/lookup-thread-focused-v1/summary.json",
+          "sha256": "ac4246c2cd740f4456c4b76c42acff0a052b86eb9ff571978f36df16cc9336a1"
+        },
+        "cause": "Three receipt fixture calls still used the old metadata API."
+      },
+      {
+        "evidence": {
+          "path": "../native-owner-dispatch-v1/lookup-thread-focused-v2/summary.json",
+          "sha256": "a5014275df1adf15e3825bb9a4d6a5d00a510a8883d5330c95769fe5ba7c074c"
+        },
+        "cause": "Five passed; the new cap fixture expected the baseline to disable bounds although it only disabled lookup threading. Corrected selector expectation; runtime retained bounds correctly."
+      }
+    ]
+  },
+  "failed_counter_attempt": {
+    "evidence": {
+      "path": "lookup-thread-hardware-v1/failure.json",
+      "sha256": "e63414d6e1e8d96557a948758ebc63e3189e558c01614523466dd52ea0a113a1"
+    },
+    "scope": "Sandbox denied kern.clockrate after the owned Rust process completed. Receipt is terminal/reaped; no qualified counter or primary timing observation. Successful retry uses read-only escalated access."
+  },
+  "remaining_targets": [
+    {
+      "priority": 1,
+      "target": "Reduce steady-loop state/address traffic through separation of pure frequent paths and rare helper paths",
+      "evidence": "87.7% of fresh candidate worker observations remain generated loops; the branch removal is offset by increased source-index stack traffic. Candidate and prior paths have 65/66 instructions, versus Rust 34.",
+      "implementation_status": "Unimplemented and unmeasured."
+    },
+    {
+      "priority": 2,
+      "target": "Measure source-independent task launch ordering without changing admission or replay",
+      "evidence": "The Rust reference launches larger-width source tasks first; the existing Mech batch launches source order. A generic LIFO runtime experiment starts after this rejection, with exact source-order loans/captures and inverse-order joins.",
+      "implementation_status": "Separate experiment; no gain assigned here."
+    },
+    {
+      "priority": 3,
+      "target": "Source-proved narrower keys/count storage",
+      "evidence": "The Rust source uses width-specialized key types and u32 counts; current Mech storage retains u64 counts. A runtime guard and source count bound would be required.",
+      "implementation_status": "Unimplemented and unmeasured."
+    }
+  ],
+  "limitations": [
+    "Rust parity is not achieved.",
+    "Worker observations include waits and differ in capture windows; they are not elapsed-time fractions or CPU utilization.",
+    "Collapsed PCs do not isolate instruction costs.",
+    "Timings, counters and samples remain distinct evidence.",
+    "Canonical benchmark data is unchanged."
+  ]
+}

@@ -1,0 +1,57 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0061]: this method takes 5 arguments but 4 arguments were supplied
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:332:47
+    |
+332 |         for header in 0..MAX_REGIONS { report.lookup_facts(header, 32, 64, vec![(1, 2, 3, "Fresh")]); }
+    |                                               ^^^^^^^^^^^^------------------------------------------ argument #5 of type `std::option::Option<LookupThreading>` is missing
+    |
+note: method defined here
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:199:12
+    |
+199 |     pub fn lookup_facts(&mut self, header: usize, source_nodes: usize, emitted_nodes: usize,
+    |            ^^^^^^^^^^^^
+200 |         substitutions: Vec<(usize, usize, u64, &'static str)>, state_threading: Option<LookupThreading>)
+    |                                                                ----------------------------------------
+help: provide the argument
+    |
+332 |         for header in 0..MAX_REGIONS { report.lookup_facts(header, 32, 64, vec![(1, 2, 3, "Fresh")], /* std::option::Option<LookupThreading> */); }
+    |                                                                                                    ++++++++++++++++++++++++++++++++++++++++++++
+
+error[E0061]: this method takes 5 arguments but 4 arguments were supplied
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:334:16
+    |
+334 |         report.lookup_facts(0, 32, 64, vec![]);
+    |                ^^^^^^^^^^^^------------------- argument #5 of type `std::option::Option<LookupThreading>` is missing
+    |
+note: method defined here
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:199:12
+    |
+199 |     pub fn lookup_facts(&mut self, header: usize, source_nodes: usize, emitted_nodes: usize,
+    |            ^^^^^^^^^^^^
+200 |         substitutions: Vec<(usize, usize, u64, &'static str)>, state_threading: Option<LookupThreading>)
+    |                                                                ----------------------------------------
+help: provide the argument
+    |
+334 |         report.lookup_facts(0, 32, 64, vec![], /* std::option::Option<LookupThreading> */);
+    |                                              ++++++++++++++++++++++++++++++++++++++++++++
+
+error[E0061]: this method takes 5 arguments but 4 arguments were supplied
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:338:16
+    |
+338 |         report.lookup_facts(0, 32, 64, vec![(1, 2, 3, "Cached"); MAX_SUBSTITUTIONS + 1]);
+    |                ^^^^^^^^^^^^------------------------------------------------------------- argument #5 of type `std::option::Option<LookupThreading>` is missing
+    |
+note: method defined here
+   --> hosts/gpu/src/native_artifact/iteration_codegen_report.rs:199:12
+    |
+199 |     pub fn lookup_facts(&mut self, header: usize, source_nodes: usize, emitted_nodes: usize,
+    |            ^^^^^^^^^^^^
+200 |         substitutions: Vec<(usize, usize, u64, &'static str)>, state_threading: Option<LookupThreading>)
+    |                                                                ----------------------------------------
+help: provide the argument
+    |
+338 |         report.lookup_facts(0, 32, 64, vec![(1, 2, 3, "Cached"); MAX_SUBSTITUTIONS + 1], /* std::option::Option<LookupThreading> */);
+    |                                                                                        ++++++++++++++++++++++++++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0061`.
+error: could not compile `mech-gpu` (lib test) due to 3 previous errors

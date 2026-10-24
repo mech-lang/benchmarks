@@ -1,0 +1,241 @@
+{
+  "status": "rejected-and-reverted-after-full-and-prefix-regressions",
+  "source_commit": "6721ccc72c3e2e2688e34f2f7d9426353666e435",
+  "revert_commit": "0f623b9b860cac388ba270bb43ae97a5adf3b12a",
+  "restored_tree": "90395fc5a8486a5c040c99a9c023b47de10bc968",
+  "restored_reference_commit": "dae3141bae18edca1ac67a181df49b9ca5438c82",
+  "native_ir_abi_work_versions": [
+    62,
+    27,
+    65
+  ],
+  "benchmark_samples": 0,
+  "implementation": "All job loans and captures are prepared in original source order. Launch the same bounded jobs through a reverse iterator, then invert handle iteration for joins and original result/error replay. No cost heuristic or source-function/workload recognition; no new container, allowance, task or worker.",
+  "generated_code": {
+    "object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "bytecode_sha256": "050db3a016f0caea04900d48940db5bbefc880c3ada507eff82c22c5b84418b0",
+    "object_identical_to_reference": true,
+    "static_evidence": {
+      "path": "launch-order-codegen-audit-v1/steady-path-comparison.json",
+      "sha256": "99a974b5378a20082e4c27e3a9026a4b5e6273488df89915c4ce404de847d0a8"
+    },
+    "path_counts": {
+      "instructions": 66,
+      "branches": 8,
+      "stack_load_instructions": 3,
+      "stack_store_instructions": 0
+    }
+  },
+  "full_timing": {
+    "evidence": {
+      "path": "full-launch-order-cohort-v1/results.json",
+      "sha256": "249aaac9fce9054e114eeec78a76f7eb89ab18ca46bdeb3a6682cfaccbc8a303"
+    },
+    "median_seconds": {
+      "rust": 0.552303916,
+      "mech": 0.917768083,
+      "baseline": 0.898987541
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 1.6617084478539168,
+      "baseline": 1.6277044485051235
+    },
+    "stdev_seconds": {
+      "rust": 0.06721812284361321,
+      "mech": 0.011608578084031049,
+      "baseline": 0.008643868195078489
+    },
+    "samples_seconds": {
+      "rust": [
+        0.546865375,
+        0.552303916,
+        0.665914542
+      ],
+      "mech": [
+        0.9042635,
+        0.927371125,
+        0.917768083
+      ],
+      "baseline": [
+        0.889647958,
+        0.9069165,
+        0.898987541
+      ]
+    },
+    "change_percent": 2.0890770053508367,
+    "cohort_count": 3,
+    "scope": "Fresh complete processes, including secured startup/shutdown; no excluded warmups or outliers; cohorts run serially in their recorded orders",
+    "finding": "All three candidate/control pairs are slower. The candidate median is 2.1% higher; ranges overlap. The 0.666-second Rust observation is retained. This policy is rejected rather than repeated to seek a favorable subset."
+  },
+  "prefix_timing": {
+    "evidence": {
+      "path": "launch-order-timing-v1/results.json",
+      "sha256": "10cb107454d930a68d93f5d510d21cb4cacc827ca50afc94225023948d1ff2dc"
+    },
+    "median_seconds": {
+      "candidate": 0.112882167,
+      "baseline": 0.088907,
+      "rust": 0.022376292
+    },
+    "x_rust": {
+      "candidate": 5.044721752826608,
+      "baseline": 3.973267778236001,
+      "rust": 1.0
+    },
+    "change_percent": 26.966568436681037,
+    "scope": "Separate one-million-base protocol, three complete processes and one excluded warmup per subject. The 27.0% higher candidate median is not pooled with full input."
+  },
+  "profile_identity": {
+    "evidence": {
+      "path": "profile-launch-order-build-v1/results.json",
+      "sha256": "d944304e3ad319b4ec119037b3d46e6087f8d5fcf542aa4c0e3ee41164a30caf"
+    },
+    "status": "profile-binary-built",
+    "source_commit": "6721ccc72c3e2e2688e34f2f7d9426353666e435",
+    "binary": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-launch-order-profile",
+    "binary_sha256": "5c7d531a7b33459dd24108f61305229ea5cd91217cec57b27c209772a7aaf9c4",
+    "object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "candidate_object_sha256": "115cf45d68d0be375c949cf4db5a10b514828bf328581fad9126cc937f9445a3",
+    "machine_code_bytes": 4274600,
+    "machine_code_sha256": "2f329a3a079c7f21e8373ce39de5d17ea2d413ff81ecb01de0b35897c2e156d1",
+    "whole_machine_code_matches_timed": true,
+    "host_optimization": "release opt-level=3; final host lto=fat and codegen-units=1; dependency ThinLTO; same as public CLI",
+    "only_package_profile_override": "strip=none for owner-counting-launch-order",
+    "environment": {
+      "PATH": "/Users/cim310/.cargo/bin:/usr/bin:/bin",
+      "LC_ALL": "C",
+      "LANG": "C",
+      "TZ": "UTC",
+      "NO_COLOR": "1",
+      "JANET_PATH": "/private/tmp/mech-benchmark-publication/experiments/janet/dependencies-v1/spork",
+      "MECH_GMP_LIBRARY": "/opt/homebrew/Cellar/gmp/6.3.0/lib/libgmp.10.dylib",
+      "HOME": "/Users/cim310",
+      "C_INCLUDE_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/include",
+      "LIBRARY_PATH": "/opt/homebrew/Cellar/gmp/6.3.0/lib",
+      "TMPDIR": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/tmp"
+    },
+    "benchmark_samples": 0
+  },
+  "worker_partition": {
+    "worker_observations": 9049,
+    "exclusive_buckets": {
+      "generated_counting_loop": 7999,
+      "work_budget_wait": 267,
+      "work_budget_active": 327,
+      "generated_helper_bridge": 64,
+      "storage_helper_active": 294,
+      "other_active": 98
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 208
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 204
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 67
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 56
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "frozen_map_charge",
+        "observations": 37
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 16
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 6
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 88.39650790142557,
+      "work_budget_wait": 2.9506022764946405,
+      "work_budget_active": 3.6136589678417503,
+      "generated_helper_bridge": 0.7072604707702509,
+      "storage_helper_active": 3.2489777876008397,
+      "other_active": 1.0829925958669466
+    }
+  },
+  "rust_worker_partition": {
+    "worker_observations": 7931,
+    "exclusive_buckets": {
+      "rust_counting_task_active": 5742,
+      "other_wait": 2189
+    },
+    "work_budget_routes": [],
+    "exclusive_percent": {
+      "rust_counting_task_active": 72.3994452149792,
+      "other_wait": 27.600554785020805
+    }
+  },
+  "profile_evidence": [
+    {
+      "path": "full-profile-launch-order-v1/analysis.json",
+      "sha256": "daed724805cefa40769a5a3349881cefe1d20a2b5ad35ac7b77aa45aeda8a812"
+    },
+    {
+      "path": "full-profile-launch-order-v2/analysis.json",
+      "sha256": "22df60ecca4c0415f18334f03f2a20e96a7790b1afe3e860d10ca37e828747b4"
+    },
+    {
+      "path": "full-profile-launch-order-v3/analysis.json",
+      "sha256": "192ff5edf63c7509d0b148a43c8ff6067355b3d7d652301c511c7f9880aa9398"
+    },
+    {
+      "path": "rust-full-profile-v15/analysis.json",
+      "sha256": "ccb4854be2c0c41ce4d6980072aa969caff65c63520d65fffeaee4509e2b32ac"
+    }
+  ],
+  "taxonomy_version": 5,
+  "profile_finding": "88.4% of the rejected variant worker observations are generated loops and 3.0% are accounting waits. Exact generated Object and successful path are unchanged. Different capture windows and included waits prohibit attributing wall seconds to those percentages.",
+  "validation": {
+    "evidence": {
+      "path": "../native-owner-dispatch-v1/launch-order-focused-v1/summary.json",
+      "sha256": "dc0fd5c8e79108d7065b1f12aa7c247367800eb551a4ff5fddd84203e925bdf9"
+    },
+    "passed": 11,
+    "failed": 0,
+    "scope": "Existing actual generated original/decoded and checked-image parallel tests cover every source map/update, immutable captures, values/order, earlier push versus later arithmetic failures, finite combined admission/fallback, child authority and cleanup. Rejected variant did not proceed to the full native suite."
+  },
+  "decision": "Restore the exact previously validated bounded-backoff source tree. Plain LIFO launch is not promoted; broader cost-guided scheduling remains unimplemented and unmeasured.",
+  "next_targets": [
+    {
+      "priority": 1,
+      "target": "Separate pure frequent source-derived update paths from rare helper paths and reduce source-state/address traffic",
+      "status": "Unimplemented; no gain assigned."
+    },
+    {
+      "priority": 2,
+      "target": "Consider a source-certified direct representation for sufficiently small packed key spaces",
+      "status": "Unimplemented; must preserve every actual insertion, membership/value semantics, finite resource checks and fallback. No input-key or benchmark-query precomputation."
+    },
+    {
+      "priority": 3,
+      "target": "Source-proved narrower key/count storage",
+      "status": "Unimplemented; needs a source value bound and checked runtime guards/fallback."
+    }
+  ],
+  "limitations": [
+    "Rust parity is not achieved.",
+    "Worker observations include waits and differing windows; they are not wall-time fractions or CPU utilization.",
+    "This rejects plain reverse launch; it does not establish that every cost-guided scheduler would fail.",
+    "Canonical benchmark data, original source/bytecode/input, Rust reference and finite launch policies remain unchanged."
+  ]
+}
