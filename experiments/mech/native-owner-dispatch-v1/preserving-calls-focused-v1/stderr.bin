@@ -1,0 +1,21 @@
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error: recursion limit reached while expanding `$crate::json_internal!`
+   --> hosts/gpu/src/native_artifact/program_compiler.rs:176:9
+    |
+176 | /         serde_json::json!({
+177 | |             "schema": "mech.canonical-managed-program-object.v1",
+178 | |             "abi_version": VERSION,
+179 | |             "entry_symbol": ENTRY,
+...   |
+217 | |             "linked": false, "executed": false, "timing_samples": 0,
+218 | |         })
+    | |__________^
+    |
+    = help: consider increasing the recursion limit by adding a `#![recursion_limit = "256"]` attribute to your crate (`mech_gpu`)
+    = note: this error originates in the macro `$crate::json_internal` which comes from the expansion of the macro `serde_json::json` (in Nightly builds, run with -Z macro-backtrace for more info)
+
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

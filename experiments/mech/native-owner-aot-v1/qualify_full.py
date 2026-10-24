@@ -53,6 +53,9 @@ require_outlined_loops = timing.get('require_outlined_loops', False)
 if require_outlined_loops:
     assert timing.get('outlined_loops_qualified') is True
 require_loop_invariants = timing.get('require_loop_invariants', False)
+require_preserving_calls = timing.get('require_preserving_calls', False)
+if require_preserving_calls:
+    assert timing.get('preserving_calls_qualified') is True and require_outlined_loops and require_loop_invariants
 if require_loop_invariants:
     assert timing.get('loop_invariants_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
@@ -131,6 +134,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_cfg_cleanup=require_cfg_cleanup,
               require_outlined_loops=require_outlined_loops,
               require_loop_invariants=require_loop_invariants,
+              require_preserving_calls=require_preserving_calls,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -171,6 +175,9 @@ if require_outlined_loops:
         report[key] = timing[key]
 if require_loop_invariants:
     for key in ('loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions'):
+        report[key] = timing[key]
+if require_preserving_calls:
+    for key in ('preserving_calls_qualified', 'compiled_bound_call_shim', 'compiled_preserving_call_regions'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']

@@ -23,6 +23,8 @@ assert sha((HERE / '.build' / args.binary).read_bytes()) == timing['candidate_sh
 assert text_section(binary) == text_section(HERE / '.build' / args.binary)
 assert analysis['machine_code_identical'] and analysis['completed_output_verified']
 symbols = ['mech_canonical_program_entry_v1'] + [loop['symbol'] for loop in timing.get('compiled_outlined_loops', [])]
+if timing.get('compiled_bound_call_shim'):
+    symbols.append(timing['compiled_bound_call_shim']['symbol'])
 assert len(symbols) == len(set(symbols))
 functions, commands, entries, command_hashes = {}, [], [], []
 for symbol in symbols:

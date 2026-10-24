@@ -1,7 +1,74 @@
 # Source-map standalone performance
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
+## Validated-head profiles and remaining costs
 
+Compiler [`0aab5c81b`](https://github.com/mech-lang/mech/commit/0aab5c81b0b989b3c7b6ff78abc84ef06df844aa), IR55/ABI27/work65, passes the [full native suite](../native-owner-dispatch-v1/preserving-calls-native-v3/summary.json): **342 GPU tests and one catalog test**, with three existing exclusions. It restricts preserving helper calls to loops with the required proofs and charges nested stack only for the bridge actually used. Unsupported or disabled proofs retain ordinary calls and the original limits. The final test correction verifies both eligible and declined fixtures.
+
+Three new rotated **125-million-base** cohorts retain every complete process, with secured startup/shutdown and no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.557 | 1.00× |
+| Original-source Mech control, IR54 | 1.438 | 2.58× |
+| Validated preserving-call Mech, IR55 | 1.299 | 2.33× |
+
+The candidate median is **9.7% lower** than its control. All three candidate observations, 1.287–1.309 seconds, precede the control range of 1.428–1.440 seconds. The [aggregate](full-preserving-calls-qualified-cohort-v1/results.json) retains every observation, standard deviation, execution order and identity. Output, all **874,999,961 updates**, seven packed SSA maps, seven bounds/call-guard entries, five complete frozen query maps, ten original reads and seven peak workers pass on every candidate run. Source, bytecode, input and finite launch policies match the control. All benchmark subjects execute serially under the common lock.
+
+The [fresh one-million-base prefix](preserving-calls-qualified-timing-v1/results.json), with one excluded warmup per executable and three timed observations, gives Rust **0.0194 seconds**, control **0.1043 seconds / 5.37× Rust**, and candidate **0.0968 seconds / 4.98× Rust**. This is a separate protocol and does not replace the older retained prefix regression below.
+
+Three fresh complete-input captures ([first](full-profile-preserving-calls-qualified-v1/analysis.json), [second](full-profile-preserving-calls-qualified-v2/analysis.json), [third](full-profile-preserving-calls-qualified-v3/analysis.json)) each observe seven workers. The [profiling copy](profile-preserving-calls-qualified-build-v1/results.json) matches all **4,270,864 bytes** of the timed executable's machine-code section, SHA-256 `4db1f5e69da5d02b04e65a864e69da2bf727de2746852724c2bae75488afe556`. The [exclusive worker partition](remaining-profile-v1/results.json), reproduced by [profile_hotspots.py](profile_hotspots.py), combines **14,723 observations**:
+
+| Observed worker location | Observations | Share |
+|---|---:|---:|
+| Generated counting loops | 12,433 | 84.4% |
+| Work-budget operations, including their waits | 862 | 5.9% |
+| Other waits | 783 | 5.3% |
+| Active storage helpers | 457 | 3.1% |
+| Generated helper bridge | 69 | 0.5% |
+| Other active frames | 119 | 0.8% |
+
+Budget observations split into **557 waiting / 305 active**. The main thread is in worker joins for **84.2%, 92.0% and 92.2%** of its observations. These are thread samples, including waits and profiler overhead; they are not percentages of elapsed time or instruction costs. Startup includes loader/debugger-notification artifacts, so no precise startup duration is inferred. [Three new Rust captures](rust-full-profile-v3/analysis.json) use its exact unchanged executable, verify every complete output and observe seven counting workers in every capture.
+
+[Fresh whole-process hardware counters](preserving-calls-qualified-hardware-v1/results.json), collected in nine separate serial diagnostic executions, give Mech **96.8 billion instructions / 19.1 billion cycles**, control **104.4 billion / 21.8 billion**, and Rust **33.1 billion / 7.91 billion**. Mech still retires **2.92× Rust's instructions**. These executions include all threads and startup/shutdown; they are not additional timing-cohort observations.
+
+The [exact disassembly and sampled-PC groups](preserving-calls-qualified-codegen-audit-v1/results.json), [second capture](preserving-calls-qualified-codegen-audit-v2/results.json), [third capture](preserving-calls-qualified-codegen-audit-v3/results.json), place the large groups in the counting-loop fuel entry and SIMD probe/match sequence. Collapsed groups contain multiple PCs and do not assign individual-instruction costs. The native Object and all four generated-function disassemblies are identical to the first preserving-call candidate; the complete host binaries differ. The [specified first-hit successful path](preserving-calls-qualified-codegen-audit-v1/steady-path-comparison.json) therefore remains:
+
+| Static existing-key iteration | Mech | Rust |
+|---|---:|---:|
+| Instructions | 101 | 34 |
+| Branches | 10 | 4 |
+| Stack-access instructions | 19 | 2 |
+
+The path retains repeated loads/stores of table state, source bounds and rolling-key state; two rematerialized hash constants; duplicate rolling-key construction; and source overflow/accounting checks. This evidence prioritizes reducing register pressure and repeated work in the generated loop. Narrowing the cold bridge to one scratch-pointer argument is an unmeasured register-allocation candidate. Moving invariant guards or deriving accounting values from source induction variables requires independent correctness and resource proofs. No speedup is assigned to any next candidate. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
+## Register-preserving private helper bridge: initial candidate
+
+Compiler [`35c634db0`](https://github.com/mech-lang/mech/commit/35c634db0937c32ceb9895036cdb5f70a47a74c3) emits an owned AArch64 `PreserveAll` bridge around the installed private helper. Only the generated bridge has that calling convention; it calls the original Rust helper through the unchanged seven-argument native C ABI. The helper result word and the caller-owned status word remain separate. The bridge has no return registers, keeps full vector register contents, and retains every helper argument, source site, error and original frame-effect synchronization.
+
+IR55 identifies the generated-call change. ABI27, work65, original source/bytecode, inputs and finite launch policies remain. The bridge has **404 code bytes / 688 stack bytes**, within a checked 128-instruction native template. Every source-site emission plus all its emitted bridge templates must fit the existing 512-unit lane; the extra initial call fits the existing 1,024-unit traversal lane. Each loop records 39 emitted call templates, at most 457 source-site units and 128 additional initial units. Total code includes the bridge once; nested stack admission includes the parent, its actual outlined callee and the bridge. No allowance is raised.
+
+Three rotated **125-million-base** cohorts retain all complete-process observations, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.545 | 1.00× |
+| Previous original-source Mech | 1.441 | 2.64× |
+| Register-preserving Mech | 1.308 | 2.40× |
+
+The candidate median is **9.2% lower**, a **1.10× speedup**. Candidate observations span 1.295–1.310 seconds, below the parent's 1.433–1.450 seconds. The [aggregate](full-preserving-calls-cohort-v1/results.json) retains all seconds, standard deviations and identities. Every candidate execution verifies complete output, all **874,999,961 updates**, seven packed SSA maps, seven bounds/call-guard selections, five complete frozen query maps, ten original reads and seven peak workers. Source and bytecode match the control. Secured startup/shutdown are included; subjects execute serially under the shared lock.
+
+The [one-million-base prefix](preserving-calls-timing-v1/results.json) regresses: Rust **0.0192 seconds**, original Mech **0.0936 seconds / 4.87× Rust**, and the candidate **0.1102 seconds / 5.74× Rust**. This median is **17.8% higher**, with non-overlapping candidate/control ranges. That protocol has one excluded warmup per executable, unlike the full cohorts. The regression is retained.
+
+[Five focused tests](../native-owner-dispatch-v1/preserving-calls-focused-v2/summary.json) pass. They directly execute live scalar/vector values across a native helper that overwrites their backing memory, verify independent full-width result/status words, and compare ordinary versus preserving calls across original/decoded source, arbitrary seeds, changed inputs, bounds, growth, full-loan refills, exact work, original arithmetic failures and precise error frontiers. Exact combined stack/code limits pass and each one short fails. A [retained compile attempt](../native-owner-dispatch-v1/preserving-calls-focused-v1/summary.json) exceeded the existing JSON metadata macro recursion limit before tests; the correction builds the two added receipt fields separately.
+
+[Separate hardware-counter executions](preserving-calls-hardware-v1/results.json) give **96.8 billion instructions / 19.1 billion cycles**, versus **104.4 billion / 21.8 billion** for the control and **33.1 billion / 7.96 billion** for Rust. Instructions decrease **7.3%**, cycles decrease **12.6%**, and Mech still retires **2.92× Rust's instructions**. These nine diagnostic executions verify every output/update and are separate from timing cohorts.
+
+The [fresh profile](full-profile-preserving-calls-v1/analysis.json) observes seven workers and 4,632 worker samples, of which 3,928 (**84.80%**) end in generated code. Inclusive library-debit/wait shares are **5.57% / 9.33%**, with no publication observed. Categories overlap and are not elapsed-time shares. The profiling copy matches all **4,270,864 machine-code bytes**, SHA-256 `0c6374489d21b29c9c84d0e6f7708987ecd0573a92482c7a022206583ae381d4`. [Exact disassembly](preserving-calls-codegen-audit-v1/results.json) covers the parent, both loops and the bridge. Each loop shrinks from 7,612 code bytes / 336 stack bytes to **7,256 / 288**.
+
+The [documented successful steady path](preserving-calls-codegen-audit-v1/steady-path-comparison.json) falls from 110 instructions and 34 stack accesses to **101 instructions and 19 stack accesses**, with ten branches in both. The same unchanged Rust executable has 34 instructions, two stack accesses and four branches under the stated first-hit/funded conditions. These are static paths, not dynamic frequencies. The new path still reloads source bounds and key state, rematerializes hash constants, and computes the rolling key twice. Reducing the preserving bridge's argument-register demands is the next unmeasured candidate.
+
+The [first full regression attempt](../native-owner-dispatch-v1/preserving-calls-native-v1/summary.json) passes 330 tests and fails 12 deliberately less-proven/disabled-pass cases at the unchanged source-site envelope. Follow-up compiler `d5b510543` gates bridge selection on the required bounds, tag, lookup and frame-effect proofs; other loops retain ordinary native calls. Stack admission adds the bridge only to the callees that actually use it. The [next full attempt](../native-owner-dispatch-v1/preserving-calls-native-v2/summary.json) passes 341 GPU tests and fails one assertion that incorrectly required bridge selection for a deliberately declined arithmetic fixture. The test correction retains an explicit eligible-case requirement and the declined-case fallback, and the final full suite passes above. This section's timings and profile belong to `35c634db0`; the validated-head observations remain separate above.
 
 ## Source-shape comparison: no established full-input gain
 

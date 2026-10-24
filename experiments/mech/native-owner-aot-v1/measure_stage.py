@@ -516,6 +516,7 @@ parser.add_argument('--require-cfg-cleanup', action='store_true',
                     help='Require bounded constant-branch cleanup in the exact emitted native function')
 parser.add_argument('--require-outlined-loops', action='store_true',
                     help='Require source-bound local native functions for every emitted packed loop')
+parser.add_argument('--require-preserving-calls', action='store_true', help='Require source-bound preserving bridge calls and included nested stack/code')
 parser.add_argument('--require-loop-invariants', action='store_true',
                     help='Require source-bound guarded calls, steady rolling and seven actual initial call-guard selections')
 args = parser.parse_args()
@@ -587,6 +588,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_cfg_cleanup=args.require_cfg_cleanup,
               require_outlined_loops=args.require_outlined_loops,
               require_loop_invariants=args.require_loop_invariants,
+              require_preserving_calls=args.require_preserving_calls,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -652,7 +654,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55) and manifest['object']['work_policy_version'] == 65
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'), bool(args.source_variant))
@@ -660,7 +662,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54) and manifest['object']['work_policy_version'] == 65
+        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55) and manifest['object']['work_policy_version'] == 65
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
@@ -674,7 +676,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_outlined_loops:
         assert args.require_cfg_cleanup and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (52, 53, 54)
+        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55)
         loops = manifest['object'].get('compiled_outlined_loops')
         assert isinstance(loops, list) and 0 < len(loops) <= 256
         expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
@@ -695,18 +697,38 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
         assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
         report['cfg_cleanup_removed_total'] = removed
-        if manifest['object']['typed_ir_version'] == 54:
+        if manifest['object']['typed_ir_version'] in (54, 55):
             functions = [report['compiled_cfg_cleanup']] + [loop['cleanup'] for loop in report.get('compiled_outlined_loops', [])]
             assert all(function['pre_codegen_data_passes'] == 0 for function in functions)
             report['single_data_pass_qualified'] = True
 
     if args.require_loop_invariants:
         assert args.require_outlined_loops and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (53, 54) and manifest['object']['abi_version'] == 27
+        assert manifest['object']['typed_ir_version'] in (53, 54, 55) and manifest['object']['abi_version'] == 27
         report['compiled_loop_invariants'] = manifest['object'].get('compiled_loop_invariants')
         report['qualified_invariant_regions'] = require_loop_invariants(report['compiled_loop_invariants'], descriptor,
             report['qualified_lookup_regions'], report['qualified_guarded_regions'])
         report['loop_invariants_qualified'] = True
+    if args.require_preserving_calls:
+        assert args.require_loop_invariants and args.require_outlined_loops
+        assert manifest['object']['typed_ir_version'] == 55 and manifest['object']['abi_version'] == 27
+        shim = manifest['object'].get('compiled_bound_call_shim')
+        regions = manifest['object'].get('compiled_preserving_call_regions')
+        assert isinstance(shim, dict) and shim['symbol'] == 'mech_canonical_program_entry_v1_preserving_bound_call'
+        assert shim['template_bound'] == 128 and 0 < shim['code_bytes'] <= 4 * 128
+        assert 16 <= shim['stack_bytes'] < manifest['object']['stack_bytes']
+        assert isinstance(regions, list) and len(regions) == len(report['compiled_outlined_loops'])
+        by_header = {r['header']: r for r in regions}
+        assert len(by_header) == len(regions)
+        for loop in report['compiled_outlined_loops']:
+            region = by_header[loop['header']]
+            assert region['emitted_calls'] > 0 and 0 < region['maximum_source_template_work'] <= 512
+            assert region['extra_entry_work'] == 128
+            assert loop['stack_bytes'] + shim['stack_bytes'] + 16 <= manifest['object']['stack_bytes']
+        assert sum(loop['code_bytes'] for loop in report['compiled_outlined_loops']) + shim['code_bytes'] < manifest['object']['code_bytes']
+        report['compiled_bound_call_shim'] = shim
+        report['compiled_preserving_call_regions'] = regions
+        report['preserving_calls_qualified'] = True
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:
         report['compiled_source_edge_facts'] = manifest['object'].get('compiled_source_edge_facts')
         report['qualified_source_edge_regions'] = require_edge_facts(

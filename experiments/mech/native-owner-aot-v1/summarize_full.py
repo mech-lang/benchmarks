@@ -27,13 +27,17 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'require_lookup_facts', 'source_lookup_facts_qualified', 'compiled_lookup_facts', 'qualified_lookup_regions',
             'require_cfg_cleanup', 'cfg_cleanup_qualified', 'compiled_cfg_cleanup', 'cfg_cleanup_removed_total', 'single_data_pass_qualified',
             'require_outlined_loops', 'outlined_loops_qualified', 'compiled_outlined_loops',
-            'require_loop_invariants', 'loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions']
+            'require_loop_invariants', 'loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions',
+            'require_preserving_calls', 'preserving_calls_qualified', 'compiled_bound_call_shim', 'compiled_preserving_call_regions']
 first = reports[0]
 samples = {}
 receipts = []
 for run, report in zip(args.runs, reports):
     assert report['status'] == 'full-output-and-update-counts-verified'
     assert all(report.get(key) == first.get(key) for key in identity)
+    if report.get('require_preserving_calls'):
+        assert report.get('preserving_calls_qualified') is True
+        assert report['compiled_bound_call_shim']['code_bytes'] <= 512
     if report.get('require_loop_invariants'):
         assert report.get('loop_invariants_qualified') is True
         native = json.loads((HERE / run / 'native.report.json').read_text())
