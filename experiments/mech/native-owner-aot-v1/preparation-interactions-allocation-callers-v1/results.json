@@ -1,0 +1,139 @@
+{
+  "status": "all-owned-allocation-diagnostics-and-outputs-verified",
+  "source": {
+    "commit": "e82ed4d54d4490102ac41192d1fcbf492d467e08",
+    "tree": "5893ad07a490a0a6e619c7d0e51439c4bfbb9e01",
+    "status": ""
+  },
+  "driver_sha256": "d6b88b6cd1b11527bbfea969b73fc756399e5a78e6c73676cbc27b7f0781bc09",
+  "memory_helper_sha256": "0b9c1a8e6fdad33d8d0844ff65f0636885a8fca681118a2609bd57c6b0173907",
+  "input_sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+  "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+  "environment_delta": {
+    "MallocStackLogging": "1"
+  },
+  "observations": [
+    {
+      "subject": "combined",
+      "process": {
+        "command": [
+          "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-preparation-combined",
+          "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/full-disjoint-state-v1/launch.json",
+          "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/preparation-interactions-allocation-callers-v1/combined.native.json",
+          "--"
+        ],
+        "inherited_common_mutex": true,
+        "deadline_seconds": 60,
+        "quantitative_benchmark": false,
+        "controller_sha256": "e0c6c1260af4900cd4b307252b54461b3f7cee90e2c102ec157d9b1429a5ce3b",
+        "birth_identity": {
+          "pid": 71114,
+          "ppid": 71097,
+          "pgid": 71097,
+          "status": 2,
+          "birth_seconds": 1792881435,
+          "birth_microseconds": 138824
+        },
+        "elapsed_seconds": 2.388527166,
+        "exit_status": 0,
+        "maximum_rss_bytes": 165167104,
+        "user_cpu_seconds": 2.173348,
+        "system_cpu_seconds": 0.049270999999999995,
+        "cleanup_errors": [],
+        "group_closed": true,
+        "reaped": true,
+        "signals": []
+      },
+      "capture_sample": {
+        "seconds": 0.412753458,
+        "resident_bytes": 161857536,
+        "virtual_bytes": 445905010688,
+        "physical_footprint_bytes": 157385184,
+        "lifetime_peak_physical_footprint_bytes": 157385184,
+        "page_faults": 18232,
+        "pageins": 3,
+        "cow_faults": 179,
+        "threads": 8,
+        "running_threads": 7
+      },
+      "captures": [
+        {
+          "tool": "vmmap",
+          "exit_status": 0
+        },
+        {
+          "tool": "heap",
+          "exit_status": 0
+        },
+        {
+          "tool": "malloc_history",
+          "exit_status": 0
+        }
+      ],
+      "raw_sha256": "721ae58e8ac255b3cc843b5fcf96ec9b0a0770f5682c47bfb3bf8172f88a74da"
+    },
+    {
+      "subject": "rust",
+      "process": {
+        "command": [
+          "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/knucleotide-rust-7"
+        ],
+        "inherited_common_mutex": true,
+        "deadline_seconds": 60,
+        "quantitative_benchmark": false,
+        "controller_sha256": "e0c6c1260af4900cd4b307252b54461b3f7cee90e2c102ec157d9b1429a5ce3b",
+        "birth_identity": {
+          "pid": 71119,
+          "ppid": 71097,
+          "pgid": 71097,
+          "status": 2,
+          "birth_seconds": 1792881437,
+          "birth_microseconds": 532448
+        },
+        "elapsed_seconds": 2.091409042,
+        "exit_status": 0,
+        "maximum_rss_bytes": 143097856,
+        "user_cpu_seconds": 2.347395,
+        "system_cpu_seconds": 0.032475,
+        "cleanup_errors": [],
+        "group_closed": true,
+        "reaped": true,
+        "signals": []
+      },
+      "capture_sample": {
+        "seconds": 0.25467675,
+        "resident_bytes": 142983168,
+        "virtual_bytes": 445908107264,
+        "physical_footprint_bytes": 142426568,
+        "lifetime_peak_physical_footprint_bytes": 142426568,
+        "page_faults": 9291,
+        "pageins": 0,
+        "cow_faults": 175,
+        "threads": 8,
+        "running_threads": 7
+      },
+      "captures": [
+        {
+          "tool": "vmmap",
+          "exit_status": 0
+        },
+        {
+          "tool": "heap",
+          "exit_status": 0
+        },
+        {
+          "tool": "malloc_history",
+          "exit_status": 0
+        }
+      ],
+      "raw_sha256": "0dfbf8e223b5f79c3d071cd7756918e7552b96f2decebd733bd7f23ead9ae3b1"
+    }
+  ],
+  "benchmark_samples": 0,
+  "scope": "Two separate, allocation-instrumented diagnostic executions. Exact timed binaries with MallocStackLogging=1; content-free snapshots approximately 100 ms after seven workers are first observed. The owned process alone is stopped and always resumed. Live allocation stacks and sizes are not allocation churn, peak attribution, primary timing samples or a causal speedup measurement.",
+  "source_after": {
+    "commit": "e82ed4d54d4490102ac41192d1fcbf492d467e08",
+    "tree": "5893ad07a490a0a6e619c7d0e51439c4bfbb9e01",
+    "status": ""
+  }
+}

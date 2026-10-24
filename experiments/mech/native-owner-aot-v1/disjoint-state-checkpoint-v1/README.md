@@ -1,5 +1,10 @@
 # Rejected private metadata alias-region trial
 
+This report records the standalone trial. A later
+[two-factor study](../preparation-combined-checkpoint-v1/README.md) retains this
+change combined with scan fusion; the decision below does not rule out that
+interaction or remove either variant from further investigation.
+
 IR79 assigns separate Cranelift alias regions to the native program frame's error-origin word, appended borrowed String view metadata, and appended non-map scalar-Tail work metadata. The goal is to let the backend reuse private values across unrelated stores in the input scanner. Ordinary source values, map frames and callback arguments retain the default region; calls remain full memory barriers. No readonly, nontrapping or speculative-load promise is added.
 
 The trial preserves the original source and bytecode, ABI28, work policy66, finite debits, capability checks and seven-worker count. It adds original/decoded source tests that compare tagging enabled and disabled across incremental ASCII/Unicode input, continuation clearance, finite limits, first failures and successful work reports.

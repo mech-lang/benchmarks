@@ -20,6 +20,12 @@ def read(path):
     return json.loads(path.read_text())
 
 
+def same_child(left, right):
+    # setsid changes the group after the pre-exec gate; birth and parent do not.
+    return all(left[key] == right[key] for key in
+               ('pid', 'ppid', 'birth_seconds', 'birth_microseconds'))
+
+
 def git(*args):
     return subprocess.check_output(['git', '-C', str(SOURCE), *args], text=True).strip()
 
@@ -74,6 +80,7 @@ for batch in (1, 2):
         process = read(path)
         assert process['quantitative_benchmark'] and process['exit_status'] == 0
         assert process['elapsed_seconds'] == row['seconds']
+        assert process['maximum_rss_bytes'] == row['maximum_rss_bytes']
         assert sha(path.parent / 'stdout.bin') == row['stdout_sha256'] == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
         assert sha(Path(process['command'][0])) == report['pins'][subject]['binary_sha256']
         if subject != 'rust':
@@ -122,6 +129,138 @@ assert sha(prefix_folder / 'measure-stage-driver.py') == prefix['study_driver_sh
 assert report['pins']['baseline']['object_sha256'] == report['pins']['scan']['object_sha256']
 assert report['pins']['baseline']['object_sha256'] != prefix['object_sha256']
 roots.extend([prefix_folder, HERE / plan['compiler']])
+profile_build = HERE / 'profile-preparation-combined-build-v1'
+build = read(profile_build / 'results.json')
+assert build['source_commit'] == plan['source_commit'] and build['whole_machine_code_matches_timed']
+assert build['candidate_object_sha256'] == prefix['object_sha256']
+for index in (1, 2, 3):
+    folder = HERE / f'full-profile-preparation-combined-v{index}'
+    capture = read(folder / 'analysis.json')
+    assert capture['source_commit'] == plan['source_commit']
+    assert capture['machine_code_identical'] and capture['completed_output_verified']
+    assert capture['timed_binary_sha256'] == prefix['candidate_sha256']
+    audit = read(HERE / f'preparation-combined-codegen-audit-v{index}/results.json')
+    assert audit['whole_machine_code_matches_timed'] and audit['source_commit'] == plan['source_commit']
+    roots.append(folder)
+roots.append(profile_build)
+hardware_folder = HERE / 'preparation-interactions-hardware-v1'
+hardware = read(hardware_folder / 'results.json')
+assert hardware['status'] == 'all-five-subject-counter-outputs-and-updates-verified'
+assert hardware['driver_sha256'] == sha(STUDY / 'hardware.py')
+assert hardware['source']['commit'] == plan['source_commit'] and not hardware['source']['status']
+assert hardware['benchmark_samples'] == 0 and len(hardware['observations']) == 15
+import re
+for row in hardware['observations']:
+    folder = hardware_folder / f"{row['order']}-{row['subject']}"
+    assert sha(folder / 'process.json') == row['process_sha256']
+    assert sha(folder / 'stderr.bin') == row['stderr_sha256']
+    assert sha(folder / 'stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+    assert not read(folder / 'process.json')['quantitative_benchmark']
+    raw = (folder / 'stderr.bin').read_text()
+    for key, label in [('instructions', 'instructions retired'), ('cycles', 'cycles elapsed'),
+                       ('involuntary_context_switches', 'involuntary context switches')]:
+        matches = re.findall(r'^\s*(\d+)\s+' + re.escape(label) + r'\s*$', raw, re.M)
+        assert len(matches) == 1 and int(matches[0]) == row[key]
+    if row['subject'] != 'rust':
+        native = read(hardware_folder / f"{row['order']}-{row['subject']}.native.json")
+        assert native['native_hash_table_updates'] == native['native_packed_map_updates'] == 874999961
+        assert native['native_parallel_tasks'] == native['native_parallel_peak_workers'] == 7
+for subject, medians in hardware['medians'].items():
+    observations = [row for row in hardware['observations'] if row['subject'] == subject]
+    assert len(observations) == 3
+    for key, value in medians.items():
+        assert statistics.median(row[key] for row in observations) == value
+roots.append(hardware_folder)
+thread_folder = HERE / 'preparation-combined-thread-lifetimes-v1'
+threads = read(thread_folder / 'results.json')
+assert threads['status'] == 'all-owned-thread-observations-and-outputs-verified'
+assert threads['driver_sha256'] == sha(STUDY / 'thread-driver.py')
+assert threads['source']['commit'] == plan['source_commit'] and not threads['source']['status']
+assert threads['input_mode'] == 'full' and len(threads['subjects']) == 6
+for index, row in enumerate(threads['subjects']):
+    folder = thread_folder / f"{index}-{row['subject']}"
+    assert sha(folder / 'thread-observations.json') == row['raw_sha256']
+    assert sha(folder / 'stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+roots.append(thread_folder)
+preparation = read(HERE / 'preparation-combined-checkpoint-v1/preparation.json')
+assert preparation['script_sha256'] == sha(STUDY / 'preparation.py')
+assert preparation['parser_sha256'] == sha(HERE / 'profile_hotspots.py')
+for item in preparation['sources']:
+    assert sha(HERE / item['path']) == item['sha256']
+for mode, count in [('timeline', 15), ('snapshot', 5)]:
+    folder = HERE / f'preparation-interactions-memory-{mode}-v1'
+    memory = read(folder / 'results.json')
+    assert memory['status'] == 'all-owned-memory-observations-and-outputs-verified'
+    assert memory['driver_sha256'] == sha(STUDY / 'memory.py')
+    assert memory['mode'] == mode and len(memory['observations']) == count
+    assert memory['source'] == memory['source_after'] == report['source']
+    assert memory['benchmark_samples'] == 0
+    for row in memory['observations']:
+        raw_folder = folder / f"{row['order']}-{row['subject']}"
+        raw = read(raw_folder / 'memory-observations.json')
+        assert sha(raw_folder / 'memory-observations.json') == row['raw_sha256']
+        receipt = read(raw_folder / 'process.json')
+        assert receipt == row['process'] and not receipt['quantitative_benchmark']
+        assert same_child(raw['identity'], receipt['birth_identity'])
+        assert raw['identity']['pgid'] == raw['identity']['pid']
+        assert sha(Path(receipt['command'][0])) == report['pins'][row['subject']]['binary_sha256']
+        assert sha(raw_folder / 'stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+        assert len(raw['snapshots']) == row['samples'] >= 2
+        assert max(s['resident_bytes'] for s in raw['snapshots']) == row['sampled_peak_rss_bytes']
+        assert max(s['lifetime_peak_physical_footprint_bytes'] for s in raw['snapshots']) == row['observed_lifetime_peak_physical_footprint_bytes']
+        assert len(raw['captures']) == (2 if mode == 'snapshot' else 0)
+        for capture in raw['captures']:
+            tool_folder = folder / (raw_folder.name + '-' + capture['tool'])
+            assert read(tool_folder / 'process.json') == capture['process']
+            assert sha(tool_folder / 'stdout.bin') == capture['stdout_sha256']
+            assert sha(tool_folder / 'stderr.bin') == capture['stderr_sha256']
+    roots.append(folder)
+allocation_folder = HERE / 'preparation-interactions-allocation-callers-v1'
+allocation = read(allocation_folder / 'results.json')
+assert allocation['status'] == 'all-owned-allocation-diagnostics-and-outputs-verified'
+assert allocation['source'] == allocation['source_after'] == report['source']
+assert allocation['driver_sha256'] == sha(STUDY / 'allocations.py')
+assert allocation['memory_helper_sha256'] == sha(STUDY / 'memory.py')
+assert allocation['environment_delta'] == dict(MallocStackLogging='1')
+assert allocation['benchmark_samples'] == 0 and len(allocation['observations']) == 2
+for row in allocation['observations']:
+    folder = allocation_folder / row['subject']
+    assert sha(folder / 'allocation-observations.json') == row['raw_sha256']
+    raw = read(folder / 'allocation-observations.json')
+    assert read(folder / 'process.json') == row['process']
+    assert sha(folder / 'stdout.bin') == 'f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7'
+    assert sha(Path(row['process']['command'][0])) == report['pins'][row['subject']]['binary_sha256']
+    assert same_child(raw['identity'], row['process']['birth_identity'])
+    assert raw['identity']['pgid'] == raw['identity']['pid']
+    assert len(raw['captures']) == 3
+    for capture in raw['captures']:
+        tool_folder = allocation_folder / (row['subject'] + '-' + capture['tool'])
+        assert read(tool_folder / 'process.json') == capture['process']
+        assert sha(tool_folder / 'stdout.bin') == capture['stdout_sha256']
+        assert sha(tool_folder / 'stderr.bin') == capture['stderr_sha256']
+roots.append(allocation_folder)
+binary_folder = HERE / 'preparation-interactions-binary-size-v1'
+binary = read(binary_folder / 'results.json')
+assert binary['status'] == 'exact-binary-file-and-machine-code-sizes-verified'
+assert binary['driver_sha256'] == sha(STUDY / 'binary.py')
+binary_tools = runpy.run_path(str(STUDY / 'binary.py'))
+for subject, item in binary['subjects'].items():
+    parsed = binary_tools['macho'](Path(item['path']))[0]
+    assert parsed['sha256'] == report['pins'][subject]['binary_sha256']
+    for key in parsed:
+        assert parsed[key] == item[key]
+assert binary_tools['function_ranges'](HERE / '.build/counting-preparation-combined-profile') == binary['combined_function_extents']
+assert binary_tools['function_ranges'](Path(binary['subjects']['rust']['path'])) == binary['rust_function_extents']
+memory_analysis_path = HERE / 'preparation-interactions-memory-analysis-v1/results.json'
+memory_analysis = read(memory_analysis_path)
+assert memory_analysis['driver_sha256'] == sha(STUDY / 'memory-analysis.py')
+assert memory_analysis['binary_parser_sha256'] == sha(STUDY / 'binary.py')
+for item in memory_analysis['sources']:
+    assert sha(HERE / item['path']) == item['sha256']
+import sys
+sys.path.insert(0, str(STUDY))
+runpy.run_path(str(STUDY / 'memory-analysis.py'))['main']()
+assert read(memory_analysis_path) == memory_analysis
 processes = set()
 for root in roots:
     for path in root.rglob('process.json'):

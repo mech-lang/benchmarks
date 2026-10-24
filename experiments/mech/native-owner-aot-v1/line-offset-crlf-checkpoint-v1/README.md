@@ -1,5 +1,10 @@
 # Rejected CRLF/offset scan fusion
 
+This report records the standalone trial. A later
+[two-factor study](../preparation-combined-checkpoint-v1/README.md) retains this
+change combined with private metadata regions; the decision below does not rule
+out that interaction or remove either variant from further investigation.
+
 Candidate `8c9713b5a77e44175609d5dadef5d86a8b480593` calculates CRLF payload geometry while constructing the existing admitted newline-offset array, replacing a separate CR search for retained input chunks. Sealed ranges without offset backing keep their original scan. Storage layout, work debits, source, bytecode, generated object, secured policy and seven-worker count remain unchanged. **The candidate is reverted after failing the predeclared expanded-batch threshold.**
 
 Revert `b7f50099dc22ab435032fee4e951e4914fe0d98f` has exactly the same Git tree as accepted twelve-round code `438646017717a5c4392721f13c6f935e88c59527`: `4588ed35da25a135eded8f1bf11c7254fdccc413`. The earlier kernel improvement is retained. Rust parity remains incomplete.

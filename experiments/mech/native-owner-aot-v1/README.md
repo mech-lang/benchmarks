@@ -2,7 +2,27 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Rejected private metadata alias regions
+## Retained preparation combination, memory and binary size
+
+A predeclared two-factor study retains both preparation changes together on
+`codex/native-preparation-interactions` at `e82ed4d54`. Two separate sessions,
+twenty complete processes per configuration each, give combined Mech
+**0.6990 s / 1.255× Rust** and **0.7031 s / 1.248× Rust**. The combination is
+below either individual change in both sessions; a reliable gain over the
+accepted baseline is still uncertain. All four configurations remain available.
+
+The [report](preparation-combined-checkpoint-v1/README.md) adds exact-code profiles,
+451 passing checks, all 200 primary observations and a memory/binary audit.
+Combined peak RSS is **162.66 / 162.96 MB**, versus Rust **140.48 / 140.44 MB**
+in the separate sessions. The actual binary is **5.501 MB** versus **0.756 MB**.
+Live allocation traces identify restored/cloned program metadata, and generated
+Mech code accounts for only about **112 KB** of the **4.334 MB** machine-code
+section. These are optimization hypotheses, not demonstrated elapsed-time gains.
+[Verification](preparation-interactions-v1/verification.json) checks 287 terminal
+owned process receipts. Accepted PR code remains separate; Rust parity is
+incomplete and canonical benchmark data is unchanged.
+
+## Earlier private metadata alias regions alone
 
 Separating error-origin, borrowed-view and scalar-Tail metadata initially lowers
 full-input medians about 2%, but one predeclared larger cohort reverses the result:
