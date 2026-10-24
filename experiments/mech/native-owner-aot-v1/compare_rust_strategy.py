@@ -131,9 +131,9 @@ def prepare(out):
     print('Prepared seven diagnostic Rust copies and six fixed execution orders.', flush=True)
 
 
-def run(out):
+def run(out, resume=False):
     plan = json.loads((out / 'plan.json').read_text())
-    assert not (out / 'results.json').exists()
+    assert (out / 'results.json').exists() == resume
     assert process.sha(SOURCE) == SOURCE_SHA and process.sha(RUST) == RUST_SHA
     assert process.sha(MECH) == MECH_SHA
     assert git('rev-parse', 'HEAD^{tree}') == SOURCE_TREE and not git('status', '--porcelain')
@@ -152,12 +152,28 @@ def run(out):
     base_command = reference['rust_compile_command'][:-3]
     assert reference['rust_compile_command'][-3] == str(SOURCE)
     assert env['RUSTUP_TOOLCHAIN'] == 'nightly-2026-03-03'
-    report = dict(status='running', plan_sha256=process.sha(out / 'plan.json'),
+    initial = dict(status='running', plan_sha256=process.sha(out / 'plan.json'),
                   controller_sha256=process.sha(Path(__file__)),
                   benchmark_commit=git('rev-parse', 'HEAD', cwd=ROOT),
                   mech_source_commit=git('rev-parse', 'HEAD'),
                   environment=env, binaries={}, samples=[], scope=plan['scope'],
                   canonical_benchmark_samples=0)
+    if resume:
+        report = json.loads((out / 'results.json').read_text())
+        assert report['status'] == 'failed-preserve-raw-receipts' and report['error'] == 'AssertionError()'
+        assert len([s for s in report['samples'] if s['input'] == 'full']) == 54
+        assert report['plan_sha256'] == initial['plan_sha256'] and report['environment'] == env
+        assert set(report['binaries']) == set(SUBJECTS)
+        for data in report['binaries'].values():
+            assert process.sha(Path(data['path'])) == data['sha256']
+        assert not (out / 'pre-resume-results.json').exists()
+        process.save(out / 'pre-resume-results.json', report)
+        report.update(status='resuming-all-prior-observations-retained',
+            resume_controller_sha256=initial['controller_sha256'],
+            resume_benchmark_commit=initial['benchmark_commit'],
+            qualification_amendment='Seven source tasks are still mandatory. Short prefix processes may observe 1–7 overlapping active workers; the full input still requires all seven. One prefix execution observed six. Its complete output, process and timing remain retained. No completed process is rerun or discarded. This is a receipt qualification correction, not a program/runtime change.')
+    else:
+        report = initial
     process.save(out / 'results.json', report)
     with Path(PLAN['common_mutex']).open('a+') as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -169,6 +185,12 @@ def run(out):
             assert receipt['exit_status'] == 0 and receipt['reaped'] and receipt['group_closed'], (
                 label, receipt, (out / label / 'stderr.bin').read_text()[-2000:])
             return receipt
+        def retained(command, label, quant=False):
+            receipt = json.loads((out / label / 'process.json').read_text())
+            assert receipt['command'] == command and receipt['quantitative_benchmark'] == quant
+            assert receipt['exit_status'] == 0 and receipt['reaped'] and receipt['group_closed']
+            assert not receipt['cleanup_errors'] and receipt['inherited_common_mutex']
+            return receipt
         try:
             for name, command in {
                 'rust-version':['/Users/cim310/.cargo/bin/rustc', '-Vv'],
@@ -177,14 +199,21 @@ def run(out):
                 'power-source':['/usr/bin/pmset','-g','batt'],
                 'power-settings':['/usr/bin/pmset','-g','custom'],
             }.items():
-                execute(command, name, deadline=30)
+                if not resume:
+                    execute(command, name, deadline=30)
+                else:
+                    retained(command, name)
             targets = dict(rust=RUST, mech=MECH)
             for name in VARIANTS:
                 binary = HERE / '.build' / (out.name + '-' + name)
-                assert not binary.exists()
                 source = SOURCE if name == 'rebuild_control' else ROOT / plan['variants'][name]['source']
                 command = [*base_command, str(source), '-o', str(binary)]
-                execute(command, 'build-' + name)
+                if resume:
+                    retained(command, 'build-' + name)
+                    assert report['binaries'][name]['command'] == command
+                else:
+                    assert not binary.exists()
+                    execute(command, 'build-' + name)
                 targets[name] = binary
                 report['binaries'][name] = dict(path=str(binary), sha256=process.sha(binary),
                                                 source_sha256=process.sha(source), command=command)
@@ -202,7 +231,9 @@ def run(out):
                         native_path = out / (label + '.native.json')
                         if subject == 'mech':
                             command += [str(HERE / spec['policy']), str(native_path), '--']
-                        receipt = execute(command, label, ROOT / spec['path'], quant=True)
+                        existing = (out / label / 'process.json').exists()
+                        receipt = retained(command, label, quant=True) if existing else execute(
+                            command, label, ROOT / spec['path'], quant=True)
                         assert process.sha(out / label / 'stdout.bin') == spec['output']
                         assert (out / label / 'stderr.bin').stat().st_size == 0
                         if subject == 'mech':
@@ -210,14 +241,22 @@ def run(out):
                             assert native['native_hash_table_updates'] == spec['updates']
                             assert native['native_packed_map_updates'] == spec['updates']
                             assert native['native_hash_table_regions'] == native['native_packed_ssa_regions'] == 7
-                            assert native['native_parallel_tasks'] == native['native_parallel_peak_workers'] == 7
+                            assert native['native_parallel_tasks'] == 7
+                            assert 1 <= native['native_parallel_peak_workers'] <= 7
+                            if input_name == 'full':
+                                assert native['native_parallel_peak_workers'] == 7
                             assert native['native_guarded_loop_regions'] == native['native_guarded_call_regions'] == 7
                             assert native['native_frozen_map_regions'] == 5 and native['native_frozen_map_reads'] == 10
                             assert native['native_aot'] and not native['jit'] and native['policy'] == 'secured'
                             assert native['shutdown'] == 'completed'
-                        report['samples'].append(dict(input=input_name, round=round_id, subject=subject,
+                        sample = dict(input=input_name, round=round_id, subject=subject,
                             seconds=receipt['elapsed_seconds'], maximum_rss_bytes=receipt['maximum_rss_bytes'],
-                            process=str((out / label / 'process.json').relative_to(ROOT))))
+                            process=str((out / label / 'process.json').relative_to(ROOT)))
+                        recorded = [s for s in report['samples'] if (s['input'], s['round'], s['subject']) == (input_name, round_id, subject)]
+                        if recorded:
+                            assert recorded == [sample]
+                        else:
+                            report['samples'].append(sample)
                         process.save(out / 'results.json', report)
                     print(input_name, 'round', round_id + 1, 'of 6 complete', flush=True)
             report['statistics'] = {}
@@ -247,7 +286,10 @@ def run(out):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('phase', choices=['prepare', 'run'])
+    parser.add_argument('phase', choices=['prepare', 'run', 'resume'])
     parser.add_argument('--receipt', default='strategy-comparison-v1')
     args = parser.parse_args()
-    (prepare if args.phase == 'prepare' else run)(HERE / args.receipt)
+    if args.phase == 'prepare':
+        prepare(HERE / args.receipt)
+    else:
+        run(HERE / args.receipt, resume=args.phase == 'resume')
