@@ -41,6 +41,9 @@ if require_guarded_loops:
 require_frozen_maps = timing.get('require_frozen_maps', False)
 if require_frozen_maps:
     assert timing.get('source_frozen_maps_qualified') is True
+require_lookup_facts = timing.get('require_lookup_facts', False)
+if require_lookup_facts:
+    assert timing.get('source_lookup_facts_qualified') is True
 require_parallel_tasks = args.require_parallel_tasks or timing.get('require_parallel_tasks')
 assert require_parallel_tasks in (None, 7)
 if args.minimum_parallel_peak is not None and (
@@ -49,16 +52,16 @@ if args.minimum_parallel_peak is not None and (
 minimum_parallel_peak = max(args.minimum_parallel_peak or 1,
                             timing.get('minimum_parallel_peak') or 1) if require_parallel_tasks else None
 assert minimum_parallel_peak is None or 1 <= minimum_parallel_peak <= require_parallel_tasks
-require_packed_map = args.require_packed_map or timing.get('require_packed_map', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps
-require_packed_ssa = timing.get('require_packed_ssa', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps
+require_packed_map = args.require_packed_map or timing.get('require_packed_map', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps or require_lookup_facts
+require_packed_ssa = timing.get('require_packed_ssa', False) or require_parallel_tasks is not None or require_guarded_loops or require_frozen_maps or require_lookup_facts
 out.mkdir(exist_ok=False)
 targets = dict(rust=HERE.parent / 'native-hashmap-work-v1/.build/knucleotide-rust-7',
                mech=HERE / '.build' / args.binary)
 assert process.sha(targets['rust']) == timing['rust_sha256']
 assert process.sha(targets['mech']) == timing['candidate_sha256']
-if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops or require_frozen_maps:
+if timing.get('source_edge_facts_qualified') or timing.get('source_tag_threading_qualified') or timing.get('source_frame_effects_qualified') or require_guarded_loops or require_frozen_maps or require_lookup_facts:
     project = Path(str(targets['mech']) + '.project')
-    for key in ('compiled_source_edge_facts', 'compiled_tag_threading', 'compiled_frame_effects', 'compiled_guarded_loops'):
+    for key in ('compiled_source_edge_facts', 'compiled_tag_threading', 'compiled_frame_effects', 'compiled_guarded_loops', 'compiled_lookup_facts'):
         if timing.get(key) is not None:
             assert timing[key]['complete'] is True
     assert process.sha(project / 'program.o') == timing['object_sha256']
@@ -102,6 +105,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_packed_map=require_packed_map, require_packed_ssa=require_packed_ssa,
               require_guarded_loops=require_guarded_loops,
               require_frozen_maps=require_frozen_maps,
+              require_lookup_facts=require_lookup_facts,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -127,6 +131,10 @@ if require_guarded_loops:
 if require_frozen_maps:
     for key in ('source_frozen_maps_qualified', 'frozen_map_layout',
                 'qualified_frozen_regions', 'object_sha256', 'linked_manifest_sha256'):
+        report[key] = timing[key]
+if require_lookup_facts:
+    for key in ('source_lookup_facts_qualified', 'compiled_lookup_facts',
+                'qualified_lookup_regions', 'object_sha256', 'linked_manifest_sha256'):
         report[key] = timing[key]
 if parent:
     report['baseline_source_commit'] = parent['source_commit']

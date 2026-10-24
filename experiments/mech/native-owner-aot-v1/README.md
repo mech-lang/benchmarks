@@ -2,6 +2,47 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Current-key lookup facts and the remaining instruction gap
+
+Compiler [`bebf57769`](https://github.com/mech-lang/mech/commit/bebf5776902092e13bececb99aaed3e8a5f14fc8) derives bounded facts about the current selected key's cache and presence through the original tag graph. A new range or header invalidates the corresponding facts; membership branches establish presence/absence; insertion refreshes the pointer and invalidates old predicates. Copies are simultaneous and joins retain only common facts. Unknown or unsupported cases keep the original lookup. Original per-call checks, arithmetic, errors, source updates and work charges remain. IR50 identifies the change; ABI26, work65, source, bytecode, inputs and finite launch limits are unchanged.
+
+Three rotated **125-million-base** cohorts retain every complete-process observation, with no excluded warmup:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.554 | 1.00× |
+| Previous complete-private-map stage, `78007ae6f` | 1.551 | 2.80× |
+| Current-key lookup facts, `bebf57769` | 1.522 | 2.75× |
+
+The candidate median is **1.9% lower**. Its 1.520–1.528-second range is below the parent's 1.547–1.556-second range in these cohorts. The [complete aggregate](full-lookup-facts-cohort-v1/results.json) retains raw observations and standard deviations. This is a small gain and does not establish Rust parity.
+
+The **one-million-base prefix**, with three alternating observations and one excluded warmup per executable, gives:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.0194 | 1.00× |
+| Previous complete-private-map stage | 0.0982 | 5.07× |
+| Current-key lookup facts | 0.0952 | 4.91× |
+
+The prefix median is **3.1% lower**, with overlapping candidate/parent ranges. [Prefix receipts](lookup-facts-timing-v1/results.json) retain all observations; the ratios use each protocol's own Rust cohort.
+
+[Emission qualification](lookup-facts-timing-v1/emission-audit.json) binds six substitutions in each of two compiled regions to the exact source membership/get/insert sites: fresh probe, proved present get, and cached insert, in both checked and guarded versions. These are source-bound emission records, not dynamic per-substitution frequencies. Every candidate execution independently verifies seven packed SSA maps, seven selected guarded loops, five complete frozen maps, ten original reads, seven peak workers, complete output and all **6,999,961 prefix** or **874,999,961 full-input updates**. Secured startup/shutdown are included and subjects execute sequentially.
+
+[Focused validation](../native-owner-dispatch-v1/lookup-facts-focused-v2/summary.json) passes six tests covering predicate copies/joins/invalidation, metadata, changed runtime inputs, growth/refills, finite limits and original arithmetic errors. The [full suite](../native-owner-dispatch-v1/lookup-facts-native-v2/summary.json) passes **325 GPU tests and one catalog test**, with three existing exclusions. The retained [focused failure](../native-owner-dispatch-v1/lookup-facts-focused-v1/summary.json) was an overly strict substitution-count assertion on a single-version error fixture. The [first full attempt](../native-owner-dispatch-v1/lookup-facts-native-v1/summary.json) stopped one execution test at its stale IR49 identity assertion; the corrected full run executes it. No production allowances changed.
+
+The [exact-code full profile](full-profile-lookup-facts-v2/analysis.json) observes seven workers and 5,740 worker samples; **89.46%** end in generated code. Inclusive library debit and wait shares are **4.09%** and **5.37%**, with no publication observed. Categories overlap and are not elapsed-time shares. The profiling binary matches all **4,274,648 bytes** of the timed machine-code section, SHA-256 `db0995405bbd125473db311dd6255972f12dd5fda28ef10b6ae3098ddebc30ba`. The first capture attempt was stopped and reaped after the sandbox denied its process inventory; its failed receipt remains. [Three new Rust captures](rust-full-profile-v2/analysis.json) use the exact timed Rust executable and observe seven counting workers on the same full input.
+
+[Separate hardware-counter executions](lookup-facts-hardware-v1/results.json) rotate all three executables, verify every complete output/update receipt and retain all observations:
+
+| macOS whole-process counter, median | Rust | Previous Mech | Current Mech | Current / Rust |
+|---|---:|---:|---:|---:|
+| Instructions retired | 33.2 billion | 124.2 billion | 119.9 billion | 3.61× |
+| CPU cycles | 8.06 billion | 25.1 billion | 24.0 billion | 2.98× |
+
+These include complete process startup/shutdown and all target threads. They are diagnostic counter runs, not extra observations in the timing cohorts. The instruction reduction from the parent is 3.46%, consistent with a small improvement. A [specified existing-key path comparison](lookup-facts-codegen-audit-v1/steady-path-comparison.json), bound to both exact disassemblies, counts **129 Mech instructions, 21 branches and 40 stack-access instructions**, versus **34 Rust instructions, four branches and two stack-access instructions**. Both paths use an initialized rolling key, a first-candidate full-key hit and another productive iteration; Mech's original calls are allowed and its finite loan has fuel. This is a static path comparison, not a measurement of how frequently that path executes.
+
+The next priority is the excess counting-loop instructions and stack traffic. The retained Mech code still has literal constant tests and unreachable continuations from failure helpers despite the speed backend setting. Bounded native CFG cleanup before register allocation is a new candidate under validation; no gain is assigned to it yet. Further loop isolation, invariant state/check placement and source-derived storage bounds remain possible targets. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Retaining complete maps for private reads
 
 Compiler [`78007ae6f`](https://github.com/mech-lang/mech/commit/78007ae6f26e5bb8f7d1c2fec318e5b102304e7d) retains an entire immutable packed map when a complete-use proof permits only private membership and scalar lookup operations in its original parent visit. Every key and count remains, including entries never queried. The five query histograms select this representation; the two frequency histograms still publish canonical maps because they enumerate their keys and values. Source, bytecode, inputs and finite launch limits are unchanged. IR49/ABI26 identify the implementation. Work policy65 prices complete packed-table validation and actual bounded queries; physically removed decoding, copying and sorting no longer incur their old implementation charges. Mutation-body charges and logical result limits remain.

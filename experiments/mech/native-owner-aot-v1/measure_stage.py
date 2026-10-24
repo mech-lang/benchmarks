@@ -164,6 +164,48 @@ def require_frame_effects(metadata, descriptor):
     return qualified
 
 
+def require_lookup_facts(metadata, descriptor, tags):
+    """Bind emitted lookup substitutions to exact original map operations."""
+    assert metadata and metadata['complete'] is True
+    records = metadata['regions']
+    by_header = {record['header']: record for record in records}
+    expected = {region['tail']['header'] for region in descriptor['closed_tails']['regions']
+                if region.get('map') is not None and region.get('packed') is not None}
+    assert expected and len(by_header) == len(records) and set(by_header) == expected
+    assert tags and tags['complete'] is True
+    tag_headers = {record['header']: record for record in tags['regions']}
+    qualified = []
+    for header in sorted(expected):
+        record = by_header[header]
+        assert 1 <= record['source_nodes'] <= 1024
+        assert record['emitted_nodes'] == tag_headers[header]['product_nodes']
+        assert record['emitted_nodes'] in (record['source_nodes'], 2 * record['source_nodes'])
+        region_id = descriptor['closed_tails']['sites'][header]
+        substitutions = record['substitutions']
+        seen, facts, sites = set(), set(), set()
+        for substitution in substitutions:
+            node, site = substitution['node'], substitution['site']
+            assert type(node) is int and 0 <= node < record['emitted_nodes'] and node not in seen
+            seen.add(node)
+            assert descriptor['closed_tails']['sites'][site] == region_id
+            call = descriptor['plan']['blocks'][site]['action']['LibraryCall']
+            selected = call['template']['selected']
+            assert len(selected) == 1
+            primitive = next(iter(selected.values()))['leaf']['primitive']
+            operation = {'MapContainsKey': 3, 'MapKeyAccess': 4, 'MapInsert': 5}[primitive]
+            assert substitution['operation'] == operation
+            fact = substitution['fact']
+            assert fact in ('Fresh', 'Cached', 'Present', 'Absent')
+            facts.add(fact)
+            sites.add(site)
+        assert {'Fresh', 'Present', 'Cached'} <= facts
+        assert len(sites) >= 3
+        qualified.append(dict(header=header, source_nodes=record['source_nodes'], emitted_nodes=record['emitted_nodes'],
+                              substitutions=substitutions,
+                              scope='Actual compiled current-key substitutions; not dynamic per-path frequencies. Runtime packed SSA selection is separately required.'))
+    return qualified
+
+
 def require_frozen_maps(candidate_count, descriptor):
     """Bind private-map inventory to source sites; loaders rederive its proof."""
     layout, plan = descriptor['frozen_maps'], descriptor['plan']
@@ -407,6 +449,8 @@ parser.add_argument('--require-guarded-loops', action='store_true',
                     help='Require source-qualified guarded versions and seven actual runtime selections; also require packed storage, SSA and tag metadata')
 parser.add_argument('--require-frozen-maps', action='store_true',
                     help='Require source-qualified private maps, five actual retained maps and ten original source queries')
+parser.add_argument('--require-lookup-facts', action='store_true',
+                    help='Require exact-source current-key substitutions in both emitted packed regions')
 args = parser.parse_args()
 if min(args.minimum_edge_guards, args.minimum_edge_arithmetic, args.minimum_tag_branches, args.minimum_tag_latches) < 0:
     parser.error('Emission receipt requirements must be nonnegative')
@@ -415,7 +459,7 @@ if args.minimum_parallel_peak is not None and (
     parser.error('--minimum-parallel-peak requires --require-parallel-tasks 7 and a value from 1 to 7')
 minimum_parallel_peak = (args.minimum_parallel_peak or 1) if args.require_parallel_tasks else None
 require_edge_emissions = bool(args.minimum_edge_guards or args.minimum_edge_arithmetic)
-require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches or args.require_guarded_loops)
+require_tag_emissions = bool(args.minimum_tag_branches or args.minimum_tag_latches or args.require_guarded_loops or args.require_lookup_facts)
 require_packed_map = args.require_packed_map or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects or args.require_frozen_maps
 require_packed_ssa = args.require_packed_ssa or args.require_parallel_tasks is not None or args.require_key_bits is not None or require_edge_emissions or require_tag_emissions or args.require_frame_effects or args.require_frozen_maps
 out = HERE / args.receipt
@@ -452,6 +496,7 @@ report = dict(status='building', source_commit=prepared['source_commit'],
               require_key_bits=args.require_key_bits,
               require_guarded_loops=args.require_guarded_loops,
               require_frozen_maps=args.require_frozen_maps,
+              require_lookup_facts=args.require_lookup_facts,
               require_parallel_tasks=args.require_parallel_tasks, minimum_parallel_peak=minimum_parallel_peak,
               native_executions=[],
               scope='One-million-base standard THREE prefix; complete fresh processes; secured Mech AOT; diagnostic only')
@@ -498,6 +543,14 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['qualified_frozen_regions'] = require_frozen_maps(
             manifest['object'].get('private_frozen_map_candidates'), descriptor)
         report['source_frozen_maps_qualified'] = True
+        report['object_sha256'] = process.sha(project / 'program.o')
+        report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
+    if args.require_lookup_facts:
+        assert manifest['object']['typed_ir_version'] == 50 and manifest['object']['work_policy_version'] == 65
+        report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
+        report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
+                                                                  manifest['object'].get('compiled_tag_threading'))
+        report['source_lookup_facts_qualified'] = True
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.minimum_edge_guards or args.minimum_edge_arithmetic:

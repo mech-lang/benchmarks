@@ -22,7 +22,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'source_frame_effects_qualified', 'compiled_frame_effects', 'qualified_frame_regions',
             'require_guarded_loops', 'source_guarded_loops_qualified',
             'compiled_guarded_loops', 'qualified_guarded_regions', 'native_descriptor_sha256',
-            'require_frozen_maps', 'source_frozen_maps_qualified', 'frozen_map_layout', 'qualified_frozen_regions']
+            'require_frozen_maps', 'source_frozen_maps_qualified', 'frozen_map_layout', 'qualified_frozen_regions',
+            'require_lookup_facts', 'source_lookup_facts_qualified', 'compiled_lookup_facts', 'qualified_lookup_regions']
 first = reports[0]
 samples = {}
 receipts = []

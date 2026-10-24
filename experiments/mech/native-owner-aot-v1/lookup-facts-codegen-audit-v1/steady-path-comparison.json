@@ -1,0 +1,788 @@
+{
+  "status": "explicit-existing-key-steady-paths-inspected",
+  "mech": {
+    "disassembly": "lookup-facts-codegen-audit-v1/entry.s",
+    "disassembly_sha256": "a054673fcf0a13121e005815b63ab0e0d71f11ab5cb3cefcb53721a019588c9f",
+    "loop_start": "0x1003f5310",
+    "conditions": {
+      "0x1003f531c": {
+        "taken": false,
+        "reason": "productive source index is below trip end"
+      },
+      "0x1003f5324": {
+        "taken": false,
+        "reason": "original range call is allowed"
+      },
+      "0x1003f53a4": {
+        "taken": true,
+        "reason": "initialized rolling key and consecutive next index"
+      },
+      "0x1003f541c": {
+        "taken": false,
+        "reason": "original membership call is allowed"
+      },
+      "0x1003f547c": {
+        "taken": true,
+        "reason": "admitted table has nonzero capacity"
+      },
+      "0x1003f54f8": {
+        "taken": false,
+        "reason": "first control group contains matching fingerprints"
+      },
+      "0x1003f5520": {
+        "taken": true,
+        "reason": "first fingerprint candidate has the complete key"
+      },
+      "0x1003f55d4": {
+        "taken": true,
+        "reason": "membership found the entry"
+      },
+      "0x1003f55ec": {
+        "taken": false,
+        "reason": "original lookup call is allowed"
+      },
+      "0x1003f5650": {
+        "taken": true,
+        "reason": "source-proved present entry; emitted constant condition"
+      },
+      "0x1003f56bc": {
+        "taken": false,
+        "reason": "source count increment does not overflow"
+      },
+      "0x1003f56c4": {
+        "taken": false,
+        "reason": "original insertion call is allowed"
+      },
+      "0x1003f5728": {
+        "taken": true,
+        "reason": "insertion replaces the already found entry"
+      },
+      "0x1003f57dc": {
+        "taken": false,
+        "reason": "update receipt counter does not overflow"
+      },
+      "0x1003f5848": {
+        "taken": true,
+        "reason": "existing finite loan has remaining fuel"
+      }
+    },
+    "counts": {
+      "instructions": 129,
+      "branches": 21,
+      "stack_load_instructions": 29,
+      "stack_store_instructions": 11
+    },
+    "ordered_instructions": [
+      {
+        "address": "0x1003f5310",
+        "instruction": "ldr\tx0, [sp, #0x108]"
+      },
+      {
+        "address": "0x1003f5314",
+        "instruction": "ldur\tx1, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f5318",
+        "instruction": "cmp\tx1, x0"
+      },
+      {
+        "address": "0x1003f531c",
+        "instruction": "b.hs\t0x1003f58dc"
+      },
+      {
+        "address": "0x1003f5320",
+        "instruction": "ldur\tx0, [sp, #0x20]"
+      },
+      {
+        "address": "0x1003f5324",
+        "instruction": "cbz\tx0, 0x1003f5330"
+      },
+      {
+        "address": "0x1003f5328",
+        "instruction": "ldur\tx2, [sp, #0x78]"
+      },
+      {
+        "address": "0x1003f532c",
+        "instruction": "b\t0x1003f5380"
+      },
+      {
+        "address": "0x1003f5380",
+        "instruction": "add\tx0, x2, #0x1"
+      },
+      {
+        "address": "0x1003f5384",
+        "instruction": "ldur\tx1, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f5388",
+        "instruction": "cmp\tx1, x0"
+      },
+      {
+        "address": "0x1003f538c",
+        "instruction": "cset\tx0, eq"
+      },
+      {
+        "address": "0x1003f5390",
+        "instruction": "mov\tx1, #-0x1"
+      },
+      {
+        "address": "0x1003f5394",
+        "instruction": "cmp\tx2, x1"
+      },
+      {
+        "address": "0x1003f5398",
+        "instruction": "cset\tx1, ne"
+      },
+      {
+        "address": "0x1003f539c",
+        "instruction": "and\tw0, w0, w1"
+      },
+      {
+        "address": "0x1003f53a0",
+        "instruction": "uxtb\tw0, w0"
+      },
+      {
+        "address": "0x1003f53a4",
+        "instruction": "cbnz\tx0, 0x1003f53e8"
+      },
+      {
+        "address": "0x1003f53e8",
+        "instruction": "ldur\tx0, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f53ec",
+        "instruction": "ldur\tx12, [sp, #0xb0]"
+      },
+      {
+        "address": "0x1003f53f0",
+        "instruction": "add\tx0, x0, x12"
+      },
+      {
+        "address": "0x1003f53f4",
+        "instruction": "sub\tx0, x0, #0x1"
+      },
+      {
+        "address": "0x1003f53f8",
+        "instruction": "ldur\tx3, [sp, #0xc0]"
+      },
+      {
+        "address": "0x1003f53fc",
+        "instruction": "ldrb\tw0, [x3, x0]"
+      },
+      {
+        "address": "0x1003f5400",
+        "instruction": "lsr\tx0, x0, #1"
+      },
+      {
+        "address": "0x1003f5404",
+        "instruction": "and\tx0, x0, #0x3"
+      },
+      {
+        "address": "0x1003f5408",
+        "instruction": "ldur\tx1, [sp, #0x40]"
+      },
+      {
+        "address": "0x1003f540c",
+        "instruction": "orr\tx0, x0, x1, lsl #2"
+      },
+      {
+        "address": "0x1003f5410",
+        "instruction": "ldur\tx1, [sp, #0xa8]"
+      },
+      {
+        "address": "0x1003f5414",
+        "instruction": "and\tx20, x0, x1"
+      },
+      {
+        "address": "0x1003f5418",
+        "instruction": "ldur\tx0, [sp, #0x50]"
+      },
+      {
+        "address": "0x1003f541c",
+        "instruction": "cbz\tx0, 0x1003f5428"
+      },
+      {
+        "address": "0x1003f5420",
+        "instruction": "ldur\tx28, [sp, #0x10]"
+      },
+      {
+        "address": "0x1003f5424",
+        "instruction": "b\t0x1003f5478"
+      },
+      {
+        "address": "0x1003f5478",
+        "instruction": "cmp\tx28, #0x0"
+      },
+      {
+        "address": "0x1003f547c",
+        "instruction": "b.ne\t0x1003f5488"
+      },
+      {
+        "address": "0x1003f5488",
+        "instruction": "mov\tx0, #0xe5b9"
+      },
+      {
+        "address": "0x1003f548c",
+        "instruction": "movk\tx0, #0x1ce4, lsl #16"
+      },
+      {
+        "address": "0x1003f5490",
+        "instruction": "movk\tx0, #0x476d, lsl #32"
+      },
+      {
+        "address": "0x1003f5494",
+        "instruction": "movk\tx0, #0xbf58, lsl #48"
+      },
+      {
+        "address": "0x1003f5498",
+        "instruction": "eor\tx0, x20, x0"
+      },
+      {
+        "address": "0x1003f549c",
+        "instruction": "mov\tx1, #0x11eb"
+      },
+      {
+        "address": "0x1003f54a0",
+        "instruction": "movk\tx1, #0x1331, lsl #16"
+      },
+      {
+        "address": "0x1003f54a4",
+        "instruction": "movk\tx1, #0x49bb, lsl #32"
+      },
+      {
+        "address": "0x1003f54a8",
+        "instruction": "movk\tx1, #0x94d0, lsl #48"
+      },
+      {
+        "address": "0x1003f54ac",
+        "instruction": "mul\tx2, x0, x1"
+      },
+      {
+        "address": "0x1003f54b0",
+        "instruction": "umulh\tx0, x0, x1"
+      },
+      {
+        "address": "0x1003f54b4",
+        "instruction": "eor\tx0, x2, x0"
+      },
+      {
+        "address": "0x1003f54b8",
+        "instruction": "sub\tx1, x28, #0x1"
+      },
+      {
+        "address": "0x1003f54bc",
+        "instruction": "and\tx12, x0, x1"
+      },
+      {
+        "address": "0x1003f54c0",
+        "instruction": "mov\tx14, #0x0"
+      },
+      {
+        "address": "0x1003f54c4",
+        "instruction": "lsr\tx0, x0, #57"
+      },
+      {
+        "address": "0x1003f54c8",
+        "instruction": "dup.8b\tv0, w0"
+      },
+      {
+        "address": "0x1003f54cc",
+        "instruction": "ldur\tx21, [sp, #0x80]"
+      },
+      {
+        "address": "0x1003f54d0",
+        "instruction": "stur\tx24, [sp, #0x28]"
+      },
+      {
+        "address": "0x1003f54d4",
+        "instruction": "stur\tx28, [sp, #0x30]"
+      },
+      {
+        "address": "0x1003f54d8",
+        "instruction": "stur\tx20, [sp, #0x40]"
+      },
+      {
+        "address": "0x1003f54dc",
+        "instruction": "ldur\tx0, [sp, #0x80]"
+      },
+      {
+        "address": "0x1003f54e0",
+        "instruction": "stur\tx0, [sp, #0x60]"
+      },
+      {
+        "address": "0x1003f54e4",
+        "instruction": "ldr\tx2, [x21, x12]"
+      },
+      {
+        "address": "0x1003f54e8",
+        "instruction": "fmov\td1, x2"
+      },
+      {
+        "address": "0x1003f54ec",
+        "instruction": "cmeq.8b\tv1, v1, v0"
+      },
+      {
+        "address": "0x1003f54f0",
+        "instruction": "mov.d\tx3, v1[0]"
+      },
+      {
+        "address": "0x1003f54f4",
+        "instruction": "and\tx3, x3, #0x101010101010101"
+      },
+      {
+        "address": "0x1003f54f8",
+        "instruction": "cbz\tx3, 0x1003f5530"
+      },
+      {
+        "address": "0x1003f54fc",
+        "instruction": "rbit\tx4, x3"
+      },
+      {
+        "address": "0x1003f5500",
+        "instruction": "clz\tx4, x4"
+      },
+      {
+        "address": "0x1003f5504",
+        "instruction": "lsr\tx4, x4, #3"
+      },
+      {
+        "address": "0x1003f5508",
+        "instruction": "add\tx4, x12, x4"
+      },
+      {
+        "address": "0x1003f550c",
+        "instruction": "and\tx4, x4, x1"
+      },
+      {
+        "address": "0x1003f5510",
+        "instruction": "lsl\tx5, x4, #4"
+      },
+      {
+        "address": "0x1003f5514",
+        "instruction": "add\tx4, x24, x4, lsl #4"
+      },
+      {
+        "address": "0x1003f5518",
+        "instruction": "ldr\tx5, [x24, x5]"
+      },
+      {
+        "address": "0x1003f551c",
+        "instruction": "cmp\tx20, x5"
+      },
+      {
+        "address": "0x1003f5520",
+        "instruction": "b.eq\t0x1003f55cc"
+      },
+      {
+        "address": "0x1003f55cc",
+        "instruction": "stur\tx4, [sp, #0x48]"
+      },
+      {
+        "address": "0x1003f55d0",
+        "instruction": "cmp\tx4, #0x0"
+      },
+      {
+        "address": "0x1003f55d4",
+        "instruction": "b.ne\t0x1003f55e8"
+      },
+      {
+        "address": "0x1003f55e8",
+        "instruction": "ldur\tx0, [sp, #0x50]"
+      },
+      {
+        "address": "0x1003f55ec",
+        "instruction": "cbz\tx0, 0x1003f55f8"
+      },
+      {
+        "address": "0x1003f55f0",
+        "instruction": "ldur\tx0, [sp, #0xd8]"
+      },
+      {
+        "address": "0x1003f55f4",
+        "instruction": "b\t0x1003f564c"
+      },
+      {
+        "address": "0x1003f564c",
+        "instruction": "uxtb\tw0, w0"
+      },
+      {
+        "address": "0x1003f5650",
+        "instruction": "cbnz\tx0, 0x1003f569c"
+      },
+      {
+        "address": "0x1003f569c",
+        "instruction": "ldur\tx27, [sp, #0x48]"
+      },
+      {
+        "address": "0x1003f56a0",
+        "instruction": "ldr\tx0, [x27, #0x8]"
+      },
+      {
+        "address": "0x1003f56a4",
+        "instruction": "mov\tx1, #0x1"
+      },
+      {
+        "address": "0x1003f56a8",
+        "instruction": "adds\tx5, x0, x1"
+      },
+      {
+        "address": "0x1003f56ac",
+        "instruction": "mov\tx20, x5"
+      },
+      {
+        "address": "0x1003f56b0",
+        "instruction": "cset\tx0, hs"
+      },
+      {
+        "address": "0x1003f56b4",
+        "instruction": "uxtb\tw0, w0"
+      },
+      {
+        "address": "0x1003f56b8",
+        "instruction": "cmp\tw0, #0x0"
+      },
+      {
+        "address": "0x1003f56bc",
+        "instruction": "b.ne\t0x1003fbfc4"
+      },
+      {
+        "address": "0x1003f56c0",
+        "instruction": "ldur\tx0, [sp, #0x58]"
+      },
+      {
+        "address": "0x1003f56c4",
+        "instruction": "cbz\tx0, 0x1003f56d0"
+      },
+      {
+        "address": "0x1003f56c8",
+        "instruction": "ldur\tx27, [sp, #0x48]"
+      },
+      {
+        "address": "0x1003f56cc",
+        "instruction": "b\t0x1003f5724"
+      },
+      {
+        "address": "0x1003f5724",
+        "instruction": "cmp\tx27, #0x0"
+      },
+      {
+        "address": "0x1003f5728",
+        "instruction": "b.ne\t0x1003f57c8"
+      },
+      {
+        "address": "0x1003f57c8",
+        "instruction": "ldur\tx21, [sp, #0x60]"
+      },
+      {
+        "address": "0x1003f57cc",
+        "instruction": "ldur\tx23, [sp, #0x18]"
+      },
+      {
+        "address": "0x1003f57d0",
+        "instruction": "ldur\tx24, [sp, #0x30]"
+      },
+      {
+        "address": "0x1003f57d4",
+        "instruction": "mov\tx7, #-0x1"
+      },
+      {
+        "address": "0x1003f57d8",
+        "instruction": "cmp\tx23, x7"
+      },
+      {
+        "address": "0x1003f57dc",
+        "instruction": "b.eq\t0x1003f57ec"
+      },
+      {
+        "address": "0x1003f57e0",
+        "instruction": "mov\tx5, x20"
+      },
+      {
+        "address": "0x1003f57e4",
+        "instruction": "ldur\tx27, [sp, #0x48]"
+      },
+      {
+        "address": "0x1003f57e8",
+        "instruction": "b\t0x1003f5834"
+      },
+      {
+        "address": "0x1003f5834",
+        "instruction": "ldur\tx27, [sp, #0x48]"
+      },
+      {
+        "address": "0x1003f5838",
+        "instruction": "str\tx5, [x27, #0x8]"
+      },
+      {
+        "address": "0x1003f583c",
+        "instruction": "add\tx23, x23, #0x1"
+      },
+      {
+        "address": "0x1003f5840",
+        "instruction": "mov\tx22, #0x1"
+      },
+      {
+        "address": "0x1003f5844",
+        "instruction": "ldur\tx0, [sp, #0x8]"
+      },
+      {
+        "address": "0x1003f5848",
+        "instruction": "cbnz\tx0, 0x1003f58a0"
+      },
+      {
+        "address": "0x1003f58a0",
+        "instruction": "mov\tx20, #0x0"
+      },
+      {
+        "address": "0x1003f58a4",
+        "instruction": "ldur\tx0, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f58a8",
+        "instruction": "add\tx0, x0, #0x1"
+      },
+      {
+        "address": "0x1003f58ac",
+        "instruction": "ldur\tx4, [sp, #0x8]"
+      },
+      {
+        "address": "0x1003f58b0",
+        "instruction": "sub\tx5, x4, #0x1"
+      },
+      {
+        "address": "0x1003f58b4",
+        "instruction": "stur\tx5, [sp, #0x8]"
+      },
+      {
+        "address": "0x1003f58b8",
+        "instruction": "stur\tx21, [sp, #0x80]"
+      },
+      {
+        "address": "0x1003f58bc",
+        "instruction": "ldur\tx1, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f58c0",
+        "instruction": "stur\tx1, [sp, #0x78]"
+      },
+      {
+        "address": "0x1003f58c4",
+        "instruction": "stur\tx0, [sp, #0x88]"
+      },
+      {
+        "address": "0x1003f58c8",
+        "instruction": "stur\tx23, [sp, #0x18]"
+      },
+      {
+        "address": "0x1003f58cc",
+        "instruction": "stur\tx24, [sp, #0x10]"
+      },
+      {
+        "address": "0x1003f58d0",
+        "instruction": "mov\tx27, x20"
+      },
+      {
+        "address": "0x1003f58d4",
+        "instruction": "ldur\tx24, [sp, #0x28]"
+      },
+      {
+        "address": "0x1003f58d8",
+        "instruction": "b\t0x1003f5310"
+      }
+    ],
+    "phase_instruction_counts": [
+      {
+        "phase": "source trip/range check",
+        "instructions": 8
+      },
+      {
+        "phase": "rolling-window selection",
+        "instructions": 22
+      },
+      {
+        "phase": "membership and table probe",
+        "instructions": 48
+      },
+      {
+        "phase": "lookup and original get checks",
+        "instructions": 8
+      },
+      {
+        "phase": "source count arithmetic",
+        "instructions": 7
+      },
+      {
+        "phase": "insert, update receipt and store",
+        "instructions": 18
+      },
+      {
+        "phase": "latch, next header and carried state",
+        "instructions": 18
+      }
+    ]
+  },
+  "rust": {
+    "disassembly": "rust-codegen-audit-v1/worker-u64.s",
+    "disassembly_sha256": "104dd15d8c77c9b9ce18796d8632dc9ac1d6f77a9d9f82e7416a6bf74b8c1f18",
+    "loop_start": "0x100006fdc",
+    "conditions": {
+      "0x100006ef4": {
+        "taken": false,
+        "reason": "first control group contains matching fingerprints"
+      },
+      "0x100006f14": {
+        "taken": true,
+        "reason": "first fingerprint candidate has the complete key"
+      },
+      "0x100006f54": {
+        "taken": true,
+        "reason": "input iterator has another byte"
+      }
+    },
+    "counts": {
+      "instructions": 34,
+      "branches": 4,
+      "stack_load_instructions": 2,
+      "stack_store_instructions": 0
+    },
+    "ordered_instructions": [
+      {
+        "address": "0x100006fdc",
+        "instruction": "mov\tx9, #0x0"
+      },
+      {
+        "address": "0x100006fe0",
+        "instruction": "ldrb\tw8, [x24], #0x1"
+      },
+      {
+        "address": "0x100006fe4",
+        "instruction": "ubfiz\tx10, x27, #2, #34"
+      },
+      {
+        "address": "0x100006fe8",
+        "instruction": "orr\tx27, x10, x8"
+      },
+      {
+        "address": "0x100006fec",
+        "instruction": "ldur\tx8, [x29, #-0x60]"
+      },
+      {
+        "address": "0x100006ff0",
+        "instruction": "ldr\tx10, [x25]"
+      },
+      {
+        "address": "0x100006ff4",
+        "instruction": "eor\tx8, x8, x27"
+      },
+      {
+        "address": "0x100006ff8",
+        "instruction": "mul\tx11, x10, x8"
+      },
+      {
+        "address": "0x100006ffc",
+        "instruction": "umulh\tx8, x10, x8"
+      },
+      {
+        "address": "0x100007000",
+        "instruction": "eor\tx21, x8, x11"
+      },
+      {
+        "address": "0x100007004",
+        "instruction": "lsr\tx22, x21, #57"
+      },
+      {
+        "address": "0x100007008",
+        "instruction": "ldp\tx20, x8, [x29, #-0x80]"
+      },
+      {
+        "address": "0x10000700c",
+        "instruction": "dup.8b\tv0, w22"
+      },
+      {
+        "address": "0x100007010",
+        "instruction": "mov\tx10, x21"
+      },
+      {
+        "address": "0x100007014",
+        "instruction": "b\t0x100006ee0"
+      },
+      {
+        "address": "0x100006ee0",
+        "instruction": "and\tx10, x10, x8"
+      },
+      {
+        "address": "0x100006ee4",
+        "instruction": "ldr\td1, [x20, x10]"
+      },
+      {
+        "address": "0x100006ee8",
+        "instruction": "cmeq.8b\tv2, v1, v0"
+      },
+      {
+        "address": "0x100006eec",
+        "instruction": "fmov\tx11, d2"
+      },
+      {
+        "address": "0x100006ef0",
+        "instruction": "ands\tx12, x11, #0x8080808080808080"
+      },
+      {
+        "address": "0x100006ef4",
+        "instruction": "b.eq\t0x100006f24"
+      },
+      {
+        "address": "0x100006ef8",
+        "instruction": "rbit\tx11, x12"
+      },
+      {
+        "address": "0x100006efc",
+        "instruction": "clz\tx11, x11"
+      },
+      {
+        "address": "0x100006f00",
+        "instruction": "add\tx11, x10, x11, lsr #3"
+      },
+      {
+        "address": "0x100006f04",
+        "instruction": "and\tx11, x11, x8"
+      },
+      {
+        "address": "0x100006f08",
+        "instruction": "sub\tx11, x20, x11, lsl #4"
+      },
+      {
+        "address": "0x100006f0c",
+        "instruction": "ldur\tx13, [x11, #-0x10]"
+      },
+      {
+        "address": "0x100006f10",
+        "instruction": "cmp\tx27, x13"
+      },
+      {
+        "address": "0x100006f14",
+        "instruction": "b.eq\t0x100006f44"
+      },
+      {
+        "address": "0x100006f44",
+        "instruction": "ldur\tw8, [x11, #-0x8]"
+      },
+      {
+        "address": "0x100006f48",
+        "instruction": "add\tw8, w8, #0x1"
+      },
+      {
+        "address": "0x100006f4c",
+        "instruction": "stur\tw8, [x11, #-0x8]"
+      },
+      {
+        "address": "0x100006f50",
+        "instruction": "cmp\tx24, x26"
+      },
+      {
+        "address": "0x100006f54",
+        "instruction": "b.ne\t0x100006fdc"
+      }
+    ]
+  },
+  "scope": "Static control-flow paths under listed conditions, not dynamic instruction counts or frequency measurements. Includes one productive iteration, first-candidate full-key hit, successful original checks and no refill/growth. Retained hardware counters measure whole processes separately."
+}

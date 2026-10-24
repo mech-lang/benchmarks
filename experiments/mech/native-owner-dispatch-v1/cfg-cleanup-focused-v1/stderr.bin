@@ -1,0 +1,28 @@
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0603]: function `optimize` is private
+    --> hosts/gpu/src/native_artifact/iteration_compiler.rs:1299:73
+     |
+1299 |         report.cfg_cleanup = Some(super::program_compiler::cfg_cleanup::optimize(&mut context, module.isa())?);
+     |                                                                         ^^^^^^^^ private function
+     |
+note: the function `optimize` is defined here
+    --> hosts/gpu/src/native_artifact/program_cfg_cleanup.rs:50:1
+     |
+  50 | pub(super) fn optimize(context: &mut Context, isa: &dyn TargetIsa) -> Result<CfgCleanup, NativeCompileError> {
+     | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: unused variable: `enabled`
+  --> hosts/gpu/src/native_artifact/program_cfg_cleanup.rs:52:9
+   |
+52 |     let enabled = true;
+   |         ^^^^^^^ help: if this is intentional, prefix it with an underscore: `_enabled`
+   |
+   = note: `#[warn(unused_variables)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0603`.
+warning: `mech-gpu` (lib test) generated 1 warning
+error: could not compile `mech-gpu` (lib test) due to 1 previous error; 1 warning emitted
