@@ -2,7 +2,24 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Current ten-round budget-mutex retry
+## Current twelve-round budget-mutex retry
+
+Extending bounded retry from ten to twelve rounds reduces the full-input median
+**2.24% initially and 1.27% in an independent repeat**. The repeat gives Rust
+**0.5537 s / 1.000×**, ten-round Mech **0.7198 s / 1.300×**, and current Mech
+**0.7107 s / 1.284×**. Separate counters give kernel CPU **0.05 → 0.04 seconds**,
+involuntary switches **9,418 → 6,009**, and 2.7% fewer cycles.
+
+The [report](escrow-backoff12-checkpoint-v1/README.md) retains both batches, the
+separate prefix, fresh exact-code profiles and new worker-appearance observations.
+Current Mech workers appear near 0.22–0.24 seconds, versus 0.12–0.15 for Rust in
+separate polling diagnostics. Serial preparation is the next investigation;
+those bounds are not exact phase timers. All 404 checks pass, and
+[verification](escrow-backoff12-checkpoint-v1/results.json) checks 78 terminal
+owned processes. Source, bytecode, generated object and finite debit logic remain
+unchanged. Rust parity is incomplete.
+
+## Earlier ten-round budget-mutex retry
 
 Extending bounded retry from eight to ten rounds cuts kernel CPU from **0.10 to
 0.06 seconds** and involuntary switches from **19,421 to 9,621** in separate

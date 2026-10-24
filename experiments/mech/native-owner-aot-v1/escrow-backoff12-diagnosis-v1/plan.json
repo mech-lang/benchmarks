@@ -1,0 +1,23 @@
+{
+  "source_commit": "438646017717a5c4392721f13c6f935e88c59527",
+  "parent": "0b4ce3e7c316ae4248399c3ce1b2ed14b8eb65e2",
+  "compiler": "compiler-v66",
+  "binary": "counting-escrow-backoff12",
+  "source_change": "None: unchanged performance Mech source and bytecode",
+  "old_spin_rounds": 10,
+  "new_spin_rounds": 12,
+  "old_max_pause_hints": 1023,
+  "new_max_pause_hints": 4095,
+  "hypothesis": "Reduce budget-mutex kernel parking and waking by extending the existing bounded retry; preserve the original blocking fallback, all debit logic, poison recovery, budgets and worker count.",
+  "full_selected_bases": 125000000,
+  "full_observations_per_subject": 6,
+  "full_warmups_excluded": 0,
+  "expected_updates": 874999961,
+  "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+  "decision_rule": "Record every observation. Verify output and finite-budget tests, compare elapsed and independent counters/profiles. Repeat before promotion when effects are small or inconsistent; retain rejected candidates and their reversions.",
+  "parent_binary": "counting-escrow-backoff10",
+  "priority": "Continue reducing kernel parking/waking; preparation changes deferred.",
+  "independent_replication_observations_per_subject": 6,
+  "validation_order": "Exact-revision worker-budget tests before native execution; full native and catalog validation before any promotion, after measuring the candidate.",
+  "small_input_protocol": "One prefix batch; if its direction conflicts with full input, plan and retain one independent prefix repeat. Never discard or pool batches."
+}

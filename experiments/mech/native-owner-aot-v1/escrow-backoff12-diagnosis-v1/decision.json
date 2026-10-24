@@ -1,0 +1,68 @@
+{
+  "source_commit": "438646017717a5c4392721f13c6f935e88c59527",
+  "parent_commit": "0b4ce3e7c316ae4248399c3ce1b2ed14b8eb65e2",
+  "decision": "retain",
+  "reason": "Both full-input cohorts improve, with lower kernel CPU, cycles and context switches; the one prefix cohort also improves. Exact-revision worker, native and catalog validation passes.",
+  "batches": [
+    {
+      "batch": "cohort",
+      "median_seconds": {
+        "rust": 0.5545829165,
+        "mech": 0.7051126249999999,
+        "baseline": 0.7212653335
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.2714286791414353,
+        "baseline": 1.3005545465625608
+      },
+      "stdev_seconds": {
+        "rust": 0.016407195728217347,
+        "mech": 0.0163268260865377,
+        "baseline": 0.009094398053170182
+      },
+      "candidate_change_percent": -2.2394960286830523,
+      "faster_pairs": 5
+    },
+    {
+      "batch": "replication",
+      "median_seconds": {
+        "rust": 0.553686729,
+        "mech": 0.710666542,
+        "baseline": 0.719791667
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.2835173840693588,
+        "baseline": 1.299998048174277
+      },
+      "stdev_seconds": {
+        "rust": 0.008744818152174866,
+        "mech": 0.011809528336637818,
+        "baseline": 0.009650241415620039
+      },
+      "candidate_change_percent": -1.2677452960843993,
+      "faster_pairs": 4
+    }
+  ],
+  "prefix": {
+    "median_seconds": {
+      "candidate": 0.100719333,
+      "baseline": 0.109965916,
+      "rust": 0.02090325
+    },
+    "x_rust": {
+      "candidate": 4.8183575759750275,
+      "baseline": 5.260709028500353,
+      "rust": 1.0
+    },
+    "candidate_change_percent": -8.408589985282354
+  },
+  "limitations": [
+    "Full-input ranges overlap; all observations retained without exclusions.",
+    "The one prefix batch has only three measured processes per subject and one excluded warmup.",
+    "CPU seconds sum across threads; stack locations do not apportion elapsed time or kernel CPU.",
+    "Only existing bounded retry changes; source, bytecode, generated object, secured policy, all debits and worker count remain identical."
+  ],
+  "next_target": "Serial input preparation before workers start: inspect current generated source-selection checks and line-framing passes."
+}
