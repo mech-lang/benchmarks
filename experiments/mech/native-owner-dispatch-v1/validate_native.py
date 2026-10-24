@@ -17,9 +17,12 @@ def source_state():
 out=HERE/sys.argv[1];assert not out.exists()
 env=json.loads((HERE.parent/'canonical-native-integration-v1/validation-v2/results.json').read_text())['environment']
 env['TMPDIR']=str(HERE/'.build/tmp');Path(env['TMPDIR']).mkdir(parents=True,exist_ok=True)
-command=['/Users/cim310/.cargo/bin/cargo','test','--manifest-path',str(ROOT/'Cargo.toml'),'--offline','--locked','-p','mech-stdlib','-p','mech-gpu','--no-default-features','--features','mech-stdlib/full_compiler,mech-stdlib/native-artifact,mech-gpu/canonical-native-program-host','--lib',sys.argv[2],'--','--test-threads=1','--nocapture']
-if len(sys.argv)>4:
- assert sys.argv[4]=='--no-run'
+extra=sys.argv[4:]
+assert len(extra)==len(set(extra)) and set(extra)<= {'--no-run','--engine-budget'}
+packages=['-p','mech-engine'] if '--engine-budget' in extra else ['-p','mech-stdlib','-p','mech-gpu']
+features='mech-engine/full_compiler,mech-engine/native-artifact' if '--engine-budget' in extra else 'mech-stdlib/full_compiler,mech-stdlib/native-artifact,mech-gpu/canonical-native-program-host'
+command=['/Users/cim310/.cargo/bin/cargo','test','--manifest-path',str(ROOT/'Cargo.toml'),'--offline','--locked',*packages,'--no-default-features','--features',features,'--lib',sys.argv[2],'--','--test-threads=1','--nocapture']
+if '--no-run' in extra:
  command.insert(command.index('--'),'--no-run')
 with Path(PLAN['common_mutex']).open('a+') as lock:
  fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)

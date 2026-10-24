@@ -1,0 +1,291 @@
+{
+  "status": "qualified-current-runtime-and-unchanged-generated-loop-diagnosed",
+  "source_commit": "779581405c58839612f454f2210bed9aa0013a36",
+  "previous_source_commit": "5474f214a78f711880ce266637ef35d2f3a6e5bc",
+  "selected_bases": 125000000,
+  "benchmark_samples": 0,
+  "separate_unprofiled_timing": {
+    "median_seconds": {
+      "rust": 0.552703583,
+      "mech": 1.1215535,
+      "baseline": 1.149414042
+    },
+    "x_rust": {
+      "rust": 1.0,
+      "mech": 2.0292133695105794,
+      "baseline": 2.079621115826926
+    },
+    "median_reduction_percent": 2.4238908680393467
+  },
+  "generated_object_identical_to_parent": true,
+  "generated_object_sha256": "c92728c16aecb53532cf814e53e816eb203b08f2711fb8aa97810f8e90a856db",
+  "native_ir_abi_work_versions": [
+    58,
+    27,
+    65
+  ],
+  "versions_unchanged_reason": "Generated code, private frame/helper effects and work prices are unchanged; the host runtime combines its existing remaining-work decision and debit.",
+  "profile_taxonomy": 3,
+  "profile_taxonomy_scope": "Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.",
+  "candidate_worker_partition": {
+    "worker_observations": 11633,
+    "exclusive_buckets": {
+      "generated_counting_loop": 9548,
+      "work_budget_wait": 1240,
+      "work_budget_active": 403,
+      "storage_helper_active": 255,
+      "generated_helper_bridge": 71,
+      "other_active": 116
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 961
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 320
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 269
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 61
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 22
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 10
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 82.07685033955127,
+      "work_budget_wait": 10.659331212928738,
+      "work_budget_active": 3.4642826442018397,
+      "storage_helper_active": 2.1920398865297,
+      "generated_helper_bridge": 0.6103326742886616,
+      "other_active": 0.997163242499785
+    }
+  },
+  "parent_worker_partition": {
+    "worker_observations": 12154,
+    "exclusive_buckets": {
+      "generated_counting_loop": 9581,
+      "work_budget_wait": 1578,
+      "work_budget_active": 499,
+      "storage_helper_active": 289,
+      "generated_helper_bridge": 104,
+      "other_active": 103
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "remaining_work_query",
+        "observations": 1029
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 331
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 276
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 217
+      },
+      {
+        "category": "work_budget_active",
+        "route": "remaining_work_query",
+        "observations": 118
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 84
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 17
+      },
+      {
+        "category": "work_budget_active",
+        "route": "other_budget_operation",
+        "observations": 4
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "frozen_map_charge",
+        "observations": 1
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 78.83001480993912,
+      "work_budget_wait": 12.983379957215732,
+      "work_budget_active": 4.105644232351489,
+      "storage_helper_active": 2.3778180023037683,
+      "generated_helper_bridge": 0.8556853710712523,
+      "other_active": 0.847457627118644
+    }
+  },
+  "blocked_worker_percent": {
+    "candidate": 10.659331212928738,
+    "parent": 12.983379957215732
+  },
+  "whole_process_hardware_medians": {
+    "mech": {
+      "instructions": 79919700484,
+      "cycles": 15699773033,
+      "real_seconds": 1.09,
+      "user_seconds": 4.19,
+      "system_seconds": 0.47
+    },
+    "baseline": {
+      "instructions": 80258044739,
+      "cycles": 16240516719,
+      "real_seconds": 1.13,
+      "user_seconds": 4.26,
+      "system_seconds": 0.57
+    },
+    "rust": {
+      "instructions": 33144299896,
+      "cycles": 7903322491,
+      "real_seconds": 0.53,
+      "user_seconds": 2.34,
+      "system_seconds": 0.02
+    }
+  },
+  "source_records": [
+    {
+      "repository": "mech-lang/mech",
+      "commit": "779581405c58839612f454f2210bed9aa0013a36",
+      "path": "hosts/gpu/src/native_artifact/program_packed_map.rs",
+      "line": 313,
+      "sha256": "c0b5199a13ff4f21d696335c39221a9a7483f56eb09eda0064b6a21862f5a63b"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "779581405c58839612f454f2210bed9aa0013a36",
+      "path": "src/engine/src/resident/native_worker_budget.rs",
+      "line": 102,
+      "sha256": "d5fd7e92498aa3dd02a7a9975dd6fba568c82782576278e73e15269348af2118"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "779581405c58839612f454f2210bed9aa0013a36",
+      "path": "src/engine/src/resident/budget.rs",
+      "line": 667,
+      "sha256": "15a88bc417211fe13fc338aa95166c41e60530c98c62d9384521a86329b26254"
+    },
+    {
+      "repository": "mech-lang/mech",
+      "commit": "779581405c58839612f454f2210bed9aa0013a36",
+      "path": "hosts/gpu/src/native_artifact/program_loop_bounds.rs",
+      "line": 43,
+      "sha256": "c2daf174f03aeedc6ee799648b9cab79e03ea07e0edc36281520f66363ee2778"
+    }
+  ],
+  "evidence": [
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "escrow-transaction-timing-v1/results.json",
+      "sha256": "dcc5a1bb387e793585433100de3d92f1407198ef908cbb4e0d813fc06670003f"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "full-escrow-transaction-cohort-v1/results.json",
+      "sha256": "e83c26f2eb14a88a9a1b10040a58eeb1cb135bf480fcf313336ed850a3d970a2"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "escrow-transaction-remaining-profile-v2/results.json",
+      "sha256": "1c72366a3d2d6616036d541f37ec758c8e5c0862dfcf88500d0dcf8d05f52959"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "mutation-remaining-profile-v4/results.json",
+      "sha256": "ee0cf80d23f5309dbd0aea90f57d70710160e686d410bd88ae8d38d025a1410d"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "escrow-transaction-hardware-v1/results.json",
+      "sha256": "6d0cb8c968323c3841137062b463ac181663adb20a36492eb980902bf799aa16"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "escrow-transaction-codegen-audit-v1/steady-path-comparison.json",
+      "sha256": "b861051b1fbb7db5bb9a8a341bd74b459c15a7e319f68ec8f477d6f2fc288122"
+    },
+    {
+      "relative_to": "native-owner-aot-v1",
+      "path": "profile-escrow-transaction-build-v1/results.json",
+      "sha256": "b96377e4a5457ff6805881bdc3d7672d8c2c04b26f1da447bcfd45e5c46dc95b"
+    },
+    {
+      "relative_to": "experiments/mech",
+      "path": "native-owner-dispatch-v1/escrow-transaction-engine-v1/summary.json",
+      "sha256": "d5c6faf870b04537873c1d12bdb17bf559b5f785d07e386aec03aa849b9e9d90"
+    },
+    {
+      "relative_to": "experiments/mech",
+      "path": "native-owner-dispatch-v1/escrow-transaction-packed-v1/summary.json",
+      "sha256": "979f03397f0a285ac199ca3f141e1a9957b94973852af914d2932465cddc2bb9"
+    },
+    {
+      "relative_to": "experiments/mech",
+      "path": "native-owner-dispatch-v1/escrow-transaction-native-v1/summary.json",
+      "sha256": "ace6f7ad4845e2e3809f3967b77aa6874f3ebddc4a6a7bb22b01046601dae853"
+    }
+  ],
+  "remaining_priorities": [
+    {
+      "target": "Generated loop instruction gap",
+      "candidate_worker_samples": 9548,
+      "candidate_worker_total": 11633,
+      "static_path": {
+        "mech": {
+          "instructions": 82,
+          "branches": 9,
+          "stack_load_instructions": 5,
+          "stack_store_instructions": 3
+        },
+        "rust": {
+          "instructions": 34,
+          "branches": 4,
+          "stack_load_instructions": 2,
+          "stack_store_instructions": 0
+        }
+      },
+      "next_candidate": "A separate source proof of bounded stored count values is required before removing source count-overflow checks. Empty storage and one insertion per recurrence alone do not constrain arbitrary replacement values.",
+      "candidate_implemented": false
+    },
+    {
+      "target": "Remaining worker escrow contention",
+      "candidate_wait_samples": 1240,
+      "candidate_wait_total": 11633,
+      "note": "One refill transaction still shares escrow with missing-key debits and other work. Finite local/shared caps, source-order error replay and every debit remain required."
+    },
+    {
+      "target": "Generic launch-order cost analysis",
+      "note": "Task launch order differs from Rust; no performance effect has been measured. Preserve source-order admission/results/errors and existing finite bounds.",
+      "candidate_implemented": false
+    }
+  ],
+  "scope": "Candidate/Rust profiles verify exact machine-code identity and complete output. Parent captures are reanalyzed using the identical classifier. Sample distributions include waits and differing capture windows; they are not elapsed-time fractions or per-instruction costs. Timing and hardware cohorts are separate executions."
+}

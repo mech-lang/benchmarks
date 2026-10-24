@@ -2,6 +2,47 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## One transaction per finite fuel refill
+
+Runtime [`779581405`](https://github.com/mech-lang/mech/commit/779581405c58839612f454f2210bed9aa0013a36) combines the remaining-work decision and its existing debit under one worker-escrow lock. The generic `NativeLibraryWorkBudget::with_unscoped_debit` callback performs bounded scalar preparation; both local and shared compute/comparison limits are checked before either ledger commits. Active scopes, sealed groups, denied debits and preparation errors cannot spend fuel. Unwinding releases the lock without refunding earlier successful work.
+
+`PackedMap::refill` retains its original quarter-headroom policy and maximum **1,024 traversals**. Pricing remains pure arithmetic outside the shared lock; any pricing error is retained until the original remaining-allowance check succeeds. The frame/funded fields change only after the transaction succeeds. There is no new allowance, larger chunk, skipped debit or resource-policy increase.
+
+Three rotated **125-million-base** cohorts retain every complete process, including secured startup/shutdown, with no excluded warmup or outlier:
+
+| Executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Unmodified upstream Rust #7 | 0.553 | 1.00× |
+| Previous two-lock refill Mech | 1.149 | 2.08× |
+| Single-transaction refill Mech | 1.122 | 2.03× |
+
+The median decreases **2.4%**, a **1.02× speedup**. Candidate/control ranges are **1.114–1.126 / 1.133–1.166 seconds**. The candidate is lower in every paired cohort; its sample standard deviation is **0.006 seconds**, versus the control's **0.017**. The [aggregate](full-escrow-transaction-cohort-v1/results.json) retains all observations, orders, identities and checks. Every candidate process verifies complete output, all **874,999,961 updates**, seven packed SSA maps, seven guarded bounds/call entries, five complete frozen maps, ten original reads and seven peak workers. Subjects execute serially under the common lock. Source, bytecode, input and finite launch policies match the parent.
+
+The [one-million-base prefix](escrow-transaction-timing-v1/results.json), a separate protocol with one excluded warmup per executable and three timed observations, gives Rust **0.0208 seconds**, parent **0.0951 seconds / 4.57× Rust**, and candidate **0.0907 seconds / 4.36× Rust**. The candidate median is **4.6% lower**; its range is 0.0891–0.0922 seconds versus the control's 0.0935–0.0968.
+
+Validation passes [24 worker-budget checks](../native-owner-dispatch-v1/escrow-transaction-engine-v1/summary.json), [37 focused packed-map checks](../native-owner-dispatch-v1/escrow-transaction-packed-v1/summary.json), and the [full native suite](../native-owner-dispatch-v1/escrow-transaction-native-v1/summary.json): **348 GPU tests plus one catalog test**, with three existing exclusions. The 37 checks are a subset of the full suite. Six new engine tests compare exact debits with the separate-query reference across tight/maximum limits and parent reservations; reject own/foreign call scopes; retain root restrictions and tighter worker-local limits; commit concurrent two-dimensional charges once; preserve failures and sealed groups; and recover after an owned preparation unwind. All validation runs bind clean source snapshots before/after execution and terminate with their process groups reaped.
+
+IR58/ABI27/work65 remain: the generated native Object is **byte-for-byte identical** to the parent, SHA-256 `c92728c16aecb53532cf814e53e816eb203b08f2711fb8aa97810f8e90a856db`. Generated instructions, private frame/helper effects and work prices are unchanged; the improvement is in the host runtime. Each loop retains **6,280 code bytes / 240 stack bytes**. The [current disassembly/path check](escrow-transaction-codegen-audit-v1/steady-path-comparison.json) verifies every instruction at its relocated address: the specified funded, productive, first-hit existing-key path still has **82 instructions, nine branches and eight stack accesses**, versus Rust's **34, four and two**.
+
+Three fresh exact-code profiles ([first](full-profile-escrow-transaction-v1/analysis.json), [second](full-profile-escrow-transaction-v2/analysis.json), [third](full-profile-escrow-transaction-v3/analysis.json)) each observe seven workers and verify complete output. The [profiling copy](profile-escrow-transaction-build-v1/results.json) matches all **4,274,092 machine-code bytes** of the timed executable, SHA-256 `933e59145d7151c78e23e3d22df10621867e5e730b0203334226cac779cc9e6c`. [Three fresh Rust captures](rust-full-profile-v8/analysis.json) retain its exact unchanged binary and seven observed counting workers each.
+
+The [candidate partition](escrow-transaction-remaining-profile-v2/results.json) and [retained parent captures reanalyzed](mutation-remaining-profile-v4/results.json) use the same classifier:
+
+| Worker observations | Parent | Candidate |
+|---|---:|---:|
+| Generated counting loops | 78.8% | 82.1% |
+| Waiting for work-budget escrow | 13.0% | 10.7% |
+| Active budget/refill operations | 4.1% | 3.5% |
+| Active storage helpers | 2.4% | 2.2% |
+| Generated helper bridge | 0.9% | 0.6% |
+| Other active frames | 0.8% | 1.0% |
+
+The denominators are **12,154 / 11,633 worker observations**. These distributions include waiting threads and different capture windows; they are not elapsed-time fractions or per-instruction costs. The transaction is inlined into `PackedMap::refill`, whose only mutex is the worker escrow. Classifier version 3 includes this helper's validation/pricing on both sides so inlining cannot hide its waits or active work. This moves 47 parent observations previously assigned to storage into refill/accounting. The [unrefined candidate analysis](escrow-transaction-remaining-profile-v1/results.json) remains retained; it classified 961 inlined refill waits as `other_wait`. In the refined candidate, **961** blocked observations originate in refill, **269** in distinct-key debits and **ten** in other accounting.
+
+[Nine separate serial whole-process counter executions](escrow-transaction-hardware-v1/results.json) give candidate **79.9 billion instructions / 15.7 billion cycles**, parent **80.3 billion / 16.2 billion**, and Rust **33.1 billion / 7.90 billion**. Instructions decrease **0.4%**, cycles **3.3%**. Median system CPU time decreases **0.57 → 0.47 seconds** and involuntary context switches **91,591 → 80,008**. These are separate diagnostic executions, not timing-cohort observations. Candidate instruction count remains **2.41× Rust**, consistent with the unchanged generated-loop gap.
+
+The [source-bound diagnosis](escrow-transaction-remaining-profile-v2/diagnosis.json) prioritizes the remaining generated-loop work and escrow contention. Empty storage and one insertion per recurrence do not constrain arbitrary stored replacement values: removing count-overflow checks requires a separate source-value proof. Count bounds and cost-guided launch ordering remain unimplemented candidates, with no assigned gains. Rust parity, separate decoded-source executable qualification and secured/trusted comparison remain incomplete.
+
 ## Certified insertion progress and nonempty storage
 
 Compiler [`5474f214a`](https://github.com/mech-lang/mech/commit/5474f214a78f711880ce266637ef35d2f3a6e5bc), IR58/ABI27/work65, uses a bounded source-CFG proof of exactly one insertion before each index+1 recurrence. Productive prefixes may not insert twice; stop paths remain total; certified insertion nodes are dominated by the original source guards; other state variants may not enter the active recurrence. For an active initial state, a runtime guard checks equality between the source index and private update tally. Unaligned entries retain the checked native path.

@@ -15,8 +15,13 @@ BUDGET = ('NativeLibraryWorkBudget6charge', 'NativeWorkDebitBatch6charge',
           'NativeLibraryWorkBudget18unscoped_remaining',
           '::NativeLibraryWorkBudget::unscoped_remaining',
           'NativeWorkerWorkLoan9remaining', '::NativeWorkerWorkLoan::remaining',
-          'NativeWorkerWorkLoan6charge', '::NativeWorkerWorkLoan::charge')
+          'NativeWorkerWorkLoan6charge', '::NativeWorkerWorkLoan::charge',
+          '19with_unscoped_debit', '::with_unscoped_debit')
 STORAGE = ('program_packed_map', '10map_owners6closed')
+# The refill helper validates the private frame, calculates finite fuel and
+# debits it. Its only mutex is worker escrow. LLVM may inline the transaction
+# into this helper, so a vanished API symbol must not hide its waits or work.
+REFILL = ('9PackedMap6refill', '::PackedMap::refill')
 
 
 def leaves(content):
@@ -64,7 +69,7 @@ def matches(context, patterns):
 
 
 def category(symbol, context, language):
-    budget = matches(context, BUDGET)
+    budget = matches(context, BUDGET) or (language == 'mech' and matches(context, REFILL))
     if matches((symbol,), WAIT):
         return 'work_budget_wait' if budget else 'other_wait'
     if language == 'mech':
@@ -101,8 +106,8 @@ def summarize(path, workers, language, expected):
                     route = 'remaining_work_query'
                 elif matches(context, ('14insert_missing', '::insert_missing')):
                     route = 'missing_key_charge'
-                elif matches(context, ('9PackedMap6refill', '::PackedMap::refill')):
-                    route = 'loop_refill_charge'
+                elif matches(context, REFILL):
+                    route = 'loop_refill'
                 elif matches(context, ('6frozen', '::frozen::')):
                     route = 'frozen_map_charge'
                 else:
@@ -172,8 +177,8 @@ for language, observations in samples.items():
                                exclusive_percent={key: 100 * count / total for key, count in counts.items()})
 result = dict(status='exclusive-worker-observations-partitioned', samples=samples,
               aggregates=aggregates, evidence=evidence, script_sha256=sha(Path(__file__).read_bytes()),
-              taxonomy_version=2,
-              taxonomy_change='Work-budget observations include remaining-work queries as well as charges. Earlier taxonomy classified mutex waits under unscoped_remaining as other_wait, and its active query frames as storage helpers. Retained context identifies the shared worker escrow in both cases.',
+              taxonomy_version=3,
+              taxonomy_change='Work-budget observations include remaining-work queries, charges and the entire packed-loop refill helper, including its validation/pricing. The refill helper has only the worker escrow mutex; transaction inlining must not hide its waits. Earlier taxonomies can classify remaining queries or inlined refill work as storage/other waits. Use this same taxonomy on both parent and candidate before comparing distributions.',
               scope='Exclusive observed stack leaves, classified with ancestor context. Buckets partition worker observations, including waits. These are sampled thread observations, not elapsed-time shares, CPU utilization, instruction costs or benchmark samples. Capture windows differ; loader/startup overhead and collapsed PCs prohibit assigning precise wall seconds to these categories.',
               benchmark_samples=0)
 (out / 'results.json').write_text(json.dumps(result, indent=2) + '\n')
