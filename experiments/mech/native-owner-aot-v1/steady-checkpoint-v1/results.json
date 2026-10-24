@@ -1,0 +1,279 @@
+{
+  "status": "funded-loop-checkpoint-verified",
+  "benchmark_samples": 0,
+  "source_commit": "8eb6db853b2040d26ff89dcaa589b58be5a723ec",
+  "timed_source_commit": "f02fbe82f3b0dbf178ffc2f6b1c5431ce3643e63",
+  "post_timing_changes": [
+    "hosts/gpu/src/native_artifact/program_line_matrix_tests.rs",
+    "hosts/gpu/src/native_artifact/program_structural_projection_tests.rs"
+  ],
+  "production_code_unchanged_after_timing": true,
+  "json_artifacts_parsed": 288,
+  "terminal_owned_processes": 133,
+  "immutable_pins": {
+    "data/benchmarks.json": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+    "experiments/mech/native-owner-aot-v1/knucleotide-source-map.mec": "ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da",
+    "experiments/mech/native-hashmap-work-v1/.build/knucleotide-rust-7": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763",
+    "experiments/janet/.build/inputs/fasta-n25000000.stdin": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+    "experiments/mech/native-owner-aot-v1/.build/counting-escrow-spin": "86f3a407052eb265930aab5a74235dec3ca29abc04a0d277ebfa5f41b8f162c5",
+    "experiments/mech/native-owner-aot-v1/.build/counting-steady": "d3c88bd5dac3da4c5137c1fd716fc15204e936a65ddce1c48471251329e21835",
+    "experiments/mech/native-owner-aot-v1/.build/counting-steady-fold": "5b87a57ac53148b37b5aeab38703ba83c10663d418d2b4bb829d2027645e99a7"
+  },
+  "common_lock_inode": 83858837,
+  "cohorts": {
+    "full-steady-cohort-v1": {
+      "observations_per_subject": 3,
+      "paired_faster": 3,
+      "median_seconds": {
+        "rust": 0.558538792,
+        "mech": 0.869952875,
+        "baseline": 0.898830833
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.557551395642364,
+        "baseline": 1.6092540856141644
+      },
+      "reduction_percent": 3.212835712768658
+    },
+    "full-steady-fold-cohort-v2": {
+      "observations_per_subject": 6,
+      "paired_faster": 6,
+      "median_seconds": {
+        "rust": 0.5520623545000001,
+        "mech": 0.85518,
+        "baseline": 0.899297542
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.5490641465211517,
+        "baseline": 1.6289782026787336
+      },
+      "reduction_percent": 4.905778114536419
+    }
+  },
+  "profiles": {
+    "steady-remaining-profile-v1": {
+      "mech": {
+        "worker_observations": 7828,
+        "exclusive_buckets": {
+          "generated_counting_loop": 6924,
+          "work_budget_wait": 96,
+          "work_budget_active": 283,
+          "storage_helper_active": 339,
+          "generated_helper_bridge": 81,
+          "other_active": 105
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 164
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 97
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 73
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 22
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 17
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 5
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 1
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 88.4517118037813,
+          "work_budget_wait": 1.2263668880940215,
+          "work_budget_active": 3.6152273888605007,
+          "storage_helper_active": 4.330608073582013,
+          "generated_helper_bridge": 1.0347470618293306,
+          "other_active": 1.341338783852836
+        }
+      },
+      "rust": {
+        "worker_observations": 6721,
+        "exclusive_buckets": {
+          "rust_counting_task_active": 5260,
+          "other_wait": 1460,
+          "other_active": 1
+        },
+        "work_budget_routes": [],
+        "exclusive_percent": {
+          "rust_counting_task_active": 78.26216336854635,
+          "other_wait": 21.72295789317066,
+          "other_active": 0.014878738282993602
+        }
+      }
+    },
+    "steady-parent-remaining-profile-v1": {
+      "mech": {
+        "worker_observations": 7992,
+        "exclusive_buckets": {
+          "generated_counting_loop": 7071,
+          "work_budget_wait": 96,
+          "work_budget_active": 261,
+          "storage_helper_active": 386,
+          "generated_helper_bridge": 81,
+          "other_active": 97
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 183
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 72
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 63
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 24
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 13
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 2
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 88.47597597597597,
+          "work_budget_wait": 1.2012012012012012,
+          "work_budget_active": 3.265765765765766,
+          "storage_helper_active": 4.82982982982983,
+          "generated_helper_bridge": 1.0135135135135136,
+          "other_active": 1.2137137137137137
+        }
+      },
+      "rust": {
+        "worker_observations": 6721,
+        "exclusive_buckets": {
+          "rust_counting_task_active": 5260,
+          "other_wait": 1460,
+          "other_active": 1
+        },
+        "work_budget_routes": [],
+        "exclusive_percent": {
+          "rust_counting_task_active": 78.26216336854635,
+          "other_wait": 21.72295789317066,
+          "other_active": 0.014878738282993602
+        }
+      }
+    },
+    "steady-fold-remaining-profile-v1": {
+      "mech": {
+        "worker_observations": 7673,
+        "exclusive_buckets": {
+          "generated_counting_loop": 6679,
+          "work_budget_wait": 79,
+          "work_budget_active": 310,
+          "storage_helper_active": 429,
+          "generated_helper_bridge": 78,
+          "other_active": 98
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 212
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 79
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 58
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 21
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 18
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 1
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 87.04548416525479,
+          "work_budget_wait": 1.0295842564837743,
+          "work_budget_active": 4.04014075329076,
+          "storage_helper_active": 5.591033494070116,
+          "generated_helper_bridge": 1.0165515443763846,
+          "other_active": 1.2772057865241757
+        }
+      },
+      "rust": {
+        "worker_observations": 6721,
+        "exclusive_buckets": {
+          "rust_counting_task_active": 5260,
+          "other_wait": 1460,
+          "other_active": 1
+        },
+        "work_budget_routes": [],
+        "exclusive_percent": {
+          "rust_counting_task_active": 78.26216336854635,
+          "other_wait": 21.72295789317066,
+          "other_active": 0.014878738282993602
+        }
+      }
+    }
+  },
+  "validation": {
+    "steady-fold-native-v2": {
+      "passed": 364,
+      "failed": 0,
+      "ignored": 3,
+      "source_commit": "8eb6db853b2040d26ff89dcaa589b58be5a723ec"
+    },
+    "steady-fold-catalog-v1": {
+      "passed": 1,
+      "failed": 0,
+      "ignored": 0,
+      "source_commit": "8eb6db853b2040d26ff89dcaa589b58be5a723ec"
+    }
+  },
+  "verifier_sha256": "0f74248de69c9f2604308f9bad00509f86d44e079b4d61aa05d9209003e9ed5a",
+  "scope": "Recomputed receipt statistics and immutable artifact checks. Failed attempts remain; no benchmark observation is excluded or reclassified as a passing observation."
+}

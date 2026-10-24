@@ -1,0 +1,54 @@
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0433]: cannot find `iteration_compiler` in `super`
+   --> hosts/gpu/src/native_artifact/program_steady_loop.rs:588:29
+    |
+588 |         .push(super::super::iteration_compiler::SteadyLoop {
+    |                             ^^^^^^^^^^^^^^^^^^ could not find `iteration_compiler` in `super`
+    |
+help: consider importing this module
+    |
+  4 + use crate::native_artifact::iteration_compiler;
+    |
+help: if you import `iteration_compiler`, refer to it directly
+    |
+588 -         .push(super::super::iteration_compiler::SteadyLoop {
+588 +         .push(iteration_compiler::SteadyLoop {
+    |
+
+error[E0433]: cannot find `abi` in `super`
+   --> hosts/gpu/src/native_artifact/program_steady_loop.rs:704:43
+    |
+704 |         .iconst(types::I64, super::super::abi::STATUS_ABI as i64);
+    |                                           ^^^ could not find `abi` in `super`
+    |
+help: consider importing this module
+    |
+  4 + use crate::native_artifact::abi;
+    |
+help: if you import `abi`, refer to it directly
+    |
+704 -         .iconst(types::I64, super::super::abi::STATUS_ABI as i64);
+704 +         .iconst(types::I64, abi::STATUS_ABI as i64);
+    |
+
+warning: unused import: `SteadyLoop`
+   --> hosts/gpu/src/native_artifact/iteration_compiler.rs:234:169
+    |
+234 | ...lShim, PreservingCallRegion, MutationLoop, CountValueLoop, SteadyLoop};
+    |                                                               ^^^^^^^^^^
+    |
+    = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `Target`
+  --> hosts/gpu/src/native_artifact/program_steady_loop.rs:69:31
+   |
+69 |     use tag_threading::{Edge, Target};
+   |                               ^^^^^^
+
+For more information about this error, try `rustc --explain E0433`.
+warning: `mech-gpu` (lib test) generated 2 warnings
+error: could not compile `mech-gpu` (lib test) due to 2 previous errors; 2 warnings emitted

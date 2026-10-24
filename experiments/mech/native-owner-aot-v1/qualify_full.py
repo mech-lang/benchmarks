@@ -59,6 +59,9 @@ require_lookup_threading = timing.get('require_lookup_threading', False)
 if require_lookup_threading:
     assert timing.get('lookup_threading_qualified') is True and timing.get('require_lookup_facts')
 require_loop_constants = timing.get('require_loop_constants', False)
+require_steady_loops = timing.get('require_steady_loops', False)
+if require_steady_loops:
+    assert timing.get('steady_loops_qualified') is True and timing.get('require_loop_constants')
 if require_loop_constants:
     assert timing.get('loop_constants_qualified') is True and timing.get('require_outlined_loops')
 require_header_cache = timing.get('require_header_cache', False)
@@ -155,6 +158,7 @@ report = dict(status='running', source_commit=timing['source_commit'],
               require_header_cache=require_header_cache,
               require_lookup_threading=require_lookup_threading,
               require_loop_constants=require_loop_constants,
+              require_steady_loops=require_steady_loops,
               require_key_bits=timing.get('require_key_bits'),
               source_key_domains_qualified=timing.get('source_key_domains_qualified'),
               closed_key_domains=timing.get('closed_key_domains'),
@@ -204,6 +208,9 @@ if require_mutation_facts:
         report[key] = timing[key]
 if require_count_values:
     for key in ('count_values_qualified', 'compiled_count_value_loops', 'qualified_count_value_regions'):
+        report[key] = timing[key]
+if require_steady_loops:
+    for key in ('steady_loops_qualified', 'compiled_steady_loops', 'qualified_steady_regions'):
         report[key] = timing[key]
 if require_header_cache:
     for key in ('header_cache_qualified', 'compiled_header_cache_loops', 'qualified_header_cache_regions'):
