@@ -2,9 +2,25 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
-## Bounded width versions and productive source-header entry
+## Current counting-loop checkpoint
 
-Current compiler [`9dd35e68a`](https://github.com/mech-lang/mech/commit/9dd35e68a5e46b77823ce86c98a2252bdb2be9fe) retains the unchanged Mech source and bytecode with **IR69 / ABI27 / work65**. Six balanced [complete-process full-input cohorts](full-productive-entry-cohort-v1/results.json), including secured startup and shutdown, give:
+Compiler [`393d23b24`](https://github.com/mech-lang/mech/commit/393d23b24b80cad13e2c2b0284823290d7bafacf), **IR73 / ABI27 / work65**, retains the unchanged string/map source and bytecode. It adds separate precise cold snapshots, direct entry/update continuations, a peeled first probe group and a caller-bound prepaid stopping extent. The [full strategy report](strategy-search-v2/README.md) records each stage, the rejected callee-bound extent and the exact-code evidence.
+
+| 125-million-base executable | Median seconds | × Rust time |
+|---|---:|---:|
+| Exact upstream Rust #7 | 0.562 | 1.00× |
+| Direct-entry IR71 control | 0.790 | 1.41× |
+| Caller-bound extent IR73 | 0.782 | 1.39× |
+
+Six balanced [complete-process cohorts](full-caller-extent-cohort-v1/results.json), including secured startup/shutdown, retain every process and outlier. The latest stage is only a **1.03%** median reduction against IR71, four faster/two slower pairs with overlapping ranges. All Mech full processes verify complete output, **874,999,961 physical updates**, seven complete maps and peak workers under the unchanged finite policy. Full validation at the exact timed source revision passes **365 native checks plus one catalog check**, with three existing manual exclusions. Three profiles match the entire timed machine-code section. Canonical benchmark data is unchanged; Rust parity remains incomplete.
+
+A [separate matched compiler diagnostic](backend-comparison-v4/results.json) compiles the same unchanged Rust source through LLVM and the official unmodified Rust Cranelift backend. In that cohort, the protected Rust control is **0.562 s / 1.00×**, matched LLVM **0.560 s / 1.00×**, stock Rust Cranelift **7.484 s / 13.32×**, and current Mech **0.786 s / 1.40×**. Shared precompiled library code, different or unestablished embedded backend versions and different compiler pipelines prevent treating this as an isolated backend ceiling. It supports further investigation of lowering/inlining rather than a claim of general language superiority. All failed setup attempts and all 48 completed diagnostic observations remain.
+
+[Checkpoint verification](strategy-search-v2/results.json) checks 72 primary full-input observations across four separate stage cohorts, twelve exact-code profiles, nine malformed-metadata rejection cases, the backend diagnostic and 281 terminal owned-process receipts. The stages are not pooled. The historical checkpoints below retain their own controls and measurements.
+
+## Earlier checkpoint: bounded width versions and productive source-header entry
+
+Compiler [`9dd35e68a`](https://github.com/mech-lang/mech/commit/9dd35e68a5e46b77823ce86c98a2252bdb2be9fe) retains the unchanged Mech source and bytecode with **IR69 / ABI27 / work65**. Six balanced [complete-process full-input cohorts](full-productive-entry-cohort-v1/results.json), including secured startup and shutdown, give:
 
 | 125-million-base executable | Median seconds | × Rust time |
 |---|---:|---:|

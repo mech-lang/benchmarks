@@ -1,0 +1,47 @@
+thread 'rustc' panicked at /rustc-dev/ec818fda361ca216eb186f5cf45131bd9c776bb4/compiler/rustc_codegen_cranelift/src/debuginfo/object.rs:89:14:
+called `Result::unwrap()` on an `Err` value: Error("unimplemented relocation Relocation { offset: 32, symbol: SymbolId(11), addend: 0, flags: Generic { kind: Relative, encoding: Generic, size: 32 } }")
+stack backtrace:
+   0:        0x112395e18 - <std[bdd3e78e9dcdd1d8]::backtrace::Backtrace>::create
+   1:        0x11023482c - std[bdd3e78e9dcdd1d8]::panicking::update_hook::<alloc[c316d1bac71f694f]::boxed::Box<rustc_driver_impl[f3b956a7304e4434]::install_ice_hook::{closure#1}>>::{closure#0}
+   2:        0x1123a7454 - std[bdd3e78e9dcdd1d8]::panicking::panic_with_hook
+   3:        0x11238b37c - std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}
+   4:        0x112381d20 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_end_short_backtrace::<std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}, !>
+   5:        0x11238c94c - __rustc[b5c62ea7d35cbfc4]::rust_begin_unwind
+   6:        0x1153c7b8c - core[c1d22ed8524e785f]::panicking::panic_fmt
+   7:        0x1153c78f4 - core[c1d22ed8524e785f]::result::unwrap_failed
+   8:        0x109b7117c - <cranelift_object[700a40181eee288a]::backend::ObjectProduct as rustc_codegen_cranelift[30319fbef08c323e]::debuginfo::object::WriteDebugInfo>::add_debug_reloc
+   9:        0x109b27594 - <rustc_codegen_cranelift[30319fbef08c323e]::unwind_module::UnwindModule<cranelift_object[700a40181eee288a]::backend::ObjectModule>>::finish
+  10:        0x109b6dda8 - rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::run_aot
+  11:        0x109b7df04 - <rustc_codegen_cranelift[30319fbef08c323e]::CraneliftCodegenBackend as rustc_codegen_ssa[9623d04433a2262a]::traits::backend::CodegenBackend>::codegen_crate
+  12:        0x110b3e160 - <rustc_interface[e06b01455700feae]::queries::Linker>::codegen_and_build_linker
+  13:        0x110229558 - rustc_interface[e06b01455700feae]::passes::create_and_enter_global_ctxt::<core[c1d22ed8524e785f]::option::Option<rustc_interface[e06b01455700feae]::queries::Linker>, rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}::{closure#2}>
+  14:        0x110238324 - rustc_interface[e06b01455700feae]::interface::run_compiler::<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}
+  15:        0x11022ce28 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_begin_short_backtrace::<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>
+  16:        0x11023e138 - <std[bdd3e78e9dcdd1d8]::thread::lifecycle::spawn_unchecked<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>::{closure#1} as core[c1d22ed8524e785f]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  17:        0x1123b2184 - <std[bdd3e78e9dcdd1d8]::sys::thread::unix::Thread>::new::thread_start
+  18:        0x196dadc08 - __pthread_cond_wait
+
+
+rustc version: 1.96.0-nightly (ec818fda3 2026-03-02)
+platform: aarch64-apple-darwin
+
+query stack during panic:
+end of query stack
+thread '<unnamed>' panicked at /rustc-dev/ec818fda361ca216eb186f5cf45131bd9c776bb4/compiler/rustc_codegen_cranelift/src/debuginfo/object.rs:89:14:
+called `Result::unwrap()` on an `Err` value: Error("unimplemented relocation Relocation { offset: 32, symbol: SymbolId(1485), addend: 0, flags: Generic { kind: Relative, encoding: Generic, size: 32 } }")
+stack backtrace:
+   0:        0x112395e18 - <std[bdd3e78e9dcdd1d8]::backtrace::Backtrace>::create
+   1:        0x11023482c - std[bdd3e78e9dcdd1d8]::panicking::update_hook::<alloc[c316d1bac71f694f]::boxed::Box<rustc_driver_impl[f3b956a7304e4434]::install_ice_hook::{closure#1}>>::{closure#0}
+   2:        0x1123a7454 - std[bdd3e78e9dcdd1d8]::panicking::panic_with_hook
+   3:        0x11238b37c - std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}
+   4:        0x112381d20 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_end_short_backtrace::<std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}, !>
+   5:        0x11238c94c - __rustc[b5c62ea7d35cbfc4]::rust_begin_unwind
+   6:        0x1153c7b8c - core[c1d22ed8524e785f]::panicking::panic_fmt
+   7:        0x1153c78f4 - core[c1d22ed8524e785f]::result::unwrap_failed
+   8:        0x109b7117c - <cranelift_object[700a40181eee288a]::backend::ObjectProduct as rustc_codegen_cranelift[30319fbef08c323e]::debuginfo::object::WriteDebugInfo>::add_debug_reloc
+   9:        0x109b27594 - <rustc_codegen_cranelift[30319fbef08c323e]::unwind_module::UnwindModule<cranelift_object[700a40181eee288a]::backend::ObjectModule>>::finish
+  10:        0x109b17cc8 - rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::module_codegen::{closure#0}
+  11:        0x109b08d08 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_begin_short_backtrace::<rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::module_codegen::{closure#0}, core[c1d22ed8524e785f]::result::Result<rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::ModuleCodegenResult, alloc[c316d1bac71f694f]::string::String>>
+  12:        0x109b1bf80 - <std[bdd3e78e9dcdd1d8]::thread::lifecycle::spawn_unchecked<rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::module_codegen::{closure#0}, core[c1d22ed8524e785f]::result::Result<rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::ModuleCodegenResult, alloc[c316d1bac71f694f]::string::String>>::{closure#1} as core[c1d22ed8524e785f]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  13:        0x1123b2184 - <std[bdd3e78e9dcdd1d8]::sys::thread::unix::Thread>::new::thread_start
+  14:        0x196dadc08 - __pthread_cond_wait

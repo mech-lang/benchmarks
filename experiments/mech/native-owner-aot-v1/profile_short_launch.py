@@ -15,6 +15,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--receipt', required=True)
 parser.add_argument('--build', required=True)
 parser.add_argument('--captures', type=int, default=3)
+parser.add_argument('--minimum-parallel-peak', type=int, choices=range(1, 8), default=7)
 args = parser.parse_args()
 assert 1 <= args.captures <= 10
 out = HERE / args.receipt
@@ -37,7 +38,7 @@ report = dict(status='sampling', source_commit=build['source_commit'],
               binary_sha256=build['binary_sha256'], binary_path=str(binary),
               object_sha256=build['object_sha256'], selected_bases=1000000,
               input_sha256=process.sha(inp), launch_sha256=process.sha(launch),
-              expected_table_updates=6999961, requested_captures=args.captures, completed_output_verified=False,
+              expected_table_updates=6999961, requested_captures=args.captures, minimum_parallel_peak=args.minimum_parallel_peak, completed_output_verified=False,
               samples=samples, subjects=subjects, native_counters=None,
               profiling_overhead_included=True, benchmark_samples=0,
               script_sha256=process.sha(Path(__file__)),
@@ -63,7 +64,8 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             native = json.loads(native_path.read_text())
             assert native['shutdown'] == 'completed'
             assert native['native_hash_table_updates'] == native['native_packed_map_updates'] == 6999961
-            assert native['native_packed_ssa_regions'] == native['native_parallel_peak_workers'] == 7
+            assert native['native_packed_ssa_regions'] == native['native_parallel_tasks'] == 7
+            assert args.minimum_parallel_peak <= native['native_parallel_peak_workers'] <= 7
             subjects.append(dict(process=result, stdout_verified=True, native_report_sha256=process.sha(native_path)))
             report['native_counters'] = {key:value for key,value in native.items() if key.startswith('native_')}
             process.save(out / 'results.json', report)

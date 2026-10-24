@@ -1,0 +1,42 @@
+
+thread 'rustc' (2684955) panicked at /rustc-dev/ec818fda361ca216eb186f5cf45131bd9c776bb4/compiler/rustc_codegen_cranelift/src/debuginfo/object.rs:89:14:
+called `Result::unwrap()` on an `Err` value: Error("unimplemented relocation Relocation { offset: 32, symbol: SymbolId(11), addend: 0, flags: Generic { kind: Relative, encoding: Generic, size: 32 } }")
+stack backtrace:
+   0:        0x111728c08 - <<std[bdd3e78e9dcdd1d8]::sys::backtrace::BacktraceLock>::print::DisplayBacktrace as core[c1d22ed8524e785f]::fmt::Display>::fmt
+   1:        0x10e94ac28 - core[c1d22ed8524e785f]::fmt::write
+   2:        0x1117403f8 - <std[bdd3e78e9dcdd1d8]::sys::stdio::unix::Stderr as std[bdd3e78e9dcdd1d8]::io::Write>::write_fmt
+   3:        0x1116ff2d4 - std[bdd3e78e9dcdd1d8]::panicking::default_hook::{closure#0}
+   4:        0x11171b0f0 - std[bdd3e78e9dcdd1d8]::panicking::default_hook
+   5:        0x10f5a8580 - std[bdd3e78e9dcdd1d8]::panicking::update_hook::<alloc[c316d1bac71f694f]::boxed::Box<rustc_driver_impl[f3b956a7304e4434]::install_ice_hook::{closure#1}>>::{closure#0}
+   6:        0x11171b454 - std[bdd3e78e9dcdd1d8]::panicking::panic_with_hook
+   7:        0x1116ff37c - std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}
+   8:        0x1116f5d20 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_end_short_backtrace::<std[bdd3e78e9dcdd1d8]::panicking::panic_handler::{closure#0}, !>
+   9:        0x11170094c - __rustc[b5c62ea7d35cbfc4]::rust_begin_unwind
+  10:        0x11473bb8c - core[c1d22ed8524e785f]::panicking::panic_fmt
+  11:        0x11473b8f4 - core[c1d22ed8524e785f]::result::unwrap_failed
+  12:        0x108c8117c - <cranelift_object[700a40181eee288a]::backend::ObjectProduct as rustc_codegen_cranelift[30319fbef08c323e]::debuginfo::object::WriteDebugInfo>::add_debug_reloc
+  13:        0x108c37594 - <rustc_codegen_cranelift[30319fbef08c323e]::unwind_module::UnwindModule<cranelift_object[700a40181eee288a]::backend::ObjectModule>>::finish
+  14:        0x108c7dda8 - rustc_codegen_cranelift[30319fbef08c323e]::driver::aot::run_aot
+  15:        0x108c8df04 - <rustc_codegen_cranelift[30319fbef08c323e]::CraneliftCodegenBackend as rustc_codegen_ssa[9623d04433a2262a]::traits::backend::CodegenBackend>::codegen_crate
+  16:        0x10feb2160 - <rustc_interface[e06b01455700feae]::queries::Linker>::codegen_and_build_linker
+  17:        0x10f59d558 - rustc_interface[e06b01455700feae]::passes::create_and_enter_global_ctxt::<core[c1d22ed8524e785f]::option::Option<rustc_interface[e06b01455700feae]::queries::Linker>, rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}::{closure#2}>
+  18:        0x10f5ac324 - rustc_interface[e06b01455700feae]::interface::run_compiler::<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}
+  19:        0x10f5a0e28 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_begin_short_backtrace::<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>
+  20:        0x10f5b2138 - <std[bdd3e78e9dcdd1d8]::thread::lifecycle::spawn_unchecked<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>::{closure#1} as core[c1d22ed8524e785f]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}
+  21:        0x111726184 - <std[bdd3e78e9dcdd1d8]::sys::thread::unix::Thread>::new::thread_start
+  22:        0x196dadc08 - __pthread_cond_wait
+
+error: the compiler unexpectedly panicked. This is a bug
+
+note: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md
+
+note: please make sure that you have updated to the latest nightly
+
+note: please attach the file at `/private/tmp/mech-benchmark-publication/rustc-ice-2026-10-24T15_53_12-31981.txt` to your bug report
+
+note: rustc 1.96.0-nightly (ec818fda3 2026-03-02) running on aarch64-apple-darwin
+
+note: compiler flags: -C opt-level=3 -C target-cpu=native -C codegen-units=1 -C panic=abort -C force-unwind-tables=no -Z codegen-backend=cranelift
+
+query stack during panic:
+end of query stack

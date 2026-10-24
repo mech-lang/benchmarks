@@ -1,0 +1,88 @@
+{
+  "status": "failed-attempt-retained",
+  "configuration": {
+    "receipt": "backend-comparison-v2",
+    "install_component": false,
+    "no_unwind_tables": true,
+    "mech_timing": "caller-extent-timing-v1",
+    "mech_binary": "counting-caller-extent"
+  },
+  "toolchain": "nightly-2026-03-03-aarch64-apple-darwin",
+  "driver_sha256": "f74f7c82f2f12257ad710d9a735d1f233530987ce8cac5fbd8c7f02e26501a08",
+  "canonical_benchmark_samples": 0,
+  "scope": "Separate complete-process diagnostics. No excluded warmups or outliers. Application/generic codegen differs; existing dependency and standard-library native code is shared. This is not a Mech compiler improvement or a same-version Cranelift ceiling.",
+  "source_state_before": {
+    "commit": "393d23b24b80cad13e2c2b0284823290d7bafacf",
+    "tree": "47d9431c97ba2db8543e3ea43d4d46f3fdf26010",
+    "clean": true
+  },
+  "rust_version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+  "component": {
+    "path": "/Users/cim310/.rustup/toolchains/nightly-2026-03-03-aarch64-apple-darwin/lib/rustlib/aarch64-apple-darwin/codegen-backends/librustc_codegen_cranelift-1.96.0-nightly.dylib",
+    "sha256": "5086a05edf3ac39ded02eab2e2054d0b9eb0994b6364495097439e5bdb20c6bd"
+  },
+  "mech_source_commit": "393d23b24b80cad13e2c2b0284823290d7bafacf",
+  "inputs": {
+    "prefix": {
+      "path": "experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/input.fasta",
+      "sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+      "output": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+      "policy": "full-timing-v1/launch.json",
+      "policy_sha256": "3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2fd0daf57cdb43ec",
+      "updates": 6999961
+    },
+    "full": {
+      "path": "experiments/janet/.build/inputs/fasta-n25000000.stdin",
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "output": "f8c042fe770dda8f870b967605ea40ca2e353f2bdf92e89a327209dd31d445c7",
+      "policy": "full-cold-snapshots-v1/launch.json",
+      "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+      "updates": 874999961
+    }
+  },
+  "binaries": {
+    "rust": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/knucleotide-rust-7",
+      "sha256": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763"
+    },
+    "mech": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-caller-extent",
+      "sha256": "ef3c83bafff8befb7d722177d037807e421af2d1fac5cf24fca66514fd88d95b"
+    },
+    "llvm_abort": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/backend-comparison-v2-llvm_abort",
+      "sha256": "2be64d2d3eaae77aa864f60d717638c2ead7b3ef90fa40910664f0ec2bdb829c",
+      "command": [
+        "/Users/cim310/.cargo/bin/rustc",
+        "--edition=2021",
+        "-Copt-level=3",
+        "-Ctarget-cpu=native",
+        "-Ccodegen-units=1",
+        "-Ldependency=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps",
+        "--extern",
+        "futures=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libfutures-6d9979a0e9a0489d.rlib",
+        "--extern",
+        "tokio_threadpool=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libtokio_threadpool-dead00269b02d28d.rlib",
+        "--extern",
+        "itertools=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libitertools-f13fe1908f7d2158.rlib",
+        "--extern",
+        "num=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libnum-4c82bed52f6b3872.rlib",
+        "--extern",
+        "hashbrown=/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/rust-knucleotide-deps/release/deps/libhashbrown-85f11e69d704a89a.rlib",
+        "-Cpanic=abort",
+        "-Cforce-unwind-tables=no",
+        "/private/tmp/mech-benchmark-publication/archive/workloads/knucleotide/upstream/knucleotide-rust-7.rs",
+        "-o",
+        "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/backend-comparison-v2-llvm_abort"
+      ]
+    }
+  },
+  "samples": [],
+  "error": "AssertionError(('build-cranelift_abort', 101, 'impl[f3b956a7304e4434]::run_compiler::{closure#0}::{closure#2}>\\n  18:        0x10f5ac324 - rustc_interface[e06b01455700feae]::interface::run_compiler::<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}\\n  19:        0x10f5a0e28 - std[bdd3e78e9dcdd1d8]::sys::backtrace::__rust_begin_short_backtrace::<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>\\n  20:        0x10f5b2138 - <std[bdd3e78e9dcdd1d8]::thread::lifecycle::spawn_unchecked<rustc_interface[e06b01455700feae]::util::run_in_thread_with_globals<rustc_interface[e06b01455700feae]::util::run_in_thread_pool_with_globals<rustc_interface[e06b01455700feae]::interface::run_compiler<(), rustc_driver_impl[f3b956a7304e4434]::run_compiler::{closure#0}>::{closure#1}, ()>::{closure#0}, ()>::{closure#0}::{closure#0}, ()>::{closure#1} as core[c1d22ed8524e785f]::ops::function::FnOnce<()>>::call_once::{shim:vtable#0}\\n  21:        0x111726184 - <std[bdd3e78e9dcdd1d8]::sys::thread::unix::Thread>::new::thread_start\\n  22:        0x196dadc08 - __pthread_cond_wait\\n\\nerror: the compiler unexpectedly panicked. This is a bug\\n\\nnote: we would appreciate a bug report: https://github.com/rust-lang/rust/issues/new?labels=C-bug%2C+I-ICE%2C+T-compiler&template=ice.md\\n\\nnote: please make sure that you have updated to the latest nightly\\n\\nnote: please attach the file at `/private/tmp/mech-benchmark-publication/rustc-ice-2026-10-24T15_53_12-31981.txt` to your bug report\\n\\nnote: rustc 1.96.0-nightly (ec818fda3 2026-03-02) running on aarch64-apple-darwin\\n\\nnote: compiler flags: -C opt-level=3 -C target-cpu=native -C codegen-units=1 -C panic=abort -C force-unwind-tables=no -Z codegen-backend=cranelift\\n\\nquery stack during panic:\\nend of query stack\\n'))",
+  "source_state_after": {
+    "commit": "393d23b24b80cad13e2c2b0284823290d7bafacf",
+    "tree": "47d9431c97ba2db8543e3ea43d4d46f3fdf26010",
+    "clean": true
+  },
+  "source_unchanged": true
+}

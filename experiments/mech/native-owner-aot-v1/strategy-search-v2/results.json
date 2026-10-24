@@ -1,0 +1,232 @@
+{
+  "status": "broader-strategy-checkpoint-verified",
+  "source_commit": "393d23b24b80cad13e2c2b0284823290d7bafacf",
+  "evidence": {
+    "cold-snapshots": {
+      "source_commit": "056990b2506fa175deae54c7b2f241925dcc0f30",
+      "median_seconds": {
+        "rust": 0.5533868755,
+        "mech": 0.821766521,
+        "baseline": 0.8338498750000001
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.4849765279624887,
+        "baseline": 1.5068118018639205
+      },
+      "faster_pairs": 5,
+      "reduction_percent": 1.44910425272895,
+      "static_instructions": [
+        42,
+        45
+      ]
+    },
+    "direct-entry": {
+      "source_commit": "09d41e7305c749351d9ba042a9e05498dfa87c96",
+      "median_seconds": {
+        "rust": 0.5564924165,
+        "mech": 0.7886008125,
+        "baseline": 0.8218058125000001
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.4170917502520899,
+        "baseline": 1.4767601285003316
+      },
+      "faster_pairs": 6,
+      "reduction_percent": 4.040492230030324,
+      "static_instructions": [
+        38,
+        41
+      ]
+    },
+    "funded-extent": {
+      "source_commit": "22c486c974e8e561ab22ce5ed49ab97ba144d939",
+      "median_seconds": {
+        "rust": 0.566117938,
+        "mech": 0.8172950004999999,
+        "baseline": 0.798534625
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.4436832780592794,
+        "baseline": 1.4105446434378839
+      },
+      "faster_pairs": 0,
+      "reduction_percent": -2.349350286470031,
+      "static_instructions": [
+        42,
+        45
+      ]
+    },
+    "caller-extent": {
+      "source_commit": "393d23b24b80cad13e2c2b0284823290d7bafacf",
+      "median_seconds": {
+        "rust": 0.562235167,
+        "mech": 0.7821022710000001,
+        "baseline": 0.790240854
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3910589676792666,
+        "baseline": 1.4055343749068618
+      },
+      "faster_pairs": 4,
+      "reduction_percent": 1.029886389548762,
+      "static_instructions": [
+        37,
+        40
+      ]
+    }
+  },
+  "validation": {
+    "cold-snapshots-native-v1": 364,
+    "cold-snapshots-catalog-v1": 1,
+    "direct-entry-hash-v1": 3,
+    "direct-entry-focused-v1": 6,
+    "funded-extent-focused-v3": 6,
+    "caller-extent-focused-v1": 6,
+    "caller-extent-native-v1": 365,
+    "caller-extent-catalog-v1": 1
+  },
+  "negative_qualification_fixtures": 9,
+  "terminal_owned_processes": 281,
+  "expected_nonzero_processes": [
+    {
+      "path": "experiments/mech/native-owner-dispatch-v1/funded-extent-focused-v1/process.json",
+      "exit_status": 101
+    },
+    {
+      "path": "experiments/mech/native-owner-dispatch-v1/funded-extent-focused-v2/process.json",
+      "exit_status": 101
+    },
+    {
+      "path": "experiments/mech/native-owner-aot-v1/backend-comparison-v1/build-cranelift_abort/process.json",
+      "exit_status": 101
+    },
+    {
+      "path": "experiments/mech/native-owner-aot-v1/backend-comparison-v2/build-cranelift_abort/process.json",
+      "exit_status": 101
+    },
+    {
+      "path": "experiments/mech/native-owner-aot-v1/backend-comparison-v3/build-llvm_abort/process.json",
+      "exit_status": 1
+    }
+  ],
+  "primary_full_observations": 72,
+  "backend_diagnostic_observations": 48,
+  "backend_statistics": {
+    "prefix": {
+      "rust": {
+        "median_seconds": 0.020027353999999997,
+        "stdev_seconds": 0.004422192955885925,
+        "samples_seconds": [
+          0.027906375,
+          0.016249375,
+          0.019252625,
+          0.021088167,
+          0.020802083,
+          0.015645292
+        ],
+        "x_rust": 1.0
+      },
+      "llvm_abort": {
+        "median_seconds": 0.020172146000000002,
+        "stdev_seconds": 0.0754548618877498,
+        "samples_seconds": [
+          0.204249792,
+          0.016087792,
+          0.022068625,
+          0.019244667,
+          0.018962125,
+          0.021099625
+        ],
+        "x_rust": 1.0072297119230031
+      },
+      "cranelift_abort": {
+        "median_seconds": 0.0833853955,
+        "stdev_seconds": 0.10273118654881715,
+        "samples_seconds": [
+          0.333573083,
+          0.076789375,
+          0.080901209,
+          0.084999375,
+          0.085829875,
+          0.081771416
+        ],
+        "x_rust": 4.1635752531263
+      },
+      "mech": {
+        "median_seconds": 0.0847315,
+        "stdev_seconds": 0.003989852343043166,
+        "samples_seconds": [
+          0.075187417,
+          0.08521175,
+          0.08425125,
+          0.084228125,
+          0.085246292,
+          0.08544025
+        ],
+        "x_rust": 4.230788550499483
+      }
+    },
+    "full": {
+      "rust": {
+        "median_seconds": 0.5617198545,
+        "stdev_seconds": 0.06646512241511468,
+        "samples_seconds": [
+          0.553092708,
+          0.550889375,
+          0.721115625,
+          0.553645042,
+          0.569794667,
+          0.571526541
+        ],
+        "x_rust": 1.0
+      },
+      "llvm_abort": {
+        "median_seconds": 0.5603583335,
+        "stdev_seconds": 0.0834108019058408,
+        "samples_seconds": [
+          0.555954083,
+          0.554495459,
+          0.557886083,
+          0.562830584,
+          0.580976209,
+          0.765358458
+        ],
+        "x_rust": 0.9975761565323129
+      },
+      "cranelift_abort": {
+        "median_seconds": 7.4842541455,
+        "stdev_seconds": 0.10418690311342775,
+        "samples_seconds": [
+          7.262965333,
+          7.336084959,
+          7.475301791,
+          7.4950935,
+          7.4932065,
+          7.515265375
+        ],
+        "x_rust": 13.323819846392844
+      },
+      "mech": {
+        "median_seconds": 0.786093854,
+        "stdev_seconds": 0.007055760723996884,
+        "samples_seconds": [
+          0.788738125,
+          0.778244166,
+          0.783390625,
+          0.799172917,
+          0.784305667,
+          0.787882041
+        ],
+        "x_rust": 1.399441105210213
+      }
+    }
+  },
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "driver_sha256": "8a40e512226da7729ba01ac4a7dd0e5c7a2eeb97fbe3494c0a1130b01b4d9cc5",
+  "canonical_benchmark_samples": 0,
+  "scope": "Four separate six-cohort primary comparisons, complete outputs/updates/policies, twelve exact-code profiles, immutable test revisions, malformed-metadata rejection, matched backend diagnostics and terminal process ownership. No pooled timings or excluded full-input observations."
+}
