@@ -1,0 +1,70 @@
+{
+  "source_commit": "b8da46b50fd78e59dc610b4dda0b4b5adc93de81",
+  "parent_source_commit": "e939c8002793c03cf63a31eeb13dd78fb8855064",
+  "compiler": "compiler-v71",
+  "receipt": "sized-schedule-timing-v1",
+  "binary": "counting-sized-schedule",
+  "parent_receipt": "host-metadata-trim-timing-v1",
+  "parent_binary": "counting-host-metadata-trim",
+  "changes": [
+    "Start independent mapped jobs with larger input elements first: text UTF-8 byte length, scalar/unsupported elements one unit",
+    "Allocation-free bounded ordering of <=32 jobs; ordinal keys restore source-order joining, result replay and source errors"
+  ],
+  "unchanged": [
+    "Mech source, bytecode, descriptor, Object identity, native Object and code version",
+    "Original worker bodies, seven full maps, every physical table update, actual lookup results",
+    "All capability, schema, factory, source-visit and finite-accounting checks; conservative existing scheduler metadata/work envelopes",
+    "Worker count, scheduling policy, affinity, QoS, clock/power settings and input data"
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Fresh exact-code CPU profiles, whole-process counters, worker lifetimes, peak RSS and binary size remain separate from primary timings.",
+  "decision": "Retain this candidate and all earlier optimization factors. Report both complete-process sessions, uncertain outcomes and failures; do not discard the scheduling factor merely because a standalone gain is small.",
+  "production_change_commit": "d18a2b3a1072209150e5c747f95b3f548456bbd3",
+  "host_hardware_observation": {
+    "processor": "Apple M3",
+    "performance_cores": 4,
+    "efficiency_cores": 4,
+    "source": "Read-only sysctl query; hardware information is not used by the scheduling implementation."
+  }
+}
