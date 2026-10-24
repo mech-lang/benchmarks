@@ -2,6 +2,17 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Rejected runtime refill experiment
+
+Precomputing full-batch charges outside the budget mutex initially reduced the
+median 1.38%, but an independent repeat regressed 2.03%. The candidate is reverted;
+accepted IR78 remains the production implementation. In the repeat, Rust takes
+**0.5566 s / 1.000×**, accepted Mech **0.7408 s / 1.331×**, and the rejected
+candidate **0.7559 s / 1.358×**. Both batches, exact-code profiles, counters and
+validation are retained in the [experiment report](refill-fastpath-checkpoint-v1/README.md).
+Worker stacks identify budget-mutex parking/waking as a remaining hypothesis;
+those samples do not establish how much elapsed time can be saved.
+
 ## Current separate lookup functions
 
 IR78 separates admitted cached and ordinary hash loops. Six balanced full-input

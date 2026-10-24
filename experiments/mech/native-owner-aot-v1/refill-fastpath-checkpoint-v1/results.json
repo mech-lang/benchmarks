@@ -1,0 +1,149 @@
+{
+  "status": "rejected-full-refill-fastpath-trial-verified",
+  "evidence": {
+    "refill-fastpath": {
+      "source_commit": "36a0d26e05b92f0f3fb21bdbd3605af2108ec882",
+      "batches": {
+        "cohort-v1": {
+          "median_seconds": {
+            "rust": 0.546403583,
+            "mech": 0.7407937085,
+            "baseline": 0.75113275
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.3557629041023327,
+            "baseline": 1.3746848911128022
+          },
+          "faster_pairs": 6,
+          "candidate_change_percent": -1.3764599533171662
+        },
+        "replication-v1": {
+          "median_seconds": {
+            "rust": 0.556581292,
+            "mech": 0.755892125,
+            "baseline": 0.740825021
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.3580983332799481,
+            "baseline": 1.331027527601485
+          },
+          "faster_pairs": 2,
+          "candidate_change_percent": 2.0338276344475714
+        }
+      },
+      "decision": "reverted: initial gain did not reproduce",
+      "hardware_medians": {
+        "mech": {
+          "instructions": 26907864829,
+          "cycles": 7598614912,
+          "real_seconds": 0.75,
+          "user_seconds": 2.04,
+          "system_seconds": 0.16
+        },
+        "baseline": {
+          "instructions": 26868140398,
+          "cycles": 7524750717,
+          "real_seconds": 0.74,
+          "user_seconds": 2.02,
+          "system_seconds": 0.16
+        },
+        "rust": {
+          "instructions": 33147447573,
+          "cycles": 7985668472,
+          "real_seconds": 0.54,
+          "user_seconds": 2.36,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 5025,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3392,
+          "work_budget_wait": 452,
+          "work_budget_active": 567,
+          "storage_helper_active": 404,
+          "generated_helper_bridge": 107,
+          "other_active": 103
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 402
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 298
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 142
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 135
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 16
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "frozen_map_charge",
+            "observations": 11
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 8
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 7
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 67.50248756218906,
+          "work_budget_wait": 8.99502487562189,
+          "work_budget_active": 11.283582089552239,
+          "storage_helper_active": 8.039800995024876,
+          "generated_helper_bridge": 2.129353233830846,
+          "other_active": 2.0497512437810945
+        }
+      },
+      "instruction_range": [
+        16,
+        39
+      ]
+    }
+  },
+  "validation": {
+    "refill-fastpath-focused-v1": 5,
+    "refill-fastpath-native-v1": 382,
+    "refill-fastpath-catalog-v1": 1
+  },
+  "negative_qualification_fixtures": 18,
+  "primary_full_observations": 18,
+  "replication_full_observations": 18,
+  "revert_commit": "c4db5641680c171f362f79b809fd80f57c6e7639",
+  "production_tree_matches": "65dfd8bef29a8aef4cddd6926ff6461a959c24be",
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 72,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "9983b351d5ffe71501f00bb533c16829f8b4e06c5de3858bc6d60e9bd06cad68",
+  "validation_commit": "36a0d26e05b92f0f3fb21bdbd3605af2108ec882",
+  "changed_paths": [
+    "hosts/gpu/src/native_artifact/program_packed_map.rs",
+    "hosts/gpu/src/native_artifact/program_packed_map_tests.rs",
+    "hosts/gpu/src/native_artifact/program_packed_refill_tests.rs"
+  ],
+  "scope": "Two separately reported sets of six balanced complete-process cohorts; candidate reverted after the apparent gain did not reproduce, all complete outputs and physical updates, four bounded emitted lookup functions, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Full validation uses the exact timed revision. The generated Mech object matches the parent; only runtime refill selection and its tests changed. One cached function uses ordinary source/live exit snapshots after optional recipe metadata admission declined. No Rust runtime parity is established."
+}
