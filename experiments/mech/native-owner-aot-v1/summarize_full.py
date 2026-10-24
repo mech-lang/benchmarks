@@ -29,7 +29,8 @@ identity = ['source_commit', 'baseline_source_commit', 'source_sha256', 'input_s
             'require_outlined_loops', 'outlined_loops_qualified', 'compiled_outlined_loops',
             'require_loop_invariants', 'loop_invariants_qualified', 'compiled_loop_invariants', 'qualified_invariant_regions',
             'require_preserving_calls', 'preserving_calls_qualified', 'compiled_bound_call_shim', 'compiled_preserving_call_regions',
-            'require_mutation_facts', 'mutation_facts_qualified', 'compiled_mutation_loops', 'qualified_mutation_regions']
+            'require_mutation_facts', 'mutation_facts_qualified', 'compiled_mutation_loops', 'qualified_mutation_regions',
+            'require_count_values', 'count_values_qualified', 'compiled_count_value_loops', 'qualified_count_value_regions']
 first = reports[0]
 samples = {}
 receipts = []
@@ -42,6 +43,9 @@ for run, report in zip(args.runs, reports):
     if report.get('require_mutation_facts'):
         assert report.get('mutation_facts_qualified') is True
         assert report['compiled_mutation_loops'] and report['qualified_mutation_regions']
+    if report.get('require_count_values'):
+        assert report.get('count_values_qualified') is True and report.get('require_mutation_facts')
+        assert report['compiled_count_value_loops'] and report['qualified_count_value_regions']
     if report.get('require_loop_invariants'):
         assert report.get('loop_invariants_qualified') is True
         native = json.loads((HERE / run / 'native.report.json').read_text())

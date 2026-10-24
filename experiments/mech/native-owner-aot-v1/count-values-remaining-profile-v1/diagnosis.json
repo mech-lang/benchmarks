@@ -1,0 +1,122 @@
+{
+  "status": "count-proof-instruction-reduction-with-no-established-full-runtime-gain",
+  "source_commit": "5c38b96ad80b14e355f1096697bf8202683032b0",
+  "selected_bases": 125000000,
+  "benchmark_samples": 0,
+  "timing_evidence": {
+    "path": "full-count-values-cohort-v1/results.json",
+    "sha256": "9228a6f4d7311b0f0f6206bf9c5d303690d93dfd5a522e1c63147efeebc751d4"
+  },
+  "median_seconds": {
+    "rust": 0.548214,
+    "mech": 1.119104459,
+    "baseline": 1.119237875
+  },
+  "x_rust": {
+    "rust": 1.0,
+    "mech": 2.0413642464439072,
+    "baseline": 2.0416076112612958
+  },
+  "hardware_evidence": {
+    "path": "count-values-hardware-v1/results.json",
+    "sha256": "b9369c0053fbf1107ea8a02aee1b11c502831b1f78af42ace1cb37d558553fb8"
+  },
+  "whole_process_hardware_medians": {
+    "mech": {
+      "instructions": 76461770032,
+      "cycles": 15715741485,
+      "real_seconds": 1.11,
+      "user_seconds": 4.16,
+      "system_seconds": 0.49
+    },
+    "baseline": {
+      "instructions": 79873302844,
+      "cycles": 15647927616,
+      "real_seconds": 1.09,
+      "user_seconds": 4.18,
+      "system_seconds": 0.46
+    },
+    "rust": {
+      "instructions": 33136961201,
+      "cycles": 8048058115,
+      "real_seconds": 0.54,
+      "user_seconds": 2.38,
+      "system_seconds": 0.02
+    }
+  },
+  "profile_evidence": [
+    {
+      "path": "full-profile-count-values-v1/analysis.json",
+      "sha256": "24466fb8d60930d5d44785c7cc8aa9dc1dca5e8a840a9ddfac612098a873eeac"
+    },
+    {
+      "path": "full-profile-count-values-v2/analysis.json",
+      "sha256": "b8419b39a9c88ae42631b02ceec9b75fbc24bb6c17ac28298f40872bb3ab0cc0"
+    },
+    {
+      "path": "full-profile-count-values-v3/analysis.json",
+      "sha256": "390643355b904004d3ed94c951f9ecec0a83b5aa9571b33f1eea55b3ff4e8ea7"
+    },
+    {
+      "path": "rust-full-profile-v9/analysis.json",
+      "sha256": "510f73d55d00b41693357febc2ef12dd1ea7fd265d6ec7ed45fe4deafd161508"
+    }
+  ],
+  "worker_partition": {
+    "worker_observations": 11483,
+    "exclusive_buckets": {
+      "generated_counting_loop": 9218,
+      "work_budget_wait": 1389,
+      "work_budget_active": 421,
+      "storage_helper_active": 267,
+      "generated_helper_bridge": 78,
+      "other_active": 110
+    },
+    "work_budget_routes": [
+      {
+        "category": "work_budget_wait",
+        "route": "loop_refill",
+        "observations": 1070
+      },
+      {
+        "category": "work_budget_active",
+        "route": "loop_refill",
+        "observations": 328
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "missing_key_charge",
+        "observations": 315
+      },
+      {
+        "category": "work_budget_active",
+        "route": "missing_key_charge",
+        "observations": 78
+      },
+      {
+        "category": "work_budget_active",
+        "route": "frozen_map_charge",
+        "observations": 15
+      },
+      {
+        "category": "work_budget_wait",
+        "route": "other_budget_operation",
+        "observations": 4
+      }
+    ],
+    "exclusive_percent": {
+      "generated_counting_loop": 80.27518941043282,
+      "work_budget_wait": 12.096142123138552,
+      "work_budget_active": 3.6662892972219803,
+      "storage_helper_active": 2.325176347644344,
+      "generated_helper_bridge": 0.6792650004354263,
+      "other_active": 0.9579378211268832
+    }
+  },
+  "static_path_evidence": {
+    "path": "count-values-codegen-audit-v1/steady-path-comparison.json",
+    "sha256": "9594efe5129a117331bfd45eb5e5ce8016756ef9be99db2a43a3a5aa0b55288f"
+  },
+  "finding": "The optional stored-count proof removes certified source increment overflow checks. Whole-process instructions decrease about 4.3%, while three matched full-input cohorts have overlapping ranges and mixed paired results. No elapsed-time improvement is established. The current IR60 vector-control executable separately adds the validated direct SIMD load.",
+  "validation_scope": "IR59 has focused qualification; the full 355-check suite ran at current IR60 commit 83012637fb0f5fab98460385fbde822a263fa3c4, not at the IR59 head."
+}
