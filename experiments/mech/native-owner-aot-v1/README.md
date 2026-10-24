@@ -19,6 +19,23 @@ those bounds are not exact phase timers. All 404 checks pass, and
 owned processes. Source, bytecode, generated object and finite debit logic remain
 unchanged. Rust parity is incomplete.
 
+## Rejected input-preparation scan fusion
+
+Combining CRLF payload classification with offset construction lowers observed
+main-thread CPU in separate diagnostics, but does not provide a sufficient
+whole-process gain. Initial and repeat medians change **+0.60% / −0.15%**.
+A predeclared larger batch of thirty observations per executable gives Rust
+**0.5549 s / 1.000×**, accepted Mech **0.7088 s / 1.277×**, and candidate
+**0.7075 s / 1.275×**: only 0.187% lower, with fifteen of thirty faster pairs.
+The candidate fails both promotion thresholds and is reverted to the exact
+accepted twelve-round source tree.
+
+The [report](line-offset-crlf-checkpoint-v1/README.md) retains all three batches,
+the prefix, profiles, counters, fresh worker-start bounds and the initial
+test-only compile failure. [Verification](line-offset-crlf-checkpoint-v1/results.json)
+checks 126 full-input observations and 168 terminal processes. Serial preparation
+remains the next larger optimization target.
+
 ## Earlier ten-round budget-mutex retry
 
 Extending bounded retry from eight to ten rounds cuts kernel CPU from **0.10 to

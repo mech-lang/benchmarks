@@ -1,0 +1,179 @@
+{
+  "status": "fused-input-offset-trial-verified",
+  "evidence": {
+    "line-offset-crlf": {
+      "source_commit": "8c9713b5a77e44175609d5dadef5d86a8b480593",
+      "batches": {
+        "cohort-v1": {
+          "median_seconds": {
+            "rust": 0.5568220005,
+            "mech": 0.7100394375,
+            "baseline": 0.705782562
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.275164122219341,
+            "baseline": 1.2675191737507505
+          },
+          "faster_pairs": 2,
+          "candidate_change_percent": 0.6031426290750375
+        },
+        "replication-v1": {
+          "median_seconds": {
+            "rust": 0.5521018955,
+            "mech": 0.7104742085,
+            "baseline": 0.711516521
+          },
+          "x_rust": {
+            "rust": 1.0,
+            "mech": 1.2868534129131604,
+            "baseline": 1.288741311702307
+          },
+          "faster_pairs": 3,
+          "candidate_change_percent": -0.14649167928455498
+        }
+      },
+      "decision": "revert",
+      "hardware_medians": {
+        "mech": {
+          "instructions": 26371838602,
+          "cycles": 7367230444,
+          "real_seconds": 0.7,
+          "user_seconds": 2.1,
+          "system_seconds": 0.04
+        },
+        "baseline": {
+          "instructions": 26590378567,
+          "cycles": 7204646778,
+          "real_seconds": 0.71,
+          "user_seconds": 2.05,
+          "system_seconds": 0.04
+        },
+        "rust": {
+          "instructions": 33134699412,
+          "cycles": 7899631515,
+          "real_seconds": 0.55,
+          "user_seconds": 2.33,
+          "system_seconds": 0.03
+        }
+      },
+      "profile": {
+        "worker_observations": 4899,
+        "exclusive_buckets": {
+          "generated_counting_loop": 3400,
+          "work_budget_active": 776,
+          "storage_helper_active": 457,
+          "generated_helper_bridge": 107,
+          "other_active": 106,
+          "work_budget_wait": 53
+        },
+        "work_budget_routes": [
+          {
+            "category": "work_budget_active",
+            "route": "loop_refill",
+            "observations": 577
+          },
+          {
+            "category": "work_budget_active",
+            "route": "missing_key_charge",
+            "observations": 178
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "loop_refill",
+            "observations": 24
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "frozen_map_charge",
+            "observations": 18
+          },
+          {
+            "category": "work_budget_active",
+            "route": "frozen_map_charge",
+            "observations": 18
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "missing_key_charge",
+            "observations": 8
+          },
+          {
+            "category": "work_budget_wait",
+            "route": "other_budget_operation",
+            "observations": 3
+          },
+          {
+            "category": "work_budget_active",
+            "route": "other_budget_operation",
+            "observations": 3
+          }
+        ],
+        "exclusive_percent": {
+          "generated_counting_loop": 69.40191875893039,
+          "work_budget_active": 15.839967340273525,
+          "storage_helper_active": 9.328434374362114,
+          "generated_helper_bridge": 2.184119208001633,
+          "other_active": 2.163706878954889,
+          "work_budget_wait": 1.0818534394774444
+        }
+      },
+      "instruction_range": [
+        16,
+        39
+      ]
+    }
+  },
+  "validation": {
+    "line-offset-crlf-engine-v2": 45,
+    "line-offset-crlf-workers-v1": 26
+  },
+  "prefix_batches": {
+    "line-offset-crlf-timing-v1": {
+      "median_seconds": {
+        "candidate": 0.090546916,
+        "baseline": 0.111594958,
+        "rust": 0.020967125
+      },
+      "x_rust": {
+        "candidate": 4.318518442561868,
+        "baseline": 5.322377674573886,
+        "rust": 1.0
+      },
+      "change_percent": -18.86110481801515
+    }
+  },
+  "expanded_evidence": {
+    "median_seconds": {
+      "mech": 0.707507334,
+      "baseline": 0.7088334375,
+      "rust": 0.554927875
+    },
+    "x_rust": {
+      "mech": 1.2749536757366893,
+      "baseline": 1.2773433619639312,
+      "rust": 1.0
+    },
+    "change_percent": -0.18708252599892727,
+    "faster_pairs": 15,
+    "passes_promotion_threshold": false
+  },
+  "negative_qualification_fixtures": 18,
+  "primary_full_observations": 18,
+  "replication_full_observations": 18,
+  "exact_code_profile_captures": 3,
+  "terminal_owned_processes": 168,
+  "successful_owned_processes": 167,
+  "expected_compile_failures": 1,
+  "expanded_full_observations": 90,
+  "canonical_data_sha256": "849fcdc53d5ccab6ce04c395fd76bec04a675c8767ff3aa138298566387304a7",
+  "canonical_benchmark_samples": 0,
+  "driver_sha256": "6d2d8865f88c0f600c252fc315332e702e81d67d187a5344d97aa327365b7c5b",
+  "validation_commit": "8c9713b5a77e44175609d5dadef5d86a8b480593",
+  "changed_paths": [
+    "src/engine/src/resident/general/native_text_line_chunk_allocation.rs",
+    "src/engine/src/resident/general/native_text_line_chunks.rs",
+    "src/engine/src/resident/general/native_text_line_offset_tests.rs"
+  ],
+  "scope": "Two separately reported sets of six balanced complete-process cohorts; all observations retained separately, all complete outputs and physical updates, four bounded emitted lookup functions, five actually admitted caches, unchanged source and secured policy, three exact-code profiles and terminal owned processes. Focused validation uses the exact timed revision; retention additionally requires native and catalog validation. One initial test-only compile failure is retained separately. The generated Mech object matches the parent; the runtime source change fuses CRLF payload classification with line-offset construction, plus its independent boundary regression test. All finite debit logic is unchanged. Six separately retained thread-observation processes provide current worker-start bounds and CPU endpoints; polling affects their execution. The separate prefix retains one excluded warmup and three observations per subject; it is not pooled with full input. One cached function uses ordinary source/live exit snapshots after optional recipe metadata admission declined. No Rust runtime parity is established."
+}

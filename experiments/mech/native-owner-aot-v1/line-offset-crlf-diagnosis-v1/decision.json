@@ -1,0 +1,97 @@
+{
+  "source_commit": "8c9713b5a77e44175609d5dadef5d86a8b480593",
+  "parent_commit": "438646017717a5c4392721f13c6f935e88c59527",
+  "decision": "revert",
+  "revert_commit": "b7f50099dc22ab435032fee4e951e4914fe0d98f",
+  "accepted_tree": "4588ed35da25a135eded8f1bf11c7254fdccc413",
+  "reason": "The two six-cohort batches are inconsistent. The predeclared 30-cohort follow-up improves the median only 0.187%, with 15/30 faster pairs, failing both promotion thresholds. Lower observed main-thread CPU does not establish sufficient complete-process improvement.",
+  "batches": [
+    {
+      "batch": "cohort",
+      "observations_per_subject": 6,
+      "median_seconds": {
+        "rust": 0.5568220005,
+        "mech": 0.7100394375,
+        "baseline": 0.705782562
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.275164122219341,
+        "baseline": 1.2675191737507505
+      },
+      "stdev_seconds": {
+        "rust": 0.04514526705490849,
+        "mech": 0.011706504456977587,
+        "baseline": 0.006663778422168464
+      },
+      "change_percent": 0.6031426290750375,
+      "faster_pairs": 2
+    },
+    {
+      "batch": "replication",
+      "observations_per_subject": 6,
+      "median_seconds": {
+        "rust": 0.5521018955,
+        "mech": 0.7104742085,
+        "baseline": 0.711516521
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.2868534129131604,
+        "baseline": 1.288741311702307
+      },
+      "stdev_seconds": {
+        "rust": 0.03941434396748164,
+        "mech": 0.012382092763927887,
+        "baseline": 0.012969486617969164
+      },
+      "change_percent": -0.14649167928455498,
+      "faster_pairs": 3
+    },
+    {
+      "batch": "expanded-cohort",
+      "observations_per_subject": 30,
+      "median_seconds": {
+        "mech": 0.707507334,
+        "baseline": 0.7088334375,
+        "rust": 0.554927875
+      },
+      "x_rust": {
+        "mech": 1.2749536757366893,
+        "baseline": 1.2773433619639312,
+        "rust": 1.0
+      },
+      "stdev_seconds": {
+        "mech": 0.015445924237263474,
+        "baseline": 0.011321681509082655,
+        "rust": 0.16142555100535075
+      },
+      "change_percent": -0.18708252599892727,
+      "faster_pairs": 15
+    }
+  ],
+  "prefix": {
+    "median_seconds": {
+      "candidate": 0.090546916,
+      "baseline": 0.111594958,
+      "rust": 0.020967125
+    },
+    "x_rust": {
+      "candidate": 4.318518442561868,
+      "baseline": 5.322377674573886,
+      "rust": 1.0
+    }
+  },
+  "validation": {
+    "line_storage_tests": 45,
+    "worker_budget_tests": 26,
+    "full_native_catalog": "Not run for this rejected candidate; exact-revision full validation of accepted twelve-round code remains retained separately."
+  },
+  "limitations": [
+    "All initial, repeat and expanded observations remain separate; no warmups or outliers excluded from full input.",
+    "Thread-polling diagnostics perturb execution and cannot establish exact phase times; worker-appearance bounds overlap.",
+    "Instructions fall while cycles rise in separate counter runs; counters do not identify the cause of that difference.",
+    "Compiler source remains byte-for-byte identical to the accepted twelve-round tree after the revert."
+  ],
+  "next_target": "Remove larger repeated costs from generated source selection and preparation; use exact-code profiles and complete-process timings before retaining another change."
+}

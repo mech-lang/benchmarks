@@ -1,0 +1,46 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+error[E0283]: type annotations needed
+    --> src/engine/src/resident/general/native_text_line_offset_tests.rs:52:13
+     |
+  52 |         let payload = text.lines().map(str::len).sum();
+     |             ^^^^^^^                              --- type must be known at this point
+     |
+     = note: multiple `impl`s satisfying `_: Sum<usize>` found in the following crates: `core`, `num_bigint`, `writeable`:
+             - impl Sum for usize;
+             - impl Sum<usize> for writeable::LengthHint;
+             - impl<T> Sum<T> for num_bigint::bigint::BigInt
+               where <num_bigint::bigint::BigInt as std::ops::Add<T>>::Output == num_bigint::bigint::BigInt, num_bigint::bigint::BigInt: std::ops::Add<T>, num_bigint::bigint::BigInt: ?Sized;
+             - impl<T> Sum<T> for num_bigint::biguint::BigUint
+               where <num_bigint::biguint::BigUint as std::ops::Add<T>>::Output == num_bigint::biguint::BigUint, num_bigint::biguint::BigUint: std::ops::Add<T>, num_bigint::biguint::BigUint: ?Sized;
+note: required by a bound in `std::iter::Iterator::sum`
+    --> /Users/cim310/.rustup/toolchains/nightly-2026-03-03-aarch64-apple-darwin/lib/rustlib/src/rust/library/core/src/iter/traits/iterator.rs:3656:12
+     |
+3653 |     fn sum<S>(self) -> S
+     |        --- required by a bound in this associated function
+...
+3656 |         S: Sum<Self::Item>,
+     |            ^^^^^^^^^^^^^^^ required by this bound in `Iterator::sum`
+help: consider giving `payload` an explicit type
+     |
+  52 |         let payload: /* Type */ = text.lines().map(str::len).sum();
+     |                    ++++++++++++
+
+error[E0283]: type annotations needed
+  --> src/engine/src/resident/general/native_text_line_offset_tests.rs:52:13
+   |
+52 |         let payload = text.lines().map(str::len).sum();
+   |             ^^^^^^^
+...
+55 |         assert_eq!(offsets.payload_bytes, payload);
+   |         ------------------------------------------ type must be known at this point
+   |
+   = note: multiple `impl`s satisfying `usize: PartialEq<_>` found in the following crates: `core`, `serde_json`:
+           - impl PartialEq for usize;
+           - impl PartialEq<serde_json::Value> for usize;
+help: consider giving `payload` an explicit type
+   |
+52 |         let payload: /* Type */ = text.lines().map(str::len).sum();
+   |                    ++++++++++++
+
+For more information about this error, try `rustc --explain E0283`.
+error: could not compile `mech-engine` (lib test) due to 2 previous errors

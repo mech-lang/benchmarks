@@ -1,0 +1,23 @@
+{
+  "source_commit": "8c9713b5a77e44175609d5dadef5d86a8b480593",
+  "parent": "438646017717a5c4392721f13c6f935e88c59527",
+  "compiler": "compiler-v67",
+  "binary": "counting-line-offset-crlf",
+  "parent_binary": "counting-escrow-backoff12",
+  "hypothesis": "Resolve CRLF payload cardinality during the existing admitted LF-offset enumeration for retained input chunks; remove a redundant full-fragment CR scan before worker startup. Sealed ranges without offsets keep their original allocation-free geometry scan.",
+  "source_change": "None: unchanged Mech performance source, bytecode and generated object",
+  "runtime_changes": [
+    "Fuse CRLF classification with private offset construction.",
+    "Retain exact allocation/debit order, immutable offset layout, CRLF/Unicode semantics and sealed-range geometry."
+  ],
+  "correctness": "Existing exhaustive UTF8-fragment/CRLF tests, exact/one-short memory and work admission, malformed counts, optional page fallback and complete native-output checks, plus independent dense/unaligned CRLF payload cases.",
+  "full_selected_bases": 125000000,
+  "expected_updates": 874999961,
+  "full_observations_per_subject": 6,
+  "full_warmups_excluded": 0,
+  "independent_replication_observations_per_subject": 6,
+  "policy_sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+  "validation_order": "Focused engine checks before build; full native and catalog checks before promotion.",
+  "decision_rule": "Retain only with verified correctness and repeatable elapsed-time benefit; keep every observation and compare separate thread-appearance diagnostics. Revert if the additional per-newline classification costs more than the removed pass.",
+  "initial_compile_commit": "6a9244ae02045aef50bb63dc6c79fdd741ce4f98"
+}
