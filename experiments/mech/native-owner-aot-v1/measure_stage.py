@@ -998,7 +998,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
     process.save(out / 'results.json', report)
     manifest = json.loads((project / 'linked-manifest.json').read_text())
     assert manifest['object']['work_policy_version'] == args.work_policy
-    if manifest['object']['typed_ir_version'] in (77, 78):
+    if manifest['object']['typed_ir_version'] in (77, 78, 79):
         assert manifest['object']['abi_version'] == 28 and args.work_policy == 66
         assert args.require_direct_lookup_regions == 5, 'The unchanged source must exercise all five eligible bounded caches'
     report['native_admission_groups'] = manifest['object']['retained_map_scalar_admission_groups']
@@ -1027,7 +1027,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_frozen_maps:
-        assert manifest['object']['abi_version'] in (26, 27, 28) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78) else 65)
+        assert manifest['object']['abi_version'] in (26, 27, 28) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 65)
         report['frozen_map_layout'] = descriptor['frozen_maps']
         report['qualified_frozen_regions'] = require_frozen_maps(
             manifest['object'].get('private_frozen_map_candidates'), descriptor)
@@ -1035,7 +1035,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['object_sha256'] = process.sha(project / 'program.o')
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_lookup_facts:
-        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78) else 65)
+        assert manifest['object']['typed_ir_version'] in (50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 65)
         report['compiled_lookup_facts'] = manifest['object'].get('compiled_lookup_facts')
         report['qualified_lookup_regions'] = require_lookup_facts(report['compiled_lookup_facts'], descriptor,
                                                                   manifest['object'].get('compiled_tag_threading'), bool(args.source_variant))
@@ -1047,7 +1047,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['qualified_lookup_thread_regions'] = require_lookup_threading(report['compiled_lookup_facts'], descriptor)
         report['lookup_threading_qualified'] = True
     if args.require_cfg_cleanup:
-        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78) else 65)
+        assert manifest['object']['typed_ir_version'] in (51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['work_policy_version'] == (66 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 65)
         cleanup = manifest['object'].get('compiled_cfg_cleanup')
         assert isinstance(cleanup, dict) and cleanup['enabled'] is True
         assert type(cleanup['rounds']) is int and 1 <= cleanup['rounds'] <= 8
@@ -1061,7 +1061,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['linked_manifest_sha256'] = process.sha(project / 'linked-manifest.json')
     if args.require_outlined_loops:
         assert args.require_cfg_cleanup and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78)
+        assert manifest['object']['typed_ir_version'] in (52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79)
         loops = manifest['object'].get('compiled_outlined_loops')
         assert isinstance(loops, list) and 0 < len(loops) <= 256
         expected_headers = {region['header'] for region in report['qualified_lookup_regions']}
@@ -1082,21 +1082,21 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
             loop['cleanup']['constant_branches_removed'] for loop in report.get('compiled_outlined_loops', []))
         assert removed > 0, 'No actual constant branch was removed in the qualified emitted functions'
         report['cfg_cleanup_removed_total'] = removed
-        if manifest['object']['typed_ir_version'] in (54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78):
+        if manifest['object']['typed_ir_version'] in (54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79):
             functions = [report['compiled_cfg_cleanup']] + [loop['cleanup'] for loop in report.get('compiled_outlined_loops', [])]
             assert all(function['pre_codegen_data_passes'] == 0 for function in functions)
             report['single_data_pass_qualified'] = True
 
     if args.require_loop_invariants:
         assert args.require_outlined_loops and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_loop_invariants'] = manifest['object'].get('compiled_loop_invariants')
         report['qualified_invariant_regions'] = require_loop_invariants(report['compiled_loop_invariants'], descriptor,
             report['qualified_lookup_regions'], report['qualified_guarded_regions'])
         report['loop_invariants_qualified'] = True
     if args.require_preserving_calls:
         assert args.require_loop_invariants and args.require_outlined_loops
-        assert manifest['object']['typed_ir_version'] in (55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         shim = manifest['object'].get('compiled_bound_call_shim')
         regions = manifest['object'].get('compiled_preserving_call_regions')
         assert isinstance(shim, dict) and shim['symbol'] == 'mech_canonical_program_entry_v1_preserving_bound_call'
@@ -1116,7 +1116,7 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['preserving_calls_qualified'] = True
     if args.require_mutation_facts:
         assert args.require_loop_invariants and args.require_guarded_loops and args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] in (58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_mutation_loops'] = manifest['object'].get('compiled_mutation_loops')
         report['qualified_mutation_regions'] = require_mutation_facts(report['compiled_mutation_loops'], descriptor,
             manifest['object']['compiled_tag_threading'], report['qualified_guarded_regions'],
@@ -1124,45 +1124,45 @@ with Path(PLAN['common_mutex']).open('a+') as lock:
         report['mutation_facts_qualified'] = True
     if args.require_count_values:
         assert args.require_mutation_facts and args.require_guarded_loops and args.require_loop_invariants
-        assert manifest['object']['typed_ir_version'] in (59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_count_value_loops'] = manifest['object'].get('compiled_count_value_loops')
         report['qualified_count_value_regions'] = require_count_values(
             report['compiled_count_value_loops'], descriptor, report['compiled_mutation_loops'])
         report['count_values_qualified'] = True
     if args.require_header_cache:
         assert args.require_lookup_facts
-        assert manifest['object']['typed_ir_version'] == 61 and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] == 61 and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_header_cache_loops'] = manifest['object'].get('compiled_header_cache_loops')
         report['qualified_header_cache_regions'] = require_header_cache(report['compiled_header_cache_loops'],
             descriptor, report['compiled_tag_threading'], report['compiled_lookup_facts'])
         report['header_cache_qualified'] = True
     if args.require_loop_constants:
         assert args.require_outlined_loops and args.require_guarded_loops
-        assert manifest['object']['typed_ir_version'] in (62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_loop_constants'] = manifest['object'].get('compiled_loop_constants')
         report['qualified_loop_constant_regions'] = require_loop_constants(report['compiled_loop_constants'],
             report['compiled_outlined_loops'], report['compiled_guarded_loops'], descriptor, manifest['object']['stack_bytes'])
         report['loop_constants_qualified'] = True
     if args.require_steady_loops:
         assert args.require_loop_constants and args.require_count_values and args.require_loop_invariants
-        assert manifest['object']['typed_ir_version'] in (64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78) else 27)
+        assert manifest['object']['typed_ir_version'] in (64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79) and manifest['object']['abi_version'] == (28 if manifest['object']['typed_ir_version'] in (77, 78, 79) else 27)
         report['compiled_steady_loops'] = manifest['object'].get('compiled_steady_loops')
         report['qualified_steady_regions'] = require_steady_loops(report['compiled_steady_loops'], descriptor,
             report['compiled_outlined_loops'], report['compiled_guarded_loops'], report['compiled_loop_invariants'], report['compiled_lookup_facts'],
             pre_data_passes=int(manifest['object']['typed_ir_version'] >= 65),
             preserve_entry_inputs=manifest['object']['typed_ir_version'] == 66,
-            specialize_widths=manifest['object']['typed_ir_version'] in (67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78),
-            fuel_edge_checks=manifest['object']['typed_ir_version'] in (68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78),
-            productive_entry=manifest['object']['typed_ir_version'] in (69, 70, 71, 72, 73, 74, 75, 76, 77, 78),
-            separate_header_snapshots=manifest['object']['typed_ir_version'] in (70, 71, 72, 73, 74, 75, 76, 77, 78),
-            peeled_entry_probes=manifest['object']['typed_ir_version'] in (71, 72, 73, 74, 75, 76, 77, 78),
-            prepaid_extent=manifest['object']['typed_ir_version'] in (72, 73, 74, 75, 76, 77, 78),
-            caller_prepaid_extent=manifest['object']['typed_ir_version'] in (73, 74, 75, 76, 77, 78),
-            affine_cursor=manifest['object']['typed_ir_version'] in (74, 75, 76, 77, 78),
-            cold_recipes=manifest['object']['typed_ir_version'] in (75, 76, 77, 78),
-            cold_frame_reloads=manifest['object']['typed_ir_version'] in (76, 77, 78),
-            lookup_split=manifest['object']['typed_ir_version'] == 78)
-        if manifest['object']['typed_ir_version'] == 78:
+            specialize_widths=manifest['object']['typed_ir_version'] in (67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79),
+            fuel_edge_checks=manifest['object']['typed_ir_version'] in (68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79),
+            productive_entry=manifest['object']['typed_ir_version'] in (69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79),
+            separate_header_snapshots=manifest['object']['typed_ir_version'] in (70, 71, 72, 73, 74, 75, 76, 77, 78, 79),
+            peeled_entry_probes=manifest['object']['typed_ir_version'] in (71, 72, 73, 74, 75, 76, 77, 78, 79),
+            prepaid_extent=manifest['object']['typed_ir_version'] in (72, 73, 74, 75, 76, 77, 78, 79),
+            caller_prepaid_extent=manifest['object']['typed_ir_version'] in (73, 74, 75, 76, 77, 78, 79),
+            affine_cursor=manifest['object']['typed_ir_version'] in (74, 75, 76, 77, 78, 79),
+            cold_recipes=manifest['object']['typed_ir_version'] in (75, 76, 77, 78, 79),
+            cold_frame_reloads=manifest['object']['typed_ir_version'] in (76, 77, 78, 79),
+            lookup_split=manifest['object']['typed_ir_version'] in (78, 79))
+        if manifest['object']['typed_ir_version'] in (78, 79):
             all_functions = [function for record in report['compiled_steady_loops']
                              for function in [record, record['lookup_cache_function']]]
             assert len(all_functions) == 4

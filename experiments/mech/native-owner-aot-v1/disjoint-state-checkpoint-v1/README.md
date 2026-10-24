@@ -1,0 +1,57 @@
+# Rejected private metadata alias-region trial
+
+IR79 assigns separate Cranelift alias regions to the native program frame's error-origin word, appended borrowed String view metadata, and appended non-map scalar-Tail work metadata. The goal is to let the backend reuse private values across unrelated stores in the input scanner. Ordinary source values, map frames and callback arguments retain the default region; calls remain full memory barriers. No readonly, nontrapping or speculative-load promise is added.
+
+The trial preserves the original source and bytecode, ABI28, work policy66, finite debits, capability checks and seven-worker count. It adds original/decoded source tests that compare tagging enabled and disabled across incremental ASCII/Unicode input, continuation clearance, finite limits, first failures and successful work reports.
+
+**The trial is reverted.** Candidate `a94d34d60ab7bc503603217d0baa49397143eb09` fails the separately predeclared larger-batch threshold. Revert `abfce6636282cc08d302579614196e1258229941` restores exactly the accepted twelve-round tree `4588ed35da25a135eded8f1bf11c7254fdccc413`, also used by `438646017717a5c4392721f13c6f935e88c59527`. Earlier improvements remain intact; Rust parity remains incomplete.
+
+## Complete-process results
+
+Each process consumes the same input containing 125 million selected bases. Timings include startup and secured shutdown. All executables run serially under the retained common lock; no full-input warmup or outlier is excluded, and batches remain separate.
+
+| Batch | Executable | Median seconds | × Rust time |
+|---|---|---:|---:|
+| Initial, six each | Rust | 0.5588 | 1.000× |
+| Initial, six each | Accepted Mech | 0.7111 | 1.273× |
+| Initial, six each | Candidate | 0.6976 | 1.248× |
+| Repeat, six each | Rust | 0.5591 | 1.000× |
+| Repeat, six each | Accepted Mech | 0.7111 | 1.272× |
+| Repeat, six each | Candidate | 0.6969 | 1.246× |
+| Expanded, thirty each | Rust | 0.5556 | 1.000× |
+| Expanded, thirty each | Accepted Mech | 0.7043 | 1.268× |
+| Expanded, thirty each | Candidate | 0.7128 | 1.283× |
+
+Initial and repeat medians improve 1.89% and 2.00%, with three and five of six faster matched pairs. The first batch's inconsistent pair direction motivates one [predeclared larger cohort](../disjoint-state-diagnosis-v1/expanded-plan.json): five shuffled balanced blocks, thirty observations per executable, and a promotion threshold of at least 1% lower median plus twenty of thirty faster pairs.
+
+The expanded candidate instead regresses **1.21%**, with **ten of thirty** faster pairs. The change does not establish a reliable full-process benefit and is rejected. All 126 full-input observations verify complete output; every Mech process performs 874,999,961 physical updates, constructs seven complete maps, admits five caches and reaches seven peak workers. [Initial](../full-disjoint-state-cohort-v1/results.json), [repeat](../full-disjoint-state-replication-v1/results.json), [expanded](../full-disjoint-state-expanded-cohort-v1/results.json) and [decision](../disjoint-state-diagnosis-v1/decision.json) records retain all observations.
+
+The separate one-million-base prefix gives Rust **0.02088 s / 1.000×**, accepted Mech **0.11289 s / 5.406×**, and candidate **0.08562 s / 4.100×**, with one excluded warmup and three measured observations per executable. This small batch is not pooled with full input and does not override the expanded result.
+
+## Worker availability and remaining preparation
+
+Six separate [full-input thread observations](../disjoint-state-thread-lifetimes-v1/results.json) bracket the candidate's first substantial worker appearance at **0.221–0.236 s** and **0.225–0.240 s**, compared with **0.222–0.238 s** and **0.231–0.246 s** for accepted Mech. These intervals overlap. Observed main-thread CPU lower bounds are about 0.217 seconds for the candidate and 0.217–0.219 for the control. Rust workers appear within 0.145–0.160 seconds, with main-thread CPU lower bounds near 0.134–0.135 seconds.
+
+Four separate [Mech-only prefix observations](../disjoint-state-prefix-thread-lifetimes-v2/results.json) retain main-thread CPU lower bounds of 0.0113–0.0122 seconds; the observed remaining non-main threads are already present near 0.033–0.034 seconds. Short-lived threads may disappear before polling, so this does not identify all seven workers or measure thread-creation duration. It does show why the small-input elapsed time cannot simply be treated as a fixed serial startup cost. Large-input preparation remains a separate substantial cost.
+
+Polling changes execution, misses work after each thread's last observation, and produces appearance bounds rather than exact phase clocks. These processes are excluded from timing cohorts. The [main profile partition](preparation.json) retains 1,774 observations: 1,189 joins, 221 unresolved root-only stacks, 195 input-capture/source-selection locations, 62 selected-line joining locations, 33 generated byte-map locations, eighteen reads, fifteen String geometry/validation locations and 41 other locations. These counts do not apportion elapsed or CPU time.
+
+A larger compiler target is the source scanner's loop-carried state and per-node bookkeeping: compile its proved closed scalar Tail into a compact register-based loop, with exact snapshots at callbacks, failures and input continuations. This would apply the existing general SSA/outlined-loop strategy to scanning rather than changing the source predicate or introducing a nucleotide-specific scanner. It remains unimplemented and unmeasured.
+
+## Counters, code and correctness
+
+Nine separate counter processes give these medians:
+
+| Executable | Instructions, billions | Cycles, billions | User CPU seconds | Kernel CPU seconds |
+|---|---:|---:|---:|---:|
+| Rust | 33.154 | 7.944 | 2.35 | 0.03 |
+| Accepted Mech | 26.597 | 7.499 | 2.13 | 0.04 |
+| Candidate | 26.572 | 7.338 | 2.09 | 0.04 |
+
+Those diagnostic counters suggest 0.10% fewer instructions and 2.14% fewer cycles, but do not override the larger primary cohort. Three profiles match the timed executable's entire machine-code section. Worker observations remain about 69.76% generated loops, 16.53% active budget accounting, 0.73% budget waits, 8.40% storage helpers and 4.59% bridge/other locations. Static [root-code comparison](codegen-delta.json) finds only two fewer instructions, 10,765 to 10,763; it does not establish elimination of the preparation bottleneck.
+
+At the exact timed revision, **379 native tests and one catalog check pass**, with three existing manual diagnostics ignored. The initial candidate `9f6896b529e1057767503cc2ee6d98e3719617e4` fails to compile a new test helper whose declared container differs from the boxed snapshot API. The correction is test-only and no timing uses that initial revision; its failed receipt is retained.
+
+An initial prefix thread diagnostic verifies two Mech processes, then stops because the short Rust process exits before two snapshots. All three outputs and cleanup succeed. Its incomplete inventories and assertion are retained alongside the separate four-process Mech-only follow-up; no failed or partial diagnostic is counted as a primary timing observation.
+
+Run `python3 verify_disjoint_state.py` from this study directory to reproduce [checkpoint verification](results.json). It checks the three full-input batches, prefix, eighteen malformed metadata rejections, three exact-code profiles, the expanded decision, exact revert tree and **175 terminal owned-process receipts**, including the compile failure and incomplete thread diagnostic. All owned processes are reaped and groups closed. Canonical benchmark data is unchanged.

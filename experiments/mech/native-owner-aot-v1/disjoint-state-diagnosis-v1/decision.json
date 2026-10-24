@@ -1,0 +1,78 @@
+{
+  "source_commit": "a94d34d60ab7bc503603217d0baa49397143eb09",
+  "initial_commit": "9f6896b529e1057767503cc2ee6d98e3719617e4",
+  "decision": "reverted-after-expanded-full-input-regression",
+  "expanded_passes_promotion_threshold": false,
+  "revert_commit": "abfce6636282cc08d302579614196e1258229941",
+  "restored_tree": "4588ed35da25a135eded8f1bf11c7254fdccc413",
+  "restored_accepted_commit": "438646017717a5c4392721f13c6f935e88c59527",
+  "batches": {
+    "cohort-v1": {
+      "median_seconds": {
+        "rust": 0.558788229,
+        "mech": 0.6976458544999999,
+        "baseline": 0.711069938
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.2484977640787058,
+        "baseline": 1.2725213257847634
+      },
+      "faster_pairs": 3,
+      "observations_per_subject": 6,
+      "improvement_percent": 1.8878710493313022,
+      "standard_deviation_seconds": {
+        "rust": 0.007912306057596963,
+        "mech": 0.011295410816793722,
+        "baseline": 0.018511155516672817
+      }
+    },
+    "replication-v1": {
+      "median_seconds": {
+        "rust": 0.5590838124999999,
+        "mech": 0.6968648125000001,
+        "baseline": 0.7110778959999999
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.2464406890693158,
+        "baseline": 1.2718627871201333
+      },
+      "faster_pairs": 5,
+      "observations_per_subject": 6,
+      "improvement_percent": 1.9988082290213427,
+      "standard_deviation_seconds": {
+        "rust": 0.012356113459553175,
+        "mech": 0.0080374395077565,
+        "baseline": 0.014485302838365537
+      }
+    },
+    "expanded-cohort-v1": {
+      "median_seconds": {
+        "baseline": 0.704271125,
+        "mech": 0.7128066665,
+        "rust": 0.5556066040000001
+      },
+      "x_rust": {
+        "baseline": 1.2675715513993422,
+        "mech": 1.2829341144764361,
+        "rust": 1.0
+      },
+      "faster_pairs": 10,
+      "observations_per_subject": 30,
+      "improvement_percent": -1.2119681181022468,
+      "standard_deviation_seconds": {
+        "baseline": 0.015480089676677706,
+        "mech": 0.010442280517880756,
+        "rust": 0.010207388844784525
+      }
+    }
+  },
+  "primary_observations": 126,
+  "benchmark_samples_published": 0,
+  "reason": "The two small cohorts suggest about 2% lower medians, but the independently predeclared larger cohort regresses 1.21% with only ten of thirty faster pairs. Region tagging does not establish a reliable end-to-end benefit or earlier worker availability. Restore the exact accepted source tree.",
+  "retained_failures": [
+    "Test-only boxed snapshot type mismatch at the first candidate revision; no timing was attempted at that revision.",
+    "Short Rust prefix exited before two libproc snapshots; all three subject outputs and cleanup succeeded, but the diagnostic controller assertion failed. Keep its partial evidence and a separate Mech-only follow-up."
+  ]
+}

@@ -1,0 +1,74 @@
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/engine)
+   Compiling mech-compute v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/compute)
+   Compiling mech-runtime v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/runtime)
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-build v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/build)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-terminal v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/terminal)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0308]: mismatched types
+   --> hosts/gpu/src/native_artifact/program_prefix_window_tests.rs:139:5
+    |
+ 12 |   fn run_windowed_delivery(jit: &JitProgramArtifact, text: &str, incremental: bool) -> Vec<Vec<u8>> {
+    |                                                                                        ------------ expected `Vec<Vec<u8>>` because of return type
+...
+117 |           snapshots.push(
+    |           --------- ... which causes `snapshots` to have type `Vec<Box<[u8]>>`
+118 | /             actual
+119 | |                 .as_ref()
+120 | |                 .unwrap()
+121 | |                 .canonical_snapshot_bytes(&descriptor.schemas)
+122 | |                 .unwrap(),
+    | |_________________________- this argument has type `Box<[u8]>`...
+...
+139 |       snapshots
+    |       ^^^^^^^^^ expected `Vec<Vec<u8>>`, found `Vec<Box<[u8]>>`
+    |
+    = note: expected struct `Vec<Vec<u8>>`
+               found struct `Vec<Box<[u8]>>`
+help: try using a conversion method
+    |
+122 |                 .unwrap().to_vec(),
+    |                          +++++++++
+
+error[E0277]: can't compare `Vec<u8>` with `Box<[u8]>`
+   --> hosts/gpu/src/native_artifact/program_prefix_window_tests.rs:174:17
+    |
+174 | /                 assert_eq!(
+175 | |                     run_windowed_delivery(&ordinary, text, incremental),
+176 | |                     [expected.clone()]
+177 | |                 );
+    | |_________________^ no implementation for `Vec<u8> == Box<[u8]>`
+    |
+    = help: the trait `PartialEq<Box<[u8]>>` is not implemented for `Vec<u8>`
+    = help: the following other types implement trait `PartialEq<Rhs>`:
+              `Vec<u8>` implements `PartialEq<&bstr::bstr::BStr>`
+              `Vec<u8>` implements `PartialEq<ByteStr>`
+              `Vec<u8>` implements `PartialEq<ByteString>`
+              `Vec<u8>` implements `PartialEq<bstr::bstr::BStr>`
+              `Vec<u8>` implements `PartialEq<bstr::bstring::BString>`
+    = note: required for `Vec<Vec<u8>>` to implement `PartialEq<[Box<[u8]>; 1]>`
+
+error[E0277]: can't compare `Vec<u8>` with `Box<[u8]>`
+   --> hosts/gpu/src/native_artifact/program_prefix_window_tests.rs:178:17
+    |
+178 | /                 assert_eq!(
+179 | |                     run_windowed_delivery(&optimized, text, incremental),
+180 | |                     [expected.clone()]
+181 | |                 );
+    | |_________________^ no implementation for `Vec<u8> == Box<[u8]>`
+    |
+    = help: the trait `PartialEq<Box<[u8]>>` is not implemented for `Vec<u8>`
+    = help: the following other types implement trait `PartialEq<Rhs>`:
+              `Vec<u8>` implements `PartialEq<&bstr::bstr::BStr>`
+              `Vec<u8>` implements `PartialEq<ByteStr>`
+              `Vec<u8>` implements `PartialEq<ByteString>`
+              `Vec<u8>` implements `PartialEq<bstr::bstr::BStr>`
+              `Vec<u8>` implements `PartialEq<bstr::bstring::BString>`
+    = note: required for `Vec<Vec<u8>>` to implement `PartialEq<[Box<[u8]>; 1]>`
+
+Some errors have detailed explanations: E0277, E0308.
+For more information about an error, try `rustc --explain E0277`.
+error: could not compile `mech-gpu` (lib test) due to 3 previous errors

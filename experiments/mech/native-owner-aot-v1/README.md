@@ -2,6 +2,22 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Rejected private metadata alias regions
+
+Separating error-origin, borrowed-view and scalar-Tail metadata initially lowers
+full-input medians about 2%, but one predeclared larger cohort reverses the result:
+Rust **0.5556 s / 1.000×**, accepted Mech **0.7043 s / 1.268×**, and candidate
+**0.7128 s / 1.283×**. The candidate regresses 1.21% with ten of thirty faster
+pairs and is reverted to the exact accepted twelve-round tree.
+
+The [report](disjoint-state-checkpoint-v1/README.md) retains all 126 full-input
+observations, exact-code profiles, counters, current worker-appearance bounds,
+small-input thread observations and both diagnostic failures. All 380 native
+and catalog checks pass at the timed revision. [Verification](disjoint-state-checkpoint-v1/results.json)
+checks 175 terminal owned processes. Worker availability does not reliably
+improve; compact compilation of the source scanner's scalar loop is the next
+larger hypothesis, still unimplemented.
+
 ## Current twelve-round budget-mutex retry
 
 Extending bounded retry from ten to twelve rounds reduces the full-input median
