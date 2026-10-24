@@ -163,6 +163,7 @@ def run(out):
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         assert Path(PLAN['common_mutex']).stat().st_ino == 83858837
         def execute(command, label, stdin=None, quant=False, deadline=180):
+            (out / label).parent.mkdir(parents=True, exist_ok=True)
             receipt = process.execute(command, out / label, env, lock, stdin=stdin,
                                       deadline=deadline, quantitative=quant)
             assert receipt['exit_status'] == 0 and receipt['reaped'] and receipt['group_closed'], (
@@ -179,7 +180,7 @@ def run(out):
                 execute(command, name, deadline=30)
             targets = dict(rust=RUST, mech=MECH)
             for name in VARIANTS:
-                binary = HERE / '.build' / ('strategy-' + name)
+                binary = HERE / '.build' / (out.name + '-' + name)
                 assert not binary.exists()
                 source = SOURCE if name == 'rebuild_control' else ROOT / plan['variants'][name]['source']
                 command = [*base_command, str(source), '-o', str(binary)]
