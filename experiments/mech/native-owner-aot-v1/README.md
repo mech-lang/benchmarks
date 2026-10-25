@@ -4,6 +4,11 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [dated optimization history](optimization-history-v1/README.md) reconstructs
+94 measured stages and 220 cohorts, including the earlier required-work
+lowering. All 1,009 candidate observations recover exact process launch times;
+the plots preserve distinct input sizes, repeat cohorts and negative trials.
+
 The [pure-scalar graph/SSA trial](pure-scalar-state-v1/README.md) at `93015bc629`
 is a repeatable **5.65/5.62% paired improvement** over the compact parent;
 all twenty matched pairs are faster. Full medians are **0.55745 s / 1.000× Rust**
