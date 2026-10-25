@@ -1,0 +1,22 @@
+warning: field `segment_count` is never read
+  --> src/engine/src/resident/general/native_text_line_window.rs:21:5
+   |
+14 | pub struct NativeTextLineWindow<'owner> {
+   |            -------------------- field in this struct
+...
+21 |     segment_count: usize,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+    Finished `test` profile [unoptimized] target(s) in 13.75s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+
+thread 'native_artifact::program_runtime::session::capture_host_tests::joined_map_tests::fused_join_map_original_join_one_short_limits_precede_the_later_missing_key' (3634958) panicked at hosts/gpu/src/native_artifact/program_join_map_capture_tests.rs:229:25:
+assertion `left == right` failed: Compute, short=false
+  left: "Value(Base(WorkLimit { phase: Setup, required: 42679767, limit: 42679751 }))"
+ right: "Collection { origin: NativeMatchOrigin { node: NodeId(6), block: None, local: None }, error: ResourceLimit { phase: Admission, dimension: ComputeWork, required: 8798464, limit: 382520 } }"
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p mech-gpu --lib`
