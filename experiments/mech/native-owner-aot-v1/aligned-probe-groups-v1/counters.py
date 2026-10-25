@@ -1,4 +1,4 @@
-"""Separate counters and exact file sizes for shared immutable String facts."""
+"""Separate counters and exact file sizes for aligned probe groups."""
 import fcntl
 import os
 import re
@@ -33,7 +33,7 @@ def main():
                   memory_helper_sha256=process.sha(HERE / 'preparation-interactions-v1/memory.py'),
                   binary_helper_sha256=process.sha(HERE / 'preparation-interactions-v1/binary.py'),
                   snapshots=[], counters=[], binary={}, benchmark_samples=0,
-                  scope='Nine separate full-input counter executions, not primary timings. Exact timed files supply disk sizes. Inline immutable String facts are covered by concrete snapshot-owner admission; primary processes retain actual peak RSS.')
+                  scope='Nine separate full-input counter executions, not primary timings. Exact timed files supply disk sizes. Aligned probes retain the same concrete table allocations and admission formulas; primary processes retain actual peak RSS.')
     for subject, binary in targets.items():
         parsed = macho(binary)[0]
         assert parsed['sha256'] == timing['pins'][subject]
