@@ -4,6 +4,19 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [selected-join/String-map composition trial](join-map-fusion-v1/README.md)
+at `b8e803224` applies the existing emitted map to initialized physical output
+chunks after EOF. All 400 native, 27 engine and one catalog checks pass, and
+every full run verifies 125 million fused bytes plus all 874,999,961 original
+histogram updates. Two balanced sessions give **0.6616 s / 1.178× Rust** and
+**0.6624 s / 1.191×**, against parents of 0.6649 s and 0.6481 s. Both paired
+intervals include zero; no complete-process improvement is established. The
+candidate remains unpromoted and retained for interactions. Exact-text profiles
+and 90 audited terminal receipts preserve five unsuccessful qualification
+attempts. Aggregate instructions remain essentially unchanged; extra UTF-8
+validation and private canonical construction still occur. Compact scanner
+execution, finite local worker credit and long-loop pipelining remain targets.
+
 The [validated line-copy trial](line-join-copy-v1/README.md) at `630921324`
 avoids repeated per-line String append and UTF-8 boundary checks within the
 already admitted output allocation. Full medians are **0.6531 s / 1.180× Rust**
@@ -14,8 +27,8 @@ explain the entire 10–23 ms difference between elapsed medians. All 26 engine,
 29 focused prefix, 392 native and one catalog checks pass. The guest object,
 descriptor, bytecode, resources, work charges and limits are unchanged. Exact
 instruction-byte profiles and counters retain 81 primary-study receipts, plus
-14 separate phase-study receipts. Join/map composition and local finite worker
-credit remain next implementation targets; Rust parity is incomplete.
+14 separate phase-study receipts. Join/map composition is measured above without a demonstrated win. Local finite
+worker credit and compact scanner execution remain targets; Rust parity is incomplete.
 
 The [finer preparation diagnostic](preparation-phase-v1/README.md) separates
 borrowing, source scanning, joining and normalization in the direct-offset
@@ -49,7 +62,7 @@ confirm that widths 12 and 18 determine the counting tail. Those widths execute
 The delayed worker start chiefly precedes spawning; actual spawn calls take
 about 75 microseconds. Instrumented hosts and their CPU/core-kind observations
 are separate from primary timings. Direct borrowed offsets have since been
-measured above; join/map fusion remains an unimplemented candidate.
+measured above; join/map fusion is also recorded above as an unpromoted trial.
 
 The [UTF-8 fragment-fact trial](utf8-fragment-facts-v1/README.md) at
 `76d17b03f` combines validation, ASCII detection and LF counting in shared
