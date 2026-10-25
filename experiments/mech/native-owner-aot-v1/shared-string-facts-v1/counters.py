@@ -1,4 +1,4 @@
-"""Separate whole-process counters and exact file sizes for decoder validation."""
+"""Separate counters and exact file sizes for shared immutable String facts."""
 import fcntl
 import os
 import re
@@ -71,7 +71,7 @@ def main():
         for k in ['instructions', 'cycles', 'involuntary_context_switches', 'real_seconds', 'user_seconds', 'system_seconds']}
         for s in targets}
     report['source_after'] = before
-    report['status'] = 'all-prepared-refill-diagnostic-outputs-and-exact-sizes-verified'
+    report['status'] = 'all-shared-string-fact-diagnostic-outputs-and-exact-sizes-verified'
     process.save(out / 'results.json', report)
     print('Live blocks', {r['subject']: r['live_allocations'] for r in report['snapshots']}, flush=True)
     print('Counter medians', report['counter_medians'], flush=True)
