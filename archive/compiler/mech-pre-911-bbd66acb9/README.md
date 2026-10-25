@@ -33,7 +33,7 @@ For example, from that original Mech checkout:
 
 ```sh
 cargo +nightly-2026-03-03 test --locked -p mech-gpu --features canonical-native-program-host --test canonical_hosted_artifact
-cargo +nightly-2026-03-03 test --locked -p mech-gpu --features canonical-native-program-host --lib complete_secured_knucleotide_original_and_decoded_setup_debit_diagnostic -- --ignored --exact
+cargo +nightly-2026-03-03 test --locked -p mech-gpu --features canonical-native-program-host --lib native_artifact::program_runtime::setup_work_diagnostic::hosted::complete_secured_knucleotide_original_and_decoded_setup_debit_diagnostic -- --ignored --exact
 ```
 
 The diagnostic's full test path includes its enclosing modules; list it first
