@@ -1,0 +1,39 @@
+{
+  "recorded_before_new_full_input_observations": true,
+  "original_plan_sha256": "f55b0e5014cccde44b9852eda3eb656cced67cfa1d50cd4b3ecfc9c8be483965",
+  "antecedent_source_commit": "36a0d26e05b92f0f3fb21bdbd3605af2108ec882",
+  "antecedent_checkpoint": "experiments/mech/native-owner-aot-v1/refill-fastpath-checkpoint-v1/results.json",
+  "antecedent_checkpoint_sha256": "e127e147c2f7f192dd6aabf261ac793d88504e40e9ee863cfcfd93b6a1c5ce74",
+  "antecedent_result": {
+    "cohort-v1": {
+      "median_seconds": {
+        "rust": 0.546403583,
+        "mech": 0.7407937085,
+        "baseline": 0.75113275
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3557629041023327,
+        "baseline": 1.3746848911128022
+      },
+      "faster_pairs": 6,
+      "candidate_change_percent": -1.3764599533171662
+    },
+    "replication-v1": {
+      "median_seconds": {
+        "rust": 0.556581292,
+        "mech": 0.755892125,
+        "baseline": 0.740825021
+      },
+      "x_rust": {
+        "rust": 1.0,
+        "mech": 1.3580983332799481,
+        "baseline": 1.331027527601485
+      },
+      "faster_pairs": 2,
+      "candidate_change_percent": 2.0338276344475714
+    }
+  },
+  "interpretation": "The full-batch threshold idea was tested previously and its initial gain did not reproduce. This experiment retests the idea together with later preparation, metadata, scheduling and key-validation factors; it is not a new mathematical optimization. Unlike the previous 72-byte plan, the current private quote retains just unit prices and optional thresholds (40 bytes on the pinned target), derives full debit by shifting thresholds, and checks funded addition inside the callback. No ABI, price, account or sample-selection change is made.",
+  "decision": "Preserve both historical sessions and both newly planned sessions. Do not discard this factor merely because its standalone outcome was uncertain; do not claim a repeatable improvement without independent evidence."
+}
