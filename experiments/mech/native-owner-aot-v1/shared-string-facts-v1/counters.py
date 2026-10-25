@@ -17,7 +17,7 @@ from binary import macho
 
 
 def main():
-    plan = read(STUDY / 'plan.json')
+    plan = read(STUDY / 'execution-plan.json')
     before = source_state()
     assert before['commit'] == plan['source_commit'] and not before['status']
     timing = read(HERE / 'full-shared-string-facts-v1/results.json')

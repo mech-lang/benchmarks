@@ -21,7 +21,7 @@ def rows(counter, limit=60):
 
 
 def main():
-    plan = read(STUDY / 'plan.json')
+    plan = read(STUDY / 'execution-plan.json')
     before = source_state()
     assert before['commit'] == plan['source_commit'] and not before['status']
     env = read(HERE / plan['compiler'] / 'results.json')['environment']

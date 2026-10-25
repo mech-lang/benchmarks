@@ -16,7 +16,7 @@ from analyze_profile import text_section
 
 
 def main():
-    plan = read(STUDY / 'plan.json')
+    plan = read(STUDY / 'execution-plan.json')
     before = source_state()
     assert before['commit'] == plan['source_commit'] and not before['status']
     build = read(HERE / 'profile-shared-string-facts-build-v1/results.json')

@@ -14,7 +14,7 @@ from measure import PLAN, process, read, source_state, check_native, INPUT_SHA, 
 
 
 def main():
-    plan = read(STUDY / 'plan.json')
+    plan = read(STUDY / 'execution-plan.json')
     before = source_state()
     assert before['commit'] == plan['source_commit'] and not before['status']
     candidate = read(HERE / plan['receipt'] / 'results.json')
@@ -37,7 +37,7 @@ def main():
             out = HERE / f'full-shared-string-facts-v{batch}'
             out.mkdir(exist_ok=False)
             orders = plan['orders'] if batch == 1 else list(reversed(plan['orders']))
-            report = dict(status='running', source=before, session=batch, plan_sha256=process.sha(STUDY / 'plan.json'),
+            report = dict(status='running', source=before, session=batch, plan_sha256=process.sha(STUDY / 'execution-plan.json'),
                 driver_sha256=process.sha(Path(__file__)), pins=pins, orders=orders, samples=[],
                 input_sha256=INPUT_SHA, policy_sha256=POLICY_SHA, canonical_data_sha256=DATA_SHA,
                 object_sha256=candidate['object_sha256'], excluded_warmups=0, excluded_outliers=0,

@@ -60,7 +60,7 @@ def main():
     updates = 6999961 if prefix else 874999961
     out = HERE / sys.argv[1]
     out.mkdir(exist_ok=False)
-    timing = json.loads((HERE / 'shared-string-facts-timing-v1/results.json').read_text())
+    timing = json.loads((HERE / 'shared-string-facts-timing-v2/results.json').read_text())
     env = json.loads((HERE / 'compiler-v74/results.json').read_text())['environment']
     targets = dict(mech=HERE / '.build/counting-shared-string-facts',
                    baseline=HERE / '.build/counting-prepared-refill',
