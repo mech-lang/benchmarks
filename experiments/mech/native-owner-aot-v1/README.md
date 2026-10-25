@@ -14,8 +14,11 @@ are 1.52/1.53% over the immediate parent and **3.09/3.20% over byte-table anchor
 bodies remain byte-identical. All 100 full observations, exact-text profiles,
 counters, sizes and failed qualification attempts are retained. Rust parity
 remains unproved; separate counter CPU is mixed. The [next status](preparation-next-round-v1/status-v8.json)
-requires matching actual-candidate phases before pure-scalar graph/state work
-and improvements shared by both long hash loops.
+first requires matching actual-candidate phases. The [completed diagnostic](compact-ascii-map-preparation-workers-v1/README.md)
+now isolates **7.5 ms less kernel/post-EOF CPU**, with 37 further terminal
+receipts and 224 worker intervals. Scanner CPU remains near 73 ms; workers
+start about 15.7 ms after Rust. The [current status](preparation-next-round-v1/status-v9.json)
+targets pure-scalar graph/state work and improvements shared by both long hash loops.
 
 The [nontrapping private-home experiment](private-home-notrap-v1/README.md)
 at `cfd54ab14d` is correctness-qualified but exposes **no instruction change**:
