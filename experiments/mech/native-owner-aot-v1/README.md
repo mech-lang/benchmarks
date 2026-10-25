@@ -4,6 +4,19 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [paired candidate key/count loads](paired-candidate-loads-v1/README.md)
+at `d8d9a7d649` establish a repeatable full-input advantage over unchanged
+upstream Rust. Complete secured-process medians are **0.53177 s / 0.95484×
+Rust** and **0.53493 s / 0.96219×**. Both paired Rust intervals exclude zero,
+as do both comparisons with the retained pure-scalar parent. Actual AArch64
+emission has 38 paired reads in each long hashed function; all twelve other
+guest functions match the parent. All 415 native checks and remaining scopes,
+fourteen changed-input AOT/oracle checks, 144 full observations, fresh exact-
+text profiles, counters and **221 terminal receipts** pass. The
+[current status](preparation-next-round-v1/status-v13.json) retains this source
+as the full-input candidate. Prefix timings and memory/file-size limitations
+remain separately documented.
+
 The [separate candidate-value load trial](candidate-value-loads-v1/README.md)
 at `ff4dc1608` is unpromoted: full medians are 0.57103 s / 1.027× Rust and
 0.56643 s / 1.010×, versus the retained scalar parent's 0.55027/0.54182 s.
