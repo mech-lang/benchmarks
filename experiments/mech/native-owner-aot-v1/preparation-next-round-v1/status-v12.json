@@ -1,0 +1,146 @@
+{
+  "status": "separate-candidate-loads-regress-retain-scalar-parent-paired-load-next",
+  "production_source": "93015bc6298b77fd10402e88baea5e3bfd89b28d",
+  "candidate_source": "ff4dc1608ec2a8af1296a9d629aa600333c2eeed",
+  "study": "../candidate-value-loads-v1/",
+  "verification_sha256": "ff52fc92011380d8a139ff8e80bff7911c9fe0a2573d96aee52551453ef93974",
+  "terminal_owned_receipts": 159,
+  "primary_full_samples": 100,
+  "full_sessions": [
+    {
+      "session": 1,
+      "median_seconds": {
+        "candidate": 0.571026292,
+        "parent": 0.550265333,
+        "ordinary": 0.6014751460000001,
+        "byte_parent": 0.6060411875,
+        "rust": 0.556193021
+      },
+      "x_rust": {
+        "candidate": 1.0266692864526252,
+        "parent": 0.9893423905439476,
+        "ordinary": 1.0814144070319072,
+        "byte_parent": 1.089623861893082,
+        "rust": 1.0
+      },
+      "paired_comparisons": {
+        "parent": {
+          "change_percent": 3.554967385071308,
+          "interval_95": [
+            2.418924361266672,
+            4.417210684216788
+          ],
+          "faster_matched_pairs": 0,
+          "pairs": 10
+        },
+        "byte_parent": {
+          "change_percent": -6.423894234307323,
+          "interval_95": [
+            -7.818541339857477,
+            -5.1991496196018625
+          ],
+          "faster_matched_pairs": 10,
+          "pairs": 10
+        },
+        "ordinary": {
+          "change_percent": -6.074299812721243,
+          "interval_95": [
+            -7.288691043501549,
+            -4.143154149615727
+          ],
+          "faster_matched_pairs": 10,
+          "pairs": 10
+        },
+        "rust": {
+          "change_percent": 2.2354441112255894,
+          "interval_95": [
+            0.6697796268072765,
+            3.5181866149643257
+          ],
+          "faster_matched_pairs": 2,
+          "pairs": 10
+        }
+      },
+      "median_peak_rss_bytes": {
+        "candidate": 162897920.0,
+        "parent": 162897920.0,
+        "ordinary": 162447360.0,
+        "byte_parent": 162865152.0,
+        "rust": 140476416.0
+      }
+    },
+    {
+      "session": 2,
+      "median_seconds": {
+        "candidate": 0.566427021,
+        "parent": 0.5418203125000001,
+        "ordinary": 0.606499854,
+        "byte_parent": 0.6012717915,
+        "rust": 0.5610741665000001
+      },
+      "x_rust": {
+        "candidate": 1.0095403688489013,
+        "parent": 0.9656839413582232,
+        "ordinary": 1.0809620014825614,
+        "byte_parent": 1.071644048862121,
+        "rust": 1.0
+      },
+      "paired_comparisons": {
+        "parent": {
+          "change_percent": 4.66295327689781,
+          "interval_95": [
+            2.58851684333911,
+            6.0808372683395895
+          ],
+          "faster_matched_pairs": 0,
+          "pairs": 10
+        },
+        "byte_parent": {
+          "change_percent": -5.9093567644768905,
+          "interval_95": [
+            -6.34039595213819,
+            -4.822336422831515
+          ],
+          "faster_matched_pairs": 10,
+          "pairs": 10
+        },
+        "ordinary": {
+          "change_percent": -6.560670044289445,
+          "interval_95": [
+            -8.101962266942314,
+            -5.2783689988486175
+          ],
+          "faster_matched_pairs": 10,
+          "pairs": 10
+        },
+        "rust": {
+          "change_percent": 1.9278924351395517,
+          "interval_95": [
+            0.4028331271346941,
+            3.352694347869578
+          ],
+          "faster_matched_pairs": 2,
+          "pairs": 10
+        }
+      },
+      "median_peak_rss_bytes": {
+        "candidate": 162914304.0,
+        "parent": 163061760.0,
+        "ordinary": 163381248.0,
+        "byte_parent": 162988032.0,
+        "rust": 140419072.0
+      }
+    }
+  ],
+  "decision": "Separate early candidate loads regress in all twenty parent pairs. No promotion. Full-key equality and all original work remain; good parent retained.",
+  "next_action": {
+    "type": "combined load of adjacent initialized narrow key/count words",
+    "requirements": [
+      "Retain wide-key fallback and all invalidation/error/source-work semantics",
+      "Qualify actual narrow and wide original/decoded execution",
+      "Inspect actual combined load and unchanged unrelated functions",
+      "Compare good scalar parent, unpromoted separate-load trial, byte/ordinary anchors and unchanged Rust"
+    ]
+  },
+  "goal_complete": false
+}

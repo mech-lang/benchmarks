@@ -4,6 +4,15 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [separate candidate-value load trial](candidate-value-loads-v1/README.md)
+at `ff4dc1608` is unpromoted: full medians are 0.57103 s / 1.027× Rust and
+0.56643 s / 1.010×, versus the retained scalar parent's 0.55027/0.54182 s.
+All twenty parent pairs regress. All 414 native checks and remaining scopes,
+exact-text profiles, counters and **159 terminal receipts** are verified.
+The [next status](preparation-next-round-v1/status-v12.json) retains the good
+scalar parent and targets combined adjacent key/count loads rather than
+the measured separate-load arrangement.
+
 The [dated optimization history](optimization-history-v1/README.md) reconstructs
 94 measured stages and 220 cohorts, including the earlier required-work
 lowering. All 1,009 candidate observations recover exact process launch times;
