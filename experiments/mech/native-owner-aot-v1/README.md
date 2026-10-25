@@ -4,7 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
-The [fresh matched current Mech/Rust profile](matched-current-profile-v1/README.md)
+The [shared immutable String-fact trial](shared-string-facts-v1/README.md)
+removes repeated worker representation scans. Two full sessions give candidate
+**0.6908 s / 1.243× Rust** and **0.6972 s / 1.255×**, against parent 0.6945 s
+and 0.6959 s; neither paired interval excludes zero. Separate counters show
+about 402 million fewer instructions, while worker availability remains around
+0.23 s and the longest observed worker CPU endpoint remains above Rust's.
+Generated hash-table instruction bytes are unchanged. The trial retains all
+91 process receipts, both wrapper corrections, the two repaired old-policy test
+expectations, and full ownership/native qualification. It remains an interaction
+factor, with no demonstrated elapsed-time win or Rust parity.
+
+The preceding [matched Mech/Rust profile](matched-current-profile-v1/README.md)
 at `bf10d4a51` records six timings per executable: **Mech 0.6999 s / 1.277× Rust**,
 Rust **0.5482 s / 1.000×**. Three fresh early full-input captures, hardware-counter
 runs and owned-thread polls per language isolate observed worker and main-thread
