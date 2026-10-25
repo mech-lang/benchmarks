@@ -4,6 +4,19 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [compact immutable mapper](compact-ascii-map-v1/README.md) at `d1ae94f684`
+reduces eight vector lookups to two after exhaustive ASCII equivalence, with
+a full-table fallback and shared ordinary/joined algebra. All 410 native
+checks, remaining scopes and **164 terminal receipts** pass. Complete-process
+medians are **0.5835 s / 1.070× Rust** and **0.5815 s / 1.048×**. Paired gains
+are 1.52/1.53% over the immediate parent and **3.09/3.20% over byte-table anchor
+`8946ccbae9`**, with all four intervals excluding zero. Seven counting/bridge
+bodies remain byte-identical. All 100 full observations, exact-text profiles,
+counters, sizes and failed qualification attempts are retained. Rust parity
+remains unproved; separate counter CPU is mixed. The [next status](preparation-next-round-v1/status-v8.json)
+requires matching actual-candidate phases before pure-scalar graph/state work
+and improvements shared by both long hash loops.
+
 The [nontrapping private-home experiment](private-home-notrap-v1/README.md)
 at `cfd54ab14d` is correctness-qualified but exposes **no instruction change**:
 all ten emitted function bodies are byte-identical to selective-field parent
