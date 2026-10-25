@@ -1,0 +1,65 @@
+{
+  "source_commit": "76d17b03f7536132369b7d221f18727a1a045d03",
+  "parent_source_commit": "8dfe57af5b116244ee8d10e1133bec95c02a4425",
+  "compiler": "compiler-v76",
+  "receipt": "utf8-fragment-facts-timing-v1",
+  "binary": "counting-utf8-fragment-facts",
+  "parent_receipt": "aligned-probe-groups-timing-v1",
+  "parent_binary": "counting-aligned-probe-groups",
+  "changes": [
+    "Validate ASCII UTF-8 and count LF bytes in one bounded byte reduction; non-ASCII still uses standard UTF-8 validation with exact errors.",
+    "Carry private-field borrowed fragment facts through resource delivery and reuse them only after the original line-capture admission and work debit.",
+    "Remove repeated owner/host ASCII scans and redundant complete-prefix LF counting. Preserve pending-line, CRLF, Unicode and deferred failure behavior."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, generated map kernels, resource image, seven complete maps and all physical source updates.",
+    "Work-policy67, IR80, ABI28, prices, caps, resource checks, error precedence, memory admission and seven workers.",
+    "Input, protected Rust, startup/security policy, scheduling and OS settings."
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Three fresh exact-code candidate/Rust profiles, three counter and owned-thread captures per subject. Diagnostic durations are not primary timings.",
+  "decision": "Retain parent and candidate. Report both full sessions without selecting observations; no predeclared gain or Rust parity.",
+  "production_change_commit": null,
+  "work_policy_version": 67
+}

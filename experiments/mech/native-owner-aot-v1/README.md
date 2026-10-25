@@ -4,6 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [UTF-8 fragment-fact trial](utf8-fragment-facts-v1/README.md) at
+`76d17b03f` combines validation, ASCII detection and LF counting in shared
+input capture. The main-thread CPU endpoint falls about 19 ms and workers are
+first observed about 11 ms earlier, but two full-input sessions show **0.6673 s /
+1.203× Rust** and **0.6603 s / 1.184×**, with both candidate/parent paired
+intervals including zero. The separate prefix cohort regresses; the candidate
+remains unpromoted and retained for interaction checks. Worker CPU endpoints
+rise in the separate captures, but their incomplete retirement observations do
+not establish a worker regression. All 423 check executions and 91 terminal
+receipts pass. The Mech source, bytecode, resource image, raw guest object,
+seven complete maps, update counts, prices and limits remain unchanged.
+
 The [aligned-probe and addressing trial](aligned-probe-groups-v1/README.md)
 at `8dfe57af5` improves all twelve matched candidate/parent pairs across two
 sessions. Full-input medians are **0.6595 s / 1.180× Rust** and **0.6712 s /
