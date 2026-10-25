@@ -1,0 +1,11 @@
+--- parent-launcher.rs
++++ diagnostic-launcher.rs
+@@ -402,6 +402,8 @@
+     Ok(())
+ }
+ fn main() {
++    let _preparation_diagnostic = mech_gpu::native_artifact::preparation_probe::Root::new();
++    let _worker_cpu_diagnostic = mech_gpu::native_artifact::worker_cpu_probe::Root::new();
+     if let Err(error) = run() { eprintln!("{error}"); std::process::exit(1); }
+ }
+ 

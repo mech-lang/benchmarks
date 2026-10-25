@@ -20,6 +20,12 @@ retire about 1.157 billion fewer instructions, with lower cycles and CPU;
 exact-text profiles, sizes, RSS and both failed compile attempts remain.
 The [current status](preparation-next-round-v1/status-v10.json) calls for matching
 actual-candidate phases before selecting further scalar or shared long-loop work.
+The [completed matching diagnostic](pure-scalar-state-preparation-workers-v1/README.md)
+now localizes the gain: scanner CPU falls from 0.073576 s to **0.031846 s**.
+Workers begin near **0.1073 s / 0.804× Rust**, about 26.1 ms earlier than Rust.
+All 37 new receipts and 224 worker intervals pass. Counting bodies remain
+unchanged; the [next status](preparation-next-round-v1/status-v11.json) targets
+candidate payload/count loading shared by both long hash loops.
 
 The [compact immutable mapper](compact-ascii-map-v1/README.md) at `d1ae94f684`
 reduces eight vector lookups to two after exhaustive ASCII equivalence, with
