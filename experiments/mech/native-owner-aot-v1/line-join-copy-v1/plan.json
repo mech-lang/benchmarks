@@ -1,0 +1,65 @@
+{
+  "source_commit": "630921324a65c385cf63e871d3241dbb0847b8d6",
+  "parent_source_commit": "91f725adc16b1ba349d77cc898e6e24de4a79bf6",
+  "compiler": "compiler-v79",
+  "receipt": "line-join-copy-timing-v1",
+  "binary": "counting-line-join-copy",
+  "parent_receipt": "borrowed-offset-cursor-timing-v2",
+  "parent_binary": "counting-borrowed-offset-cursor",
+  "changes": [
+    "Copy already validated captured line payloads into existing prepaid output storage without repeating per-line UTF8 boundary checks or String append capacity checks.",
+    "Preserve LF/CRLF semantics, arbitrary UTF8, contiguous partial edge selections, incremental source retirement, all producer charges and the original output allocation."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, native guest object, descriptor, resource image, all original source predicates and map updates, seven-worker cap, OS settings and secured startup through process exit.",
+    "IR81, ABI29, work policy68, operation prices, finite resource and work limits, canonical output and source error precedence."
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Build exact-code profile and compare new copy frames with retained parent; diagnostic elapsed times never enter primary medians.",
+  "decision": "Retain parent and copy candidate independently; report both full sessions and exact-code diagnostic evidence without selecting samples or asserting a speedup before measurement.",
+  "production_change_commit": null,
+  "work_policy_version": 68,
+  "typed_ir_version": 81,
+  "abi_version": 29
+}

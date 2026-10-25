@@ -4,6 +4,27 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [validated line-copy trial](line-join-copy-v1/README.md) at `630921324`
+avoids repeated per-line String append and UTF-8 boundary checks within the
+already admitted output allocation. Full medians are **0.6531 s / 1.180× Rust**
+and **0.6574 s / 1.191×**. The repeat's paired interval includes zero, so the
+elapsed gain remains provisional. Separate paired phase captures confirm about
+5.9 ms less copy CPU and 6.5 ms less main CPU before worker launch; they do not
+explain the entire 10–23 ms difference between elapsed medians. All 26 engine,
+29 focused prefix, 392 native and one catalog checks pass. The guest object,
+descriptor, bytecode, resources, work charges and limits are unchanged. Exact
+instruction-byte profiles and counters retain 81 primary-study receipts, plus
+14 separate phase-study receipts. Join/map composition and local finite worker
+credit remain next implementation targets; Rust parity is incomplete.
+
+The [finer preparation diagnostic](preparation-phase-v1/README.md) separates
+borrowing, source scanning, joining and normalization in the direct-offset
+parent. Median main-thread CPU reaches worker launch at 0.1959 s, versus Rust's
+input-ready milestone at 0.1279 s. Borrowing costs about 1 ms, scanning 73 ms,
+selected copying 28 ms and the normalization kernel 13 ms. Nested spans are
+not additive and instrumented durations never replace primary timings. All
+14 native receipts and original output/update checks pass.
+
 The [compact borrowed-offset trial](borrowed-offset-cursor-v1/README.md) at
 `91f725adc` removes the per-line pointer directory for bounded ASCII chunk
 windows. Full medians are **0.6713 s / 1.225× Rust** and **0.6713 s / 1.200×**,
@@ -27,8 +48,8 @@ confirm that widths 12 and 18 determine the counting tail. Those widths execute
 1.170× and 1.136× Rust's instructions, while cached widths 1–6 use about half.
 The delayed worker start chiefly precedes spawning; actual spawn calls take
 about 75 microseconds. Instrumented hosts and their CPU/core-kind observations
-are separate from primary timings. Direct borrowed offsets and join/map fusion
-remain unmeasured implementation candidates.
+are separate from primary timings. Direct borrowed offsets have since been
+measured above; join/map fusion remains an unimplemented candidate.
 
 The [UTF-8 fragment-fact trial](utf8-fragment-facts-v1/README.md) at
 `76d17b03f` combines validation, ASCII detection and LF counting in shared
