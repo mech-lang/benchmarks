@@ -4,6 +4,16 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [fresh cold-origin phase/per-width diagnostic](cold-origin-preparation-workers-v1/README.md)
+shows **0.188 s** to Mech worker launch versus **0.130 s** for Rust, with only
+71 microseconds in actual spawning. Source scanning remains **72.6 ms CPU**,
+selected joining 20.6 ms and normalization 13.0 ms. Width-12 counting is
+**0.4024 s / 1.036× Rust**; width 18 is **0.4023 s / 0.998×**. All 15 diagnostic
+receipts and 84 worker intervals are verified; these are not primary samples.
+The isolated scanner-store changes have not removed the serial preparation
+gap. The next substantive compiler target is the complete pure scalar graph
+and its carrier/view data movement; finite worker credit remains the checkpoint.
+
 The [cold scalar-origin trial](scalar-cold-origins-v1/README.md) at
 `47da29a4c` is **unpromoted**: medians are **0.6297 s / 1.139× Rust** and
 **0.6294 s / 1.135×**, with paired changes +0.35% and +0.30%; both intervals
