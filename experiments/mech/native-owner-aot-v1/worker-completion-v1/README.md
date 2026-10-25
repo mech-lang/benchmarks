@@ -37,6 +37,17 @@ Mech capture and Rust input preparation have different boundaries: Mech performs
 
 The full per-width setup, preparation, counting, publication, generated post-work and retirement counters, including core-kind CPU, are in [analysis.json](analysis.json). These are sampled experimental runs; differing core residency is observed rather than assigned by this study.
 
+### Instruction distribution on the critical widths
+
+The aggregate instruction advantage comes from widths 1–6, which execute about half the Rust instructions. The two ordinary-hash widths that finish last still execute more instructions and cycles. These complete count-interval counters include the maintained accounting and helper costs.
+
+| Width | Aligned instructions | Rust instructions | Aligned / Rust | Aligned cycles | Rust cycles | Aligned / Rust |
+|---:|---:|---:|---:|---:|---:|---:|
+| 12 | 5.011 B | 4.284 B | 1.170× | 1.489 B | 1.311 B | 1.136× |
+| 18 | 4.869 B | 4.288 B | 1.136× | 1.477 B | 1.358 B | 1.088× |
+
+Shortening these specific count intervals and their serial prerequisite is therefore more relevant to completion than reducing already short cached workers further. Core-kind residency differs between subjects and is retained in the raw counters; these observations alone do not isolate an instruction scheduling or core-placement cause.
+
 ## Qualification and retained failure
 
 Each diagnostic host first passed the retained prefix output and all seven source-width traces. The original aligned build failed with Cargo status 101 because adding the copied launcher probe left its source-integrity pin stale. No subject was launched by that failed build. The corrected version updates only the diagnostic launcher pin and build-script self-pin; it removes no checks and leaves guest objects, bytecode and resources pinned. The failed receipt is retained.

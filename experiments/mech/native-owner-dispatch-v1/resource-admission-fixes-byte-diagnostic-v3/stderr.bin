@@ -1,0 +1,15 @@
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+    Finished `test` profile [unoptimized] target(s) in 10.22s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+WORKER_PREFLIGHT tasks=7 used_bytes=15282153 required_bytes=1222564 byte_limit=15728308
+WORKER_PREFLIGHT tasks=5 used_bytes=14451916 required_bytes=873260 byte_limit=15728308
+WORKER_FAILURE phase=body error=Base(Memory { error: BudgetExceeded { operation: None, requested: 15885550, limit: 15728308 } })
+WORKER_FAILURE phase=body error=Base(Memory { error: BudgetExceeded { operation: None, requested: 15881382, limit: 15728308 } })
+WORKER_FAILURE phase=body error=Base(Memory { error: BudgetExceeded { operation: None, requested: 15881382, limit: 15728308 } })
+WORKER_FAILURE phase=constructor region=1 index=3 error=Base(Memory { error: BudgetExceeded { operation: None, requested: 15728478, limit: 15728308 } })
+WORKER_FAILURE phase=body error=Library { origin: NativeMatchOrigin { node: NodeId(5), block: Some(0), local: Some(1) }, error: Memory(BudgetExceeded { operation: None, requested: 16489238, limit: 15728308 }) }
+
+thread 'native_artifact::program_runtime::parallel_tests::insufficient_combined_worker_bytes_uses_serial_source_body' (3435972) panicked at hosts/gpu/src/native_artifact/program_parallel_tests.rs:361:58:
+called `Result::unwrap()` on an `Err` value: Base(Memory { error: BudgetExceeded { operation: None, requested: 15881382, limit: 15728308 } })
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p mech-gpu --lib`

@@ -4,6 +4,22 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [corrected ownership/admission baseline](resource-admission-fixes-v1/README.md)
+at `ce0686764` fixes all three retained runtime findings and passes 392 native
+checks plus the catalog check. Two balanced full-input sessions give **0.6817 s /
+1.237× Rust** and **0.6826 s / 1.237×**. It is slightly slower than the previous
+aligned build in these sessions; no speedup is claimed. Source, bytecode,
+resources, descriptor and raw guest object remain identical. All 57 terminal
+receipts, including four preserved unsuccessful attempts, are audited.
+
+[Complete per-width diagnostics](worker-completion-v1/README.md) independently
+confirm that widths 12 and 18 determine the counting tail. Those widths execute
+1.170× and 1.136× Rust's instructions, while cached widths 1–6 use about half.
+The delayed worker start chiefly precedes spawning; actual spawn calls take
+about 75 microseconds. Instrumented hosts and their CPU/core-kind observations
+are separate from primary timings. Direct borrowed offsets and join/map fusion
+remain unmeasured implementation candidates.
+
 The [UTF-8 fragment-fact trial](utf8-fragment-facts-v1/README.md) at
 `76d17b03f` combines validation, ASCII detection and LF counting in shared
 input capture. The main-thread CPU endpoint falls about 19 ms and workers are
