@@ -1,0 +1,55 @@
+{
+  "status": "matching-byte-table-phases-qualified-selective-scanner-field-loads-next",
+  "review_sha256": "2a24d8df69555a727cb6a38c338bf246fa45a032ef651ad4ef2b30ca3f03f1b6",
+  "production_source": "8946ccbae9ef213e52832b3847c7c019a8e112e2",
+  "diagnostic_source": "5a89d492f4f72aaf0093af7cf449d63aefcb6387",
+  "phase_verification_sha256": "f796120c67d02db2413a986b1901987d410b34cbdae7bc316180793f9ade314c",
+  "phase_study": "../joined-byte-table-preparation-workers-v1/",
+  "terminal_owned_phase_receipts": 37,
+  "full_worker_intervals": 224,
+  "phase_findings": {
+    "candidate": {
+      "kernel_cpu_seconds": 0.0236984665,
+      "scanner_cpu_seconds": 0.07281553099999999,
+      "post_eof_cpu_seconds": 0.0299204165
+    },
+    "parent": {
+      "kernel_cpu_seconds": 0.025891947,
+      "scanner_cpu_seconds": 0.073091847,
+      "post_eof_cpu_seconds": 0.032113521000000006
+    }
+  },
+  "promotion": "Byte-table primary increment remains unproved; matching diagnostic probes isolate approximately 2.2ms less kernel/post-EOF CPU. No primary timing is replaced and Rust parity is not established.",
+  "next_action": {
+    "type": "independent field-selective borrowed-view lowering",
+    "parent_source": "8946ccbae9ef213e52832b3847c7c019a8e112e2",
+    "ordinary_control": "bdb3c511cd552ffc143460d6e1ae7edd04885a7f",
+    "source_file": "hosts/gpu/src/native_artifact/program_borrowed_codegen.rs",
+    "first_change": "Length loads only its length home instead of invoking pair() and discarding its pointer.",
+    "required_evidence": [
+      "Actual removal of the confirmed unused pointer load in the emitted object",
+      "Every unrelated nonentry function remains unchanged",
+      "Original source/bytecode, finite prices, error boundaries and callback barriers preserved",
+      "Source/decoded and finite-budget correctness, then balanced whole-process measurements, exact profiles and counters"
+    ]
+  },
+  "separate_followup": {
+    "type": "narrowly proved nontrapping private homes",
+    "contract": "Pinned cranelift-codegen 0.131.3 permits deleting unused loads/dead stores with notrap; this does not grant arbitrary movement, readonly memory or alignment.",
+    "audit_state": "Stable owner, extent construction and entry lifetime inspected; typed projection default initialization and complete call-site scope must be verified before adding promises.",
+    "source_areas": [
+      "compiler_memory_regions.rs",
+      "memory.rs",
+      "program_session.rs",
+      "program_borrowed_layout.rs",
+      "program_tail_layout.rs"
+    ]
+  },
+  "remaining_review_sequence": [
+    "Derive and exhaustively verify a compact immutable mapping plan",
+    "Extend maintained graph/tag/SSA/liveness machinery to pure scalar and borrowed regions",
+    "Simplify monotone row cursor and mode transitions; assess owner-bound ASCII validity certificate",
+    "Improve both long ordinary counting loops with earlier candidate-count loads and funded pipelining"
+  ],
+  "goal_complete": false
+}

@@ -14,9 +14,12 @@ prepared vector loads before row traversal; the kernel stack falls from
 immediate direct-transform parent include zero, so the isolated byte-table
 change is **unpromoted** and the second ratio does not establish Rust parity.
 Against the ordinary control, paired reductions are 4.76% and 4.25%, with
-both intervals excluding zero. The [updated status](preparation-next-round-v1/status-v4.json)
-requires fresh actual-candidate phases before assigning a kernel saving;
-selective view-field loads are the next independent compiler change.
+both intervals excluding zero. The [matching phase diagnostic](joined-byte-table-preparation-workers-v1/README.md)
+now isolates about 2.2 ms less kernel/post-EOF CPU, with 37 additional verified
+receipts and 224 full worker intervals. Workers still start about 22 ms after
+Rust, and the scanner remains near 73 ms. The [updated status](preparation-next-round-v1/status-v5.json)
+targets selective view-field loads and a separate proof of nontrapping private
+homes; the phase saving is not promoted to a whole-process timing claim.
 
 The [direct transform/copy trial](joined-transform-copy-v1/README.md) at
 `6cf5877fa9` is correctness-qualified but **unpromoted**. It removes the

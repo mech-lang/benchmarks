@@ -129,9 +129,12 @@ subject, give:
 
 Instructions decrease modestly, but summed cycles and CPU do not improve in
 this diagnostic. These results cannot promote the candidate over its immediate
-parent. A fresh candidate-specific phase/per-width cohort is still needed to
-isolate the joined kernel and distinguish preparation changes from long-worker
-variation and core residence.
+parent. The separate [matching phase/per-width cohort](../joined-byte-table-preparation-workers-v1/README.md)
+now isolates approximately 2.2 ms less kernel and post-EOF CPU: 0.023698 s
+versus 0.025892 s in the kernel, and 0.029920 s versus 0.032114 s after EOF.
+Its 37 terminal receipts and 224 full worker intervals are verified. The
+source scanner remains near 73 ms. These observations do not replace primary
+timings or establish an incremental whole-process win.
 
 The executable is 5,501,280 bytes, versus the parent's 5,501,264 bytes.
 Machine text is 4,329,012 versus 4,329,140 bytes. Candidate primary peak RSS
@@ -145,9 +148,8 @@ gates, whole-text profile equivalence and separate counter observations.
 Every native process exits successfully, inherits the original mutex, is
 reaped and closes its process group, with no signal or cleanup error.
 
-The next diagnostic keeps this production object unchanged and measures its
-actual preparation and all seven task widths. The next independent compiler
-change makes borrowed-view field loads selective; narrowly proved nontrapping
-home accesses follow as a separate experiment. Compact shared mapping plans,
+The next independent compiler change makes borrowed-view field loads
+selective; narrowly proved nontrapping home accesses follow as a separate
+experiment. Compact shared mapping plans,
 maintained scalar graph/tag/SSA optimization, row-cursor simplification and
 both long-loop experiments remain queued.
