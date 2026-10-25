@@ -4,8 +4,26 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [private join/map buffer trial](private-join-buffer-v1/README.md) at
+`88b883b4cf` is correctness-qualified and retained as the foundation for direct
+transform-on-copy. All eighteen matched pairs favor it, but the benefit varies:
+initial sessions give **0.6009 s / 1.081× Rust** and **0.5952 s / 1.067×**, with
+paired reductions of 2.42% and 4.36%; the predetermined clean holdout gives
+**0.60485 s / 1.101×**, versus parent **0.60535 s / 1.101×** and Rust **0.54957 s**,
+only a 0.24% paired reduction. A consistent 2–4% gain is not established.
+All 401 native, 28 line-storage, 36 finite-credit, one catalog and seven focused
+checks pass. All eight nonentry function bodies remain byte-identical. The
+executable shrinks from 5.50 to 5.48 MB; peak RSS is broadly unchanged.
+The [fresh actual-path phase/width diagnostic](private-join-preparation-workers-v1/README.md)
+still measures **0.0385 s** after EOF, including 0.0215 s of copying and
+0.0135 s of mapping. Its different per-chunk clock overhead prevents treating
+these spans as a primary elapsed decomposition. All **123 terminal native
+receipts** are verified, including the reused successful prefix after a parser
+correction. The next larger candidate must compare direct transform-on-copy
+against both this foundation and the qualified ordinary parent, plus Rust.
+
 The [worker-credit/fragment-fact combination](credit-fragment-facts-v1/README.md)
-at `bdb3c511c` is the **new qualified checkpoint**: **0.6046 s / 1.092× Rust**
+at `bdb3c511c` is the **qualified ordinary control**: **0.6046 s / 1.092× Rust**
 and **0.6083 s / 1.082×**, against current credit-parent medians 0.6230 s and
 0.6248 s. All twelve matched pairs are faster; paired reductions are 2.14% and
 2.22%, with both intervals excluding zero. The source, bytecode, resources,

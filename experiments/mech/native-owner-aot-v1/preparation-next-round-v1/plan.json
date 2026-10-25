@@ -1,8 +1,8 @@
 {
   "baseline_source": "bdb3c511cd552ffc143460d6e1ae7edd04885a7f",
   "review_sha256": "22a5989a5e47e03882d38620f18459d4f0feacc77e7a653b066517fb127e6a11",
-  "status": "exact-counter-complete-buffer-owner-fusion-next",
-  "current_experiment": "scalar-traversal-count-v1",
+  "status": "private-owner-qualified-direct-transform-copy-next",
+  "current_experiment": "private-join-buffer-v1",
   "tracks": [
     {
       "name": "scalar-scanner",
@@ -56,14 +56,27 @@
   },
   "promotion": "No diagnostic-only reduction, static instruction change, or interval including zero establishes a runtime improvement.",
   "retained_credit_control_source": "7a715c12a055472247bab992904f43a9962cafd1",
-  "current_experiment_status": "Counter is correct but unpromoted: paired +2.18% and +1.82%; scanner 0.07377 versus 0.07396 seconds. Production and diagnostic source committed; evidence verified.",
-  "latest_phase_evidence": "../scalar-traversal-preparation-workers-v1/verification.json",
+  "current_experiment_status": "Physical canonical intermediate and redundant scan removed; all correctness and receipt checks pass. Eighteen matched pairs favor the candidate, but paired gain varies from 0.24% in the clean holdout to 2.42%/4.36% initially; no consistent large improvement is claimed.",
+  "latest_phase_evidence": "../private-join-preparation-workers-v1/verification-v2.json",
   "latest_phase_findings": {
-    "candidate_source_scanner_cpu_seconds": 0.0737746925,
-    "parent_source_scanner_cpu_seconds": 0.073955908,
-    "candidate_post_eof_cpu_seconds": 0.0403976465,
-    "parent_post_eof_cpu_seconds": 0.0401445625,
-    "candidate_long_tasks_body_finish_difference_seconds": 0.008265
+    "candidate_source_scanner_cpu_seconds": 0.0733728265,
+    "parent_source_scanner_cpu_seconds": 0.0739361065,
+    "candidate_post_eof_cpu_seconds": 0.0384621875,
+    "parent_post_eof_cpu_seconds": 0.0399627915,
+    "candidate_copy_cpu_seconds": 0.021474258,
+    "candidate_mapper_cpu_seconds": 0.01346914,
+    "candidate_mapping_loans": 3847,
+    "candidate_copy_preparations": 3848,
+    "phase_clock_overhead_not_subtracted": true,
+    "candidate_long_tasks_body_finish_difference_seconds": 0.0077235,
+    "latest_holdout_candidate_seconds": 0.604845937,
+    "latest_holdout_rust_seconds": 0.549571417,
+    "latest_holdout_x_rust": 1.1005775014678392
   },
-  "next_experiment": "Carry an admitted private byte-buffer owner directly through the complete-use-proved join/map chain, avoiding the canonical String round trip; start from bdb3c511c without the unpromoted counter."
+  "next_experiment": "Transform selected source bytes directly into the final private destination, avoiding copy-then-map. Preserve exact initialized extent/account/capacity, original source/error boundaries, finite work and every complete update. Compare with both the qualified ordinary control and private-owner foundation, plus protected Rust.",
+  "foundation_source": "88b883b4cfcdc8625440b3f075c8334bfeb09382",
+  "next_comparator_sources": [
+    "bdb3c511cd552ffc143460d6e1ae7edd04885a7f",
+    "88b883b4cfcdc8625440b3f075c8334bfeb09382"
+  ]
 }
