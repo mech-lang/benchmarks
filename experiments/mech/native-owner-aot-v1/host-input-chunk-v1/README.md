@@ -167,6 +167,15 @@ shared mutex, and canonical dataset bytes are unchanged.
 
 Run `python3 host-input-chunk-v1/verify.py` from this study directory in the
 qualified checkout. No new compiler default or fastest-program claim is made.
-The next representation investigation can use existing key-width and
-count-value facts to compare table storage with Rust's smaller keys/counts;
-this buffer trial does not implement that change.
+The retained [Rust strategy comparison](../strategy-comparison-v3/results.json)
+already isolates representation width: its unchanged Rust reference is
+0.5513 s / 1.000×, while wide keys/counts take 0.5609 s / 1.017×. A separate
+[table-algorithm diagnostic](../table-strategy-v1/results.json) reproduces
+Mech's 16-byte payload, folded hash, eight-byte NEON controls and linear probing
+in Rust; its linear variant takes 0.5473 s / 0.988× its own 0.5539 s Rust
+reference. Those studies use older Mech controls and do not replace current
+Mech observations. The Rust-only counterfactuals do not establish a Mech layout
+speedup, and do not support predicting a large remaining gain from payload
+width alone. Reuse those retained controls before implementing a new table ABI.
+The current follow-up instead prepares exact refill costs before acquiring
+shared worker accounting, keeping every original debit and limited-budget path.

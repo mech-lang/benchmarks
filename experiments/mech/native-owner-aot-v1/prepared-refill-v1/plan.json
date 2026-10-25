@@ -1,0 +1,65 @@
+{
+  "source_commit": "bf10d4a51c6af5e1f212548f136a51f97f60ff4a",
+  "parent_source_commit": "1b7c79b3e1d6713f0648cbe59794fab8b091d245",
+  "compiler": "compiler-v73",
+  "receipt": "prepared-refill-timing-v1",
+  "binary": "counting-prepared-refill",
+  "parent_receipt": "packed-domain-validation-timing-v1",
+  "parent_binary": "counting-packed-domain-validation",
+  "changes": [
+    "Prepare representable full-batch price thresholds outside the shared worker escrow lock. The common callback chooses exactly the original BATCH fuel and debits using comparisons and shifts; zero prices, overflowing thresholds or limited headroom retain the original divisions.",
+    "Pricing errors remain deferred until the original remaining-allowance/scope check reaches the callback. Funded-count errors retain their original order. No heap or persistent metadata is added."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, descriptor, Object identity, native Object and code version",
+    "Per-operation work formulas, BATCH=1024, fourfold headroom, each selected fuel count and exact debit, error order, scope checks and ledger transaction",
+    "All capability, factory, schema, frame, source-visit, sparse-key and other validation checks",
+    "Seven workers, complete maps and physical updates; original input and secured launch policies",
+    "Default input chunk size 64 KiB; worker ordering, affinity, QoS, power and clock settings"
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Fresh exact-code CPU profiles, whole-process counters, worker lifetimes, peak RSS and binary size remain separate from primary timings.",
+  "decision": "Retain all earlier factors and the prepared-refill branch. Report both separately balanced sessions and all observations, including uncertain or regressing outcomes. No prediction of a large speedup or Rust parity is made.",
+  "production_change_commit": "bf10d4a51c6af5e1f212548f136a51f97f60ff4a"
+}
