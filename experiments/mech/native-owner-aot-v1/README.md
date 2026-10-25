@@ -14,7 +14,11 @@ terminal receipts pass, including fresh exact-code profiles and counters.
 The remaining gap is 46–51 ms. The [next-round plan](preparation-next-round-v1/)
 targets exact scalar traversal accounting, fewer physical join/map passes,
 short immutable comparisons, table-derived SIMD mapping and the two long
-ordinary hash loops. A fresh three-subject phase/per-width diagnostic is pending.
+ordinary hash loops. The [fresh three-subject phase/per-width diagnostic](credit-fragment-preparation-workers-v1/)
+confirms about 19.5 ms less capture CPU and 19.8 ms earlier worker start; the
+40 ms post-EOF region remains. All 22 diagnostic receipts and 126 worker
+intervals pass. The long tasks finish within roughly 3 ms of each other, so
+counting-side changes should help both.
 
 The [fresh cold-origin phase/per-width diagnostic](cold-origin-preparation-workers-v1/README.md)
 shows **0.188 s** to Mech worker launch versus **0.130 s** for Rust, with only

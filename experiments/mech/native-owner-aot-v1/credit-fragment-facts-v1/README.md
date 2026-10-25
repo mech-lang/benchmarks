@@ -41,7 +41,7 @@ The clean candidate passes **468 checks**: 2 core fragment checks, 9 runtime cap
 | 1 | 162.53 | 163.15 | 140.68 |
 | 2 | 162.78 | 162.79 | 140.77 |
 
-No memory improvement is claimed. Fresh exact-whole-text profiles, independent counters and executable sizes are verified. The separately instrumented [phase/per-width diagnostic](../credit-fragment-preparation-workers-v1/) is pending; it will measure the actual candidate and credit parent before attributing the saved time to individual phases. The canonical benchmark dataset is unchanged. All native work runs serially under the existing common lock, with no changes to power, frequency, QoS, affinity or scheduling settings.
+No memory improvement is claimed. Fresh exact-whole-text profiles, independent counters and executable sizes are verified. The separately instrumented [phase/per-width diagnostic](../credit-fragment-preparation-workers-v1/) verifies 22 further terminal receipts and 126 worker intervals. Capture CPU is about 19.5 ms lower and worker start about 19.8 ms earlier than the credit parent; the post-EOF region remains about 40 ms. This supports the input-side origin of the gain without treating separate diagnostic medians as an exact decomposition of primary elapsed time. The canonical benchmark dataset is unchanged. All native work runs serially under the existing common lock, with no changes to power, frequency, QoS, affinity or scheduling settings.
 
 ## Fresh exact-code diagnostics
 
