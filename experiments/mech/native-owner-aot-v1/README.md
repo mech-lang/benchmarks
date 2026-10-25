@@ -4,6 +4,21 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [finite local worker-credit trial](worker-local-credit-v1/README.md) at
+`7a715c12a` is a repeatable improvement: **0.6166 s / 1.115× Rust** and
+**0.6218 s / 1.126×**, against parent medians 0.6557 s and 0.6466 s. All twelve
+matched pairs are faster; paired reductions are 5.97% and 4.12%, with both
+intervals excluding zero. Every full run reports 854,497 credited original
+batches, about sixty per shared reservation, while retaining all 874,999,961
+updates and seven complete maps. The guest object, descriptor, source,
+bytecode, resources and original body prices are unchanged. All 393 native,
+36 credit, 26 line-storage and one catalog checks pass. Exact-code profiles,
+counters, sizes and 87 terminal receipts are retained, including one repaired
+metadata-fixture failure and the unqualified zero-test filter. Active accounting
+is 3.01% of fresh worker observations; independent counter CPU falls from
+1.96 s to 1.67 s. This is the next performance checkpoint; Rust parity remains
+incomplete. Preparation/scanner work and the longest generated loops remain.
+
 The [selected-join/String-map composition trial](join-map-fusion-v1/README.md)
 at `b8e803224` applies the existing emitted map to initialized physical output
 chunks after EOF. All 400 native, 27 engine and one catalog checks pass, and
