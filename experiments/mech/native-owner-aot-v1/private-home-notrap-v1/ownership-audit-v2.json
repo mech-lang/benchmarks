@@ -1,0 +1,90 @@
+{
+  "status": "private-home-call-sites-allocation-initialization-extent-lifetime-and-barriers-audited",
+  "audited_source": "cfd54ab14d6c016efba2a539d98626b1b15bf6bb",
+  "implemented": true,
+  "dependency": {
+    "name": "cranelift-codegen",
+    "version": "0.131.3",
+    "memflags_source_sha256": "4499f91eaa9780ca246584d9453cde2f0f759731076a94319cceab94f9e0641d",
+    "contract": "Nontrapping memory permits removal of unused loads and dead stores at their current program points. It does not imply arbitrary movement, readonly memory or alignment."
+  },
+  "source_sha256": {
+    "hosts/gpu/src/native_artifact/compiler_memory_regions.rs": "e79764a420fd0e6a1d67b5460cdf42722c1988103ee4e06fe67b69c2d7ca3406",
+    "hosts/gpu/src/native_artifact/memory.rs": "c6ee5f4549b8e76aa5a25268401bb782e4178c550d7e0a19f6e34669d140c1af",
+    "hosts/gpu/src/native_artifact/program_session.rs": "ad1a216bb825171e592e335cca5a574810aaa039652ab52b24d87cd378f11052",
+    "hosts/gpu/src/native_artifact/program_borrowed_layout.rs": "0bd4fe04f611f84787f79c75d84345e19b1b357549b6b8e108dc798a2960238e",
+    "hosts/gpu/src/native_artifact/program_tail_codegen.rs": "759bc3274f0159408f65e55dccde158494b1c3823b8f1accba49efa85a210161",
+    "src/core/src/memory_runtime/domain.rs": "33dee45c098cd015127a82d35f43e0ef4b32db1d1b114ed68eede5c779687c3b",
+    "src/core/src/memory_runtime/allocation.rs": "03ee3168f16162eceb19eade748e8581d07542677b7cb2d502aea691ea8a1e5c",
+    "Cargo.lock": "36b1a96024775de3aaf1d0bb1c174d54ee6389f8c3923f1e5e9861b07cb8ba17",
+    "hosts/gpu/src/native_artifact/iteration_compiler.rs": "b4e2cb4a48dd0011ed1186a56d0a9c0c5516e409d30db06810a445fc2d9c2f2a",
+    "hosts/gpu/src/native_artifact/compiler.rs": "b0503839e97ffcc53be9d895dd6a786262730787735d7322de0e0496672d2351",
+    "hosts/gpu/src/native_artifact/program_prefix_codegen.rs": "a505678eef11ae45c4c332dc690afb7fce3eca2db2d9063adab0d688c2d8d9f0",
+    "hosts/gpu/src/native_artifact/program_tail_layout.rs": "77c90200c33420b67c2ad1091ba4b7cdcd1cbc8ad4e07ea4015d16a0b06fa02b",
+    "hosts/gpu/src/native_artifact/program_hooks.rs": "e064e41eb7d2a11989e81a456f53282c761d4b1342eb1c99420146e697da9c04",
+    "hosts/gpu/src/native_artifact/program_borrowed_codegen.rs": "1eecbc3c50f000c335f9434f248a9c72c494a0a08254fcc137b4ecd1c4f4c613"
+  },
+  "facts": [
+    {
+      "source": "memory.rs NativeTypedStorage::for_slot",
+      "fact": "Checked allocation byte counts and limits precede a typed host-arena projection retained together with its memory domain."
+    },
+    {
+      "source": "memory_runtime/allocation.rs PlannedArenaProjection::validate_realized_layout/initialize",
+      "fact": "The projection exactly covers its arena; every lane is initialized with T::default before exposure. u64 is a sealed supported lane type."
+    },
+    {
+      "source": "program_session.rs Prepared::setup_geometry and entry dispatch",
+      "fact": "Checked private metadata counts extend the local bank. The owned projection is split into bounded slices; frame pointers/capacities reference those slices and stay borrowed across the synchronous entry call."
+    },
+    {
+      "source": "program_borrowed_layout.rs Layout::derive",
+      "fact": "Ready, capture and temporary homes are derived with checked additions and disjoint offsets into the reserved borrowed bank."
+    },
+    {
+      "source": "iteration_compiler.rs define_cfg",
+      "fact": "Origin flags apply only for CodePlan::is_program; other image kinds use default memory flags."
+    },
+    {
+      "source": "program_hooks and source byte/offset access",
+      "fact": "Source bounds and opaque callback memory effects must remain. No promise is proposed for general source bytes, LF allocations, map payloads or callback argument/result buffers."
+    }
+  ],
+  "remaining": [
+    "Differential callback/window and finite-work regressions at this exact source",
+    "Inspect actual emitted code before any extensive timing"
+  ],
+  "prohibited_promises": [
+    "readonly on mutable frame homes",
+    "aligned/trusted without an independent proof",
+    "can_move",
+    "general source-memory notrap"
+  ],
+  "primary_benchmark_samples": 0,
+  "call_site_scope": [
+    {
+      "region": "Vmctx",
+      "source": "iteration_compiler.rs -> compiler::set_origin_with_flags",
+      "extent": "Exactly NativeEntryFrame.error_node; flags selected only for CodePlan::Program.",
+      "lifetime": "Initialized stack Frame remains live for synchronous entry; no source pointer is dereferenced."
+    },
+    {
+      "region": "Heap",
+      "source": "program_borrowed_codegen.rs pair/put_view/readiness/Length/MatrixElement and program_prefix_codegen.rs clear loops",
+      "extent": "Checked borrowed RegionLayout ready..end. Each view has two words and each matrix three; slot derivation precedes code emission. Clear loops iterate only this range.",
+      "lifetime": "Homes lie within the owned initialized locals projection; clearing source loans never deallocates this private bank. Actual pointed-to source/row reads retain default flags."
+    },
+    {
+      "region": "Table",
+      "source": "program_tail_codegen.rs load/store/leave/prepare/header and program_prefix_codegen.rs exit clear",
+      "extent": "Only map=None uses these flags, with exactly three checked words: ready, compute, comparison. Branches using words+3/+4 require map=Some and retain default flags.",
+      "lifetime": "Tail layouts extend the same owned locals projection using checked additions. Whole bank remains allocated across callback resumes and synchronous entry."
+    },
+    {
+      "region": "Boundary",
+      "source": "iteration_compiler.rs Program-only layout derivation; program_session.rs setup_geometry and run; program_hooks.rs",
+      "extent": "No other CodePlan kind derives borrowed/closed layouts. Exact u64 arena default initialization, capacities and disjoint slices precede entry.",
+      "lifetime": "Opaque ordinary helper calls remain full memory barriers. All source bounds/error branches, loan clearing and callback effects remain. No readonly/aligned/can_move flags are set."
+    }
+  ]
+}

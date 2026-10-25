@@ -4,6 +4,15 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [nontrapping private-home experiment](private-home-notrap-v1/README.md)
+at `cfd54ab14d` is correctness-qualified but exposes **no instruction change**:
+all ten emitted function bodies are byte-identical to selective-field parent
+`2e58f2abdf`. All 406 native checks, remaining scopes and 23 terminal receipts
+pass. The assembly gate therefore skips the predeclared full timing campaign;
+no elapsed gain is claimed. The [next status](preparation-next-round-v1/status-v7.json)
+targets a compact immutable mapping plan shared by both mapper emitters,
+with exhaustive equivalence and a full-table fallback.
+
 The [selective borrowed-field trial](borrowed-field-loads-v1/README.md) at
 `2e58f2abdf` removes the confirmed unused pointer loads and leaves all nine
 nonentry functions byte-identical. All correctness scopes and **119 terminal
