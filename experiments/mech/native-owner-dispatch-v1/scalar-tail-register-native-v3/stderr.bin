@@ -1,0 +1,38 @@
+warning: field `segment_count` is never read
+  --> src/engine/src/resident/general/native_text_line_window.rs:21:5
+   |
+14 | pub struct NativeTextLineWindow<'owner> {
+   |            -------------------- field in this struct
+...
+21 |     segment_count: usize,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0382]: use of moved value: `prepared`
+   --> hosts/gpu/src/native_artifact/program_scalar_tail_register_tests.rs:75:11
+    |
+ 15 |     let mut prepared = Prepared::new(descriptor, limits(), &memory).unwrap();
+    |         ------------ move occurs because `prepared` has type `program_runtime::session::Prepared<'_>`, which does not implement the `Copy` trait
+...
+ 71 |             prepared.publish(&mut outputs).unwrap();
+    |             -------- value moved here
+...
+ 75 |     drop((prepared, inputs, outputs));
+    |           ^^^^^^^^ value used here after move
+    |
+note: if `program_runtime::session::Prepared<'_>` implemented `Clone`, you could clone the value
+   --> hosts/gpu/src/native_artifact/program_session.rs:379:1
+    |
+379 | pub(super) struct Prepared<'a> {
+    | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ consider implementing `Clone` for this type
+    |
+   ::: hosts/gpu/src/native_artifact/program_scalar_tail_register_tests.rs:71:13
+    |
+ 71 |             prepared.publish(&mut outputs).unwrap();
+    |             -------- you could clone this value
+
+For more information about this error, try `rustc --explain E0382`.
+error: could not compile `mech-gpu` (lib test) due to 1 previous error

@@ -1,0 +1,57 @@
+warning: field `segment_count` is never read
+  --> src/engine/src/resident/general/native_text_line_window.rs:21:5
+   |
+14 | pub struct NativeTextLineWindow<'owner> {
+   |            -------------------- field in this struct
+...
+21 |     segment_count: usize,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0308]: mismatched types
+   --> hosts/gpu/src/native_artifact/program_scalar_tail_register_tests.rs:39:54
+    |
+ 39 |         let result = prepared.run_prefix(&mut entry, available, false);
+    |                               ----------             ^^^^^^^^^ expected `u64`, found `usize`
+    |                               |
+    |                               arguments to this method are incorrect
+    |
+note: method defined here
+   --> hosts/gpu/src/native_artifact/program_session.rs:897:8
+    |
+897 |     fn run_prefix<F: FnMut(*mut Frame) -> u64>(
+    |        ^^^^^^^^^^
+...
+900 |         available: u64,
+    |         --------------
+help: you can convert a `usize` to a `u64` and panic if the converted value doesn't fit
+    |
+ 39 |         let result = prepared.run_prefix(&mut entry, available.try_into().unwrap(), false);
+    |                                                               ++++++++++++++++++++
+
+error[E0308]: mismatched types
+   --> hosts/gpu/src/native_artifact/program_scalar_tail_register_tests.rs:56:54
+    |
+ 56 |         let result = prepared.run_prefix(&mut entry, count, true);
+    |                               ----------             ^^^^^ expected `u64`, found `usize`
+    |                               |
+    |                               arguments to this method are incorrect
+    |
+note: method defined here
+   --> hosts/gpu/src/native_artifact/program_session.rs:897:8
+    |
+897 |     fn run_prefix<F: FnMut(*mut Frame) -> u64>(
+    |        ^^^^^^^^^^
+...
+900 |         available: u64,
+    |         --------------
+help: you can convert a `usize` to a `u64` and panic if the converted value doesn't fit
+    |
+ 56 |         let result = prepared.run_prefix(&mut entry, count.try_into().unwrap(), true);
+    |                                                           ++++++++++++++++++++
+
+For more information about this error, try `rustc --explain E0308`.
+error: could not compile `mech-gpu` (lib test) due to 2 previous errors
