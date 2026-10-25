@@ -1,0 +1,591 @@
+diff --git a/hosts/gpu/src/native_artifact/mod.rs b/hosts/gpu/src/native_artifact/mod.rs
+index 95820cc36..12f22348a 100644
+--- a/hosts/gpu/src/native_artifact/mod.rs
++++ b/hosts/gpu/src/native_artifact/mod.rs
+@@ -109,6 +109,9 @@ mod program_prefix_layout;
+ #[cfg(feature = "canonical-native-program-runtime")]
+ mod program_runtime;
+ #[cfg(feature = "canonical-native-program-runtime")]
++#[doc(hidden)]
++pub use program_runtime::worker_cpu_probe;
++#[cfg(feature = "canonical-native-program-runtime")]
+ mod program_parallel_layout;
+ #[cfg(feature = "canonical-native-program-runtime")]
+ mod program_selected_join_layout;
+@@ -156,6 +159,9 @@ pub use program_identity::{
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+ pub use program_runtime::NativeProgramExecutionSession;
+ #[cfg(feature = "canonical-native-program-runtime")]
++#[doc(hidden)]
++pub use program_runtime::preparation_probe;
++#[cfg(feature = "canonical-native-program-runtime")]
+ pub use program_runtime::{
+     NativeProgramExecutionError, NativeProgramExecutionLimits, NativeProgramExecutionReport,
+ };
+diff --git a/hosts/gpu/src/native_artifact/program_capture_host.rs b/hosts/gpu/src/native_artifact/program_capture_host.rs
+index 2b39e9697..6cf046c6e 100644
+--- a/hosts/gpu/src/native_artifact/program_capture_host.rs
++++ b/hosts/gpu/src/native_artifact/program_capture_host.rs
+@@ -27,6 +27,8 @@ impl<'a> NativeProgramExecutionSession<'a> {
+         input_limit: u64,
+         chunk_bytes: usize,
+     ) -> Result<CanonicalNativeResourcePrepared<Self>, NativeProgramExecutionError> {
++        crate::native_artifact::preparation_probe::mark("capture_begin");
++        super::worker_cpu_probe::mark("capture_setup_begin");
+         let descriptor = self.prepared.descriptor;
+         let Some(state) = self.prepared.state.as_mut() else {
+             return Err(invalid("capture setup has consumed native state"));
+@@ -75,7 +77,9 @@ impl<'a> NativeProgramExecutionSession<'a> {
+         let captured = state.line_matrices.captured.as_ref().unwrap();
+         let prior =
+             capture::capture_source_coexistence(state, captured.ordinal, &self.prepared.memory)?;
+-        let initial = match owner.borrow_window(1, 1) {
++        let initial = {
++            let _phase = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::BorrowRows);
++            match owner.borrow_window(1, 1) {
+             Ok(initial) => initial,
+             Err(_) => {
+                 // No generated visit has occurred. Retire private storage
+@@ -83,7 +87,9 @@ impl<'a> NativeProgramExecutionSession<'a> {
+                 self.prepared.state.as_mut().unwrap().line_matrices.captured = None;
+                 return Ok(CanonicalNativeResourcePrepared::snapshot(self));
+             }
++            }
+         };
++        crate::native_artifact::preparation_probe::window(&initial);
+         let failure = match catch_unwind(AssertUnwindSafe(|| {
+             self.prepared.run_prefix_window(
+                 &mut |frame| self.entry.invoke(frame),
+@@ -195,10 +201,12 @@ impl<'a> NativeProgramExecutionSession<'a> {
+             capture.await_eof = true;
+             return Ok(());
+         }
+-        let window = capture
+-            .owner
+-            .borrow_window(first, available + 1)
+-            .map_err(|error| source_error(descriptor, error))?;
++        let window = {
++            let _phase = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::BorrowRows);
++            capture.owner.borrow_window(first, available + 1)
++                .map_err(|error| source_error(descriptor, error))?
++        };
++        crate::native_artifact::preparation_probe::window(&window);
+         debug_assert!(window.is_ascii());
+         match catch_unwind(AssertUnwindSafe(|| {
+             self.prepared.run_prefix_window(
+@@ -272,6 +280,7 @@ impl<'a> NativeProgramExecutionSession<'a> {
+             .owner
+             .finish()
+             .map_err(|error| source_error(descriptor, error))?;
++        super::worker_cpu_probe::mark("capture_eof");
+         admit_output_retirement(descriptor, outputs, &self.prepared.memory, &capture.library)?;
+         if let Some(failure) = capture.failure {
+             // The proved prelude orders both source visits before any
+@@ -321,11 +330,12 @@ impl<'a> NativeProgramExecutionSession<'a> {
+         } else {
+             capture.scanned + 1
+         };
+-        let window = view
+-            .captured_chunks()
+-            .unwrap()
+-            .borrow_window(first, facts.lines() + 1)
+-            .map_err(|error| source_error(descriptor, error))?;
++        let window = {
++            let _phase = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::BorrowRows);
++            view.captured_chunks().unwrap().borrow_window(first, facts.lines() + 1)
++                .map_err(|error| source_error(descriptor, error))?
++        };
++        crate::native_artifact::preparation_probe::window(&window);
+         self.prepared.run_prefix_window(
+             &mut |frame| self.entry.invoke(frame),
+             facts.lines(),
+@@ -334,6 +344,7 @@ impl<'a> NativeProgramExecutionSession<'a> {
+         )?;
+         drop(window);
+         drop(view);
++        crate::native_artifact::preparation_probe::mark("capture_complete");
+         self.prepared
+             .resume_capture_tail(&mut |frame| self.entry.invoke(frame))?;
+         self.prepared.publish(outputs)
+diff --git a/hosts/gpu/src/native_artifact/program_map_closed_runtime.rs b/hosts/gpu/src/native_artifact/program_map_closed_runtime.rs
+index b75deee72..89d8da573 100644
+--- a/hosts/gpu/src/native_artifact/program_map_closed_runtime.rs
++++ b/hosts/gpu/src/native_artifact/program_map_closed_runtime.rs
+@@ -63,6 +63,8 @@ impl Owner<'_> {
+             { return Err(invalid("guarded loop selection is not a valid first header")); }
+             self.guarded_loop_entered = true;
+             self.guarded_calls_entered = args[2] == 1;
++            super::super::worker_cpu_probe::width(args[0]);
++            super::super::worker_cpu_probe::mark("count_begin");
+             #[cfg(all(test, feature = "canonical-native-program"))]
+             if self.guarded_calls_entered { super::super::map_closed_tests::record_guarded_call_entry(); }
+             return Ok(0);
+@@ -323,6 +325,7 @@ impl<'plan, 'a> Context<'plan, 'a> {
+         result
+     }
+     pub(in crate::native_artifact::program_runtime) fn end_closed_map(&mut self, region: usize, remaining: u64, mode: u64) -> Result<u64, Error> {
++        super::super::worker_cpu_probe::mark("count_complete");
+         if !matches!(mode, 0 | 2 | 3) { return Err(invalid("closed map cannot suspend")); }
+         let index = self.control.descriptor.closed_tails.regions[region].map.unwrap();
+         let state = self.map_owners.state.as_mut().ok_or_else(|| invalid("closed map session lost"))?;
+@@ -364,6 +367,7 @@ impl<'plan, 'a> Context<'plan, 'a> {
+         if packed_ssa_entered { self.packed_ssa_regions = add(self.packed_ssa_regions, 1)?; }
+         if guarded_loop_entered { self.guarded_loop_regions = add(self.guarded_loop_regions, 1)?; }
+         if guarded_calls_entered { self.guarded_call_regions = add(self.guarded_call_regions, 1)?; }
++        super::super::worker_cpu_probe::mark("map_publication_complete");
+         Ok(traversals)
+     }
+ }
+diff --git a/hosts/gpu/src/native_artifact/program_parallel_runtime.rs b/hosts/gpu/src/native_artifact/program_parallel_runtime.rs
+index 22d294572..e12d2c80d 100644
+--- a/hosts/gpu/src/native_artifact/program_parallel_runtime.rs
++++ b/hosts/gpu/src/native_artifact/program_parallel_runtime.rs
+@@ -186,6 +186,7 @@ impl Context<'_, '_> {
+     }
+ 
+     fn run_parallel(&mut self, site: usize, args: [u64; 3]) -> Result<Option<u64>, Error> {
++        super::worker_cpu_probe::mark("parallel_dispatch_begin");
+         let descriptor = self.control.descriptor;
+         let id = usize::try_from(args[2]).map_err(|_| invalid("parallel region index overflow"))?;
+         let region = descriptor
+@@ -450,31 +451,21 @@ impl Context<'_, '_> {
+             #[cfg(test)]
+             TEST_DISPATCH_ORDER.with(|order| order.borrow_mut().clear());
+             let mut spawn_failed = false;
++            crate::native_artifact::preparation_probe::mark("spawn_begin");
++            super::worker_cpu_probe::mark("spawn_begin");
+             for (_, ordinal, region, count, index, loan, worker_captures) in jobs {
+                 let memory = memory.clone();
+                 let activity = &activity;
+-                let handle =
+-                    std::thread::Builder::new()
+-                        .stack_size(STACK)
+-                        .spawn_scoped(scope, move || {
+-                            let _active = activity.enter();
+-                            let library = NativeLibraryWorkBudget::from_worker_loan(loan)
+-                                .map_err(|error| Error::Collection { origin, error })?;
+-                            super::session::Prepared::run_worker(
+-                                descriptor,
+-                                entry,
+-                                limits,
+-                                &memory,
+-                                library,
+-                                Worker {
+-                                    region,
+-                                    index,
+-                                    count,
+-                                    result: None,
+-                                },
+-                                worker_captures,
+-                            )
+-                        });
++                let handle = std::thread::Builder::new().stack_size(STACK).spawn_scoped(scope, move || {
++                    super::worker_cpu_probe::begin(ordinal, region as u64, index);
++                    let _active = activity.enter();
++                    let library = NativeLibraryWorkBudget::from_worker_loan(loan)
++                        .map_err(|error| Error::Collection { origin, error })?;
++                    let result = super::session::Prepared::run_worker(descriptor, entry, limits, &memory,
++                        library, Worker { region, index, count, result: None }, worker_captures);
++                    super::worker_cpu_probe::finish();
++                    result
++                });
+                 match handle {
+                     Ok(handle) => {
+                         #[cfg(test)]
+@@ -487,6 +478,7 @@ impl Context<'_, '_> {
+                     }
+                 }
+             }
++            super::worker_cpu_probe::mark("spawn_complete");
+             // Always explicitly join every launched thread, including after a
+             // later spawn failure. No unjoined panic may unwind through FFI.
+             // Restore source order before joining/replay, even though workers
+@@ -500,6 +492,7 @@ impl Context<'_, '_> {
+                         .unwrap_or_else(|_| Err(invalid("native worker panicked"))),
+                 );
+             }
++            super::worker_cpu_probe::mark("join_complete");
+             if spawn_failed {
+                 Err(invalid("native worker creation failed"))
+             } else {
+diff --git a/hosts/gpu/src/native_artifact/program_preparation_probe.rs b/hosts/gpu/src/native_artifact/program_preparation_probe.rs
+new file mode 100644
+index 000000000..62ba03956
+--- /dev/null
++++ b/hosts/gpu/src/native_artifact/program_preparation_probe.rs
+@@ -0,0 +1,91 @@
++//! Diagnostic-only main-thread phase clocks. No guest algorithm or prices change.
++use std::cell::RefCell;
++
++#[cfg(not(target_os = "macos"))]
++compile_error!("preparation clock diagnostic requires the verified macOS runner");
++
++unsafe extern "C" { fn clock_gettime_nsec_np(clock_id: u32) -> u64; }
++#[derive(Clone, Copy, Default)]
++struct Stamp { cpu: u64, wall: u64 }
++fn now() -> Stamp {
++    // Verified on the runner: THREAD_CPUTIME=16, MONOTONIC=6. Read-only clocks.
++    unsafe { Stamp { cpu: clock_gettime_nsec_np(16), wall: clock_gettime_nsec_np(6) } }
++}
++#[derive(Clone, Copy)]
++pub enum Phase { BorrowRows, Scanner, SelectedJoin, JoinCopy, MapPrepare, MapKernel, MapFinish }
++impl Phase {
++    fn name(self) -> &'static str { match self {
++        Self::BorrowRows => "borrow_rows", Self::Scanner => "source_scan",
++        Self::SelectedJoin => "selected_join", Self::JoinCopy => "join_copy",
++        Self::MapPrepare => "map_prepare", Self::MapKernel => "map_kernel",
++        Self::MapFinish => "map_finish",
++    } }
++}
++const PHASES: [Phase; 7] = [Phase::BorrowRows, Phase::Scanner, Phase::SelectedJoin,
++    Phase::JoinCopy, Phase::MapPrepare, Phase::MapKernel, Phase::MapFinish];
++#[derive(Clone, Copy, Default)]
++struct Total { calls: u64, cpu: u64, wall: u64, maximum_cpu: u64 }
++#[derive(Clone, Copy, Default)]
++struct Mark { name: Option<&'static str>, at: Stamp }
++struct State {
++    active: bool, start: Stamp, totals: [Total; 7], open: [Option<Stamp>; 7],
++    marks: [Mark; 16], mark_count: usize,
++    direct_windows: u64, direct_rows: u64, cell_windows: u64, cell_rows: u64,
++}
++impl Default for State {
++    fn default() -> Self { Self { active: false, start: Stamp::default(), totals: [Total::default(); 7],
++        open: [None; 7], marks: [Mark::default(); 16], mark_count: 0,
++        direct_windows: 0, direct_rows: 0, cell_windows: 0, cell_rows: 0 } }
++}
++thread_local! { static STATE: RefCell<State> = RefCell::new(State::default()); }
++fn active() -> bool { STATE.with(|state| state.borrow().active) }
++fn record(phase: Phase, start: Stamp, end: Stamp) {
++    STATE.with(|state| { let mut state = state.borrow_mut(); let total = &mut state.totals[phase as usize];
++        let cpu = end.cpu.checked_sub(start.cpu).expect("monotone thread clock");
++        total.calls += 1; total.cpu += cpu; total.wall += end.wall.checked_sub(start.wall).expect("monotone wall clock");
++        total.maximum_cpu = total.maximum_cpu.max(cpu);
++    });
++}
++pub struct Scope { phase: Phase, start: Option<Stamp> }
++impl Scope {
++    pub fn new(phase: Phase) -> Self { Self { phase, start: active().then(now) } }
++}
++impl Drop for Scope {
++    fn drop(&mut self) { if let Some(start) = self.start { record(self.phase, start, now()); } }
++}
++pub fn begin(phase: Phase) {
++    if active() { let stamp=now(); STATE.with(|s| { let mut s=s.borrow_mut();
++        assert!(s.open[phase as usize].replace(stamp).is_none(), "non-overlapping phase"); }); }
++}
++pub fn end(phase: Phase) {
++    if active() { let stamp=now(); let start=STATE.with(|s| s.borrow_mut().open[phase as usize].take()).expect("phase began");
++        record(phase,start,stamp); }
++}
++pub fn mark(name: &'static str) {
++    if active() { let at=now(); STATE.with(|s| { let mut s=s.borrow_mut(); let index=s.mark_count;
++        assert!(index<s.marks.len(), "bounded diagnostic marks"); s.marks[index]=Mark { name: Some(name), at }; s.mark_count+=1; }); }
++}
++pub fn window(window: &mech_engine::native_artifact::NativeTextLineWindow<'_>) {
++    if active() { STATE.with(|s| { let mut s=s.borrow_mut();
++        if window.rows().is_none() { s.direct_windows+=1; s.direct_rows+=window.row_count() as u64; }
++        else { s.cell_windows+=1; s.cell_rows+=window.row_count() as u64; }
++    }); }
++}
++pub struct Root;
++impl Root {
++    pub fn new() -> Self { let start=now(); STATE.with(|s| { let mut s=s.borrow_mut(); assert!(!s.active);
++        *s=State { active: true, start, ..State::default() }; }); mark("main_begin"); Self }
++}
++impl Drop for Root {
++    fn drop(&mut self) {
++        mark("main_complete");
++        STATE.with(|s| { let mut s=s.borrow_mut(); s.active=false;
++            assert!(s.open.iter().all(Option::is_none));
++            for phase in PHASES { let t=s.totals[phase as usize];
++                eprintln!("PPHASE_V1 {} {} {} {} {}",phase.name(),t.calls,t.cpu,t.wall,t.maximum_cpu); }
++            for mark in &s.marks[..s.mark_count] {
++                eprintln!("PMARK_V1 {} {} {}",mark.name.unwrap(),mark.at.cpu-s.start.cpu,mark.at.wall-s.start.wall); }
++            eprintln!("PROWS_V1 {} {} {} {}",s.direct_windows,s.direct_rows,s.cell_windows,s.cell_rows);
++        });
++    }
++}
+diff --git a/hosts/gpu/src/native_artifact/program_runtime.rs b/hosts/gpu/src/native_artifact/program_runtime.rs
+index 25e41ced1..c0e7453bd 100644
+--- a/hosts/gpu/src/native_artifact/program_runtime.rs
++++ b/hosts/gpu/src/native_artifact/program_runtime.rs
+@@ -23,6 +23,9 @@ use mech_engine::native_artifact::{
+ };
+ use std::ffi::c_void;
+ 
++#[path = "program_preparation_probe.rs"]
++pub mod preparation_probe;
++
+ #[path = "program_borrowed_strings.rs"]
+ mod borrowed;
+ #[path = "program_caller_geometry.rs"]
+@@ -44,6 +47,8 @@ mod map_admission_tests;
+ mod map_closed_tests;
+ #[path = "program_map_owner_runtime.rs"]
+ mod map_owners;
++#[path = "program_worker_cpu_probe.rs"]
++pub mod worker_cpu_probe;
+ #[path = "program_parallel_runtime.rs"]
+ mod parallel;
+ #[path = "program_parallel_admission.rs"]
+diff --git a/hosts/gpu/src/native_artifact/program_selected_join.rs b/hosts/gpu/src/native_artifact/program_selected_join.rs
+index f7aa4c3dd..888cbc941 100644
+--- a/hosts/gpu/src/native_artifact/program_selected_join.rs
++++ b/hosts/gpu/src/native_artifact/program_selected_join.rs
+@@ -391,6 +391,8 @@ impl Context<'_, '_> {
+         state: State,
+         separator: &Value,
+     ) -> Result<Completion, Error> {
++        let _phase = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::SelectedJoin);
++        crate::native_artifact::preparation_probe::mark("selected_join_begin");
+         let State {
+             phase,
+             region: region_index,
+@@ -558,8 +560,11 @@ impl Context<'_, '_> {
+                         reservation: state_reservation,
+                     }));
+                 }
+-                call.selected_matrix_join_append_consuming(view, separator, &mut text, &memory)
+-                    .map_err(|e| library(self, site, e))?;
++                {
++                    let _copy = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::JoinCopy);
++                    call.selected_matrix_join_append_consuming(view, separator, &mut text, &memory)
++                        .map_err(|e| library(self, site, e))?;
++                }
+                 let canonical = SnapshotCanonicalizationBudget::new(finalization);
+                 let output = &descriptor.plan.values()[region.output().get() as usize];
+                 ValueDraft {
+diff --git a/hosts/gpu/src/native_artifact/program_session.rs b/hosts/gpu/src/native_artifact/program_session.rs
+index f59b13219..b36df0b42 100644
+--- a/hosts/gpu/src/native_artifact/program_session.rs
++++ b/hosts/gpu/src/native_artifact/program_session.rs
+@@ -809,6 +809,7 @@ impl<'a> Prepared<'a> {
+         }
+         prepared.worker = Some(worker);
+         prepared.activated = true;
++        super::worker_cpu_probe::mark("worker_setup_ready");
+         prepared.run(
+             &mut |frame| {
+                 // SAFETY: the scoped parent retains this exact checked code owner;
+@@ -817,6 +818,7 @@ impl<'a> Prepared<'a> {
+             },
+             PHASE_WORKER,
+         )?;
++        super::worker_cpu_probe::mark("generated_body_complete");
+         let receipt = prepared
+             .worker
+             .as_mut()
+@@ -824,6 +826,7 @@ impl<'a> Prepared<'a> {
+             .ok_or_else(|| invalid("worker omitted its owned result"))?;
+         // Retire every Rc work account before returning across the thread join.
+         drop(prepared);
++        super::worker_cpu_probe::mark("worker_storage_retired");
+         Ok(receipt)
+     }
+ 
+@@ -1010,6 +1013,7 @@ impl<'a> Prepared<'a> {
+         eof: bool,
+         window: Option<&mech_engine::native_artifact::NativeTextLineWindow<'_>>,
+     ) -> Result<(), NativeProgramExecutionError> {
++        let _phase = crate::native_artifact::preparation_probe::Scope::new(crate::native_artifact::preparation_probe::Phase::Scanner);
+         if !self.activated
+             || self.descriptor.prefix.is_none()
+             || self.state.as_ref().is_none_or(|state| state.completed)
+diff --git a/hosts/gpu/src/native_artifact/program_string_map_binding.rs b/hosts/gpu/src/native_artifact/program_string_map_binding.rs
+index 2078dd612..9c8d6b717 100644
+--- a/hosts/gpu/src/native_artifact/program_string_map_binding.rs
++++ b/hosts/gpu/src/native_artifact/program_string_map_binding.rs
+@@ -59,6 +59,9 @@ impl State {
+         region: &NativeStringMapRegion,
+         remaining: u64,
+     ) -> Result<Option<u64>, Error> {
++        let _prepare = crate::native_artifact::preparation_probe::Scope::new(
++            crate::native_artifact::preparation_probe::Phase::MapPrepare,
++        );
+         let Some(mapped) = ctx.take_joined_map(region)? else {
+             return Ok(None);
+         };
+@@ -175,6 +178,9 @@ impl State {
+         region: &NativeStringMapRegion,
+         remaining: u64,
+     ) -> Result<Option<[u64; 5]>, Error> {
++        let _phase = crate::native_artifact::preparation_probe::Scope::new(
++            crate::native_artifact::preparation_probe::Phase::MapPrepare,
++        );
+         let id = region.collection();
+         self.account(ctx, id, 0, 128)?;
+         let source = self.sources[region.iteration() as usize]
+diff --git a/hosts/gpu/src/native_artifact/program_string_map_round.rs b/hosts/gpu/src/native_artifact/program_string_map_round.rs
+index 3868089a7..069c51c81 100644
+--- a/hosts/gpu/src/native_artifact/program_string_map_round.rs
++++ b/hosts/gpu/src/native_artifact/program_string_map_round.rs
+@@ -39,6 +39,9 @@ impl Context<'_, '_> {
+         }
+         let result = (|| {
+             if let Some(processed) = state.prepare_joined_string_map(self, region, args[0])? {
++                let _finish = crate::native_artifact::preparation_probe::Scope::new(
++                    crate::native_artifact::preparation_probe::Phase::MapFinish,
++                );
+                 state.finish_compiled_string_map(self, region, args[0], processed)?;
+                 Ok(Bound::Complete)
+             } else {
+@@ -57,6 +60,10 @@ impl Context<'_, '_> {
+             }
+             Bound::Kernel(words) => words,
+         };
++        crate::native_artifact::preparation_probe::mark("map_kernel_begin");
++        crate::native_artifact::preparation_probe::begin(
++            crate::native_artifact::preparation_probe::Phase::MapKernel,
++        );
+         self.window_region = Some((region.collection(), args[0]));
+         self.write_window_arguments(words)?;
+         Ok(Some(1))
+@@ -66,6 +73,13 @@ impl Context<'_, '_> {
+         site: usize,
+         args: [u64; 3],
+     ) -> Result<Option<u64>, Error> {
++        crate::native_artifact::preparation_probe::end(
++            crate::native_artifact::preparation_probe::Phase::MapKernel,
++        );
++        crate::native_artifact::preparation_probe::mark("map_kernel_complete");
++        let _phase = crate::native_artifact::preparation_probe::Scope::new(
++            crate::native_artifact::preparation_probe::Phase::MapFinish,
++        );
+         let (collection, accepted) = self
+             .window_region
+             .ok_or_else(|| invalid("compiled String map lost loans"))?;
+diff --git a/hosts/gpu/src/native_artifact/program_worker_cpu_probe.rs b/hosts/gpu/src/native_artifact/program_worker_cpu_probe.rs
+new file mode 100644
+index 000000000..2b5bde576
+--- /dev/null
++++ b/hosts/gpu/src/native_artifact/program_worker_cpu_probe.rs
+@@ -0,0 +1,129 @@
++//! Diagnostic branch only: read this thread's counters at owned boundaries.
++//! No counter configuration, priority/affinity change, or worker-time logging.
++//! Shared verbatim with the separately instrumented upstream Rust copy.
++use std::cell::RefCell;
++use std::io::Write;
++use std::sync::OnceLock;
++
++#[repr(C)]
++#[derive(Clone, Copy, Default)]
++struct Raw {
++    instructions: u64,
++    cycles: u64,
++    user_mach: u64,
++    system_mach: u64,
++}
++unsafe extern "C" {
++    fn thread_selfcounts(kind: u32, destination: *mut std::ffi::c_void, size: usize) -> i32;
++    fn clock_gettime_nsec_np(clock: i32) -> u64;
++    fn pthread_threadid_np(thread: *mut std::ffi::c_void, id: *mut u64) -> i32;
++}
++const _: () = assert!(std::mem::size_of::<Raw>() == 32);
++
++#[derive(Clone, Copy, Default)]
++struct Stamp {
++    wall_ns: u64,
++    cpu_ns: u64,
++    levels: [Raw; 2],
++}
++impl Stamp {
++    fn read() -> Self {
++        let mut value = Self::default();
++        // The counter pilot verifies two levels (Performance, Efficiency) on
++        // this runner. THSC_TIME_CPI_PER_PERF_LEVEL is read-only kind 4.
++        unsafe {
++            value.wall_ns = clock_gettime_nsec_np(6);
++            value.cpu_ns = clock_gettime_nsec_np(16);
++            assert_eq!(thread_selfcounts(4, value.levels.as_mut_ptr().cast(),
++                std::mem::size_of_val(&value.levels)), 0);
++        }
++        value
++    }
++}
++#[derive(Clone, Copy, Default)]
++struct Mark {
++    label: &'static str,
++    stamp: Stamp,
++}
++struct Trace {
++    slot: usize,
++    region: u64,
++    index: u64,
++    width: u64,
++    thread_id: u64,
++    marks: [Mark; 16],
++    used: usize,
++}
++thread_local! {
++    static CURRENT: RefCell<Option<Trace>> = const { RefCell::new(None) };
++}
++static FINISHED: [OnceLock<Trace>; 32] = [const { OnceLock::new() }; 32];
++
++pub fn begin(slot: usize, region: u64, index: u64) {
++    assert!(slot < FINISHED.len());
++    let stamp = Stamp::read();
++    let mut thread_id = 0;
++    assert_eq!(unsafe { pthread_threadid_np(std::ptr::null_mut(), &mut thread_id) }, 0);
++    let mut marks = [Mark::default(); 16];
++    marks[0] = Mark { label: if slot == 31 { "main_begin" } else { "worker_begin" }, stamp };
++    CURRENT.with(|current| {
++        let mut current = current.borrow_mut();
++        assert!(current.is_none());
++        *current = Some(Trace { slot, region, index, width: 0, thread_id, marks, used: 1 });
++    });
++}
++pub fn width(width: u64) {
++    CURRENT.with(|current| {
++        if let Some(trace) = &mut *current.borrow_mut() {
++            assert!(trace.width == 0 || trace.width == width);
++            trace.width = width;
++        }
++    });
++}
++pub fn mark(label: &'static str) {
++    CURRENT.with(|current| {
++        if let Some(trace) = &mut *current.borrow_mut() {
++            assert!(trace.used < trace.marks.len());
++            trace.marks[trace.used] = Mark { label, stamp: Stamp::read() };
++            trace.used += 1;
++        }
++    });
++}
++pub fn finish() {
++    mark("body_complete");
++    CURRENT.with(|current| {
++        let trace = current.borrow_mut().take().expect("diagnostic trace missing");
++        assert!(FINISHED[trace.slot].set(trace).is_ok());
++    });
++}
++
++pub struct Root;
++impl Root {
++    pub fn new() -> Self {
++        begin(31, u64::MAX, u64::MAX);
++        Self
++    }
++}
++impl Drop for Root {
++    fn drop(&mut self) {
++        finish();
++        // Emit only after every source task has completed and the caller has
++        // joined/consumed its results. Fixed diagnostic storage is outside the
++        // guest graph; these builds are not primary benchmark executables.
++        let mut output = std::io::stderr().lock();
++        for slot in &FINISHED {
++            if let Some(trace) = slot.get() {
++                for mark in &trace.marks[..trace.used] {
++                    let stamp = mark.stamp;
++                    let p = stamp.levels[0];
++                    let e = stamp.levels[1];
++                    writeln!(output, "WCPU_TRACE_V1 {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}",
++                        trace.slot, trace.region, trace.index, trace.width, trace.thread_id,
++                        mark.label, stamp.wall_ns, stamp.cpu_ns,
++                        p.instructions, p.cycles, p.user_mach, p.system_mach,
++                        e.instructions, e.cycles, e.user_mach, e.system_mach).unwrap();
++                }
++            }
++        }
++    }
++}

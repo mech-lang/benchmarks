@@ -1,0 +1,51 @@
+--- retained-seven-phase-probe.rs
++++ current-ten-phase-probe.rs
+@@ -12,29 +12,32 @@
+     unsafe { Stamp { cpu: clock_gettime_nsec_np(16), wall: clock_gettime_nsec_np(6) } }
+ }
+ #[derive(Clone, Copy)]
+-pub enum Phase { BorrowRows, Scanner, SelectedJoin, JoinCopy, MapPrepare, MapKernel, MapFinish }
++pub enum Phase { BorrowRows, Scanner, SelectedJoin, JoinCopy, MapPrepare, MapKernel, MapFinish,
++    SourceLoan, JoinedTransform, ChunkReceipt }
+ impl Phase {
+     fn name(self) -> &'static str { match self {
+         Self::BorrowRows => "borrow_rows", Self::Scanner => "source_scan",
+         Self::SelectedJoin => "selected_join", Self::JoinCopy => "join_copy",
+         Self::MapPrepare => "map_prepare", Self::MapKernel => "map_kernel",
+-        Self::MapFinish => "map_finish",
++        Self::MapFinish => "map_finish", Self::SourceLoan => "source_loan",
++        Self::JoinedTransform => "joined_transform", Self::ChunkReceipt => "chunk_receipt",
+     } }
+ }
+-const PHASES: [Phase; 7] = [Phase::BorrowRows, Phase::Scanner, Phase::SelectedJoin,
+-    Phase::JoinCopy, Phase::MapPrepare, Phase::MapKernel, Phase::MapFinish];
++const PHASES: [Phase; 10] = [Phase::BorrowRows, Phase::Scanner, Phase::SelectedJoin,
++    Phase::JoinCopy, Phase::MapPrepare, Phase::MapKernel, Phase::MapFinish,
++    Phase::SourceLoan, Phase::JoinedTransform, Phase::ChunkReceipt];
+ #[derive(Clone, Copy, Default)]
+ struct Total { calls: u64, cpu: u64, wall: u64, maximum_cpu: u64 }
+ #[derive(Clone, Copy, Default)]
+ struct Mark { name: Option<&'static str>, at: Stamp }
+ struct State {
+-    active: bool, start: Stamp, totals: [Total; 7], open: [Option<Stamp>; 7],
++    active: bool, start: Stamp, totals: [Total; 10], open: [Option<Stamp>; 10],
+     marks: [Mark; 16], mark_count: usize,
+     direct_windows: u64, direct_rows: u64, cell_windows: u64, cell_rows: u64,
+ }
+ impl Default for State {
+-    fn default() -> Self { Self { active: false, start: Stamp::default(), totals: [Total::default(); 7],
+-        open: [None; 7], marks: [Mark::default(); 16], mark_count: 0,
++    fn default() -> Self { Self { active: false, start: Stamp::default(), totals: [Total::default(); 10],
++        open: [None; 10], marks: [Mark::default(); 16], mark_count: 0,
+         direct_windows: 0, direct_rows: 0, cell_windows: 0, cell_rows: 0 } }
+ }
+ thread_local! { static STATE: RefCell<State> = RefCell::new(State::default()); }
+@@ -82,7 +85,7 @@
+         STATE.with(|s| { let mut s=s.borrow_mut(); s.active=false;
+             assert!(s.open.iter().all(Option::is_none));
+             for phase in PHASES { let t=s.totals[phase as usize];
+-                eprintln!("PPHASE_V1 {} {} {} {} {}",phase.name(),t.calls,t.cpu,t.wall,t.maximum_cpu); }
++                eprintln!("PPHASE_V2 {} {} {} {} {}",phase.name(),t.calls,t.cpu,t.wall,t.maximum_cpu); }
+             for mark in &s.marks[..s.mark_count] {
+                 eprintln!("PMARK_V1 {} {} {}",mark.name.unwrap(),mark.at.cpu-s.start.cpu,mark.at.wall-s.start.wall); }
+             eprintln!("PROWS_V1 {} {} {} {}",s.direct_windows,s.direct_rows,s.cell_windows,s.cell_rows);

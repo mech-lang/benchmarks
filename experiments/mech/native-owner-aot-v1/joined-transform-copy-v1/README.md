@@ -124,10 +124,13 @@ per subject, give these medians:
 | System CPU | 0.030 s | 0.030 s | 0.030 s | 0.030 s |
 
 These diagnostics do not establish a primary elapsed improvement. The long
-counting functions are unchanged. A fresh candidate-specific phase/per-width
-diagnostic is still required to measure source-chunk loan preparation and the
-combined transform/copy interval. The previous parent's separate copy/map
-spans cannot be assigned to this new physical path.
+counting functions are unchanged. The separate [actual-path phase/per-width
+diagnostic](../joined-transform-preparation-workers-v1/README.md) now measures
+0.032061 s after EOF, including 0.000645 s of source-loan preparation,
+0.025861 s in the combined transform/copy kernel and 0.001544 s in chunk
+receipt checks/retirement. Its 37 terminal receipts and 224 full worker
+intervals are verified. These instrumented observations do not replace the
+primary results above.
 
 [Verification](verification.json) checks all **126 terminal owned-process
 receipts**, immutable execution scripts and source pins, 64 full and nine
@@ -137,8 +140,10 @@ limits, inherited locking, reaping and process-group closure. The two retained
 qualification failures have their expected statuses. No signal or cleanup
 error occurs.
 
-The next diagnostic must keep this source fixed in its own instrumented host,
-compare both retained Mech controls and protected Rust, and report the actual
-new phase boundaries. Compact scanner execution, short immutable comparisons,
+The [retained object audit](../preparation-next-round-v1/byte-table-baseline-inspection.json)
+confirms sixteen narrowing instructions and three stack-vector reloads per
+active row. Preparing a byte table once is the next contained implementation;
+its actual object must demonstrate removal of that repeated work. Selective
+private-home loads, compact scanner execution, short immutable comparisons,
 table-derived mapping and shared improvements to both long counting loops
 remain independent candidates.

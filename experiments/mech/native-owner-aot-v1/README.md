@@ -15,9 +15,13 @@ gap are not established. All final correctness scopes and **126 terminal
 receipts** pass, including 64 primary full-input samples, exact-code profiles,
 counters and object inspection. All eight previous nonentry functions remain
 byte-identical. The ordinary control and private-buffer foundation below
-remain available. The [updated next-round status](preparation-next-round-v1/status-v2.json)
-requires a fresh actual-candidate phase/per-width diagnostic before assigning
-this candidate any preparation saving or choosing its next interaction.
+remain available. The [actual-path diagnostic](joined-transform-preparation-workers-v1/README.md)
+now measures 0.0321 s after EOF versus 0.0389 s for the private-buffer parent;
+0.0259 s remains in the combined kernel. All 37 new terminal receipts and
+224 full worker intervals pass. Candidate workers start near 0.1575 s versus
+Rust at 0.1336 s after main. The [updated next-round status](preparation-next-round-v1/status-v3.json)
+targets a byte table prepared once: exact assembly confirms sixteen narrowing
+instructions and three stack-vector reloads still repeat per active row.
 
 The [private join/map buffer trial](private-join-buffer-v1/README.md) at
 `88b883b4cf` is correctness-qualified and retained as the foundation for direct
