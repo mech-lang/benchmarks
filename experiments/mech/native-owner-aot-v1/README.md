@@ -4,6 +4,19 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [fresh matched current Mech/Rust profile](matched-current-profile-v1/README.md)
+at `bf10d4a51` records six timings per executable: **Mech 0.6999 s / 1.277× Rust**,
+Rust **0.5482 s / 1.000×**. Three fresh early full-input captures, hardware-counter
+runs and owned-thread polls per language isolate observed worker and main-thread
+paths. Mech retires fewer instructions and uses less aggregate CPU, but workers
+appear later and its longest workers consume more CPU. Active accounting is
+16.3% of all-worker stack observations, 9.6% on the longest pair; generated
+counting is 76.2% on that pair. Repeated String length/ASCII scans and serial
+capture/join work are directly observed. These are diagnostic observations,
+not an elapsed-time partition or a measured optimization. All 40 terminal
+receipts and complete outputs pass; source and canonical benchmark data are
+unchanged.
+
 The [decoder-validation proof](packed-domain-validation-v1/README.md) at
 `1b7c79b3e` removes redundant per-symbol checks after establishing a complete
 decoder, retaining width and sparse-code checks. Separate full-input sessions
