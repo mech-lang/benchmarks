@@ -1,0 +1,70 @@
+{
+  "source_commit": "1b7c79b3e1d6713f0648cbe59794fab8b091d245",
+  "parent_source_commit": "b8da46b50fd78e59dc610b4dda0b4b5adc93de81",
+  "compiler": "compiler-v72",
+  "receipt": "packed-domain-validation-timing-v1",
+  "binary": "counting-packed-domain-validation",
+  "parent_receipt": "sized-schedule-timing-v1",
+  "parent_binary": "counting-sized-schedule",
+  "changes": [
+    "Cache whether the actual immutable packed-key decoder covers every code at owner admission; use that proof to omit redundant per-symbol validation after the mandatory key-width check",
+    "Sparse and singleton encodings retain the original code-by-code validation. Private metadata accounting includes the cached proof through size_of::<Self>(); no allocation or charge is hidden."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, descriptor, Object identity, native Object and code version",
+    "Seven full maps, every physical table update, caller-computed replacement values and actual lookup results",
+    "Capability, factory, schema, source-visit, private frame, width, hashing, mutation and sparse-code checks; original per-operation price formulas and resource limits",
+    "Worker count, scheduling factor, affinity, QoS, clock/power settings and input data"
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Fresh exact-code CPU profiles, whole-process counters, worker lifetimes, peak RSS and binary size remain separate from primary timings.",
+  "decision": "Retain all prior factors and this source revision independently. Report both separately balanced complete-process sessions, including uncertainty or regressions. No timing, counter, profile or diagnostic observation is filtered by performance.",
+  "production_change_commit": "1b7c79b3e1d6713f0648cbe59794fab8b091d245",
+  "host_hardware_observation": {
+    "processor": "Apple M3",
+    "performance_cores": 4,
+    "efficiency_cores": 4,
+    "source": "Read-only sysctl query; hardware information is not used by the scheduling implementation."
+  }
+}
