@@ -1,8 +1,8 @@
 {
   "baseline_source": "bdb3c511cd552ffc143460d6e1ae7edd04885a7f",
   "review_sha256": "22a5989a5e47e03882d38620f18459d4f0feacc77e7a653b066517fb127e6a11",
-  "status": "implementation-and-measurement-in-progress",
-  "current_experiment": "credit-fragment-facts-v1",
+  "status": "exact-counter-complete-buffer-owner-fusion-next",
+  "current_experiment": "scalar-traversal-count-v1",
   "tracks": [
     {
       "name": "scalar-scanner",
@@ -47,21 +47,23 @@
     "commit and push source and evidence; promotion only after repeatable primary improvement"
   ],
   "counter_design": {
-    "representation": "Keep original ready/compute/comparison homes; append one private remaining-traversal word after the existing region homes, preserving all packed-map home offsets. The original pair remains unchanged during native body execution.",
-    "entry": "N=min(C/c,P/p), with zero comparison price contributing no limit; compute price is nonzero by existing closed-tail derivation.",
-    "header": "One check and decrement at the original charged header, including the terminal traversal.",
-    "settlement": "Recompute initial N from the unchanged original pair; t=N-remaining. Reconstruct C-t*c and P-t*p before the existing end callback on exit, pause, failure and fallback.",
-    "wire": "Preserve the existing end-callback arguments and runtime reconciliation; admit the additional real private word and clear it at checkpoints.",
+    "representation": "Reuse the existing readiness word: zero means inactive, otherwise it stores remaining traversals plus one. Both original balance homes and all frame offsets remain unchanged.",
+    "entry": "N=min(C/c,P/p), ignoring zero comparison price; eligibility requires c>1, which proves N+1 fits u64 for every finite u64 balance.",
+    "header": "At the original header, encoded readiness above one admits a traversal and decrements once. The final active value one denotes an exhausted loan.",
+    "settlement": "Recompute initial N from the unchanged original pair; t=N-(encoded-1). Restore C-t*c and P-t*p to their original homes before the unchanged end callback and clear readiness.",
+    "wire": "Preserve all three homes, callback arguments, runtime reconciliation and checkpoint clearance. IR85 separates the new private encoding; ABI29 and work policy68 remain.",
     "qualification": "Differential compiled-source tests across original/decoded artifacts, repeated prefixes, Unicode/CRLF, source errors and exact/one-short independent finite budget dimensions."
   },
   "promotion": "No diagnostic-only reduction, static instruction change, or interval including zero establishes a runtime improvement.",
   "retained_credit_control_source": "7a715c12a055472247bab992904f43a9962cafd1",
-  "current_experiment_status": "qualified complete-process gain; fresh three-subject preparation and per-width diagnostic verified",
-  "latest_phase_evidence": "../credit-fragment-preparation-workers-v1/verification.json",
+  "current_experiment_status": "Counter is correct but unpromoted: paired +2.18% and +1.82%; scanner 0.07377 versus 0.07396 seconds. Production and diagnostic source committed; evidence verified.",
+  "latest_phase_evidence": "../scalar-traversal-preparation-workers-v1/verification.json",
   "latest_phase_findings": {
-    "input_cpu_savings_seconds": 0.0195419795,
-    "remaining_post_eof_cpu_seconds": 0.0402026875,
-    "source_scanner_cpu_seconds": 0.0740206005,
-    "two_long_tasks_body_finish_difference_seconds": 0.0026649999999999174
-  }
+    "candidate_source_scanner_cpu_seconds": 0.0737746925,
+    "parent_source_scanner_cpu_seconds": 0.073955908,
+    "candidate_post_eof_cpu_seconds": 0.0403976465,
+    "parent_post_eof_cpu_seconds": 0.0401445625,
+    "candidate_long_tasks_body_finish_difference_seconds": 0.008265
+  },
+  "next_experiment": "Carry an admitted private byte-buffer owner directly through the complete-use-proved join/map chain, avoiding the canonical String round trip; start from bdb3c511c without the unpromoted counter."
 }

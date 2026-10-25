@@ -12,13 +12,27 @@ and **0.6083 s / 1.082×**, against current credit-parent medians 0.6230 s and
 descriptor and entire guest object remain unchanged. All 468 checks and 84
 terminal receipts pass, including fresh exact-code profiles and counters.
 The remaining gap is 46–51 ms. The [next-round plan](preparation-next-round-v1/)
-targets exact scalar traversal accounting, fewer physical join/map passes,
-short immutable comparisons, table-derived SIMD mapping and the two long
-ordinary hash loops. The [fresh three-subject phase/per-width diagnostic](credit-fragment-preparation-workers-v1/)
+targets fewer physical join/map passes, short immutable comparisons,
+table-derived SIMD mapping, compact scalar execution and the two long ordinary
+hash loops. The independent exact-counter experiment below is complete. The [fresh three-subject phase/per-width diagnostic](credit-fragment-preparation-workers-v1/)
 confirms about 19.5 ms less capture CPU and 19.8 ms earlier worker start; the
 40 ms post-EOF region remains. All 22 diagnostic receipts and 126 worker
 intervals pass. The long tasks finish within roughly 3 ms of each other, so
 counting-side changes should help both.
+
+The [exact scalar traversal-count trial](scalar-traversal-count-v1/README.md)
+at `f1b9e17f15` remains **unpromoted**. Complete-process medians are
+**0.6188 s / 1.113× Rust** and **0.6170 s / 1.106×**, versus qualified-parent
+controls **0.6051 s / 1.088×** and **0.6053 s / 1.085×**. Paired changes are
++2.18% and +1.82%; neither session establishes improvement. All 396 native,
+three focused differential and one catalog checks pass. All eight nonentry
+function bodies remain byte-identical; the scalar entry grows by 936 bytes.
+Fresh exact-code profiles, counters, sizes and 83 terminal receipts are verified.
+The [actual-candidate phase/per-width cohort](scalar-traversal-preparation-workers-v1/README.md)
+adds 22 verified receipts and 126 worker intervals: scanner CPU is 0.07377 s
+versus the parent's 0.07396 s, with no useful gain. About 0.040 s remains after
+EOF before spawning. The counter stays available for controlled interactions;
+the next larger buffer-owner fusion starts from qualified `bdb3c511c`.
 
 The [fresh cold-origin phase/per-width diagnostic](cold-origin-preparation-workers-v1/README.md)
 shows **0.188 s** to Mech worker launch versus **0.130 s** for Rust, with only
