@@ -4,6 +4,17 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [aligned-probe and addressing trial](aligned-probe-groups-v1/README.md)
+at `8dfe57af5` improves all twelve matched candidate/parent pairs across two
+sessions. Full-input medians are **0.6595 s / 1.180× Rust** and **0.6712 s /
+1.223×**, reductions of 5.55% and 1.81%; both paired intervals exclude zero.
+All 387 native checks pass, alongside the two focused cases and catalog check.
+Exact-code profiles, 90 process receipts and disassembly support a shorter
+candidate-address chain and a lower longest-worker CPU endpoint. Worker
+availability stays around 0.23 s. Serial input preparation is the next target;
+Rust parity remains incomplete. The source, resource image, all complete maps,
+update counts, worker count, prices and allowance limits remain unchanged.
+
 The [shared immutable String-fact trial](shared-string-facts-v1/README.md)
 removes repeated worker representation scans. Two full sessions give candidate
 **0.6908 s / 1.243× Rust** and **0.6972 s / 1.255×**, against parent 0.6945 s
