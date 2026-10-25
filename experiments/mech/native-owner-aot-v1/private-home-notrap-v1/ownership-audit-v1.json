@@ -1,0 +1,60 @@
+{
+  "status": "allocation-initialization-lifetime-audited-call-site-scope-and-tests-pending",
+  "audited_source": "2e58f2abdfd39ef296b5c9bb470be3aa4dfad925",
+  "implemented": false,
+  "dependency": {
+    "name": "cranelift-codegen",
+    "version": "0.131.3",
+    "memflags_source_sha256": "4499f91eaa9780ca246584d9453cde2f0f759731076a94319cceab94f9e0641d",
+    "contract": "Nontrapping memory permits removal of unused loads and dead stores at their current program points. It does not imply arbitrary movement, readonly memory or alignment."
+  },
+  "source_sha256": {
+    "hosts/gpu/src/native_artifact/compiler_memory_regions.rs": "3fbe193c8a145c3212ad7901217f1691a941d3979ef8abc5a7e947b53fe3ef12",
+    "hosts/gpu/src/native_artifact/memory.rs": "c6ee5f4549b8e76aa5a25268401bb782e4178c550d7e0a19f6e34669d140c1af",
+    "hosts/gpu/src/native_artifact/program_session.rs": "ad1a216bb825171e592e335cca5a574810aaa039652ab52b24d87cd378f11052",
+    "hosts/gpu/src/native_artifact/program_borrowed_layout.rs": "0bd4fe04f611f84787f79c75d84345e19b1b357549b6b8e108dc798a2960238e",
+    "hosts/gpu/src/native_artifact/program_tail_codegen.rs": "759bc3274f0159408f65e55dccde158494b1c3823b8f1accba49efa85a210161",
+    "src/core/src/memory_runtime/domain.rs": "33dee45c098cd015127a82d35f43e0ef4b32db1d1b114ed68eede5c779687c3b",
+    "src/core/src/memory_runtime/allocation.rs": "03ee3168f16162eceb19eade748e8581d07542677b7cb2d502aea691ea8a1e5c",
+    "Cargo.lock": "36b1a96024775de3aaf1d0bb1c174d54ee6389f8c3923f1e5e9861b07cb8ba17"
+  },
+  "facts": [
+    {
+      "source": "memory.rs NativeTypedStorage::for_slot",
+      "fact": "Checked allocation byte counts and limits precede a typed host-arena projection retained together with its memory domain."
+    },
+    {
+      "source": "memory_runtime/allocation.rs PlannedArenaProjection::validate_realized_layout/initialize",
+      "fact": "The projection exactly covers its arena; every lane is initialized with T::default before exposure. u64 is a sealed supported lane type."
+    },
+    {
+      "source": "program_session.rs Prepared::setup_geometry and entry dispatch",
+      "fact": "Checked private metadata counts extend the local bank. The owned projection is split into bounded slices; frame pointers/capacities reference those slices and stay borrowed across the synchronous entry call."
+    },
+    {
+      "source": "program_borrowed_layout.rs Layout::derive",
+      "fact": "Ready, capture and temporary homes are derived with checked additions and disjoint offsets into the reserved borrowed bank."
+    },
+    {
+      "source": "iteration_compiler.rs define_cfg",
+      "fact": "Origin flags apply only for CodePlan::is_program; other image kinds use default memory flags."
+    },
+    {
+      "source": "program_hooks and source byte/offset access",
+      "fact": "Source bounds and opaque callback memory effects must remain. No promise is proposed for general source bytes, LF allocations, map payloads or callback argument/result buffers."
+    }
+  ],
+  "remaining": [
+    "Complete and record every borrowed/scalar-tail flag call-site range/lifetime proof.",
+    "Add an independent test-only compile reference that disables only nontrapping promises, retaining existing alias regions.",
+    "Verify original/decoded callback resumes, Unicode fallback, exact finite work/errors and unchanged source plans.",
+    "Inspect actual object changes before primary timing."
+  ],
+  "prohibited_promises": [
+    "readonly on mutable frame homes",
+    "aligned/trusted without an independent proof",
+    "can_move",
+    "general source-memory notrap"
+  ],
+  "primary_benchmark_samples": 0
+}

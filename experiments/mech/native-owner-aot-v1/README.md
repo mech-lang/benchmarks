@@ -4,6 +4,17 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [selective borrowed-field trial](borrowed-field-loads-v1/README.md) at
+`2e58f2abdf` removes the confirmed unused pointer loads and leaves all nine
+nonentry functions byte-identical. All correctness scopes and **119 terminal
+receipts** pass. Complete-process medians are **0.6075 s / 1.090× Rust** and
+**0.6051 s / 1.080×**, versus byte-table parent **0.5902 s / 1.059×** and
+**0.5996 s / 1.070×**. The first paired session regresses; the second is
+inconclusive. The cleanup is **unpromoted**, with the parent retained for
+interaction experiments. Fresh exact-code profiles and counters establish
+no isolated runtime benefit. The [next status](preparation-next-round-v1/status-v6.json)
+separates the upcoming nontrapping-private-home experiment from this result.
+
 The [prepared joined-byte-table trial](joined-byte-table-v1/README.md) at
 `8946ccbae9` removes all sixteen per-row narrowing instructions and all three
 table-vector stack reloads. Actual CFG/dominator inspection verifies eight
