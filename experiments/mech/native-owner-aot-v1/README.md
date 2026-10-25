@@ -4,6 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [cold scalar-origin trial](scalar-cold-origins-v1/README.md) at
+`47da29a4c` is **unpromoted**: medians are **0.6297 s / 1.139× Rust** and
+**0.6294 s / 1.135×**, with paired changes +0.35% and +0.30%; both intervals
+include zero. All 395 native checks, two focused checks and the catalog check
+pass. Every counting function remains byte-for-byte unchanged, and all original
+work is retained. Separate counters retire about 306 million fewer instructions
+without fewer cycles. Fresh exact-code profiles and 80 terminal receipts are
+verified, including the failed attempt that exposed the normal checkpoint
+header-origin requirement. The finite-worker-credit checkpoint remains the
+best qualified version; a new phase/per-width breakdown is required before
+assigning this candidate any preparation saving.
+
 The [scalar Tail register trial](scalar-tail-registers-v1/README.md) at
 `bd690a4eb` is **not promoted**: full medians are **0.6425 s / 1.160× Rust**
 and **0.6430 s / 1.159×**, against current parent controls of 0.6186 s and
