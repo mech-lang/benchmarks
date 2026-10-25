@@ -1716,3 +1716,5 @@ That profile selected per-window range/String materialization and library invoca
 - Every build, test, profile and timed process uses the existing common mutex and owned-process cleanup. The canonical benchmark dataset, website data and protected upstream submissions are unchanged.
 
 The latest source build completes the full workload with exact output and table-update qualification. A separate decoded-source executable qualification and secured/trusted timings of the same executable remain unfinished. The source-map implementation has not reached Rust's performance.
+
+[Complete per-width task diagnostics](worker-completion-v1/README.md) confirm that widths 12 and 18 determine the tail. These separate instrumented copies record task completion, CPU and core-kind counters without live polling; the eighteen runs supply no primary timing samples.

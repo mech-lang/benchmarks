@@ -1,0 +1,69 @@
+--- protected-upstream.rs
++++ diagnostic-copy.rs
+@@ -15,6 +15,9 @@
+ use num::{FromPrimitive, ToPrimitive};
+ use std::cmp::Ordering;
+ use std::sync::Arc;
++
++#[path = "worker_probe.rs"]
++mod worker_probe;
+ 
+ type Map<T> = hashbrown::HashMap<T, u32>;
+ 
+@@ -117,16 +120,21 @@
+     s_vec: &[u8],
+     len: usize,
+ ) -> Map<T> {
++    worker_probe::begin(len, 0, len as u64);
++    worker_probe::width(len as u64);
+     let mut h = Map::default();
+     let mask = T::mask(len);
+     let mut it = s_vec.iter();
+     let mut a = it.by_ref()
+         .take(len - 1)
+         .fold(T::default(), |acc, &x| T::sh(acc, x, mask));
++    worker_probe::mark("count_begin");
+     for &x in it {
+         a = T::sh(a, x, mask);
+         *h.entry(a).or_insert(0) += 1;
+     }
++    worker_probe::mark("count_complete");
++    worker_probe::finish();
+     h
+ }
+ 
+@@ -155,8 +163,10 @@
+ 
+ pub fn calc<R: std::io::BufRead>(r: R) {
+     let s_vec = get_seq(r, b">THREE");
++    worker_probe::mark("input_ready");
+ 
+     let pool = ThreadPool::new();
++    worker_probe::mark("pool_ready");
+ 
+     let arc_vec = Arc::new(s_vec);
+     let s1 = arc_vec.clone();
+@@ -166,6 +176,7 @@
+     let s5 = arc_vec.clone();
+     let s6 = arc_vec.clone();
+     let s7 = arc_vec.clone();
++    worker_probe::mark("spawn_begin");
+     let f7 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s1, 18))));
+     let f6 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s2, 12))));
+     let f5 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s3, 6))));
+@@ -173,6 +184,7 @@
+     let f3 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s5, 3))));
+     let f2 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s6, 2))));
+     let f1 = pool.spawn_handle(lazy(move || Ok::<_, ()>(freq(&s7, 1))));
++    worker_probe::mark("spawn_complete");
+     print_stat(f1.wait().unwrap(), 1);
+     print_stat(f2.wait().unwrap(), 2);
+     print::<u8>(f3.wait().unwrap(), "GGT");
+@@ -183,6 +195,7 @@
+ }
+ 
+ fn main() {
++    let _worker_cpu_diagnostic = worker_probe::Root::new();
+     let stdin = std::io::stdin();
+     calc(stdin.lock());
+ }
