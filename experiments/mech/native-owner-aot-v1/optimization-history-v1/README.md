@@ -11,6 +11,9 @@ cohort medians, input size, contemporaneous Rust denominator, compiler commit,
 source receipt and relevant paired comparisons. `history.csv` provides the
 cohort-level data. `history.html` is the interactive conversation fragment;
 its horizontal axes use actual calendar time, displayed in America/New_York.
+The `png-white-blue` directory contains static white-background exports with
+blue circles for all cohorts, including uncertain and negative trials, plus
+their export script and source/image hashes. Input sizes remain separate.
 
 ## Time recovery
 
