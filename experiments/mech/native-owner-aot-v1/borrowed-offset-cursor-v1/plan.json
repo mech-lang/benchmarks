@@ -1,0 +1,67 @@
+{
+  "source_commit": "91f725adc16b1ba349d77cc898e6e24de4a79bf6",
+  "parent_source_commit": "ce06867648d1de888c7b4a3046be70cbfdda1a9d",
+  "compiler": "compiler-v78",
+  "receipt": "borrowed-offset-cursor-timing-v1",
+  "binary": "counting-borrowed-offset-cursor",
+  "parent_receipt": "resource-admission-fixes-timing-v1",
+  "parent_binary": "counting-resource-admission-fixes",
+  "changes": [
+    "Borrow existing LF offsets through two inline physical-chunk descriptors for producer-proved ASCII windows; remove per-line allocation, writes and reads.",
+    "Generate native row lookup directly from immutable bytes and u32 LF positions, preserving exactly one CR before LF and the lone unterminated-line representation.",
+    "Keep checked materialized rows for larger physical windows and mixed-Unicode producers; no source/header/name recognition.",
+    "IR81/ABI29 discriminate compact loans from aligned ordinary row tables. Work policy68 includes the larger inline loan metadata while retaining old row/payload work and row-capacity claims."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, resource image, source predicates, complete map behavior, all 874999961 source updates, seven-worker cap and OS settings.",
+    "Original operation prices, library-call limits, input, protected Rust, secured startup through complete process exit and finite allowance limits."
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Inspect the new row emitter and retain exact-code profiles separately from primary timings; no assumed speedup.",
+  "decision": "Retain corrected parent and direct-offset candidate; report both sessions without selecting observations or claiming predeclared Rust parity.",
+  "production_change_commit": null,
+  "work_policy_version": 68,
+  "typed_ir_version": 81,
+  "abi_version": 29
+}

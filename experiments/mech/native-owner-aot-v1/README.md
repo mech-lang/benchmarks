@@ -4,6 +4,16 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [compact borrowed-offset trial](borrowed-offset-cursor-v1/README.md) at
+`91f725adc` removes the per-line pointer directory for bounded ASCII chunk
+windows. Full medians are **0.6713 s / 1.225× Rust** and **0.6713 s / 1.200×**,
+about 17 ms and 14 ms below the corrected parent. The repeat’s paired interval
+includes zero, so the candidate remains provisional. All 24 engine, 29 focused
+prefix, 392 native and one catalog executions pass; exact-text profiles,
+counters, emitted row fragments and 82 terminal receipts are retained. Two slow
+Rust counter diagnostics are reported rather than replacing the primary Rust
+controls. Further phase separation and join/map fusion remain next targets.
+
 The [corrected ownership/admission baseline](resource-admission-fixes-v1/README.md)
 at `ce0686764` fixes all three retained runtime findings and passes 392 native
 checks plus the catalog check. Two balanced full-input sessions give **0.6817 s /
