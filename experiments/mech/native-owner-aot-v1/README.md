@@ -4,6 +4,16 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [updated credit preparation/per-width diagnostic](credit-preparation-workers-v1/README.md)
+keeps the complete guest object unchanged and supplies no primary timings.
+Mech reaches worker launch near 0.186 s after main, versus Rust near 0.128 s.
+The source scanner is still about 73 ms CPU; actual spawning is only 70 µs.
+Current width-12 counting is 0.4083 s / 1.056× Rust, while width 18 is
+0.3959 s / 0.973×. Preparation now accounts for most of the visible remaining
+completion lag. All 15 diagnostic receipts, 84 worker intervals and original
+outputs/updates pass verification. Compact scalar scanner bookkeeping is the
+next contained experiment; ordinary-loop pipelining remains separate.
+
 The [finite local worker-credit trial](worker-local-credit-v1/README.md) at
 `7a715c12a` is a repeatable improvement: **0.6166 s / 1.115× Rust** and
 **0.6218 s / 1.126×**, against parent medians 0.6557 s and 0.6466 s. All twelve
