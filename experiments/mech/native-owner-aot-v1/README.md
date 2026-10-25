@@ -4,6 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [worker-credit/fragment-fact combination](credit-fragment-facts-v1/README.md)
+at `bdb3c511c` is the **new qualified checkpoint**: **0.6046 s / 1.092× Rust**
+and **0.6083 s / 1.082×**, against current credit-parent medians 0.6230 s and
+0.6248 s. All twelve matched pairs are faster; paired reductions are 2.14% and
+2.22%, with both intervals excluding zero. The source, bytecode, resources,
+descriptor and entire guest object remain unchanged. All 468 checks and 84
+terminal receipts pass, including fresh exact-code profiles and counters.
+The remaining gap is 46–51 ms. The [next-round plan](preparation-next-round-v1/)
+targets exact scalar traversal accounting, fewer physical join/map passes,
+short immutable comparisons, table-derived SIMD mapping and the two long
+ordinary hash loops. A fresh three-subject phase/per-width diagnostic is pending.
+
 The [fresh cold-origin phase/per-width diagnostic](cold-origin-preparation-workers-v1/README.md)
 shows **0.188 s** to Mech worker launch versus **0.130 s** for Rust, with only
 71 microseconds in actual spawning. Source scanning remains **72.6 ms CPU**,
@@ -12,7 +24,7 @@ selected joining 20.6 ms and normalization 13.0 ms. Width-12 counting is
 receipts and 84 worker intervals are verified; these are not primary samples.
 The isolated scanner-store changes have not removed the serial preparation
 gap. The next substantive compiler target is the complete pure scalar graph
-and its carrier/view data movement; finite worker credit remains the checkpoint.
+and its carrier/view data movement; the newer fragment-fact combination is the checkpoint.
 
 The [cold scalar-origin trial](scalar-cold-origins-v1/README.md) at
 `47da29a4c` is **unpromoted**: medians are **0.6297 s / 1.139× Rust** and
@@ -22,8 +34,8 @@ pass. Every counting function remains byte-for-byte unchanged, and all original
 work is retained. Separate counters retire about 306 million fewer instructions
 without fewer cycles. Fresh exact-code profiles and 80 terminal receipts are
 verified, including the failed attempt that exposed the normal checkpoint
-header-origin requirement. The finite-worker-credit checkpoint remains the
-best qualified version; a new phase/per-width breakdown is required before
+header-origin requirement. The newer fragment-fact combination is now the
+qualified checkpoint; a new phase/per-width breakdown is required before
 assigning this candidate any preparation saving.
 
 The [scalar Tail register trial](scalar-tail-registers-v1/README.md) at
@@ -34,8 +46,8 @@ All 394 native checks and the catalog check pass; the main entry changes while
 all eight nonentry function bodies remain identical. Fewer instructions do not
 produce fewer cycles or lower elapsed time. Both sessions, exact-code profiles,
 counters and 83 terminal receipts are verified, including the sandbox-denied
-profile attempt and three repaired test-build attempts. Finite local worker
-credit remains the checkpoint. Cold error-location bookkeeping and compact
+profile attempt and three repaired test-build attempts. Its finite-credit parent is retained as a
+control for the newer qualified combination. Cold error-location bookkeeping and compact
 scalar source state remain preparation targets.
 
 The [updated credit preparation/per-width diagnostic](credit-preparation-workers-v1/README.md)
@@ -60,8 +72,8 @@ bytecode, resources and original body prices are unchanged. All 393 native,
 counters, sizes and 87 terminal receipts are retained, including one repaired
 metadata-fixture failure and the unqualified zero-test filter. Active accounting
 is 3.01% of fresh worker observations; independent counter CPU falls from
-1.96 s to 1.67 s. This is the next performance checkpoint; Rust parity remains
-incomplete. Preparation/scanner work and the longest generated loops remain.
+1.96 s to 1.67 s. This established the credit checkpoint used by the later fragment-fact
+interaction; Rust parity remains incomplete. Preparation/scanner work and the longest generated loops remain.
 
 The [selected-join/String-map composition trial](join-map-fusion-v1/README.md)
 at `b8e803224` applies the existing emitted map to initialized physical output
