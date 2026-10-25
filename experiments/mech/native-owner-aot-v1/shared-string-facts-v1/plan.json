@@ -1,0 +1,65 @@
+{
+  "source_commit": "388261c0873210eb86ed19ff0f6c06f77e584ab6",
+  "parent_source_commit": "bf10d4a51c6af5e1f212548f136a51f97f60ff4a",
+  "compiler": "compiler-v74",
+  "receipt": "shared-string-facts-timing-v1",
+  "binary": "counting-shared-string-facts",
+  "parent_receipt": "prepared-refill-timing-v1",
+  "parent_binary": "counting-prepared-refill",
+  "changes": [
+    "Inline allocation-free once-cell on exact immutable String data owner caches ASCII/no-CRLF representation, shared by clones, imports and workers. Core ownership bounds include its concrete size.",
+    "Generic maintained String length and closed-map preparation use that fact after original schema, work and source checks. Existing native same-entry cache delegates fact computation.",
+    "Owned mutable transfer discards cached facts; refreezing starts a new empty cell. Work-policy 67 fences concrete owner layout."
+  ],
+  "unchanged": [
+    "Mech source program, complete maps, 874999961 physical updates, seven workers and five bounded lookup caches.",
+    "Original full representation-scan charges, Unicode/CRLF fallback, per-body prices, finite work limits and capability validation.",
+    "Full input, policies, exact upstream Rust binary, default chunk size, scheduling, OS priorities and power settings."
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Fresh exact-code candidate profiles, hardware counters and owned-thread CPU observations remain separate from both full-input timing sessions.",
+  "decision": "Keep parent and candidate branches and all observations. Require repeated same-session output-verified comparisons; do not claim Rust parity or assign phase seconds from samples.",
+  "production_change_commit": null,
+  "work_policy_version": 67
+}
