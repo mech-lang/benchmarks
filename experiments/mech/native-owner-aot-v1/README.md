@@ -2,6 +2,52 @@
 
 This study measures a Mech state machine that explicitly traverses a String, selects each window, tests map membership, reads the previous count, inserts a caller-produced count and advances its state. The compiler retains general hash storage while compiling those operations from Mech. The current source is [knucleotide-source-map.mec](knucleotide-source-map.mec), SHA-256 `ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da`.
 
+## Latest retained experiments
+
+The [decoder-validation proof](packed-domain-validation-v1/README.md) at
+`1b7c79b3e` removes redundant per-symbol checks after establishing a complete
+decoder, retaining width and sparse-code checks. Separate full-input sessions
+give **0.6890 s / 1.251× Rust** and **0.6915 s / 1.221×**. Their paired intervals
+include zero; separate counters show about 290 million fewer full-input
+instructions and 274 million fewer prefix instructions. All 386 check
+executions pass. The Mech program source, Object, descriptor, bytecode and resource image
+remain unchanged from its scheduling parent.
+
+The preceding [size-first scheduling trial](sized-schedule-v1/README.md) at
+`b8da46b50` retains source-order admission, results and errors. Its separate
+full-input medians are **0.7032 s / 1.260× Rust** and **0.7049 s / 1.247×**;
+repeat direction reverses against the parent and no reliable gain is established.
+Both failed initial fixtures and the repaired 397-check qualification remain.
+
+The [host input-buffer study](host-input-chunk-v1/README.md) retains all
+48 timing observations and six early-start full-input profiles. The 256 KiB
+variant reverses direction across full-input sessions; 1 MiB reduces peak RSS
+roughly 4–6 MB while regressing the short-input cohort. The 64 KiB default stays.
+Matched early Mech/Rust profiles now retain input preparation as well as
+workers. The final join copy constructs contiguous text; window borrowing
+already caches ASCII and complete-chunk payload facts, and its remaining walk
+builds the borrowed row table. These are representation costs, not unneeded
+validation loops that can simply be deleted.
+
+The [prepared-refill interaction retest](prepared-refill-v1/README.md) at
+`bf10d4a51` moves exact full-batch thresholds outside shared worker accounting.
+It revisits the retained earlier shortcut with a smaller quote and later
+optimization factors. Session medians are **0.6921 s / 1.231× Rust** and
+**0.6945 s / 1.253×**, improving 1.18% initially and regressing 0.64% in the
+repeat. Both paired intervals include zero, and counters do not improve.
+All 388 check executions pass; the smaller 40-byte quote remains a stack
+implementation detail rather than a demonstrated gain. All 36 full-input
+observations, exact-code profiles, code audit and 89 owned process receipts
+are retained.
+
+These are separately reported cohorts, each using its own unchanged Rust
+denominator. All source branches and prior factors remain available for
+combination testing; no uncertain factor is discarded automatically. Canonical
+benchmark data is unchanged, and Rust parity remains incomplete. The retained
+Rust strategy/table controls do not support predicting a large gain from
+payload width alone. Generated hash-probe addressing and worker accounting
+remain targets for further measurement.
+
 ## Compact host metadata
 
 `codex/native-host-startup-trimming` at `e939c8002` builds on the retained
