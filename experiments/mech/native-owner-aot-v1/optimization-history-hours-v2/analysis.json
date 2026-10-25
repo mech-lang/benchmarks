@@ -1,0 +1,61 @@
+{
+  "schema": "mech-history-direct-exponential-fit-v2",
+  "source_analysis_sha256": "7a3b2d227591ebf36ce009190399306e1dc8693c1cb1a3d9f86ada16cb69035d",
+  "builder_sha256": "d41425ce537af230adc9962b09d43e43aab2c8c383128e72733ad83a8916a1cb",
+  "cohorts": 118,
+  "process_observations": 708,
+  "t0_timestamp": 1792776172.061441,
+  "simple_exponential": {
+    "A": 215.6051348955348,
+    "C": 0.0,
+    "k_per_hour": 1.1532396383238277,
+    "sse": 315.2630635023643,
+    "model": "A exp(-k h)",
+    "r_squared_original": 0.9934648531625835,
+    "rmse_ratio": 1.6345399588687577,
+    "method": "Direct nonlinear least squares in measured Mech/Rust ratios; one equal weight per retained cohort.",
+    "profile_grid": {
+      "k_min": 1.0000000000000004e-06,
+      "k_max": 100.00000000000023,
+      "points": 1601,
+      "local_minima": 1
+    },
+    "first_derivatives_sse": {
+      "A": 3.148053039306722e-15,
+      "k": 2.6373643065009662e-05
+    },
+    "prediction_at_zero": 215.6051348955348,
+    "prediction_at_48h": 1.963675675940328e-22
+  },
+  "offset_exponential": {
+    "A": 214.33264970629838,
+    "C": 1.5541827530903403,
+    "k_per_hour": 1.1963865188844802,
+    "sse": 46.45264112448416,
+    "model": "C + A exp(-k h)",
+    "r_squared_original": 0.9990370745390792,
+    "rmse_ratio": 0.6274284423003892,
+    "method": "Direct nonlinear least squares in measured Mech/Rust ratios; one equal weight per retained cohort.",
+    "profile_grid": {
+      "k_min": 1.0000000000000004e-06,
+      "k_max": 100.00000000000023,
+      "points": 1601,
+      "local_minima": 1
+    },
+    "first_derivatives_sse": {
+      "A": -6.543152534709238e-14,
+      "k": -1.7854863423152728e-06,
+      "C": 5.541140463138916e-14
+    },
+    "prediction_at_zero": 215.88683245938873,
+    "prediction_at_48h": 1.5541827530903403
+  },
+  "scope": "Same 118 full-input cohorts and same exact launch coordinates as v1. Only the fitting objective and display change; no subjects are executed.",
+  "notes": [
+    "The prior plot fit log ratios; this plot minimizes squared error in the original runtime ratios.",
+    "The offset is fitted freely, not fixed to Rust parity. A and C are nonnegative, k is positive.",
+    "Large early ratios dominate original-scale R-squared. The tail inset shows the remaining mismatch.",
+    "The fitted 1.55x offset is not a physical floor: actual later cohorts reach approximately 1x.",
+    "All retained trials and repeated cohorts remain. This is descriptive and not a forecast."
+  ]
+}
