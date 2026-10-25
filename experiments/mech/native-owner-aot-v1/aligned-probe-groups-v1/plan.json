@@ -1,0 +1,65 @@
+{
+  "source_commit": "8dfe57af5b116244ee8d10e1133bec95c02a4425",
+  "parent_source_commit": "d23c2950da1c9079573459606d91878e4c0d36d3",
+  "compiler": "compiler-v75",
+  "receipt": "aligned-probe-groups-timing-v1",
+  "binary": "counting-aligned-probe-groups",
+  "parent_receipt": "shared-string-facts-timing-v2",
+  "parent_binary": "counting-shared-string-facts",
+  "changes": [
+    "Align private linear control groups to eight buckets in both runtime insertion/rehash/frozen lookup and generated probes. Each bounded cycle still covers all buckets; complete keys remain checked.",
+    "Compute the payload-group base before the control match. Convert the first set control bit directly into a byte displacement for both 16- and 24-byte strides.",
+    "IR80 fences the changed private table placement; ABI28 and work-policy67 remain. Prices, per-group charges, quotas and complete source-operation checks stay unchanged. Actual probe counts can vary with the changed placement."
+  ],
+  "unchanged": [
+    "Mech source, bytecode, resource image, all seven full histograms and physical window updates; seven workers and five bounded lookup caches.",
+    "Per-group and per-body price formulas, finite allowance limits, source failure sites, memory admission and key equality.",
+    "Input, protected Rust, startup/security policies, scheduling and OS settings."
+  ],
+  "primary_sessions": 2,
+  "orders_per_session": 6,
+  "subjects": [
+    "rust",
+    "parent",
+    "candidate"
+  ],
+  "orders": [
+    [
+      "rust",
+      "parent",
+      "candidate"
+    ],
+    [
+      "parent",
+      "candidate",
+      "rust"
+    ],
+    [
+      "candidate",
+      "rust",
+      "parent"
+    ],
+    [
+      "candidate",
+      "parent",
+      "rust"
+    ],
+    [
+      "parent",
+      "rust",
+      "candidate"
+    ],
+    [
+      "rust",
+      "candidate",
+      "parent"
+    ]
+  ],
+  "excluded_full_input_warmups": 0,
+  "excluded_outliers": 0,
+  "prefix": "One excluded warmup and three complete measured processes per subject, kept separate from full-input sessions",
+  "diagnostics": "Fresh exact-code candidate/Rust full profiles, counters and parent/candidate/Rust thread polling separate from primary timing cohorts.",
+  "decision": "Retain parent and candidate. Report both full sessions and uncertainty; a diagnostic policy result is not a native Mech speedup. No predeclared gain or Rust parity.",
+  "production_change_commit": null,
+  "work_policy_version": 67
+}
