@@ -1,0 +1,26 @@
+warning: field `segment_count` is never read
+  --> src/engine/src/resident/general/native_text_line_window.rs:21:5
+   |
+14 | pub struct NativeTextLineWindow<'owner> {
+   |            -------------------- field in this struct
+...
+21 |     segment_count: usize,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-combinatorics v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/combinatorics)
+   Compiling mech-set v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/set)
+   Compiling mech-math v0.3.5 (/private/tmp/mech-native-hashmap-performance/machines/math)
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-native-hashmap-performance/src/stdlib)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+    Finished `test` profile [unoptimized] target(s) in 1m 19s
+     Running unittests src/lib.rs (/private/tmp/mech-pidigits-performance/target/debug/deps/mech_gpu-46c70f4789310e79)
+
+thread 'native_artifact::program_runtime::session::prefix_tests::scalar_cold_origin_tests::scalar_cold_origins_preserve_resumes_credit_failure_and_checkpoint_clearance' (3761645) panicked at hosts/gpu/src/native_artifact/program_scalar_cold_origin_tests.rs:111:17:
+assertion `left == right` failed: original scalar work, error origin, carrier and output must agree: "", cap=0
+  left: ["0: Err(Base(Descriptor { reason: \"native entry returned the wrong input checkpoint\" })); carrier=[0, 1, 0]; work=None"]
+ right: ["0: Ok(()); carrier=[0, 1, 0]; work=Some((8605780, (8605780, 0)))", "0: Ok(()); carrier=[0, 1, 0]; work=Some((8622788, (8622788, 0)))", "EOF: Ok(()); work=Some((8815340, (8815340, 128)))", ""]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+error: test failed, to rerun pass `-p mech-gpu --lib`
