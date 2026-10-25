@@ -72,6 +72,9 @@ project = HERE / '.build' / (plan['binary'] + '.project')
 parent_project = HERE / '.build' / (plan['parent_binary'] + '.project')
 for name in ['native-resources.json', 'program.mecb']:
     assert process.sha(project / name) == process.sha(parent_project / name)
+inspection = read(STUDY / 'code-inspection.json')
+assert inspection['source'] == before and inspection['script_sha256'] == process.sha(STUDY / 'inspect-code.py')
+assert len(inspection['functions']) == 9 and sum(row['identical'] for row in inspection['functions']) == 8
 manifest = read(project / 'linked-manifest.json')['object']
 assert (manifest['typed_ir_version'], manifest['abi_version'], manifest['work_policy_version']) == (83, 29, 68)
 assert manifest['scalar_tail_register_regions'] == p['scalar_tail_register_regions']
@@ -82,13 +85,13 @@ assert hashlib.sha256(text_section(Path(profile['binary']))).hexdigest() == prof
 paths.extend(profile_folder.rglob('process.json'))
 analysis = read(STUDY / 'analysis.json')
 assert analysis['status'] == 'exact-current-binary-observations-partitioned'
-assert analysis['source'] == analysis['source_after'] == before and analysis['analysis_sha256'] == process.sha(STUDY / 'analyze.py')
+assert analysis['source'] == analysis['source_after'] == before and analysis['analysis_sha256'] == process.sha(STUDY / 'analyze-v2.py')
 for subject in ['mech', 'rust']:
-    folder = STUDY / f'early-{subject}-profile-v1'; capture = read(folder / 'results.json')
+    folder = STUDY / f'early-{subject}-profile-v2'; capture = read(folder / 'results.json')
     assert capture['status'] == 'profile-captured' and capture['source'] == capture['source_after'] == before
     assert len(capture['samples']) == len(capture['subjects']) == 3
     assert capture['binary_sha256'] == analysis['languages'][subject]['binary_sha256']
-    assert capture['script_sha256'] == process.sha(STUDY / 'profile-capture.py')
+    assert capture['script_sha256'] == process.sha(STUDY / 'profile-capture-v2.py')
     for index, sample in enumerate(capture['samples']):
         sub = folder / f'sample-{index}'
         assert process.sha(sub / 'stacks.txt') == sample['stacks_sha256'] and sample['owned_direct_child']
@@ -103,11 +106,21 @@ for row in counter['counters']:
     assert process.sha(folder / 'stderr.bin') == row['stderr_sha256'] and process.sha(folder / 'stdout.bin') == OUTPUT_SHA
     if row['subject'] != 'rust': check_native(folder.with_name(folder.name + '.native.json'))
 paths.extend((STUDY / 'counters').rglob('process.json'))
+failed_profile = STUDY / 'early-mech-profile-v1/sample-0'
+failed_sampler = failed_profile / 'sampler/process.json'
+assert 'Operation not permitted' in (failed_profile / 'sampler/stderr.bin').read_text()
+failed_receipt = read(failed_sampler)
+assert failed_receipt['error'] == 'Owned process deadline' and failed_receipt['exit_status'] == -9
+assert process.sha(failed_profile / 'subject/stdout.bin') == OUTPUT_SHA
+paths.extend(failed_profile.rglob('process.json'))
 for path in set(paths):
     r = read(path)
-    assert r['exit_status'] == (101 if path.parent.name in failures else 0)
+    assert r['exit_status'] == (-9 if path == failed_sampler else (101 if path.parent.name in failures else 0))
     assert r['inherited_common_mutex'] and r['reaped'] and r['group_closed'] and r['birth_identity']['pid'] > 0
-    assert not r['cleanup_errors'] and not r['signals']
+    assert not r['cleanup_errors']
+    if path == failed_sampler:
+        assert len(r['signals']) == 1 and r['signals'][0]['signal'] == 9 and r['signals'][0]['pid'] == r['birth_identity']['pid']
+    else: assert not r['signals']
 assert process.sha(HERE.parents[2] / 'data/benchmarks.json') == DATA_SHA
 assert process.sha(HERE / 'knucleotide-source-map.mec') == SOURCE_SHA and source_state() == before
 binary = HERE / '.build' / plan['binary']; assert process.sha(binary) == p['candidate_sha256']
@@ -117,6 +130,6 @@ result = dict(status='scalar-register-validation-output-profile-counter-and-term
     binary_file_bytes=binary.stat().st_size, whole_text_bytes=profile['machine_code_bytes'], whole_text_sha256=profile['machine_code_sha256'],
     counter_medians=counter['counter_medians'], full_sessions=[{k:r[k] for k in ['session','median_seconds','x_rust','median_peak_rss_bytes','paired_change_percent','paired_change_interval_95']} for r in full],
     primary_full_samples=36, primary_prefix_samples=9, excluded_prefix_warmups=3, excluded_full_warmups=0, excluded_outliers=0,
-    verifier_sha256=process.sha(Path(__file__)))
+    verifier_sha256=process.sha(Path(__file__)), failed_profile_attempt='v1: sandbox denied process enumeration; bounded sampler killed and reaped, complete subject verified; fresh v2 separately qualified')
 process.save(STUDY / 'verification.json', result)
 print(result['status'], len(set(paths)), 'terminal receipts')

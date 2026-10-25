@@ -4,6 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [scalar Tail register trial](scalar-tail-registers-v1/README.md) at
+`bd690a4eb` is **not promoted**: full medians are **0.6425 s / 1.160× Rust**
+and **0.6430 s / 1.159×**, against current parent controls of 0.6186 s and
+0.6265 s. Paired slowdowns are 3.54% and 2.84%, with both intervals above zero.
+All 394 native checks and the catalog check pass; the main entry changes while
+all eight nonentry function bodies remain identical. Fewer instructions do not
+produce fewer cycles or lower elapsed time. Both sessions, exact-code profiles,
+counters and 83 terminal receipts are verified, including the sandbox-denied
+profile attempt and three repaired test-build attempts. Finite local worker
+credit remains the checkpoint. Cold error-location bookkeeping and compact
+scalar source state remain preparation targets.
+
 The [updated credit preparation/per-width diagnostic](credit-preparation-workers-v1/README.md)
 keeps the complete guest object unchanged and supplies no primary timings.
 Mech reaches worker launch near 0.186 s after main, versus Rust near 0.128 s.

@@ -1,4 +1,4 @@
-"""Separate counters and exact file sizes for paired finite worker credits."""
+"""Separate counters and exact file sizes for the scalar Tail register experiment."""
 import fcntl
 import os
 import re
@@ -33,7 +33,7 @@ def main():
                   memory_helper_sha256=process.sha(HERE / 'preparation-interactions-v1/memory.py'),
                   binary_helper_sha256=process.sha(HERE / 'preparation-interactions-v1/binary.py'),
                   snapshots=[], counters=[], binary={}, benchmark_samples=0,
-                  scope='Nine separate full-input counter executions, not primary timings. Exact timed files supply disk sizes. The candidate redistributes existing finite group work through revocable credits. Source, bytecode, guest object, descriptor, original body prices and complete hash-table work remain unchanged; primary processes retain actual peak RSS.')
+                  scope='Nine separate full-input counter executions, not primary timings. Exact timed files supply disk sizes. The candidate changes only the scalar-loan representation in the main native entry. The code inspection separately verifies eight unchanged nonentry functions. Source, bytecode, resources, original body prices and complete hash-table work remain unchanged; primary processes retain actual peak RSS. The parent and candidate both use the qualified finite worker credits.')
     for subject, binary in targets.items():
         parsed = macho(binary)[0]
         assert parsed['sha256'] == timing['pins'][subject]
