@@ -4,6 +4,21 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [direct transform/copy trial](joined-transform-copy-v1/README.md) at
+`6cf5877fa9` is correctness-qualified but **unpromoted**. It removes the
+separate payload-copy pass and maps immutable source bytes directly into the
+final private destination. Full medians are **0.5999 s / 1.081× Rust** and
+**0.5964 s / 1.033×**, against private-buffer controls **0.5962 s / 1.074×**
+and **0.6065 s / 1.051×**. Both paired intervals versus that immediate parent
+include zero. Rust observations vary substantially; parity and a stable 3%
+gap are not established. All final correctness scopes and **126 terminal
+receipts** pass, including 64 primary full-input samples, exact-code profiles,
+counters and object inspection. All eight previous nonentry functions remain
+byte-identical. The ordinary control and private-buffer foundation below
+remain available. The [updated next-round status](preparation-next-round-v1/status-v2.json)
+requires a fresh actual-candidate phase/per-width diagnostic before assigning
+this candidate any preparation saving or choosing its next interaction.
+
 The [private join/map buffer trial](private-join-buffer-v1/README.md) at
 `88b883b4cf` is correctness-qualified and retained as the foundation for direct
 transform-on-copy. All eighteen matched pairs favor it, but the benefit varies:
@@ -19,8 +34,8 @@ still measures **0.0385 s** after EOF, including 0.0215 s of copying and
 0.0135 s of mapping. Its different per-chunk clock overhead prevents treating
 these spans as a primary elapsed decomposition. All **123 terminal native
 receipts** are verified, including the reused successful prefix after a parser
-correction. The next larger candidate must compare direct transform-on-copy
-against both this foundation and the qualified ordinary parent, plus Rust.
+correction. The later direct-transform trial above includes both this
+foundation and the qualified ordinary parent as controls alongside Rust.
 
 The [worker-credit/fragment-fact combination](credit-fragment-facts-v1/README.md)
 at `bdb3c511c` is the **qualified ordinary control**: **0.6046 s / 1.092× Rust**
