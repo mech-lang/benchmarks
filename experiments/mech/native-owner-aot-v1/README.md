@@ -4,6 +4,18 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [pure-scalar graph/SSA trial](pure-scalar-state-v1/README.md) at `93015bc629`
+is a repeatable **5.65/5.62% paired improvement** over the compact parent;
+all twenty matched pairs are faster. Full medians are **0.55745 s / 1.000× Rust**
+and **0.55604 s / 0.999×**, versus Rust 0.55756/0.55644 s. Both paired Rust
+intervals include zero; no repeatable advantage or defined equivalence claim
+is made. All 412 native checks, remaining scopes and **160 terminal receipts**
+pass. All thirteen nonentry functions are byte-identical. Separate counters
+retire about 1.157 billion fewer instructions, with lower cycles and CPU;
+exact-text profiles, sizes, RSS and both failed compile attempts remain.
+The [current status](preparation-next-round-v1/status-v10.json) calls for matching
+actual-candidate phases before selecting further scalar or shared long-loop work.
+
 The [compact immutable mapper](compact-ascii-map-v1/README.md) at `d1ae94f684`
 reduces eight vector lookups to two after exhaustive ASCII equivalence, with
 a full-table fallback and shared ordinary/joined algebra. All 410 native

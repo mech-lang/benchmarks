@@ -1,0 +1,83 @@
+warning: field `segment_count` is never read
+  --> src/engine/src/resident/general/native_text_line_window.rs:21:5
+   |
+14 | pub struct NativeTextLineWindow<'owner> {
+   |            -------------------- field in this struct
+...
+21 |     segment_count: usize,
+   |     ^^^^^^^^^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `mech-engine` (lib) generated 1 warning
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-native-hashmap-performance/hosts/gpu)
+error[E0603]: enum `Edge` is private
+  --> hosts/gpu/src/native_artifact/program_scalar_loop_codegen.rs:21:35
+   |
+21 | use packed::tag_threading::{self, Edge, Target};
+   |                                   ^^^^ private enum
+   |
+note: the enum `Edge` is defined here
+  --> hosts/gpu/src/native_artifact/program_tag_threading.rs:55:1
+   |
+55 | pub(super) enum Edge {
+   | ^^^^^^^^^^^^^^^^^^^^
+
+error[E0603]: enum `Target` is private
+  --> hosts/gpu/src/native_artifact/program_scalar_loop_codegen.rs:21:41
+   |
+21 | use packed::tag_threading::{self, Edge, Target};
+   |                                         ^^^^^^ private enum
+   |
+note: the enum `Target` is defined here
+  --> hosts/gpu/src/native_artifact/program_tag_threading.rs:53:1
+   |
+53 | pub(super) enum Target { Node(usize), Exit }
+   | ^^^^^^^^^^^^^^^^^^^^^^
+
+error[E0603]: function `derive_scalar` is private
+   --> hosts/gpu/src/native_artifact/program_scalar_loop_codegen.rs:218:38
+    |
+218 |     let Some(graph) = tag_threading::derive_scalar(code, closed, id, aggregates, borrowed) else {
+    |                                      ^^^^^^^^^^^^^ private function
+    |
+note: the function `derive_scalar` is defined here
+   --> hosts/gpu/src/native_artifact/program_tag_threading.rs:189:1
+    |
+189 | / pub(super) fn derive_scalar(code: CodePlan<'_>, closed: &Layout, id: usize,
+190 | |     aggregates: &NativeScalarAggregates,
+191 | |     borrowed: &super::super::super::program_borrowed_layout::Layout) -> Option<Graph>
+...   |
+206 | |     derive_from(code, closed, id, carrier_word, transfers)
+207 | | }
+    | |_^
+
+warning: unreachable pattern
+   --> hosts/gpu/src/native_artifact/program_scalar_loop_codegen.rs:138:9
+    |
+138 |         _ => unreachable!("proved scalar Tail action"),
+    |         ^ no value can reach this
+    |
+note: multiple earlier patterns match some of the same values
+   --> hosts/gpu/src/native_artifact/program_scalar_loop_codegen.rs:138:9
+    |
+120 |           Scalar::None => {}
+    |           ------------ matches some of the same values
+121 |           Scalar::Copy { source, output } => {
+    |           ------------------------------- matches some of the same values
+...
+125 | /         Scalar::Primitive {
+126 | |             op,
+127 | |             operands,
+128 | |             output,
+129 | |             ..
+130 | |         } => {
+    | |_________- matches some of the same values
+...
+138 |           _ => unreachable!("proved scalar Tail action"),
+    |           ^ collectively making this unreachable
+    = note: `#[warn(unreachable_patterns)]` (part of `#[warn(unused)]`) on by default
+
+For more information about this error, try `rustc --explain E0603`.
+warning: `mech-gpu` (lib test) generated 1 warning
+error: could not compile `mech-gpu` (lib test) due to 3 previous errors; 1 warning emitted
