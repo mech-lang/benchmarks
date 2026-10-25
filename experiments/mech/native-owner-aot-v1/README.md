@@ -4,6 +4,20 @@ This study measures a Mech state machine that explicitly traverses a String, sel
 
 ## Latest retained experiments
 
+The [prepared joined-byte-table trial](joined-byte-table-v1/README.md) at
+`8946ccbae9` removes all sixteen per-row narrowing instructions and all three
+table-vector stack reloads. Actual CFG/dominator inspection verifies eight
+prepared vector loads before row traversal; the kernel stack falls from
+160 to 48 bytes. All 405 native checks, remaining correctness scopes and
+**121 terminal receipts** pass. Complete-process medians are **0.5953 s /
+1.071× Rust** and **0.5857 s / 0.992×**. Both paired intervals against the
+immediate direct-transform parent include zero, so the isolated byte-table
+change is **unpromoted** and the second ratio does not establish Rust parity.
+Against the ordinary control, paired reductions are 4.76% and 4.25%, with
+both intervals excluding zero. The [updated status](preparation-next-round-v1/status-v4.json)
+requires fresh actual-candidate phases before assigning a kernel saving;
+selective view-field loads are the next independent compiler change.
+
 The [direct transform/copy trial](joined-transform-copy-v1/README.md) at
 `6cf5877fa9` is correctness-qualified but **unpromoted**. It removes the
 separate payload-copy pass and maps immutable source bytes directly into the
