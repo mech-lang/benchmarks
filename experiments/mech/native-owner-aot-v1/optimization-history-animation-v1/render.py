@@ -139,7 +139,9 @@ def make_base() -> Image.Image:
 
 
 class Replay:
-    def __init__(self):
+    def __init__(self, fps: int = FPS):
+        assert fps in [30, 60]
+        self.fps = fps
         self.data = json.loads(SOURCE.read_text())
         self.fit = json.loads(FIT_SOURCE.read_text())["drawn_fit"]
         self.rows = sorted(self.data["records"], key=lambda r: r["hours"])
@@ -152,7 +154,7 @@ class Replay:
         self.end_hour = self.hours[-1]
         self.history_seconds = self.end_hour * 3600 / HISTORY_SPEEDUP
         self.duration = INTRO_SECONDS + self.history_seconds + OUTRO_SECONDS
-        self.frames = math.ceil(self.duration * FPS)
+        self.frames = round(math.ceil(self.duration * FPS) / FPS * self.fps)
         # Each speed is held, including regressions; no fitted or interpolated speed.
         self.transitions = [0.0] + [INTRO_SECONDS + h * 3600 / HISTORY_SPEEDUP for h in self.hours[1:]]
         self.phases = [0.0]
@@ -171,8 +173,9 @@ class Replay:
         self.end_hour = max(self.end_hour, self.samples[-1][0])
         self.history_seconds = self.end_hour * 3600 / HISTORY_SPEEDUP
         self.duration = INTRO_SECONDS + self.history_seconds + OUTRO_SECONDS
-        self.frames = math.ceil(self.duration * FPS)
-        contacts = bounce_events(self, fps=FPS, rust_trip_seconds=RUST_TRIP_SECONDS)
+        # Both editions have the same duration and audio, on the original 30 Hz ending boundary.
+        self.frames = round(math.ceil(self.duration * FPS) / FPS * self.fps)
+        contacts = bounce_events(self, fps=self.fps, rust_trip_seconds=RUST_TRIP_SECONDS)
         self.contacts = {name: [e["time_seconds"] for e in contacts if e["language"] == name]
                          for name in LANES}
         self.base = make_base()
@@ -343,10 +346,11 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", type=Path, default=HERE)
     parser.add_argument("--preview-only", action="store_true")
+    parser.add_argument("--fps", type=int, choices=[30, 60], default=FPS)
     args = parser.parse_args()
     out = args.output.resolve()
     out.mkdir(parents=True, exist_ok=True)
-    replay = Replay()
+    replay = Replay(fps=args.fps)
     checks = replay.verify_motion()
     preview_times = [0, INTRO_SECONDS + 3.05, INTRO_SECONDS + 10, INTRO_SECONDS + 25,
                      INTRO_SECONDS + 40.6, replay.duration - 1]
@@ -364,7 +368,7 @@ def main():
         return
     video = out / "mech-rust-optimization-timelapse.mp4"
     silent = out / ".mech-rust-optimization-silent.mp4"
-    encoder = imageio_ffmpeg.write_frames(str(silent), (WIDTH, HEIGHT), fps=FPS, codec="libx264",
+    encoder = imageio_ffmpeg.write_frames(str(silent), (WIDTH, HEIGHT), fps=replay.fps, codec="libx264",
         pix_fmt_in="rgb24", pix_fmt_out="yuv420p", macro_block_size=1,
         output_params=["-crf", "18", "-preset", "fast", "-threads", "2", "-movflags", "+faststart",
                        "-metadata", "title=" + " · ".join(TITLE_LINES)],
@@ -372,13 +376,13 @@ def main():
     encoder.send(None)
     try:
         for n in range(replay.frames):
-            encoder.send(np.asarray(replay.frame(n / FPS)))
-            if n % (FPS * 5) == 0:
-                print(f"Rendered {n / FPS:.0f} / {replay.frames / FPS:.1f} seconds", flush=True)
+            encoder.send(np.asarray(replay.frame(n / replay.fps)))
+            if n % (replay.fps * 5) == 0:
+                print(f"Rendered {n / replay.fps:.0f} / {replay.frames / replay.fps:.1f} seconds", flush=True)
     finally:
         encoder.close()
     ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
-    soundtrack, audio = create_soundtrack(replay, out, fps=FPS, rust_trip_seconds=RUST_TRIP_SECONDS)
+    soundtrack, audio = create_soundtrack(replay, out, fps=replay.fps, rust_trip_seconds=RUST_TRIP_SECONDS)
     subprocess.run([ffmpeg, "-y", "-v", "error", "-i", str(silent), "-i", str(soundtrack),
         "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
         "-ar", "48000", "-ac", "2", "-threads", "2", "-movflags", "+faststart",
@@ -392,7 +396,7 @@ def main():
         "-loop", "0", str(gif)], check=True)
     frames, duration = imageio_ffmpeg.count_frames_and_secs(str(video))
     assert frames == replay.frames
-    assert abs(duration - frames / FPS) <= 1 / FPS
+    assert abs(duration - frames / replay.fps) <= 1 / replay.fps
     manifest = {"schema": "mech.optimization-history-animation.v3",
         "title": " · ".join(TITLE_LINES),
         "runtime_axis_log_base": 10,
@@ -409,7 +413,8 @@ def main():
                   "bounces": audio["bounces"], "report": "bounce-audio.json",
                   "synthesizer_sha256": audio["synthesizer_sha256"],
                   "style": audio["style"]},
-        "fps": FPS, "video_frames": frames, "video_duration_seconds": duration,
+        "fps": replay.fps, "video_frames": frames, "video_duration_seconds": duration,
+        "frame_generation": "Each frame is rendered from the measured timeline at its own timestamp.",
         "history_duration_hours": replay.end_hour, "history_clock_speedup": HISTORY_SPEEDUP,
         "intro_seconds": INTRO_SECONDS, "outro_seconds": OUTRO_SECONDS,
         "ball_clock_rust_crossing_seconds": RUST_TRIP_SECONDS,

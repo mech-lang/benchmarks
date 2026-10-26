@@ -12,10 +12,16 @@ base-10 logarithmic runtime axis, ten annotated changes and line of best fit sho
 path from 216× Rust to 0.962× Rust.
 
 [1080p video](media/mech-rust-optimization-timelapse.mp4) ·
+[1080p 60 fps video](media-60fps/mech-rust-optimization-timelapse.mp4) ·
 [Animated preview](media/mech-rust-optimization-timelapse.gif) ·
 [Decoded-frame overview](media/encoded-contact-sheet.png)
 
-The approximately 57-second video uses two explicitly separate clocks:
+The 30 fps and 60 fps editions both run for 57.1 seconds and share the same
+lossless soundtrack. Every frame is rendered at its own timestamp. The retained
+30 fps packet was generated from benchmark commit
+`273fcdbad2340bf21a965f7edbec4597a064355f`; its pinned source hashes remain intact.
+
+The video uses two explicitly separate clocks:
 
 - The optimization clock runs at 3,600×: one recorded elapsed hour per video
   second, including intervening gaps. A two-second introduction and five-second
@@ -83,11 +89,15 @@ With Python 3.12, create an isolated environment, install the versions in
 `python render.py --output media` and `python verify_video.py media`. `--preview-only`
 renders six still frames and an overview before encoding. Matplotlib supplies
 the chart and bundled fonts; Pillow composes the frames; imageio-ffmpeg supplies
-the H.264 encoder, AAC audio encoder and silent GIF preview. The recorded output
-uses 1920×1080, 30 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio, and MP4
+the H.264 encoder, AAC audio encoder and silent GIF preview. The recorded editions
+use 1920×1080 at 30 or 60 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio, and MP4
 fast-start metadata. `bounce_audio.py` creates the deterministic soundtrack;
 `media/bounce-soundtrack.flac` retains its lossless master, and
 `media/bounce-audio.json` records every impact and its source hash.
+Render the separate 60 fps edition with `python render.py --fps 60 --output
+media-60fps`, then run `python verify_video.py media-60fps`. Its manifest and
+checks are stored alongside the 60 fps video, including a decoded intervening
+frame that verifies its position against the 60 Hz motion clock.
 
 `media/animation.json` records both clock scales, source and artifact hashes,
 package versions, exact endpoints, frame count, and motion checks. Every speed
@@ -100,5 +110,6 @@ positions to within one pixel. Those checks and decoded video metadata are
 retained in `media/encoded-verification.json`. The verifier also checks all wall
 contacts, the audio stream's format, quiet peak levels, absence of clipping, and
 alignment of the decoded AAC track with the lossless master. It checks 362
-encoded frames around the 78 impacts for deformation, center position and
+encoded frames in the 30 fps edition and 371 in the 60 fps edition around the
+78 impacts for deformation, center position and
 absence of arrows, and verifies wall contact and recovery analytically.

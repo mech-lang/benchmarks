@@ -19,12 +19,12 @@ def verify_audio(folder, replay, manifest, digest):
     report = json.loads((folder / "bounce-audio.json").read_text())
     assert digest(Path(bounce_audio.__file__)) == report["synthesizer_sha256"] == manifest["audio"]["synthesizer_sha256"]
     assert digest(folder / "bounce-soundtrack.flac") == report["soundtrack_sha256"]
-    expected = bounce_audio.bounce_events(replay, fps=animation.FPS, rust_trip_seconds=animation.RUST_TRIP_SECONDS)
+    expected = bounce_audio.bounce_events(replay, fps=replay.fps, rust_trip_seconds=animation.RUST_TRIP_SECONDS)
     assert len(expected) == len(report["events"])
     for event, retained in zip(expected, report["events"]):
         assert all(retained[k] == v for k, v in event.items())
         assert abs(retained["sample"] / report["sample_rate"] - event["time_seconds"]) <= .5 / report["sample_rate"]
-    duration = replay.frames / animation.FPS
+    duration = replay.frames / replay.fps
     counts = {"Mech": math.floor(replay.phase_at(duration)),
               "Rust": math.ceil(duration / animation.RUST_TRIP_SECONDS) - 1}
     assert report["bounces"] == counts == manifest["audio"]["bounces"]
@@ -67,20 +67,24 @@ def main():
     assert fit["fitted_cohorts"] == 120 and fit["source_sha256"] == digest(animation.SOURCE)
     for name, record in manifest["artifacts"].items():
         assert digest(folder / name) == record["sha256"], name
-    replay = animation.Replay()
+    fps = manifest["fps"]
+    replay = animation.Replay(fps=fps)
     assert manifest["runtime_axis_log_base"] == 10
     first, last = replay.rows[0], replay.rows[-1]
     assert round(first["seconds"] / last["seconds"]) == 222
     assert round(100 * (1 - last["seconds"] / first["seconds"]), 2) == 99.55
     assert round(100 * (last["rust_seconds"] / last["seconds"] - 1)) == 4
     times = [0, 1, 3.25, 4, 12, 27, 42.6, replay.duration - 1]
-    indices = {int(round(t * animation.FPS)) for t in times}
+    indices = {int(round(t * fps)) for t in times}
+    if fps == 60:
+        # A duplicated 30 fps stream cannot match Rust's position on this intervening frame.
+        indices.add(1)
     # Verify the first encoded frame of each of the two new winning cohorts.
-    indices.update(math.ceil(t * animation.FPS) for t in replay.transitions[-2:])
+    indices.update(math.ceil(t * fps) for t in replay.transitions[-2:])
     ordinary_indices = indices.copy()
-    impact_indices = {round((t + dt) * animation.FPS) for contacts in replay.contacts.values()
-                      for t in contacts for dt in [-2 / animation.FPS, 0, 2 / animation.FPS, 4 / animation.FPS, 6 / animation.FPS]
-                      if 0 <= t + dt < replay.frames / animation.FPS}
+    impact_indices = {round((t + dt) * fps) for contacts in replay.contacts.values()
+                      for t in contacts for dt in [-1 / 15, 0, 1 / 15, 2 / 15, .2]
+                      if 0 <= t + dt < replay.frames / fps}
     indices.update(impact_indices)
     assert not manifest["ball_animation"]["arrows"]
     for name, contacts in replay.contacts.items():
@@ -93,10 +97,10 @@ def main():
             assert abs(edge - wall) < 1e-8
             settled = replay.ball_geometry(name, t + .22)
             assert math.isclose(settled["rx"], animation.BALL_RADIUS) and settled["y"] == animation.LANES[name]
-    contact_indices = {int(round(t * animation.FPS)) for t in [0, 3.25, 12, 27, 42.6, replay.duration - 1]}
+    contact_indices = {int(round(t * fps)) for t in [0, 3.25, 12, 27, 42.6, replay.duration - 1]}
     stream = imageio_ffmpeg.read_frames(str(folder / "mech-rust-optimization-timelapse.mp4"), pix_fmt="rgb24")
     metadata = next(stream)
-    assert metadata["fps"] == animation.FPS
+    assert metadata["fps"] == fps
     assert metadata["size"] == (animation.WIDTH, animation.HEIGHT)
     records, impact_records, previews = [], [], []
     count = 0
@@ -105,7 +109,7 @@ def main():
         if n not in indices:
             continue
         pixels = np.frombuffer(frame, np.uint8).reshape(animation.HEIGHT, animation.WIDTH, 3)
-        t = n / animation.FPS
+        t = n / fps
         balls = []
         for name in animation.LANES:
             shape = replay.ball_geometry(name, t)
@@ -146,9 +150,10 @@ def main():
         if n in contact_indices:
             previews.append(Image.fromarray(pixels).resize((960, 540), Image.Resampling.LANCZOS))
     assert count == manifest["video_frames"] == replay.frames
-    assert len(records) == 10
+    assert len(records) == len(ordinary_indices)
     assert {r["checkpoint"] for r in records}.issuperset({119, 120})
     report = {"decoded_video": metadata, "decoded_frames": count, "encoded_ball_checks": records,
+              "fps": fps, "intervening_60fps_frame_checked": fps == 60 and any(r["frame"] == 1 for r in records),
               "max_ball_error_px": max(b["error_px"] for r in records + impact_records for b in r["balls"]),
               "retained_individual_observations": replay.verify_motion()["retained_individual_observations"],
               "individual_points_drawn": replay.verify_motion()["individual_points_drawn"],
