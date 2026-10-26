@@ -3,7 +3,7 @@ import hashlib
 import math
 import subprocess
 from pathlib import Path
-from study import HERE, ROOT, process, read, source_state, subjects, inputs, check_native
+from study import HERE, ROOT, RETAINED, process, read, source_state, subjects, inputs, check_native
 
 COMPLETE = 'all-96-complete-processes-output-counters-pins-and-cleanup-verified'
 CONTROLLER = 'experiments/janet/knucleotide-bytes-v1/process.py'
@@ -56,6 +56,16 @@ def prerequisites(plan):
     assert plan['implementation_base'] == i['source']['commit'] and not i['source']['status']
     assert source_state(Path(i['workspace'])) == i['source']
     assert plan['subject_pins'] == pins
+    controls = read(HERE / 'retained-controls.json')
+    assert process.sha(Path(controls['W']['object_path'])) == controls['W']['object_sha256']
+    rust = controls['R']
+    assert process.sha(Path(rust['source_path'])) == rust['source_sha256']
+    assert process.sha(Path(rust['toolchain_receipt'])) == rust['toolchain_receipt_sha256']
+    for library in rust['libraries'].values():
+        assert process.sha(Path(library['path'])) == library['sha256']
+    dependencies = (RETAINED / rust['provenance_receipt']).parent
+    assert process.sha(dependencies / 'Cargo.toml') == rust['library_manifest_sha256']
+    assert process.sha(dependencies / 'Cargo.lock') == rust['library_lock_sha256']
     assert plan['bootstrap_seed'] == 2026102595 and plan['bootstrap_resamples'] == 20000
     assert plan['primary_observations'] == 192 and plan['warmups'] == plan['excluded_outliers'] == 0
     assert plan['acceptance_upper_95_percent'] == {'F/I': 1.0, 'F/W': 1.0, 'F/R': 0.0}
@@ -100,18 +110,24 @@ def prerequisites(plan):
     for subject, receipt in [('F',f), ('I',i)]:
         project = Path(receipt['executable'] + '.project')
         assert all(process.sha(project / name) == row[subject] for name, row in files.items())
+        assert all(process.sha(contained(row[subject + '_file'])) == row[subject] for row in files.values())
     representatives = evidence(checks['representative_objects'])
     assert representatives['F_source'] == f['source'] and representatives['I_source'] == i['source']
     assert len(representatives['files']) == 32 and all(row['equal'] and row['F'] == row['I'] for row in representatives['files'])
     expected = {f'{fixture}-{variant}.{suffix}' for fixture in ['aggregate','owner','owner-words','scalar']
                 for variant in ['source','decoded'] for suffix in ['o','mecb','metadata.json','descriptor.json']}
     assert {row['path'] for row in representatives['files']} == expected
+    for row in representatives['files']:
+        assert all(process.sha(contained(row[s + '_file'])) == row[s] for s in ('F','I'))
     return targets, pins, f, i
 
 
 def committed_before_sampling(revision, plan):
-    files = ['plan.json', 'qualification.json', plan['baseline_receipt'], plan['candidate_receipt']]
-    files += [ref['path'] for ref in read(HERE / 'qualification.json')['checks'].values()]
+    files = ['plan.json', 'qualification.json', 'retained-controls.json', plan['baseline_receipt'], plan['candidate_receipt']]
+    checks = read(HERE / 'qualification.json')['checks']
+    files += [ref['path'] for ref in checks.values()]
+    for name in ['guest_code', 'representative_objects']:
+        files += [row[subject + '_file'] for row in evidence(checks[name])['files'] for subject in ('F','I')]
     paths = [str((HERE / name).relative_to(ROOT)) for name in files] + list(plan['controller_pins'])
     for path in paths:
         blob = subprocess.check_output(['git','-C',str(ROOT),'show',revision + ':' + path])

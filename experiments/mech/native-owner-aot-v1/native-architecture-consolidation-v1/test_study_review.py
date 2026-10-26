@@ -46,8 +46,9 @@ class StudyReviewTests(unittest.TestCase):
                 analyze(report, self.plan)
 
     def test_evidence_qualifier_rejects_unfrozen_campaign(self):
+        unfrozen = dict(self.plan, status='unfrozen-test-campaign')
         with self.assertRaises(AssertionError):
-            qualify(self.reports, self.plan)
+            qualify(self.reports, unfrozen)
 
     def test_multi_package_filter_requires_nonempty_total_not_every_package(self):
         row = dict(stage='native-unit', head='source', exit_code=0,

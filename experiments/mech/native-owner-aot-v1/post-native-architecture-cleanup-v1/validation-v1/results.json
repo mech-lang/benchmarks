@@ -1,0 +1,81 @@
+[
+  {
+    "stage": "format",
+    "source": "a771196c4fca5f65abc84c32797b594f6b76d3a8",
+    "command": [
+      "cargo",
+      "+nightly-2026-03-03",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "module-layout",
+    "source": "a771196c4fca5f65abc84c32797b594f6b76d3a8",
+    "command": [
+      "python3",
+      "scripts/check-rust-module-layout.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "runtime-factory-safety",
+    "source": "a771196c4fca5f65abc84c32797b594f6b76d3a8",
+    "command": [
+      "python3",
+      "scripts/check-runtime-factory-safety.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "build-analysis-layout",
+    "source": "a771196c4fca5f65abc84c32797b594f6b76d3a8",
+    "command": [
+      "python3",
+      "scripts/check-native-build-analysis-layout.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "warning-policy",
+    "source": "a771196c4fca5f65abc84c32797b594f6b76d3a8",
+    "command": [
+      "python3",
+      "scripts/check-warning-policy.py"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "study-contracts",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1",
+      "-p",
+      "test_study_review.py",
+      "-v"
+    ],
+    "exit_code": 0
+  },
+  {
+    "stage": "probe-contracts",
+    "command": [
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tools/native-compiler-probes",
+      "-p",
+      "test_run.py",
+      "-v"
+    ],
+    "exit_code": 0
+  }
+]

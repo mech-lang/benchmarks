@@ -2,14 +2,15 @@
 
 This study adopts baseline I at `17539acd704e622c5f8ad90e001e20227535d53f`
 and final cleanup F at `01b8b397011b6a774b7d9f730578a4ef92bf30f6`, before
-any primary measurement. Fresh build receipts remain required. The earlier
+any primary measurement. Both fresh public AOT builds are recorded. The earlier
 I at `8aafe1e16b50b333d7990dd107e79124405bb71b` and intermediate F receipts
 are retained as historical evidence.
 
 `plan.json` predeclares both complete four-subject schedules, paired analysis,
 seed and acceptance policy. `retained-controls.json` verifies the exact W/R
 files and winning object, without rebuilding them. No primary observations
-have been collected. Final F pins and correctness gates are still required.
+have been collected. The final source and executable pins are recorded; final
+correctness/process gates and both timing sessions remain required.
 
 `baseline/public-aot.json` records the actual public CLI build of I, its clean
 source, compiler/environment/executable pins, and owned process receipt. Its
@@ -42,11 +43,24 @@ access those existing checks require. Source-contract corrections and their
 verification are retained separately. These historical receipts do not claim
 that final process qualification or CI has completed.
 
-Compiler PR #934 has since received CI repairs. Before primary measurements,
-the final plan and build receipts must adopt its exact revised base and the
-rebased cleanup head, while preserving the earlier I/F receipts. Generated
-process gates and the two final timing sessions remain pending. There are zero
-primary samples. Historical W timings are not measurements of I or F.
+The adopted final builds are `baseline-builds/final-17539-v1/public-aot.json`
+and `candidate-builds/final-01b8-v1/public-aot.json`. Their six guest Object,
+bytecode, descriptor, identity and resource artifacts are byte-identical,
+including the retained W guest object. `exact-head-equivalence-v1/` archives
+both sets of raw files and all 32 representative source/decoded artifacts;
+each representative artifact also matches exactly.
+
+`changed-inputs-final-01b8-17539-v1/results.json` records the seven independent
+oracles and fourteen successful executions of these final pinned F/I files.
+Historical comparisons above remain preserved. Required final correctness and
+generated-process receipts are still being completed, including the original
+failed policy compile deadline and its serial retry. Zero primary samples have
+been collected; historical W timings do not qualify I or F.
+
+The separate `../post-native-architecture-cleanup-v1/` study records the deletion
+audit following this architecture. Its before subject is the immutable #935
+candidate above. Evidence from one pair of compiler revisions does not qualify
+a later cleanup.
 
 `analyze.py` reports **statistical acceptance only**. It always reports
 `performance_qualified: false`; favorable numbers do not validate source pins,
