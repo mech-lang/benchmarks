@@ -140,11 +140,16 @@ def execute_stage(process, command, stage, env, lock, checkout, deadline):
     wrapper = "import os,sys;os.chdir(sys.argv[1]);os.execve(sys.argv[2],sys.argv[2:],os.environ)"
     receipt = process.execute([sys.executable, "-c", wrapper, str(checkout), *command],
                               stage, env, lock, deadline=deadline, quantitative=False)
-    require(receipt["exit_status"] == 0, f"{stage.name} failed; see {stage / 'stderr.bin'}")
+    require("error" not in receipt and "observer_still_waiting" not in receipt
+            and receipt.get("cleanup_errors") == []
+            and receipt.get("group_closed") is True and receipt.get("reaped") is True
+            and receipt.get("exit_status") == 0,
+            f"{stage.name} failed or cleanup was incomplete; see {stage / 'process.json'}")
     return receipt
 
 
 def main():
+    require(__debug__, "Python optimization disables required process-supervision checks; do not use -O or PYTHONOPTIMIZE")
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", required=True, type=Path, help="Clean local Mech Git repository")
     parser.add_argument("--commit", required=True, help="Full 40-character immutable Git commit")

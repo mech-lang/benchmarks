@@ -2,8 +2,11 @@
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import unittest
+from unittest.mock import Mock
 
 HERE = Path(__file__).resolve().parent
 SPEC = importlib.util.spec_from_file_location("native_probe_runner", HERE / "run.py")
@@ -12,6 +15,27 @@ SPEC.loader.exec_module(runner)
 
 
 class ProbeRunnerTests(unittest.TestCase):
+    def test_stage_rejects_exit_zero_with_incomplete_cleanup_or_deadline_error(self):
+        success = {"exit_status": 0, "cleanup_errors": [], "group_closed": True, "reaped": True}
+        process = Mock()
+        process.execute.return_value = success
+        arguments = (process, ["/unused"], Path("stage"), {}, None, Path("checkout"), 30)
+        self.assertEqual(runner.execute_stage(*arguments), success)
+        for failure in ({"error": "Owned process deadline"}, {"observer_still_waiting": True},
+                        {"cleanup_errors": ["live child"]}, {"group_closed": False},
+                        {"reaped": False}, {"exit_status": 1}):
+            with self.subTest(failure=failure):
+                process.execute.return_value = success | failure
+                with self.assertRaisesRegex(ValueError, "failed or cleanup was incomplete"):
+                    runner.execute_stage(*arguments)
+
+    def test_optimized_python_is_rejected_before_argument_handling(self):
+        result = subprocess.run([sys.executable, "-O", str(HERE / "run.py"), "--help"],
+                                capture_output=True, text=True, timeout=10)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Python optimization disables required process-supervision checks", result.stderr)
+        self.assertNotIn("usage:", result.stdout)
+
     def test_removed_probe_is_installed_once_with_local_imports(self):
         spec = json.loads((HERE / "probes.json").read_text())["probes"]["window-kernel"]
         with tempfile.TemporaryDirectory() as directory:
