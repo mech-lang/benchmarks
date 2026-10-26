@@ -54,6 +54,12 @@ correctness gates or process receipts. A performance claim also requires a
 separate evidence qualification step. The synthetic analysis self-checks are
 not campaign evidence.
 
+`qualify.py` is that separate gate: it verifies frozen source and executable
+pins, prerequisite receipts, the committed pre-sample plan/controllers, both
+complete sessions and every raw owned-process duration, output and cleanup
+receipt before combining evidence validation with statistical acceptance.
+`measure.py` uses the same prerequisite gate before starting a primary sample.
+
 `build-baseline.py` and `build-candidate.py` now require `--workspace` and
 `--target-dir`, and optionally accept a fresh `--run-id`. Each invocation builds
 the compiler and public AOT executable into new paths, preserving all committed

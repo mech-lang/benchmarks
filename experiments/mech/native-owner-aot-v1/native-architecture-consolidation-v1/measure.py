@@ -3,9 +3,10 @@ from collections import Counter
 import fcntl,json,statistics,subprocess
 from pathlib import Path
 from study import HERE,ROOT,process,read,source_state,subjects,inputs,check_native
+from campaign import prerequisites
 
 def main():
-    plan=read(HERE/'plan.json');targets,pins,f,i=subjects();before=source_state()
+    plan=read(HERE/'plan.json');targets,pins,f,i=prerequisites(plan);before=source_state()
     assert plan['final_compiler_source']==before['commit'] and plan['subject_pins']==pins
     assert plan['status']=='frozen-before-first-primary-sample'
     gate=read(HERE/'qualification.json')
