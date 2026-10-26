@@ -18,7 +18,7 @@ os.environ.setdefault("XDG_CACHE_HOME", "/private/tmp/mech-history-animation-cac
 import imageio_ffmpeg
 import matplotlib
 matplotlib.use("Agg")
-from matplotlib.ticker import FixedLocator, FuncFormatter
+from matplotlib.ticker import FixedLocator, FuncFormatter, NullFormatter
 import numpy as np
 from PIL import Image, ImageFont
 from bounce_audio import bounce_events, create_soundtrack
@@ -30,6 +30,11 @@ SOURCE = HERE / "timeline.json"
 FIT_SOURCE = HERE / "best-fit.json"
 WIDTH, HEIGHT = 1920, 1080
 PLOT = (145, 185, 1815, 690)
+X_LIMITS = (0.0, 54.0)
+Y_LIMITS = (0.5, 320.0)
+X_TICKS = tuple(range(0, 55, 6))
+Y_MAJOR_TICKS = (1.0, 10.0, 100.0)
+Y_MINOR_TICKS = (0.5, 2.0, 5.0, 20.0, 50.0, 200.0)
 FPS = 30
 INTRO_SECONDS = 2.0
 OUTRO_SECONDS = 5.0
@@ -78,11 +83,11 @@ def seconds_label(value: float) -> str:
 
 
 def X(hours: float) -> float:
-    return PLOT[0] + (PLOT[2] - PLOT[0]) * hours / 54.0
+    return PLOT[0] + (PLOT[2] - PLOT[0]) * (hours - X_LIMITS[0]) / (X_LIMITS[1] - X_LIMITS[0])
 
 
 def Y(ratio: float) -> float:
-    return PLOT[3] - (PLOT[3] - PLOT[1]) * math.log(ratio / 0.5) / math.log(640)
+    return PLOT[3] - (PLOT[3] - PLOT[1]) * math.log10(ratio / Y_LIMITS[0]) / math.log10(Y_LIMITS[1] / Y_LIMITS[0])
 
 
 def make_base() -> VectorScene:
@@ -97,30 +102,32 @@ def make_base() -> VectorScene:
     left, top, right, bottom = PLOT
     ax = fig.add_axes([left / WIDTH, (HEIGHT - bottom) / HEIGHT,
                        (right - left) / WIDTH, (bottom - top) / HEIGHT])
-    ax.set_xlim(0, 54)
-    ax.set_ylim(0.5, 320)
+    ax.set_xlim(*X_LIMITS)
+    ax.set_ylim(*Y_LIMITS)
     ax.set_yscale("log", base=10)
-    ax.xaxis.set_major_locator(FixedLocator(range(0, 55, 6)))
-    ax.yaxis.set_major_locator(FixedLocator([0.5, 1, 2, 5, 10, 20, 50, 100, 200]))
+    ax.xaxis.set_major_locator(FixedLocator(X_TICKS))
+    ax.yaxis.set_major_locator(FixedLocator(Y_MAJOR_TICKS))
     ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:g}×"))
-    ax.minorticks_off()
-    ax.grid(color="#E4ECF4", linewidth=0.9)
+    ax.yaxis.set_minor_locator(FixedLocator(Y_MINOR_TICKS))
+    ax.yaxis.set_minor_formatter(NullFormatter())
+    ax.grid(which="major", color="#E4ECF4", linewidth=0.9)
+    ax.grid(which="minor", color="#F0F3F7", linewidth=0.6)
     ax.axhline(1, color="#ACBED0", linestyle=(0, (5, 4)), linewidth=1.2)
-    ax.set_xlabel("Elapsed optimization time (hours)", labelpad=15, fontsize=16)
+    ax.set_xlabel("Elapsed hours since first recorded process launch", labelpad=15, fontsize=16)
     ax.set_ylabel("Mech / Rust runtime · log₁₀", labelpad=22, fontsize=16)
     for edge in ["top", "right"]:
         ax.spines[edge].set_visible(False)
     for edge in ["left", "bottom"]:
         ax.spines[edge].set_color("#94A6BA")
-    ax.tick_params(length=0, pad=11)
+    ax.tick_params(which="both", length=0, pad=11)
     d = scene
     text(d, (55, 16), TITLE_LINES[0], 38, bold=True)
     text(d, (55, 64), TITLE_LINES[1], 33, bold=True)
-    text(d, (57, 111), "K-nucleotide · 125 million bases · complete process, including startup", 20, MUTED)
-    text(d, (1455, 28), "OPTIMIZATION CLOCK  ·  3,600×", 17, MUTED, bold=True)
+    text(d, (57, 111), "K-nucleotide · 125 million bases · complete process timing · headline speedup uses raw seconds", 20, MUTED)
+    text(d, (1455, 28), "RECORDED ELAPSED TIME", 15, MUTED, bold=True)
     # Legend uses the same colors as the original white-background chart.
     d.ellipse((58, 154, 70, 166), fill=BLUE)
-    text(d, (83, 145), "Measured medians", 19)
+    text(d, (83, 145), "Checkpoint medians", 19)
     for x in range(510, 560, 16):
         d.line((x, 160, x + 9, 160), fill="#7E8D9E", width=2)
     text(d, (572, 145), "Line of best fit", 19)
@@ -128,14 +135,15 @@ def make_base() -> VectorScene:
     text(d, (1802, Y(1) - 29), "Rust = 1×", 18, MUTED, anchor="ra")
     # The replay lanes are separate from the elapsed-hour chart.
     d.rounded_rectangle((55, 791, 1865, 1033), radius=22, fill="#F5F8FC", outline="#E0E8F2", width=1)
-    text(d, (83, 805), "BENCHMARK SPEED REPLAY", 16, MUTED, bold=True)
+    text(d, (83, 805), "RELATIVE SPEED REPLAY", 16, MUTED, bold=True)
+    text(d, (385, 835), "Crossing time at a fixed checkpoint: 1.2 s × plotted runtime ratio", 14, MUTED)
     for name, y, color in [("Mech", 891, MECH), ("Rust", 978, RUST)]:
         d.ellipse((85, y - 28, 101, y - 12), fill=color)
         text(d, (111, y - 39), name, 29, INK, bold=True)
         d.line((380, y, 1815, y), fill="#CCD8E5", width=3)
         d.line((380, y - 19, 380, y + 19), fill="#A3B3C5", width=3)
         d.line((1815, y - 19, 1815, y + 19), fill="#A3B3C5", width=3)
-    text(d, (85, 978), "1.00× reference", 20, MUTED)
+    text(d, (85, 978), "1× · 1.2 s / crossing", 20, MUTED)
     scene.freeze()
     return scene
 
@@ -274,17 +282,19 @@ class Replay:
             d.line((x, y, end, ly + 10), fill="#98B4D2", width=1)
             text(d, (lx, ly), annotation, 17, bold=True)
         x, y = X(row["hours"]), Y(row["x_rust"])
-        d.ellipse((x - 8, y - 8, x + 8, y + 8), fill="white", outline=BLUE, width=2)
+        d.ellipse((x - 8, y - 8, x + 8, y + 8), fill="white", outline=BLUE, width=2, gid="current-median-ring")
         d.ellipse((x - 4, y - 4, x + 4, y + 4), fill=BLUE)
         minutes = int(h * 60)
+        text(d, (1835, 28), "HOLD" if t < INTRO_SECONDS or t >= INTRO_SECONDS + self.history_seconds else "3,600×", 14, MUTED, anchor="ra")
         text(d, (1455, 61), f'{minutes // 60:02d} h {minutes % 60:02d} m', 32, bold=True)
         # Keep numerical evidence legible while the points and balls move.
         winning = row["key"] == "paired-candidate-loads"
         d.rounded_rectangle((1215, 207, 1814, 444 if winning else 382), radius=15, fill="#F5F8FC", outline="#DEE7F1")
-        text(d, (1240, 220), "MECH BEATS UNCHANGED RUST" if winning else "CURRENT MEASURED TIMING", 15, BLUE if winning else MUTED, bold=True)
+        heading = "MECH BEATS UNCHANGED RUST" if winning else "CURRENT TIMING"
+        text(d, (1240, 220), f'{heading} · n={row["n"]}', 15, BLUE if winning else MUTED, bold=True)
         text(d, (1240, 245), f'{ratio_label(row["x_rust"])} Rust', 43, BLUE, bold=True)
         speedup = self.rows[0]["seconds"] / row["seconds"]
-        gain = "Starting point" if i == 0 else f'{speedup:.0f}× faster than the start' if speedup >= 10 else f'{speedup:.1f}× faster than the start'
+        gain = "Starting point" if i == 0 else f'Raw-runtime speedup: {speedup:.0f}×' if speedup >= 10 else f'Raw-runtime speedup: {speedup:.1f}×'
         if winning:
             for n, session in enumerate(s for s in self.data["final_sessions"] if s["hours"] <= h):
                 text(d, (1243, 302 + n * 33), f'Session {session["session"]} · {session["seconds"]:.4f} s · {session["x_rust"]:.3f}×', 21)
@@ -297,6 +307,7 @@ class Replay:
         text(d, (1835, 804), f'{i + 1} / {len(self.rows)} checkpoints', 17, MUTED, anchor="ra")
         text(d, (385, 804), label, 18, MUTED)
         text(d, (85, 891), f'{row["seconds"]:.4f} s' if winning else seconds_label(row["seconds"]), 20, MUTED)
+        text(d, (85, 1009), f'Measured baseline: {row["rust_seconds"]:.4f} s', 14, MUTED)
         for name in LANES:
             self.draw_ball(d, name, t)
 
@@ -421,6 +432,11 @@ def main():
         "frame_generation": "Each frame is rendered from the measured timeline at its own timestamp.",
         "history_duration_hours": replay.end_hour, "history_clock_speedup": HISTORY_SPEEDUP,
         "intro_seconds": INTRO_SECONDS, "outro_seconds": OUTRO_SECONDS,
+        "encoded_outro_seconds": frames / replay.fps - INTRO_SECONDS - replay.history_seconds,
+        "axes": {"x_limits_hours": X_LIMITS, "x_major_ticks_hours": X_TICKS,
+                 "y_limits_ratio": Y_LIMITS, "y_major_ticks_ratio": Y_MAJOR_TICKS,
+                 "y_minor_ticks_ratio": Y_MINOR_TICKS, "y_log_base": 10,
+                 "timestamp_basis": "Median recorded process launch"},
         "ball_clock_rust_crossing_seconds": RUST_TRIP_SECONDS,
         "mech_crossing_formula": "1.2 * latest_measured_Mech_seconds / its_contemporaneous_Rust_median_seconds",
         "motion_update": "Hold the latest measured ratio until the next cohort's original elapsed-hour coordinate; integrate continuous position across each change.",

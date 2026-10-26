@@ -151,7 +151,13 @@ def main():
             patch = pixels[top:top + 45, left:right, :]
             color = animation.MECH if name == "Mech" else animation.RUST
             target = np.array([int(color[j:j + 2], 16) for j in [1, 3, 5]])
-            mask = np.max(np.abs(patch.astype(np.int16) - target), axis=2) < 35
+            # Estimate half-coverage boundaries. A fixed near-solid-color mask
+            # measures an inset contour and undercounts antialiased widths.
+            background = np.array([245, 248, 252])
+            direction = background - target
+            coverage = np.sum((background - patch.astype(float)) * direction, axis=2) / direction.dot(direction)
+            residual = np.max(np.abs(patch - (background - coverage[:, :, None] * direction)), axis=2)
+            mask = (coverage >= .5) & (residual < 30)
             assert mask.sum() > 350, (name, t, "Ball color missing")
             columns = mask.sum(axis=0)
             observed = left + float(np.average(np.arange(len(columns)), weights=columns))
@@ -162,7 +168,7 @@ def main():
             assert abs(observed_y - y) < 1.0, (name, t, y, observed_y)
             occupied_y, occupied_x = np.nonzero(mask)
             width, height = int(np.ptp(occupied_x)) + 1, int(np.ptp(occupied_y)) + 1
-            assert abs(width - 2 * shape["rx"]) < 3 and abs(height - 2 * shape["ry"]) < 3
+            assert abs(width - 2 * shape["rx"]) < 3 and abs(height - 2 * shape["ry"]) < 3, (n, name, width, height, shape)
             # No language-colored arrow or other marker may remain beside the ball.
             lane = pixels[top:top + 45, animation.WALL_LEFT - 2:animation.WALL_RIGHT + 3, :]
             lane_mask = np.max(np.abs(lane.astype(np.int16) - target), axis=2) < 35

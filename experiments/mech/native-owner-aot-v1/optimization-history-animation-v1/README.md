@@ -11,10 +11,11 @@ process observations remain in the source data and are not drawn. Its
 base-10 logarithmic runtime axis, ten annotated changes and line of best fit show the
 path from 216× Rust to 0.962× Rust.
 
-[SVG chart](media-vector-60fps/mech-compiler-optimization.svg) ·
-[1080p 60 fps video](media-vector-60fps/mech-rust-optimization-timelapse.mp4) ·
-[Animated preview](media-vector-60fps/mech-rust-optimization-timelapse.gif) ·
-[Decoded-frame overview](media-vector-60fps/encoded-contact-sheet.png)
+[SVG chart](media-audited-60fps/mech-compiler-optimization.svg) ·
+[1080p 60 fps video](media-audited-60fps/mech-rust-optimization-timelapse.mp4) ·
+[Animated preview](media-audited-60fps/mech-rust-optimization-timelapse.gif) ·
+[Decoded-frame overview](media-audited-60fps/encoded-contact-sheet.png) ·
+[Accuracy audit](accuracy-audit/README.md)
 
 The complete artwork uses vector paths, including the axes, circles, connecting
 lines, callouts, cards, balls and font outlines. The SVG contains no embedded
@@ -22,13 +23,19 @@ bitmap images. Video frames are rasterized at 3840×2160 with antialiasing and
 downsampled with Lanczos to 1920×1080 at 60 fps. The SVG remains scalable at any
 zoom level.
 
+Major y labels are equally spaced decades (1×, 10×, 100×); faint 2× and 5×
+minor grids preserve logarithmic reading. Equal six-hour x intervals use median
+process-launch times. Visible sample counts, clock holds and the replay scale
+identify the measurement and timing conventions. The independent accuracy
+audit rechecks all source timings, every marker and every encoded frame.
+
 The 30 fps and 60 fps editions both run for 57.1 seconds and share the same
 lossless soundtrack. Every frame is rendered at its own timestamp. The retained
 30 fps packet was generated from benchmark commit
 `273fcdbad2340bf21a965f7edbec4597a064355f`; its pinned source hashes remain intact.
 The initial 60 fps packet is retained in `media-60fps` at benchmark commit
 `b52f2858242ecbe1ffcad1541315f08fd8fc47cd`. The vector edition is in
-`media-vector-60fps`.
+`media-vector-60fps`. The audited presentation is in `media-audited-60fps`.
 
 The video uses two explicitly separate clocks:
 
@@ -37,7 +44,9 @@ The video uses two explicitly separate clocks:
   ending hold keep the initial and final speeds visible.
 - The replay clock assigns 1.2 screen seconds to one Rust crossing. A Mech
   crossing takes `1.2 × (Mech seconds / contemporaneous Rust median seconds)`.
-  One one-way crossing represents one full benchmark execution.
+  At a fixed checkpoint, one one-way crossing represents one benchmark
+  execution at the replay scale. Crossings spanning an update integrate both
+  successive speeds.
 
 Rust's speed stays constant. Mech's speed changes discretely at each original
 cohort coordinate and stays constant until the next checkpoint. Its position
@@ -102,10 +111,10 @@ use 1920×1080 at 30 or 60 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio
 fast-start metadata. `bounce_audio.py` creates the deterministic soundtrack;
 `media/bounce-soundtrack.flac` retains its lossless master, and
 `media/bounce-audio.json` records every impact and its source hash.
-Render the vector 60 fps edition with `python render.py --fps 60 --output
-media-vector-60fps`, run `python normalize_svg.py media-vector-60fps` to remove
+Render the audited 60 fps edition with `python render.py --fps 60 --output
+media-audited-60fps`, run `python normalize_svg.py media-audited-60fps` to remove
 trailing line whitespace from the generated SVGs, then run
-`python verify_video.py media-vector-60fps`. Its manifest and
+`python verify_video.py media-audited-60fps`. Its manifest and
 checks are stored alongside the 60 fps video, including a decoded intervening
 frame that verifies its position against the 60 Hz motion clock.
 
