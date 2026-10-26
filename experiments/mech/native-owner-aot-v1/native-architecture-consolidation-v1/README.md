@@ -1,15 +1,50 @@
 # Native architecture consolidation
 
-This study adopts baseline I at `17539acd704e622c5f8ad90e001e20227535d53f`
-and final cleanup F at `01b8b397011b6a774b7d9f730578a4ef92bf30f6`, before
-any primary measurement. Both fresh public AOT builds are recorded. The earlier
+The shared controller now serves this study and
+`post-native-architecture-cleanup-v1` through a fixed `--study` choice. The
+architecture study remains the default. Plans, build receipts, qualification
+manifests and primary-session directories are separate; the measurement,
+evidence checks and statistics have one implementation in this directory.
+Controller hashes refer to these source files regardless of the selected study.
+
+Neither plan is frozen. The source/build receipts described below remain
+preserved while final repaired compiler heads are adopted. Both plans must also
+adopt the same explicit `runtime_environment_receipt` before changed-input checks
+or primary sampling; the
+controller no longer silently substitutes the selected I build's environment.
+Both plans now adopt `runtime-environment-v1.json` by its exact hash, sharing one
+task-owned temporary directory and runtime environment across all four subjects.
+The field can identify an
+existing build receipt or a separately recorded environment receipt containing
+an `environment` map. A shared reference has exactly
+`{"study_id": "native-architecture-consolidation-v1", "path": "relative/receipt.json", "sha256": "actual SHA-256"}`.
+Only the two named study directories are accepted. Adopt a real, verified
+receipt in both plans before freezing; do not copy placeholder pins.
+
+The current source candidates are baseline I at
+`ddf8cbc3b17a644ea6292ee3bf0c4a9c63af4514` and architecture F at
+`b05a3f8a81e34b39b625b7e55c1bf90790ca1092`. I includes the verified #934
+test-profile and linkage-inventory repairs. Fresh public builds and complete
+qualification for these candidates are pending; both build-receipt fields are
+null. A launcher qualification dependency repair is also under investigation.
+
+`baseline-prerequisites-ddf8-v1/` records the repaired baseline's five prerequisite
+suites: 415 native tests (two existing ignored diagnostics), 82 facts, 30 line,
+36 worker-credit and one catalog test. Its one snapshot test produced 32 artifacts
+byte-identical to the preserved baseline. The temporary snapshot overlay was
+removed and the final source state is clean. These are correctness receipts;
+the current public build and timing gates remain separate.
+
+Historical baseline I at `17539acd704e622c5f8ad90e001e20227535d53f`
+and F at `01b8b397011b6a774b7d9f730578a4ef92bf30f6` retain their actual
+public AOT builds and raw comparison evidence below. The earlier
 I at `8aafe1e16b50b333d7990dd107e79124405bb71b` and intermediate F receipts
 are retained as historical evidence.
 
 `plan.json` predeclares both complete four-subject schedules, paired analysis,
 seed and acceptance policy. `retained-controls.json` verifies the exact W/R
 files and winning object, without rebuilding them. No primary observations
-have been collected. The final source and executable pins are recorded; final
+have been collected. The candidate source pins are recorded; fresh executable pins,
 correctness/process gates and both timing sessions remain required.
 
 `baseline/public-aot.json` records the actual public CLI build of I, its clean
@@ -43,7 +78,7 @@ access those existing checks require. Source-contract corrections and their
 verification are retained separately. These historical receipts do not claim
 that final process qualification or CI has completed.
 
-The adopted final builds are `baseline-builds/final-17539-v1/public-aot.json`
+The historical completed builds are `baseline-builds/final-17539-v1/public-aot.json`
 and `candidate-builds/final-01b8-v1/public-aot.json`. Their six guest Object,
 bytecode, descriptor, identity and resource artifacts are byte-identical,
 including the retained W guest object. `exact-head-equivalence-v1/` archives
@@ -51,16 +86,17 @@ both sets of raw files and all 32 representative source/decoded artifacts;
 each representative artifact also matches exactly.
 
 `changed-inputs-final-01b8-17539-v1/results.json` records the seven independent
-oracles and fourteen successful executions of these final pinned F/I files.
+oracles and fourteen successful executions of those historical pinned F/I files.
 Historical comparisons above remain preserved. Required final correctness and
 generated-process receipts are still being completed, including the original
 failed policy compile deadline and its serial retry. Zero primary samples have
 been collected; historical W timings do not qualify I or F.
 
 The separate `../post-native-architecture-cleanup-v1/` study records the deletion
-audit following this architecture. Its before subject is the immutable #935
-candidate above. Evidence from one pair of compiler revisions does not qualify
-a later cleanup.
+audit following this architecture. Its before subject must be the final repaired
+#935 candidate, explicitly adopted after repairs and rebasing. The earlier
+`01b8` receipt above is preserved as historical evidence. Evidence from one pair
+of compiler revisions does not qualify a later cleanup.
 
 `analyze.py` reports **statistical acceptance only**. It always reports
 `performance_qualified: false`; favorable numbers do not validate source pins,
@@ -80,3 +116,20 @@ the compiler and public AOT executable into new paths, preserving all committed
 and previous build receipts. The printed receipt must be explicitly adopted
 as `baseline_receipt` or `candidate_receipt` in `plan.json`; running the builder
 does not change the adopted subject. These repair builds collect no timings.
+
+Every entrypoint accepts `--study native-architecture-consolidation-v1` or
+`--study post-native-architecture-cleanup-v1` before its existing arguments.
+For example, after final pins and gates are adopted:
+
+```sh
+python3 experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/measure.py \
+  --study post-native-architecture-cleanup-v1
+```
+
+An unrecognized or repeated study choice fails. A baseline may reference the
+other study's immutable public AOT receipt using the structured reference above;
+the candidate must use a local receipt. Referenced before-build and environment
+receipts are hash-checked and included in the committed pre-sampling evidence.
+All primary observations and their raw process files remain confined to the
+selected study. Finish and review shared-controller changes before freezing
+either plan; changing controller files after sampling changes their pins.

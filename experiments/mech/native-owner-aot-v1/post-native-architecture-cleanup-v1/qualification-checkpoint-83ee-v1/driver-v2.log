@@ -1,0 +1,26 @@
+none-check 0 []
+none-tree 0 []
+scalar-runtime-check 0 []
+scalar-runtime-tree 0 []
+program-runtime-check 0 []
+program-runtime-tree 0 []
+host-runtime-check 0 []
+host-runtime-tree 0 []
+scalar-compiler-check 0 []
+program-compiler-check 0 []
+native-unit 0 [[426, 0, 0], [0, 0, 0]]
+native-facts 0 [[84, 0, 0]]
+scalar-unit 0 [[34, 0, 0]]
+scalar-integration 0 [[4, 0, 0], [5, 0, 0], [4, 0, 0], [12, 0, 1], [10, 0, 0], [9, 0, 0]]
+program-integration 101 []
+Traceback (most recent call last):
+  File "/private/tmp/post-native-cleanup-verify-v2.py", line 43, in <module>
+    test('program-integration',['mech-gpu'],'canonical-native-program',['--test','canonical_artifact_program'])
+    ~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/post-native-cleanup-verify-v2.py", line 38, in test
+    run(name,command,True,extra=extra)
+    ~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/private/tmp/post-native-cleanup-verify-v2.py", line 23, in run
+    assert result.returncode==0,(name,output[-7000:])
+           ^^^^^^^^^^^^^^^^^^^^
+AssertionError: ('program-integration', 'stage=program-integration timeout_seconds=1800.0 cleanup_seconds=30 command=[\'cargo\', \'+nightly-2026-03-03\', \'test\', \'--locked\', \'--offline\', \'-j1\', \'-p\', \'mech-gpu\', \'--no-default-features\', \'--features\', \'canonical-native-program\', \'--test\', \'canonical_artifact_program\', \'--\', \'--test-threads=1\', \'--nocapture\']\n   Compiling mech-gpu v0.3.5 (/private/tmp/mech-post-native-cleanup/hosts/gpu)\nerror: unused import: `mech_engine::native_artifact::NativeCollectionResult`\n --> hosts/gpu/tests/support/canonical_program_window_round.rs:3:5\n  |\n3 | use mech_engine::native_artifact::NativeCollectionResult;\n  |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  |\n  = note: `-D unused-imports` implied by `-D warnings`\n  = help: to override `-D warnings` add `#[allow(unused_imports)]`\n\nerror: could not compile `mech-gpu` (test "canonical_artifact_program") due to 1 previous error\n{"stage": "program-integration", "reason": "exit", "command_exit_status": 101, "owned_group_cleanup": "complete", "elapsed_seconds": 8.914136208011769, "timeout_seconds": 1800.0, "cleanup_seconds": 30}\n')

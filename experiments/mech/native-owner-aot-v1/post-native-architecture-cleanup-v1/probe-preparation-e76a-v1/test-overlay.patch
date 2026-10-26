@@ -1,0 +1,206 @@
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs b/hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs
+index c3cd870cc..966edb637 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs
+@@ -89,3 +89,66 @@ fn histogram_batches_count_every_admissible_ascii_pair_and_dense_overlaps() {
+         assert!(AsciiSource::borrow(source).is_none());
+     }
+ }
++
++#[test]
++#[ignore = "manual machine-code histogram diagnostic; NOT full secure program timings"]
++fn measure_compiled_histogram_kernel_only() {
++    use std::{hint::black_box, time::Instant};
++    let input_path = std::env::var("MECH_HISTOGRAM_KERNEL_INPUT").expect("explicit input required");
++    let input = std::fs::read_to_string(input_path).unwrap();
++    let mut selected_record = false;
++    let mut source = String::new();
++    for line in input.lines() {
++        if line.starts_with('>') {
++            selected_record = line.starts_with(">THREE");
++        } else if selected_record {
++            source.push_str(line);
++        }
++    }
++    source.make_ascii_uppercase();
++    assert_eq!(source.len(), 10_000_000);
++    let loan = AsciiSource::borrow(&source).unwrap();
++    let selected = Compiled::histogram(false);
++    let scalar = Compiled::histogram(true);
++    let mut samples = Vec::new();
++    for width in [1usize, 2] {
++        let expected = reference(&source, width);
++        check(&selected, &source, width, &expected);
++        check(&scalar, &source, width, &expected);
++        for round in 0..7 {
++            let variants = if round % 2 == 0 {
++                [
++                    ("banked", &selected, 4),
++                    ("serial", &selected, 1),
++                    ("scalar", &scalar, 1),
++                ]
++            } else {
++                [
++                    ("scalar", &scalar, 1),
++                    ("serial", &selected, 1),
++                    ("banked", &selected, 4),
++                ]
++            };
++            for (lowering, code, banks) in variants {
++                // Allocation,zeroing,source/oracle preparation and full-bin
++                // comparisons are outside these kernel-only intervals.
++                let mut bins = vec![0; expected.len() * banks];
++                let start = Instant::now();
++                let count =
++                    code.histogram_count(black_box(&loan), width as u64, black_box(&mut bins));
++                let elapsed_ns = start.elapsed().as_nanos();
++                assert_eq!(&bins[..expected.len()], expected);
++                assert_eq!(count, source.len() as u64 - width as u64 + 1);
++                samples.push(serde_json::json!({"round":round,"width":width,"lowering":lowering,"count":count,"all_bins_exact":true,"elapsed_ns":elapsed_ns}));
++            }
++        }
++    }
++    eprintln!(
++        "HISTOGRAM_KERNEL_DIAGNOSTIC {}",
++        serde_json::json!({
++            "scope":"Same executable/raw emitted kernel,NOT secured program timing or isolated capability overhead;source prep,allocation,zeroing,host,capabilities,output,accounting and commit excluded",
++            "source_bases":source.len(),"samples":samples,"runtime_callbacks_in_emitted_body":0,
++            "scratch_layout_changed":true,"object_opt_level":"speed","production_wired":true
++        })
++    );
++}
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
+index 8be8bec7c..a70800819 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
+@@ -310,3 +310,87 @@ fn vector_wide_prefix_hits_keep_all_lanes_dense_overlaps_and_late_mismatches() {
+         }
+     }
+ }
++
++#[test]
++#[ignore = "manual machine-code kernel diagnostic; NOT full secure program timings"]
++fn measure_compiled_window_query_kernel_only() {
++    use std::{hint::black_box, time::Instant};
++    let input_path =
++        std::env::var("MECH_WINDOW_KERNEL_INPUT").expect("explicit diagnostic input required");
++    let oracle_path =
++        std::env::var("MECH_WINDOW_KERNEL_ORACLE").expect("explicit exact oracle required");
++    let input = std::fs::read_to_string(input_path).unwrap();
++    let oracle = std::fs::read_to_string(oracle_path).unwrap();
++    // Diagnostic setup ONLY. This is deliberately outside every timed call;
++    // it is NOT claimed to measure FASTA selection/case conversion, hosting,
++    // accounting, snapshot ownership, output or round/commit overhead.
++    let mut selected = false;
++    let mut source = String::new();
++    for line in input.lines() {
++        if line.starts_with('>') {
++            selected = line.starts_with(">THREE");
++        } else if selected {
++            source.push_str(line);
++        }
++    }
++    source.make_ascii_uppercase();
++    assert_eq!(source.len(), 10_000_000);
++    let compiled = Compiled::new();
++    let scalar = Compiled::scalar();
++    let source_loan = AsciiSource::borrow(&source).unwrap();
++    let queries = [
++        "GGT",
++        "GGTA",
++        "GGTATT",
++        "GGTATTTTAATT",
++        "GGTATTTTAATTTATAGT",
++    ];
++    let expected = queries.map(|query| {
++        oracle
++            .lines()
++            .find_map(|line| {
++                let (count, label) = line.split_once('\t')?;
++                (label == query).then(|| count.parse::<u64>().unwrap())
++            })
++            .unwrap()
++    });
++    for (query, wanted) in queries.iter().zip(expected) {
++        assert_eq!(
++            compiled.count(&source_loan, query.len() as u64, query),
++            wanted
++        );
++        assert_eq!(
++            scalar.count(&source_loan, query.len() as u64, query),
++            wanted
++        );
++    }
++    let mut rows = Vec::new();
++    for round in 0..7 {
++        for (index, query) in queries.iter().enumerate() {
++            let variants = if round % 2 == 0 {
++                [("selected", &compiled), ("scalar", &scalar)]
++            } else {
++                [("scalar", &scalar), ("selected", &compiled)]
++            };
++            for (lowering, code) in variants {
++                let start = Instant::now();
++                let count = code.count(
++                    black_box(&source_loan),
++                    query.len() as u64,
++                    black_box(query),
++                );
++                let elapsed_ns = start.elapsed().as_nanos();
++                assert_eq!(count, expected[index]);
++                rows.push(serde_json::json!({"round":round,"query":query,"lowering":lowering,"count":count,"elapsed_ns":elapsed_ns}));
++            }
++        }
++    }
++    eprintln!(
++        "WINDOW_KERNEL_DIAGNOSTIC {}",
++        serde_json::json!({
++        "scope":"isolated shared-emitter kernel; ASCII loan validated once outside samples; NOT secure end-to-end performance or recovered-original-body qualification",
++        "source_bases":source.len(),"object_opt_level":"speed","samples":rows,
++        "comparison":"same executable and input; target-selected lowering versus scalar; alternating order; excludes host/capabilities and is NOT full-program timing",
++        "runtime_callbacks_in_emitted_body":0,"production_wired":true})
++    );
++}
+diff --git a/hosts/gpu/tests/support/canonical_program_window_round.rs b/hosts/gpu/tests/support/canonical_program_window_round.rs
+index 299caaa38..546f64839 100644
+--- a/hosts/gpu/tests/support/canonical_program_window_round.rs
++++ b/hosts/gpu/tests/support/canonical_program_window_round.rs
+@@ -292,3 +292,38 @@ fn window_region_declines_changed_iteration_bounds_guards_and_yield() {
+         }
+     }
+ }
++
++#[test]
++#[ignore = "manual canonical window-region compiler diagnostic; not a benchmark"]
++fn inspect_complete_window_query_compiler_region() {
++    for (variant, artifact) in artifacts(QUERY).0.iter().enumerate() {
++        let jit = JitProgramArtifact::compile(artifact, &mech_stdlib::source_catalog()).unwrap();
++        let plan = jit.descriptor().plan();
++        let collections = plan
++            .collections()
++            .iter()
++            .filter(|collection| {
++                collection.string_span_projection().is_some()
++                    && matches!(
++                        collection.result(),
++                        NativeCollectionResult::GuardedHistogramQuery(_)
++                    )
++            })
++            .collect::<Vec<_>>();
++        assert_eq!(collections.len(), 1);
++        eprintln!("WINDOW_REGION variant={variant} entry={}", plan.entry());
++        eprintln!("COLLECTION {:#?}", collections[0]);
++        eprintln!("ITERATIONS {:#?}", plan.iterations());
++        for constant in plan.constants() {
++            eprintln!("CONSTANT {constant:?}");
++        }
++        for (index, block) in plan.blocks().iter().enumerate() {
++            eprintln!(
++                "BLOCK {index} iteration={:?} action={:?} terminator={:?}",
++                block.iteration(),
++                block.action(),
++                block.terminator()
++            );
++        }
++    }
++}

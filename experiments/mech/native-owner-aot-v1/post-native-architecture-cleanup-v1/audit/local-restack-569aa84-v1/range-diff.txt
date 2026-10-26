@@ -1,0 +1,73 @@
+1:  b07fe2724 =  1:  224b139de test(runtime): keep live control flow independent of planning examples
+ 2:  1e335cb1a =  2:  ec191c94d feat(engine): add maintained U64 word operations and native lowering
+ 3:  4f1533ffd =  3:  dd7c53173 feat(engine): select checked unsigned word conversions in native programs
+ 4:  b8f25a910 =  4:  838665e80 Compile FSM-local buffer updates as pure versioned values
+ 5:  54d26e9df =  5:  724c8eadf Compile tuple FSM kernels and qualify DEFLATE Huffman
+ 6:  a12b5cb36 =  6:  34c8532c1 Keep selected U64 buffer reads in native scalar storage
+ 7:  12f5ed6b6 !  7:  9acfcd1c5 Keep narrow unsigned values and checked casts in native words
+    @@ hosts/gpu/src/native_artifact/compiler/mod.rs: fn define<M: Module>(
+     @@ hosts/gpu/src/native_artifact/compiler/mod.rs: pub(in crate::native_artifact) fn compiled_stack_bytes(
+      
+      #[cfg(test)]
+    - pub(in crate::native_artifact::compiler) mod tests;
+    + mod tests;
+     +
+     +#[cfg(test)]
+    -+#[path = "narrow_scalar_tests.rs"]
+     +mod narrow_scalar_tests;
+     
+      ## hosts/gpu/src/native_artifact/compiler/narrow_scalar_tests.rs (new) ##
+ 8:  239ef2f54 =  8:  6c706422c Enable unary matrix broadcasts and port DEFLATE matchfinder helpers
+ 9:  c0c1fd676 =  9:  0118db6e6 Support runtime-shaped unsigned buffer tuple construction
+10:  5c003b650 = 10:  d3d7ca9e7 Exercise dynamic tuple binding across repeated generated visits
+11:  d23a44fe0 = 11:  aa4bd9e5e Compile ordinary tail recursion over runtime-shaped unsigned buffers
+12:  cc0431409 = 12:  f4bd1a13a Lower nested tail calls to their lexical native loop
+13:  1270c0709 = 13:  ef8b5e799 Support recursive statement functions and bounded deeper control
+14:  7a60b227b = 14:  7da93d0d5 Port pinned Roc binary-tree search and skip to Mech
+15:  7cd0ffb73 ! 15:  fd2ae5058 Preserve lexical invariants in checked function and control visits
+    @@ hosts/gpu/src/native_artifact/lexical_integrity_status_tests.rs (new)
+     +}
+     
+      ## hosts/gpu/src/native_artifact/mod.rs ##
+    -@@ hosts/gpu/src/native_artifact/mod.rs: pub(in crate::native_artifact) mod codegen;
+    +@@ hosts/gpu/src/native_artifact/mod.rs: mod codegen;
+      
+      #[cfg(feature = "canonical-native-runtime")]
+      pub mod launch;
+16:  99d54cb12 = 16:  0b20a5105 Keep transitive function checks in lexical invocation order
+17:  8fbfafdb7 = 17:  3c4dce2da Record lexical assertion failures in the resident coordinator
+18:  71a1abf2d = 18:  52d5ffd4d Qualify recorded and linked lexical assertion recovery
+19:  da5b728e1 = 19:  964eafc8f Regenerate executable fixtures for canonical graph revision 14
+20:  ca2b51852 = 20:  c12fe376e Migrate remaining frozen graphs and qualify all fixture consumers
+21:  6ee96db05 = 21:  640595327 Keep ordinary checked argument kinds in lexical capture frames
+22:  d60ba0a12 = 22:  7be13e069 Reject native identities from either preceding compiler branch
+23:  d99757498 = 23:  58673f708 Align collection and assignment factory feature gates
+24:  9d5f868a9 = 24:  385df423e Keep canonical word codecs independent of wider integer features
+25:  30b9e8e34 = 25:  cf9e13902 Classify maintained word and map factories in catalog inventories
+26:  5339373c8 = 26:  f39eee5cb Format the published compiler stack with the pinned toolchain
+27:  ceef84e3f = 27:  caedab593 Refresh distribution snapshots while preserving predecessor catalog identities
+28:  d98bf4a94 = 28:  f02b64dae Declare inherited native execution audit boundaries
+29:  e4aa4d2c2 = 29:  71e3f5ede Update the inherited recursive function compilation contract
+30:  36e12dabc = 30:  acc6a287f Consolidate overlapping native safety inventory declarations
+31:  421e776ce <  -:  --------- Keep packed map ABI expectations inside their test profile
+32:  d8ddbd61c <  -:  --------- Gate hosted map test controls with their qualification profile
+33:  df2150905 = 31:  2019ad945 Measure allocations in ordinary checked function argument frames
+34:  ac7db6dbd = 32:  fe9a8da92 Borrow immutable arguments in nonrecursive checked function frames
+35:  eaf790972 = 33:  21b6a770d Preserve structural carriers for checked runtime-shaped tuple arguments
+36:  50178e19b = 34:  7156a5256 Reproduce checked self-recursion through application stages
+37:  dcaf71fbc = 35:  590a7e58d Allow normal setup work in the bounded Boolean regression
+38:  29e970d83 = 36:  e9c61ff9b Recognize self-calls in application stages before binding function frames
+39:  ca6d03398 = 37:  2b4707c6b Construct the checked tuple argument from ordinary shaped source inputs
+40:  4ee54cac9 = 38:  8786bf23e Keep Boolean recursion coverage in its dedicated follow-up PR
+41:  943db9b6f ! 39:  cc93a1ff5 Exercise assertion status regressions in the scalar native profile
+    @@ hosts/gpu/src/native_artifact/lexical_integrity_status_tests.rs: fn iteration_in
+          let jit = JitProgramArtifact::compile(&artifact, &mech_stdlib::source_catalog()).unwrap();
+     
+      ## hosts/gpu/src/native_artifact/mod.rs ##
+    -@@ hosts/gpu/src/native_artifact/mod.rs: pub(in crate::native_artifact) mod codegen;
+    +@@ hosts/gpu/src/native_artifact/mod.rs: mod codegen;
+      #[cfg(feature = "canonical-native-runtime")]
+      pub mod launch;
+      
+42:  77c5533b4 = 40:  b6fb34b6a Preserve whole-word zero defaults in matchfinder reads
+43:  a017eb577 = 41:  8fdc971f4 Qualify fresh Boolean arguments in checked application recursion

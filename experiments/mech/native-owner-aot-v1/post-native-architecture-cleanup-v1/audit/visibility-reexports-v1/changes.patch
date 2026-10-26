@@ -1,0 +1,1531 @@
+diff --git a/docs/design/native-post-architecture-cleanup.md b/docs/design/native-post-architecture-cleanup.md
+index a04fd21fb..0275b604c 100644
+--- a/docs/design/native-post-architecture-cleanup.md
++++ b/docs/design/native-post-architecture-cleanup.md
+@@ -50,6 +50,14 @@ First deletion batch removes 256 redundant path attributes and 19 inherited
+ feature guards. Module targets, visibility and effective feature conditions are
+ unchanged. Independent compilation and existing guards verify the resolution.
+ 
++The visibility batch removes 179 exact-current-module restrictions across 81
++files and groups 68 reexported names into 17 declarations across nine files.
++Default private visibility, feature gates, import aliases and module targets are
++unchanged. Ancestor restrictions, inline-module cases and nondefault path cases
++are excluded. Exact before/after inventories and exclusions are archived in the
++benchmark study's `audit/visibility-reexports-v1` directory. This local candidate
++still awaits base-repair/coverage adoption and runtime qualification.
++
+ Map admission now owns `Limits`, storage `Error`, checked add/multiply/limit
+ checks, and ordered finite-limit checking. Binding and packed owners retain their
+ specific unbounded-dimension messages. Owner invocation geometry and frozen-read
+diff --git a/hosts/gpu/src/native_artifact/application/mod.rs b/hosts/gpu/src/native_artifact/application/mod.rs
+index 8a811515b..152e99112 100644
+--- a/hosts/gpu/src/native_artifact/application/mod.rs
++++ b/hosts/gpu/src/native_artifact/application/mod.rs
+@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, BTreeSet};
+ use std::fs;
+ use std::path::{Path, PathBuf};
+ 
+-pub(in crate::native_artifact::application) mod value_features;
++mod value_features;
+ 
+ #[derive(Debug)]
+ pub enum NativeApplicationError {
+diff --git a/hosts/gpu/src/native_artifact/application/value_features/mod.rs b/hosts/gpu/src/native_artifact/application/value_features/mod.rs
+index 7916cd29e..c9211a975 100644
+--- a/hosts/gpu/src/native_artifact/application/value_features/mod.rs
++++ b/hosts/gpu/src/native_artifact/application/value_features/mod.rs
+@@ -108,4 +108,4 @@ fn from_bodies<'a>(bodies: impl Iterator<Item = &'a SchemaBody>) -> Requirements
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::application::value_features) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/benchmark_policy/mod.rs b/hosts/gpu/src/native_artifact/benchmark_policy/mod.rs
+index 6f1caf85e..c56d2d16b 100644
+--- a/hosts/gpu/src/native_artifact/benchmark_policy/mod.rs
++++ b/hosts/gpu/src/native_artifact/benchmark_policy/mod.rs
+@@ -334,4 +334,4 @@ impl CapabilityKernel for NativeBenchmarkCapabilityKernel {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::benchmark_policy) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/benchmark_policy/tests/mod.rs b/hosts/gpu/src/native_artifact/benchmark_policy/tests/mod.rs
+index 363f3f547..9fef746de 100644
+--- a/hosts/gpu/src/native_artifact/benchmark_policy/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/benchmark_policy/tests/mod.rs
+@@ -269,4 +269,4 @@ fn stale_carrier_arc_cannot_authorize_a_removed_or_replaced_capability() {
+     assert!(kernel.preview_check(&denied).is_err());
+ }
+ 
+-pub(in crate::native_artifact::benchmark_policy::tests) mod storage;
++mod storage;
+diff --git a/hosts/gpu/src/native_artifact/codegen/common/aggregates/mod.rs b/hosts/gpu/src/native_artifact/codegen/common/aggregates/mod.rs
+index d4abeb183..7aa41185c 100644
+--- a/hosts/gpu/src/native_artifact/codegen/common/aggregates/mod.rs
++++ b/hosts/gpu/src/native_artifact/codegen/common/aggregates/mod.rs
+@@ -282,4 +282,4 @@ pub(in crate::native_artifact) fn aggregate_at<'a>(
+ /// single-backedge invariants; no spelling of a source function is recognized.
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::codegen::common::aggregates) mod map_owner_tests;
++mod map_owner_tests;
+diff --git a/hosts/gpu/src/native_artifact/codegen/control/mod.rs b/hosts/gpu/src/native_artifact/codegen/control/mod.rs
+index f566e3b81..8bd5e1d01 100644
+--- a/hosts/gpu/src/native_artifact/codegen/control/mod.rs
++++ b/hosts/gpu/src/native_artifact/codegen/control/mod.rs
+@@ -39,29 +39,10 @@ fn load(
+ #[path = "report/mod.rs"]
+ pub(in crate::native_artifact::codegen::control) mod codegen_report;
+ #[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::BoundCallShim;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::CfgCleanup;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::CodegenReport;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::ColdSnapshot;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::CountValueLoop;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::InvariantLoop;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::MutationLoop;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::OutlinedLoop;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::PreservingCallRegion;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::RegionToken;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::ScalarLoop;
+-#[cfg(feature = "canonical-native-program")]
+-pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::SteadyLoop;
++pub(in crate::native_artifact) use crate::native_artifact::codegen::control::codegen_report::{
++    BoundCallShim, CfgCleanup, CodegenReport, ColdSnapshot, CountValueLoop, InvariantLoop,
++    MutationLoop, OutlinedLoop, PreservingCallRegion, RegionToken, ScalarLoop, SteadyLoop,
++};
+ 
+ #[cfg(not(feature = "canonical-native-program"))]
+ pub(in crate::native_artifact) struct CodegenReport;
+diff --git a/hosts/gpu/src/native_artifact/compiler/mod.rs b/hosts/gpu/src/native_artifact/compiler/mod.rs
+index f862f08c8..19738ec9d 100644
+--- a/hosts/gpu/src/native_artifact/compiler/mod.rs
++++ b/hosts/gpu/src/native_artifact/compiler/mod.rs
+@@ -855,4 +855,4 @@ pub(in crate::native_artifact) fn compiled_stack_bytes(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::compiler) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/control_identity/mod.rs b/hosts/gpu/src/native_artifact/control_identity/mod.rs
+index 189317cb1..78bf587e2 100644
+--- a/hosts/gpu/src/native_artifact/control_identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/control_identity/mod.rs
+@@ -230,4 +230,4 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeMatchArtifactPlan
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native"))]
+-pub(in crate::native_artifact::control_identity) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/control_runtime/mod.rs b/hosts/gpu/src/native_artifact/control_runtime/mod.rs
+index f542b0e7e..760e971d9 100644
+--- a/hosts/gpu/src/native_artifact/control_runtime/mod.rs
++++ b/hosts/gpu/src/native_artifact/control_runtime/mod.rs
+@@ -326,4 +326,4 @@ pub(in crate::native_artifact) fn execute<F: FnOnce(*mut Frame) -> u64>(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native"))]
+-pub(in crate::native_artifact::control_runtime) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/identity/mod.rs b/hosts/gpu/src/native_artifact/identity/mod.rs
+index 1e171d58b..41bbcf756 100644
+--- a/hosts/gpu/src/native_artifact/identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/identity/mod.rs
+@@ -278,4 +278,4 @@ pub(in crate::native_artifact) fn op_tag(op: NativeScalarOp) -> u8 {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native"))]
+-pub(in crate::native_artifact::identity) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/iteration_identity/mod.rs b/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
+index 789fccd2c..3964ae4cc 100644
+--- a/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
+@@ -341,4 +341,4 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native"))]
+-pub(in crate::native_artifact::iteration_identity) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/iteration_runtime/mod.rs b/hosts/gpu/src/native_artifact/iteration_runtime/mod.rs
+index 895d37c66..e9b3fac57 100644
+--- a/hosts/gpu/src/native_artifact/iteration_runtime/mod.rs
++++ b/hosts/gpu/src/native_artifact/iteration_runtime/mod.rs
+@@ -542,4 +542,4 @@ pub(in crate::native_artifact) fn execute<F: FnOnce(*mut Frame) -> u64>(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native"))]
+-pub(in crate::native_artifact::iteration_runtime) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/launch/hosted/mod.rs b/hosts/gpu/src/native_artifact/launch/hosted/mod.rs
+index 8cca7960d..1f839bac1 100644
+--- a/hosts/gpu/src/native_artifact/launch/hosted/mod.rs
++++ b/hosts/gpu/src/native_artifact/launch/hosted/mod.rs
+@@ -538,4 +538,4 @@ fn run<P: LaunchPolicy>(
+     Ok(())
+ }
+ #[cfg(test)]
+-pub(in crate::native_artifact::launch::hosted) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/launch/mod.rs b/hosts/gpu/src/native_artifact/launch/mod.rs
+index 82a079f9a..3fc9bc6e5 100644
+--- a/hosts/gpu/src/native_artifact/launch/mod.rs
++++ b/hosts/gpu/src/native_artifact/launch/mod.rs
+@@ -1,21 +1,21 @@
+ //! Compiled application launchers. Generated mains supply build-owned bindings.
+-pub(in crate::native_artifact::launch) mod arguments;
+-pub(in crate::native_artifact::launch) mod scalar;
++mod arguments;
++mod scalar;
+ pub use crate::native_artifact::launch::scalar::{
+     BuildOwnedIterationBinding, BuildOwnedMatchBinding, BuildOwnedScalarBinding,
+     run_iteration_application, run_match_application, run_scalar_application,
+ };
+ 
+ #[cfg(feature = "canonical-native-program-runtime")]
+-pub(in crate::native_artifact::launch) mod managed;
++mod managed;
+ #[cfg(feature = "canonical-native-program-runtime")]
+-pub(in crate::native_artifact::launch) mod program;
++mod program;
+ #[cfg(feature = "canonical-native-program-runtime")]
+ pub use crate::native_artifact::launch::managed::run_program_application;
+ #[cfg(feature = "canonical-native-program-runtime")]
+ pub use crate::native_artifact::launch::program::BuildOwnedProgramBinding;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+-pub(in crate::native_artifact::launch) mod hosted;
++mod hosted;
+ #[cfg(feature = "canonical-native-benchmark-policy-runtime")]
+ pub use crate::native_artifact::launch::hosted::run_benchmark_program_application;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+diff --git a/hosts/gpu/src/native_artifact/memory/mod.rs b/hosts/gpu/src/native_artifact/memory/mod.rs
+index 40e69c4d7..aac5684f8 100644
+--- a/hosts/gpu/src/native_artifact/memory/mod.rs
++++ b/hosts/gpu/src/native_artifact/memory/mod.rs
+@@ -170,4 +170,4 @@ impl<T: PlannedArenaElement> NativeTypedStorage<T> {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::memory) mod admission_tests;
++mod admission_tests;
+diff --git a/hosts/gpu/src/native_artifact/mod.rs b/hosts/gpu/src/native_artifact/mod.rs
+index 56a34da0d..0ba46c738 100644
+--- a/hosts/gpu/src/native_artifact/mod.rs
++++ b/hosts/gpu/src/native_artifact/mod.rs
+@@ -3,46 +3,36 @@
+ //! Runtime-only linked applications do not include the source parser, JIT or
+ //! code generator. JIT and Object emission share one checked definition pass;
+ //! JIT and linked invocation share one managed typed evaluator.
+-pub(in crate::native_artifact) mod abi;
++mod abi;
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod application;
++mod application;
+ #[cfg(feature = "canonical-native-benchmark-policy-runtime")]
+-pub(in crate::native_artifact) mod benchmark_policy;
+-#[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod compiler;
+-pub(in crate::native_artifact) mod identity;
+-pub(in crate::native_artifact) mod linked;
+-pub(in crate::native_artifact) mod memory;
+-pub(in crate::native_artifact) mod runtime;
+-pub(in crate::native_artifact) mod values;
+-pub(in crate::native_artifact) mod work;
++mod benchmark_policy;
++#[cfg(feature = "canonical-native")]
++mod compiler;
++mod identity;
++mod linked;
++mod memory;
++mod runtime;
++mod values;
++mod work;
+ pub use crate::native_artifact::abi::{
+     NATIVE_ARTIFACT_ABI_VERSION, NATIVE_ARTIFACT_ENTRY_SYMBOL, NativeAbiDescriptor,
+ };
+ #[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::application::GeneratedLinkedApplication;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::application::NativeApplicationError;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::application::generate_linked_application;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::application::validate_linked_application_binary_name;
+-#[cfg(feature = "canonical-native-benchmark-policy-runtime")]
+-pub use crate::native_artifact::benchmark_policy::NativeBenchmarkCapabilityKernel;
++pub use crate::native_artifact::application::{
++    GeneratedLinkedApplication, NativeApplicationError, generate_linked_application,
++    validate_linked_application_binary_name,
++};
+ #[cfg(feature = "canonical-native-benchmark-policy-runtime")]
+-pub use crate::native_artifact::benchmark_policy::NativeBenchmarkPolicy;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::JitArtifact;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::NativeCompileError;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::NativeCompileLimits;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::NativeObject;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::emit_object;
++pub use crate::native_artifact::benchmark_policy::{
++    NativeBenchmarkCapabilityKernel, NativeBenchmarkPolicy,
++};
+ #[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::compiler::emit_object_with_limits;
++pub use crate::native_artifact::compiler::{
++    JitArtifact, NativeCompileError, NativeCompileLimits, NativeObject, emit_object,
++    emit_object_with_limits,
++};
+ pub use crate::native_artifact::identity::{
+     NATIVE_LINK_IDENTITY_BYTES, NATIVE_TYPED_IR_VERSION, NATIVE_WORK_POLICY_VERSION,
+     NativeObjectIdentity,
+@@ -56,23 +46,19 @@ pub use crate::native_artifact::values::{
+ };
+ pub use crate::native_artifact::work::NativeWorkMeter;
+ 
+-pub(in crate::native_artifact) mod control_abi;
++mod control_abi;
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod control_application;
++mod control_application;
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod control_compiler;
+-pub(in crate::native_artifact) mod control_identity;
+-pub(in crate::native_artifact) mod control_linked;
+-pub(in crate::native_artifact) mod control_runtime;
++mod control_compiler;
++mod control_identity;
++mod control_linked;
++mod control_runtime;
+ pub use crate::native_artifact::control_abi::{NativeMatchDescriptor, NativeMatchVisit};
+ #[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::control_compiler::JitMatchArtifact;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::control_compiler::NativeMatchObject;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::control_compiler::emit_match_object;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::control_compiler::emit_match_object_with_limits;
++pub use crate::native_artifact::control_compiler::{
++    JitMatchArtifact, NativeMatchObject, emit_match_object, emit_match_object_with_limits,
++};
+ pub use crate::native_artifact::control_runtime::{
+     NativeMatchExecutionError, NativeMatchExecutionReport,
+ };
+@@ -86,20 +72,20 @@ pub use crate::native_artifact::control_linked::LinkedMatchArtifact;
+ #[cfg(feature = "canonical-native")]
+ pub use crate::native_artifact::control_application::generate_linked_match_application;
+ 
+-pub(in crate::native_artifact) mod iteration_abi;
++mod iteration_abi;
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod iteration_application;
++mod iteration_application;
+ 
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod iteration_compiler;
+-pub(in crate::native_artifact) mod iteration_identity;
+-pub(in crate::native_artifact) mod iteration_linked;
+-pub(in crate::native_artifact) mod iteration_runtime;
++mod iteration_compiler;
++mod iteration_identity;
++mod iteration_linked;
++mod iteration_runtime;
+ #[cfg(any(
+     feature = "canonical-native",
+     feature = "canonical-native-program-runtime"
+ ))]
+-pub(in crate::native_artifact) mod program;
++mod program;
+ 
+ #[cfg(feature = "canonical-native-program-runtime")]
+ pub use crate::native_artifact::program::linked::LinkedProgramArtifact;
+@@ -108,13 +94,10 @@ pub use crate::native_artifact::iteration_abi::{NativeIterationDescriptor, Nativ
+ #[cfg(feature = "canonical-native")]
+ pub use crate::native_artifact::iteration_application::generate_linked_iteration_application;
+ #[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::iteration_compiler::JitIterationArtifact;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::iteration_compiler::NativeIterationObject;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::iteration_compiler::emit_iteration_object;
+-#[cfg(feature = "canonical-native")]
+-pub use crate::native_artifact::iteration_compiler::emit_iteration_object_with_limits;
++pub use crate::native_artifact::iteration_compiler::{
++    JitIterationArtifact, NativeIterationObject, emit_iteration_object,
++    emit_iteration_object_with_limits,
++};
+ pub use crate::native_artifact::iteration_identity::{
+     NATIVE_ITERATION_LINK_IDENTITY_BYTES, NATIVE_ITERATION_TYPED_IR_VERSION,
+     NATIVE_ITERATION_WORK_POLICY_VERSION, NativeIterationObjectIdentity,
+@@ -130,34 +113,25 @@ pub use crate::native_artifact::program::application::generate_linked_hosted_pro
+ #[cfg(feature = "canonical-native-program")]
+ pub use crate::native_artifact::program::application::generate_linked_program_application;
+ #[cfg(feature = "canonical-native-program")]
+-pub use crate::native_artifact::program::compiler::JitProgramArtifact;
+-#[cfg(feature = "canonical-native-program")]
+-pub use crate::native_artifact::program::compiler::NativeProgramObject;
+-#[cfg(feature = "canonical-native-program")]
+-pub use crate::native_artifact::program::compiler::emit_program_object;
+-#[cfg(feature = "canonical-native-program")]
+-pub use crate::native_artifact::program::compiler::emit_program_object_with_limits;
++pub use crate::native_artifact::program::compiler::{
++    JitProgramArtifact, NativeProgramObject, emit_program_object, emit_program_object_with_limits,
++};
+ #[cfg(feature = "canonical-native-program-runtime")]
+ pub use crate::native_artifact::program::image::NativeProgramDescriptor;
+ #[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::image::identity::NATIVE_PROGRAM_LINK_IDENTITY_BYTES;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::image::identity::NATIVE_PROGRAM_TYPED_IR_VERSION;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::image::identity::NATIVE_PROGRAM_WORK_POLICY_VERSION;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::image::identity::NativeProgramObjectIdentity;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::runtime::NativeProgramExecutionError;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::runtime::NativeProgramExecutionLimits;
+-#[cfg(feature = "canonical-native-program-runtime")]
+-pub use crate::native_artifact::program::runtime::NativeProgramExecutionReport;
++pub use crate::native_artifact::program::image::identity::{
++    NATIVE_PROGRAM_LINK_IDENTITY_BYTES, NATIVE_PROGRAM_TYPED_IR_VERSION,
++    NATIVE_PROGRAM_WORK_POLICY_VERSION, NativeProgramObjectIdentity,
++};
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+ pub use crate::native_artifact::program::runtime::NativeProgramExecutionSession;
++#[cfg(feature = "canonical-native-program-runtime")]
++pub use crate::native_artifact::program::runtime::{
++    NativeProgramExecutionError, NativeProgramExecutionLimits, NativeProgramExecutionReport,
++};
+ 
+ #[cfg(feature = "canonical-native")]
+-pub(in crate::native_artifact) mod codegen;
++mod codegen;
+ 
+ #[cfg(feature = "canonical-native-runtime")]
+ pub mod launch;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/borrowed/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/borrowed/mod.rs
+index 809d4bfb8..aa3756cad 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/borrowed/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/borrowed/mod.rs
+@@ -12,7 +12,7 @@ use cranelift_codegen::ir::{Block, InstBuilder, MemFlags, Value, types};
+ use cranelift_frontend::FunctionBuilder;
+ use mech_engine::native_artifact::{NativeBorrowedStringAction as Action, NativeMatchValue};
+ 
+-pub(in crate::native_artifact::program::codegen::borrowed) mod line;
++mod line;
+ 
+ fn word(
+     b: &mut FunctionBuilder,
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/bound_shim/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/bound_shim/mod.rs
+index d108a03b2..dd55a2625 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/bound_shim/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/bound_shim/mod.rs
+@@ -106,4 +106,4 @@ pub(in crate::native_artifact) fn define<M: Module>(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::bound_shim) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/mod.rs
+index 8b89ab1bf..0e0ce1ebf 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/mod.rs
+@@ -117,4 +117,4 @@ pub(in crate::native_artifact) fn optimize(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::cfg_cleanup) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/hooks/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/hooks/mod.rs
+index 83adfc8a9..37f40e1da 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/hooks/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/hooks/mod.rs
+@@ -27,7 +27,7 @@ pub(in crate::native_artifact) struct Hooks {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::codegen::hooks) mod tests;
++mod tests;
+ impl Hooks {
+     #[cfg(feature = "canonical-native-program")]
+     pub(in crate::native_artifact) fn with_bound_shim<M: Module>(
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/join_map/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/join_map/mod.rs
+index 092f87ee2..b2e8d8049 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/join_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/join_map/mod.rs
+@@ -388,4 +388,4 @@ fn define_leaf<M: Module>(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::codegen::join_map) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/edge_facts/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/edge_facts/mod.rs
+index 19ea5e2c4..777294558 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/edge_facts/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/edge_facts/mod.rs
+@@ -695,4 +695,4 @@ pub(in crate::native_artifact::program::codegen::packed_loop) fn derive(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_loop::edge_facts) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/lookup_facts/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/lookup_facts/mod.rs
+index 72a1caf4e..6ea71ac3a 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/lookup_facts/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/lookup_facts/mod.rs
+@@ -366,4 +366,4 @@ pub(in crate::native_artifact::program::codegen::packed_loop) fn derive(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_loop::lookup_facts) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/loop_bounds/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/loop_bounds/mod.rs
+index 33b84f8a2..77199d6b0 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/loop_bounds/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/loop_bounds/mod.rs
+@@ -1019,4 +1019,4 @@ pub(in crate::native_artifact::program::codegen::packed_loop) fn derive(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_loop::loop_bounds) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/mod.rs
+index 302dc25cd..c678afced 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/mod.rs
+@@ -29,15 +29,15 @@ use mech_engine::native_artifact::{
+     NativeScalarAggregates, NativeScalarKind,
+ };
+ use std::collections::{BTreeMap, BTreeSet};
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod count_bounds;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod edge_facts;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod invariants;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod lookup_facts;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod loop_bounds;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod loop_constants;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod mutation_facts;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod outlined;
+-pub(in crate::native_artifact::program::codegen::packed_loop) mod steady;
++mod count_bounds;
++mod edge_facts;
++mod invariants;
++mod lookup_facts;
++mod loop_bounds;
++mod loop_constants;
++mod mutation_facts;
++mod outlined;
++mod steady;
+ use crate::native_artifact::program::codegen::tag_threading;
+ 
+ pub(in crate::native_artifact) use crate::native_artifact::program::codegen::packed_loop::outlined::define_functions;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/cold_recipes/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/cold_recipes/mod.rs
+index 8b5176826..e62c2c2fd 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/cold_recipes/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/cold_recipes/mod.rs
+@@ -381,4 +381,4 @@ pub(in crate::native_artifact::program::codegen::packed_loop::steady) fn derive(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_loop::steady::cold_recipes) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/mod.rs
+index 04fa117c3..6b5f29641 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_loop/steady/mod.rs
+@@ -9,7 +9,7 @@ use cranelift_codegen::ir::{AbiParam, FuncRef, Opcode, StackSlot, StackSlotData,
+ use cranelift_frontend::{FunctionBuilderContext, Switch, Variable};
+ use cranelift_module::{FuncId, Linkage, Module};
+ use mech_engine::native_artifact::NativeScalarOp as Op;
+-pub(in crate::native_artifact::program::codegen::packed_loop::steady) mod cold_recipes;
++mod cold_recipes;
+ 
+ pub(in crate::native_artifact::program::codegen::packed_loop) struct Proof {
+     graph: crate::native_artifact::program::codegen::tag_threading::Graph,
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_map/frame_state/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_map/frame_state/mod.rs
+index 8d798d143..6326069eb 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_map/frame_state/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_map/frame_state/mod.rs
+@@ -489,4 +489,4 @@ impl FrameState {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_map::frame_state) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_map/hash_tests/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_map/hash_tests/mod.rs
+index 2b0547a37..15f387f13 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_map/hash_tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_map/hash_tests/mod.rs
+@@ -4,7 +4,7 @@ use cranelift_codegen::ir::AbiParam;
+ use cranelift_frontend::FunctionBuilderContext;
+ use cranelift_module::{Linkage, Module, default_libcall_names};
+ 
+-pub(in crate::native_artifact::program::codegen::packed_map::hash_tests) mod probe_group_tests;
++mod probe_group_tests;
+ 
+ #[test]
+ fn direct_lookup_cache_generated_keeps_absence_zero_values_and_hash_fallback() {
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/packed_map/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/packed_map/mod.rs
+index f41fbce72..4b690a2fa 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/packed_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/packed_map/mod.rs
+@@ -13,12 +13,14 @@ use cranelift_codegen::ir::condcodes::IntCC;
+ use cranelift_codegen::ir::{Block, Endianness, InstBuilder, MemFlags, Value, types};
+ use cranelift_frontend::FunctionBuilder;
+ 
+-pub(in crate::native_artifact::program::codegen::packed_map) mod frame_state;
+-pub(in crate::native_artifact) use crate::native_artifact::program::codegen::packed_map::frame_state::FrameState;
+-pub(in crate::native_artifact) use crate::native_artifact::program::codegen::packed_map::frame_state::LookupMode;
++mod frame_state;
++pub(in crate::native_artifact) use crate::native_artifact::program::codegen::packed_map::frame_state::{
++    FrameState,
++    LookupMode,
++};
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::packed_map) mod hash_tests;
++mod hash_tests;
+ 
+ /// Compile-time facts rederived from the source CFG for this selected key.
+ /// Memory-mode callers and unsupported graphs always use Unknown.
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/prefix/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/prefix/mod.rs
+index 9044c66a7..bbf5962b7 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/prefix/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/prefix/mod.rs
+@@ -16,7 +16,7 @@ use cranelift_frontend::FunctionBuilder;
+ use mech_engine::native_artifact::NativeMatchAction;
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::prefix) mod tests;
++mod tests;
+ 
+ /// Per-entry SSA facts. The owning session keeps these frame fields immutable
+ /// across every callback, but ordinary local stores can obscure that property
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/string_map/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/string_map/mod.rs
+index 011916119..373101d36 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/string_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/string_map/mod.rs
+@@ -10,9 +10,9 @@ use cranelift_frontend::{FunctionBuilder, FunctionBuilderContext};
+ use cranelift_module::{FuncId, Linkage, Module};
+ use mech_engine::native_artifact::NativeStringMapRegion;
+ 
+-pub(in crate::native_artifact::program::codegen::string_map) mod batches;
++mod batches;
+ 
+-pub(in crate::native_artifact::program::codegen::string_map) mod simd;
++mod simd;
+ 
+ pub(in crate::native_artifact) fn define<M: Module>(
+     module: &mut M,
+@@ -115,4 +115,4 @@ fn define_leaf<M: Module>(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::codegen::string_map) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/tag_threading/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/tag_threading/mod.rs
+index 71479f5de..16c8ac0f5 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/tag_threading/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/tag_threading/mod.rs
+@@ -559,4 +559,4 @@ fn derive_from(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::codegen::tag_threading) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/window/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/window/mod.rs
+index 3d6e6321e..f698f4dcd 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/window/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/window/mod.rs
+@@ -14,11 +14,11 @@ use mech_engine::native_artifact::NativeWindowRegion;
+ use cranelift_codegen::ir::Endianness;
+ 
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::codegen::window) mod histogram;
++mod histogram;
+ 
+-pub(in crate::native_artifact::program::codegen::window) mod hashes;
++mod hashes;
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::codegen::window) mod query;
++mod query;
+ 
+ // (source pointer, source bytes, accumulator owner, library update callback, width) -> completed.
+ // Caller must prove that source is ASCII without CRLF grapheme pairs. Then
+@@ -78,4 +78,4 @@ fn define_with<M: Module>(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::codegen::window) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/window/query/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/window/query/mod.rs
+index aef5868d1..d92bd0ae9 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/window/query/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/window/query/mod.rs
+@@ -4,7 +4,7 @@
+ use crate::native_artifact::program::codegen::window::*;
+ use cranelift_codegen::ir::{Block, Endianness, Value};
+ 
+-pub(in crate::native_artifact::program::codegen::window::query) mod simd;
++mod simd;
+ 
+ #[derive(Clone, Copy)]
+ struct WindowValues {
+diff --git a/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs b/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
+index 8be8bec7c..1c328db22 100644
+--- a/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs
+@@ -3,8 +3,8 @@ use cranelift_module::default_libcall_names;
+ 
+ type Entry = unsafe extern "C" fn(u64, u64, u64, u64, u64) -> u64;
+ 
+-pub(in crate::native_artifact::program::codegen::window::tests) mod histogram_reference;
+-pub(in crate::native_artifact::program::codegen::window::tests) mod histogram_tests;
++mod histogram_reference;
++mod histogram_tests;
+ struct Compiled {
+     entry: Entry,
+     _module: cranelift_jit::JITModule,
+diff --git a/hosts/gpu/src/native_artifact/program/image/mod.rs b/hosts/gpu/src/native_artifact/program/image/mod.rs
+index ca07f1b45..338a7342d 100644
+--- a/hosts/gpu/src/native_artifact/program/image/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/image/mod.rs
+@@ -143,7 +143,7 @@ impl NativeProgramDescriptor {
+     }
+ }
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::image) mod string_map_factory_tests;
++mod string_map_factory_tests;
+ impl crate::native_artifact::iteration_runtime::VisitPlan for NativeProgramDescriptor {
+     fn entry(&self) -> u32 {
+         self.metadata.plan.entry()
+diff --git a/hosts/gpu/src/native_artifact/program/prepare/frozen_map/mod.rs b/hosts/gpu/src/native_artifact/program/prepare/frozen_map/mod.rs
+index 6330d9404..543b4a2ad 100644
+--- a/hosts/gpu/src/native_artifact/program/prepare/frozen_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/prepare/frozen_map/mod.rs
+@@ -479,4 +479,4 @@ impl Layout {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::prepare::frozen_map) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/prepare/packed_map/mod.rs b/hosts/gpu/src/native_artifact/program/prepare/packed_map/mod.rs
+index 3195ff281..612193171 100644
+--- a/hosts/gpu/src/native_artifact/program/prepare/packed_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/prepare/packed_map/mod.rs
+@@ -293,4 +293,4 @@ pub(in crate::native_artifact) fn derive(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::prepare::packed_map) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/prepare/retirement/mod.rs b/hosts/gpu/src/native_artifact/program/prepare/retirement/mod.rs
+index c42c1e540..bbd6c15db 100644
+--- a/hosts/gpu/src/native_artifact/program/prepare/retirement/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/prepare/retirement/mod.rs
+@@ -180,4 +180,4 @@ impl RetirementTables {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::prepare::retirement) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/prepare/selected_join/mod.rs b/hosts/gpu/src/native_artifact/program/prepare/selected_join/mod.rs
+index 167dfa688..d93c51bd0 100644
+--- a/hosts/gpu/src/native_artifact/program/prepare/selected_join/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/prepare/selected_join/mod.rs
+@@ -76,4 +76,4 @@ impl Layout {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::prepare::selected_join) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/prepare/window_histogram/mod.rs b/hosts/gpu/src/native_artifact/program/prepare/window_histogram/mod.rs
+index dd700b6cf..0272766f3 100644
+--- a/hosts/gpu/src/native_artifact/program/prepare/window_histogram/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/prepare/window_histogram/mod.rs
+@@ -52,4 +52,4 @@ pub(in crate::native_artifact) fn prefer_banks(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::prepare::window_histogram) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/protocol/mod.rs b/hosts/gpu/src/native_artifact/program/protocol/mod.rs
+index 58c0e4f64..2fb171a06 100644
+--- a/hosts/gpu/src/native_artifact/program/protocol/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/protocol/mod.rs
+@@ -1,6 +1,6 @@
+ //! Typed private helper domains. Raw u64 lanes remain the unchanged transport.
+ #[cfg(feature = "canonical-native-program-runtime")]
+-pub(in crate::native_artifact::program::protocol) mod owner;
++mod owner;
+ #[cfg(feature = "canonical-native-program-runtime")]
+ pub(in crate::native_artifact) use crate::native_artifact::program::protocol::owner::OwnerOperation;
+ 
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/allocation/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/allocation/mod.rs
+index 1f474b7bc..ae0d603a8 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/allocation/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/allocation/mod.rs
+@@ -72,4 +72,4 @@ fn text_with(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::collections::allocation) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/ascii_facts/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/ascii_facts/mod.rs
+index 7306889b9..734d66e7c 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/ascii_facts/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/ascii_facts/mod.rs
+@@ -54,4 +54,4 @@ impl Cache {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::ascii_facts) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/finish/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/finish/mod.rs
+index 5cea215a0..d24093bbe 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/finish/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/finish/mod.rs
+@@ -6,9 +6,9 @@ use mech_core::snapshot::{
+     MapEntryDraft, SnapshotCanonicalizationBudget, SnapshotValidationContext, ValueDataDraft,
+     ValueDraft,
+ };
+-pub(in crate::native_artifact::program::runtime::collections::histogram::finish) mod allocation;
++mod allocation;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::histogram::finish) mod allocation_tests;
++mod allocation_tests;
+ impl State {
+     pub(in crate::native_artifact) fn park_histogram(
+         &mut self,
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/mod.rs
+index 341d042da..e8cd61a87 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/mod.rs
+@@ -7,16 +7,16 @@ use core::mem::size_of;
+ use mech_core::{ManagedMemoryReservation, MemoryBudgetDimension as Dimension};
+ use mech_engine::native_artifact::{NativeCollectionResult, NativeHistogramSink, NativeMatchValue};
+ 
+-pub(in crate::native_artifact::program::runtime::collections::histogram) mod finish;
++mod finish;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::histogram) mod observation;
+-pub(in crate::native_artifact::program::runtime::collections::histogram) mod window;
++mod observation;
++mod window;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::histogram::observation::HistogramDemand;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::histogram::observation::HistogramStage;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::histogram::observation::HistogramVisit;
++pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::histogram::observation::{
++    HistogramDemand,
++    HistogramStage,
++    HistogramVisit,
++};
+ 
+ struct Entry {
+     key: String,
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/window/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/window/mod.rs
+index 7a68cfd0f..be8e31310 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/window/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram/window/mod.rs
+@@ -334,4 +334,4 @@ impl State {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::histogram::window) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_layout/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_layout/mod.rs
+index 62f1333ae..1cdcae959 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_layout/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_layout/mod.rs
+@@ -100,4 +100,4 @@ pub(in crate::native_artifact::program::runtime::collections) fn certify(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::collections::histogram_layout) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_query/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_query/mod.rs
+index d34329c7c..b2cbfcfcb 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_query/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/histogram_query/mod.rs
+@@ -14,7 +14,7 @@ use mech_engine::native_artifact::{
+     NativeHistogramQueryStepKind as Step, NativeMatchValue,
+ };
+ 
+-pub(in crate::native_artifact::program::runtime::collections::histogram_query) mod compiled_window;
++mod compiled_window;
+ 
+ pub(in crate::native_artifact::program::runtime::collections) struct Builder {
+     // Retire the captured root before the enclosing admitted metadata lane.
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/mod.rs
+index 73e62f249..dc2ed7a31 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/mod.rs
+@@ -18,8 +18,8 @@ use mech_engine::native_artifact::{
+     NativeMatchOrigin as Origin, NativeScalarKind,
+ };
+ 
+-pub(in crate::native_artifact::program::runtime::collections) mod allocation;
+-pub(in crate::native_artifact::program::runtime::collections) mod ascii_facts;
++mod allocation;
++mod ascii_facts;
+ pub(in crate::native_artifact::program::runtime) fn admitted_capacity<T>(
+     values: Vec<T>,
+     count: usize,
+@@ -27,7 +27,7 @@ pub(in crate::native_artifact::program::runtime) fn admitted_capacity<T>(
+ ) -> Result<Vec<T>, Error> {
+     allocation::exact_capacity(values, count, reason)
+ }
+-pub(in crate::native_artifact::program::runtime::collections) mod data;
++mod data;
+ pub(in crate::native_artifact::program::runtime) fn source_count(
+     value: &Value,
+ ) -> Result<u64, Error> {
+@@ -48,27 +48,28 @@ pub(in crate::native_artifact::program::runtime) fn element_work_hint(
+         _ => 1,
+     }
+ }
+-pub(in crate::native_artifact::program::runtime::collections) mod histogram;
+-pub(in crate::native_artifact::program::runtime::collections) mod histogram_layout;
+-pub(in crate::native_artifact::program::runtime::collections) mod histogram_query;
+-pub(in crate::native_artifact::program::runtime::collections) mod lifetime;
+-pub(in crate::native_artifact::program::runtime::collections) mod string_map_entry;
+-pub(in crate::native_artifact::program::runtime::collections) mod string_span;
++mod histogram;
++mod histogram_layout;
++mod histogram_query;
++mod lifetime;
++mod string_map_entry;
++mod string_span;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+ pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::string_span::before_helper as before_span_helper;
+-pub(in crate::native_artifact::program::runtime::collections) mod text_join;
++mod text_join;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::histogram::HistogramDemand;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::histogram::HistogramStage;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::histogram::HistogramVisit;
++pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::histogram::{
++    HistogramDemand,
++    HistogramStage,
++    HistogramVisit,
++};
+ #[cfg(all(test, feature = "canonical-native-program"))]
+ pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::histogram_query::QueryDemand;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::text_join::TextJoinDemand;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::text_join::TextJoinStage;
++pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::collections::text_join::{
++    TextJoinDemand,
++    TextJoinStage,
++};
+ 
+ struct Source {
+     backing: SourceBacking,
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/mod.rs
+index aa6625a87..822c65178 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/mod.rs
+@@ -10,7 +10,7 @@ use crate::native_artifact::program::runtime::{NativeProgramExecutionError as Er
+ use mech_core::{MemoryBudgetDimension as Dimension, ResourceDemand, Value, ValueData, WorkDemand};
+ use mech_engine::native_artifact::{NativeControlLoop, NativeMatchValue};
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::string_map_entry) mod tests;
++mod tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+ pub(in crate::native_artifact::program::runtime::collections) use crate::native_artifact::program::runtime::collections::string_map_entry::tests::before_stage;
+ 
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/tests/mod.rs
+index cadb9fb3c..dc13bb8ed 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/string_map_entry/tests/mod.rs
+@@ -66,7 +66,7 @@ pub(in crate::native_artifact::program::runtime::collections::string_map_entry)
+     });
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::collections::string_map_entry::tests) mod faults;
++mod faults;
+ pub(in super::super) use crate::native_artifact::program::runtime::collections::string_map_entry::tests::faults::before_stage;
+ struct Reset;
+ impl Drop for Reset {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/string_span/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/string_span/mod.rs
+index 72fbf957c..4777eab9b 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/string_span/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/string_span/mod.rs
+@@ -11,11 +11,11 @@ use mech_engine::native_artifact::{
+ };
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::string_span) mod boundary_tests;
++mod boundary_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::string_span) mod selector_tests;
++mod selector_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::string_span) mod tests;
++mod tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+ pub(in super::super) use crate::native_artifact::program::runtime::collections::string_span::tests::before_helper;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/compiled_map/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/compiled_map/mod.rs
+index f7a80b8fc..2a58f4f64 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/compiled_map/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/compiled_map/mod.rs
+@@ -5,7 +5,7 @@ use crate::native_artifact::program::runtime::maps::ascii as ascii_map;
+ use mech_engine::native_artifact::NativeStringMapRegion;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::text_join::compiled_map) mod owned_tests;
++mod owned_tests;
+ 
+ enum Owned {
+     Snapshot(mech_core::snapshot::OwnedSnapshotBytes),
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/mod.rs
+index 22558ddc6..a2ca20cfd 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/collections/text_join/mod.rs
+@@ -10,13 +10,14 @@ use mech_core::snapshot::{
+ };
+ use mech_core::{ManagedMemoryReservation, MemoryBudgetDimension as Dimension, Value, ValueData};
+ use mech_engine::native_artifact::{NativeCollectionResult, NativeMatchValue, NativeTextJoinSink};
+-pub(in crate::native_artifact::program::runtime::collections::text_join) mod compiled_map;
++mod compiled_map;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::collections::text_join) mod observation;
++mod observation;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::text_join::observation::TextJoinDemand;
+-#[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::text_join::observation::TextJoinStage;
++pub(in crate::native_artifact) use crate::native_artifact::program::runtime::collections::text_join::observation::{
++    TextJoinDemand,
++    TextJoinStage,
++};
+ 
+ pub(in crate::native_artifact::program::runtime::collections) struct Builder {
+     // Payloads are destroyed before the parent reservation is released.
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/caller_geometry/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/caller_geometry/mod.rs
+index dfc526b2a..5ae35522b 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/caller_geometry/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/caller_geometry/mod.rs
+@@ -128,4 +128,4 @@ impl Invocation<'_, '_, '_> {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::invocation::caller_geometry) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/joins/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/joins/mod.rs
+index ac223ac74..4f2eab5b0 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/joins/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/joins/mod.rs
+@@ -18,22 +18,18 @@ use mech_engine::native_artifact::{
+ };
+ use std::rc::Rc;
+ 
+-pub(in crate::native_artifact::program::runtime::invocation::joins) mod mapped;
++mod mapped;
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::Control as JoinMapControl;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::Fault as JoinMapFault;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::Limit as JoinMapLimit;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::demand as join_map_demand;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::fired as join_map_fault_fired;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::started as join_map_started;
+-#[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::with_control as with_join_map_control;
+-pub(in crate::native_artifact::program::runtime::invocation::joins) mod range;
++pub(in crate::native_artifact::program::runtime) use crate::native_artifact::program::runtime::invocation::joins::mapped::faults::{
++    Control as JoinMapControl,
++    Fault as JoinMapFault,
++    Limit as JoinMapLimit,
++    demand as join_map_demand,
++    fired as join_map_fault_fired,
++    started as join_map_started,
++    with_control as with_join_map_control,
++};
++mod range;
+ 
+ enum Phase {
+     Range {
+@@ -629,9 +625,9 @@ impl Invocation<'_, '_, '_> {
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::invocation::joins) mod tests;
++mod tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::invocation::joins) mod range_tests;
++mod range_tests;
+ 
+ pub(in crate::native_artifact::program::runtime) use mapped::Mapped;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/admission/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/admission/mod.rs
+index 61cc92c1b..8d2db9889 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/admission/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/admission/mod.rs
+@@ -47,7 +47,7 @@ pub(in crate::native_artifact::program::runtime) fn supported(
+ }
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::invocation::parallel::admission) mod tests;
++mod tests;
+ 
+ impl Invocation<'_, '_, '_> {
+     /// The caller must retain this claim until every scoped worker has joined.
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/mod.rs
+index 7b2a4ce6b..ae8dc6475 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/mod.rs
+@@ -12,7 +12,7 @@ use mech_engine::native_artifact::{NativeLibraryWorkBudget, NativeWorkerBudgetEr
+ use std::collections::VecDeque;
+ use std::sync::atomic::{AtomicUsize, Ordering};
+ 
+-pub(in crate::native_artifact::program::runtime::invocation::parallel) mod schedule;
++mod schedule;
+ 
+ #[derive(Default)]
+ struct Activity {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/tests/mod.rs
+index b33b822b6..5e35797e5 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/parallel/tests/mod.rs
+@@ -3,8 +3,8 @@ use crate::native_artifact::program::protocol::abi::{PARALLEL_RUN, PHASE_TURN, P
+ use crate::native_artifact::program::runtime::*;
+ use std::cell::Cell;
+ 
+-pub(in crate::native_artifact::program::runtime::invocation::parallel::tests) mod credit_tests;
+-pub(in crate::native_artifact::program::runtime::invocation::parallel::tests) mod schedule_tests;
++mod credit_tests;
++mod schedule_tests;
+ 
+ thread_local! {
+     static BATCHES: Cell<usize> = const { Cell::new(0) };
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/prefix/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/prefix/mod.rs
+index b1bddb615..c5ef965e0 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/prefix/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/prefix/mod.rs
+@@ -380,4 +380,4 @@ impl Invocation<'_, '_, '_> {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::invocation::prefix) mod retention_tests;
++mod retention_tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/window/hashes/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/window/hashes/mod.rs
+index 0b7a8c5c6..a5f597f36 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/window/hashes/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/window/hashes/mod.rs
+@@ -326,4 +326,4 @@ pub(in crate::native_artifact::program::runtime::invocation::window) unsafe exte
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::invocation::window::hashes) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/invocation/window/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/invocation/window/mod.rs
+index 6b7067a24..9fc03c8ef 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/invocation/window/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/invocation/window/mod.rs
+@@ -4,7 +4,7 @@ use crate::native_artifact::program::runtime::invocation::Invocation;
+ use crate::native_artifact::program::runtime::{NativeProgramExecutionError as Error, invalid};
+ use mech_engine::native_artifact::NativeControlLoop;
+ pub(in crate::native_artifact::program::runtime) mod hashes;
+-pub(in crate::native_artifact::program::runtime::invocation::window) mod string_map;
++mod string_map;
+ 
+ impl Invocation<'_, '_, '_> {
+     pub(in crate::native_artifact::program::runtime) fn prepare_window_region(
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/lines/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/lines/mod.rs
+index 31e3951a4..af5280b20 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/lines/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/lines/mod.rs
+@@ -13,7 +13,7 @@ use mech_engine::native_artifact::{
+ use std::rc::Rc;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::lines) mod tests;
++mod tests;
+ 
+ pub(in crate::native_artifact::program::runtime) struct State {
+     pub views: Box<[Option<Rc<NativeTextLineMatrix>>]>,
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/ascii/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/ascii/mod.rs
+index 8bcea511a..8471503d1 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/ascii/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/ascii/mod.rs
+@@ -97,4 +97,4 @@ pub(in crate::native_artifact) fn test_table(cells: &[u16; 128]) -> [u8; BYTES]
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::ascii) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/binding/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/binding/mod.rs
+index 0678bc020..d3f9e7d90 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/binding/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/binding/mod.rs
+@@ -712,4 +712,4 @@ impl<'plan> Binding<'plan> {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::binding) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/edge_facts/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/edge_facts/mod.rs
+index 8c82bf4d8..42cd4a611 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/edge_facts/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/edge_facts/mod.rs
+@@ -59,12 +59,12 @@ impl Pass {
+     }
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod cold_recipe_tests;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod constant_tests;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod count_bound_tests;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod loop_bounds_tests;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod mutation_tests;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests::edge_facts) mod steady_tests;
++mod cold_recipe_tests;
++mod constant_tests;
++mod count_bound_tests;
++mod loop_bounds_tests;
++mod mutation_tests;
++mod steady_tests;
+ 
+ type PublicationFrontier = (u64, u64, u64, (u64, u64));
+ thread_local! {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/mod.rs
+index 2e9bbcd75..2e725a38f 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/closed_tests/mod.rs
+@@ -5,7 +5,7 @@ use crate::native_artifact::program::protocol::abi::{
+ use crate::native_artifact::program::runtime::*;
+ use std::cell::{Cell, RefCell};
+ 
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests) mod narrow_codegen;
++mod narrow_codegen;
+ 
+ #[derive(Clone, Copy, PartialEq)]
+ enum Mode {
+@@ -1079,8 +1079,8 @@ fn packed_ssa_preserves_carriers_across_refill_growth_and_branch_merges() {
+     }
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests) mod cold_origins;
+-pub(in crate::native_artifact::program::runtime::maps::closed_tests) mod edge_facts;
++mod cold_origins;
++mod edge_facts;
+ 
+ #[test]
+ fn packed_generated_controls_compare_colliding_keys_across_wrap_and_growth() {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/key_domain/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/key_domain/mod.rs
+index 01a4856c0..f39418101 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/key_domain/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/key_domain/mod.rs
+@@ -208,4 +208,4 @@ pub(in crate::native_artifact) fn derive(plan: &Plan, source: Value) -> Option<D
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::key_domain) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/owner/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/owner/mod.rs
+index 7d6c35f83..a3b9b52a6 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/owner/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/owner/mod.rs
+@@ -13,10 +13,10 @@ use crate::native_artifact::{
+ use mech_core::{ManagedMemoryBudget, ManagedMemoryReservation, ManagedNodeReservation, Value};
+ use mech_engine::native_artifact::{NativeIterationAction as Action, NativeMapOwnerRegion};
+ 
+-pub(in crate::native_artifact::program::runtime::maps::owner) mod caller_geometry;
+-pub(in crate::native_artifact::program::runtime::maps::owner) mod closed;
++mod caller_geometry;
++mod closed;
+ pub(in crate::native_artifact::program::runtime) mod frozen;
+-pub(in crate::native_artifact::program::runtime::maps::owner) mod spans;
++mod spans;
+ use crate::native_artifact::program::runtime::maps::owner::frozen::FrozenSlot;
+ 
+ pub(in crate::native_artifact::program::runtime) enum Publication {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/fuel/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/fuel/mod.rs
+index 7c17ead13..9522dce99 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/fuel/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/fuel/mod.rs
+@@ -70,4 +70,4 @@ impl Prepared {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::packed::fuel) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/mod.rs
+index 1d531b2fb..ecc5e3809 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/mod.rs
+@@ -52,19 +52,21 @@ pub(in crate::native_artifact) struct Slot {
+     pub value: u64,
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::maps::packed) mod payload;
++mod payload;
+ #[cfg(test)]
+ pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::payload::NarrowSlot;
+ use crate::native_artifact::program::runtime::maps::packed::payload::Slots;
+ #[cfg(any(test, feature = "canonical-native-program"))]
+ pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::payload::value_offset;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::payload::narrow;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::payload::slot_bytes;
++pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::payload::{
++    narrow,
++    slot_bytes,
++};
+ 
+-pub(in crate::native_artifact::program::runtime::maps::packed) mod frozen;
++mod frozen;
+ pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::frozen::FrozenPackedMap;
+ 
+-pub(in crate::native_artifact::program::runtime::maps::packed) mod lookup;
++mod lookup;
+ use crate::native_artifact::program::runtime::maps::packed::lookup::LookupCache;
+ #[cfg(feature = "canonical-native-program")]
+ pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::packed::lookup::lookup_cache_entries;
+@@ -84,7 +86,7 @@ struct Price {
+     comparison: u64,
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::maps::packed) mod fuel;
++mod fuel;
+ 
+ pub(in crate::native_artifact) struct PackedMap {
+     // Actual allocations retire before their reservations. The boxed frame
+@@ -835,4 +837,4 @@ impl PackedMap {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::packed) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/tests/mod.rs
+index 981f9b662..c270b2332 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/packed/tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/packed/tests/mod.rs
+@@ -29,11 +29,11 @@ pub(super) const SLOT_LOW: usize = 0;
+ pub(super) const SLOT_HIGH: usize = 1;
+ pub(super) const SLOT_VALUE: usize = 2;
+ 
+-pub(in crate::native_artifact::program::runtime::maps::packed::tests) mod domain_validation_tests;
+-pub(in crate::native_artifact::program::runtime::maps::packed::tests) mod frozen_tests;
+-pub(in crate::native_artifact::program::runtime::maps::packed::tests) mod lookup_cache_tests;
+-pub(in crate::native_artifact::program::runtime::maps::packed::tests) mod narrow_tests;
+-pub(in crate::native_artifact::program::runtime::maps::packed::tests) mod probe_group_tests;
++mod domain_validation_tests;
++mod frozen_tests;
++mod lookup_cache_tests;
++mod narrow_tests;
++mod probe_group_tests;
+ 
+ fn limits() -> MemoryBudgetLimits {
+     MemoryBudgetLimits {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/string/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/string/mod.rs
+index ec944efea..ac3339d76 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/string/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/string/mod.rs
+@@ -8,11 +8,13 @@ use mech_core::{ManagedMemoryReservation, ManagedNodeReservation};
+ use mech_engine::native_artifact::NativeLibraryWorkBudget;
+ use std::hash::BuildHasher;
+ 
+-pub(in crate::native_artifact::program::runtime::maps::string) mod publication;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::string::publication::Geometry as PublicationGeometry;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::string::publication::logical_map_bytes;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::string::publication::logical_map_limits;
+-pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::string::publication::string_u64_schema;
++mod publication;
++pub(in crate::native_artifact) use crate::native_artifact::program::runtime::maps::string::publication::{
++    Geometry as PublicationGeometry,
++    logical_map_bytes,
++    logical_map_limits,
++    string_u64_schema,
++};
+ // hashbrown 0.15.5: power-of-two buckets, <=7/8 load, one control byte per
+ // bucket, a trailing control group and alignment. Use concrete entry width.
+ fn allocation_bound(capacity: usize) -> Result<u64, Error> {
+@@ -260,4 +262,4 @@ impl<S: BuildHasher> OwnedStringMap<S> {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::string) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/maps/string/publication/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/maps/string/publication/mod.rs
+index 68834cd9e..fa22de178 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/maps/string/publication/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/maps/string/publication/mod.rs
+@@ -311,4 +311,4 @@ fn sort_with_debits(
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::maps::string::publication) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/mod.rs
+index 4437bb1f7..dd89e5b64 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/mod.rs
+@@ -30,11 +30,11 @@ use mech_engine::native_artifact::{
+ };
+ use std::ffi::c_void;
+ 
+-pub(in crate::native_artifact::program::runtime) mod collections;
++mod collections;
+ 
+-pub(in crate::native_artifact::program::runtime) mod lines;
++mod lines;
+ 
+-pub(in crate::native_artifact::program::runtime) mod session;
++mod session;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+ pub(in crate::native_artifact) use crate::native_artifact::program::runtime::session::CheckedEntry;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+@@ -278,19 +278,19 @@ fn execute_prepared<F: FnMut(*mut Frame) -> u64>(
+ mod test_support;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) mod histogram_query_observation_tests;
++mod histogram_query_observation_tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) mod histogram_observation_tests;
++mod histogram_observation_tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) mod text_join_observation_tests;
++mod text_join_observation_tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) mod tests;
++mod tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime) mod structural_projection_tests;
++mod structural_projection_tests;
+ 
+ #[test]
+ fn native_runtime_consolidation_preserves_the_charged_layout_envelope() {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/session/call_cache_tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/session/call_cache_tests/mod.rs
+index bb476ae52..dc844210b 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/session/call_cache_tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/session/call_cache_tests/mod.rs
+@@ -452,4 +452,4 @@ fn preserved_control_checkpoint_edges_cannot_replay_root_sites() {
+     }
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::session::call_cache_tests) mod allocation_tests;
++mod allocation_tests;
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/session/capture_host_tests/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/session/capture_host_tests/mod.rs
+index 152628efc..763e32165 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/session/capture_host_tests/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/session/capture_host_tests/mod.rs
+@@ -10,7 +10,7 @@ use std::sync::{Arc, Mutex};
+ 
+ #[path = "../../../../../../tests/support/canonical_hosted_fixture.rs"]
+ pub(in crate::native_artifact::program::runtime::session::capture_host_tests) mod fixture;
+-pub(in crate::native_artifact::program::runtime::session::capture_host_tests) mod joined_map_tests;
++mod joined_map_tests;
+ 
+ const FULL: &str =
+     include_str!("../../../../../../tests/fixtures/native/knucleotide-idiomatic.mec");
+@@ -307,7 +307,7 @@ fn original_and_decoded_full_program_stream_through_authorized_cli_and_match_sna
+     }
+ }
+ 
+-pub(in crate::native_artifact::program::runtime::session::capture_host_tests) mod chunk_boundaries;
++mod chunk_boundaries;
+ 
+ #[test]
+ fn capture_failures_precede_a_real_generated_body_failure_and_publish_nothing() {
+diff --git a/hosts/gpu/src/native_artifact/program/runtime/session/mod.rs b/hosts/gpu/src/native_artifact/program/runtime/session/mod.rs
+index 8685ab6c1..369f9bbb4 100644
+--- a/hosts/gpu/src/native_artifact/program/runtime/session/mod.rs
++++ b/hosts/gpu/src/native_artifact/program/runtime/session/mod.rs
+@@ -7,32 +7,32 @@ use crate::native_artifact::program::protocol::abi::{
+ };
+ use crate::native_artifact::program::runtime::*;
+ 
+-pub(in crate::native_artifact::program::runtime::session) mod call_cache_allocation;
++mod call_cache_allocation;
+ 
+-pub(in crate::native_artifact::program::runtime::session) mod capture;
++mod capture;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+-pub(in crate::native_artifact::program::runtime::session) mod capture_admission;
++mod capture_admission;
+ #[cfg(feature = "canonical-native-program-host-runtime")]
+-pub(in crate::native_artifact::program::runtime::session) mod capture_host;
++mod capture_host;
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::program::runtime::session) mod observation_tests;
++mod observation_tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod call_cache_tests;
++mod call_cache_tests;
+ #[cfg(all(test, feature = "canonical-native-program-host"))]
+-pub(in crate::native_artifact::program::runtime::session) mod capture_host_tests;
++mod capture_host_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod capture_tests;
++mod capture_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod identity_inventory_tests;
++mod identity_inventory_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod prefix_tests;
++mod prefix_tests;
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod prefix_window_tests;
++mod prefix_window_tests;
+ 
+ #[cfg(all(test, feature = "canonical-native-program"))]
+-pub(in crate::native_artifact::program::runtime::session) mod output_retirement_tests;
++mod output_retirement_tests;
+ 
+ /// Validate and fund retirement of the caller's existing output roots before
+ /// native publication. The shared account remains available even if a failed
+diff --git a/hosts/gpu/src/native_artifact/values/mod.rs b/hosts/gpu/src/native_artifact/values/mod.rs
+index 5ebb78863..3251dddda 100644
+--- a/hosts/gpu/src/native_artifact/values/mod.rs
++++ b/hosts/gpu/src/native_artifact/values/mod.rs
+@@ -394,4 +394,4 @@ impl<'a> NativeValueArena<'a> {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::values) mod tests;
++mod tests;
+diff --git a/hosts/gpu/src/native_artifact/work/mod.rs b/hosts/gpu/src/native_artifact/work/mod.rs
+index cdf3b9576..70f9ccd5c 100644
+--- a/hosts/gpu/src/native_artifact/work/mod.rs
++++ b/hosts/gpu/src/native_artifact/work/mod.rs
+@@ -16,7 +16,7 @@ pub struct NativeWorkMeter {
+ }
+ 
+ #[cfg(test)]
+-pub(in crate::native_artifact::work) mod tests;
++mod tests;
+ impl NativeWorkMeter {
+     /// Attach a meter to a consumed parent-backed worker loan. This does not
+     /// promote a scalar ledger, mint root fuel or copy thread-local scopes.

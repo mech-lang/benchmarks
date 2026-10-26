@@ -62,8 +62,11 @@ python3 tools/native-compiler-probes/run.py \
   --evidence /tmp/native-probes-region-RUN_ID
 ```
 
-Compilation uses locked, offline Cargo with `canonical-native-program`, one build
-job, and `nightly-2026-03-03` by default. Select another installed toolchain using
+Compilation uses locked, offline Cargo with `canonical-native-program-host`, one
+build job, and `nightly-2026-03-03` by default. The host compiler profile is
+required because the window and histogram kernel test modules are feature-gated;
+the program-only profile can compile successfully while selecting zero probes.
+The runner verifies every exact ignored selection after compilation. Select another installed toolchain using
 `--toolchain`, or an absolute Cargo path using `--cargo`. `--environment` accepts
 a JSON map of build environment strings when the compiler needs explicit native
 library paths. Otherwise, only the documented build-related variables in

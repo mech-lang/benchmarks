@@ -7,7 +7,7 @@ import subprocess
 import sys
 import uuid
 from pathlib import Path
-from study import HERE, ROOT, RETAINED, process, read, source_state
+from study import HERE, ROOT, RETAINED, process, read, read_plan, source_state
 
 
 def allocate(subject, run_id):
@@ -29,7 +29,7 @@ def main(subject):
     parser.add_argument('--run-id', default=uuid.uuid4().hex)
     args = parser.parse_args()
     workspace = args.workspace.resolve()
-    plan = read(HERE / 'plan.json')
+    plan = read_plan()
     before = source_state(workspace)
     expected = plan['implementation_base' if subject == 'I' else 'final_compiler_source']
     assert before['commit'] == expected and not before['status']

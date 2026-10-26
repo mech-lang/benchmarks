@@ -67,12 +67,12 @@ def install_probe(checkout, name, spec):
     else:
         # The archived functions previously used their test module's imports.
         # Local imports keep the overlay independent of that incidental scaffolding.
-        installed = raw
-        if name in ("window-kernel", "histogram-kernel"):
-            declaration = ("fn " + spec["function"] + "() {\n").encode()
-            require(raw.count(declaration) == 1, "Unexpected probe declaration")
-            installed = raw.replace(declaration, declaration +
-                                    b"    use std::{hint::black_box, time::Instant};\n", 1)
+        local_import = (b"    use mech_engine::native_artifact::NativeCollectionResult;\n"
+                        if name == "window-region" else
+                        b"    use std::{hint::black_box, time::Instant};\n")
+        declaration = ("fn " + spec["function"] + "() {\n").encode()
+        require(raw.count(declaration) == 1, "Unexpected probe declaration")
+        installed = raw.replace(declaration, declaration + local_import, 1)
         target.write_bytes(original.rstrip() + b"\n\n" + installed)
         mode = "test-overlay"
     return {
@@ -113,6 +113,16 @@ def validate_result(output, test):
     require(counts == [("1", "0", "0")], f"The probe did not pass exactly one test: {counts}")
     require(re.search(r"^test " + re.escape(test) + r" \.\.\. ok$", output, re.M),
             "The completed test name did not match the selected probe")
+
+
+def compile_command(cargo, toolchain, targets):
+    # The window kernel test supports are gated on the host compiler profile.
+    command = [str(cargo), "+" + toolchain, "test", "--locked", "--offline", "-j1",
+               "-p", "mech-gpu", "--no-default-features", "--features", "canonical-native-program-host",
+               "--no-run", "--message-format=json"]
+    for target in targets:
+        command += ["--lib"] if target == "lib" else ["--test", target]
+    return command
 
 
 def environment(args, evidence):
@@ -221,11 +231,7 @@ def main():
             env["MECH_WINDOW_KERNEL_ORACLE"] = inputs["oracle"]["path"]
         report["environment"] = env
         targets = sorted({probes[name]["target"] for name in names})
-        command = [str(cargo), "+" + args.toolchain, "test", "--locked", "--offline", "-j1",
-                   "-p", "mech-gpu", "--no-default-features", "--features", "canonical-native-program",
-                   "--no-run", "--message-format=json"]
-        for target in targets:
-            command += ["--lib"] if target == "lib" else ["--test", target]
+        command = compile_command(cargo, args.toolchain, targets)
         report["compile_command"] = command
         module = importlib.util.spec_from_file_location("native_probe_process", CONTROLLER)
         process = importlib.util.module_from_spec(module)

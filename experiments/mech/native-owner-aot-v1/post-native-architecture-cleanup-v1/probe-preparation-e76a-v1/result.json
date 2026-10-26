@@ -1,0 +1,100 @@
+{
+  "schema": "mech.native-compiler-probe-run.v1",
+  "status": "prepared",
+  "scope": "compiler/kernel diagnostics",
+  "performance_qualified": false,
+  "primary_timing_samples": 0,
+  "source_workspace": "/private/tmp/mech-post-native-cleanup",
+  "source_before": {
+    "commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+    "tree": "2f91833582d6130905bec6c651508b2778e22da8",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "requested_commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+  "probes": [
+    "window-kernel",
+    "histogram-kernel",
+    "window-region"
+  ],
+  "runner": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/run.py",
+    "sha256": "82c9afc41b095e26ccc63f0010240af1153b174afb5f79599eec4fa9f3ea7321"
+  },
+  "manifest": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes.json",
+    "sha256": "c3d038d673eb091fd755d14a47b558c7ccf9609c5557f390726d86e5fb56da72"
+  },
+  "controller": {
+    "path": "/private/tmp/benchmarks-native-consolidation/experiments/janet/knucleotide-bytes-v1/process.py",
+    "sha256": "e0c6c1260af4900cd4b307252b54461b3f7cee90e2c102ec157d9b1429a5ce3b"
+  },
+  "supervisor": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/qualification/prolog_supervisor.py",
+    "sha256": "5458bdf5e58465cb21156a2140657066b4706aa2a0941fe3efde8758207574b4"
+  },
+  "inputs": {},
+  "checkout_before": {
+    "commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+    "tree": "2f91833582d6130905bec6c651508b2778e22da8",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "overlays": [
+    {
+      "probe": "window-kernel",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/window-kernel.rs",
+        "sha256": "93bc1c7597b6660077e25bf2cf16c822232d4228eccb6f2c70a32e0a56cfa160"
+      },
+      "before_sha256": "ba80406f8afe7d5462d46cfe0dc37643affa9cef2b1fcbb7cbe4cf8472ba7877",
+      "after_sha256": "e0d99448108fb8f5fec0d05384df029fca006d83aa6c2140877321bedee08222",
+      "test": "native_artifact::program::codegen::window::tests::measure_compiled_window_query_kernel_only"
+    },
+    {
+      "probe": "histogram-kernel",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/histogram-kernel.rs",
+        "sha256": "57044db09fad704773e6a1f54315763e8ed6cbd3c23157ba7b478f7751f5a596"
+      },
+      "before_sha256": "44509b8d3ad06fb50515928d0ecd2e75eabf69c7f9eb6bc5ec5bd6b1f391b8f7",
+      "after_sha256": "621a295145db32952d68d6cb878fbd8d1786276323d802b44e38ce2a59585109",
+      "test": "native_artifact::program::codegen::window::tests::histogram_tests::measure_compiled_histogram_kernel_only"
+    },
+    {
+      "probe": "window-region",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/tests/support/canonical_program_window_round.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/window-region.rs",
+        "sha256": "f62e2b204e5db990690a1af7b6d8f0022507f6a3b4d65d23213efb1351638e78"
+      },
+      "before_sha256": "4b74f37480b4c54133b5a3cd4fb7d878934cb76dac828334cdcdf74539cbf003",
+      "after_sha256": "7e6161a907ebb744349f049cd0cecd19da472ec7e8b866287563cc55b40ead6b",
+      "test": "window_round_qualification::inspect_complete_window_query_compiler_region"
+    }
+  ],
+  "checkout_overlay": {
+    "commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+    "tree": "2f91833582d6130905bec6c651508b2778e22da8",
+    "status": " M hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs\n M hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs\n M hosts/gpu/tests/support/canonical_program_window_round.rs\n",
+    "diff_sha256": "aff46ef4a35390201efc6622779db1b15ad95689755fbc4e07574271bef1555d"
+  },
+  "source_after": {
+    "commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+    "tree": "2f91833582d6130905bec6c651508b2778e22da8",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "checkout_after": {
+    "commit": "e76a4ebb33545875e87beeb1a55259317b1bec38",
+    "tree": "2f91833582d6130905bec6c651508b2778e22da8",
+    "status": " M hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs\n M hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs\n M hosts/gpu/tests/support/canonical_program_window_round.rs\n",
+    "diff_sha256": "aff46ef4a35390201efc6622779db1b15ad95689755fbc4e07574271bef1555d"
+  },
+  "process_evidence": {}
+}

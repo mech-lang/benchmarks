@@ -4,7 +4,7 @@ import argparse
 import fcntl
 import uuid
 from pathlib import Path
-from study import HERE,process,read,source_state,subjects,inputs
+from study import HERE,STUDY_ID,process,read,read_plan,source_state,subjects,inputs,runtime_environment
 
 
 def allocate_output(run_id):
@@ -41,12 +41,12 @@ def main():
     parser.add_argument('--run-id',default=uuid.uuid4().hex)
     args=parser.parse_args()
     all_targets,pins,f,i=subjects();targets={s:all_targets[s] for s in ['F','I']}
-    before=source_state();plan=read(HERE/'plan.json');_,policy,_=inputs()
+    before=source_state();plan=read_plan();_,policy,_=inputs()
     motif='GGTATTTTAATTTATAGT';rng=random_bases(8193,0x75d5b70ad086419f)
     cases=[('one-key-short','a'*31,7),('query-boundaries',motif*59+'ACGTT',11),('random-single-row',rng,8193),('random-short-rows',rng,1),('random-ordinary-rows',rng,60),('growth-and-partial-credit',random_bases(65541,0xb797f4f25f1c90ed),131),('repeated-wide-key',(motif*4000)[:65539],59)]
     out=allocate_output(args.run_id)
-    env=i['environment']
-    report=dict(status='checking',source=before,driver_sha256=process.sha(Path(__file__)),pins={s:pins[s] for s in targets},cases=[],benchmark_samples=0,scope='Fourteen exact F/I AOT processes, seven changed FASTA inputs, direct Python string-window oracle; correctness only.')
+    env=runtime_environment(plan)
+    report=dict(status='checking',study_id=STUDY_ID,source=before,driver_sha256=process.sha(Path(__file__)),pins={s:pins[s] for s in targets},cases=[],benchmark_samples=0,scope='Fourteen exact F/I AOT processes, seven changed FASTA inputs, direct Python string-window oracle; correctness only.')
     process.save(out/'results.json',report)
     mutex=Path(plan['common_mutex']);assert mutex.is_file() and mutex.stat().st_ino==83858837
     with mutex.open('r+') as lock:

@@ -15,6 +15,16 @@ SPEC.loader.exec_module(runner)
 
 
 class ProbeRunnerTests(unittest.TestCase):
+    def test_compiler_profile_enables_host_gated_kernel_modules(self):
+        probes = json.loads((HERE / "probes.json").read_text())["probes"]
+        targets = sorted({probe["target"] for probe in probes.values()})
+        command = runner.compile_command(Path("/cargo"), "nightly-2026-03-03", targets)
+        # window/mod.rs gates both kernel probes on this profile, not program alone.
+        self.assertIn("canonical-native-program-host", command[command.index("--features") + 1].split(","))
+        self.assertIn("--lib", command)
+        self.assertEqual(command[command.index("--test") + 1], "canonical_artifact_program")
+        self.assertIn("--no-run", command)
+
     def test_stage_rejects_exit_zero_with_incomplete_cleanup_or_deadline_error(self):
         success = {"exit_status": 0, "cleanup_errors": [], "group_closed": True, "reaped": True}
         process = Mock()
@@ -37,19 +47,23 @@ class ProbeRunnerTests(unittest.TestCase):
         self.assertNotIn("usage:", result.stdout)
 
     def test_removed_probe_is_installed_once_with_local_imports(self):
-        spec = json.loads((HERE / "probes.json").read_text())["probes"]["window-kernel"]
-        with tempfile.TemporaryDirectory() as directory:
-            root = Path(directory)
-            target = root / spec["target_file"]
-            target.parent.mkdir(parents=True)
-            target.write_text("// Existing correctness support remains here.\n")
-            report = runner.install_probe(root, "window-kernel", spec)
-            self.assertEqual(report["mode"], "test-overlay")
-            self.assertTrue(target.read_text().startswith("// Existing correctness support remains here."))
-            self.assertIn("use std::{hint::black_box, time::Instant};", target.read_text())
-            # A second install cannot silently accept a body different from the archive.
-            with self.assertRaisesRegex(ValueError, "differs from the archived"):
-                runner.install_probe(root, "window-kernel", spec)
+        probes = json.loads((HERE / "probes.json").read_text())["probes"]
+        for name, spec in probes.items():
+            with self.subTest(probe=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                target = root / spec["target_file"]
+                target.parent.mkdir(parents=True)
+                target.write_text("// Existing correctness support remains here.\n")
+                report = runner.install_probe(root, name, spec)
+                self.assertEqual(report["mode"], "test-overlay")
+                self.assertTrue(target.read_text().startswith("// Existing correctness support remains here."))
+                required_import = ("use mech_engine::native_artifact::NativeCollectionResult;"
+                                   if name == "window-region" else
+                                   "use std::{hint::black_box, time::Instant};")
+                self.assertIn(required_import, target.read_text())
+                # A second install cannot silently accept a body different from the archive.
+                with self.assertRaisesRegex(ValueError, "differs from the archived"):
+                    runner.install_probe(root, name, spec)
 
     def test_original_is_preserved_and_changed_existing_probe_is_rejected(self):
         spec = json.loads((HERE / "probes.json").read_text())["probes"]["window-region"]

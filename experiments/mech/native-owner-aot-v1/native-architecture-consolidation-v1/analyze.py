@@ -1,7 +1,6 @@
 """Statistical acceptance only; this module cannot qualify campaign evidence."""
 import json, math, random, statistics, sys
 from pathlib import Path
-HERE = Path(__file__).resolve().parent
 
 def analyze(report, plan):
     rows = report['samples']
@@ -36,7 +35,8 @@ def analyze_sessions(reports, plan):
                 scope='Statistics only. Source, prerequisite gates and owned-process evidence require separate validation before any performance claim.')
 
 if __name__ == '__main__':
-    plan = json.loads((HERE/'plan.json').read_text())
+    from study import HERE, read_plan
+    plan = read_plan()
     assert len(sys.argv) == 3, 'Supply both complete session receipts.'
     result = analyze_sessions([json.loads(Path(p).read_text()) for p in sys.argv[1:]], plan)
     (HERE/'analysis.json').write_text(json.dumps(result, indent=2)+'\n')

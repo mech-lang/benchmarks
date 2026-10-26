@@ -1,12 +1,13 @@
 """The predeclared 192-process F/I/W/R campaign; no warmups or exclusions."""
 from collections import Counter
-import fcntl,json,statistics,subprocess
+import fcntl,json,statistics,subprocess,sys
 from pathlib import Path
-from study import HERE,ROOT,process,read,source_state,subjects,inputs,check_native
-from campaign import prerequisites
+from study import HERE,ROOT,STUDY_ID,process,read,read_plan,source_state,subjects,inputs,check_native,runtime_environment
+from campaign import prerequisites, committed_before_sampling
 
 def main():
-    plan=read(HERE/'plan.json');targets,pins,f,i=prerequisites(plan);before=source_state()
+    if len(sys.argv)!=1:raise ValueError('Only the shared --study option is accepted by measure.py')
+    plan=read_plan();targets,pins,f,i=prerequisites(plan);before=source_state()
     assert plan['final_compiler_source']==before['commit'] and plan['subject_pins']==pins
     assert plan['status']=='frozen-before-first-primary-sample'
     gate=read(HERE/'qualification.json')
@@ -24,14 +25,15 @@ def main():
         adjacent=Counter((a,b) for row in orders for a,b in zip(row,row[1:]));assert len(adjacent)==12 and set(adjacent.values())=={6}
     git=lambda *a:subprocess.check_output(['git','-C',str(ROOT),*a],text=True).strip()
     revision=git('rev-parse','HEAD');assert not git('status','--porcelain')
-    inp,policy,data=inputs();env=i['environment']
+    committed_before_sampling(revision,plan)
+    inp,policy,data=inputs();env=runtime_environment(plan)
     mutex=Path(plan['common_mutex']);assert mutex.is_file() and mutex.stat().st_ino==83858837
     with mutex.open('r+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)
         for session in [1,2]:
             out=HERE/f'primary-session-{session}';out.mkdir(exist_ok=False)
             orders=plan[f'session_{session}']
-            report=dict(status='running',source=before,evidence_revision=revision,session=session,orders=orders,pins=pins,plan_sha256=process.sha(HERE/'plan.json'),driver_sha256=process.sha(Path(__file__)),controller_sha256=process.sha(ROOT/'experiments/janet/knucleotide-bytes-v1/process.py'),input_sha256=plan['input_sha256'],policy_sha256=plan['policy_sha256'],canonical_data_sha256=plan['canonical_data_sha256'],source_sha256=plan['source_sha256'],bytecode_sha256=plan['bytecode_sha256'],excluded_warmups=0,excluded_outliers=0,samples=[],scope='Complete secured startup through exit, exact retained controls, fixed balanced serial orders, all observations retained.')
+            report=dict(status='running',study_id=STUDY_ID,source=before,evidence_revision=revision,session=session,orders=orders,pins=pins,plan_sha256=process.sha(HERE/'plan.json'),driver_sha256=process.sha(Path(__file__)),controller_sha256=process.sha(ROOT/'experiments/janet/knucleotide-bytes-v1/process.py'),input_sha256=plan['input_sha256'],policy_sha256=plan['policy_sha256'],canonical_data_sha256=plan['canonical_data_sha256'],source_sha256=plan['source_sha256'],bytecode_sha256=plan['bytecode_sha256'],excluded_warmups=0,excluded_outliers=0,samples=[],scope='Complete secured startup through exit, exact retained controls, fixed balanced serial orders, all observations retained.')
             process.save(out/'results.json',report)
             for index,order in enumerate(orders):
                 for position,subject in enumerate(order):

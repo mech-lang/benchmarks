@@ -1,28 +1,58 @@
-"""Evidence checks for this one predeclared complete-process campaign."""
+"""Shared evidence checks for the two separately predeclared campaigns."""
 import hashlib
 import math
 import subprocess
 from pathlib import Path
-from study import HERE, ROOT, RETAINED, process, read, source_state, subjects, inputs, check_native
+from study import (HERE, CODE_DIR, ROOT, RETAINED, STUDY_ID, process, read, source_state,
+                   subjects, inputs, check_native, build_receipt_path, runtime_environment)
 
 COMPLETE = 'all-96-complete-processes-output-counters-pins-and-cleanup-verified'
 CONTROLLER = 'experiments/janet/knucleotide-bytes-v1/process.py'
-CORRECTNESS = {
-    'none-check', 'none-tree', 'scalar-runtime-check', 'scalar-runtime-tree',
-    'program-runtime-check', 'program-runtime-tree', 'host-runtime-check',
-    'host-runtime-tree', 'scalar-compiler-check', 'program-compiler-check',
+CORRECTNESS_TESTS = {
     'native-unit', 'native-facts', 'native-lines', 'worker-credit', 'native-catalog',
     'scalar-integration', 'program-integration', 'scalar-unit', 'native-source-lowering',
     'source-contracts', 'source-applications', 'source-assignment', 'benchmark-policy-unit',
+    'resident-factory-attachment', 'native-collection-templates', 'native-set-conversion',
+    'native-kind-conversion', 'native-annotation-conversion', 'source-set-conversion',
+    'source-kind-conversion', 'source-annotation-conversion', 'native-semantics',
+    'iteration-proofs', 'program-runtime-unit', 'program-prefix-unit',
+    'program-prefix-window-unit', 'program-prefix-retention-unit',
+    'native-source-integration', 'canonical-host-reference', 'canonical-cli-byte-contracts',
+    'maintained-hosted-runner',
+}
+CORRECTNESS = CORRECTNESS_TESTS | {
+    'none-check', 'none-tree', 'scalar-runtime-check', 'scalar-runtime-tree',
+    'program-runtime-check', 'program-runtime-tree', 'host-runtime-check',
+    'host-runtime-tree', 'scalar-compiler-check', 'program-compiler-check',
     'format', 'unsafe', 'unsafe-contract', 'runtime-factory-safety',
     'build-analysis-layout', 'warning-policy', 'module-layout', 'planning-quarantine',
     'workflow-contracts', 'process-contracts',
 }
-PROCESS_TESTS = {
-    'canonical-cli-unit-contracts', 'canonical-cli-public-qualification',
-    'canonical-hosted-contracts', 'canonical-hosted-linked', 'canonical-policy-kernel',
-    'canonical-policy-contracts', 'canonical-policy-linked',
+LINKED_PROCESS_TESTS = {
+    'canonical-hosted-linked': 'linked::complete_original_and_decoded_knucleotide_linked_processes_are_secured_and_pinned',
+    'canonical-policy-linked': 'linked::benchmark::complete_original_and_decoded_knucleotide_same_binary_policy_controls',
+    'canonical-scalar-linked': 'linked_canonical_artifact_scalar_applications_are_typed_bounded_and_atomic',
+    'canonical-cast-linked': 'linked_canonical_artifact_cast_applications_preserve_checked_boundaries',
+    'canonical-match-linked': 'linked_canonical_match_applications_are_lazy_bounded_and_atomic',
+    'canonical-iteration-linked': 'linked_qualification::one_linked_iteration_executable_preserves_exact_typed_loops_and_denials',
+    'canonical-program-linked': 'linked_qualification::linked_managed_programs_preserve_canonical_outputs_errors_and_denials',
+    'native-source-host-linked': 'one_linked_executable_runs_secure_and_trusted_without_rebuilding',
+    'native-source-control-linked': 'one_linked_control_executable_preserves_signed_machine_outputs',
+    'native-source-stdin-linked': 'one_linked_stdin_executable_preserves_unicode_snapshots_and_launch_policy',
+    'canonical-resident-cli-linked': 'linked_canonical_cli_arguments_and_stdin_finish_without_drivers',
 }
+PROCESS_TESTS = set(LINKED_PROCESS_TESTS) | {
+    'canonical-cli-unit-contracts', 'canonical-cli-public-qualification',
+    'canonical-hosted-contracts', 'canonical-policy-kernel', 'canonical-policy-contracts',
+}
+TEST_MINIMUMS = dict.fromkeys(CORRECTNESS_TESTS | PROCESS_TESTS, 1)
+TEST_MINIMUMS.update({
+    'canonical-cli-unit-contracts': 5, 'canonical-cli-public-qualification': 3,
+    'canonical-policy-kernel': 13, 'benchmark-policy-unit': 13,
+})
+# Multi-package filters and the maintained runner's empty doc-test target are
+# legitimate companions. An empty selected integration suite is not.
+EMPTY_COMPANION_STAGES = {'native-unit', 'native-catalog', 'maintained-hosted-runner'}
 
 
 def contained(path):
@@ -37,18 +67,50 @@ def evidence(ref):
     return read(path)
 
 
+def required_controller_paths():
+    return {str((CODE_DIR / name).relative_to(ROOT)) for name in
+            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py']} | {CONTROLLER}
+
+
+def check_controllers(plan):
+    assert required_controller_paths() <= set(plan['controller_pins'])
+    for path, digest in plan['controller_pins'].items():
+        assert not Path(path).is_absolute() and (ROOT / path).resolve().is_relative_to(ROOT.resolve()), path
+        assert process.sha(ROOT / path) == digest, path
+
+
 def stages(rows, head, required):
     assert len({row['stage'] for row in rows}) == len(rows)
     assert required <= {row['stage'] for row in rows}
     for row in rows:
-        assert row['head'] == head and row['exit_code'] == 0, row['stage']
-        if row['counts']:
-            assert sum(int(count[0]) for count in row['counts']) > 0, row['stage']
-            assert all(int(count[1]) == 0 for count in row['counts']), row['stage']
+        name = row['stage']
+        assert row['head'] == head and row['exit_code'] == 0, name
+        counts = []
+        for count in row['counts']:
+            assert len(count) == 3, name
+            assert all(type(value) is int or isinstance(value, str) and value.isdecimal()
+                       for value in count), name
+            values = tuple(map(int, count))
+            assert all(value >= 0 for value in values), name
+            counts.append(values)
+        if counts:
+            assert sum(count[0] for count in counts) > 0, name
+            assert all(count[1] == 0 for count in counts), name
+        if name in TEST_MINIMUMS:
+            assert sum(count[0] for count in counts) >= TEST_MINIMUMS[name], name
+            if name not in EMPTY_COMPANION_STAGES:
+                assert all(count[0] > 0 for count in counts), name
+        if name in LINKED_PROCESS_TESTS:
+            command = row['command']
+            assert '--list' not in command and '--no-run' not in command, name
+            assert command.count('--ignored') == command.count('--exact') == 1, name
+            assert command[command.index('--exact') + 1] == LINKED_PROCESS_TESTS[name], name
+            assert counts == [(1, 0, 0)], name
     return {row['stage']: row for row in rows}
 
 
 def prerequisites(plan):
+    assert plan['study_id'] == STUDY_ID
     assert plan['status'] == 'frozen-before-first-primary-sample'
     targets, pins, f, i = subjects()
     assert source_state() == f['source'] and not f['source']['status']
@@ -56,6 +118,7 @@ def prerequisites(plan):
     assert plan['implementation_base'] == i['source']['commit'] and not i['source']['status']
     assert source_state(Path(i['workspace'])) == i['source']
     assert plan['subject_pins'] == pins
+    runtime_environment(plan)
     controls = read(HERE / 'retained-controls.json')
     assert process.sha(Path(controls['W']['object_path'])) == controls['W']['object_sha256']
     rust = controls['R']
@@ -72,26 +135,16 @@ def prerequisites(plan):
     block = [['F','I','R','W'], ['I','W','F','R'], ['W','R','I','F'], ['R','F','W','I']]
     assert plan['session_1'] == block * 6 and plan['session_2'] == list(reversed(block * 6))
     inputs()
-    for name in ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py']:
-        assert str((HERE / name).relative_to(ROOT)) in plan['controller_pins']
-    assert CONTROLLER in plan['controller_pins']
-    for path, digest in plan['controller_pins'].items():
-        assert process.sha(ROOT / path) == digest, path
+    check_controllers(plan)
     gate = read(HERE / 'qualification.json')
     assert process.sha(HERE / 'qualification.json') == plan['qualification_sha256']
     assert gate['source'] == f['source'] and gate['baseline_source'] == i['source']
     assert gate['proceed_to_primary'] is True
     checks = gate['checks']
-    rows = stages(evidence(checks['correctness']), f['source']['commit'], CORRECTNESS)
-    for name in ['native-unit','native-facts','native-lines','worker-credit','native-catalog',
-                 'scalar-integration','program-integration','scalar-unit','native-source-lowering',
-                 'source-contracts','source-applications','source-assignment','benchmark-policy-unit']:
-        assert rows[name]['counts'], name
-    rows = stages(evidence(checks['generated_processes']), f['source']['commit'], PROCESS_TESTS)
-    assert all(rows[name]['counts'] for name in PROCESS_TESTS)
-    baseline = stages(evidence(checks['baseline_correctness']), i['source']['commit'],
-                      {'native-unit', 'native-facts', 'native-lines', 'worker-credit', 'native-catalog'})
-    assert all(row['counts'] for row in baseline.values())
+    stages(evidence(checks['correctness']), f['source']['commit'], CORRECTNESS)
+    stages(evidence(checks['generated_processes']), f['source']['commit'], PROCESS_TESTS)
+    stages(evidence(checks['baseline_correctness']), i['source']['commit'],
+           {'native-unit', 'native-facts', 'native-lines', 'worker-credit', 'native-catalog'})
     changed = evidence(checks['changed_inputs'])
     assert changed['status'] == 'seven-independent-oracles-and-fourteen-pinned-AOT-executions-verified'
     assert changed['source'] == changed['source_after'] == f['source']
@@ -123,12 +176,16 @@ def prerequisites(plan):
 
 
 def committed_before_sampling(revision, plan):
-    files = ['plan.json', 'qualification.json', 'retained-controls.json', plan['baseline_receipt'], plan['candidate_receipt']]
+    files = ['plan.json', 'qualification.json', 'retained-controls.json']
     checks = read(HERE / 'qualification.json')['checks']
     files += [ref['path'] for ref in checks.values()]
     for name in ['guest_code', 'representative_objects']:
         files += [row[subject + '_file'] for row in evidence(checks[name])['files'] for subject in ('F','I')]
-    paths = [str((HERE / name).relative_to(ROOT)) for name in files] + list(plan['controller_pins'])
+    receipts = [build_receipt_path(plan['baseline_receipt'], shared=True),
+                build_receipt_path(plan['candidate_receipt']),
+                build_receipt_path(plan['runtime_environment_receipt'], shared=True)]
+    paths = [str(path.relative_to(ROOT)) for path in [*(contained(name) for name in files), *receipts]]
+    paths += list(plan['controller_pins'])
     for path in paths:
         blob = subprocess.check_output(['git','-C',str(ROOT),'show',revision + ':' + path])
         assert hashlib.sha256(blob).hexdigest() == process.sha(ROOT / path), path
@@ -176,12 +233,13 @@ def validate_reports(reports, plan):
     identities = set()
     for report in reports:
         session = report['session']
+        assert report['study_id'] == STUDY_ID
         assert report['status'] == COMPLETE and len(report['samples']) == 96
         assert report['source'] == report['source_after'] == f['source']
         assert report['pins'] == pins and report['orders'] == plan[f'session_{session}']
         assert report['excluded_warmups'] == report['excluded_outliers'] == 0
         assert report['plan_sha256'] == process.sha(HERE / 'plan.json')
-        assert report['driver_sha256'] == process.sha(HERE / 'measure.py')
+        assert report['driver_sha256'] == process.sha(CODE_DIR / 'measure.py')
         assert report['controller_sha256'] == plan['controller_pins'][CONTROLLER]
         for key in ['input_sha256','policy_sha256','canonical_data_sha256','source_sha256','bytecode_sha256']:
             assert report[key] == plan[key]
