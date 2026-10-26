@@ -1,0 +1,74 @@
+ 1:  224b139de =  1:  690361397 test(runtime): keep live control flow independent of planning examples
+ 2:  ec191c94d =  2:  bbb152c4c feat(engine): add maintained U64 word operations and native lowering
+ 3:  dd7c53173 =  3:  5aa2bf670 feat(engine): select checked unsigned word conversions in native programs
+ -:  --------- >  4:  41f5cdcef Inventory unsafe test boundaries introduced by PR 915
+ 4:  838665e80 =  5:  5e89c69dc Compile FSM-local buffer updates as pure versioned values
+ -:  --------- >  6:  967c10803 Inventory unsafe test boundaries introduced by PR 916
+ 5:  724c8eadf =  7:  c8246049d Compile tuple FSM kernels and qualify DEFLATE Huffman
+ -:  --------- >  8:  d1a727fc0 Inventory unsafe test boundaries introduced by PR 917
+ 6:  34c8532c1 =  9:  af7a11188 Keep selected U64 buffer reads in native scalar storage
+ -:  --------- > 10:  81e08ab96 Inventory unsafe test boundaries introduced by PR 918
+ 7:  9acfcd1c5 = 11:  0b46793f9 Keep narrow unsigned values and checked casts in native words
+ -:  --------- > 12:  1c4e976f6 Inventory unsafe test boundaries introduced by PR 919
+ 8:  6c706422c = 13:  18eaddcbc Enable unary matrix broadcasts and port DEFLATE matchfinder helpers
+ 9:  0118db6e6 = 14:  475bb67de Support runtime-shaped unsigned buffer tuple construction
+10:  d3d7ca9e7 = 15:  a4cab246d Exercise dynamic tuple binding across repeated generated visits
+ -:  --------- > 16:  29907cf42 Inventory unsafe test boundaries introduced by PR 921
+11:  aa4bd9e5e = 17:  86fcb593d Compile ordinary tail recursion over runtime-shaped unsigned buffers
+ -:  --------- > 18:  afff8e40b Inventory unsafe test boundaries introduced by PR 922
+12:  f4bd1a13a = 19:  9c491373b Lower nested tail calls to their lexical native loop
+13:  ef8b5e799 = 20:  d1a333f91 Support recursive statement functions and bounded deeper control
+14:  7da93d0d5 = 21:  13a105487 Port pinned Roc binary-tree search and skip to Mech
+15:  fd2ae5058 = 22:  84f358bff Preserve lexical invariants in checked function and control visits
+16:  0b20a5105 = 23:  f7768ec88 Keep transitive function checks in lexical invocation order
+17:  3c4dce2da = 24:  9c85f4bb5 Record lexical assertion failures in the resident coordinator
+18:  52d5ffd4d = 25:  03c9ae5e4 Qualify recorded and linked lexical assertion recovery
+19:  964eafc8f = 26:  e7e62d824 Regenerate executable fixtures for canonical graph revision 14
+20:  c12fe376e = 27:  b1a8291dc Migrate remaining frozen graphs and qualify all fixture consumers
+21:  640595327 = 28:  94e529038 Keep ordinary checked argument kinds in lexical capture frames
+22:  7be13e069 = 29:  99d2d7c0b Reject native identities from either preceding compiler branch
+ -:  --------- > 30:  cb804670c Inventory unsafe test boundaries introduced by PR 926
+23:  58673f708 = 31:  986dc624a Align collection and assignment factory feature gates
+24:  385df423e = 32:  8ab648c62 Keep canonical word codecs independent of wider integer features
+25:  cf9e13902 = 33:  e9d8b8303 Classify maintained word and map factories in catalog inventories
+26:  f39eee5cb = 34:  0a0fd0be0 Format the published compiler stack with the pinned toolchain
+27:  caedab593 = 35:  c6d83e35b Refresh distribution snapshots while preserving predecessor catalog identities
+28:  f02b64dae = 36:  8d59fa2a0 Declare inherited native execution audit boundaries
+29:  71e3f5ede = 37:  b2406ccca Update the inherited recursive function compilation contract
+30:  acc6a287f ! 38:  f0e15aab9 Consolidate overlapping native safety inventory declarations
+    @@ scripts/unsafe-boundaries.allowlist
+     -hosts/gpu/tests/support/canonical_program_ordinary_recursion.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing ordinary recursion descriptor regression coverage
+     -hosts/gpu/tests/support/canonical_program_unsigned_conversion.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing unsigned conversion descriptor regression coverage
+     -hosts/gpu/tests/support/canonical_program_word_reads.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing word reads descriptor regression coverage
+    --hosts/gpu/tests/support/canonical_program_lexical_invariants.rs|native-build-image-test|mech-gpu|the unchanged descriptor comes from the retained checked JIT build and is inspected without granting authority to foreign code; ordinary catalog and ABI validation remains mandatory|lexical assertion descriptor roundtrip coverage
+    --hosts/gpu/src/native_artifact/lexical_integrity_status_tests.rs|native-integrity-status-test-entry|mech-gpu|each synchronous call uses the entry owned by the retained JIT and the frame admitted from that same descriptor; only its returned status is forged after the call|test-only verification that arithmetic errors cannot acquire integrity or rejection authority
+    + hosts/gpu/tests/support/canonical_program_lexical_invariants.rs|native-build-image-test|mech-gpu|the unchanged descriptor comes from the retained checked JIT build and is inspected without granting authority to foreign code; ordinary catalog and ABI validation remains mandatory|lexical assertion descriptor roundtrip coverage
+    + hosts/gpu/src/native_artifact/lexical_integrity_status_tests.rs|native-integrity-status-test-entry|mech-gpu|each synchronous call uses the entry owned by the retained JIT and the frame admitted from that same descriptor; only its returned status is forged after the call|test-only verification that arithmetic errors cannot acquire integrity or rejection authority
+      hosts/gpu/src/native_artifact/program/image/decode/mod.rs|native-build-descriptor-loader|mech-gpu|restored descriptor metadata remains confined until source bytecode image and linked Object pins establish the same unchanged checked build; ordinary ABI identity admission visits and resource policy remain mandatory|explicit unsafe metadata restoration contract
+    - hosts/gpu/src/native_artifact/program/image/wire/mod.rs|native-build-descriptor-wire|mech-gpu|private wire readers are reachable only through the unsafe descriptor loader and inherit its unchanged checked Object confinement; selected library factories are validated against the actual catalog|private descriptor proof reconstruction
+    - hosts/gpu/src/native_artifact/program/codegen/string_map/tests.rs|native-string-map-test-entry|mech-gpu|the retained JIT module owns the exact five-word entry signature; initialized table and bounded input output buffers outlive each synchronous call; in-place tests retain exclusive ownership without aliased Rust references|differential scalar and SIMD map kernel tests
+    -@@ scripts/unsafe-boundaries.allowlist: hosts/gpu/src/native_artifact/program/runtime/invocation/mod.rs|canonical-native
+    - hosts/gpu/src/native_artifact/program/runtime/hooks.rs|canonical-native-program-invocation|mech-gpu|callbacks borrow one exclusive short-lived session context and disjoint admitted lanes for each synchronous phase; current-site exact-once registered-pointer exact-arity capacity and zero-managed-word checks guard every helper read while native execution is suspended; no Rust lane reference spans native writes and outputs publish only after full success on the same finite account|canonical mixed-value typed transport and maintained leaf callback boundary
+    - hosts/gpu/src/native_artifact/program/runtime/mod.rs|canonical-native-program-invocation|mech-gpu|callbacks borrow one exclusive short-lived session context and disjoint admitted lanes for each synchronous phase; current-site exact-once registered-pointer exact-arity capacity and zero-managed-word checks guard every helper read while native execution is suspended; no Rust lane reference spans native writes and outputs publish only after full success on the same finite account|canonical mixed-value typed transport and maintained leaf callback boundary
+    - hosts/gpu/src/native_artifact/program/runtime/invocation/map_calls.rs|native-map-owner-lane|mech-gpu|descriptor operands and the exact admitted pointer and capacity are checked before copying at most three initialized words while generated execution is suspended|retained map source-call transport boundary
+    -+hosts/gpu/src/native_artifact/compiler/narrow_scalar_tests.rs|native-narrow-entry-test|mech-gpu|the retained JIT owns the exact entry ABI and disjoint live frames; malformed words and simulated output lanes stay inside the admitted test frame|narrow-width admission and atomic publication rejection probes
+    -+hosts/gpu/tests/support/canonical_program_dynamic_buffers.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing dynamic buffers descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_dynamic_projection_admission.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing dynamic projection admission descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_huffman.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing huffman descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_local_buffers.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing local buffers descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_ordinary_recursion.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing ordinary recursion descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_unsigned_conversion.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing unsigned conversion descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_word_reads.rs|native-build-image-test|mech-gpu|unchanged descriptor metadata comes from this exact checked build and remains confined to its retained owner; malformed catalogs are rejection probes and no foreign executable is paired|existing word reads descriptor regression coverage
+    -+hosts/gpu/tests/support/canonical_program_lexical_invariants.rs|native-build-image-test|mech-gpu|the unchanged descriptor comes from the retained checked JIT build and is inspected without granting authority to foreign code; ordinary catalog and ABI validation remains mandatory|lexical assertion descriptor roundtrip coverage
+    -+hosts/gpu/src/native_artifact/lexical_integrity_status_tests.rs|native-integrity-status-test-entry|mech-gpu|each synchronous call uses the entry owned by the retained JIT and the frame admitted from that same descriptor; only its returned status is forged after the call|test-only verification that arithmetic errors cannot acquire integrity or rejection authority
+31:  2019ad945 = 39:  393677626 Measure allocations in ordinary checked function argument frames
+32:  fe9a8da92 = 40:  bb69bc0e1 Borrow immutable arguments in nonrecursive checked function frames
+33:  21b6a770d = 41:  6acd9e08b Preserve structural carriers for checked runtime-shaped tuple arguments
+34:  7156a5256 = 42:  380954dd4 Reproduce checked self-recursion through application stages
+35:  590a7e58d = 43:  8973778d4 Allow normal setup work in the bounded Boolean regression
+36:  e9c61ff9b = 44:  5b2c319f1 Recognize self-calls in application stages before binding function frames
+37:  2b4707c6b = 45:  334d21d3f Construct the checked tuple argument from ordinary shaped source inputs
+38:  8786bf23e = 46:  f71cc3673 Keep Boolean recursion coverage in its dedicated follow-up PR
+39:  cc93a1ff5 = 47:  b1aa4c9e5 Exercise assertion status regressions in the scalar native profile
+40:  b6fb34b6a = 48:  bbaed35e5 Preserve whole-word zero defaults in matchfinder reads
+41:  8fdc971f4 = 49:  e1feadf43 Qualify fresh Boolean arguments in checked application recursion

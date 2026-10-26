@@ -23,10 +23,17 @@ receipt in both plans before freezing; do not copy placeholder pins.
 
 The current source candidates are baseline I at
 `ddf8cbc3b17a644ea6292ee3bf0c4a9c63af4514` and architecture F at
-`b05a3f8a81e34b39b625b7e55c1bf90790ca1092`. I includes the verified #934
-test-profile and linkage-inventory repairs. Fresh public builds and complete
-qualification for these candidates are pending; both build-receipt fields are
-null. A launcher qualification dependency repair is also under investigation.
+`a3e805aae775a8aa6bf181714c8cbe7c9e6619e9`. I includes the verified #934
+test-profile and linkage-inventory repairs; F includes the runtime-only launcher
+qualification fixture repair. The fresh baseline public receipt is explicitly
+adopted at `baseline-builds/adopted-ddf8-v1/public-aot.json`, with clean owned
+compiler/AOT exits and bytecode/guest Object matching the retained pins. The
+final architecture candidate is adopted at
+`candidate-builds/adopted-a3e805a-v1/public-aot.json`. Both public builds and all
+14 changed-input executions have clean validated receipts; final qualification
+remains pending. The earlier
+`b05a3f8a81e34b39b625b7e55c1bf90790ca1092` prospective subject remains recorded
+in `plan.json`; zero primary observations have been collected.
 
 `baseline-prerequisites-ddf8-v1/` records the repaired baseline's five prerequisite
 suites: 415 native tests (two existing ignored diagnostics), 82 facts, 30 line,
@@ -44,8 +51,8 @@ are retained as historical evidence.
 `plan.json` predeclares both complete four-subject schedules, paired analysis,
 seed and acceptance policy. `retained-controls.json` verifies the exact W/R
 files and winning object, without rebuilding them. No primary observations
-have been collected. The candidate source pins are recorded; fresh executable pins,
-correctness/process gates and both timing sessions remain required.
+have been collected. Candidate source and executable pins are adopted. Final
+correctness/process/artifact coverage and both timing sessions remain required.
 
 `baseline/public-aot.json` records the actual public CLI build of I, its clean
 source, compiler/environment/executable pins, and owned process receipt. Its
@@ -133,3 +140,39 @@ receipts are hash-checked and included in the committed pre-sampling evidence.
 All primary observations and their raw process files remain confined to the
 selected study. Finish and review shared-controller changes before freezing
 either plan; changing controller files after sampling changes their pins.
+
+`qualification-history/superseded-pre-launcher-repair-v1/` preserves all raw
+logs and terminal evidence from the superseded b05/569 and earlier stack attempts,
+including the controlled interruptions and sandbox cleanup limitation. These
+attempts do not satisfy the final qualification gates.
+
+`secondary-prefix-preparation-v1/` retains the independent oracle, reviewed
+controller source hash and 54 counter validation checks. It contains zero new
+benchmark observations.
+
+## Final build metrics and secondary prefix diagnostic
+
+`public-build-metrics-final-v1.json` records actual pinned executable sizes and
+separate compiler/public AOT build durations, with exact raw receipt references.
+The values retain their original cache and concurrent-build conditions. Retained
+W/R historical build scopes are listed separately in that record.
+
+| Subject | Executable bytes | Compiler build (s) | Public AOT build (s) |
+| --- | ---: | ---: | ---: |
+| F (`a3e805a`) | 5,550,864 | 602.947 | 199.701 |
+| I (`ddf8cbc`) | 5,517,760 | 712.255 | 187.877 |
+
+`secondary-prefix-protocol.json` prospectively pins the original million-base
+THREE input, independently verified exact output, native counters, final F/I/W/R
+executables and unchanged primary policy. The shared `secondary-prefix.py`
+entrypoint validates all four completed primary sessions before it can execute
+its single 16-observation block. It records all observations and per-subject
+medians, without warmups, exclusions, replacement samples or a performance
+acceptance claim. The entrypoint has not been run; prefix time remains pending.
+
+After both primary campaigns validate, use:
+
+```sh
+python3 experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/secondary-prefix.py \
+  --study native-architecture-consolidation-v1
+```

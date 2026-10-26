@@ -6,9 +6,12 @@ This is the primary evidence study for the cleanup following mech-lang/mech
 and build receipt in `../native-architecture-consolidation-v1/` remain historical
 evidence. The actual before subject must be the final repaired #935; the after
 subject must be the cleanup rebased above it. The current source candidates are
-architecture `b05a3f8a81e34b39b625b7e55c1bf90790ca1092` and cleanup
-`569aa84ed0e80c08e954fe39add6f83ab21e5a3a`; fresh public build receipts and
-complete qualification remain pending. Neither candidate has timing evidence.
+architecture `a3e805aae775a8aa6bf181714c8cbe7c9e6619e9` and cleanup
+`870fddede8b6483856134fe4e0235167e8155612`; both final public build receipts are now
+validated and adopted. All 14 cleanup/architecture changed-input executions
+passed their exact-output and raw-process audits; final qualification remains
+pending. The former b05/569 prospective subjects
+remain recorded in `plan.json`. Neither candidate has timing evidence.
 
 `audit/` retains the complete 363-file inventory, exact-body candidates,
 256 resolved default-module paths, 19 inherited feature guards, and original
@@ -36,7 +39,9 @@ study. No historical performance claim is transferred to the new candidate.
 
 `plan.json` is **UNFROZEN**. It retains the original workload/control pins,
 two-session schedule and acceptance policy. Its source candidates are recorded,
-but F/I build receipts remain null. Both studies adopt the same hash-pinned
+and both F/I build receipts are adopted. The before receipt is an immutable
+hash-pinned reference to architecture F; the cleanup candidate receipt stays
+local. Both studies adopt the same hash-pinned
 `runtime-environment-v1.json`. `retained-controls.json`
 is a byte-for-byte snapshot of the same W/R provenance; no control was rebuilt.
 Final correctness, generated-process, changed-input and object evidence must be
@@ -66,3 +71,36 @@ before changed-input checks or primary sampling. This avoids changing the runtim
 because architecture F becomes cleanup I. The shared receipt format and
 pre-sampling commitment rules are documented in the architecture study README.
 Final source/build qualification is pending; no placeholder is executable.
+
+`audit/final-rebase-870fdde-v1/` proves all 113 Rust cleanup patches remained
+byte-identical through the launcher-fixture rebase. The final independent review
+is retained at `audit/final-independent-review-870fdde-v1.json`.
+`audit/downstream-restack-v3/` records the verified local 19-branch stack and its
+preserved original patches/authors; it does not claim remote publication.
+
+## Final build metrics and secondary prefix diagnostic
+
+`public-build-metrics-final-v1.json` records actual pinned executable sizes and
+separate compiler/public AOT build durations, with exact raw receipt references.
+The values retain their original cache and concurrent-build conditions. Retained
+W/R historical build scopes are listed separately in that record.
+
+| Subject | Executable bytes | Compiler build (s) | Public AOT build (s) |
+| --- | ---: | ---: | ---: |
+| F (`870fdde`) | 5,550,864 | 852.457 | 175.230 |
+| I (`a3e805a`) | 5,550,864 | 602.947 | 199.701 |
+
+`secondary-prefix-protocol.json` prospectively pins the original million-base
+THREE input, independently verified exact output, native counters, final F/I/W/R
+executables and unchanged primary policy. The shared `secondary-prefix.py`
+entrypoint validates all four completed primary sessions before it can execute
+its single 16-observation block. It records all observations and per-subject
+medians, without warmups, exclusions, replacement samples or a performance
+acceptance claim. The entrypoint has not been run; prefix time remains pending.
+
+After both primary campaigns validate, use:
+
+```sh
+python3 experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/secondary-prefix.py \
+  --study post-native-architecture-cleanup-v1
+```
