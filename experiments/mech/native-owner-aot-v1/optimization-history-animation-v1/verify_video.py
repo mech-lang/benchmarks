@@ -27,6 +27,11 @@ def main():
     for name, record in manifest["artifacts"].items():
         assert digest(folder / name) == record["sha256"], name
     replay = animation.Replay()
+    assert manifest["runtime_axis_log_base"] == 10
+    first, last = replay.rows[0], replay.rows[-1]
+    assert round(first["seconds"] / last["seconds"]) == 222
+    assert round(100 * (1 - last["seconds"] / first["seconds"]), 2) == 99.55
+    assert round(100 * (last["rust_seconds"] / last["seconds"] - 1)) == 4
     times = [0, 1, 3.25, 4, 12, 27, 42.6, replay.duration - 1]
     indices = {int(round(t * animation.FPS)) for t in times}
     # Verify the first encoded frame of each of the two new winning cohorts.
@@ -72,6 +77,7 @@ def main():
               "individual_points_drawn": replay.verify_motion()["individual_points_drawn"],
               "median_points_visible_at_end": replay.verify_motion()["median_points_visible_at_end"],
               "bottom_caption": manifest["bottom_caption"],
+              "runtime_axis_log_base": manifest["runtime_axis_log_base"],
               "best_fit_medians": fit["fitted_cohorts"],
               "both_winning_cohorts_checked": True,
               "verifier_sha256": digest(Path(__file__))}

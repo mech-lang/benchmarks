@@ -1,13 +1,13 @@
-# Mech’s Guided LLM Optimization Process
+# LLM Optimizes Mech Compiler 222× Over 50 Hours
 
-**50 Hours · 222× Speedup (99.55% Runtime Reduction)**
+**99.55% Runtime Reduction · 4% Faster Than Rust Baseline**
 
 The animation reveals the full-input optimization history above two benchmark
 replay lanes. Mech is blue; Rust is orange. The white-background chart includes
 120 median timing checkpoints: the original 118 cohorts plus both later
 qualified sessions in which Mech beats unchanged Rust. The 732 individual
 process observations remain in the source data and are not drawn. Its
-logarithmic runtime axis, ten annotated changes and line of best fit show the
+base-10 logarithmic runtime axis, ten annotated changes and line of best fit show the
 path from 216× Rust to 0.962× Rust.
 
 [1080p video](media/mech-rust-optimization-timelapse.mp4) ·

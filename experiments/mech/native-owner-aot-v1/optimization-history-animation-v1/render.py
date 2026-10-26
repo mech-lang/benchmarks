@@ -35,8 +35,8 @@ OUTRO_SECONDS = 5.0
 HISTORY_SPEEDUP = 3600.0  # One elapsed optimization hour per video second.
 RUST_TRIP_SECONDS = 1.2  # Separate illustrative clock, identical in both lanes.
 TITLE_LINES = (
-    "Mech’s Guided LLM Optimization Process",
-    "50 Hours · 222× Speedup (99.55% Runtime Reduction)",
+    "LLM Optimizes Mech Compiler 222× Over 50 Hours",
+    "99.55% Runtime Reduction · 4% Faster Than Rust Baseline",
 )
 BLUE = "#176DCA"
 INK = "#1B2B3B"
@@ -90,7 +90,7 @@ def make_base() -> Image.Image:
                        (right - left) / WIDTH, (bottom - top) / HEIGHT])
     ax.set_xlim(0, 54)
     ax.set_ylim(0.5, 320)
-    ax.set_yscale("log")
+    ax.set_yscale("log", base=10)
     ax.xaxis.set_major_locator(FixedLocator(range(0, 55, 6)))
     ax.yaxis.set_major_locator(FixedLocator([0.5, 1, 2, 5, 10, 20, 50, 100, 200]))
     ax.yaxis.set_major_formatter(FuncFormatter(lambda y, _: f"{y:g}×"))
@@ -98,7 +98,7 @@ def make_base() -> Image.Image:
     ax.grid(color="#E4ECF4", linewidth=0.9)
     ax.axhline(1, color="#ACBED0", linestyle=(0, (5, 4)), linewidth=1.2)
     ax.set_xlabel("Elapsed optimization time (hours)", labelpad=15, fontsize=16)
-    ax.set_ylabel("Mech / Rust runtime · log scale", labelpad=22, fontsize=16)
+    ax.set_ylabel("Mech / Rust runtime · log₁₀", labelpad=22, fontsize=16)
     for edge in ["top", "right"]:
         ax.spines[edge].set_visible(False)
     for edge in ["left", "bottom"]:
@@ -342,6 +342,7 @@ def main():
     assert abs(duration - frames / FPS) <= 1 / FPS
     manifest = {"schema": "mech.optimization-history-animation.v2",
         "title": " · ".join(TITLE_LINES),
+        "runtime_axis_log_base": 10,
         "displayed_point_layer": "medians only", "bottom_caption": False,
         "source": str(SOURCE.relative_to(ROOT)), "source_sha256": sha(SOURCE),
         "fit_source": str(FIT_SOURCE.relative_to(ROOT)), "fit_sha256": sha(FIT_SOURCE),
