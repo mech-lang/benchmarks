@@ -5,12 +5,53 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import subprocess
 
 import imageio_ffmpeg
 import numpy as np
 from PIL import Image
 
 import render as animation
+import bounce_audio
+
+
+def verify_audio(folder, replay, manifest, digest):
+    report = json.loads((folder / "bounce-audio.json").read_text())
+    assert digest(Path(bounce_audio.__file__)) == report["synthesizer_sha256"] == manifest["audio"]["synthesizer_sha256"]
+    assert digest(folder / "bounce-soundtrack.flac") == report["soundtrack_sha256"]
+    expected = bounce_audio.bounce_events(replay, fps=animation.FPS, rust_trip_seconds=animation.RUST_TRIP_SECONDS)
+    assert len(expected) == len(report["events"])
+    for event, retained in zip(expected, report["events"]):
+        assert all(retained[k] == v for k, v in event.items())
+        assert abs(retained["sample"] / report["sample_rate"] - event["time_seconds"]) <= .5 / report["sample_rate"]
+    duration = replay.frames / animation.FPS
+    counts = {"Mech": math.floor(replay.phase_at(duration)),
+              "Rust": math.ceil(duration / animation.RUST_TRIP_SECONDS) - 1}
+    assert report["bounces"] == counts == manifest["audio"]["bounces"]
+    decoded = []
+    metadata = ""
+    for name in ["bounce-soundtrack.flac", "mech-rust-optimization-timelapse.mp4"]:
+        result = subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), "-hide_banner", "-v", "info", "-i", str(folder / name),
+            "-map", "0:a:0", "-f", "f32le", "-acodec", "pcm_f32le", "-ac", "2", "-ar", "48000", "pipe:1"],
+            stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=True)
+        decoded.append(np.frombuffer(result.stdout, "<f4").reshape(-1, 2))
+        if name.endswith("mp4"):
+            metadata = result.stderr.decode()
+            assert "Audio: aac" in metadata and "48000 Hz, stereo" in metadata
+    source, encoded = decoded
+    assert len(source) == report["samples"] == round(duration * report["sample_rate"])
+    assert len(source) <= len(encoded) <= len(source) + 1024
+    encoded = encoded[:len(source)]
+    correlation = float(np.corrcoef(source.reshape(-1), encoded.reshape(-1))[0, 1])
+    peak = float(np.abs(encoded).max())
+    rms = float(np.sqrt(np.mean(encoded.astype(np.float64) ** 2)))
+    assert correlation > .98, correlation
+    assert 0 < peak < .17 and 0 < rms < .025
+    return {"codec": "AAC", "sample_rate": report["sample_rate"], "channels": 2,
+            "bounces": counts, "all_contacts_checked": True,
+            "maximum_event_quantization_seconds": .5 / report["sample_rate"],
+            "decoded_peak_dbfs": 20 * math.log10(peak), "decoded_rms_dbfs": 20 * math.log10(rms),
+            "zero_lag_correlation_with_lossless_source": correlation, "clipping": False}
 
 
 def main():
@@ -54,10 +95,10 @@ def main():
             expected = replay.ball_x(phase)
             left, right = max(0, int(expected) - 18), min(animation.WIDTH, int(expected) + 19)
             patch = pixels[y - 15:y + 16, left:right, :]
-            if name == "Mech":
-                mask = (patch[:, :, 0] < 75) & (patch[:, :, 1] > 65) & (patch[:, :, 1] < 155) & (patch[:, :, 2] > 145)
-            else:
-                mask = (patch[:, :, 0] > 150) & (patch[:, :, 1] > 60) & (patch[:, :, 1] < 160) & (patch[:, :, 2] < 110)
+            color = animation.MECH if name == "Mech" else animation.RUST
+            target = np.array([int(color[j:j + 2], 16) for j in [1, 3, 5]])
+            mask = np.max(np.abs(patch.astype(np.int16) - target), axis=2) < 35
+            assert mask.sum() > 350, (name, t, "Ball color missing")
             columns = mask.sum(axis=0)
             observed = left + float(np.average(np.arange(len(columns)), weights=columns))
             error = abs(observed - expected)
@@ -80,6 +121,8 @@ def main():
               "runtime_axis_log_base": manifest["runtime_axis_log_base"],
               "best_fit_medians": fit["fitted_cohorts"],
               "both_winning_cohorts_checked": True,
+              "ball_colors": manifest["ball_colors"],
+              "audio": verify_audio(folder, replay, manifest, digest),
               "verifier_sha256": digest(Path(__file__))}
     assert report["median_points_visible_at_end"] == 120 and report["individual_points_drawn"] == 0
     assert not report["bottom_caption"]

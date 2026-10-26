@@ -22,6 +22,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FixedLocator, FuncFormatter
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from bounce_audio import create_soundtrack
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -39,9 +40,10 @@ TITLE_LINES = (
     "99.55% Runtime Reduction · 4% Faster Than Rust Baseline",
 )
 BLUE = "#176DCA"
+MECH = "#F6C04E"  # Mech logo: rgb(246 192 78).
 INK = "#1B2B3B"
 MUTED = "#53677E"
-RUST = "#C27331"
+RUST = "#DEA584"  # GitHub Linguist's Rust language color.
 FONT = Path(matplotlib.get_data_path()) / "fonts/ttf/DejaVuSans.ttf"
 BOLD = FONT.with_name("DejaVuSans-Bold.ttf")
 FONTS: dict[tuple[int, bool], ImageFont.FreeTypeFont] = {}
@@ -123,8 +125,9 @@ def make_base() -> Image.Image:
     # The replay lanes are separate from the elapsed-hour chart.
     d.rounded_rectangle((55, 791, 1865, 1033), radius=22, fill="#F5F8FC", outline="#E0E8F2", width=1)
     text(d, (83, 805), "BENCHMARK SPEED REPLAY", 16, MUTED, bold=True)
-    for name, y, color in [("Mech", 891, BLUE), ("Rust", 978, RUST)]:
-        text(d, (85, y - 39), name, 29, color, bold=True)
+    for name, y, color in [("Mech", 891, MECH), ("Rust", 978, RUST)]:
+        d.ellipse((85, y - 28, 101, y - 12), fill=color)
+        text(d, (111, y - 39), name, 29, INK, bold=True)
         d.line((380, y, 1815, y), fill="#CCD8E5", width=3)
         d.line((380, y - 19, 380, y + 19), fill="#A3B3C5", width=3)
         d.line((1815, y - 19, 1815, y + 19), fill="#A3B3C5", width=3)
@@ -256,7 +259,7 @@ class Replay:
         text(d, (1835, 804), f'{i + 1} / {len(self.rows)} checkpoints', 17, MUTED, anchor="ra")
         text(d, (385, 804), label, 18, MUTED)
         text(d, (85, 891), f'{row["seconds"]:.4f} s' if winning else seconds_label(row["seconds"]), 20, MUTED)
-        for phase, by, color in [(self.phase_at(t), 891, BLUE), (t / RUST_TRIP_SECONDS, 978, RUST)]:
+        for phase, by, color in [(self.phase_at(t), 891, MECH), (t / RUST_TRIP_SECONDS, 978, RUST)]:
             bx = self.ball_x(phase)
             # A small forward marker makes the direction of travel unambiguous.
             direction = 1 if phase % 2 < 1 else -1
@@ -317,7 +320,8 @@ def main():
     if args.preview_only:
         return
     video = out / "mech-rust-optimization-timelapse.mp4"
-    encoder = imageio_ffmpeg.write_frames(str(video), (WIDTH, HEIGHT), fps=FPS, codec="libx264",
+    silent = out / ".mech-rust-optimization-silent.mp4"
+    encoder = imageio_ffmpeg.write_frames(str(silent), (WIDTH, HEIGHT), fps=FPS, codec="libx264",
         pix_fmt_in="rgb24", pix_fmt_out="yuv420p", macro_block_size=1,
         output_params=["-crf", "18", "-preset", "fast", "-threads", "2", "-movflags", "+faststart",
                        "-metadata", "title=" + " · ".join(TITLE_LINES)],
@@ -331,6 +335,12 @@ def main():
     finally:
         encoder.close()
     ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+    soundtrack, audio = create_soundtrack(replay, out, fps=FPS, rust_trip_seconds=RUST_TRIP_SECONDS)
+    subprocess.run([ffmpeg, "-y", "-v", "error", "-i", str(silent), "-i", str(soundtrack),
+        "-map", "0:v:0", "-map", "1:a:0", "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
+        "-ar", "48000", "-ac", "2", "-threads", "2", "-movflags", "+faststart",
+        "-metadata", "title=" + " · ".join(TITLE_LINES), str(video)], check=True)
+    silent.unlink()
     # A smaller silent preview is suitable for inline display as well as the MP4.
     gif = out / "mech-rust-optimization-timelapse.gif"
     subprocess.run([ffmpeg, "-y", "-v", "error", "-threads", "2", "-i", str(video),
@@ -340,13 +350,18 @@ def main():
     frames, duration = imageio_ffmpeg.count_frames_and_secs(str(video))
     assert frames == replay.frames
     assert abs(duration - frames / FPS) <= 1 / FPS
-    manifest = {"schema": "mech.optimization-history-animation.v2",
+    manifest = {"schema": "mech.optimization-history-animation.v3",
         "title": " · ".join(TITLE_LINES),
         "runtime_axis_log_base": 10,
         "displayed_point_layer": "medians only", "bottom_caption": False,
         "source": str(SOURCE.relative_to(ROOT)), "source_sha256": sha(SOURCE),
         "fit_source": str(FIT_SOURCE.relative_to(ROOT)), "fit_sha256": sha(FIT_SOURCE),
         "render_source_sha256": sha(Path(__file__)), "width": WIDTH, "height": HEIGHT,
+        "ball_colors": {"Mech": MECH, "Rust": RUST}, "chart_point_color": BLUE,
+        "audio": {"codec": "AAC", "sample_rate": audio["sample_rate"], "channels": audio["channels"],
+                  "bounces": audio["bounces"], "report": "bounce-audio.json",
+                  "synthesizer_sha256": audio["synthesizer_sha256"],
+                  "style": audio["style"]},
         "fps": FPS, "video_frames": frames, "video_duration_seconds": duration,
         "history_duration_hours": replay.end_hour, "history_clock_speedup": HISTORY_SPEEDUP,
         "intro_seconds": INTRO_SECONDS, "outro_seconds": OUTRO_SECONDS,
@@ -358,7 +373,8 @@ def main():
         "last": {k: replay.rows[-1][k] for k in ["hours", "seconds", "rust_seconds", "x_rust", "trial"]},
         "motion_verification": checks,
         "packages": {name: importlib.metadata.version(name) for name in ["matplotlib", "numpy", "Pillow", "imageio-ffmpeg"]},
-        "artifacts": {p.name: {"sha256": sha(p), "bytes": p.stat().st_size} for p in [video, gif, out / "contact-sheet.png"]},
+        "artifacts": {p.name: {"sha256": sha(p), "bytes": p.stat().st_size} for p in
+                      [video, gif, out / "contact-sheet.png", soundtrack, out / "bounce-audio.json"]},
         "notes": ["The optimization clock is linear and retains intervening gaps.",
                   "The ball clock is independently scaled so the benchmark durations remain visible.",
                   "Mech follows all 120 measured cohorts, including regressions and unpromoted trials.",
@@ -366,6 +382,7 @@ def main():
                   "The line of best fit uses all 120 measured medians and never controls ball motion. Its equation is not displayed.",
                   "All 120 median coordinates, ratios and raw seconds are unchanged; individual process observations are retained as source data but not drawn.",
                   "The bottom caption is omitted; clock definitions remain in the source documentation.",
+                  "Quiet keyboard-style taps occur at the exact wall contacts: Mech lighter, Rust deeper, with subtle left/right placement.",
                   "No benchmark is rerun."]}
     (out / "animation.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps({"video": str(video), "gif": str(gif), "frames": frames, "duration": duration}), flush=True)

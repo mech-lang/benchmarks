@@ -3,7 +3,9 @@
 **99.55% Runtime Reduction · 4% Faster Than Rust Baseline**
 
 The animation reveals the full-input optimization history above two benchmark
-replay lanes. Mech is blue; Rust is orange. The white-background chart includes
+replay lanes. Mech's ball uses its logo yellow (`#F6C04E`); Rust's uses the
+[GitHub Linguist Rust color](https://github.com/github-linguist/linguist/blob/main/lib/linguist/languages.yml)
+(`#DEA584`). The white-background chart keeps blue markers and includes
 120 median timing checkpoints: the original 118 cohorts plus both later
 qualified sessions in which Mech beats unchanged Rust. The 732 individual
 process observations remain in the source data and are not drawn. Its
@@ -28,6 +30,13 @@ cohort coordinate and stays constant until the next checkpoint. Its position
 remains continuous across updates and reflects at the lane ends. The fitted
 curve never controls the ball's motion. All trials and measured regressions
 are retained; this is not a best-so-far envelope.
+
+Each wall contact has a quiet, rounded keyboard-style tap: Mech has a lighter
+sound, Rust a deeper, muted sound. The original synthesized impacts use short,
+damped resonances and filtered noise, with a soft attack and slight stereo
+placement toward the contacted wall. No third-party sound recordings are used.
+The soundtrack contains 31 Mech and 47 Rust contacts. Collision times come from
+the integrated ball motion, quantized to the nearest 48 kHz audio sample.
 
 The initial checkpoint is 118.6006 seconds, or 216.1647× Rust. The two qualified
 paired-load sessions occur at 50.056996 and 50.068763 elapsed hours, recovered
@@ -67,8 +76,11 @@ With Python 3.12, create an isolated environment, install the versions in
 `python render.py --output media` and `python verify_video.py media`. `--preview-only`
 renders six still frames and an overview before encoding. Matplotlib supplies
 the chart and bundled fonts; Pillow composes the frames; imageio-ffmpeg supplies
-the H.264 encoder and GIF preview. The recorded output uses 1920×1080, 30 fps,
-H.264 with 4:2:0 pixels, and MP4 fast-start metadata.
+the H.264 encoder, AAC audio encoder and silent GIF preview. The recorded output
+uses 1920×1080, 30 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio, and MP4
+fast-start metadata. `bounce_audio.py` creates the deterministic soundtrack;
+`media/bounce-soundtrack.flac` retains its lossless master, and
+`media/bounce-audio.json` records every impact and its source hash.
 
 `media/animation.json` records both clock scales, source and artifact hashes,
 package versions, exact endpoints, frame count, and motion checks. Every speed
@@ -78,4 +90,6 @@ bottom caption are omitted from the video. The encoded MP4 was decoded
 at ten timestamps, including the first visible frame of each winning cohort;
 both balls' observed centers agree with their expected
 positions to within one pixel. Those checks and decoded video metadata are
-retained in `media/encoded-verification.json`.
+retained in `media/encoded-verification.json`. The verifier also checks all wall
+contacts, the audio stream's format, quiet peak levels, absence of clipping, and
+alignment of the decoded AAC track with the lossless master.
