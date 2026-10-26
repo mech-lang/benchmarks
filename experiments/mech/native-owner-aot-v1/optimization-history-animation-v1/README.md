@@ -1,11 +1,14 @@
-# K-nucleotide optimization time-lapse
+# Mech’s Guided LLM Optimization Process
+
+**50 Hours · 222× Speedup (99.55% Runtime Reduction)**
 
 The animation reveals the full-input optimization history above two benchmark
 replay lanes. Mech is blue; Rust is orange. The white-background chart includes
-120 cohort checkpoints and 732 individual process observations: the original
-118 cohorts plus both later qualified sessions in which Mech beats unchanged
-Rust. Its logarithmic runtime axis, ten annotated changes and original
-descriptive fitted reference show the path from 216× Rust to 0.962× Rust.
+120 median timing checkpoints: the original 118 cohorts plus both later
+qualified sessions in which Mech beats unchanged Rust. The 732 individual
+process observations remain in the source data and are not drawn. Its
+logarithmic runtime axis, ten annotated changes and line of best fit show the
+path from 216× Rust to 0.962× Rust.
 
 [1080p video](media/mech-rust-optimization-timelapse.mp4) ·
 [Animated preview](media/mech-rust-optimization-timelapse.gif) ·
@@ -51,13 +54,16 @@ and appends the two later candidate cohorts from the verified
 [`paired-candidate-loads-v1`](../paired-candidate-loads-v1/README.md) packet. It
 checks receipt hashes, terminal process state, source identity, input identity,
 medians and paired intervals. The merged source is `timeline.json`.
-The original fitted reference comes from
-[`optimization-history-hours-v3/analysis.json`](../optimization-history-hours-v3/analysis.json).
-It stops at its original data range and does not extrapolate into the new data.
+`fit_curve.py` computes the line of best fit from all 120 median timings and
+records the parameters in `best-fit.json`. The model is an offset plus two
+exponential components. It minimizes squared errors in runtime ratios with
+equal weight per median. Five positive-parameter starting points converge to
+the same optimum, and analytic first derivatives are checked. The fitted
+curve is drawn over the observed elapsed-hour range.
 No benchmark is executed to render this animation.
 
 With Python 3.12, create an isolated environment, install the versions in
-`requirements.txt`, run `python build_timeline.py`, then
+`requirements.txt`, run `python build_timeline.py` and `python fit_curve.py`, then
 `python render.py --output media` and `python verify_video.py media`. `--preview-only`
 renders six still frames and an overview before encoding. Matplotlib supplies
 the chart and bundled fonts; Pillow composes the frames; imageio-ffmpeg supplies
@@ -67,7 +73,8 @@ H.264 with 4:2:0 pixels, and MP4 fast-start metadata.
 `media/animation.json` records both clock scales, source and artifact hashes,
 package versions, exact endpoints, frame count, and motion checks. Every speed
 interval is checked against its measured ratio, phase continuity is verified,
-and all 732 observations are visible at the end. The encoded MP4 was decoded
+and all 120 median points are visible at the end. The individual-run layer and
+bottom caption are omitted from the video. The encoded MP4 was decoded
 at ten timestamps, including the first visible frame of each winning cohort;
 both balls' observed centers agree with their expected
 positions to within one pixel. Those checks and decoded video metadata are

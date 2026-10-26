@@ -21,6 +21,9 @@ def main():
     digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
     assert digest(Path(animation.__file__)) == manifest["render_source_sha256"]
     assert digest(animation.SOURCE) == manifest["source_sha256"]
+    assert digest(animation.FIT_SOURCE) == manifest["fit_sha256"]
+    fit = json.loads(animation.FIT_SOURCE.read_text())
+    assert fit["fitted_cohorts"] == 120 and fit["source_sha256"] == digest(animation.SOURCE)
     for name, record in manifest["artifacts"].items():
         assert digest(folder / name) == record["sha256"], name
     replay = animation.Replay()
@@ -65,9 +68,15 @@ def main():
     assert {r["checkpoint"] for r in records}.issuperset({119, 120})
     report = {"decoded_video": metadata, "decoded_frames": count, "encoded_ball_checks": records,
               "max_ball_error_px": max(b["error_px"] for r in records for b in r["balls"]),
-              "all_individual_observations_revealed": replay.verify_motion()["individual_observations_visible_at_end"],
+              "retained_individual_observations": replay.verify_motion()["retained_individual_observations"],
+              "individual_points_drawn": replay.verify_motion()["individual_points_drawn"],
+              "median_points_visible_at_end": replay.verify_motion()["median_points_visible_at_end"],
+              "bottom_caption": manifest["bottom_caption"],
+              "best_fit_medians": fit["fitted_cohorts"],
               "both_winning_cohorts_checked": True,
               "verifier_sha256": digest(Path(__file__))}
+    assert report["median_points_visible_at_end"] == 120 and report["individual_points_drawn"] == 0
+    assert not report["bottom_caption"]
     (folder / "encoded-verification.json").write_text(json.dumps(report, indent=2) + "\n")
     sheet = Image.new("RGB", (1920, 1620), "white")
     assert len(previews) == 6

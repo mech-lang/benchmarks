@@ -26,7 +26,7 @@ from PIL import Image, ImageDraw, ImageFont
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 SOURCE = HERE / "timeline.json"
-FIT_SOURCE = ROOT / "optimization-history-hours-v3/analysis.json"
+FIT_SOURCE = HERE / "best-fit.json"
 WIDTH, HEIGHT = 1920, 1080
 PLOT = (145, 185, 1815, 690)
 FPS = 30
@@ -34,10 +34,13 @@ INTRO_SECONDS = 2.0
 OUTRO_SECONDS = 5.0
 HISTORY_SPEEDUP = 3600.0  # One elapsed optimization hour per video second.
 RUST_TRIP_SECONDS = 1.2  # Separate illustrative clock, identical in both lanes.
+TITLE_LINES = (
+    "Mech’s Guided LLM Optimization Process",
+    "50 Hours · 222× Speedup (99.55% Runtime Reduction)",
+)
 BLUE = "#176DCA"
 INK = "#1B2B3B"
 MUTED = "#53677E"
-PALE = "#C2D9F0"
 RUST = "#C27331"
 FONT = Path(matplotlib.get_data_path()) / "fonts/ttf/DejaVuSans.ttf"
 BOLD = FONT.with_name("DejaVuSans-Bold.ttf")
@@ -105,18 +108,17 @@ def make_base() -> Image.Image:
     image = Image.fromarray(np.asarray(fig.canvas.buffer_rgba())[:, :, :3].copy())
     plt.close(fig)
     d = ImageDraw.Draw(image)
-    text(d, (55, 25), "K-nucleotide: from 216× to beating Rust", 41, bold=True)
-    text(d, (57, 88), "125 million bases · complete process, including startup", 23, MUTED)
+    text(d, (55, 16), TITLE_LINES[0], 38, bold=True)
+    text(d, (55, 64), TITLE_LINES[1], 33, bold=True)
+    text(d, (57, 111), "K-nucleotide · 125 million bases · complete process, including startup", 20, MUTED)
     text(d, (1455, 28), "OPTIMIZATION CLOCK  ·  3,600×", 17, MUTED, bold=True)
     # Legend uses the same colors as the original white-background chart.
-    d.ellipse((58, 139, 70, 151), fill=BLUE)
-    text(d, (83, 130), "Cohort medians / early single runs", 19)
-    d.ellipse((568, 142, 575, 149), fill=PALE)
-    text(d, (588, 130), "Individual runs", 19)
-    for x in range(900, 950, 16):
-        d.line((x, 146, x + 9, 146), fill="#7E8D9E", width=2)
-    text(d, (962, 130), "Earlier fitted reference", 19)
-    text(d, (1815, 130), "Lower is faster", 19, MUTED, anchor="ra")
+    d.ellipse((58, 154, 70, 166), fill=BLUE)
+    text(d, (83, 145), "Measured medians", 19)
+    for x in range(510, 560, 16):
+        d.line((x, 160, x + 9, 160), fill="#7E8D9E", width=2)
+    text(d, (572, 145), "Line of best fit", 19)
+    text(d, (1815, 145), "Lower is faster", 19, MUTED, anchor="ra")
     text(d, (1802, Y(1) - 29), "Rust = 1×", 18, MUTED, anchor="ra")
     # The replay lanes are separate from the elapsed-hour chart.
     d.rounded_rectangle((55, 791, 1865, 1033), radius=22, fill="#F5F8FC", outline="#E0E8F2", width=1)
@@ -127,7 +129,6 @@ def make_base() -> Image.Image:
         d.line((380, y - 19, 380, y + 19), fill="#A3B3C5", width=3)
         d.line((1815, y - 19, 1815, y + 19), fill="#A3B3C5", width=3)
     text(d, (85, 978), "1.00× reference", 20, MUTED)
-    text(d, (57, 1052), "One crossing = one run · Rust crossing = 1.2 s on screen · Mech speed changes only at measured checkpoints", 18, MUTED)
     return image
 
 
@@ -170,7 +171,7 @@ class Replay:
         curve = ImageDraw.Draw(self.curve_layer)
         points = []
         for i in range(1601):
-            h = self.data["original_final_cohort_hours"] * i / 1600
+            h = self.hours[-1] * i / 1600
             p = self.fit
             value = p["C"] + p["A_fast"] * math.exp(-p["k_fast"] * h) + p["A_slow"] * math.exp(-p["k_slow"] * h)
             points.append((X(h), Y(value)))
@@ -210,12 +211,6 @@ class Replay:
         d = ImageDraw.Draw(image)
         cursor = X(h)
         d.line((cursor, PLOT[1], cursor, PLOT[3]), fill="#BDCEE1", width=2)
-        for sh, ratio in self.samples:
-            if sh > h:
-                break
-            if sh >= 0:
-                x, y = X(sh), Y(ratio)
-                d.ellipse((x - 2, y - 2, x + 2, y + 2), fill=PALE)
         # The measured path itself is a staircase, matching the replay's updates.
         path = [(X(0), Y(self.rows[0]["x_rust"]))]
         for j in range(1, i + 1):
@@ -291,7 +286,9 @@ class Replay:
         assert visible == len(self.samples) == 732
         return {"piecewise_constant_speed_max_relative_error": max(errors),
                 "phase_continuity_max_error": max(jumps),
-                "individual_observations_visible_at_end": visible,
+                "retained_individual_observations": visible,
+                "individual_points_drawn": 0,
+                "median_points_visible_at_end": len(self.rows),
                 "regressions_retained": sum(b["x_rust"] > a["x_rust"] for a, b in zip(self.rows, self.rows[1:])),
                 "trend_fit_used_for_motion": False}
 
@@ -322,7 +319,8 @@ def main():
     video = out / "mech-rust-optimization-timelapse.mp4"
     encoder = imageio_ffmpeg.write_frames(str(video), (WIDTH, HEIGHT), fps=FPS, codec="libx264",
         pix_fmt_in="rgb24", pix_fmt_out="yuv420p", macro_block_size=1,
-        output_params=["-crf", "18", "-preset", "fast", "-threads", "2", "-movflags", "+faststart"],
+        output_params=["-crf", "18", "-preset", "fast", "-threads", "2", "-movflags", "+faststart",
+                       "-metadata", "title=" + " · ".join(TITLE_LINES)],
         ffmpeg_log_level="warning")
     encoder.send(None)
     try:
@@ -343,6 +341,8 @@ def main():
     assert frames == replay.frames
     assert abs(duration - frames / FPS) <= 1 / FPS
     manifest = {"schema": "mech.optimization-history-animation.v2",
+        "title": " · ".join(TITLE_LINES),
+        "displayed_point_layer": "medians only", "bottom_caption": False,
         "source": str(SOURCE.relative_to(ROOT)), "source_sha256": sha(SOURCE),
         "fit_source": str(FIT_SOURCE.relative_to(ROOT)), "fit_sha256": sha(FIT_SOURCE),
         "render_source_sha256": sha(Path(__file__)), "width": WIDTH, "height": HEIGHT,
@@ -362,8 +362,10 @@ def main():
                   "The ball clock is independently scaled so the benchmark durations remain visible.",
                   "Mech follows all 120 measured cohorts, including regressions and unpromoted trials.",
                   "The two later qualified sessions are 0.95484 and 0.96219 times unchanged Rust, at their recovered process-launch times.",
-                  "The earlier fitted reference stops at its original data range and never controls motion.",
-                  "All original coordinates, ratios and raw seconds are unchanged; no benchmark is rerun."]}
+                  "The line of best fit uses all 120 measured medians and never controls ball motion. Its equation is not displayed.",
+                  "All 120 median coordinates, ratios and raw seconds are unchanged; individual process observations are retained as source data but not drawn.",
+                  "The bottom caption is omitted; clock definitions remain in the source documentation.",
+                  "No benchmark is rerun."]}
     (out / "animation.json").write_text(json.dumps(manifest, indent=2) + "\n")
     print(json.dumps({"video": str(video), "gif": str(gif), "frames": frames, "duration": duration}), flush=True)
 
