@@ -23,7 +23,7 @@ def main():
         adjacent=Counter((a,b) for row in orders for a,b in zip(row,row[1:]));assert len(adjacent)==12 and set(adjacent.values())=={6}
     git=lambda *a:subprocess.check_output(['git','-C',str(ROOT),*a],text=True).strip()
     revision=git('rev-parse','HEAD');assert not git('status','--porcelain')
-    inp,policy,data=inputs();env=read(HERE/'baseline/public-aot.json')['environment']
+    inp,policy,data=inputs();env=i['environment']
     mutex=Path(plan['common_mutex']);assert mutex.is_file() and mutex.stat().st_ino==83858837
     with mutex.open('r+') as lock:
         fcntl.flock(lock,fcntl.LOCK_EX|fcntl.LOCK_NB)

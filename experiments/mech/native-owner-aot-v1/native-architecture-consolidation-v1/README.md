@@ -1,8 +1,10 @@
 # Native architecture consolidation
 
-This study fixes baseline I at `8aafe1e16b50b333d7990dd107e79124405bb71b`,
-replacing the handoff’s earlier baseline before measurements. It preserves
-the merged pre-911 cleanup and all later #911 integration fixes.
+This study adopts baseline I at `17539acd704e622c5f8ad90e001e20227535d53f`
+and final cleanup F at `01b8b397011b6a774b7d9f730578a4ef92bf30f6`, before
+any primary measurement. Fresh build receipts remain required. The earlier
+I at `8aafe1e16b50b333d7990dd107e79124405bb71b` and intermediate F receipts
+are retained as historical evidence.
 
 `plan.json` predeclares both complete four-subject schedules, paired analysis,
 seed and acceptance policy. `retained-controls.json` verifies the exact W/R
@@ -45,3 +47,16 @@ the final plan and build receipts must adopt its exact revised base and the
 rebased cleanup head, while preserving the earlier I/F receipts. Generated
 process gates and the two final timing sessions remain pending. There are zero
 primary samples. Historical W timings are not measurements of I or F.
+
+`analyze.py` reports **statistical acceptance only**. It always reports
+`performance_qualified: false`; favorable numbers do not validate source pins,
+correctness gates or process receipts. A performance claim also requires a
+separate evidence qualification step. The synthetic analysis self-checks are
+not campaign evidence.
+
+`build-baseline.py` and `build-candidate.py` now require `--workspace` and
+`--target-dir`, and optionally accept a fresh `--run-id`. Each invocation builds
+the compiler and public AOT executable into new paths, preserving all committed
+and previous build receipts. The printed receipt must be explicitly adopted
+as `baseline_receipt` or `candidate_receipt` in `plan.json`; running the builder
+does not change the adopted subject. These repair builds collect no timings.

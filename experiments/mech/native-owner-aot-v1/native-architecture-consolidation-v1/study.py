@@ -13,7 +13,8 @@ def source_state(workspace=WORKSPACE):
  def git(*args):return subprocess.check_output(['git','-C',str(workspace),*args],text=True).strip()
  return dict(commit=git('rev-parse','HEAD'),tree=git('rev-parse','HEAD^{tree}'),status=git('status','--porcelain'))
 def subjects():
- f=read(HERE/'candidate/public-aot.json');i=read(HERE/'baseline/public-aot.json');controls=read(HERE/'retained-controls.json')
+ plan=read(HERE/'plan.json')
+ f=read(HERE/plan.get('candidate_receipt','candidate/public-aot.json'));i=read(HERE/plan.get('baseline_receipt','baseline/public-aot.json'));controls=read(HERE/'retained-controls.json')
  targets={'F':Path(f['executable']),'I':Path(i['executable']),'W':Path(controls['W']['path']),'R':Path(controls['R']['path'])}
  pins={'F':f['executable_sha256'],'I':i['executable_sha256'],'W':controls['W']['sha256'],'R':controls['R']['sha256']}
  assert source_state()==f['source'] and not f['source']['status']
