@@ -6,6 +6,7 @@ import json
 import math
 from pathlib import Path
 import subprocess
+import xml.etree.ElementTree as ET
 
 import imageio_ffmpeg
 import numpy as np
@@ -13,6 +14,37 @@ from PIL import Image
 
 import render as animation
 import bounce_audio
+
+
+def verify_vectors(folder, replay, manifest, digest):
+    assert digest(animation.HERE / "vector_scene.py") == manifest["vector_scene_source_sha256"]
+    if "svg_normalization_source_sha256" in manifest:
+        assert digest(animation.HERE / "normalize_svg.py") == manifest["svg_normalization_source_sha256"]
+    records = []
+    for name in ["mech-compiler-optimization.svg", "mech-compiler-optimization-frame.svg"]:
+        root = ET.parse(folder / name).getroot()
+        images = [e for e in root.iter() if e.tag.endswith("}image")]
+        medians = [e for e in root.iter() if e.attrib.get("id", "").startswith("median-")]
+        paths = [e for e in root.iter() if e.tag.endswith("}path")]
+        assert not images
+        assert {e.attrib["id"] for e in medians} == {f"median-{i:03d}" for i in range(120)}
+        assert len(paths) > 200
+        assert not any(e.tag.endswith("}text") for e in root.iter())  # Fonts are outlined too.
+        records.append({"file": name, "embedded_images": 0, "median_markers": len(medians),
+                        "vector_paths": len(paths), "fonts": "outlined vector paths",
+                        "view_box": root.attrib["viewBox"]})
+    # Inspect actual marker-edge coverage in the uncompressed final preview.
+    pixels = np.asarray(Image.open(folder / "frame-05.png").convert("RGB"))
+    x, y = round(animation.X(0)), round(animation.Y(replay.rows[0]["x_rust"]))
+    patch = pixels[y - 7:y + 8, x - 7:x + 8].reshape(-1, 3)
+    blue = np.array([23, 109, 202])
+    coverage = (255 - patch.astype(float)) / (255 - blue)
+    selected = (np.ptp(coverage, axis=1) < .10) & (coverage.mean(axis=1) > .05) & (coverage.mean(axis=1) < .95)
+    shades = len(np.unique(patch[selected], axis=0))
+    assert shades >= 8, ("Missing marker-edge antialiasing", shades)
+    return {"files": records, "antialiased_marker_edge_shades": shades,
+            "video_working_pixels": manifest["renderer"]["working_pixels"],
+            "downsampling": manifest["renderer"]["downsampling"]}
 
 
 def verify_audio(folder, replay, manifest, digest):
@@ -171,6 +203,7 @@ def main():
                                    "arrows_absent": True, "settled_after_seconds": .22,
                                    "radius_compensated_contacts": True},
               "audio": verify_audio(folder, replay, manifest, digest),
+              "vector_artwork": verify_vectors(folder, replay, manifest, digest),
               "verifier_sha256": digest(Path(__file__))}
     assert report["median_points_visible_at_end"] == 120 and report["individual_points_drawn"] == 0
     assert not report["bottom_caption"]

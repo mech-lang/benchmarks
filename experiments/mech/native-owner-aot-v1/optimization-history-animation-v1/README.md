@@ -11,15 +11,24 @@ process observations remain in the source data and are not drawn. Its
 base-10 logarithmic runtime axis, ten annotated changes and line of best fit show the
 path from 216× Rust to 0.962× Rust.
 
-[1080p video](media/mech-rust-optimization-timelapse.mp4) ·
-[1080p 60 fps video](media-60fps/mech-rust-optimization-timelapse.mp4) ·
-[Animated preview](media/mech-rust-optimization-timelapse.gif) ·
-[Decoded-frame overview](media/encoded-contact-sheet.png)
+[SVG chart](media-vector-60fps/mech-compiler-optimization.svg) ·
+[1080p 60 fps video](media-vector-60fps/mech-rust-optimization-timelapse.mp4) ·
+[Animated preview](media-vector-60fps/mech-rust-optimization-timelapse.gif) ·
+[Decoded-frame overview](media-vector-60fps/encoded-contact-sheet.png)
+
+The complete artwork uses vector paths, including the axes, circles, connecting
+lines, callouts, cards, balls and font outlines. The SVG contains no embedded
+bitmap images. Video frames are rasterized at 3840×2160 with antialiasing and
+downsampled with Lanczos to 1920×1080 at 60 fps. The SVG remains scalable at any
+zoom level.
 
 The 30 fps and 60 fps editions both run for 57.1 seconds and share the same
 lossless soundtrack. Every frame is rendered at its own timestamp. The retained
 30 fps packet was generated from benchmark commit
 `273fcdbad2340bf21a965f7edbec4597a064355f`; its pinned source hashes remain intact.
+The initial 60 fps packet is retained in `media-60fps` at benchmark commit
+`b52f2858242ecbe1ffcad1541315f08fd8fc47cd`. The vector edition is in
+`media-vector-60fps`.
 
 The video uses two explicitly separate clocks:
 
@@ -41,8 +50,7 @@ horizontally by up to 14%, preserve their elliptical area, then recover with
 a 4% stretch and a two-pixel lift. The effect settles within 0.21 seconds.
 Radius compensation keeps the compressed edge against the wall. These small
 surface and position offsets do not change the measured phase, crossing times
-or impact sounds. Ball edges are rendered at four times the output resolution
-before downsampling.
+or impact sounds. Ball outlines and highlights are vector ellipses.
 
 Each wall contact has a quiet, rounded keyboard-style tap: Mech has a lighter
 sound, Rust a deeper, muted sound. The original synthesized impacts use short,
@@ -88,14 +96,16 @@ With Python 3.12, create an isolated environment, install the versions in
 `requirements.txt`, run `python build_timeline.py` and `python fit_curve.py`, then
 `python render.py --output media` and `python verify_video.py media`. `--preview-only`
 renders six still frames and an overview before encoding. Matplotlib supplies
-the chart and bundled fonts; Pillow composes the frames; imageio-ffmpeg supplies
+the vector scene and bundled fonts; Pillow downsamples the frames; imageio-ffmpeg supplies
 the H.264 encoder, AAC audio encoder and silent GIF preview. The recorded editions
 use 1920×1080 at 30 or 60 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio, and MP4
 fast-start metadata. `bounce_audio.py` creates the deterministic soundtrack;
 `media/bounce-soundtrack.flac` retains its lossless master, and
 `media/bounce-audio.json` records every impact and its source hash.
-Render the separate 60 fps edition with `python render.py --fps 60 --output
-media-60fps`, then run `python verify_video.py media-60fps`. Its manifest and
+Render the vector 60 fps edition with `python render.py --fps 60 --output
+media-vector-60fps`, run `python normalize_svg.py media-vector-60fps` to remove
+trailing line whitespace from the generated SVGs, then run
+`python verify_video.py media-vector-60fps`. Its manifest and
 checks are stored alongside the 60 fps video, including a decoded intervening
 frame that verifies its position against the 60 Hz motion clock.
 
@@ -103,8 +113,8 @@ frame that verifies its position against the 60 Hz motion clock.
 package versions, exact endpoints, frame count, and motion checks. Every speed
 interval is checked against its measured ratio, phase continuity is verified,
 and all 120 median points are visible at the end. The individual-run layer and
-bottom caption are omitted from the video. The encoded MP4 was decoded
-at ten timestamps, including the first visible frame of each winning cohort;
+bottom caption are omitted from the video. The encoded MP4 checks include
+the first visible frame of each winning cohort;
 both balls' observed centers agree with their expected
 positions to within one pixel. Those checks and decoded video metadata are
 retained in `media/encoded-verification.json`. The verifier also checks all wall
@@ -113,3 +123,7 @@ alignment of the decoded AAC track with the lossless master. It checks 362
 encoded frames in the 30 fps edition and 371 in the 60 fps edition around the
 78 impacts for deformation, center position and
 absence of arrows, and verifies wall contact and recovery analytically.
+For the vector edition it also checks the SVG path structure, all 120 marker
+IDs, absence of embedded raster layers, outlined fonts and intermediate
+edge-coverage colors in the uncompressed preview. `vector_scene.py` supplies
+the shared SVG and video drawing primitives.

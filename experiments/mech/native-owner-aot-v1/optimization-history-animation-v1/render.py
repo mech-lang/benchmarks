@@ -18,11 +18,11 @@ os.environ.setdefault("XDG_CACHE_HOME", "/private/tmp/mech-history-animation-cac
 import imageio_ffmpeg
 import matplotlib
 matplotlib.use("Agg")
-from matplotlib import pyplot as plt
 from matplotlib.ticker import FixedLocator, FuncFormatter
 import numpy as np
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageFont
 from bounce_audio import bounce_events, create_soundtrack
+from vector_scene import VectorScene
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -64,7 +64,7 @@ def font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
 
 
 def text(draw, xy, value, size=20, color=INK, bold=False, anchor="la"):
-    draw.text(xy, value, font=font(size, bold), fill=color, anchor=anchor)
+    draw.text(xy, value, size, color, bold, anchor, BOLD if bold else FONT)
 
 
 def ratio_label(value: float) -> str:
@@ -85,11 +85,15 @@ def Y(ratio: float) -> float:
     return PLOT[3] - (PLOT[3] - PLOT[1]) * math.log(ratio / 0.5) / math.log(640)
 
 
-def make_base() -> Image.Image:
-    plt.rcParams.update({"font.family": "DejaVu Sans", "font.size": 14,
+def make_base() -> VectorScene:
+    matplotlib.rcParams.update({"font.family": "DejaVu Sans", "font.size": 14,
                          "text.color": INK, "axes.labelcolor": INK,
-                         "xtick.color": MUTED, "ytick.color": MUTED})
-    fig = plt.figure(figsize=(WIDTH / 100, HEIGHT / 100), dpi=100, facecolor="white")
+                         "xtick.color": MUTED, "ytick.color": MUTED,
+                         "svg.fonttype": "path", "svg.hashsalt": "mech-optimization-history",
+                         "lines.antialiased": True, "patch.antialiased": True,
+                         "text.antialiased": True})
+    scene = VectorScene(WIDTH, HEIGHT, scale=2)
+    fig = scene.fig
     left, top, right, bottom = PLOT
     ax = fig.add_axes([left / WIDTH, (HEIGHT - bottom) / HEIGHT,
                        (right - left) / WIDTH, (bottom - top) / HEIGHT])
@@ -109,10 +113,7 @@ def make_base() -> Image.Image:
     for edge in ["left", "bottom"]:
         ax.spines[edge].set_color("#94A6BA")
     ax.tick_params(length=0, pad=11)
-    fig.canvas.draw()
-    image = Image.fromarray(np.asarray(fig.canvas.buffer_rgba())[:, :, :3].copy())
-    plt.close(fig)
-    d = ImageDraw.Draw(image)
+    d = scene
     text(d, (55, 16), TITLE_LINES[0], 38, bold=True)
     text(d, (55, 64), TITLE_LINES[1], 33, bold=True)
     text(d, (57, 111), "K-nucleotide · 125 million bases · complete process, including startup", 20, MUTED)
@@ -135,7 +136,8 @@ def make_base() -> Image.Image:
         d.line((380, y - 19, 380, y + 19), fill="#A3B3C5", width=3)
         d.line((1815, y - 19, 1815, y + 19), fill="#A3B3C5", width=3)
     text(d, (85, 978), "1.00× reference", 20, MUTED)
-    return image
+    scene.freeze()
+    return scene
 
 
 class Replay:
@@ -179,20 +181,13 @@ class Replay:
         self.contacts = {name: [e["time_seconds"] for e in contacts if e["language"] == name]
                          for name in LANES}
         self.base = make_base()
-        self.curve_layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
-        curve = ImageDraw.Draw(self.curve_layer)
         points = []
         for i in range(1601):
             h = self.hours[-1] * i / 1600
             p = self.fit
             value = p["C"] + p["A_fast"] * math.exp(-p["k_fast"] * h) + p["A_slow"] * math.exp(-p["k_slow"] * h)
             points.append((X(h), Y(value)))
-        distance = 0.0
-        for a, b in zip(points, points[1:]):
-            length = math.dist(a, b)
-            if int(distance / 10) % 2 == 0:
-                curve.line([a, b], fill=(116, 131, 149, 180), width=2)
-            distance += length
+        self.curve_points = points
 
     def trip_seconds(self, i: int) -> float:
         return RUST_TRIP_SECONDS * self.rows[i]["x_rust"]
@@ -236,35 +231,25 @@ class Replay:
                 "contact_seconds": contact, "contact_offset_seconds": dt,
                 "measured_center_x": self.ball_x(phase)}
 
-    def draw_ball(self, image: Image.Image, name: str, t: float):
+    def draw_ball(self, scene: VectorScene, name: str, t: float):
         shape = self.ball_geometry(name, t)
         x, y, rx, ry = (shape[k] for k in ["x", "y", "rx", "ry"])
-        left, top = math.floor(x) - 24, math.floor(y) - 24
-        scale = 4
-        sprite = Image.new("RGBA", (48 * scale, 48 * scale))
-        draw = ImageDraw.Draw(sprite)
-        bounds = [(x - rx - left) * scale, (y - ry - top) * scale,
-                  (x + rx - left) * scale, (y + ry - top) * scale]
-        draw.ellipse(bounds, fill=MECH if name == "Mech" else RUST)
+        scene.ellipse((x - rx, y - ry, x + rx, y + ry), fill=MECH if name == "Mech" else RUST,
+                      gid=f"{name.lower()}-ball")
         # The highlight deforms with the surface instead of floating above it.
-        draw.ellipse(((x - 5 * rx / BALL_RADIUS - left) * scale,
-                      (y - 8 * ry / BALL_RADIUS - top) * scale,
-                      (x + rx / BALL_RADIUS - left) * scale,
-                      (y - 2 * ry / BALL_RADIUS - top) * scale), fill="white")
-        sprite = sprite.resize((48, 48), Image.Resampling.LANCZOS)
-        image.paste(sprite, (left, top), sprite)
+        scene.ellipse((x - 5 * rx / BALL_RADIUS, y - 8 * ry / BALL_RADIUS,
+                       x + rx / BALL_RADIUS, y - 2 * ry / BALL_RADIUS), fill="white")
 
-    def frame(self, t: float) -> Image.Image:
+    def compose(self, t: float):
         h = max(0.0, min(self.end_hour, (t - INTRO_SECONDS) * HISTORY_SPEEDUP / 3600))
         i = self.index_at(t)
         row = self.rows[i]
-        image = self.base.copy()
+        d = self.base
+        d.begin()
         # Reveal the descriptive fit only as the same elapsed-hour frontier passes.
         if h > 0:
-            crop = (PLOT[0], PLOT[1], min(WIDTH, math.ceil(X(h)) + 1), PLOT[3] + 1)
-            layer = self.curve_layer.crop(crop)
-            image.paste(layer, crop[:2], layer)
-        d = ImageDraw.Draw(image)
+            d.line(self.curve_points, fill="#748395B4", width=2, dashes=(5, 5),
+                   clip=(PLOT[0], PLOT[1], min(WIDTH, X(h)), PLOT[3]), gid="line-of-best-fit")
         cursor = X(h)
         d.line((cursor, PLOT[1], cursor, PLOT[3]), fill="#BDCEE1", width=2)
         # The measured path itself is a staircase, matching the replay's updates.
@@ -275,9 +260,9 @@ class Replay:
         path.append((cursor, Y(row["x_rust"])))
         if len(path) > 1:
             d.line(path, fill="#A6C8EB", width=2)
-        for r in self.rows[:i + 1]:
+        for j, r in enumerate(self.rows[:i + 1]):
             x, y = X(r["hours"]), Y(r["x_rust"])
-            d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=BLUE)
+            d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=BLUE, gid=f"median-{j:03d}")
         text(d, (X(0) + 14, Y(self.rows[0]["x_rust"]) - 30), "t=0 · 216× Rust", 18)
         for m in self.data["discontinuities"]:
             if m["hours"] > h:
@@ -313,8 +298,19 @@ class Replay:
         text(d, (385, 804), label, 18, MUTED)
         text(d, (85, 891), f'{row["seconds"]:.4f} s' if winning else seconds_label(row["seconds"]), 20, MUTED)
         for name in LANES:
-            self.draw_ball(image, name, t)
-        return image
+            self.draw_ball(d, name, t)
+
+    def frame(self, t: float) -> Image.Image:
+        self.compose(t)
+        return self.base.image()
+
+    def svg(self, t: float, path: Path, chart_only=False):
+        self.compose(t)
+        self.base.svg(path, {"Title": " · ".join(TITLE_LINES),
+                            "Description": json.dumps({"source_sha256": sha(SOURCE),
+                                                       "cohorts": self.index_at(t) + 1,
+                                                       "elapsed_video_seconds": t})},
+                      height=790 if chart_only else None)
 
     def verify_motion(self):
         errors = []
@@ -363,6 +359,10 @@ def main():
     for n, image in enumerate(previews):
         sheet.paste(image, ((n % 2) * 960, (n // 2) * 540))
     sheet.save(out / "contact-sheet.png")
+    svg = out / "mech-compiler-optimization.svg"
+    full_svg = out / "mech-compiler-optimization-frame.svg"
+    replay.svg(replay.duration - 1, svg, chart_only=True)
+    replay.svg(replay.duration - 1, full_svg)
     print(json.dumps({"preview": str(out / "contact-sheet.png"), "motion": checks}), flush=True)
     if args.preview_only:
         return
@@ -370,7 +370,7 @@ def main():
     silent = out / ".mech-rust-optimization-silent.mp4"
     encoder = imageio_ffmpeg.write_frames(str(silent), (WIDTH, HEIGHT), fps=replay.fps, codec="libx264",
         pix_fmt_in="rgb24", pix_fmt_out="yuv420p", macro_block_size=1,
-        output_params=["-crf", "18", "-preset", "fast", "-threads", "2", "-movflags", "+faststart",
+        output_params=["-crf", "16", "-preset", "fast", "-threads", "2", "-movflags", "+faststart",
                        "-metadata", "title=" + " · ".join(TITLE_LINES)],
         ffmpeg_log_level="warning")
     encoder.send(None)
@@ -404,10 +404,14 @@ def main():
         "source": str(SOURCE.relative_to(ROOT)), "source_sha256": sha(SOURCE),
         "fit_source": str(FIT_SOURCE.relative_to(ROOT)), "fit_sha256": sha(FIT_SOURCE),
         "render_source_sha256": sha(Path(__file__)), "width": WIDTH, "height": HEIGHT,
+        "vector_scene_source_sha256": sha(HERE / "vector_scene.py"),
+        "renderer": {"primitives": "Matplotlib vector paths and outlined text", "antialiasing": True,
+                     "rasterization_scale": 2, "working_pixels": [WIDTH * 2, HEIGHT * 2],
+                     "downsampling": "Lanczos", "svg_embedded_rasters": 0},
         "ball_colors": {"Mech": MECH, "Rust": RUST}, "chart_point_color": BLUE,
         "ball_animation": {"arrows": False, "maximum_horizontal_compression": .14,
                            "maximum_rebound_stretch": .04, "maximum_vertical_lift_px": 2,
-                           "contact_radius_compensation": True, "sprite_supersampling": 4,
+                           "contact_radius_compensation": True, "vector_paths": True,
                            "motion_phase_unchanged": True},
         "audio": {"codec": "AAC", "sample_rate": audio["sample_rate"], "channels": audio["channels"],
                   "bounces": audio["bounces"], "report": "bounce-audio.json",
@@ -426,7 +430,7 @@ def main():
         "motion_verification": checks,
         "packages": {name: importlib.metadata.version(name) for name in ["matplotlib", "numpy", "Pillow", "imageio-ffmpeg"]},
         "artifacts": {p.name: {"sha256": sha(p), "bytes": p.stat().st_size} for p in
-                      [video, gif, out / "contact-sheet.png", soundtrack, out / "bounce-audio.json"]},
+                      [video, gif, out / "contact-sheet.png", soundtrack, out / "bounce-audio.json", svg, full_svg]},
         "notes": ["The optimization clock is linear and retains intervening gaps.",
                   "The ball clock is independently scaled so the benchmark durations remain visible.",
                   "Mech follows all 120 measured cohorts, including regressions and unpromoted trials.",
