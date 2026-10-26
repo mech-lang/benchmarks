@@ -1,4 +1,6 @@
 """Pinned controls and unchanged complete-process checks for this study only."""
+if not __debug__:
+ raise RuntimeError('Python optimization disables required campaign evidence and process-supervision checks; do not use -O, -OO, or PYTHONOPTIMIZE')
 import importlib.util,json,subprocess,sys
 from pathlib import Path
 HERE=Path(__file__).resolve().parent

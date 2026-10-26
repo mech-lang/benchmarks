@@ -2,6 +2,9 @@
 import copy
 import importlib.util
 import json
+import os
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -25,6 +28,29 @@ class StudyReviewTests(unittest.TestCase):
                  seconds=1.0 if subject == 'F' else 2.0, verified=True)
             for order, subjects in enumerate(self.plan[f'session_{session}'])
             for position, subject in enumerate(subjects)]) for session in [1, 2]]
+
+    def test_optimized_python_cannot_enter_qualification_or_campaign(self):
+        root = Path(__file__).resolve().parent
+        message = 'Python optimization disables required campaign evidence and process-supervision checks'
+        with tempfile.TemporaryDirectory() as directory:
+            commands = {
+                'qualification': [str(root / 'qualify.py'), str(Path(directory) / 'missing-session-1.json'),
+                                  str(Path(directory) / 'missing-session-2.json')],
+                'campaign import': ['-c', "import campaign; print('UNSAFE_CAMPAIGN_IMPORT_REACHED')"],
+            }
+            for optimization in ('-O', 'PYTHONOPTIMIZE'):
+                env = {key: value for key, value in os.environ.items() if key != 'PYTHONOPTIMIZE'}
+                flags = ['-O'] if optimization == '-O' else []
+                if not flags:
+                    env['PYTHONOPTIMIZE'] = '1'
+                for entrypoint, command in commands.items():
+                    with self.subTest(optimization=optimization, entrypoint=entrypoint):
+                        result = subprocess.run([sys.executable, *flags, *command], cwd=root, env=env,
+                                                capture_output=True, text=True, timeout=10)
+                        self.assertNotEqual(result.returncode, 0)
+                        self.assertIn(message, result.stderr)
+                        self.assertEqual(result.stdout, '')
+                        self.assertNotIn('FileNotFoundError', result.stderr)
 
     def test_fabricated_labels_and_timings_never_qualify_performance(self):
         result = analyze_sessions(self.reports, self.plan)
