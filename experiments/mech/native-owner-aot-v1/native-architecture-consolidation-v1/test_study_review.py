@@ -1,5 +1,6 @@
 """Regressions for unqualified statistics and preserved build evidence."""
 import copy
+import importlib.util
 import json
 import tempfile
 import unittest
@@ -7,9 +8,13 @@ from pathlib import Path
 from unittest.mock import patch
 from analyze import analyze_sessions, analyze
 from build_subject import allocate
-from campaign import observation, CONTROLLER
+from campaign import observation, stages, CONTROLLER
 from qualify import qualify
-from study import process
+from study import process, subjects, source_state
+
+spec = importlib.util.spec_from_file_location('changed_inputs', Path(__file__).with_name('changed-inputs.py'))
+changed_inputs = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(changed_inputs)
 
 
 class StudyReviewTests(unittest.TestCase):
@@ -43,6 +48,14 @@ class StudyReviewTests(unittest.TestCase):
     def test_evidence_qualifier_rejects_unfrozen_campaign(self):
         with self.assertRaises(AssertionError):
             qualify(self.reports, self.plan)
+
+    def test_multi_package_filter_requires_nonempty_total_not_every_package(self):
+        row = dict(stage='native-unit', head='source', exit_code=0,
+                   counts=[[426, 0, 2], [0, 0, 0]])
+        stages([row], 'source', {'native-unit'})
+        row['counts'] = [[0, 0, 0], [0, 0, 0]]
+        with self.assertRaises(AssertionError):
+            stages([row], 'source', {'native-unit'})
 
     def test_observations_require_matching_owned_receipts_and_cleanup(self):
         with tempfile.TemporaryDirectory() as directory, patch('campaign.HERE', Path(directory)):
@@ -104,6 +117,43 @@ class StudyReviewTests(unittest.TestCase):
                 allocate('I', '../escape')
             self.assertEqual(old.read_text(), 'retained evidence')
             self.assertEqual(receipt.read_text(), 'first build')
+
+    def test_changed_input_runs_preserve_intermediate_and_final_evidence(self):
+        with tempfile.TemporaryDirectory() as directory, patch.object(changed_inputs, 'HERE', Path(directory)):
+            retained = Path(directory) / 'changed-inputs-v1'
+            retained.mkdir()
+            (retained / 'results.json').write_text('intermediate evidence')
+            final = changed_inputs.allocate_output('final')
+            (final / 'results.json').write_text('final evidence')
+            with self.assertRaises(FileExistsError):
+                changed_inputs.allocate_output('final')
+            changed_inputs.allocate_output('next')
+            self.assertEqual((retained / 'results.json').read_text(), 'intermediate evidence')
+            self.assertEqual((final / 'results.json').read_text(), 'final evidence')
+
+    def test_adopted_candidate_workspace_controls_all_source_checks(self):
+        with tempfile.TemporaryDirectory() as directory, patch('study.HERE', Path(directory)):
+            root = Path(directory)
+            source = dict(commit='final', tree='tree', status='')
+            targets = {}
+            pins = {}
+            for subject in ['F','I','W','R']:
+                targets[subject] = root / subject
+                targets[subject].write_text(subject)
+                pins[subject] = process.sha(targets[subject])
+            plan = dict(candidate_receipt='new-F.json', baseline_receipt='new-I.json', implementation_base='before')
+            (root / 'plan.json').write_text(json.dumps(plan))
+            (root / 'new-F.json').write_text(json.dumps(dict(source=source, workspace='/alternate-checkout', executable=str(targets['F']), executable_sha256=pins['F'])))
+            (root / 'new-I.json').write_text(json.dumps(dict(source=dict(commit='before'), executable=str(targets['I']), executable_sha256=pins['I'])))
+            (root / 'retained-controls.json').write_text(json.dumps({s:dict(path=str(targets[s]),sha256=pins[s]) for s in ['W','R']}))
+
+            def git(command, **kwargs):
+                self.assertEqual(command[:3], ['git','-C','/alternate-checkout'])
+                return {'HEAD': 'final', 'HEAD^{tree}': 'tree', '--porcelain': ''}[command[-1]]
+
+            with patch('study.subprocess.check_output', side_effect=git):
+                self.assertEqual(subjects()[:2], (targets, pins))
+                self.assertEqual(source_state(), source)
 
 
 if __name__ == '__main__':

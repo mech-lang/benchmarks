@@ -42,8 +42,9 @@ def stages(rows, head, required):
     assert required <= {row['stage'] for row in rows}
     for row in rows:
         assert row['head'] == head and row['exit_code'] == 0, row['stage']
-        for passed, failed, _ in row['counts']:
-            assert int(passed) > 0 and int(failed) == 0, row['stage']
+        if row['counts']:
+            assert sum(int(count[0]) for count in row['counts']) > 0, row['stage']
+            assert all(int(count[1]) == 0 for count in row['counts']), row['stage']
     return {row['stage']: row for row in rows}
 
 
@@ -53,6 +54,7 @@ def prerequisites(plan):
     assert source_state() == f['source'] and not f['source']['status']
     assert plan['final_compiler_source'] == f['source']['commit']
     assert plan['implementation_base'] == i['source']['commit'] and not i['source']['status']
+    assert source_state(Path(i['workspace'])) == i['source']
     assert plan['subject_pins'] == pins
     assert plan['bootstrap_seed'] == 2026102595 and plan['bootstrap_resamples'] == 20000
     assert plan['primary_observations'] == 192 and plan['warmups'] == plan['excluded_outliers'] == 0
@@ -85,13 +87,25 @@ def prerequisites(plan):
     assert changed['source'] == changed['source_after'] == f['source']
     assert changed['pins'] == {s: pins[s] for s in ('F','I')}
     assert len(changed['cases']) == 7 and all(len(c['executions']) == 2 for c in changed['cases'])
+    assert {c['name'] for c in changed['cases']} == {
+        'one-key-short', 'query-boundaries', 'random-single-row', 'random-short-rows',
+        'random-ordinary-rows', 'growth-and-partial-credit', 'repeated-wide-key'}
+    assert all({e['subject'] for e in c['executions']} == {'F','I'} for c in changed['cases'])
     code = evidence(checks['guest_code'])
     assert code['F_source'] == f['source'] and code['I_source'] == i['source']
     assert len(code['files']) == 6 and all(row['equal'] and row['F'] == row['I'] for row in code['files'])
-    assert code['files'][0]['F'] == read(HERE / 'retained-controls.json')['W']['object_sha256']
+    files = {row['file']: row for row in code['files']}
+    assert set(files) == {'program.o','program.mecb','native-descriptor.json','native-descriptor.bin','object-identity.bin','native-resources.json'}
+    assert files['program.o']['F'] == f['object_sha256'] == i['object_sha256'] == read(HERE / 'retained-controls.json')['W']['object_sha256']
+    for subject, receipt in [('F',f), ('I',i)]:
+        project = Path(receipt['executable'] + '.project')
+        assert all(process.sha(project / name) == row[subject] for name, row in files.items())
     representatives = evidence(checks['representative_objects'])
     assert representatives['F_source'] == f['source'] and representatives['I_source'] == i['source']
-    assert len(representatives['files']) == 32 and all(row['equal'] for row in representatives['files'])
+    assert len(representatives['files']) == 32 and all(row['equal'] and row['F'] == row['I'] for row in representatives['files'])
+    expected = {f'{fixture}-{variant}.{suffix}' for fixture in ['aggregate','owner','owner-words','scalar']
+                for variant in ['source','decoded'] for suffix in ['o','mecb','metadata.json','descriptor.json']}
+    assert {row['path'] for row in representatives['files']} == expected
     return targets, pins, f, i
 
 

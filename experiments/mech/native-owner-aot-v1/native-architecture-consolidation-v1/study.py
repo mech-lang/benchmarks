@@ -9,7 +9,11 @@ sys.path.insert(0,str(ROOT/'tools/qualification'))
 spec=importlib.util.spec_from_file_location('owned_process',ROOT/'experiments/janet/knucleotide-bytes-v1/process.py')
 process=importlib.util.module_from_spec(spec);spec.loader.exec_module(process)
 def read(path):return json.loads(Path(path).read_text())
-def source_state(workspace=WORKSPACE):
+def source_state(workspace=None):
+ if workspace is None:
+  plan=read(HERE/'plan.json')
+  candidate=read(HERE/plan.get('candidate_receipt','candidate/public-aot.json'))
+  workspace=Path(candidate.get('workspace',WORKSPACE))
  def git(*args):return subprocess.check_output(['git','-C',str(workspace),*args],text=True).strip()
  return dict(commit=git('rev-parse','HEAD'),tree=git('rev-parse','HEAD^{tree}'),status=git('status','--porcelain'))
 def subjects():
@@ -17,7 +21,7 @@ def subjects():
  f=read(HERE/plan.get('candidate_receipt','candidate/public-aot.json'));i=read(HERE/plan.get('baseline_receipt','baseline/public-aot.json'));controls=read(HERE/'retained-controls.json')
  targets={'F':Path(f['executable']),'I':Path(i['executable']),'W':Path(controls['W']['path']),'R':Path(controls['R']['path'])}
  pins={'F':f['executable_sha256'],'I':i['executable_sha256'],'W':controls['W']['sha256'],'R':controls['R']['sha256']}
- assert source_state()==f['source'] and not f['source']['status']
+ assert source_state(Path(f.get('workspace',WORKSPACE)))==f['source'] and not f['source']['status']
  assert i['source']['commit']==read(HERE/'plan.json')['implementation_base']
  for s,p in targets.items():assert process.sha(p)==pins[s],s
  return targets,pins,f,i
