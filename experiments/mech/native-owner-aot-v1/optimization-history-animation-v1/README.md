@@ -3,9 +3,8 @@
 **99.55% Runtime Reduction · 4% Faster Than Rust Baseline**
 
 The animation reveals the full-input optimization history above two benchmark
-replay lanes. Mech's ball uses its logo yellow (`#F6C04E`); Rust's uses the
-[GitHub Linguist Rust color](https://github.com/github-linguist/linguist/blob/main/lib/linguist/languages.yml)
-(`#DEA584`). The white-background chart keeps blue markers and includes
+replay lanes. Mech's ball uses its logo yellow (`#F6C04E`); Rust's uses a deeper
+brown (`#8B4A2D`) to distinguish the two lanes. The white-background chart keeps blue markers and includes
 120 median timing checkpoints: the original 118 cohorts plus both later
 qualified sessions in which Mech beats unchanged Rust. The 732 individual
 process observations remain in the source data and are not drawn. Its
@@ -30,6 +29,14 @@ cohort coordinate and stays constant until the next checkpoint. Its position
 remains continuous across updates and reflects at the lane ends. The fitted
 curve never controls the ball's motion. All trials and measured regressions
 are retained; this is not a best-so-far envelope.
+
+The balls have no direction arrows. At each wall contact they compress
+horizontally by up to 14%, preserve their elliptical area, then recover with
+a 4% stretch and a two-pixel lift. The effect settles within 0.21 seconds.
+Radius compensation keeps the compressed edge against the wall. These small
+surface and position offsets do not change the measured phase, crossing times
+or impact sounds. Ball edges are rendered at four times the output resolution
+before downsampling.
 
 Each wall contact has a quiet, rounded keyboard-style tap: Mech has a lighter
 sound, Rust a deeper, muted sound. The original synthesized impacts use short,
@@ -92,4 +99,6 @@ both balls' observed centers agree with their expected
 positions to within one pixel. Those checks and decoded video metadata are
 retained in `media/encoded-verification.json`. The verifier also checks all wall
 contacts, the audio stream's format, quiet peak levels, absence of clipping, and
-alignment of the decoded AAC track with the lossless master.
+alignment of the decoded AAC track with the lossless master. It checks 362
+encoded frames around the 78 impacts for deformation, center position and
+absence of arrows, and verifies wall contact and recovery analytically.

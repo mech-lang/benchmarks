@@ -22,7 +22,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import FixedLocator, FuncFormatter
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-from bounce_audio import create_soundtrack
+from bounce_audio import bounce_events, create_soundtrack
 
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
@@ -43,7 +43,10 @@ BLUE = "#176DCA"
 MECH = "#F6C04E"  # Mech logo: rgb(246 192 78).
 INK = "#1B2B3B"
 MUTED = "#53677E"
-RUST = "#DEA584"  # GitHub Linguist's Rust language color.
+RUST = "#8B4A2D"
+BALL_RADIUS = 14.0
+WALL_LEFT, WALL_RIGHT = 380, 1815
+LANES = {"Mech": 891, "Rust": 978}
 FONT = Path(matplotlib.get_data_path()) / "fonts/ttf/DejaVuSans.ttf"
 BOLD = FONT.with_name("DejaVuSans-Bold.ttf")
 FONTS: dict[tuple[int, bool], ImageFont.FreeTypeFont] = {}
@@ -169,6 +172,9 @@ class Replay:
         self.history_seconds = self.end_hour * 3600 / HISTORY_SPEEDUP
         self.duration = INTRO_SECONDS + self.history_seconds + OUTRO_SECONDS
         self.frames = math.ceil(self.duration * FPS)
+        contacts = bounce_events(self, fps=FPS, rust_trip_seconds=RUST_TRIP_SECONDS)
+        self.contacts = {name: [e["time_seconds"] for e in contacts if e["language"] == name]
+                         for name in LANES}
         self.base = make_base()
         self.curve_layer = Image.new("RGBA", (WIDTH, HEIGHT), (0, 0, 0, 0))
         curve = ImageDraw.Draw(self.curve_layer)
@@ -199,7 +205,51 @@ class Replay:
     def ball_x(phase: float) -> float:
         p = phase % 2
         fraction = p if p <= 1 else 2 - p
-        return 394 + (1801 - 394) * fraction
+        return WALL_LEFT + BALL_RADIUS + (WALL_RIGHT - WALL_LEFT - 2 * BALL_RADIUS) * fraction
+
+    def ball_geometry(self, name: str, t: float) -> dict:
+        phase = self.phase_at(t) if name == "Mech" else t / RUST_TRIP_SECONDS
+        fraction = 1 - abs(phase % 2 - 1)
+        contacts = self.contacts[name]
+        index = bisect.bisect_left(contacts, t)
+        neighbors = contacts[max(0, index - 1):index + 1]
+        contact = min(neighbors, key=lambda value: abs(value - t))
+        dt = t - contact
+        smooth = lambda x: x * x * (3 - 2 * x)
+        deformation = 0.0
+        if -.065 < dt <= 0:
+            deformation = -.14 * smooth((dt + .065) / .065)
+        elif 0 < dt < .065:
+            deformation = -.14 * (1 - smooth(dt / .065))
+        elif .065 <= dt < .185:
+            deformation = .04 * math.sin(math.pi * (dt - .065) / .12) ** 2
+        rx = BALL_RADIUS * (1 + deformation)
+        ry = BALL_RADIUS / (1 + deformation)
+        lift = 2 * math.sin(math.pi * dt / .21) ** 2 if 0 < dt < .21 else 0.0
+        # Radius compensation keeps the deformed edge on the wall at contact.
+        # The measured phase and its collision times remain unchanged.
+        x = WALL_LEFT + rx + (WALL_RIGHT - WALL_LEFT - 2 * rx) * fraction
+        return {"x": x, "y": LANES[name] - lift, "rx": rx, "ry": ry,
+                "contact_seconds": contact, "contact_offset_seconds": dt,
+                "measured_center_x": self.ball_x(phase)}
+
+    def draw_ball(self, image: Image.Image, name: str, t: float):
+        shape = self.ball_geometry(name, t)
+        x, y, rx, ry = (shape[k] for k in ["x", "y", "rx", "ry"])
+        left, top = math.floor(x) - 24, math.floor(y) - 24
+        scale = 4
+        sprite = Image.new("RGBA", (48 * scale, 48 * scale))
+        draw = ImageDraw.Draw(sprite)
+        bounds = [(x - rx - left) * scale, (y - ry - top) * scale,
+                  (x + rx - left) * scale, (y + ry - top) * scale]
+        draw.ellipse(bounds, fill=MECH if name == "Mech" else RUST)
+        # The highlight deforms with the surface instead of floating above it.
+        draw.ellipse(((x - 5 * rx / BALL_RADIUS - left) * scale,
+                      (y - 8 * ry / BALL_RADIUS - top) * scale,
+                      (x + rx / BALL_RADIUS - left) * scale,
+                      (y - 2 * ry / BALL_RADIUS - top) * scale), fill="white")
+        sprite = sprite.resize((48, 48), Image.Resampling.LANCZOS)
+        image.paste(sprite, (left, top), sprite)
 
     def frame(self, t: float) -> Image.Image:
         h = max(0.0, min(self.end_hour, (t - INTRO_SECONDS) * HISTORY_SPEEDUP / 3600))
@@ -259,15 +309,8 @@ class Replay:
         text(d, (1835, 804), f'{i + 1} / {len(self.rows)} checkpoints', 17, MUTED, anchor="ra")
         text(d, (385, 804), label, 18, MUTED)
         text(d, (85, 891), f'{row["seconds"]:.4f} s' if winning else seconds_label(row["seconds"]), 20, MUTED)
-        for phase, by, color in [(self.phase_at(t), 891, MECH), (t / RUST_TRIP_SECONDS, 978, RUST)]:
-            bx = self.ball_x(phase)
-            # A small forward marker makes the direction of travel unambiguous.
-            direction = 1 if phase % 2 < 1 else -1
-            ax = bx + direction * 36
-            if 396 < ax < 1799:
-                d.polygon([(ax, by), (ax - direction * 10, by - 5), (ax - direction * 10, by + 5)], fill=color)
-            d.ellipse((bx - 14, by - 14, bx + 14, by + 14), fill=color)
-            d.ellipse((bx - 5, by - 8, bx + 1, by - 2), fill="#FFFFFF")
+        for name in LANES:
+            self.draw_ball(image, name, t)
         return image
 
     def verify_motion(self):
@@ -358,6 +401,10 @@ def main():
         "fit_source": str(FIT_SOURCE.relative_to(ROOT)), "fit_sha256": sha(FIT_SOURCE),
         "render_source_sha256": sha(Path(__file__)), "width": WIDTH, "height": HEIGHT,
         "ball_colors": {"Mech": MECH, "Rust": RUST}, "chart_point_color": BLUE,
+        "ball_animation": {"arrows": False, "maximum_horizontal_compression": .14,
+                           "maximum_rebound_stretch": .04, "maximum_vertical_lift_px": 2,
+                           "contact_radius_compensation": True, "sprite_supersampling": 4,
+                           "motion_phase_unchanged": True},
         "audio": {"codec": "AAC", "sample_rate": audio["sample_rate"], "channels": audio["channels"],
                   "bounces": audio["bounces"], "report": "bounce-audio.json",
                   "synthesizer_sha256": audio["synthesizer_sha256"],

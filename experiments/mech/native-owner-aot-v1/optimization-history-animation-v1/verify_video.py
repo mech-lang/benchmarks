@@ -77,12 +77,28 @@ def main():
     indices = {int(round(t * animation.FPS)) for t in times}
     # Verify the first encoded frame of each of the two new winning cohorts.
     indices.update(math.ceil(t * animation.FPS) for t in replay.transitions[-2:])
+    ordinary_indices = indices.copy()
+    impact_indices = {round((t + dt) * animation.FPS) for contacts in replay.contacts.values()
+                      for t in contacts for dt in [-2 / animation.FPS, 0, 2 / animation.FPS, 4 / animation.FPS, 6 / animation.FPS]
+                      if 0 <= t + dt < replay.frames / animation.FPS}
+    indices.update(impact_indices)
+    assert not manifest["ball_animation"]["arrows"]
+    for name, contacts in replay.contacts.items():
+        for crossing, t in enumerate(contacts, 1):
+            shape = replay.ball_geometry(name, t)
+            assert math.isclose(shape["rx"], animation.BALL_RADIUS * .86, abs_tol=1e-8)
+            assert math.isclose(shape["rx"] * shape["ry"], animation.BALL_RADIUS ** 2, abs_tol=1e-8)
+            edge = shape["x"] + shape["rx"] if crossing % 2 else shape["x"] - shape["rx"]
+            wall = animation.WALL_RIGHT if crossing % 2 else animation.WALL_LEFT
+            assert abs(edge - wall) < 1e-8
+            settled = replay.ball_geometry(name, t + .22)
+            assert math.isclose(settled["rx"], animation.BALL_RADIUS) and settled["y"] == animation.LANES[name]
     contact_indices = {int(round(t * animation.FPS)) for t in [0, 3.25, 12, 27, 42.6, replay.duration - 1]}
     stream = imageio_ffmpeg.read_frames(str(folder / "mech-rust-optimization-timelapse.mp4"), pix_fmt="rgb24")
     metadata = next(stream)
     assert metadata["fps"] == animation.FPS
     assert metadata["size"] == (animation.WIDTH, animation.HEIGHT)
-    records, previews = [], []
+    records, impact_records, previews = [], [], []
     count = 0
     for n, frame in enumerate(stream):
         count += 1
@@ -91,10 +107,12 @@ def main():
         pixels = np.frombuffer(frame, np.uint8).reshape(animation.HEIGHT, animation.WIDTH, 3)
         t = n / animation.FPS
         balls = []
-        for name, y, phase in [("Mech", 891, replay.phase_at(t)), ("Rust", 978, t / animation.RUST_TRIP_SECONDS)]:
-            expected = replay.ball_x(phase)
-            left, right = max(0, int(expected) - 18), min(animation.WIDTH, int(expected) + 19)
-            patch = pixels[y - 15:y + 16, left:right, :]
+        for name in animation.LANES:
+            shape = replay.ball_geometry(name, t)
+            expected, y = shape["x"], shape["y"]
+            left, right = math.floor(expected) - 22, math.floor(expected) + 23
+            top = math.floor(y) - 22
+            patch = pixels[top:top + 45, left:right, :]
             color = animation.MECH if name == "Mech" else animation.RUST
             target = np.array([int(color[j:j + 2], 16) for j in [1, 3, 5]])
             mask = np.max(np.abs(patch.astype(np.int16) - target), axis=2) < 35
@@ -103,17 +121,35 @@ def main():
             observed = left + float(np.average(np.arange(len(columns)), weights=columns))
             error = abs(observed - expected)
             assert error < 1.0, (name, t, expected, observed)
-            balls.append({"language": name, "expected_x": expected, "decoded_x": observed, "error_px": error})
+            rows = mask.sum(axis=1)
+            observed_y = top + float(np.average(np.arange(len(rows)), weights=rows))
+            assert abs(observed_y - y) < 1.0, (name, t, y, observed_y)
+            occupied_y, occupied_x = np.nonzero(mask)
+            width, height = int(np.ptp(occupied_x)) + 1, int(np.ptp(occupied_y)) + 1
+            assert abs(width - 2 * shape["rx"]) < 3 and abs(height - 2 * shape["ry"]) < 3
+            # No language-colored arrow or other marker may remain beside the ball.
+            lane = pixels[top:top + 45, animation.WALL_LEFT - 2:animation.WALL_RIGHT + 3, :]
+            lane_mask = np.max(np.abs(lane.astype(np.int16) - target), axis=2) < 35
+            outside_left = max(0, math.floor(expected - shape["rx"] - 3) - animation.WALL_LEFT + 2)
+            outside_right = math.ceil(expected + shape["rx"] + 3) - animation.WALL_LEFT + 2
+            assert lane_mask[:, :outside_left].sum() == 0 and lane_mask[:, outside_right:].sum() == 0
+            balls.append({"language": name, "expected_x": expected, "decoded_x": observed, "error_px": error,
+                          "expected_y": y, "decoded_y": observed_y, "decoded_width": width,
+                          "decoded_height": height, "expected_rx": shape["rx"], "expected_ry": shape["ry"]})
         row = replay.rows[replay.index_at(t)]
-        records.append({"frame": n, "video_seconds": t, "checkpoint": replay.index_at(t) + 1,
-                        "measured_x_rust": row["x_rust"], "balls": balls})
+        record = {"frame": n, "video_seconds": t, "checkpoint": replay.index_at(t) + 1,
+                  "measured_x_rust": row["x_rust"], "balls": balls}
+        if n in ordinary_indices:
+            records.append(record)
+        if n in impact_indices:
+            impact_records.append(record)
         if n in contact_indices:
             previews.append(Image.fromarray(pixels).resize((960, 540), Image.Resampling.LANCZOS))
     assert count == manifest["video_frames"] == replay.frames
     assert len(records) == 10
     assert {r["checkpoint"] for r in records}.issuperset({119, 120})
     report = {"decoded_video": metadata, "decoded_frames": count, "encoded_ball_checks": records,
-              "max_ball_error_px": max(b["error_px"] for r in records for b in r["balls"]),
+              "max_ball_error_px": max(b["error_px"] for r in records + impact_records for b in r["balls"]),
               "retained_individual_observations": replay.verify_motion()["retained_individual_observations"],
               "individual_points_drawn": replay.verify_motion()["individual_points_drawn"],
               "median_points_visible_at_end": replay.verify_motion()["median_points_visible_at_end"],
@@ -122,6 +158,13 @@ def main():
               "best_fit_medians": fit["fitted_cohorts"],
               "both_winning_cohorts_checked": True,
               "ball_colors": manifest["ball_colors"],
+              "impact_animation": {"decoded_frames_checked": len(impact_records),
+                                   "wall_contacts_checked": sum(map(len, replay.contacts.values())),
+                                   "maximum_x_error_px": max(b["error_px"] for r in impact_records for b in r["balls"]),
+                                   "maximum_y_error_px": max(abs(b["expected_y"] - b["decoded_y"]) for r in impact_records for b in r["balls"]),
+                                   "compressed_width_px": min(b["decoded_width"] for r in impact_records for b in r["balls"]),
+                                   "arrows_absent": True, "settled_after_seconds": .22,
+                                   "radius_compensated_contacts": True},
               "audio": verify_audio(folder, replay, manifest, digest),
               "verifier_sha256": digest(Path(__file__))}
     assert report["median_points_visible_at_end"] == 120 and report["individual_points_drawn"] == 0
