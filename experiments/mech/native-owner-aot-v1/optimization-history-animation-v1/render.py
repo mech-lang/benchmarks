@@ -39,7 +39,7 @@ FPS = 30
 INTRO_SECONDS = 2.0
 OUTRO_SECONDS = 5.0
 HISTORY_SPEEDUP = 3600.0  # One elapsed optimization hour per video second.
-RUST_TRIP_SECONDS = 1.2  # Separate illustrative clock, identical in both lanes.
+RUST_TRIP_SECONDS = 1.0  # One screen second per Rust crossing; Mech uses its measured ratio.
 TITLE_LINES = (
     "LLM Optimizes Mech Compiler 222× Over 50 Hours",
     "99.55% Runtime Reduction · 4% Faster Than Rust Baseline",
@@ -90,7 +90,7 @@ def Y(ratio: float) -> float:
     return PLOT[3] - (PLOT[3] - PLOT[1]) * math.log10(ratio / Y_LIMITS[0]) / math.log10(Y_LIMITS[1] / Y_LIMITS[0])
 
 
-def make_base() -> VectorScene:
+def make_base(first: dict, last: dict) -> VectorScene:
     matplotlib.rcParams.update({"font.family": "DejaVu Sans", "font.size": 14,
                          "text.color": INK, "axes.labelcolor": INK,
                          "xtick.color": MUTED, "ytick.color": MUTED,
@@ -123,7 +123,9 @@ def make_base() -> VectorScene:
     d = scene
     text(d, (55, 16), TITLE_LINES[0], 38, bold=True)
     text(d, (55, 64), TITLE_LINES[1], 33, bold=True)
-    text(d, (57, 111), "K-nucleotide · 125 million bases · complete process timing · headline speedup uses raw seconds", 20, MUTED)
+    text(d, (57, 111),
+         f'K-nucleotide · 125 million bases · Mech full-process runtime: {first["seconds"]:.2f} → {last["seconds"]:.4f} s = {first["seconds"] / last["seconds"]:.0f}× speedup',
+         20, MUTED)
     text(d, (1455, 28), "RECORDED ELAPSED TIME", 15, MUTED, bold=True)
     # Legend uses the same colors as the original white-background chart.
     d.ellipse((58, 154, 70, 166), fill=BLUE)
@@ -136,14 +138,14 @@ def make_base() -> VectorScene:
     # The replay lanes are separate from the elapsed-hour chart.
     d.rounded_rectangle((55, 791, 1865, 1033), radius=22, fill="#F5F8FC", outline="#E0E8F2", width=1)
     text(d, (83, 805), "RELATIVE SPEED REPLAY", 16, MUTED, bold=True)
-    text(d, (385, 835), "Crossing time at a fixed checkpoint: 1.2 s × plotted runtime ratio", 14, MUTED)
+    text(d, (385, 835), "1 s per Rust crossing · Mech crossing time = plotted runtime ratio in seconds", 14, MUTED)
     for name, y, color in [("Mech", 891, MECH), ("Rust", 978, RUST)]:
         d.ellipse((85, y - 28, 101, y - 12), fill=color)
         text(d, (111, y - 39), name, 29, INK, bold=True)
         d.line((380, y, 1815, y), fill="#CCD8E5", width=3)
         d.line((380, y - 19, 380, y + 19), fill="#A3B3C5", width=3)
         d.line((1815, y - 19, 1815, y + 19), fill="#A3B3C5", width=3)
-    text(d, (85, 978), "1× · 1.2 s / crossing", 20, MUTED)
+    text(d, (85, 978), "1× · 1 s / crossing", 20, MUTED)
     scene.freeze()
     return scene
 
@@ -188,7 +190,7 @@ class Replay:
         contacts = bounce_events(self, fps=self.fps, rust_trip_seconds=RUST_TRIP_SECONDS)
         self.contacts = {name: [e["time_seconds"] for e in contacts if e["language"] == name]
                          for name in LANES}
-        self.base = make_base()
+        self.base = make_base(self.rows[0], self.rows[-1])
         points = []
         for i in range(1601):
             h = self.hours[-1] * i / 1600
@@ -271,7 +273,8 @@ class Replay:
         for j, r in enumerate(self.rows[:i + 1]):
             x, y = X(r["hours"]), Y(r["x_rust"])
             d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=BLUE, gid=f"median-{j:03d}")
-        text(d, (X(0) + 14, Y(self.rows[0]["x_rust"]) - 30), "t=0 · 216× Rust", 18)
+        text(d, (X(0) + 14, Y(self.rows[0]["x_rust"]) - 30),
+             f't=0 · {self.rows[0]["x_rust"]:.0f}× Rust · {self.rows[0]["seconds"]:.2f} s', 18)
         for m in self.data["discontinuities"]:
             if m["hours"] > h:
                 continue
@@ -292,9 +295,9 @@ class Replay:
         d.rounded_rectangle((1215, 207, 1814, 444 if winning else 382), radius=15, fill="#F5F8FC", outline="#DEE7F1")
         heading = "MECH BEATS UNCHANGED RUST" if winning else "CURRENT TIMING"
         text(d, (1240, 220), f'{heading} · n={row["n"]}', 15, BLUE if winning else MUTED, bold=True)
-        text(d, (1240, 245), f'{ratio_label(row["x_rust"])} Rust', 43, BLUE, bold=True)
+        text(d, (1240, 245), f'{ratio_label(row["x_rust"])} Rust runtime', 43, BLUE, bold=True)
         speedup = self.rows[0]["seconds"] / row["seconds"]
-        gain = "Starting point" if i == 0 else f'Raw-runtime speedup: {speedup:.0f}×' if speedup >= 10 else f'Raw-runtime speedup: {speedup:.1f}×'
+        gain = "Mech starting time" if i == 0 else f'Mech speedup since start: {speedup:.0f}×' if speedup >= 10 else f'Mech speedup since start: {speedup:.1f}×'
         if winning:
             for n, session in enumerate(s for s in self.data["final_sessions"] if s["hours"] <= h):
                 text(d, (1243, 302 + n * 33), f'Session {session["session"]} · {session["seconds"]:.4f} s · {session["x_rust"]:.3f}×', 21)
@@ -438,7 +441,14 @@ def main():
                  "y_minor_ticks_ratio": Y_MINOR_TICKS, "y_log_base": 10,
                  "timestamp_basis": "Median recorded process launch"},
         "ball_clock_rust_crossing_seconds": RUST_TRIP_SECONDS,
-        "mech_crossing_formula": "1.2 * latest_measured_Mech_seconds / its_contemporaneous_Rust_median_seconds",
+        "mech_crossing_formula": "1.0 * latest_measured_Mech_seconds / its_contemporaneous_Rust_median_seconds",
+        "headline_speedup": {"comparison": "Initial Mech seconds divided by final Mech seconds",
+                             "initial_mech_seconds": replay.rows[0]["seconds"],
+                             "final_mech_seconds": replay.rows[-1]["seconds"],
+                             "factor": replay.rows[0]["seconds"] / replay.rows[-1]["seconds"]},
+        "plotted_ratio": {"comparison": "Mech seconds divided by the same cohort's Rust median seconds",
+                          "initial": replay.rows[0]["x_rust"], "final": replay.rows[-1]["x_rust"],
+                          "endpoint_ratio_drop": replay.rows[0]["x_rust"] / replay.rows[-1]["x_rust"]},
         "motion_update": "Hold the latest measured ratio until the next cohort's original elapsed-hour coordinate; integrate continuous position across each change.",
         "cohorts": len(replay.rows), "individual_process_observations": len(replay.samples),
         "first": {k: replay.rows[0][k] for k in ["hours", "seconds", "rust_seconds", "x_rust"]},

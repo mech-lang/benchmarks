@@ -26,15 +26,26 @@ median. The subtitle and timing card now distinguish these quantities.
 | Quantity | Independently recomputed value |
 |---|---:|
 | First Mech complete-process time | 118.600627083 s |
+| Initial Rust control | 0.5486585 s |
+| Initial Mech / Rust runtime | 216.164749× |
 | Final Mech median | 0.5349341875 s |
 | Final Rust median | 0.5559576875 s |
+| Final Mech / Rust runtime | 0.962185× |
 | Raw-runtime speedup | 221.7107×, rounded to 222× |
 | Raw-runtime reduction | 99.54896%, rounded to 99.55% |
 | Final speed advantage over Rust | 3.9301%, rounded to 4% |
 | Drop in the normalized plotted ratio | 224.6603× |
 
-The last row differs from the raw-runtime speedup because the Rust denominator
-changes across cohorts. It is not a second estimate of the same quantity.
+The headline is `118.600627083 / 0.5349341875 = 221.7107×`, rounded to 222×.
+The chart begins at `118.600627083 / 0.5486585 = 216.164749× Rust` and ends
+at `0.5349341875 / 0.5559576875 = 0.962185× Rust`. It therefore starts at
+216× Rust without implying a 216× improvement in Mech itself. The subtitle now
+prints the raw-seconds calculation, and the card separately names the Rust
+runtime ratio and Mech's speedup since the start.
+
+The last table row differs from the raw-runtime speedup because the Rust
+denominator changes by 1.33037% across those cohorts. It is not a second
+estimate of the same quantity.
 The 222× headline is an observed historical ratio with a single-run initial
 checkpoint, not a confidence bound on a replicated initial baseline.
 
@@ -63,21 +74,26 @@ Results are in `axes.json`.
 
 `audit_playback.py` imports no renderer code. It integrates speed directly from
 the receipt-derived medians and decodes every frame to check both balls and the
-history frontier. At a fixed checkpoint, one Rust crossing takes 1.2 screen
-seconds and one Mech crossing takes 1.2 times its Mech/Rust ratio. Between
+history frontier. At a fixed checkpoint, one Rust crossing takes one screen
+second and one Mech crossing takes its Mech/Rust ratio in screen seconds. The
+earlier 1.2-second scale was an arbitrary presentation choice; both lanes and
+the impact soundtrack now use the simpler one-second convention. Between
 checkpoints the speed changes immediately while phase remains continuous.
 A crossing spanning a speed update is an illustrative work unit rather than a
 measurement of one executable version.
 
-Both the previous and corrected videos pass the independent playback check.
+The previous 1.2-second editions retain their audit reports in
+`previous-release/playback-audit.json` and `current-release/playback-audit.json`.
+The one-second edition is checked separately in
+`one-second-release/playback-audit.json`.
 The history advances one recorded hour per video second, preceded by a
 two-second hold and followed by a 5.02644-second hold after frame rounding.
-All 78 impact times are checked independently. Audio event quantization is
-within 10.1 microseconds; a contact can fall up to 8.28 milliseconds from its
-nearest 60 fps frame. Per-contact comparisons of decoded AAC against the
+All 95 impact times are checked independently (38 Mech, 57 Rust). Audio event
+quantization is within half a 48 kHz sample; a contact can fall up to half a
+60 fps frame from its nearest frame. Per-contact comparisons of decoded AAC against the
 lossless master detect no additional lag at the audit's 83-microsecond
-resolution. Results are in `previous-release/playback-audit.json` and
-`current-release/playback-audit.json`.
+resolution. The change affects the illustrative replay speed and soundtrack;
+all 120 historical timing checkpoints and the fitted curve remain unchanged.
 
 ## Reproduction
 
@@ -85,10 +101,13 @@ From the animation source directory:
 
 ```sh
 python audit_evidence.py accuracy-audit
-python audit_axes.py media-audited-60fps/mech-compiler-optimization.svg accuracy-audit/axes.json
-python audit_playback.py media-audited-60fps accuracy-audit/current-release
-python verify_video.py media-audited-60fps
+python audit_axes.py media-one-second-60fps/mech-compiler-optimization.svg accuracy-audit/one-second-axes.json
+python audit_playback.py media-one-second-60fps accuracy-audit/one-second-release
+python verify_video.py media-one-second-60fps
 ```
+
+Earlier editions can be independently replay-audited with
+`--rust-crossing-seconds 1.2`; the default is now one second.
 
 The existing encoded verifier additionally checks the vector structure,
 antialiasing, exact deformed ball geometry, frame rate, both winning cohorts,

@@ -11,10 +11,10 @@ process observations remain in the source data and are not drawn. Its
 base-10 logarithmic runtime axis, ten annotated changes and line of best fit show the
 path from 216× Rust to 0.962× Rust.
 
-[SVG chart](media-audited-60fps/mech-compiler-optimization.svg) ·
-[1080p 60 fps video](media-audited-60fps/mech-rust-optimization-timelapse.mp4) ·
-[Animated preview](media-audited-60fps/mech-rust-optimization-timelapse.gif) ·
-[Decoded-frame overview](media-audited-60fps/encoded-contact-sheet.png) ·
+[SVG chart](media-one-second-60fps/mech-compiler-optimization.svg) ·
+[1080p 60 fps video](media-one-second-60fps/mech-rust-optimization-timelapse.mp4) ·
+[Animated preview](media-one-second-60fps/mech-rust-optimization-timelapse.gif) ·
+[Decoded-frame overview](media-one-second-60fps/encoded-contact-sheet.png) ·
 [Accuracy audit](accuracy-audit/README.md)
 
 The complete artwork uses vector paths, including the axes, circles, connecting
@@ -29,21 +29,24 @@ process-launch times. Visible sample counts, clock holds and the replay scale
 identify the measurement and timing conventions. The independent accuracy
 audit rechecks all source timings, every marker and every encoded frame.
 
-The 30 fps and 60 fps editions both run for 57.1 seconds and share the same
-lossless soundtrack. Every frame is rendered at its own timestamp. The retained
+The current 60 fps edition runs for 57.1 seconds. Every frame is rendered at
+its own timestamp. Earlier editions used a 1.2-second Rust crossing; the current
+edition uses one second and regenerates every collision sound from that motion.
+The retained
 30 fps packet was generated from benchmark commit
 `273fcdbad2340bf21a965f7edbec4597a064355f`; its pinned source hashes remain intact.
 The initial 60 fps packet is retained in `media-60fps` at benchmark commit
 `b52f2858242ecbe1ffcad1541315f08fd8fc47cd`. The vector edition is in
-`media-vector-60fps`. The audited presentation is in `media-audited-60fps`.
+`media-vector-60fps`. The earlier audited presentation is in `media-audited-60fps`;
+the current one-second replay is in `media-one-second-60fps`.
 
 The video uses two explicitly separate clocks:
 
 - The optimization clock runs at 3,600×: one recorded elapsed hour per video
   second, including intervening gaps. A two-second introduction and five-second
   ending hold keep the initial and final speeds visible.
-- The replay clock assigns 1.2 screen seconds to one Rust crossing. A Mech
-  crossing takes `1.2 × (Mech seconds / contemporaneous Rust median seconds)`.
+- The replay clock assigns one screen second to one Rust crossing. A Mech
+  crossing takes `(Mech seconds / contemporaneous Rust median seconds)` screen seconds.
   At a fixed checkpoint, one one-way crossing represents one benchmark
   execution at the replay scale. Crossings spanning an update integrate both
   successive speeds.
@@ -65,10 +68,25 @@ Each wall contact has a quiet, rounded keyboard-style tap: Mech has a lighter
 sound, Rust a deeper, muted sound. The original synthesized impacts use short,
 damped resonances and filtered noise, with a soft attack and slight stereo
 placement toward the contacted wall. No third-party sound recordings are used.
-The soundtrack contains 31 Mech and 47 Rust contacts. Collision times come from
+The soundtrack contains 38 Mech and 57 Rust contacts. Collision times come from
 the integrated ball motion, quantized to the nearest 48 kHz audio sample.
 
-The initial checkpoint is 118.6006 seconds, or 216.1647× Rust. The two qualified
+The headline compares Mech with its own initial runtime, while the chart compares
+Mech with Rust. These are different quantities:
+
+| Comparison | Calculation | Result |
+|---|---|---:|
+| Mech's own runtime improvement | 118.600627083 / 0.5349341875 | 221.7107× ≈ 222× |
+| Initial Mech / initial Rust runtime | 118.600627083 / 0.5486585 | 216.1647× |
+| Final Mech / final Rust runtime | 0.5349341875 / 0.5559576875 | 0.962185× |
+
+Dividing the chart's first ratio by its final ratio gives 224.6603× rather than
+221.7107× because the Rust control median changed by 1.3304% between those
+measurements. The headline uses Mech's raw seconds. The subtitle prints its
+118.60 → 0.5349-second calculation, and the timing card separately labels the
+current Rust comparison and Mech's speedup since the start.
+
+The two qualified
 paired-load sessions occur at 50.056996 and 50.068763 elapsed hours, recovered
 from the retained process births. Their results are:
 
@@ -109,16 +127,16 @@ the vector scene and bundled fonts; Pillow downsamples the frames; imageio-ffmpe
 the H.264 encoder, AAC audio encoder and silent GIF preview. The recorded editions
 use 1920×1080 at 30 or 60 fps, H.264 with 4:2:0 pixels, stereo 48 kHz AAC audio, and MP4
 fast-start metadata. `bounce_audio.py` creates the deterministic soundtrack;
-`media/bounce-soundtrack.flac` retains its lossless master, and
-`media/bounce-audio.json` records every impact and its source hash.
-Render the audited 60 fps edition with `python render.py --fps 60 --output
-media-audited-60fps`, run `python normalize_svg.py media-audited-60fps` to remove
+`media-one-second-60fps/bounce-soundtrack.flac` retains its lossless master, and
+`media-one-second-60fps/bounce-audio.json` records every impact and its source hash.
+Render the current 60 fps edition with `python render.py --fps 60 --output
+media-one-second-60fps`, run `python normalize_svg.py media-one-second-60fps` to remove
 trailing line whitespace from the generated SVGs, then run
-`python verify_video.py media-audited-60fps`. Its manifest and
+`python verify_video.py media-one-second-60fps`. Its manifest and
 checks are stored alongside the 60 fps video, including a decoded intervening
 frame that verifies its position against the 60 Hz motion clock.
 
-`media/animation.json` records both clock scales, source and artifact hashes,
+`media-one-second-60fps/animation.json` records both clock scales, source and artifact hashes,
 package versions, exact endpoints, frame count, and motion checks. Every speed
 interval is checked against its measured ratio, phase continuity is verified,
 and all 120 median points are visible at the end. The individual-run layer and
@@ -126,11 +144,10 @@ bottom caption are omitted from the video. The encoded MP4 checks include
 the first visible frame of each winning cohort;
 both balls' observed centers agree with their expected
 positions to within one pixel. Those checks and decoded video metadata are
-retained in `media/encoded-verification.json`. The verifier also checks all wall
+retained in `media-one-second-60fps/encoded-verification.json`. The verifier also checks all wall
 contacts, the audio stream's format, quiet peak levels, absence of clipping, and
-alignment of the decoded AAC track with the lossless master. It checks 362
-encoded frames in the 30 fps edition and 371 in the 60 fps edition around the
-78 impacts for deformation, center position and
+alignment of the decoded AAC track with the lossless master. It checks encoded
+frames around all 95 impacts for deformation, center position and
 absence of arrows, and verifies wall contact and recovery analytically.
 For the vector edition it also checks the SVG path structure, all 120 marker
 IDs, absence of embedded raster layers, outlined fonts and intermediate

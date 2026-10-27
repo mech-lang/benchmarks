@@ -103,6 +103,10 @@ def main():
     replay = animation.Replay(fps=fps)
     assert manifest["runtime_axis_log_base"] == 10
     first, last = replay.rows[0], replay.rows[-1]
+    assert manifest["ball_clock_rust_crossing_seconds"] == animation.RUST_TRIP_SECONDS == 1.0
+    assert math.isclose(manifest["headline_speedup"]["factor"], first["seconds"] / last["seconds"], rel_tol=1e-12)
+    assert math.isclose(manifest["plotted_ratio"]["initial"], first["seconds"] / first["rust_seconds"], rel_tol=1e-12)
+    assert math.isclose(manifest["plotted_ratio"]["final"], last["seconds"] / last["rust_seconds"], rel_tol=1e-12)
     assert round(first["seconds"] / last["seconds"]) == 222
     assert round(100 * (1 - last["seconds"] / first["seconds"]), 2) == 99.55
     assert round(100 * (last["rust_seconds"] / last["seconds"] - 1)) == 4

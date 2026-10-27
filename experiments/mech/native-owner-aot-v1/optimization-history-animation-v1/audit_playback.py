@@ -14,7 +14,7 @@ import imageio_ffmpeg
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-FPS, INTRO, RUST_CROSSING = 60, 2.0, 1.2
+FPS, INTRO = 60, 2.0
 LEFT, RIGHT, RADIUS = 380, 1815, 14
 
 
@@ -22,7 +22,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("media", type=Path)
     parser.add_argument("output", type=Path)
+    parser.add_argument("--rust-crossing-seconds", type=float, choices=[1.0, 1.2], default=1.0,
+                        help="Independently specified replay scale; 1.2 reproduces earlier editions.")
     args = parser.parse_args()
+    rust_crossing = args.rust_crossing_seconds
     args.output.mkdir(parents=True, exist_ok=True)
     evidence = json.loads((HERE / "accuracy-audit/receipt-audit.json").read_text())
     source = json.loads((HERE / "timeline.json").read_text())
@@ -33,27 +36,27 @@ def main():
     starts = [0.0] + [INTRO + row["hours"] for row in rows[1:]]
     prefixes = [0.0]
     for i in range(1, len(rows)):
-        prefixes.append(prefixes[-1] + (starts[i] - starts[i - 1]) * rows[i - 1]["rust_seconds"] / (RUST_CROSSING * rows[i - 1]["candidate_seconds"]))
+        prefixes.append(prefixes[-1] + (starts[i] - starts[i - 1]) * rows[i - 1]["rust_seconds"] / (rust_crossing * rows[i - 1]["candidate_seconds"]))
 
     def phase(t):
         i = bisect.bisect_right(starts, t) - 1
-        return prefixes[i] + (t - starts[i]) * rows[i]["rust_seconds"] / (RUST_CROSSING * rows[i]["candidate_seconds"])
+        return prefixes[i] + (t - starts[i]) * rows[i]["rust_seconds"] / (rust_crossing * rows[i]["candidate_seconds"])
 
     def center(value):
         fraction = 1 - abs(value % 2 - 1)
         return LEFT + RADIUS + (RIGHT - LEFT - 2 * RADIUS) * fraction
 
     events = []
-    for number in range(1, math.ceil(duration / RUST_CROSSING)):
-        events.append({"language": "Rust", "time_seconds": number * RUST_CROSSING, "crossing": number})
+    for number in range(1, math.ceil(duration / rust_crossing)):
+        events.append({"language": "Rust", "time_seconds": number * rust_crossing, "crossing": number})
     for number in range(1, math.floor(phase(duration)) + 1):
         i = max(0, bisect.bisect_right(prefixes, number) - 1)
-        when = starts[i] + (number - prefixes[i]) * RUST_CROSSING * rows[i]["candidate_seconds"] / rows[i]["rust_seconds"]
+        when = starts[i] + (number - prefixes[i]) * rust_crossing * rows[i]["candidate_seconds"] / rows[i]["rust_seconds"]
         assert when < duration and abs(phase(when) - number) < 1e-10
         events.append({"language": "Mech", "time_seconds": when, "crossing": number})
     events.sort(key=lambda e: (e["time_seconds"], e["language"]))
     retained_audio = json.loads((args.media / "bounce-audio.json").read_text())
-    assert len(events) == len(retained_audio["events"]) == 78
+    assert len(events) == len(retained_audio["events"])
     event_error, frame_error = 0.0, 0.0
     for expected, actual in zip(events, retained_audio["events"]):
         assert expected["language"] == actual["language"] and expected["crossing"] == actual["crossing"]
@@ -91,7 +94,7 @@ def main():
         maximum_cursor_error = max(maximum_cursor_error, abs(cursor - observed_cursor))
         assert abs(cursor - observed_cursor) < 1.5, (n, cursor, observed_cursor)
         for name, y, value, color in [("Mech", 891, phase(t), [246, 192, 78]),
-                                      ("Rust", 978, t / RUST_CROSSING, [139, 74, 45])]:
+                                      ("Rust", 978, t / rust_crossing, [139, 74, 45])]:
             expected = center(value)
             x0, y0 = math.floor(expected) - 25, y - 23
             patch = pixels[y0:y0 + 47, x0:x0 + 51].astype(np.int16)
@@ -140,7 +143,7 @@ def main():
               "video_duration_seconds": duration, "history_hours": end_hour,
               "history_seconds_per_hour": 1.0, "intro_hold_seconds": INTRO,
               "encoded_outro_hold_seconds": duration - INTRO - end_hour,
-              "rust_crossing_seconds": RUST_CROSSING,
+              "rust_crossing_seconds": rust_crossing,
               "maximum_history_cursor_error_px": maximum_cursor_error,
               "maximum_ball_center_error_including_deformation_px": maximum_ball_error,
               "maximum_vertical_lift_including_pixel_error_px": maximum_y_error,
