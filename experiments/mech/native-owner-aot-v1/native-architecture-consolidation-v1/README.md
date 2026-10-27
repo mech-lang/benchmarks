@@ -1,5 +1,44 @@
 # Native architecture consolidation
 
+The published-head primary campaigns are complete: 192 full-input processes for
+this rearchitecture and 192 for the cleanup, with no exclusions. Every output,
+work counter, executable/source pin and owned-process terminal receipt validates.
+**Neither study meets complete statistical acceptance, and neither is performance
+qualified.** Final compiler/artifact verification also remains open.
+
+| Study | F/I paired change, session 1 | F/I paired change, session 2 |
+| --- | --- | --- |
+| Architecture #935 | +0.989% [-0.703%, +3.008%] | -0.252% [-0.781%, +0.868%] |
+| Cleanup #939 | +0.263% [-0.763%, +1.262%] | +0.100% [-1.020%, +0.986%] |
+
+Intervals are the unchanged predeclared paired 95% bootstrap intervals. Acceptance
+requires every F/I, F/W and F/R bound in both sessions, not just favorable point
+estimates. See [architecture results](collection-analysis.json) and
+[cleanup results](../post-native-architecture-cleanup-v1/collection-analysis.json)
+for all four comparisons, medians and acceptance decisions. Every raw process is
+retained under each study's `primary-session-1/` and `primary-session-2/`.
+No unchanged cohort is repeated to seek acceptance.
+
+[The binary audit](binary-difference-audit-v1/README.md) verifies all three exact
+timed executables. All 129,296 guest text bytes match except linking address
+fixups; all four funded packed-loop bodies are byte-identical after linking.
+Resolved dependency versions/features and release settings match. Rust host code,
+source-path strings, addresses and executable metadata differ. This establishes
+why full executable hashes differ, not a cause for the observed timing variation.
+
+At #935's exact published head, all 51 correctness scopes and sixteen substantive
+generated-process scopes pass. The latter's 45 complete stages and 127 passed,
+zero failed, three ignored tests are retained in `published-processes-7543-v1/`.
+The complete correctness raw evidence and validated same-head resume remain in
+local qualification evidence pending archival. Exact baseline five-suite and
+32-snapshot coverage, #935's 32 snapshots, and cleanup #939's 51/16/32 proof remain
+required. The failed disk-full snapshot attempt remains preserved.
+
+The notes below retain preparation history. References to zero primary samples,
+unstarted timing, or pending public-build adoption describe earlier checkpoints;
+the current published-head results and status are the statements above.
+
+
 The shared controller now serves this study and
 `post-native-architecture-cleanup-v1` through a fixed `--study` choice. The
 architecture study remains the default. Plans, build receipts, qualification
