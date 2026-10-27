@@ -5,13 +5,15 @@ This is the primary evidence study for the cleanup following mech-lang/mech
 `01b8b397011b6a774b7d9f730578a4ef92bf30f6`. Its retained public AOT executable
 and build receipt in `../native-architecture-consolidation-v1/` remain historical
 evidence. The actual before subject must be the final repaired #935; the after
-subject must be the cleanup rebased above it. The current source candidates are
-architecture `a3e805aae775a8aa6bf181714c8cbe7c9e6619e9` and cleanup
-`870fddede8b6483856134fe4e0235167e8155612`; both final public build receipts are now
-validated and adopted. All 14 cleanup/architecture changed-input executions
-passed their exact-output and raw-process audits; final qualification remains
-pending. The former b05/569 prospective subjects
-remain recorded in `plan.json`. Neither candidate has timing evidence.
+subject must be the cleanup directly above it. The current prospective sources
+are architecture `7543c56d5efc4df30d0b60961922024d74caa9d7` (#935) and cleanup
+`a68fb2e60d7afbc59bc146f8878b17181e275645` (#939). The complete Rust cleanup
+patch preserves the six-profile/four-runtime-closure checkpoint; exact final-head
+qualification and fresh public builds remain in progress. The earlier
+`a3e805a`/`870fdde` builds and fourteen changed-input executions remain historical
+evidence at their original pins. Their receipts do not qualify these new heads.
+The former b05/569 subjects also remain recorded in `plan.json`. No candidate
+has final timing qualification.
 
 `audit/` retains the complete 363-file inventory, exact-body candidates,
 256 resolved default-module paths, 19 inherited feature guards, and original
@@ -39,12 +41,12 @@ study. No historical performance claim is transferred to the new candidate.
 
 `plan.json` is **UNFROZEN**. It retains the original workload/control pins,
 two-session schedule and acceptance policy. Its source candidates are recorded,
-and both F/I build receipts are adopted. The before receipt is an immutable
+while fresh F/I build receipt adoption remains pending. The before receipt will be an immutable
 hash-pinned reference to architecture F; the cleanup candidate receipt stays
 local. Both studies adopt the same hash-pinned
 `runtime-environment-v1.json`. `retained-controls.json`
 is a byte-for-byte snapshot of the same W/R provenance; no control was rebuilt.
-Final correctness, generated-process, changed-input and object evidence must be
+Final correctness, generated-process, changed-input, 32 representative and wide-slot artifact evidence must be
 adopted before filling qualification/controller pins and freezing the plan.
 
 Use the shared implementation in `../native-architecture-consolidation-v1/`:

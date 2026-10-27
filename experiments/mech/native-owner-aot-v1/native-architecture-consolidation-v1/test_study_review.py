@@ -16,6 +16,7 @@ from campaign import (observation, stages, CONTROLLER, CORRECTNESS, CORRECTNESS_
                       check_controllers, required_controller_paths)
 from qualify import qualify
 import measure
+import wide_slot
 from study import (process, subjects, source_state, STUDY_IDS, STUDY_ID, ROOT,
                    build_receipt_path, runtime_environment, read_plan)
 
@@ -32,6 +33,58 @@ class StudyReviewTests(unittest.TestCase):
                  seconds=1.0 if subject == 'F' else 2.0, verified=True)
             for order, subjects in enumerate(self.plan[f'session_{session}'])
             for position, subject in enumerate(subjects)]) for session in [1, 2]]
+
+    def test_wide_slots_require_all_six_public_builds_at_the_adopted_sources(self):
+        sources = {name: dict(commit=name * 40, tree=name * 40, status='') for name in 'IAC'}
+        compilers = {name: name.lower() * 64 for name in 'IAC'}
+        artifacts = dict.fromkeys(wide_slot.FILES, '1' * 64)
+        report = dict(schema='mech.wide-slot-public-artifacts.v1',
+                      status='passed-six-public-builds-wide-guest-artifacts-identical',
+                      benchmark_samples=0, performance_qualified=False, builds=[
+                          dict(subject=name, route=route, source=sources[name],
+                               guest_artifacts=artifacts.copy(), descriptor_evidence=dict(
+                                   packing_bits=4, selected_width=17, selected_key_bits=68, payload_bytes=24))
+                          for name in 'IAC' for route in ('source', 'decoded')])
+        protocol = dict(status='ready', subjects_order=list('IAC'), routes=['source', 'decoded'],
+                        builds=6, guest_files=sorted(wide_slot.FILES),
+                        aot_deadline_seconds=1800, clean_deadline_seconds=180,
+                        subjects={name: dict(commit=sources[name]['commit'], compiler_sha256=compilers[name])
+                                  for name in 'IAC'},
+                        fixture=dict(packing_bits=4, width=17, key_bits=68, slot_bytes=24,
+                                     text_length=42, source_inputs=0, resources=0))
+        receipt = lambda name: dict(source=sources[name], compiler_sha256=compilers[name])
+        for study, before, after in [(STUDY_IDS[0], 'I', 'A'), (STUDY_IDS[1], 'A', 'C')]:
+            wide_slot.inventory(report, protocol, receipt(after), receipt(before), study)
+            mutations = [
+                lambda r: r['builds'].pop(),
+                lambda r: r['builds'][-1].update(route='source'),
+                lambda r: r['builds'][-1]['guest_artifacts'].update({'program.o': '2' * 64}),
+                lambda r: r['builds'][0]['source'].update(commit='stale'),
+                lambda r: r['builds'][0]['descriptor_evidence'].update(payload_bytes=16),
+                lambda r: r.update(status='running'),
+                lambda r: r.update(benchmark_samples=1),
+                lambda r: r.update(performance_qualified=True),
+            ]
+            for mutation in mutations:
+                changed = copy.deepcopy(report)
+                mutation(changed)
+                with self.assertRaises(AssertionError):
+                    wide_slot.inventory(changed, protocol, receipt(after), receipt(before), study)
+            with self.assertRaises(AssertionError):
+                wide_slot.inventory(report, protocol, receipt(before), receipt(after), study)
+
+    def test_wide_process_receipts_cannot_hide_failed_or_unclosed_builds(self):
+        receipt = dict(exit_status=0, command=['compiler', 'build'], deadline_seconds=1800,
+                       quantitative_benchmark=False, inherited_common_mutex=True,
+                       group_closed=True, reaped=True, cleanup_errors=[], signals=[],
+                       controller_sha256='owner')
+        wide_slot.owned(receipt, 'owner', ['compiler', 'build'], 1800)
+        for field, value in [('exit_status', 1), ('group_closed', False), ('reaped', False),
+                             ('cleanup_errors', ['unreaped']), ('quantitative_benchmark', True),
+                             ('deadline_seconds', 3600), ('command', ['another-compiler']),
+                             ('controller_sha256', 'another-owner')]:
+            with self.subTest(field=field), self.assertRaises(AssertionError):
+                wide_slot.owned(dict(receipt, **{field: value}), 'owner', ['compiler', 'build'], 1800)
 
     def test_study_selection_keeps_data_separate_and_controllers_shared(self):
         code = '''import json,sys,study,campaign,measure,qualify,build_subject

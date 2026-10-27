@@ -21,19 +21,31 @@ an `environment` map. A shared reference has exactly
 Only the two named study directories are accepted. Adopt a real, verified
 receipt in both plans before freezing; do not copy placeholder pins.
 
-The current source candidates are baseline I at
-`ddf8cbc3b17a644ea6292ee3bf0c4a9c63af4514` and architecture F at
-`a3e805aae775a8aa6bf181714c8cbe7c9e6619e9`. I includes the verified #934
-test-profile and linkage-inventory repairs; F includes the runtime-only launcher
-qualification fixture repair. The fresh baseline public receipt is explicitly
-adopted at `baseline-builds/adopted-ddf8-v1/public-aot.json`, with clean owned
-compiler/AOT exits and bytecode/guest Object matching the retained pins. The
-final architecture candidate is adopted at
-`candidate-builds/adopted-a3e805a-v1/public-aot.json`. Both public builds and all
-14 changed-input executions have clean validated receipts; final qualification
-remains pending. The earlier
-`b05a3f8a81e34b39b625b7e55c1bf90790ca1092` prospective subject remains recorded
-in `plan.json`; zero primary observations have been collected.
+The current prospective sources are baseline I at
+`a093aea452340a70c1e72a1f58bd831f1edef70f` (#934) and architecture F at
+`7543c56d5efc4df30d0b60961922024d74caa9d7` (#935). The test-only base repair
+passes all 422 tests across the nine original canonical source CI suites. The
+architecture preserves the complete prepared patch and published history.
+Fresh public builds and exact-head correctness/process/artifact qualification
+are in progress. Their receipt fields remain empty until independently checked.
+
+The earlier `ddf8cbc`/`a3e805a` public builds and fourteen changed-input
+executions remain historical evidence at their original pins, alongside the
+older `b05a3f8` prospective subject. No result is relabelled for a later source.
+Zero primary observations have been collected.
+
+`artifact_equivalence.py snapshots` runs the tracked, exact-one-test snapshot
+harness for an explicitly adopted `--subject I` or `--subject F`. It requires
+matching source/cache provenance and records all 32 named source/decoded files.
+`compare` requires pinned snapshot receipts for both actual before/after heads;
+the cleanup reuses architecture F as its I. The older ddf8 snapshot archive is
+an additional byte-level reference, not a substitute for the actual before head.
+
+Before primary sampling, `wide_slot.py` also requires the six public wide-slot
+builds (three source heads, each source/decoded). It checks the four-bit domain,
+68-bit key, 24-byte slot, all six guest artifacts, actual source/compiler pins,
+owned AOT/disassembly receipts and committed archive bytes. Neither the six
+ordinary public artifacts nor the 32 representatives replace this separate gate.
 
 `baseline-prerequisites-ddf8-v1/` records the repaired baseline's five prerequisite
 suites: 415 native tests (two existing ignored diagnostics), 82 facts, 30 line,
@@ -51,7 +63,8 @@ are retained as historical evidence.
 `plan.json` predeclares both complete four-subject schedules, paired analysis,
 seed and acceptance policy. `retained-controls.json` verifies the exact W/R
 files and winning object, without rebuilding them. No primary observations
-have been collected. Candidate source and executable pins are adopted. Final
+have been collected. Prospective source heads are adopted; fresh executable
+receipt adoption remains pending. Final
 correctness/process/artifact coverage and both timing sessions remain required.
 
 `baseline/public-aot.json` records the actual public CLI build of I, its clean

@@ -5,6 +5,7 @@ import subprocess
 from pathlib import Path
 from study import (HERE, CODE_DIR, ROOT, RETAINED, STUDY_ID, process, read, source_state,
                    subjects, inputs, check_native, build_receipt_path, runtime_environment)
+import wide_slot
 
 COMPLETE = 'all-96-complete-processes-output-counters-pins-and-cleanup-verified'
 CONTROLLER = 'experiments/janet/knucleotide-bytes-v1/process.py'
@@ -69,7 +70,7 @@ def evidence(ref):
 
 def required_controller_paths():
     return {str((CODE_DIR / name).relative_to(ROOT)) for name in
-            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py']} | {CONTROLLER}
+            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py', 'wide_slot.py']} | {CONTROLLER}
 
 
 def check_controllers(plan):
@@ -172,19 +173,22 @@ def prerequisites(plan):
     assert {row['path'] for row in representatives['files']} == expected
     for row in representatives['files']:
         assert all(process.sha(contained(row[s + '_file'])) == row[s] for s in ('F','I'))
+    wide_slot.check(checks['wide_slot_artifacts'], f, i)
     return targets, pins, f, i
 
 
 def committed_before_sampling(revision, plan):
     files = ['plan.json', 'qualification.json', 'retained-controls.json']
     checks = read(HERE / 'qualification.json')['checks']
-    files += [ref['path'] for ref in checks.values()]
+    files += [ref['path'] for name, ref in checks.items() if name != 'wide_slot_artifacts']
     for name in ['guest_code', 'representative_objects']:
         files += [row[subject + '_file'] for row in evidence(checks[name])['files'] for subject in ('F','I')]
     receipts = [build_receipt_path(plan['baseline_receipt'], shared=True),
                 build_receipt_path(plan['candidate_receipt']),
                 build_receipt_path(plan['runtime_environment_receipt'], shared=True)]
     paths = [str(path.relative_to(ROOT)) for path in [*(contained(name) for name in files), *receipts]]
+    wide_files = wide_slot.check(checks['wide_slot_artifacts'], read(receipts[1]), read(receipts[0]))
+    paths += [str(path.relative_to(ROOT)) for path in wide_files]
     paths += list(plan['controller_pins'])
     for path in paths:
         blob = subprocess.check_output(['git','-C',str(ROOT),'show',revision + ':' + path])
