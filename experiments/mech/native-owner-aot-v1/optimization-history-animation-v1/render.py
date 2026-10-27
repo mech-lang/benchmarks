@@ -124,7 +124,7 @@ def make_base(first: dict, last: dict) -> VectorScene:
     text(d, (55, 16), TITLE_LINES[0], 38, bold=True)
     text(d, (55, 64), TITLE_LINES[1], 33, bold=True)
     text(d, (57, 111),
-         f'K-nucleotide · 125 million bases · Mech full-process runtime: {first["seconds"]:.2f} → {last["seconds"]:.4f} s = {first["seconds"] / last["seconds"]:.0f}× speedup',
+         f'K-nucleotide · 125 million bases · Mech full-process runtime: {first["seconds"]:.4f} → {last["seconds"]:.6f} s = {first["seconds"] / last["seconds"]:.2f}× speedup',
          20, MUTED)
     text(d, (1455, 28), "RECORDED ELAPSED TIME", 15, MUTED, bold=True)
     # Legend uses the same colors as the original white-background chart.
@@ -274,7 +274,7 @@ class Replay:
             x, y = X(r["hours"]), Y(r["x_rust"])
             d.ellipse((x - 5, y - 5, x + 5, y + 5), fill=BLUE, gid=f"median-{j:03d}")
         text(d, (X(0) + 14, Y(self.rows[0]["x_rust"]) - 30),
-             f't=0 · {self.rows[0]["x_rust"]:.0f}× Rust · {self.rows[0]["seconds"]:.2f} s', 18)
+             f't=0 · {self.rows[0]["x_rust"]:.2f}× Rust · {self.rows[0]["seconds"]:.4f} s', 18)
         for m in self.data["discontinuities"]:
             if m["hours"] > h:
                 continue
@@ -297,7 +297,7 @@ class Replay:
         text(d, (1240, 220), f'{heading} · n={row["n"]}', 15, BLUE if winning else MUTED, bold=True)
         text(d, (1240, 245), f'{ratio_label(row["x_rust"])} Rust runtime', 43, BLUE, bold=True)
         speedup = self.rows[0]["seconds"] / row["seconds"]
-        gain = "Mech starting time" if i == 0 else f'Mech speedup since start: {speedup:.0f}×' if speedup >= 10 else f'Mech speedup since start: {speedup:.1f}×'
+        gain = f'Mech speedup since start: {speedup:.2f}×'
         if winning:
             for n, session in enumerate(s for s in self.data["final_sessions"] if s["hours"] <= h):
                 text(d, (1243, 302 + n * 33), f'Session {session["session"]} · {session["seconds"]:.4f} s · {session["x_rust"]:.3f}×', 21)

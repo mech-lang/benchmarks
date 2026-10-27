@@ -31,12 +31,13 @@ median. The subtitle and timing card now distinguish these quantities.
 | Final Mech median | 0.5349341875 s |
 | Final Rust median | 0.5559576875 s |
 | Final Mech / Rust runtime | 0.962185× |
-| Raw-runtime speedup | 221.7107×, rounded to 222× |
+| Raw-runtime speedup | 221.7107× |
 | Raw-runtime reduction | 99.54896%, rounded to 99.55% |
 | Final speed advantage over Rust | 3.9301%, rounded to 4% |
 | Drop in the normalized plotted ratio | 224.6603× |
 
-The headline is `118.600627083 / 0.5349341875 = 221.7107×`, rounded to 222×.
+The speedup is `118.600627083 / 0.5349341875 = 221.7107×`. Only the headline
+rounds it to a whole number; the chart subtitle and timing cards show 221.71×.
 The chart begins at `118.600627083 / 0.5486585 = 216.164749× Rust` and ends
 at `0.5349341875 / 0.5559576875 = 0.962185× Rust`. It therefore starts at
 216× Rust without implying a 216× improvement in Mech itself. The subtitle now
@@ -46,7 +47,7 @@ runtime ratio and Mech's speedup since the start.
 The last table row differs from the raw-runtime speedup because the Rust
 denominator changes by 1.33037% across those cohorts. It is not a second
 estimate of the same quantity.
-The 222× headline is an observed historical ratio with a single-run initial
+The headline is an observed historical ratio with a single-run initial
 checkpoint, not a confidence bound on a replicated initial baseline.
 
 ## Evidence checks
@@ -113,3 +114,6 @@ The existing encoded verifier additionally checks the vector structure,
 antialiasing, exact deformed ball geometry, frame rate, both winning cohorts,
 audio format and quiet levels. Antialiased ellipse extents are detected at
 half coverage rather than using a near-solid-color inset contour.
+The independent cursor detector uses long vertical luminance contrast because
+H.264 4:2:0 chroma subsampling can shift the RGB color of a thin line. Its
+1.5-pixel position tolerance is unchanged.

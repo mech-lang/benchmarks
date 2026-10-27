@@ -5,6 +5,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+import re
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -22,6 +23,12 @@ def verify_vectors(folder, replay, manifest, digest):
         assert digest(animation.HERE / "normalize_svg.py") == manifest["svg_normalization_source_sha256"]
     records = []
     for name in ["mech-compiler-optimization.svg", "mech-compiler-optimization-frame.svg"]:
+        labels = re.findall(r"<!-- (.*?) -->", (folder / name).read_text())
+        rounded_headlines = [label for label in labels if "222×" in label]
+        assert rounded_headlines == [animation.TITLE_LINES[0]], rounded_headlines
+        speedup = replay.rows[0]["seconds"] / replay.rows[-1]["seconds"]
+        assert f'Mech speedup since start: {speedup:.2f}×' in labels
+        assert any(f'= {speedup:.2f}× speedup' in label for label in labels)
         root = ET.parse(folder / name).getroot()
         images = [e for e in root.iter() if e.tag.endswith("}image")]
         medians = [e for e in root.iter() if e.attrib.get("id", "").startswith("median-")]

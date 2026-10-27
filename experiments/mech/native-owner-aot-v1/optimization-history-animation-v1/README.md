@@ -76,14 +76,14 @@ Mech with Rust. These are different quantities:
 
 | Comparison | Calculation | Result |
 |---|---|---:|
-| Mech's own runtime improvement | 118.600627083 / 0.5349341875 | 221.7107× ≈ 222× |
+| Mech's own runtime improvement | 118.600627083 / 0.5349341875 | 221.7107× |
 | Initial Mech / initial Rust runtime | 118.600627083 / 0.5486585 | 216.1647× |
 | Final Mech / final Rust runtime | 0.5349341875 / 0.5559576875 | 0.962185× |
 
 Dividing the chart's first ratio by its final ratio gives 224.6603× rather than
 221.7107× because the Rust control median changed by 1.3304% between those
 measurements. The headline uses Mech's raw seconds. The subtitle prints its
-118.60 → 0.5349-second calculation, and the timing card separately labels the
+118.6006 → 0.534934-second calculation, and the timing card separately labels the
 current Rust comparison and Mech's speedup since the start.
 
 The two qualified
@@ -97,7 +97,7 @@ from the retained process births. Their results are:
 | Unchanged Rust control | 0.5569 | 1.000× | 0.5560 | 1.000× |
 
 The final Mech ball is therefore about 4% faster than the Rust ball. Raw Mech
-runtime has improved by about 222× from the first checkpoint. Both sessions
+runtime has improved by 221.71× from the first checkpoint. Both sessions
 include secured startup and shutdown, retain twelve observations per
 executable, and have paired 95% intervals favoring Mech over Rust. Parent and
 anchor retimings remain comparison controls rather than new implementation

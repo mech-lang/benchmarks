@@ -80,14 +80,18 @@ def main():
         cursor = 145 + (1815 - 145) * hour / 54
         left = math.floor(cursor) - 5
         patch = pixels[185:691, left:left + 11].astype(np.int16)
-        mask = np.max(np.abs(patch - np.array([189, 206, 225])), axis=2) <= 25
+        # H.264 4:2:0 can shift a one-pixel stroke's RGB chroma beyond a fixed
+        # color tolerance. Detect its long vertical luminance contrast instead;
+        # short annotation strokes and faint gridlines cannot meet this gate.
+        luminance = patch @ np.array([.2126, .7152, .0722])
+        mask = luminance.max(axis=1, keepdims=True) - luminance >= 30
         weights = mask.sum(axis=0)
         # The antialiased left spine has a similar color. Once the frontier
         # separates from it, exclude those fixed border columns from detection.
         if cursor > 146.5:
             weights[np.arange(11) + left <= 145] = 0
         assert weights.max() >= 100, (n, "history cursor missing")
-        # A cursor spans the plot. Short same-color stair/annotation segments
+        # A cursor spans the plot. Short stair/annotation segments
         # must not pull its measured centroid away from the full-height stripe.
         weights[weights < max(60, .7 * weights.max())] = 0
         observed_cursor = left + float(np.average(np.arange(11), weights=weights))
