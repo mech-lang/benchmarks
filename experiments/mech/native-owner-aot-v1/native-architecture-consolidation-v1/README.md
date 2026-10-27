@@ -1,10 +1,19 @@
 # Native architecture consolidation
 
-The published-head primary campaigns are complete: 192 full-input processes for
+The historical primary campaigns are complete: 192 full-input processes for
 this rearchitecture and 192 for the cleanup, with no exclusions. Every output,
 work counter, executable/source pin and owned-process terminal receipt validates.
 **Neither study meets complete statistical acceptance, and neither is performance
 qualified.** Final compiler/artifact verification also remains open.
+
+The current repaired heads are #934 `b4e7b151`, #935 `36bcb929` and
+#939 `1da476a`. [Current contract and artifact evidence](contract-repairs-b4e7b151-36bcb929-v1/README.md)
+records all 32 original/decoded files byte-identical between #934 and #935,
+77 passing base native tests, the four repaired contract effects and a clean
+review of the current architecture head. #934 CI is green; #935 CI is resumed
+and still running, while #939 CI remains held. The new heads are not adopted
+into the old timing plans. All timing results below remain pinned to
+I=`a093aea`, architecture F=`7543c56` and cleanup F=`a68fb2e`.
 
 | Study | F/I paired change, session 1 | F/I paired change, session 2 |
 | --- | --- | --- |
@@ -26,7 +35,8 @@ Resolved dependency versions/features and release settings match. Rust host code
 source-path strings, addresses and executable metadata differ. This establishes
 why full executable hashes differ, not a cause for the observed timing variation.
 
-At #935's exact published head, all 51 correctness scopes and sixteen substantive
+At historical #935 head `7543c56d5efc4df30d0b60961922024d74caa9d7`,
+all 51 correctness scopes and sixteen substantive
 generated-process scopes pass. The latter's 45 complete stages and 127 passed,
 zero failed, three ignored tests are retained in `published-processes-7543-v1/`.
 The complete correctness raw evidence and validated same-head resume remain in

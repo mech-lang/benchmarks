@@ -1,0 +1,174 @@
+{
+  "publication_held": false,
+  "complete_audit": false,
+  "confirmed_observable_effects": 4,
+  "findings": [
+    {
+      "id": "MAP-ASSIGN-001",
+      "status": "confirmed",
+      "kind": "language-semantics",
+      "commit": "0711f60c740b83d601a90a3ccdf9322ccbd4d79c",
+      "before": "Assignment to an absent map key fails and preserves prior publication.",
+      "after": "An absent key is appended for maps with available dynamic cardinality.",
+      "affected": [
+        "src/engine/src/intrinsics/assign/mod.rs",
+        "src/engine/src/resident/numeric/mod.rs"
+      ],
+      "source_coverage_added_for_changed_behavior": [
+        "source_map_assignment_inserts_a_missing_key_without_a_counting_helper",
+        "source_map_assignment_supports_numeric_keys_and_string_values"
+      ],
+      "approval_evidence": "No separate authorization for indexed assignment to insert missing keys was found in the available conversation and handoffs. User now explicitly confirms missing-key assignment must fail.",
+      "timed_knucleotide_requires_change": false,
+      "benchmark_uses": "Explicit map/insert at unchanged source line11.",
+      "repair_status": "published-in-934-935-939",
+      "repair_source_commit": "b191fe7246124eb6cff60d680c3ce647fd9054ce",
+      "qualification": "934 CI succeeded at b4e7b151; 935 CI restarted at 36bcb929 and current-head review is clean; 939 CI remains held. No performance qualification."
+    },
+    {
+      "id": "MAP-ASSIGN-002",
+      "status": "confirmed-admission-estimate-change",
+      "kind": "resource-accounting",
+      "same_introducing_commit": true,
+      "before": "Existing-key update retains sink logical element count.",
+      "after": "Dynamic map update estimates current entry count +1 even for an existing key.",
+      "witness": "clean-source-witnesses-v1/after/witness-0.log",
+      "witness_expected": 1,
+      "witness_actual": 2,
+      "actual_denial_boundary_tested": false,
+      "commit": "0711f60c740b83d601a90a3ccdf9322ccbd4d79c",
+      "before_witness": "clean-source-witnesses-v1/before/witness-0.log",
+      "approval_evidence": "No separate approval found for changing indexed-assignment logical admission. Actual caller denial boundary has not yet been reproduced; do not claim that the entire physical memory charge doubled.",
+      "repair_status": "published-in-934-935-939",
+      "repair_source_commit": "b191fe7246124eb6cff60d680c3ce647fd9054ce",
+      "qualification": "934 CI succeeded at b4e7b151; 935 CI restarted at 36bcb929 and current-head review is clean; 939 CI remains held. No performance qualification."
+    },
+    {
+      "id": "TAIL-ADMISSION-001",
+      "status": "confirmed-observable-error-contract-change",
+      "kind": "resource-admission-diagnostic",
+      "implementation_commit": "6e53189b7d2132752224fe385ac5aca657df2b65",
+      "test_expectation_commit": "52addb71cf6e47a607bed5fa08e927381df96385",
+      "affected": [
+        "src/engine/src/source_semantics/frontend.rs",
+        "src/engine/src/resident/general/execution.rs"
+      ],
+      "before": {
+        "required": 65537,
+        "limit": 65536,
+        "phase": "Admission",
+        "dimension": "ComparisonWork"
+      },
+      "after": {
+        "required": 65538,
+        "limit": 65536,
+        "phase": "Admission",
+        "dimension": "ComparisonWork"
+      },
+      "before_witness": "clean-source-witnesses-v1/before/witness-1.log",
+      "after_witness": "clean-source-witnesses-v1/after/witness-1.log",
+      "isolation": "Reversing only the predicate-schema addition restores required=65537 at a093; the test accepting 65538 then fails. The temporary reversal was restored. This isolates the trigger but does not establish every changed program or frontier.",
+      "diagnostic_log": "diagnostic-without-retained-predicate-schema.log",
+      "diagnostic_summary": "diagnostic-without-retained-predicate-schema.summary.json",
+      "approval_evidence": "No separate approval found for changing the finite-work failure diagnostic; the later test expectation change accepted the observed implementation behavior.",
+      "repair_status": "published-in-934-935-939",
+      "repair_source_commit": "b191fe7246124eb6cff60d680c3ce647fd9054ce",
+      "qualification": "934 CI succeeded at b4e7b151; 935 CI restarted at 36bcb929 and current-head review is clean; 939 CI remains held. No performance qualification."
+    },
+    {
+      "id": "FINALIZATION-ADMISSION-001",
+      "status": "confirmed-published-934-error-category-regression",
+      "kind": "resource-error-propagation",
+      "implementation_commit": "3dcede9b5bf73cb0d40765d15180667b4ea87316",
+      "before": "Nested-set preflight reports ResourceLimit Admission ComparisonWork with required 48368 and limit 48367.",
+      "after": "The same bounded preflight returns InvalidShape.",
+      "evidence": "/private/tmp/native-934-semantics-repair-v1/preexisting-unit-failures-v1/results.json",
+      "repair_status": "published-in-934-935-939",
+      "repair_workspace": "/private/tmp/mech-native-base-ci-green-v4",
+      "repair_source_commit": "b4e7b15168c9caced1dc10f5a487bd151a2ba976",
+      "qualification": "934 CI succeeded at b4e7b151; 935 CI restarted at 36bcb929 and current-head review is clean; 939 CI remains held. No performance qualification."
+    }
+  ],
+  "as_of_utc": "2026-10-27T19:31:07.159745+00:00",
+  "confirmed_change_areas": 3,
+  "additional_effects_beyond_missing_key_insertion": 3,
+  "counting_rule": "Observable contract effects, not number of commits, files, or implementations. Map insertion and existing-update admission share one introducing commit; tail admission is a separate area.",
+  "scope": {
+    "934": {
+      "base": "891816ee8e0d8cff08474613cf61993311f6b5b2",
+      "head": "a093aea452340a70c1e72a1f58bd831f1edef70f",
+      "changed_paths": 254,
+      "existing_unique_named_test_bodies_changed": 34,
+      "test_declarations_removed_or_renamed": 2
+    },
+    "935": {
+      "base": "a093aea452340a70c1e72a1f58bd831f1edef70f",
+      "head": "7543c56d5efc4df30d0b60961922024d74caa9d7",
+      "existing_unique_named_test_bodies_changed": 193,
+      "test_declarations_removed_or_renamed": 1,
+      "additional_confirmed_findings": 0
+    },
+    "939": {
+      "base": "7543c56d5efc4df30d0b60961922024d74caa9d7",
+      "head": "a68fb2e60d7afbc59bc146f8878b17181e275645",
+      "changed_paths": 118,
+      "existing_unique_named_test_bodies_changed": 0,
+      "manual_ignored_probes_archived": 3,
+      "additional_confirmed_findings": 0
+    }
+  },
+  "limitations": [
+    "This is a partial compatibility audit, not an exhaustive behavioral proof or approval census.",
+    "Static test inventories omit macro expansion and require manual checking of duplicate test names.",
+    "No extra confirmed finding in #935/#939 does not mean those heads are fully qualified.",
+    "The original optimization stage intentionally adds native capabilities and changes versioned internal ABI; additions are not counted as unapproved merely because they are new.",
+    "The handoff preserves its starting implementation I; findings are reported against the integration baseline and current user clarification, without assuming each pre-I feature was unauthorized."
+  ],
+  "attempted_test_weakening": {
+    "status": "reverted-unpublished",
+    "artifact": "/private/tmp/native-934-ci-repair-v3/abandoned-test-change.patch",
+    "description": "An attempted test-only change accepted missing-key insertion. It was reverted after the user challenged it. Its passing test run is excluded from qualification."
+  },
+  "excluded_evidence": [
+    {
+      "path": "before-admission-attempt-invalid.json",
+      "reason": "wrong working directory"
+    },
+    {
+      "path": "after-stack-tail-budget-expectation.*",
+      "reason": "shared target could contain the other source; superseded by independent cleaned-source builds"
+    },
+    {
+      "path": "before-stack-existing-key-admission-v2*",
+      "reason": "superseded by independently cleaned-source proof"
+    },
+    {
+      "path": "/private/tmp/native-934-ci-repair-v3",
+      "reason": "abandoned expectation change does not qualify required semantics"
+    }
+  ],
+  "next_work": [
+    "Get 935 green while preserving the repaired contracts.",
+    "Finish current-head correctness/artifact qualification and resolve performance acceptance before merge.",
+    "The compatibility audit remains partial; do not infer exhaustive approval or behavior coverage."
+  ],
+  "evidence_hashes": {
+    "clean-source-witnesses-v1/complete.json": "274c8a1d680256a26f8504e524372d45927907c6d34f845fc31f0c1a4b520028",
+    "clean-source-witnesses-v1/before/result.json": "5664a1b4242df46ad1275475c238e52da5a730e9d9847bfa5989ed17d334e389",
+    "clean-source-witnesses-v1/after/result.json": "b72d40ac3c8cd59869196ac2fadc802eeb55670bee97ee49497553a0a211fa04",
+    "diagnostic-without-retained-predicate-schema.log": "b8961b17725b285c99825a7f0e27217ee19814136ab7eb0492ea18f90bda70cf",
+    "diagnostic-without-retained-predicate-schema.summary.json": "ea32430b18f91bb9408b541b0dded0e5fb4adaa1df8fc077dd84c55de8fad326",
+    "predicate-schema-change.patch": "cbc744d7aa5747dc705f2abc2da7afe66a81fe0c6549009332dd26b08b2f0b1f"
+  },
+  "repair_authorization": "User explicitly requested fixing the reported contracts in the existing PRs and then returning to #934 CI.",
+  "preexisting_integration_failure": {
+    "test": "resident::conversion::tests::present_option_preflights_payload_budget_before_publishing",
+    "status": "same failure on retained integration and published #934 binaries on this host",
+    "not_counted_as_934_added_change": true
+  },
+  "published_repaired_heads": {
+    "934": "b4e7b15168c9caced1dc10f5a487bd151a2ba976",
+    "935": "36bcb9292ed40676a4547c91588c96735785b139",
+    "939": "1da476a0273191e754958c5b45d891212498ce4d"
+  }
+}
