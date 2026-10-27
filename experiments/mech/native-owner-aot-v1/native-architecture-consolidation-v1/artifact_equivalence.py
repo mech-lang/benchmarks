@@ -22,6 +22,7 @@ HARNESS = 'hosts/gpu/tests/native_architecture_equivalence.rs'
 EXPECTED = {f'{case}-{route}.{suffix}' for case in ('aggregate', 'owner', 'owner-words', 'scalar')
             for route in ('source', 'decoded') for suffix in ('o', 'mecb', 'metadata.json', 'descriptor.json')}
 AOT = ('program.o', 'program.mecb', 'native-descriptor.json', 'native-descriptor.bin', 'object-identity.bin', 'native-resources.json')
+WRAPPER = 'import os,sys;os.chdir(sys.argv[1]);os.execve(sys.argv[2],sys.argv[2:],os.environ)'
 # Match the inherited build protocol of the archived ddf8/final51 drivers.
 # No public-AOT or primary timing environment is imported or modified here.
 BUILD_OVERRIDES = {'CARGO_INCREMENTAL': '0', 'CARGO_BUILD_JOBS': '1',
@@ -87,6 +88,43 @@ def checked_process(receipt, deadline):
     require(receipt.get('deadline_seconds') == deadline, 'Unexpected deadline')
 
 
+def snapshot_command():
+    return ['/Users/cim310/.cargo/bin/cargo', '+nightly-2026-03-03', 'test', '--locked', '--offline', '-j1',
+            '-p', 'mech-gpu', '--no-default-features', '--features', 'canonical-native-program', '--test',
+            'native_architecture_equivalence', TEST, '--', '--exact', '--test-threads=1', '--nocapture', '--color', 'never']
+
+
+def exact_test_output(text):
+    passed = [line for line in text.splitlines() if line.startswith('test ') and line.endswith(' ... ok')]
+    require(passed == [f'test {TEST} ... ok'], 'Exactly the named test must pass once')
+    summaries = re.findall(r'^test result: .*$', text, re.M)
+    require(len(summaries) == 1 and summaries[0].startswith('test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;'), 'Invalid exact-one test summary')
+
+
+def install_harness(workspace):
+    """The baseline predates this test; add only the preserved, pinned harness."""
+    path = workspace / HARNESS
+    authority = BASELINE / 'snapshot-harness.rs'
+    if path.exists():
+        subprocess.run(['git', '-C', str(workspace), 'ls-files', '--error-unmatch', HARNESS],
+                       check=True, stdout=subprocess.DEVNULL)
+        require(path.is_file() and not path.is_symlink() and process.sha(path) == process.sha(authority),
+                'Tracked snapshot harness differs from archived authority')
+        return False
+    require(not path.is_symlink(), 'Snapshot path is a symlink')
+    with path.open('xb') as output:
+        output.write(authority.read_bytes())
+    return True
+
+
+def remove_overlay(workspace, installed):
+    if installed:
+        path = workspace / HARNESS
+        require(path.is_file() and not path.is_symlink() and process.sha(path) == process.sha(BASELINE / 'snapshot-harness.rs'),
+                'Overlay changed; preserve it for inspection')
+        path.unlink()
+
+
 def snapshots(path):
     require(path.is_dir(), f'Missing snapshot directory: {path}')
     require({p.name for p in path.iterdir()} == EXPECTED, 'Expected exactly the 32 named snapshot files')
@@ -117,40 +155,49 @@ def run_snapshot(args):
     require(provenance['source'] == before and provenance['target_dir'] == str(target),
             'Target provenance must identify this exact source and Cargo cache')
     require(not target.is_relative_to(workspace) and not target.is_relative_to(ROOT), 'Target must be outside both repositories')
-    subprocess.run(['git', '-C', str(workspace), 'ls-files', '--error-unmatch', HARNESS], check=True, stdout=subprocess.DEVNULL)
     _, _, reference = baseline()
-    require(process.sha(workspace / HARNESS) == process.sha(BASELINE / 'snapshot-harness.rs'), 'Tracked snapshot harness differs from archived authority')
     out = fresh('representative-snapshots', args.run_id)
     env, recorded_env = build_environment(target, out)
-    command = ['/Users/cim310/.cargo/bin/cargo', '+nightly-2026-03-03', 'test', '--locked', '--offline', '-j1',
-               '-p', 'mech-gpu', '--no-default-features', '--features', 'canonical-native-program', '--test',
-               'native_architecture_equivalence', TEST, '--', '--exact', '--test-threads=1', '--nocapture', '--color', 'never']
+    command = snapshot_command()
     owner = ROOT / 'experiments/janet/knucleotide-bytes-v1/process.py'
     supervisor = ROOT / 'tools/qualification/prolog_supervisor.py'
-    pins = [pin(p) for p in (Path(__file__), CODE / 'study.py', owner, supervisor, HERE / 'plan.json',
-                            BASELINE / 'executed-driver.py', args.target_provenance, workspace / HARNESS, BASELINE / 'archive-manifest.json')]
+    inputs = {'driver': Path(__file__), 'study': CODE / 'study.py', 'process': owner,
+              'supervisor': supervisor, 'plan': HERE / 'plan.json',
+              'baseline-driver': BASELINE / 'executed-driver.py', 'target-provenance': args.target_provenance,
+              'harness': BASELINE / 'snapshot-harness.rs', 'baseline-manifest': BASELINE / 'archive-manifest.json'}
+    pins = []
+    for name, source in inputs.items():
+        archive = out / 'execution-inputs' / name
+        archive.parent.mkdir(exist_ok=True)
+        shutil.copyfile(source, archive)
+        pins.append(dict(pin(source), name=name, archive=str(archive.relative_to(out))))
     shutil.copyfile(__file__, out / 'executed-driver.py')
-    shutil.copyfile(workspace / HARNESS, out / 'snapshot-harness.rs')
+    shutil.copyfile(BASELINE / 'snapshot-harness.rs', out / 'snapshot-harness.rs')
     shutil.copyfile(args.target_provenance, out / 'target-provenance.json')
     report = {'schema': 'mech.representative-snapshot-run.v1', 'status': 'prepared', 'study_id': STUDY_ID,
-              'source': before, 'subject': args.subject, 'workspace': str(workspace), 'command': command, 'build_environment': recorded_env,
+              'source': before, 'subject': args.subject, 'workspace': str(workspace), 'command': command,
+              'build_environment': recorded_env, 'python': sys.executable, 'python_sha256': process.sha(Path(sys.executable)),
+              'target_dir': str(target), 'execution_inputs': pins,
               'environment_scope': 'Inherited shell plus the same explicit overrides as ddf8/final51; compiler-relevant values only; no reconstructed historical environment claim',
               'pins': pins, 'performance_qualified': False, 'primary_timing_samples': 0}
     save(out / 'result.json', report)
+    installed = False
+    process_started = False
     try:
         mutex = Path(plan['common_mutex'])
         require(mutex.is_file() and mutex.stat().st_ino == 83858837, 'Shared mutex inode changed')
-        wrapper = 'import os,sys;os.chdir(sys.argv[1]);os.execve(sys.argv[2],sys.argv[2:],os.environ)'
         with mutex.open('r+') as lock:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
-            report['mutex'] = {'path': str(mutex), 'inode': mutex.stat().st_ino}
-            checked_process(process.execute([sys.executable, '-c', wrapper, str(workspace), *command],
+            installed = install_harness(workspace)
+            during = source_state(workspace)
+            expected = dict(before, status='?? ' + HARNESS if installed else '')
+            require(during == expected, 'Unexpected changes beside the pinned snapshot harness')
+            report.update(source_during=during, harness_overlay=installed)
+            save(out / 'result.json', report)
+            process_started = True
+            checked_process(process.execute([sys.executable, '-c', WRAPPER, str(workspace), *command],
                                              out / 'representative-objects', env, lock, deadline=1800, quantitative=False), 1800)
-        text = (out / 'representative-objects/stdout.bin').read_text()
-        passed = [line for line in text.splitlines() if line.startswith('test ') and line.endswith(' ... ok')]
-        require(passed == [f'test {TEST} ... ok'], 'Exactly the named test must pass once')
-        summaries = re.findall(r'^test result: .*$', text, re.M)
-        require(len(summaries) == 1 and summaries[0].startswith('test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;'), 'Invalid exact-one test summary')
+        exact_test_output((out / 'representative-objects/stdout.bin').read_text())
         report['snapshots'] = snapshots(out / 'snapshots')
         require(report['snapshots'] == reference, 'Representative snapshots differ from ddf8 baseline')
         report['status'] = 'passed'
@@ -159,6 +206,12 @@ def run_snapshot(args):
         raise
     finally:
         try:
+            if installed and process_started:
+                terminal = read(out / 'representative-objects/process.json')
+                require(terminal.get('group_closed') is True and terminal.get('reaped') is True,
+                        'Keep the overlay until its process group is closed')
+            remove_overlay(workspace, installed)
+            report['overlay_removed'] = installed and not (workspace / HARNESS).exists()
             report['source_after'] = source_state(workspace)
             require(report['source_after'] == before, 'Source changed during snapshot stage')
             for item in pins:
@@ -177,13 +230,60 @@ def snapshot_receipt(reference):
     report = read(path)
     require(report['schema'] == 'mech.representative-snapshot-run.v1' and report['status'] == 'passed', 'Snapshot attempt did not pass')
     require(report['source'] == report['source_after'] and not report['source']['status'], 'Invalid snapshot source')
+    require(report['source'] == source_state(Path(report['workspace'])), 'Snapshot workspace no longer matches')
+    expected_during = dict(report['source'], status='?? ' + HARNESS if report['harness_overlay'] else '')
+    require(report['source_during'] == expected_during, 'Unaccounted source overlay')
+    require(not report['harness_overlay'] or report['overlay_removed'] is True, 'Snapshot overlay was not removed')
     require(report['primary_timing_samples'] == 0 and report['performance_qualified'] is False, 'Invalid snapshot scope')
+    inputs = {item['name']: item for item in report['execution_inputs']}
+    require(len(inputs) == len(report['execution_inputs']) and set(inputs) == {
+        'driver', 'study', 'process', 'supervisor', 'plan', 'baseline-driver', 'target-provenance', 'harness', 'baseline-manifest'},
+        'Incomplete or duplicate archived execution inputs')
+    for item in inputs.values():
+        archived = (path.parent / item['archive']).resolve()
+        require(archived.is_relative_to(path.parent.resolve()) and archived.is_file() and not archived.is_symlink(),
+                'Execution input escapes snapshot archive')
+        require(process.sha(archived) == item['sha256'], 'Archived execution input changed')
+    for name, current in {'driver': Path(__file__), 'study': CODE / 'study.py',
+                          'process': ROOT / 'experiments/janet/knucleotide-bytes-v1/process.py',
+                          'supervisor': ROOT / 'tools/qualification/prolog_supervisor.py',
+                          'harness': BASELINE / 'snapshot-harness.rs',
+                          'baseline-driver': BASELINE / 'executed-driver.py',
+                          'baseline-manifest': BASELINE / 'archive-manifest.json'}.items():
+        require(inputs[name]['sha256'] == process.sha(current), 'Snapshot execution authority differs: ' + name)
+    archive_input = lambda name: read(path.parent / inputs[name]['archive'])
+    execution_plan = archive_input('plan')
+    require(execution_plan['study_id'] == report['study_id'], 'Wrong execution study')
+    key = 'implementation_base' if report['subject'] == 'I' else 'final_compiler_source'
+    require(report['subject'] in ('I', 'F') and execution_plan[key] == report['source']['commit'], 'Snapshot source was not adopted at execution')
+    provenance = archive_input('target-provenance')
+    require(provenance['source'] == report['source'] and provenance['target_dir'] == report['target_dir'], 'Snapshot target provenance differs')
+    require(process.sha(path.parent / 'snapshot-harness.rs') == inputs['harness']['sha256'], 'Snapshot harness differs')
+    require(process.sha(path.parent / 'executed-driver.py') == inputs['driver']['sha256'], 'Executed driver differs')
+    require(process.sha(Path(report['python'])) == report['python_sha256'], 'Snapshot interpreter changed')
+    require(report['command'] == snapshot_command(), 'Snapshot command differs from the exact test')
     hashes = snapshots(path.parent / 'snapshots')
     require(hashes == report['snapshots'], 'Snapshot files changed')
     for name in ('process.json', 'stdout.bin', 'stderr.bin'):
         require(process.sha(path.parent / 'representative-objects' / name) == report['process_evidence'][name]['sha256'], 'Snapshot process evidence changed')
-    checked_process(read(path.parent / 'representative-objects/process.json'), 1800)
+    raw = read(path.parent / 'representative-objects/process.json')
+    checked_process(raw, 1800)
+    require(raw['command'] == [report['python'], '-c', WRAPPER, report['workspace'], *snapshot_command()],
+            'Process did not run the exact-source snapshot command')
+    require(raw['controller_sha256'] == inputs['process']['sha256'], 'Wrong snapshot process controller')
+    exact_test_output((path.parent / 'representative-objects/stdout.bin').read_text())
     return report['source'], path.parent / 'snapshots', hashes
+
+
+def snapshot_archive_files(reference):
+    snapshot_receipt(reference)
+    path = build_receipt_path(reference, shared=True)
+    report = read(path)
+    return [path, path.parent / 'executed-driver.py', path.parent / 'snapshot-harness.rs',
+            path.parent / 'target-provenance.json',
+            *(path.parent / item['archive'] for item in report['execution_inputs']),
+            *(path.parent / 'snapshots' / name for name in sorted(EXPECTED)),
+            *(path.parent / 'representative-objects' / name for name in ('process.json', 'stdout.bin', 'stderr.bin'))]
 
 
 def compare(args):
@@ -237,6 +337,8 @@ def compare(args):
             row['equal'] = row['F'] == row['I']
             rows.append(row)
         report = {'F_source': receipts['F']['source'], 'I_source': receipts['I']['source'], 'files': rows}
+        if kind == 'representatives':
+            report['snapshot_receipts'] = {'F': candidate, 'I': initial}
         save(out / ('guest-code.json' if kind == 'public-aot' else 'representative-objects.json'), report)
         require(all(row['equal'] for row in rows), 'Equivalence failed: ' + kind)
         if kind == 'public-aot':

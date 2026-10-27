@@ -9,7 +9,9 @@ subject must be the cleanup directly above it. The current prospective sources
 are architecture `7543c56d5efc4df30d0b60961922024d74caa9d7` (#935) and cleanup
 `a68fb2e60d7afbc59bc146f8878b17181e275645` (#939). The complete Rust cleanup
 patch preserves the six-profile/four-runtime-closure checkpoint; exact final-head
-qualification and fresh public builds remain in progress. The earlier
+qualification remains in progress. Fresh public builds at all three published
+heads have passed independent validation; their six ordinary guest artifacts
+are byte-identical, and the actual build receipts are now adopted. The earlier
 `a3e805a`/`870fdde` builds and fourteen changed-input executions remain historical
 evidence at their original pins. Their receipts do not qualify these new heads.
 The former b05/569 subjects also remain recorded in `plan.json`. No candidate

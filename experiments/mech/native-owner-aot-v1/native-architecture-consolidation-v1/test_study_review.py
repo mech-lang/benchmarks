@@ -53,13 +53,14 @@ class StudyReviewTests(unittest.TestCase):
                         fixture=dict(packing_bits=4, width=17, key_bits=68, slot_bytes=24,
                                      text_length=42, source_inputs=0, resources=0))
         receipt = lambda name: dict(source=sources[name], compiler_sha256=compilers[name])
-        for study, before, after in [(STUDY_IDS[0], 'I', 'A'), (STUDY_IDS[1], 'A', 'C')]:
-            wide_slot.inventory(report, protocol, receipt(after), receipt(before), study)
+        receipts = {name: receipt(name) for name in 'IAC'}
+        wide_slot.inventory(report, protocol, receipts)
+        for subject in 'IAC':
             mutations = [
                 lambda r: r['builds'].pop(),
                 lambda r: r['builds'][-1].update(route='source'),
                 lambda r: r['builds'][-1]['guest_artifacts'].update({'program.o': '2' * 64}),
-                lambda r: r['builds'][0]['source'].update(commit='stale'),
+                lambda r: next(row for row in r['builds'] if row['subject'] == subject)['source'].update(commit='stale'),
                 lambda r: r['builds'][0]['descriptor_evidence'].update(payload_bytes=16),
                 lambda r: r.update(status='running'),
                 lambda r: r.update(benchmark_samples=1),
@@ -69,9 +70,15 @@ class StudyReviewTests(unittest.TestCase):
                 changed = copy.deepcopy(report)
                 mutation(changed)
                 with self.assertRaises(AssertionError):
-                    wide_slot.inventory(changed, protocol, receipt(after), receipt(before), study)
+                    wide_slot.inventory(changed, protocol, receipts)
+            changed, changed_protocol = copy.deepcopy(report), copy.deepcopy(protocol)
+            stale = dict(commit='stale', tree='stale', status='')
+            changed_protocol['subjects'][subject].update(commit='stale', compiler_sha256='stale')
+            for row in changed['builds']:
+                if row['subject'] == subject:
+                    row['source'] = stale
             with self.assertRaises(AssertionError):
-                wide_slot.inventory(report, protocol, receipt(before), receipt(after), study)
+                wide_slot.inventory(changed, changed_protocol, receipts)
 
     def test_wide_process_receipts_cannot_hide_failed_or_unclosed_builds(self):
         receipt = dict(exit_status=0, command=['compiler', 'build'], deadline_seconds=1800,

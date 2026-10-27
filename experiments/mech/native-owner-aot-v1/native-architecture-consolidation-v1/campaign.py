@@ -6,6 +6,7 @@ from pathlib import Path
 from study import (HERE, CODE_DIR, ROOT, RETAINED, STUDY_ID, process, read, source_state,
                    subjects, inputs, check_native, build_receipt_path, runtime_environment)
 import wide_slot
+import artifact_equivalence
 
 COMPLETE = 'all-96-complete-processes-output-counters-pins-and-cleanup-verified'
 CONTROLLER = 'experiments/janet/knucleotide-bytes-v1/process.py'
@@ -70,7 +71,7 @@ def evidence(ref):
 
 def required_controller_paths():
     return {str((CODE_DIR / name).relative_to(ROOT)) for name in
-            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py', 'wide_slot.py']} | {CONTROLLER}
+            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py', 'wide_slot.py', 'artifact_equivalence.py']} | {CONTROLLER}
 
 
 def check_controllers(plan):
@@ -173,6 +174,10 @@ def prerequisites(plan):
     assert {row['path'] for row in representatives['files']} == expected
     for row in representatives['files']:
         assert all(process.sha(contained(row[s + '_file'])) == row[s] for s in ('F','I'))
+    for subject, receipt in (('F', f), ('I', i)):
+        source, _, hashes = artifact_equivalence.snapshot_receipt(representatives['snapshot_receipts'][subject])
+        assert source == receipt['source']
+        assert hashes == {row['path']: row[subject] for row in representatives['files']}
     wide_slot.check(checks['wide_slot_artifacts'], f, i)
     return targets, pins, f, i
 
@@ -189,6 +194,9 @@ def committed_before_sampling(revision, plan):
     paths = [str(path.relative_to(ROOT)) for path in [*(contained(name) for name in files), *receipts]]
     wide_files = wide_slot.check(checks['wide_slot_artifacts'], read(receipts[1]), read(receipts[0]))
     paths += [str(path.relative_to(ROOT)) for path in wide_files]
+    representatives = evidence(checks['representative_objects'])
+    for reference in representatives['snapshot_receipts'].values():
+        paths += [str(path.relative_to(ROOT)) for path in artifact_equivalence.snapshot_archive_files(reference)]
     paths += list(plan['controller_pins'])
     for path in paths:
         blob = subprocess.check_output(['git','-C',str(ROOT),'show',revision + ':' + path])

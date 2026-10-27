@@ -26,26 +26,37 @@ The current prospective sources are baseline I at
 `7543c56d5efc4df30d0b60961922024d74caa9d7` (#935). The test-only base repair
 passes all 422 tests across the nine original canonical source CI suites. The
 architecture preserves the complete prepared patch and published history.
-Fresh public builds and exact-head correctness/process/artifact qualification
-are in progress. Their receipt fields remain empty until independently checked.
+Fresh public builds at all three published heads have passed independent
+validation and their receipts are adopted. All six ordinary guest artifacts
+are byte-identical. Exact-head correctness/process/artifact qualification
+continues; no runtime acceptance result is available yet.
 
 The earlier `ddf8cbc`/`a3e805a` public builds and fourteen changed-input
 executions remain historical evidence at their original pins, alongside the
 older `b05a3f8` prospective subject. No result is relabelled for a later source.
 Zero primary observations have been collected.
 
-`artifact_equivalence.py snapshots` runs the tracked, exact-one-test snapshot
-harness for an explicitly adopted `--subject I` or `--subject F`. It requires
+`artifact_equivalence.py snapshots` runs the preserved, exact-one-test snapshot
+harness for an explicitly adopted `--subject I` or `--subject F`. At the baseline,
+which predates the harness, it installs only a hash-pinned temporary test overlay,
+accounts for that source status, and removes it after the process group closes.
+Later heads use the identical tracked harness. It requires
 matching source/cache provenance and records all 32 named source/decoded files.
 `compare` requires pinned snapshot receipts for both actual before/after heads;
 the cleanup reuses architecture F as its I. The older ddf8 snapshot archive is
 an additional byte-level reference, not a substitute for the actual before head.
+The receipt validator rechecks the exact workspace/test command, process owner,
+archived execution inputs, clean source, overlay cleanup and one-test stdout.
+Both receipt archives must be committed before sampling.
 
 Before primary sampling, `wide_slot.py` also requires the six public wide-slot
 builds (three source heads, each source/decoded). It checks the four-bit domain,
 68-bit key, 24-byte slot, all six guest artifacts, actual source/compiler pins,
 owned AOT/disassembly receipts and committed archive bytes. Neither the six
 ordinary public artifacts nor the 32 representatives replace this separate gate.
+All three subjects must agree with both studies' adopted public receipts. The
+selected width comes from the range operands in the actual descriptor; the
+selected packed loop must emit 24-byte addressing with high-key/value loads.
 
 `baseline-prerequisites-ddf8-v1/` records the repaired baseline's five prerequisite
 suites: 415 native tests (two existing ignored diagnostics), 82 facts, 30 line,
