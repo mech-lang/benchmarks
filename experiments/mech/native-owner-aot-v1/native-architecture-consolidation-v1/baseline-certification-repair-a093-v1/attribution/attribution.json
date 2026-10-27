@@ -1,0 +1,82 @@
+{
+  "status": "all-ten-fingerprint-changes-attributed-to-predicate-type-schema-closure",
+  "head": "ddf8cbc3b17a644ea6292ee3bf0c4a9c63af4514",
+  "experiment": {
+    "stage": "without-predicate-type-insertion",
+    "source_head": "ddf8cbc3b17a644ea6292ee3bf0c4a9c63af4514",
+    "source_before": {
+      "src/engine/src/source_semantics/frontend.rs": "b8a15bfdbb12629fb89e140c856bdc068dc0c4e6166e9803c181cb375ea4079d",
+      "src/engine/src/source_semantics/application.rs": "17ca03e3f4b2399d9e74dbff0e4354d04a8a4b15023b8b0594ffa68e13b0590f"
+    },
+    "source_after": {
+      "src/engine/src/source_semantics/frontend.rs": "b8a15bfdbb12629fb89e140c856bdc068dc0c4e6166e9803c181cb375ea4079d",
+      "src/engine/src/source_semantics/application.rs": "17ca03e3f4b2399d9e74dbff0e4354d04a8a4b15023b8b0594ffa68e13b0590f"
+    },
+    "command": [
+      "cargo",
+      "+nightly-2026-03-03",
+      "test",
+      "--locked",
+      "--offline",
+      "-j1",
+      "-p",
+      "mech-engine",
+      "--no-default-features",
+      "--features",
+      "full_source,resident-artifact",
+      "--test",
+      "canonical_executable_semantics",
+      "every_semantic_rule_meets_its_required_witness_outcome",
+      "--",
+      "--exact",
+      "--test-threads=1",
+      "--nocapture"
+    ],
+    "wrapper": [
+      "/opt/homebrew/opt/python@3.14/bin/python3.14",
+      "/private/tmp/mech-native-semantic-fingerprint-attribution-v1/scripts/run-native-plan-stage.py",
+      "--stage",
+      "without-predicate-type-insertion",
+      "--timeout-secs",
+      "1800",
+      "--log-dir",
+      "/private/tmp/native-semantic-fingerprint-attribution-v1",
+      "--",
+      "cargo",
+      "+nightly-2026-03-03",
+      "test",
+      "--locked",
+      "--offline",
+      "-j1",
+      "-p",
+      "mech-engine",
+      "--no-default-features",
+      "--features",
+      "full_source,resident-artifact",
+      "--test",
+      "canonical_executable_semantics",
+      "every_semantic_rule_meets_its_required_witness_outcome",
+      "--",
+      "--exact",
+      "--test-threads=1",
+      "--nocapture"
+    ],
+    "exit_code": 0,
+    "summary": {
+      "stage": "without-predicate-type-insertion",
+      "reason": "exit",
+      "command_exit_status": 0,
+      "owned_group_cleanup": "complete",
+      "elapsed_seconds": 59.896890875010286,
+      "timeout_seconds": 1800.0,
+      "cleanup_seconds": 30
+    },
+    "changed_fingerprints": [],
+    "log_sha256": "2c27065ca51141d5e0002086ed932e051dff4d1e08e9329c4103460a9ab2e697",
+    "experimental_patch_sha256": "5adb050bf370d5d526e392b8ed409267cec0a3345999a2665618ee20fe8d0c73"
+  },
+  "explanation": "Reversing only the 18-line predicate schema insertion from6e53189b7 restores every certified fingerprint. Application detail formatting was unchanged in this experiment, so it is not the cause.",
+  "diagnostic_driver_outcome": "The original script expected one fingerprint to remain; its post-test assertion rejected the passing result. The raw successful test and complete process cleanup are preserved. The unused second reversal was never executed; finally restored both files exactly.",
+  "compiler_sources_restored_clean": true,
+  "primary_timing_samples": 0
+}

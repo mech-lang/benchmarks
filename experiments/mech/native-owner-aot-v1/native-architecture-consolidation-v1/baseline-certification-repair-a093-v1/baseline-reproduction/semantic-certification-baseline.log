@@ -1,0 +1,128 @@
+stage=semantic-certification-baseline timeout_seconds=1800.0 cleanup_seconds=30 command=['cargo', '+nightly-2026-03-03', 'test', '--locked', '--offline', '-j1', '-p', 'mech-engine', '--no-default-features', '--features', 'full_source,resident-artifact', '--test', 'canonical_executable_semantics', 'every_semantic_rule_meets_its_required_witness_outcome', '--', '--exact', '--test-threads=1', '--nocapture']
+   Compiling proc-macro2 v1.0.107
+   Compiling unicode-ident v1.0.24
+   Compiling quote v1.0.47
+   Compiling syn v2.0.119
+   Compiling autocfg v1.5.1
+   Compiling synstructure v0.13.2
+   Compiling typenum v1.20.1
+   Compiling libm v0.2.16
+   Compiling zerofrom-derive v0.1.7
+   Compiling num-traits v0.2.19
+   Compiling zerofrom v0.1.8
+   Compiling yoke-derive v0.8.2
+   Compiling stable_deref_trait v1.2.1
+   Compiling yoke v0.8.3
+   Compiling zerovec-derive v0.11.3
+   Compiling libc v0.2.189
+   Compiling serde_core v1.0.229
+   Compiling zerovec v0.11.6
+   Compiling displaydoc v0.2.6
+   Compiling version_check v0.9.5
+   Compiling generic-array v0.14.7
+   Compiling hybrid-array v0.4.14
+   Compiling paste v1.0.15
+   Compiling bytemuck v1.25.2
+   Compiling safe_arch v0.7.4
+   Compiling num-integer v0.1.46
+   Compiling matrixmultiply v0.3.11
+   Compiling syn v3.0.3
+   Compiling zmij v1.0.23
+   Compiling alloc-no-stdlib v2.0.4
+   Compiling cfg-if v1.0.4
+   Compiling serde v1.0.229
+   Compiling alloc-stdlib v0.2.4
+   Compiling serde_derive v1.0.229
+   Compiling num-bigint v0.4.8
+   Compiling wide v0.7.33
+   Compiling block-buffer v0.12.1
+   Compiling crypto-common v0.2.2
+   Compiling tinystr v0.8.3
+   Compiling num-complex v0.4.6
+   Compiling approx v0.5.1
+   Compiling litemap v0.8.2
+   Compiling fnv v1.0.7
+   Compiling icu_properties_data v2.2.0
+   Compiling serde_json v1.0.151
+   Compiling crc32fast v1.5.0
+   Compiling virtue v0.0.18
+   Compiling writeable v0.6.3
+   Compiling bytecount v0.6.9
+   Compiling unicode-width v0.2.2
+   Compiling rawpointer v0.2.1
+   Compiling papergrid v0.17.0
+   Compiling icu_locale_core v2.2.0
+   Compiling bincode_derive v2.0.1
+   Compiling simba v0.9.1
+   Compiling digest v0.11.3
+   Compiling num-rational v0.4.2
+   Compiling brotli-decompressor v5.0.3
+   Compiling cpufeatures v0.3.0
+   Compiling zerotrie v0.2.4
+   Compiling potential_utf v0.1.5
+   Compiling nalgebra-macros v0.3.0
+   Compiling equivalent v1.0.2
+   Compiling utf8_iter v1.0.4
+   Compiling hashbrown v0.17.1
+   Compiling unty v0.0.4
+   Compiling unicode-segmentation v1.13.3
+   Compiling tinyvec_macros v0.1.1
+   Compiling itoa v1.0.18
+   Compiling memchr v2.8.3
+   Compiling tinyvec v1.12.0
+   Compiling bincode v2.0.1
+   Compiling indexmap v2.14.0
+   Compiling icu_collections v2.2.0
+   Compiling nalgebra v0.34.2
+   Compiling icu_provider v2.2.0
+   Compiling sha2 v0.11.0
+   Compiling brotli v8.0.4
+   Compiling tabled v0.20.0
+   Compiling crypto-common v0.1.7
+   Compiling block-buffer v0.10.4
+   Compiling base64 v0.22.1
+   Compiling byteorder v1.5.0
+   Compiling seahash v4.1.0
+   Compiling mech-core v0.3.5 (/private/tmp/mech-native-base-ci-repair-next/src/core)
+   Compiling digest v0.10.7
+   Compiling icu_properties v2.2.0
+   Compiling unicode-normalization v0.1.25
+   Compiling grapheme_macro v2.0.0
+   Compiling cpufeatures v0.2.17
+   Compiling colored v3.1.1
+   Compiling smallvec v1.15.2
+   Compiling grapheme v1.3.0
+   Compiling mech-syntax v0.3.5 (/private/tmp/mech-native-base-ci-repair-next/src/syntax)
+   Compiling sha2 v0.10.9
+   Compiling mech-engine v0.3.5 (/private/tmp/mech-native-base-ci-repair-next/src/engine)
+    Finished `test` profile [unoptimized] target(s) in 1m 34s
+     Running tests/canonical_executable_semantics.rs (/private/tmp/mech-native-base-ci-repair-next-target/debug/deps/canonical_executable_semantics-7f088f23ccfbf803)
+
+running 1 test
+test every_semantic_rule_meets_its_required_witness_outcome ... 
+thread 'every_semantic_rule_meets_its_required_witness_outcome' (7044790) panicked at src/engine/tests/canonical_executable_semantics.rs:692:5:
+semantic completion requires artifact-ready witnesses and current fingerprints; unfinished lowering cannot be certified:
+
+semantic snapshot hashes changed:
+application-expression	15900295803488764600	5305303669357309629
+matrix-comprehension	3719540254412544890	12019589506034148462
+pattern	1715461710252728663	1736201267287444906
+pattern-array	13741600566300079143	15954833125824897122
+pattern-array-item	6117365933560286808	4700637032897119923
+pattern-array-token	11585187250687382095	27467207203996490
+pattern-atom-struct	4319664872760798088	8210498117116201900
+pattern-tuple	7528422719692210968	13655727730701342919
+pattern-tuple-struct	4319664872760798088	8210498117116201900
+set-comprehension	16115835114433929563	5603789009965684633
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+FAILED
+
+failures:
+
+failures:
+    every_semantic_rule_meets_its_required_witness_outcome
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.86s
+
+error: test failed, to rerun pass `-p mech-engine --test canonical_executable_semantics`
+{"stage": "semantic-certification-baseline", "reason": "exit", "command_exit_status": 101, "owned_group_cleanup": "complete", "elapsed_seconds": 96.53482920798706, "timeout_seconds": 1800.0, "cleanup_seconds": 30}

@@ -1,0 +1,77 @@
+{
+  "schema": "mech.native-authority-cleanup-audit.v1",
+  "source": "870fddede8b6483856134fe4e0235167e8155612",
+  "status": "implemented isolated checkpoint; qualification pending",
+  "scope": "Shared private scalar identity transcript grammar; family-specific plan fields, versions, object binding and independently checked descriptor reconstruction remain in each owner",
+  "duplicate_owners": [
+    "identity::typed_ir_sha256 nested word/bytes/type/value encoding",
+    "control_identity::typed_ir_sha256 scalar bindings, action and terminator grammar",
+    "iteration_identity::typed_ir_sha256 copies the same scalar bindings and nested grammar",
+    "program::image::identity::typed_ir_sha256 copies scalar action/terminator/origin grammar"
+  ],
+  "replacement": "One private identity::transcript module for byte/word writes, scalar type/value/bindings, source origin and scalar action/terminator encodings; no semantic IR, dynamic dispatch, allocations or new derivation",
+  "production_callers": [
+    "NativeAbiDescriptor::from_compiled",
+    "NativeMatchDescriptor::from_plan",
+    "NativeIterationDescriptor::from_plan",
+    "NativeProgramDescriptor::from_prepared and independent image identity binding"
+  ],
+  "invariants": [
+    "All domain prefixes, field order, literal tags, length/count prefixes, numeric operation IDs and versions byte-identical",
+    "No removal of target, footprint, current source/catalog, image-restoration or same-Object checks",
+    "Typed primitive emission, frame layout, helper ABI, work/admission order and generated guest code unchanged",
+    "Runtime-only closures gain no compiler dependency; scalar paths retain private direct entry"
+  ],
+  "validation": [
+    "Existing scalar identity tests",
+    "Original/decoded scalar/match/iteration integration and Program tests",
+    "32 pinned original/decoded guest snapshots",
+    "Six public AOT artifacts and wide-slot supplement",
+    "Independent feature closures and existing guards",
+    "Final unchanged-source paired k-nucleotide runtime qualification"
+  ],
+  "files_before": [
+    {
+      "path": "hosts/gpu/src/native_artifact/identity/mod.rs",
+      "sha256": "501aaee1de8aa710ffffe7d2a92e7018fe20d2097cb4bf7564d83df0da60dbad",
+      "lines": 281
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/control_identity/mod.rs",
+      "sha256": "abc5e3cb6183b80be75789797572e86c053e0aa1424cb9307c19f829f4568a25",
+      "lines": 233
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/iteration_identity/mod.rs",
+      "sha256": "255f78ad8ba25b8eee252318eeb22dfd2670dd1e9e1600c45d8647466326c3cc",
+      "lines": 344
+    },
+    {
+      "path": "hosts/gpu/src/native_artifact/program/image/identity.rs",
+      "sha256": "218b34a5d7031ada58ac0b7564560bdcc82d12b072f5d555f29822bef143876f",
+      "lines": 1179
+    }
+  ],
+  "retained_boundaries": [
+    {
+      "area": "Scalar/Match/Iteration public APIs",
+      "reason": "Retirement requires canonical specialization with equal short-call latency/allocation and compatible proof/ABI; instructions explicitly prohibit dropping the fast entry merely for consolidation"
+    },
+    {
+      "area": "Image wire reconstruction",
+      "reason": "Independent untrusted-image checking boundary is required; compile-time prepared facts cannot replace it"
+    },
+    {
+      "area": "Detailed codegen report",
+      "reason": "Supported Object metadata and actual-pass verification consume it; blanket diagnostic deletion would change maintained output/coverage"
+    },
+    {
+      "area": "Managed/hosted application construction",
+      "reason": "Prior consolidation prototype increased lines and duplicated profile authority; retained pending a demonstrably smaller design"
+    }
+  ],
+  "candidate": "cb41553b6a8b9a6b0432b4015ca22b9368ddbab6",
+  "additional_net_Rust_lines_removed": 190,
+  "additional_net_lines_removed_including_ledger": 182,
+  "preserved_Program_inline_boundary": "Program word/bytes remain inline(never); shared word/bytes inline(always) eliminate an extra delegation frame"
+}

@@ -1,0 +1,755 @@
+commit cb41553b6a8b9a6b0432b4015ca22b9368ddbab6
+Author:     cmontella <cmontella@live.com>
+AuthorDate: Mon Oct 26 19:53:16 2026 -0400
+Commit:     cmontella <cmontella@live.com>
+CommitDate: Mon Oct 26 19:53:16 2026 -0400
+
+    Share the frozen scalar identity transcript grammar
+
+diff --git a/docs/design/native-post-architecture-cleanup.md b/docs/design/native-post-architecture-cleanup.md
+index 0266ea9f7..17f767822 100644
+--- a/docs/design/native-post-architecture-cleanup.md
++++ b/docs/design/native-post-architecture-cleanup.md
+@@ -23,6 +23,7 @@ inventories, original files, hashes and diagnostic history belong to the primary
+ | Program application construction | Retained after prototype review: sharing the distinct managed/hosted preflight paths grew the file from 211 to 227 lines and introduced a second profile owner. Existing output assembly remains with each public generator. | Existing public generator and process contracts |
+ | Backend setup | One compiler-only constructor now builds JIT/Object modules for scalar, match, iteration and Program owners. Immutable family flag sets retain their exact values/order; each owner keeps its typed entry, preflight and definition. | Scalar-family original/decoded and Object equivalence checks |
+ | Repeated test snapshots | Six identical snapshot helpers share one private, test-only helper. All 18 existing test bodies and assertions are preserved. | Native unit suite |
++| Scalar identity transcripts | Scalar, Match, Iteration and Program identities repeat scalar type/value, action/terminator and source-origin encodings. Share the frozen grammar; keep each family's transcript order, domain prefix, versions and independent linked/image validation. | Existing identity and original/decoded suites; exact guest artifact comparisons |
+ 
+ ## Guarantees and limits
+ 
+@@ -85,3 +86,10 @@ matched the architecture checkpoint byte for byte. These receipts remain pinned
+ to their original sources in `qualification-checkpoint-83ee-v1` in benchmarks.
+ Final qualification covers the adopted base and additional visibility cleanup;
+ k-nucleotide timing qualification remains open.
++
++The next authority batch gives the frozen scalar identity grammar one private
++owner. It introduces no allocation, dynamic dispatch or alternate plan. Program
++identity retains its existing noninlined word/byte boundaries. Family-specific
++identity fields and every independent image/linked check remain with their
++owners. This batch is an isolated successor to the qualified checkpoints; its
++compilation, artifact equivalence and final runtime evidence remain pending.
+diff --git a/hosts/gpu/src/native_artifact/control_identity/mod.rs b/hosts/gpu/src/native_artifact/control_identity/mod.rs
+index 78bf587e2..08ae139cf 100644
+--- a/hosts/gpu/src/native_artifact/control_identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/control_identity/mod.rs
+@@ -1,16 +1,10 @@
+ //! Explicit versioned executable CFG identity; no Debug/serde encoding.
+-use mech_engine::native_artifact::{
+-    NativeMatchAction, NativeMatchArtifactPlan, NativeMatchTerminator, NativeScalarKind,
+-    NativeScalarValue,
++use crate::native_artifact::identity::transcript::{
++    bytes, origin, scalar_action, scalar_bindings, scalar_terminator, word,
+ };
++use mech_engine::native_artifact::NativeMatchArtifactPlan;
+ use sha2::{Digest, Sha256};
+-fn word(hash: &mut Sha256, value: u64) {
+-    hash.update(value.to_le_bytes());
+-}
+-fn bytes(hash: &mut Sha256, value: &[u8]) {
+-    word(hash, value.len() as u64);
+-    hash.update(value);
+-}
++
+ pub const NATIVE_MATCH_LINK_IDENTITY_BYTES: usize = 168;
+ pub const NATIVE_MATCH_TYPED_IR_VERSION: u64 = 2;
+ pub const NATIVE_MATCH_WORK_POLICY_VERSION: u64 = 1;
+@@ -119,105 +113,12 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeMatchArtifactPlan
+     word(&mut hash, NATIVE_MATCH_WORK_POLICY_VERSION);
+     hash.update(plan.program_revision().as_bytes());
+     word(&mut hash, plan.entry() as u64);
+-    word(&mut hash, plan.values().len() as u64);
+-    for ty in plan.values() {
+-        hash.update([match ty.kind() {
+-            NativeScalarKind::Bool => 1,
+-            NativeScalarKind::U64 => 2,
+-            NativeScalarKind::I64 => 3,
+-            NativeScalarKind::F64 => 4,
+-        }]);
+-        word(&mut hash, ty.schema().get() as u64);
+-        hash.update(ty.schema_key().as_bytes());
+-    }
+-    word(&mut hash, plan.inputs().len() as u64);
+-    for input in plan.inputs() {
+-        word(&mut hash, input.declaration().input().get() as u64);
+-        word(&mut hash, input.declaration().slot().get() as u64);
+-        bytes(&mut hash, input.declaration().name().as_bytes());
+-        word(&mut hash, input.value().get() as u64);
+-    }
+-    word(&mut hash, plan.constants().len() as u64);
+-    for constant in plan.constants() {
+-        word(&mut hash, constant.value().get() as u64);
+-        match constant.scalar() {
+-            NativeScalarValue::Bool(value) => {
+-                hash.update([1]);
+-                word(&mut hash, value as u64);
+-            }
+-            NativeScalarValue::U64(value) => {
+-                hash.update([2]);
+-                word(&mut hash, value);
+-            }
+-            NativeScalarValue::I64(value) => {
+-                hash.update([3]);
+-                word(&mut hash, value as u64);
+-            }
+-            NativeScalarValue::F64(value) => {
+-                hash.update([4]);
+-                word(&mut hash, value.bits());
+-            }
+-        }
+-    }
++    scalar_bindings(&mut hash, plan.values(), plan.inputs(), plan.constants());
+     word(&mut hash, plan.blocks().len() as u64);
+     for block in plan.blocks() {
+-        let at = block.origin();
+-        word(&mut hash, at.node().get() as u64);
+-        for id in [at.block(), at.local()] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
+-        }
+-        match block.action() {
+-            NativeMatchAction::None => hash.update([0]),
+-            NativeMatchAction::Primitive {
+-                op,
+-                operands,
+-                output,
+-                ..
+-            } => {
+-                hash.update([1, crate::native_artifact::identity::op_tag(*op)]);
+-                word(&mut hash, output.get() as u64);
+-                word(&mut hash, operands.len() as u64);
+-                for operand in operands {
+-                    word(&mut hash, operand.get() as u64);
+-                }
+-            }
+-            NativeMatchAction::Copy { source, output } => {
+-                hash.update([2]);
+-                word(&mut hash, source.get() as u64);
+-                word(&mut hash, output.get() as u64);
+-            }
+-        }
+-        match block.terminator() {
+-            NativeMatchTerminator::Jump(next) => {
+-                hash.update([1]);
+-                word(&mut hash, next as u64);
+-            }
+-            NativeMatchTerminator::Branch { condition, yes, no } => {
+-                hash.update([2]);
+-                word(&mut hash, condition.get() as u64);
+-                word(&mut hash, yes as u64);
+-                word(&mut hash, no as u64);
+-            }
+-            NativeMatchTerminator::LiteralBranch {
+-                left,
+-                right,
+-                yes,
+-                no,
+-            } => {
+-                hash.update([3]);
+-                for value in [left.get(), right.get(), yes, no] {
+-                    word(&mut hash, value as u64);
+-                }
+-            }
+-            NativeMatchTerminator::Complete => hash.update([4]),
+-            NativeMatchTerminator::Reject => hash.update([5]),
+-        }
++        origin(&mut hash, block.origin());
++        scalar_action(&mut hash, block.action());
++        scalar_terminator(&mut hash, block.terminator());
+     }
+     word(&mut hash, plan.outputs().len() as u64);
+     for output in plan.outputs() {
+diff --git a/hosts/gpu/src/native_artifact/identity/mod.rs b/hosts/gpu/src/native_artifact/identity/mod.rs
+index 41bbcf756..d1c02026f 100644
+--- a/hosts/gpu/src/native_artifact/identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/identity/mod.rs
+@@ -1,11 +1,11 @@
+ //! Versioned executable-IR identity. No Debug/serde representation is hashed.
+ use crate::native_artifact::abi::{ABI_VERSION, NativeAbiDescriptor};
+-use mech_engine::native_artifact::{
+-    NativeArtifactPlan, NativeScalarKind, NativeScalarOp, NativeScalarType, NativeScalarValue,
+-    NativeValueRef,
+-};
++use mech_engine::native_artifact::{NativeArtifactPlan, NativeScalarOp, NativeValueRef};
+ use sha2::{Digest, Sha256};
+ 
++pub(in crate::native_artifact) mod transcript;
++use transcript::{bytes, scalar_type as ty, scalar_value, word};
++
+ /// Fixed exported data size for the build-owned entry pairing record.
+ pub const NATIVE_LINK_IDENTITY_BYTES: usize = 152;
+ pub const NATIVE_TYPED_IR_VERSION: u64 = 4;
+@@ -142,23 +142,6 @@ pub(in crate::native_artifact) fn hex(bytes: &[u8]) -> String {
+ /// still binds their originating artifact. This encoding must be versioned
+ /// whenever its field set, operation tags, or checked ABI semantics change.
+ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeArtifactPlan) -> [u8; 32] {
+-    fn word(hash: &mut Sha256, value: u64) {
+-        hash.update(value.to_le_bytes());
+-    }
+-    fn bytes(hash: &mut Sha256, value: &[u8]) {
+-        word(hash, value.len() as u64);
+-        hash.update(value);
+-    }
+-    fn ty(hash: &mut Sha256, value: &NativeScalarType) {
+-        hash.update([match value.kind() {
+-            NativeScalarKind::Bool => 1,
+-            NativeScalarKind::U64 => 2,
+-            NativeScalarKind::I64 => 3,
+-            NativeScalarKind::F64 => 4,
+-        }]);
+-        word(hash, u64::from(value.schema().get()));
+-        hash.update(value.schema_key().as_bytes());
+-    }
+     fn reference(hash: &mut Sha256, value: NativeValueRef) {
+         let (tag, id) = match value {
+             NativeValueRef::Constant(id) => (1, id.get()),
+@@ -185,24 +168,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeArtifactPlan) ->
+     for constant in plan.constants() {
+         word(&mut hash, u64::from(constant.constant().get()));
+         ty(&mut hash, constant.ty());
+-        match constant.value() {
+-            NativeScalarValue::Bool(v) => {
+-                hash.update([1]);
+-                word(&mut hash, u64::from(v));
+-            }
+-            NativeScalarValue::U64(v) => {
+-                hash.update([2]);
+-                word(&mut hash, v);
+-            }
+-            NativeScalarValue::I64(v) => {
+-                hash.update([3]);
+-                word(&mut hash, v as u64);
+-            }
+-            NativeScalarValue::F64(v) => {
+-                hash.update([4]);
+-                word(&mut hash, v.bits());
+-            }
+-        }
++        scalar_value(&mut hash, constant.value());
+     }
+     word(&mut hash, plan.lets().len() as u64);
+     for node in plan.lets() {
+diff --git a/hosts/gpu/src/native_artifact/identity/transcript.rs b/hosts/gpu/src/native_artifact/identity/transcript.rs
+new file mode 100644
+index 000000000..6c24beee9
+--- /dev/null
++++ b/hosts/gpu/src/native_artifact/identity/transcript.rs
+@@ -0,0 +1,139 @@
++//! Shared frozen scalar identity grammar. Family owners choose the transcript
++//! order and retain independent plan, image and same-Object validation.
++use mech_engine::native_artifact::{
++    NativeMatchAction, NativeMatchConstant, NativeMatchInput, NativeMatchOrigin,
++    NativeMatchTerminator, NativeScalarKind, NativeScalarType, NativeScalarValue,
++};
++use sha2::{Digest, Sha256};
++
++#[inline(always)]
++pub(in crate::native_artifact) fn word(hash: &mut Sha256, value: u64) {
++    hash.update(value.to_le_bytes());
++}
++
++#[inline(always)]
++pub(in crate::native_artifact) fn bytes(hash: &mut Sha256, value: &[u8]) {
++    word(hash, value.len() as u64);
++    hash.update(value);
++}
++
++pub(in crate::native_artifact) fn scalar_kind(kind: NativeScalarKind) -> u8 {
++    match kind {
++        NativeScalarKind::Bool => 1,
++        NativeScalarKind::U64 => 2,
++        NativeScalarKind::I64 => 3,
++        NativeScalarKind::F64 => 4,
++    }
++}
++
++pub(in crate::native_artifact) fn scalar_type(hash: &mut Sha256, value: &NativeScalarType) {
++    hash.update([scalar_kind(value.kind())]);
++    word(hash, u64::from(value.schema().get()));
++    hash.update(value.schema_key().as_bytes());
++}
++
++pub(in crate::native_artifact) fn scalar_value(hash: &mut Sha256, value: NativeScalarValue) {
++    let (tag, bits) = match value {
++        NativeScalarValue::Bool(value) => (1, u64::from(value)),
++        NativeScalarValue::U64(value) => (2, value),
++        NativeScalarValue::I64(value) => (3, value as u64),
++        NativeScalarValue::F64(value) => (4, value.bits()),
++    };
++    hash.update([tag]);
++    word(hash, bits);
++}
++
++pub(in crate::native_artifact) fn scalar_bindings(
++    hash: &mut Sha256,
++    values: &[NativeScalarType],
++    inputs: &[NativeMatchInput],
++    constants: &[NativeMatchConstant],
++) {
++    word(hash, values.len() as u64);
++    for value in values {
++        scalar_type(hash, value);
++    }
++    word(hash, inputs.len() as u64);
++    for input in inputs {
++        word(hash, u64::from(input.declaration().input().get()));
++        word(hash, u64::from(input.declaration().slot().get()));
++        bytes(hash, input.declaration().name().as_bytes());
++        word(hash, u64::from(input.value().get()));
++    }
++    word(hash, constants.len() as u64);
++    for constant in constants {
++        word(hash, u64::from(constant.value().get()));
++        scalar_value(hash, constant.scalar());
++    }
++}
++
++pub(in crate::native_artifact) fn optional_index(hash: &mut Sha256, value: Option<u32>) {
++    match value {
++        Some(value) => {
++            hash.update([1]);
++            word(hash, u64::from(value));
++        }
++        None => hash.update([0]),
++    }
++}
++
++pub(in crate::native_artifact) fn origin(hash: &mut Sha256, value: NativeMatchOrigin) {
++    word(hash, u64::from(value.node().get()));
++    optional_index(hash, value.block());
++    optional_index(hash, value.local());
++}
++
++pub(in crate::native_artifact) fn scalar_action(hash: &mut Sha256, action: &NativeMatchAction) {
++    match action {
++        NativeMatchAction::None => hash.update([0]),
++        NativeMatchAction::Primitive {
++            op,
++            operands,
++            output,
++            ..
++        } => {
++            hash.update([1, super::op_tag(*op)]);
++            word(hash, u64::from(output.get()));
++            word(hash, operands.len() as u64);
++            for operand in operands {
++                word(hash, u64::from(operand.get()));
++            }
++        }
++        NativeMatchAction::Copy { source, output } => {
++            hash.update([2]);
++            word(hash, u64::from(source.get()));
++            word(hash, u64::from(output.get()));
++        }
++    }
++}
++
++pub(in crate::native_artifact) fn scalar_terminator(
++    hash: &mut Sha256,
++    terminator: NativeMatchTerminator,
++) {
++    match terminator {
++        NativeMatchTerminator::Jump(next) => {
++            hash.update([1]);
++            word(hash, u64::from(next));
++        }
++        NativeMatchTerminator::Branch { condition, yes, no } => {
++            hash.update([2]);
++            word(hash, u64::from(condition.get()));
++            word(hash, u64::from(yes));
++            word(hash, u64::from(no));
++        }
++        NativeMatchTerminator::LiteralBranch {
++            left,
++            right,
++            yes,
++            no,
++        } => {
++            hash.update([3]);
++            for value in [left.get(), right.get(), yes, no] {
++                word(hash, u64::from(value));
++            }
++        }
++        NativeMatchTerminator::Complete => hash.update([4]),
++        NativeMatchTerminator::Reject => hash.update([5]),
++    }
++}
+diff --git a/hosts/gpu/src/native_artifact/iteration_identity/mod.rs b/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
+index 3964ae4cc..1fefb3251 100644
+--- a/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
++++ b/hosts/gpu/src/native_artifact/iteration_identity/mod.rs
+@@ -1,17 +1,13 @@
+ //! Explicit versioned executable CFG identity; no Debug/serde encoding.
++use crate::native_artifact::identity::transcript::{
++    bytes, optional_index, origin, scalar_action, scalar_bindings, scalar_terminator, word,
++};
+ use mech_engine::native_artifact::{
+     NativeIterationAction, NativeIterationArtifactPlan, NativeIterationTerminator,
+-    NativeIterationValueScope, NativeMatchAction, NativeMatchTerminator, NativeScalarKind,
+-    NativeScalarValue,
++    NativeIterationValueScope,
+ };
+ use sha2::{Digest, Sha256};
+-fn word(hash: &mut Sha256, value: u64) {
+-    hash.update(value.to_le_bytes());
+-}
+-fn bytes(hash: &mut Sha256, value: &[u8]) {
+-    word(hash, value.len() as u64);
+-    hash.update(value);
+-}
++
+ pub const NATIVE_ITERATION_LINK_IDENTITY_BYTES: usize = 176;
+ pub const NATIVE_ITERATION_TYPED_IR_VERSION: u64 = 1;
+ pub const NATIVE_ITERATION_WORK_POLICY_VERSION: u64 = 1;
+@@ -124,66 +120,11 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+     word(&mut hash, NATIVE_ITERATION_WORK_POLICY_VERSION);
+     hash.update(plan.program_revision().as_bytes());
+     word(&mut hash, plan.entry() as u64);
+-    word(&mut hash, plan.values().len() as u64);
+-    for ty in plan.values() {
+-        hash.update([match ty.kind() {
+-            NativeScalarKind::Bool => 1,
+-            NativeScalarKind::U64 => 2,
+-            NativeScalarKind::I64 => 3,
+-            NativeScalarKind::F64 => 4,
+-        }]);
+-        word(&mut hash, ty.schema().get() as u64);
+-        hash.update(ty.schema_key().as_bytes());
+-    }
+-    word(&mut hash, plan.inputs().len() as u64);
+-    for input in plan.inputs() {
+-        word(&mut hash, input.declaration().input().get() as u64);
+-        word(&mut hash, input.declaration().slot().get() as u64);
+-        bytes(&mut hash, input.declaration().name().as_bytes());
+-        word(&mut hash, input.value().get() as u64);
+-    }
+-    word(&mut hash, plan.constants().len() as u64);
+-    for constant in plan.constants() {
+-        word(&mut hash, constant.value().get() as u64);
+-        match constant.scalar() {
+-            NativeScalarValue::Bool(value) => {
+-                hash.update([1]);
+-                word(&mut hash, value as u64);
+-            }
+-            NativeScalarValue::U64(value) => {
+-                hash.update([2]);
+-                word(&mut hash, value);
+-            }
+-            NativeScalarValue::I64(value) => {
+-                hash.update([3]);
+-                word(&mut hash, value as u64);
+-            }
+-            NativeScalarValue::F64(value) => {
+-                hash.update([4]);
+-                word(&mut hash, value.bits());
+-            }
+-        }
+-    }
++    scalar_bindings(&mut hash, plan.values(), plan.inputs(), plan.constants());
+     word(&mut hash, plan.blocks().len() as u64);
+     for block in plan.blocks() {
+-        let at = block.origin();
+-        word(&mut hash, at.node().get() as u64);
+-        for id in [at.block(), at.local()] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
+-        }
+-        match block.iteration() {
+-            Some(id) => {
+-                hash.update([1]);
+-                word(&mut hash, id as u64);
+-            }
+-            None => hash.update([0]),
+-        }
++        origin(&mut hash, block.origin());
++        optional_index(&mut hash, block.iteration());
+         match block.action() {
+             // Such a plan is rejected by both engine proof and scalar emitter.
+             // Keep it disjoint from every valid frozen scalar action encoding.
+@@ -202,27 +143,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+             | NativeIterationAction::TextJoinFinish { .. } => hash.update([255]),
+             NativeIterationAction::Scalar(action) => {
+                 hash.update([0]);
+-                match action {
+-                    NativeMatchAction::None => hash.update([0]),
+-                    NativeMatchAction::Primitive {
+-                        op,
+-                        operands,
+-                        output,
+-                        ..
+-                    } => {
+-                        hash.update([1, crate::native_artifact::identity::op_tag(*op)]);
+-                        word(&mut hash, output.get() as u64);
+-                        word(&mut hash, operands.len() as u64);
+-                        for operand in operands {
+-                            word(&mut hash, operand.get() as u64);
+-                        }
+-                    }
+-                    NativeMatchAction::Copy { source, output } => {
+-                        hash.update([2]);
+-                        word(&mut hash, source.get() as u64);
+-                        word(&mut hash, output.get() as u64);
+-                    }
+-                }
++                scalar_action(&mut hash, action);
+             }
+             NativeIterationAction::Initialize { iteration } => {
+                 hash.update([1]);
+@@ -237,31 +158,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+             NativeIterationTerminator::TailHeader { .. } => hash.update([255]),
+             NativeIterationTerminator::Scalar(terminator) => {
+                 hash.update([0]);
+-                match terminator {
+-                    NativeMatchTerminator::Jump(next) => {
+-                        hash.update([1]);
+-                        word(&mut hash, next as u64);
+-                    }
+-                    NativeMatchTerminator::Branch { condition, yes, no } => {
+-                        hash.update([2]);
+-                        word(&mut hash, condition.get() as u64);
+-                        word(&mut hash, yes as u64);
+-                        word(&mut hash, no as u64);
+-                    }
+-                    NativeMatchTerminator::LiteralBranch {
+-                        left,
+-                        right,
+-                        yes,
+-                        no,
+-                    } => {
+-                        hash.update([3]);
+-                        for value in [left.get(), right.get(), yes, no] {
+-                            word(&mut hash, value as u64);
+-                        }
+-                    }
+-                    NativeMatchTerminator::Complete => hash.update([4]),
+-                    NativeMatchTerminator::Reject => hash.update([5]),
+-                }
++                scalar_terminator(&mut hash, terminator);
+             }
+             NativeIterationTerminator::Header {
+                 iteration,
+@@ -280,13 +177,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+         match scope {
+             NativeIterationValueScope::Immutable { iteration } => {
+                 hash.update([0]);
+-                match iteration {
+-                    Some(id) => {
+-                        hash.update([1]);
+-                        word(&mut hash, *id as u64);
+-                    }
+-                    None => hash.update([0]),
+-                }
++                optional_index(&mut hash, *iteration);
+             }
+             NativeIterationValueScope::Carrier { iteration } => {
+                 hash.update([1]);
+@@ -302,13 +193,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(plan: &NativeIterationArtifact
+             iteration.origin().local(),
+             iteration.parent(),
+         ] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
++            optional_index(&mut hash, id);
+         }
+         word(&mut hash, iteration.count());
+         for value in [
+diff --git a/hosts/gpu/src/native_artifact/program/image/identity.rs b/hosts/gpu/src/native_artifact/program/image/identity.rs
+index b6415bc8b..6dea2e3a0 100644
+--- a/hosts/gpu/src/native_artifact/program/image/identity.rs
++++ b/hosts/gpu/src/native_artifact/program/image/identity.rs
+@@ -1,8 +1,11 @@
+ //! Explicit program IR/ABI identity. No Debug or pointer serialization.
++use crate::native_artifact::identity::transcript::{
++    self, optional_index, origin, scalar_action, scalar_kind, scalar_terminator,
++};
+ use mech_engine::native_artifact::{
+-    NativeIterationAction, NativeIterationTerminator, NativeIterationValueScope, NativeMatchAction,
+-    NativeMatchTerminator, NativeProgramArtifactPlan, NativeScalarKind, NativeSelectedTextJoin,
+-    NativeTextLineMatrixRegion, NativeTextLineRetentionFrontier,
++    NativeIterationAction, NativeIterationTerminator, NativeIterationValueScope,
++    NativeProgramArtifactPlan, NativeSelectedTextJoin, NativeTextLineMatrixRegion,
++    NativeTextLineRetentionFrontier,
+ };
+ use sha2::{Digest, Sha256};
+ // Identity construction runs once per descriptor, outside generated execution.
+@@ -10,13 +13,13 @@ use sha2::{Digest, Sha256};
+ // this shares code without changing a single byte of the identity transcript.
+ #[inline(never)]
+ fn word(hash: &mut Sha256, value: u64) {
+-    hash.update(value.to_le_bytes());
++    transcript::word(hash, value);
+ }
+ #[inline(never)]
+ fn bytes(hash: &mut Sha256, value: &[u8]) {
+-    word(hash, value.len() as u64);
+-    hash.update(value);
++    transcript::bytes(hash, value);
+ }
++
+ fn selected_template(
+     hash: &mut Sha256,
+     template: &mech_engine::native_artifact::NativeProgramLibraryTemplate,
+@@ -469,13 +472,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+     word(&mut hash, plan.entry() as u64);
+     word(&mut hash, plan.values().len() as u64);
+     for ty in plan.values() {
+-        hash.update([match ty.scalar_kind() {
+-            None => 0,
+-            Some(NativeScalarKind::Bool) => 1,
+-            Some(NativeScalarKind::U64) => 2,
+-            Some(NativeScalarKind::I64) => 3,
+-            Some(NativeScalarKind::F64) => 4,
+-        }]);
++        hash.update([ty.scalar_kind().map_or(0, scalar_kind)]);
+         word(&mut hash, ty.schema().get() as u64);
+         hash.update(ty.schema_key().as_bytes());
+     }
+@@ -582,24 +579,8 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+ 
+     word(&mut hash, plan.blocks().len() as u64);
+     for block in plan.blocks() {
+-        let at = block.origin();
+-        word(&mut hash, at.node().get() as u64);
+-        for id in [at.block(), at.local()] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
+-        }
+-        match block.iteration() {
+-            Some(id) => {
+-                hash.update([1]);
+-                word(&mut hash, id as u64);
+-            }
+-            None => hash.update([0]),
+-        }
++        origin(&mut hash, block.origin());
++        optional_index(&mut hash, block.iteration());
+         match block.action() {
+             NativeIterationAction::PrepareStringSpanSelector { collection } => {
+                 hash.update([14]);
+@@ -714,27 +695,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+             }
+             NativeIterationAction::Scalar(action) => {
+                 hash.update([0]);
+-                match action {
+-                    NativeMatchAction::None => hash.update([0]),
+-                    NativeMatchAction::Primitive {
+-                        op,
+-                        operands,
+-                        output,
+-                        ..
+-                    } => {
+-                        hash.update([1, crate::native_artifact::identity::op_tag(*op)]);
+-                        word(&mut hash, output.get() as u64);
+-                        word(&mut hash, operands.len() as u64);
+-                        for operand in operands {
+-                            word(&mut hash, operand.get() as u64);
+-                        }
+-                    }
+-                    NativeMatchAction::Copy { source, output } => {
+-                        hash.update([2]);
+-                        word(&mut hash, source.get() as u64);
+-                        word(&mut hash, output.get() as u64);
+-                    }
+-                }
++                scalar_action(&mut hash, action);
+             }
+             NativeIterationAction::Initialize { iteration } => {
+                 hash.update([1]);
+@@ -770,31 +731,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+             }
+             NativeIterationTerminator::Scalar(terminator) => {
+                 hash.update([0]);
+-                match terminator {
+-                    NativeMatchTerminator::Jump(next) => {
+-                        hash.update([1]);
+-                        word(&mut hash, next as u64);
+-                    }
+-                    NativeMatchTerminator::Branch { condition, yes, no } => {
+-                        hash.update([2]);
+-                        word(&mut hash, condition.get() as u64);
+-                        word(&mut hash, yes as u64);
+-                        word(&mut hash, no as u64);
+-                    }
+-                    NativeMatchTerminator::LiteralBranch {
+-                        left,
+-                        right,
+-                        yes,
+-                        no,
+-                    } => {
+-                        hash.update([3]);
+-                        for value in [left.get(), right.get(), yes, no] {
+-                            word(&mut hash, value as u64);
+-                        }
+-                    }
+-                    NativeMatchTerminator::Complete => hash.update([4]),
+-                    NativeMatchTerminator::Reject => hash.update([5]),
+-                }
++                scalar_terminator(&mut hash, terminator);
+             }
+             NativeIterationTerminator::Header {
+                 iteration,
+@@ -813,13 +750,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+         match scope {
+             NativeIterationValueScope::Immutable { iteration } => {
+                 hash.update([0]);
+-                match iteration {
+-                    Some(id) => {
+-                        hash.update([1]);
+-                        word(&mut hash, *id as u64);
+-                    }
+-                    None => hash.update([0]),
+-                }
++                optional_index(&mut hash, *iteration);
+             }
+             NativeIterationValueScope::Carrier { iteration } => {
+                 hash.update([1]);
+@@ -836,13 +767,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+             iteration.origin().local(),
+             iteration.parent(),
+         ] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
++            optional_index(&mut hash, id);
+         }
+         match iteration {
+             mech_engine::native_artifact::NativeControlLoopRef::Iteration(fold) => {
+@@ -940,13 +865,7 @@ pub(in crate::native_artifact) fn typed_ir_sha256(
+             collection.parent(),
+             collection.parent_collection(),
+         ] {
+-            match id {
+-                Some(id) => {
+-                    hash.update([1]);
+-                    word(&mut hash, id as u64);
+-                }
+-                None => hash.update([0]),
+-            }
++            optional_index(&mut hash, id);
+         }
+         match collection.kind() {
+             mech_engine::ComprehensionKind::Matrix => hash.update([0]),
