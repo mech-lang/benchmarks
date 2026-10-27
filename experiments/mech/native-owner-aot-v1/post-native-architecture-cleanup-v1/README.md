@@ -17,6 +17,13 @@ evidence at their original pins. Their receipts do not qualify these new heads.
 The former b05/569 subjects also remain recorded in `plan.json`. No candidate
 has final timing qualification.
 
+`changed-inputs-published-a68fb2e-v1/` passes all seven direct-oracle cases on the
+actual architecture/cleanup binaries (fourteen executions with independently
+checked output, update, pin and process-cleanup receipts). The shared
+`../native-architecture-consolidation-v1/supplemental-wide-slot-published-v1/`
+proof passes all six public source/decoded builds at the three published heads
+and the mandatory gate for this study. Neither result qualifies runtime speed.
+
 `audit/` retains the complete 363-file inventory, exact-body candidates,
 256 resolved default-module paths, 19 inherited feature guards, and original
 migration/architecture documents with hashes. These records preceded code edits.

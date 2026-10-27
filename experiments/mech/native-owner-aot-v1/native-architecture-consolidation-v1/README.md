@@ -36,6 +36,17 @@ executions remain historical evidence at their original pins, alongside the
 older `b05a3f8` prospective subject. No result is relabelled for a later source.
 Zero primary observations have been collected.
 
+At the published heads, `changed-inputs-published-7543c56-v1/` and the cleanup's
+`changed-inputs-published-a68fb2e-v1/` each pass seven direct-oracle cases and
+fourteen exact F/I executions. Their independent validators check every raw
+command, output, update count, source/executable pin and terminal process receipt.
+`supplemental-wide-slot-published-v1/` passes all six source/decoded builds at
+I=a093, A=7543 and C=a68; both studies' mandatory wide-artifact gates accept it.
+The archived descriptors and disassembly establish the selected 68-bit key and
+24-byte emitted slot addressing. These are correctness/artifact results, not
+primary observations. `published-public-builds-v1/build-metrics.json` separately
+records executable sizes and observed build costs with their concurrency limits.
+
 `artifact_equivalence.py snapshots` runs the preserved, exact-one-test snapshot
 harness for an explicitly adopted `--subject I` or `--subject F`. At the baseline,
 which predates the harness, it installs only a hash-pinned temporary test overlay,
