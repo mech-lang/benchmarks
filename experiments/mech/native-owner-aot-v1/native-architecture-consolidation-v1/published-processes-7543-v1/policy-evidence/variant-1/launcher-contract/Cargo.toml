@@ -1,0 +1,37 @@
+lib = { path = "/private/tmp/mech-native-consolidation-final/hosts/gpu/tests/support/launcher_owner/lib.rs" }
+features = { canonical-native-program-runtime = [], canonical-native-program-host-runtime = ["canonical-native-program-runtime"], canonical-native-benchmark-policy-runtime = [] }
+[package]
+name = "canonical-launcher-contract"
+version = "0.0.0"
+edition = "2024"
+publish = false
+[workspace]
+[dependencies]
+mech-core = { path = "/private/tmp/mech-native-consolidation-final/src/core", default-features = false, features = ["bool", "enum", "f64", "map", "matrixd", "selective-convert", "serde", "set", "string", "tuple", "u64"] }
+mech-engine = { path = "/private/tmp/mech-native-consolidation-final/src/engine", default-features = false, features = ["native-artifact", "convert", "map_ops", "pure_text", "sequence_sort"] }
+mech-gpu = { path = "/private/tmp/mech-native-consolidation-final/hosts/gpu", default-features = false, features = ["canonical-native-benchmark-policy-runtime"] }
+sha2 = { version = "0.11.0", default-features = false }
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+mech-runtime = { path = "/private/tmp/mech-native-consolidation-final/src/runtime", default-features = false, features = ["runtime", "string", "canonical-native-resources"] }
+mech-terminal = { version = "0.3.5", path = "/private/tmp/mech-native-consolidation-final/hosts/terminal", default-features = false, features = ["provider"]}
+
+[profile.release]
+debug = false
+
+[profile.test]
+# The exhaustive native-factory matrix otherwise produces multi-gigabyte
+# test executables that macOS cannot map alongside the shared dyld cache.
+debug = false
+strip = "symbols"
+
+[patch.crates-io]
+"mech-combinatorics" = { path = "/private/tmp/mech-native-consolidation-final/machines/combinatorics" }
+"mech-compare" = { path = "/private/tmp/mech-native-consolidation-final/machines/compare" }
+"mech-logic" = { path = "/private/tmp/mech-native-consolidation-final/machines/logic" }
+"mech-math" = { path = "/private/tmp/mech-native-consolidation-final/machines/math" }
+"mech-matrix" = { path = "/private/tmp/mech-native-consolidation-final/machines/matrix" }
+"mech-range" = { path = "/private/tmp/mech-native-consolidation-final/machines/range" }
+"mech-set" = { path = "/private/tmp/mech-native-consolidation-final/machines/set" }
+"mech-stats" = { path = "/private/tmp/mech-native-consolidation-final/machines/stats" }
+"mech-string" = { path = "/private/tmp/mech-native-consolidation-final/machines/string" }

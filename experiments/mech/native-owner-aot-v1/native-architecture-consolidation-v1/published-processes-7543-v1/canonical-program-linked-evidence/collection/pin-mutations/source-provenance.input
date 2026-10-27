@@ -1,0 +1,13 @@
+*> text
++> sequence
++> number
++> map
+words := text/lines(input<string>)
+joined := text/join(words, ",")
+size := sequence/length(joined)
+formatted := number/format(size, 0u64)
+counts := map/histogram(words)
+keys := map/keys(counts)
+values := map/values(counts)
+more := size + 1u64
+projection := text/join([number/format(sequence/length(word) / (sequence/length(word) - divisor<u64>), 0u64) | word <- words], ",")

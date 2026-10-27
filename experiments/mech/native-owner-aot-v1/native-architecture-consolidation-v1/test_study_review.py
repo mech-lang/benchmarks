@@ -196,6 +196,7 @@ print(json.dumps(dict(study=study.STUDY_ID,plan_study=study.read_plan()['study_i
         plan = dict(self.plan, status='frozen-before-first-primary-sample',
                     final_compiler_source='candidate', subject_pins=pins,
                     qualification_sha256='qualification-pin', controller_pins={})
+        plan.pop('verification_order', None)  # Exercise the preserved legacy gate.
         with patch.object(measure, 'read_plan', return_value=plan), \
              patch.object(measure, 'prerequisites', return_value=(dict.fromkeys(pins), pins, {}, {})), \
              patch.object(measure, 'source_state', return_value=source), \

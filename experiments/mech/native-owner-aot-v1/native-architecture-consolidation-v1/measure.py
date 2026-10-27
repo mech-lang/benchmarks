@@ -4,15 +4,22 @@ import fcntl,json,statistics,subprocess,sys
 from pathlib import Path
 from study import HERE,ROOT,STUDY_ID,process,read,read_plan,source_state,subjects,inputs,check_native,runtime_environment
 from campaign import prerequisites, committed_before_sampling
+from campaign import DEFERRED_VERIFICATION
+import sampling
 
 def main():
     if len(sys.argv)!=1:raise ValueError('Only the shared --study option is accepted by measure.py')
-    plan=read_plan();targets,pins,f,i=prerequisites(plan);before=source_state()
+    plan=read_plan()
+    deferred=plan.get('verification_order')==DEFERRED_VERIFICATION
+    targets,pins,f,i=(sampling.prerequisites(plan) if deferred else prerequisites(plan));before=source_state()
     assert plan['final_compiler_source']==before['commit'] and plan['subject_pins']==pins
     assert plan['status']=='frozen-before-first-primary-sample'
-    gate=read(HERE/'qualification.json')
-    assert gate['source']==before and gate['proceed_to_primary']
-    assert process.sha(HERE/'qualification.json')==plan['qualification_sha256']
+    if deferred:
+        assert sampling.readiness(plan)['source']==before
+    else:
+        gate=read(HERE/'qualification.json')
+        assert gate['source']==before and gate['proceed_to_primary']
+        assert process.sha(HERE/'qualification.json')==plan['qualification_sha256']
     for path,digest in plan['controller_pins'].items():assert process.sha(ROOT/path)==digest,path
     assert plan['bootstrap_seed']==2026102595 and plan['bootstrap_resamples']==20000
     assert plan['primary_observations']==192 and plan['warmups']==plan['excluded_outliers']==0
@@ -34,6 +41,8 @@ def main():
             out=HERE/f'primary-session-{session}';out.mkdir(exist_ok=False)
             orders=plan[f'session_{session}']
             report=dict(status='running',study_id=STUDY_ID,source=before,evidence_revision=revision,session=session,orders=orders,pins=pins,plan_sha256=process.sha(HERE/'plan.json'),driver_sha256=process.sha(Path(__file__)),controller_sha256=process.sha(ROOT/'experiments/janet/knucleotide-bytes-v1/process.py'),input_sha256=plan['input_sha256'],policy_sha256=plan['policy_sha256'],canonical_data_sha256=plan['canonical_data_sha256'],source_sha256=plan['source_sha256'],bytecode_sha256=plan['bytecode_sha256'],excluded_warmups=0,excluded_outliers=0,samples=[],scope='Complete secured startup through exit, exact retained controls, fixed balanced serial orders, all observations retained.')
+            if deferred:
+                report['verification_status_at_collection']='timings-only-final-correctness-and-artifact-qualification-required'
             process.save(out/'results.json',report)
             for index,order in enumerate(orders):
                 for position,subject in enumerate(order):

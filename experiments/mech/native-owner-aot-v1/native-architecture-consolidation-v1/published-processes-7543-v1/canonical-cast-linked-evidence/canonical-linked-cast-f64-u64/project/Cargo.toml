@@ -1,0 +1,36 @@
+[package]
+name = "canonical-linked-cast-f64-u64"
+version = "0.0.0"
+edition = "2024"
+publish = false
+build = "build.rs"
+[workspace]
+[dependencies]
+mech-core = { path = "/private/tmp/mech-native-consolidation-final/src/core", default-features = false, features = ["f64", "selective-convert", "u64"] }
+mech-engine = { path = "/private/tmp/mech-native-consolidation-final/src/engine", default-features = false, features = ["native-artifact", "convert", "pure_text"] }
+mech-gpu = { path = "/private/tmp/mech-native-consolidation-final/hosts/gpu", default-features = false, features = ["canonical-native-runtime"] }
+sha2 = { version = "0.11.0", default-features = false }
+[build-dependencies]
+sha2 = { version = "0.11.0", default-features = false }
+serde_json = "1.0"
+[profile.dev]
+debug = 0
+incremental = false
+[profile.release]
+# Remove symbol tables while retaining the normal speed optimization level.
+strip = "symbols"
+opt-level = 3
+# Optimize the Rust host across crate boundaries; the checked Mech Object is
+# already native machine code and is linked unchanged, not lowered through LLVM.
+lto = "thin"
+
+[patch.crates-io]
+"mech-combinatorics" = { path = "/private/tmp/mech-native-consolidation-final/machines/combinatorics" }
+"mech-compare" = { path = "/private/tmp/mech-native-consolidation-final/machines/compare" }
+"mech-logic" = { path = "/private/tmp/mech-native-consolidation-final/machines/logic" }
+"mech-math" = { path = "/private/tmp/mech-native-consolidation-final/machines/math" }
+"mech-matrix" = { path = "/private/tmp/mech-native-consolidation-final/machines/matrix" }
+"mech-range" = { path = "/private/tmp/mech-native-consolidation-final/machines/range" }
+"mech-set" = { path = "/private/tmp/mech-native-consolidation-final/machines/set" }
+"mech-stats" = { path = "/private/tmp/mech-native-consolidation-final/machines/stats" }
+"mech-string" = { path = "/private/tmp/mech-native-consolidation-final/machines/string" }

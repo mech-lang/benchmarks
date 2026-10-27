@@ -9,6 +9,7 @@ import wide_slot
 import artifact_equivalence
 
 COMPLETE = 'all-96-complete-processes-output-counters-pins-and-cleanup-verified'
+DEFERRED_VERIFICATION = 'collect-fixed-binaries-qualify-after-complete-verification-v1'
 CONTROLLER = 'experiments/janet/knucleotide-bytes-v1/process.py'
 CORRECTNESS_TESTS = {
     'native-unit', 'native-facts', 'native-lines', 'worker-credit', 'native-catalog',
@@ -71,7 +72,7 @@ def evidence(ref):
 
 def required_controller_paths():
     return {str((CODE_DIR / name).relative_to(ROOT)) for name in
-            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py', 'wide_slot.py', 'artifact_equivalence.py']} | {CONTROLLER}
+            ['measure.py', 'analyze.py', 'qualify.py', 'campaign.py', 'study.py', 'wide_slot.py', 'artifact_equivalence.py', 'sampling.py']} | {CONTROLLER}
 
 
 def check_controllers(plan):
@@ -111,7 +112,7 @@ def stages(rows, head, required):
     return {row['stage']: row for row in rows}
 
 
-def prerequisites(plan):
+def fixed_prerequisites(plan):
     assert plan['study_id'] == STUDY_ID
     assert plan['status'] == 'frozen-before-first-primary-sample'
     targets, pins, f, i = subjects()
@@ -138,8 +139,38 @@ def prerequisites(plan):
     assert plan['session_1'] == block * 6 and plan['session_2'] == list(reversed(block * 6))
     inputs()
     check_controllers(plan)
+    return targets, pins, f, i
+
+
+def final_gate(plan):
     gate = read(HERE / 'qualification.json')
-    assert process.sha(HERE / 'qualification.json') == plan['qualification_sha256']
+    digest = plan.get('qualification_sha256')
+    if plan.get('verification_order') == DEFERRED_VERIFICATION:
+        assert digest is None
+        attestation = read(contained(plan['final_verification_attestation']))
+        assert attestation['schema'] == 'mech.final-verification-attestation.v1'
+        assert attestation['sampling_plan_sha256'] == process.sha(HERE / 'plan.json')
+        digest = attestation['qualification_sha256']
+    assert process.sha(HERE / 'qualification.json') == digest
+    return gate
+
+
+def check_changed_inputs(reference, pins, final):
+    changed = evidence(reference)
+    assert changed['status'] == 'seven-independent-oracles-and-fourteen-pinned-AOT-executions-verified'
+    assert changed['source'] == changed['source_after'] == final['source']
+    assert changed['pins'] == {s: pins[s] for s in ('F', 'I')}
+    assert len(changed['cases']) == 7 and all(len(c['executions']) == 2 for c in changed['cases'])
+    assert {c['name'] for c in changed['cases']} == {
+        'one-key-short', 'query-boundaries', 'random-single-row', 'random-short-rows',
+        'random-ordinary-rows', 'growth-and-partial-credit', 'repeated-wide-key'}
+    assert all({e['subject'] for e in c['executions']} == {'F', 'I'} for c in changed['cases'])
+    return changed
+
+
+def prerequisites(plan):
+    targets, pins, f, i = fixed_prerequisites(plan)
+    gate = final_gate(plan)
     assert gate['source'] == f['source'] and gate['baseline_source'] == i['source']
     assert gate['proceed_to_primary'] is True
     checks = gate['checks']
@@ -147,15 +178,7 @@ def prerequisites(plan):
     stages(evidence(checks['generated_processes']), f['source']['commit'], PROCESS_TESTS)
     stages(evidence(checks['baseline_correctness']), i['source']['commit'],
            {'native-unit', 'native-facts', 'native-lines', 'worker-credit', 'native-catalog'})
-    changed = evidence(checks['changed_inputs'])
-    assert changed['status'] == 'seven-independent-oracles-and-fourteen-pinned-AOT-executions-verified'
-    assert changed['source'] == changed['source_after'] == f['source']
-    assert changed['pins'] == {s: pins[s] for s in ('F','I')}
-    assert len(changed['cases']) == 7 and all(len(c['executions']) == 2 for c in changed['cases'])
-    assert {c['name'] for c in changed['cases']} == {
-        'one-key-short', 'query-boundaries', 'random-single-row', 'random-short-rows',
-        'random-ordinary-rows', 'growth-and-partial-credit', 'repeated-wide-key'}
-    assert all({e['subject'] for e in c['executions']} == {'F','I'} for c in changed['cases'])
+    check_changed_inputs(checks['changed_inputs'], pins, f)
     code = evidence(checks['guest_code'])
     assert code['F_source'] == f['source'] and code['I_source'] == i['source']
     assert len(code['files']) == 6 and all(row['equal'] and row['F'] == row['I'] for row in code['files'])
@@ -182,8 +205,10 @@ def prerequisites(plan):
     return targets, pins, f, i
 
 
-def committed_before_sampling(revision, plan):
+def committed_final_verification(revision, plan):
     files = ['plan.json', 'qualification.json', 'retained-controls.json']
+    if plan.get('verification_order') == DEFERRED_VERIFICATION:
+        files.append(plan['final_verification_attestation'])
     checks = read(HERE / 'qualification.json')['checks']
     files += [ref['path'] for name, ref in checks.items() if name != 'wide_slot_artifacts']
     for name in ['guest_code', 'representative_objects']:
@@ -201,6 +226,14 @@ def committed_before_sampling(revision, plan):
     for path in paths:
         blob = subprocess.check_output(['git','-C',str(ROOT),'show',revision + ':' + path])
         assert hashlib.sha256(blob).hexdigest() == process.sha(ROOT / path), path
+
+
+def committed_before_sampling(revision, plan):
+    if plan.get('verification_order') == DEFERRED_VERIFICATION:
+        from sampling import committed
+        committed(revision, plan)
+    else:
+        committed_final_verification(revision, plan)
 
 
 def observation(sample, session, plan, targets, identities, policy):
@@ -236,11 +269,19 @@ def observation(sample, session, plan, targets, identities, policy):
     assert raw['command'] == command and sample['verified'] is True
 
 
-def validate_reports(reports, plan):
-    targets, pins, f, _ = prerequisites(plan)
+def validate_reports(reports, plan, *, collection_only=False):
+    if collection_only:
+        from sampling import prerequisites as sampling_prerequisites
+        targets, pins, f, _ = sampling_prerequisites(plan)
+    else:
+        targets, pins, f, _ = prerequisites(plan)
     assert [r['session'] for r in reports] == [1, 2]
     assert len({r['evidence_revision'] for r in reports}) == 1
     committed_before_sampling(reports[0]['evidence_revision'], plan)
+    if not collection_only and plan.get('verification_order') == DEFERRED_VERIFICATION:
+        current = subprocess.check_output(['git', '-C', str(ROOT), 'rev-parse', 'HEAD'], text=True).strip()
+        subprocess.run(['git', '-C', str(ROOT), 'merge-base', '--is-ancestor', reports[0]['evidence_revision'], current], check=True)
+        committed_final_verification(current, plan)
     _, policy, _ = inputs()
     identities = set()
     for report in reports:

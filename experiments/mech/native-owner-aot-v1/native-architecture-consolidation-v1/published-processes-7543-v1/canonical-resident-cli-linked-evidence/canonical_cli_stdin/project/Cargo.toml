@@ -1,0 +1,27 @@
+[package]
+name = "canonical_cli_stdin"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+[workspace]
+
+[[bin]]
+name = "canonical_cli_stdin"
+path = "src/main.rs"
+
+[dependencies]
+ctrlc = { package = "ctrlc", version = "=3.5.2", default-features = false, features = [] }
+mech_core = { package = "mech-core", path = "../../../../mech-native-consolidation-final/src/core", default-features = false, features = ["program", "string"] }
+mech_engine = { package = "mech-engine", path = "../../../../mech-native-consolidation-final/src/engine", default-features = false, features = ["runtime", "string"] }
+mech_runtime = { package = "mech-runtime", path = "../../../../mech-native-consolidation-final/src/runtime", default-features = false, features = ["resident-routing", "runtime", "string"] }
+mech_terminal = { package = "mech-terminal", path = "../../../../mech-native-consolidation-final/hosts/terminal", default-features = false, features = ["provider"] }
+
+[patch]
+
+[patch.crates-io]
+mech-core = { path = "../../../../mech-native-consolidation-final/src/core" }
+mech-engine = { path = "../../../../mech-native-consolidation-final/src/engine" }
+mech-runtime = { path = "../../../../mech-native-consolidation-final/src/runtime" }
+mech-terminal = { path = "../../../../mech-native-consolidation-final/hosts/terminal" }
+mech-syntax = { path = "../../../../mech-native-consolidation-final/src/syntax" }

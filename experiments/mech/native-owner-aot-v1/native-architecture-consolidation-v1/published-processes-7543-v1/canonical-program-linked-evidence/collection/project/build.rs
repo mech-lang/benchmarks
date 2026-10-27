@@ -1,0 +1,42 @@
+use sha2::{Digest, Sha256};
+use std::{collections::BTreeMap, fs, path::PathBuf};
+
+const EXPECTED: &str = "{\"Cargo.toml\":\"f11f0a5cfe1438df0c246762d66e2a8add909d1e74bc71518d63901420d3a7c6\",\"application.mec\":\"b731d398cf073b17103003ad3579418fb61abbe28ad1a3926a989ddb48789765\",\"factory-profile.json\":\"351cfc108a7eb5eb5d5a149e7f497847a8959d1025798066dfc877e9290b8577\",\"native-descriptor.bin\":\"f3ea2296e65e330156f024127b434aea2f487895f1c7ca579a338b0bfad4d248\",\"native-descriptor.json\":\"06b2063e3374588a327d67e471ab176b855f8dd7af57b38dfaf4edd7832e6516\",\"object-identity.bin\":\"5a6341f46e055e2af9cf6c29423702011d860b77294cd3a37c87ace64342c6fe\",\"program.mecb\":\"aad73a74077b4ef29e2cd863321992d4bc2e6592bb959c6615429d1489d2a913\",\"program.o\":\"3b1a17dcce75adcba319a0c1601507cf214e7e124dc3226ae3e54f53b1acba5b\",\"rust-toolchain.toml\":\"19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9\",\"src/main.rs\":\"0ae40a80670b1d950a36005c81fc6360e2dc2738f9732acb1087661c0fc0e75b\"}";
+fn digest(bytes: &[u8]) -> String {
+    Sha256::digest(bytes)
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect()
+}
+fn main() {
+    assert_eq!(
+        std::env::var("HOST").unwrap(),
+        std::env::var("TARGET").unwrap(),
+        "canonical native object is host-only"
+    );
+    let root = PathBuf::from(std::env::var_os("CARGO_MANIFEST_DIR").unwrap());
+    let expected: BTreeMap<String, String> = serde_json::from_str(EXPECTED).unwrap();
+    let manifest_bytes = fs::read(root.join("linked-manifest.json")).unwrap();
+    let manifest: serde_json::Value = serde_json::from_slice(&manifest_bytes).unwrap();
+    assert_eq!(manifest["schema"], "mech.canonical-linked-program-application.v1");
+    let mut pins: BTreeMap<String, String> =
+        serde_json::from_value(manifest["pins"].clone()).unwrap();
+    let script = pins.remove("build.rs").expect("build script pin");
+    assert_eq!(
+        digest(&fs::read(root.join("build.rs")).unwrap()),
+        script,
+        "build script changed"
+    );
+    assert_eq!(pins, expected, "manifest generated-input pins changed");
+    for (name, hash) in expected {
+        assert_eq!(
+            digest(&fs::read(root.join(&name)).unwrap()),
+            hash,
+            "changed generated input {name}"
+        );
+        println!("cargo:rerun-if-changed={name}");
+    }
+    println!("cargo:rerun-if-changed=linked-manifest.json");
+    println!("cargo:rerun-if-changed=build.rs");
+    println!("cargo:rustc-link-arg={}", root.join("program.o").display());
+}

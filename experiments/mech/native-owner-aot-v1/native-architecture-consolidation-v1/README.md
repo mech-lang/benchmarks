@@ -7,8 +7,12 @@ manifests and primary-session directories are separate; the measurement,
 evidence checks and statistics have one implementation in this directory.
 Controller hashes refer to these source files regardless of the selected study.
 
-Neither plan is frozen. The source/build receipts described below remain
-preserved while final repaired compiler heads are adopted. Both plans must also
+Both plans are frozen before their first primary observation. The three published
+compiler heads and their exact public AOT files are fixed. Collection can precede
+remaining compiler verification; final performance qualification still requires
+every correctness, process and artifact gate. `sampling-readiness.json` pins
+completed public-build/oracle/wide proofs, and the future final attestation must
+bind the unchanged sampling plan to the completed qualification manifest. Both plans must also
 adopt the same explicit `runtime_environment_receipt` before changed-input checks
 or primary sampling; the
 controller no longer silently substitutes the selected I build's environment.
@@ -58,7 +62,7 @@ the cleanup reuses architecture F as its I. The older ddf8 snapshot archive is
 an additional byte-level reference, not a substitute for the actual before head.
 The receipt validator rechecks the exact workspace/test command, process owner,
 archived execution inputs, clean source, overlay cleanup and one-test stdout.
-Both receipt archives must be committed before sampling.
+Both receipt archives must be committed before final performance qualification.
 
 Before primary sampling, `wide_slot.py` also requires the six public wide-slot
 builds (three source heads, each source/decoded). It checks the four-bit domain,
@@ -150,7 +154,10 @@ not campaign evidence.
 pins, prerequisite receipts, the committed pre-sample plan/controllers, both
 complete sessions and every raw owned-process duration, output and cleanup
 receipt before combining evidence validation with statistical acceptance.
-`measure.py` uses the same prerequisite gate before starting a primary sample.
+`measure.py` checks the frozen collection prerequisites before starting a primary
+sample. `qualify.py` always requires the full verification gate; collecting or
+statistically analyzing timings cannot qualify performance. The prospective
+ordering correction is recorded in `sampling-order-adoption-v1/receipt.json`.
 
 `build-baseline.py` and `build-candidate.py` now require `--workspace` and
 `--target-dir`, and optionally accept a fresh `--run-id`. Each invocation builds
