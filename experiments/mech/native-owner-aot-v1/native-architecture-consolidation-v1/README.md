@@ -7,12 +7,15 @@ work counter, executable/source pin and owned-process terminal receipt validates
 qualified.** Final compiler/artifact verification also remains open.
 
 The current repaired heads are #934 `b4e7b151`, #935 `36bcb929` and
-#939 `1da476a`. [Current contract and artifact evidence](contract-repairs-b4e7b151-36bcb929-v1/README.md)
+#939 `eacb00fcb`. [Current contract and artifact evidence](contract-repairs-b4e7b151-36bcb929-v1/README.md)
 records all 32 original/decoded files byte-identical between #934 and #935,
 77 passing base native tests, the four repaired contract effects and a clean
-review of the current architecture head. #934 CI is green; #935 CI is resumed
-and still running, while #939 CI remains held. The new heads are not adopted
-into the old timing plans. All timing results below remain pinned to
+review of the current architecture head. #934 and #935 CI have passed.
+[Current cleanup verification](../post-native-architecture-cleanup-v1/current-head-verification-eacb00fcb-v1/README.md)
+adds all 32 matching #935/#939 artifact pairs, the repaired full-source check
+and a clean cleanup-head review. #939 CI was restarted after its temporary-build
+disk-lifetime repair; follow the compiler PR for the latest result. The new
+heads are not adopted into the old timing plans. All timing results below remain pinned to
 I=`a093aea`, architecture F=`7543c56` and cleanup F=`a68fb2e`.
 
 | Study | F/I paired change, session 1 | F/I paired change, session 2 |
@@ -40,9 +43,10 @@ all 51 correctness scopes and sixteen substantive
 generated-process scopes pass. The latter's 45 complete stages and 127 passed,
 zero failed, three ignored tests are retained in `published-processes-7543-v1/`.
 The complete correctness raw evidence and validated same-head resume remain in
-local qualification evidence pending archival. Exact baseline five-suite and
-32-snapshot coverage, #935's 32 snapshots, and cleanup #939's 51/16/32 proof remain
-required. The failed disk-full snapshot attempt remains preserved.
+local qualification evidence pending archival. The historical campaigns still
+require their own exact baseline five-suite/32-file, architecture 32-file and
+cleanup 51/16/32 receipts. Newer-head comparisons above remain separate from
+those original source pins. The failed disk-full attempt remains preserved.
 
 The notes below retain preparation history. References to zero primary samples,
 unstarted timing, or pending public-build adoption describe earlier checkpoints;

@@ -1,5 +1,27 @@
 # Post-architecture native cleanup
 
+The historical 192-process cleanup campaign at I=`7543c56` and F=`a68fb2e`
+is complete and frozen, with no exclusions. It fails the unchanged acceptance
+policy: session 1 misses the before/after, retained-Mech and retained-Rust bounds;
+session 2 passes all three. This cleanup is not performance qualified. See
+[the complete results](collection-analysis.json) and the retained raw sessions.
+
+[Current-head verification](current-head-verification-eacb00fcb-v1/README.md)
+covers cleanup `eacb00fcb3352fbbf3d4dddb7b983f4c130f4a7b` above green #935
+`36bcb9292ed40676a4547c91588c96735785b139`: all 32 generated object, descriptor,
+metadata and bytecode files match across those exact heads. The full-source
+check passes three profile tests and 14 independent catalog cases; 132 existing
+CI contract tests pass and the new cleanup head has a clean review. A CI-only
+repair retires completed temporary build targets before independent consumers,
+while preserving every command, bytecode handoff and compiler setting. CI is
+running; follow the compiler PR for its latest state.
+
+These newer heads are separate from the immutable timing plans. No new primary
+observation or speed claim is made. Full current-head correctness and generated
+process qualification remain outstanding. The following notes retain preparation
+history; their unfrozen-plan and zero-observation statements describe earlier
+checkpoints, not the completed campaign above.
+
 This is the primary evidence study for the cleanup following mech-lang/mech
 #935 and preceding the 19 downstream PRs. The audited source is
 `01b8b397011b6a774b7d9f730578a4ef92bf30f6`. Its retained public AOT executable
