@@ -1,0 +1,15 @@
++> text
++> sequence
++> number
++> map
+choose := flag<bool>
+step(x<string>) => (next<string>) :=
+  words := text/lines(x)
+  joined := text/join(words, ",")
+  size := sequence/length(joined)
+  counts := map/histogram(words)
+  keys := map/keys(counts)
+  values := map/values(counts)
+  formatted := number/format(size + sequence/length(values), 0u64)
+  next := (choose? | true => text/join(keys, formatted) | false => x).
+seed<string> |2> step

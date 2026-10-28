@@ -1,0 +1,162 @@
+{
+  "schema": "mech.native.secondary-prefix-protocol.v1",
+  "status": "prospectively-adopted-before-secondary-observations",
+  "study_id": "post-native-architecture-cleanup-v1",
+  "scope": "Descriptive one-million-base prefix diagnostic; separate from primary runtime acceptance.",
+  "performance_qualified": false,
+  "observations": 16,
+  "warmups": 0,
+  "excluded_outliers": 0,
+  "replacement_samples": 0,
+  "deadline_seconds": 30,
+  "orders": [
+    [
+      "F",
+      "I",
+      "R",
+      "W"
+    ],
+    [
+      "I",
+      "W",
+      "F",
+      "R"
+    ],
+    [
+      "W",
+      "R",
+      "I",
+      "F"
+    ],
+    [
+      "R",
+      "F",
+      "W",
+      "I"
+    ]
+  ],
+  "subject_pins": {
+    "F": "0ac4ce3405bca57ee1d7488dd0c1dcfe6a4b68029b7c367e439e008ecbe2e3f2",
+    "I": "49c6825f4b4ae1d03010dd6fe3bc261beecee5319707a4f3f7d2ebf366f3e1e8",
+    "W": "43ec6990256fec678e99bc7726ce2f203a4191154e19963fee4a43b355fc70ca",
+    "R": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763"
+  },
+  "build_receipts": {
+    "F": "candidate-builds/published-a68fb2e-v1/public-aot.json",
+    "I": {
+      "study_id": "native-architecture-consolidation-v1",
+      "path": "candidate-builds/published-7543c56-v1/public-aot.json",
+      "sha256": "84e680a3d9c8c07664299c9d72109e7acd90f0de64336ea97dda8d3877505a65"
+    }
+  },
+  "source_pins": {
+    "F": {
+      "commit": "a68fb2e60d7afbc59bc146f8878b17181e275645",
+      "tree": "81c9610a8be5596ad8142b42d10112ebc80e8ef4",
+      "status": ""
+    },
+    "I": {
+      "commit": "7543c56d5efc4df30d0b60961922024d74caa9d7",
+      "tree": "f01d1bb18941ce5a81a207dca10e214e526722c7",
+      "status": ""
+    }
+  },
+  "input": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/input.fasta",
+    "sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+    "bytes": 1016674
+  },
+  "expected_output": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/expected.txt",
+    "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+    "bytes": 249
+  },
+  "policy": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/full-disjoint-state-v1/launch.json",
+    "sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+    "bytes": 749
+  },
+  "runtime_environment_receipt": {
+    "study_id": "native-architecture-consolidation-v1",
+    "path": "runtime-environment-v1.json",
+    "sha256": "9eb02e4e90eab72fa151b3f6f7dc90ed81e2af8f8a03af9579b46021b8e78e06"
+  },
+  "native_checks": {
+    "exact_counters": {
+      "native_hash_table_regions": 7,
+      "native_packed_map_regions": 7,
+      "native_packed_ssa_regions": 7,
+      "native_guarded_loop_regions": 7,
+      "native_guarded_call_regions": 7,
+      "native_parallel_tasks": 7,
+      "native_hash_table_updates": 6999961,
+      "native_packed_map_updates": 6999961,
+      "native_fused_string_map_bytes": 1000000,
+      "native_worker_credit_batches": 6839,
+      "native_parallel_batches": 1,
+      "native_parallel_regions": 2,
+      "native_frozen_map_regions": 5,
+      "native_direct_lookup_regions": 5,
+      "native_frozen_map_reads": 10
+    },
+    "required_flags": {
+      "native_aot": true,
+      "jit": false,
+      "source_parser": false,
+      "resident_body_evaluation": false,
+      "policy": "secured",
+      "shutdown": "completed"
+    },
+    "schedule_dependent_checks": {
+      "native_parallel_peak_workers": "integer in1..7, not exact7 for short input",
+      "native_worker_credit_claims": "positive integer",
+      "native_worker_credit_reclaims": "equals claims after complete shutdown",
+      "native_work": "positive and within unchanged finite policy work cap",
+      "native_comparison_work": "positive and within unchanged finite comparison cap"
+    },
+    "independent_derivation": "Seven histogram widths from unchanged source; updates sum(N-k+1)=7*N-39. Full funded batches sum(ceil((N-k+1)/1024)); unchanged runtime BATCH1024 and ample finite caps. Source has2+5 histogram tasks in two comprehensions, five query maps and two lookups per query.",
+    "do_not_hardcode": {
+      "native_work": [
+        1903615695293631,
+        1903615695293887,
+        1903615695294095,
+        1903615695294159
+      ],
+      "native_comparison_work": [
+        29732192101682,
+        29732192101694,
+        29732192101712
+      ],
+      "native_worker_credit_claims": [
+        443,
+        444,
+        445,
+        453
+      ],
+      "native_worker_credit_reclaims": [
+        443,
+        444,
+        445,
+        453
+      ]
+    }
+  },
+  "shared_mutex": {
+    "path": "/private/tmp/mech-clbg-timing.lock",
+    "inode": 83858837
+  },
+  "entrypoint": "native-architecture-consolidation-v1/secondary-prefix.py",
+  "secondary_driver_sha256": "ef7d815adfdc443ec02779ef6a9112f69240d0aead75e6734696dcbd3883e99c",
+  "preparation_receipt": {
+    "study_id": "native-architecture-consolidation-v1",
+    "path": "secondary-prefix-preparation-v1/native-prefix-secondary-preparation-v1.json",
+    "sha256": "da21e87e9a62662c5c37e39f4aa0b046bed1324767d50be8f3ed67e0cda50a55"
+  },
+  "run_when": "Both primary sessions in both maintained studies must complete and pass the existing validate_reports authority; no secondary subject runs earlier.",
+  "reporting": "Retain all sixteen raw observations and four-observation medians per subject. No acceptance interval, outlier exclusion, replacement, primary pooling or performance qualification.",
+  "published_head_adoption": {
+    "study_id": "post-native-architecture-cleanup-v1",
+    "path": "published-head-public-adoption-v1/receipt.json",
+    "sha256": "bc5d3b223c987730292f543530c62069ad4293c9314fed34893b7fab42115ee5"
+  }
+}

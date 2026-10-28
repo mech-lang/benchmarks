@@ -1,0 +1,176 @@
+{
+  "schema": "mech.native-compiler-probe-run.v1",
+  "status": "failed",
+  "scope": "compiler/kernel diagnostics",
+  "performance_qualified": false,
+  "primary_timing_samples": 0,
+  "source_workspace": "/private/tmp/mech-post-native-cleanup-final",
+  "source_before": {
+    "commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+    "tree": "cd0be6e11ed9adbb47f92cc0fa01530b02f1e37a",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "requested_commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+  "probes": [
+    "window-kernel",
+    "histogram-kernel",
+    "window-region"
+  ],
+  "runner": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/run.py",
+    "sha256": "7df47ffb30df9c483d94543c31493c91ca688a9281347d05926f467215db5e29"
+  },
+  "manifest": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes.json",
+    "sha256": "c3d038d673eb091fd755d14a47b558c7ccf9609c5557f390726d86e5fb56da72"
+  },
+  "controller": {
+    "path": "/private/tmp/benchmarks-native-consolidation/experiments/janet/knucleotide-bytes-v1/process.py",
+    "sha256": "e0c6c1260af4900cd4b307252b54461b3f7cee90e2c102ec157d9b1429a5ce3b"
+  },
+  "supervisor": {
+    "path": "/private/tmp/benchmarks-native-consolidation/tools/qualification/prolog_supervisor.py",
+    "sha256": "5458bdf5e58465cb21156a2140657066b4706aa2a0941fe3efde8758207574b4"
+  },
+  "inputs": {},
+  "checkout_before": {
+    "commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+    "tree": "cd0be6e11ed9adbb47f92cc0fa01530b02f1e37a",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "overlays": [
+    {
+      "probe": "window-kernel",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/window-kernel.rs",
+        "sha256": "93bc1c7597b6660077e25bf2cf16c822232d4228eccb6f2c70a32e0a56cfa160"
+      },
+      "before_sha256": "cf0cba2e49933299d9cc7973a07f2278c9b010554b336a1d06702bd7a80252a8",
+      "after_sha256": "5314717642c97a8e3089b5dd75cef3eb5c875168a5e829f5310c580926e3d54c",
+      "test": "native_artifact::program::codegen::window::tests::measure_compiled_window_query_kernel_only"
+    },
+    {
+      "probe": "histogram-kernel",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/histogram-kernel.rs",
+        "sha256": "57044db09fad704773e6a1f54315763e8ed6cbd3c23157ba7b478f7751f5a596"
+      },
+      "before_sha256": "44509b8d3ad06fb50515928d0ecd2e75eabf69c7f9eb6bc5ec5bd6b1f391b8f7",
+      "after_sha256": "621a295145db32952d68d6cb878fbd8d1786276323d802b44e38ce2a59585109",
+      "test": "native_artifact::program::codegen::window::tests::histogram_tests::measure_compiled_histogram_kernel_only"
+    },
+    {
+      "probe": "window-region",
+      "mode": "test-overlay",
+      "target_file": "hosts/gpu/tests/support/canonical_program_window_round.rs",
+      "archived_source": {
+        "path": "/private/tmp/benchmarks-native-consolidation/tools/native-compiler-probes/probes/window-region.rs",
+        "sha256": "f62e2b204e5db990690a1af7b6d8f0022507f6a3b4d65d23213efb1351638e78"
+      },
+      "before_sha256": "b867930789b097ec865378b5993862330547d05d979466351e229b8683b70ae2",
+      "after_sha256": "4ae0f38a4054d13d652709d6b3d9341adc365e594921e99e0858853e6c738c0d",
+      "test": "window_round_qualification::inspect_complete_window_query_compiler_region"
+    }
+  ],
+  "checkout_overlay": {
+    "commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+    "tree": "cd0be6e11ed9adbb47f92cc0fa01530b02f1e37a",
+    "status": " M hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs\n M hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs\n M hosts/gpu/tests/support/canonical_program_window_round.rs\n",
+    "diff_sha256": "6b9c55daf1957aa94a0c880bd4483c78103b3db1f9702d1046c36e16eedbbedc"
+  },
+  "environment": {
+    "PATH": "/opt/homebrew/bin:/opt/homebrew/sbin:/Users/cim310/.local/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/pmk/env/global/bin:/opt/homebrew/bin:/Users/cim310/.codex/packages/standalone/releases/0.160.0-aarch64-apple-darwin/codex-path:/Users/cim310/.codex/tmp/arg0/codex-arg0cMoS0q:/Users/cim310/.local/bin:/opt/homebrew/sbin:/Users/cim310/.cargo/bin",
+    "HOME": "/Users/cim310",
+    "LC_ALL": "C",
+    "LANG": "C",
+    "TZ": "UTC",
+    "NO_COLOR": "1",
+    "CARGO_INCREMENTAL": "0",
+    "CARGO_BUILD_JOBS": "1",
+    "CARGO_PROFILE_TEST_DEBUG": "0",
+    "CARGO_PROFILE_DEV_DEBUG": "0",
+    "CARGO_TARGET_DIR": "/private/tmp/native-compiler-probes-compile-adopted-v2/target",
+    "TMPDIR": "/private/tmp/native-compiler-probes-compile-adopted-v2/tmp"
+  },
+  "compile_command": [
+    "/Users/cim310/.cargo/bin/cargo",
+    "+nightly-2026-03-03",
+    "test",
+    "--locked",
+    "--offline",
+    "-j1",
+    "-p",
+    "mech-gpu",
+    "--no-default-features",
+    "--features",
+    "canonical-native-program",
+    "--no-run",
+    "--message-format=json",
+    "--test",
+    "canonical_artifact_program",
+    "--lib"
+  ],
+  "mutex": {
+    "path": "/private/tmp/mech-clbg-timing.lock",
+    "inode": 83858837
+  },
+  "executables": {
+    "canonical_artifact_program": {
+      "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/target/debug/deps/canonical_artifact_program-41370381e1fff640",
+      "sha256": "fa81223c7cba9c7b9bce224364ac4a9673d8d2873ffe37be1f841e2e49c69329"
+    },
+    "lib": {
+      "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/target/debug/deps/mech_gpu-caf07b5b4e836acb",
+      "sha256": "d0a53e5ab0e1f29753dc4efa5fbd850792e833ed6821ba96618aaa65ebf32eb8"
+    }
+  },
+  "error": "ValueError(\"The ignored exact test selection was not unique: ''\")",
+  "source_after": {
+    "commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+    "tree": "cd0be6e11ed9adbb47f92cc0fa01530b02f1e37a",
+    "status": "",
+    "diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "checkout_after": {
+    "commit": "569aa84ed0e80c08e954fe39add6f83ab21e5a3a",
+    "tree": "cd0be6e11ed9adbb47f92cc0fa01530b02f1e37a",
+    "status": " M hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs\n M hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs\n M hosts/gpu/tests/support/canonical_program_window_round.rs\n",
+    "diff_sha256": "6b9c55daf1957aa94a0c880bd4483c78103b3db1f9702d1046c36e16eedbbedc"
+  },
+  "process_evidence": {
+    "window-kernel-selection": {
+      "process.json": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/window-kernel-selection/process.json",
+        "sha256": "a10a9388ffcec593f0ff1df9558e144e4f3fe0b473663080b902633d04585cef"
+      },
+      "stdout.bin": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/window-kernel-selection/stdout.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr.bin": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/window-kernel-selection/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    "compile": {
+      "process.json": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/compile/process.json",
+        "sha256": "e4f05544e9c612bf6bf549ed8cbdccdb971eea497aa505d519fbeb2161b6553a"
+      },
+      "stdout.bin": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/compile/stdout.bin",
+        "sha256": "6b9ea8a1d3d7612f6153636d22ef5f798adbcaa1755701f64fe5c7e59de22c94"
+      },
+      "stderr.bin": {
+        "path": "/private/tmp/native-compiler-probes-compile-adopted-v2/compile/stderr.bin",
+        "sha256": "c286259289bab5788aecc2756c6f06278aec96b881d5130a970b29e1ec95599d"
+      }
+    }
+  }
+}

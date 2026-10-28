@@ -1,0 +1,97 @@
+{
+  "schema": "mech.exact-timed-binary-difference-audit.v1",
+  "status": "passed-three-exact-executables-linked-guest-text-verified",
+  "rebuilt_or_executed_subjects": false,
+  "subjects": {
+    "I": {
+      "path": "I.json",
+      "sha256": "1f5cec488e27264b57cf83e7c79beb4fe7b623cce8689647ce6ad0852c613cac"
+    },
+    "A": {
+      "path": "A.json",
+      "sha256": "7d256bf2c76db16a493b6dc770ad9ce3ec1dc3b8e94a0e4aee7f686c016ebb9a"
+    },
+    "C": {
+      "path": "C.json",
+      "sha256": "21bb0224ec3e987d7b3c234a4b446857adc0ecd496f80a7c2b64a89d727dbd40"
+    }
+  },
+  "comparisons": [
+    {
+      "before": "I",
+      "after": "A",
+      "file_bytes_delta": 33104,
+      "section_size_delta": {
+        "__TEXT,__text": 25316,
+        "__TEXT,__stubs": 0,
+        "__TEXT,__stub_helper": 0,
+        "__TEXT,__gcc_except_tab": 2396,
+        "__TEXT,__const": 688,
+        "__TEXT,__cstring": 1464,
+        "__TEXT,__unwind_info": 504,
+        "__TEXT,__eh_frame": 3696,
+        "__DATA_CONST,__got": 0,
+        "__DATA_CONST,__const": 312,
+        "__DATA,__la_symbol_ptr": 0,
+        "__DATA,__data": 0,
+        "__DATA,__thread_vars": 0,
+        "__DATA,__thread_data": 0,
+        "__DATA,__thread_bss": 0,
+        "__DATA,__bss": -16
+      },
+      "same_release_profile": true,
+      "same_direct_dependencies": false,
+      "same_guest_text_after_relocations_removed": true,
+      "guest_functions_byte_identical": [
+        "_mech_string_map_region_0_full",
+        "_mech_string_map_region_0_projected",
+        "_mech_join_map_copy_region_0_full",
+        "_mech_join_map_copy_region_0_projected",
+        "_mech_canonical_program_entry_v1_preserving_bound_call",
+        "_mech_canonical_program_entry_v1_packed_loop_173_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_173_lookup_cache_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_284_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_284_lookup_cache_funded"
+      ]
+    },
+    {
+      "before": "A",
+      "after": "C",
+      "file_bytes_delta": 16,
+      "section_size_delta": {
+        "__TEXT,__text": 1428,
+        "__TEXT,__stubs": 0,
+        "__TEXT,__stub_helper": 0,
+        "__TEXT,__gcc_except_tab": 520,
+        "__TEXT,__const": -128,
+        "__TEXT,__cstring": 876,
+        "__TEXT,__unwind_info": 200,
+        "__TEXT,__eh_frame": 1048,
+        "__DATA_CONST,__got": 0,
+        "__DATA_CONST,__const": 8,
+        "__DATA,__la_symbol_ptr": 0,
+        "__DATA,__data": 0,
+        "__DATA,__thread_vars": 0,
+        "__DATA,__thread_data": 0,
+        "__DATA,__thread_bss": 0,
+        "__DATA,__bss": 0
+      },
+      "same_release_profile": true,
+      "same_direct_dependencies": true,
+      "same_guest_text_after_relocations_removed": true,
+      "guest_functions_byte_identical": [
+        "_mech_string_map_region_0_full",
+        "_mech_string_map_region_0_projected",
+        "_mech_join_map_copy_region_0_full",
+        "_mech_join_map_copy_region_0_projected",
+        "_mech_canonical_program_entry_v1_preserving_bound_call",
+        "_mech_canonical_program_entry_v1_packed_loop_173_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_173_lookup_cache_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_284_funded",
+        "_mech_canonical_program_entry_v1_packed_loop_284_lookup_cache_funded"
+      ]
+    }
+  ],
+  "performance_causality_established": false,
+  "limitation": "Public executables intentionally strip Rust symbols. Named host-function growth needs a separate diagnostic link map; section growth alone cannot identify its function or prove a runtime cost."
+}

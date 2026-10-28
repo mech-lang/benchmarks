@@ -1,0 +1,38 @@
+{
+  "schema": "mech.native-compiler-probes.v1",
+  "origin_commit": "01b8b397011b6a774b7d9f730578a4ef92bf30f6",
+  "probes": {
+    "window-kernel": {
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/mod.rs",
+      "function": "measure_compiled_window_query_kernel_only",
+      "target": "lib",
+      "test": "native_artifact::program::codegen::window::tests::measure_compiled_window_query_kernel_only",
+      "required_environment": [
+        "MECH_WINDOW_KERNEL_INPUT",
+        "MECH_WINDOW_KERNEL_ORACLE"
+      ],
+      "source_sha256": "93bc1c7597b6660077e25bf2cf16c822232d4228eccb6f2c70a32e0a56cfa160",
+      "scope": "Manual compiler/kernel diagnostic only; never secured complete-process performance qualification."
+    },
+    "histogram-kernel": {
+      "target_file": "hosts/gpu/src/native_artifact/program/codegen/window/tests/histogram_tests.rs",
+      "function": "measure_compiled_histogram_kernel_only",
+      "target": "lib",
+      "test": "native_artifact::program::codegen::window::tests::histogram_tests::measure_compiled_histogram_kernel_only",
+      "required_environment": [
+        "MECH_HISTOGRAM_KERNEL_INPUT"
+      ],
+      "source_sha256": "57044db09fad704773e6a1f54315763e8ed6cbd3c23157ba7b478f7751f5a596",
+      "scope": "Manual compiler/kernel diagnostic only; never secured complete-process performance qualification."
+    },
+    "window-region": {
+      "target_file": "hosts/gpu/tests/support/canonical_program_window_round.rs",
+      "function": "inspect_complete_window_query_compiler_region",
+      "target": "canonical_artifact_program",
+      "test": "window_round_qualification::inspect_complete_window_query_compiler_region",
+      "required_environment": [],
+      "source_sha256": "f62e2b204e5db990690a1af7b6d8f0022507f6a3b4d65d23213efb1351638e78",
+      "scope": "Manual compiler/kernel diagnostic only; never secured complete-process performance qualification."
+    }
+  }
+}

@@ -1,0 +1,93 @@
+stage=scalar-integration timeout_seconds=1800.0 cleanup_seconds=30 command=['cargo', '+nightly-2026-03-03', 'test', '--locked', '--offline', '-j1', '-p', 'mech-gpu', '--no-default-features', '--features', 'canonical-native', '--test', 'canonical_artifact_native', '--test', 'canonical_artifact_i64', '--test', 'canonical_artifact_f64', '--test', 'canonical_artifact_cast', '--test', 'canonical_artifact_match', '--test', 'canonical_artifact_iteration', '--', '--test-threads=1', '--nocapture']
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-post-native-cleanup/hosts/gpu)
+MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=15.0
+MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=30.1
+    Finished `test` profile [unoptimized] target(s) in 37.98s
+     Running tests/canonical_artifact_cast.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_cast-2b4624acb54f56c8)
+
+running 4 tests
+test all_six_scalar_casts_match_actual_core_resident_and_jit_original_and_decoded ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=45.1
+ok
+test cast_boundaries_truncate_before_range_and_never_saturate ... ok
+test cast_error_order_denials_atomic_outputs_and_recovery_are_preserved ... ok
+test cast_object_metadata_has_new_typed_identity_but_is_not_execution ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.48s
+
+     Running tests/canonical_artifact_f64.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_f64-22f1ed4ab18bd38c)
+
+running 5 tests
+test dense_f64_arithmetic_and_platform_sqrt_match_resident_bits ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=60.1
+ok
+test f64_comparisons_are_numeric_for_nan_and_signed_zero ... ok
+test f64_object_identity_is_typed_emission_without_execution ... ok
+test f64_ordered_nodes_are_not_fused_reassociated_or_dropped ... ok
+test f64_setup_completion_memory_and_type_denials_are_atomic_and_recover ... ok
+
+test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.57s
+
+     Running tests/canonical_artifact_i64.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_i64-e852391d65ac47b4)
+
+running 4 tests
+test all_signed_scalar_operations_match_resident_original_and_decoded ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=75.1
+ok
+test signed_denials_preserve_type_transport_and_first_error_order ... ok
+test signed_object_identity_is_typed_and_emission_is_not_execution ... ok
+test signed_overflow_zero_division_and_minimum_remainder_fail_before_publication ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.90s
+
+     Running tests/canonical_artifact_iteration.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_iteration-454206d99b562809)
+
+running 13 tests
+test exact_zero_and_over_twenty_four_counts_execute_real_loops ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=90.1
+ok
+test finite_work_memory_stack_and_completion_denials_are_atomic_and_recover ... ok
+test linked_qualification::four_typed_sibling_loops_have_independent_carriers_and_literal_outputs ... ok
+test linked_qualification::one_linked_iteration_executable_preserves_exact_typed_loops_and_denials ... ignored, explicit clean-source linked qualification; builds one runtime-only executable and records no timings
+test loop_casts_share_the_checked_scalar_emitter_and_zero_count_skips_them ... ok
+test loop_literal_branches_use_language_equality_not_transport_bits ... ok
+test matches_in_loop_bodies_preserve_lazy_errors_and_all_checked_nodes ... ok
+test max_count_is_finitely_denied_and_storage_is_independent_of_count ... ok
+test mid_loop_signed_overflow_is_atomic_and_the_same_entry_recovers ... ok
+test nested_carriers_and_invocation_captures_are_current_visit_values ... ok
+test nested_iteration_entry_cannot_replace_an_active_library_account ... ok
+test scalar_iteration_turn_keeps_closed_lexical_loops_in_the_frozen_abi ... ok
+test signed_and_floating_loops_preserve_exact_numeric_semantics ... ok
+
+test result: ok. 12 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 6.84s
+
+     Running tests/canonical_artifact_match.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_match-9c7c96a6bd2d6328)
+
+running 10 tests
+test all_six_selected_casts_compose_with_match_and_keep_errors_atomic ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=105.2
+ok
+test first_arithmetic_error_precedes_later_cfg_work_denial_and_recovers ... ok
+test full_call_denials_keep_all_outputs_atomic_and_object_pairing_is_exact ... ok
+test nested_guards_and_bodies_execute_in_lazy_source_order ... ok
+test nested_match_entry_cannot_replace_an_active_library_account ... ok
+test scalar_match_turn_keeps_closed_lexical_calls_in_the_frozen_abi ... ok
+test scalar_matches_preserve_literals_bindings_and_raw_u64_values ... ok
+test signed_and_float_literals_use_language_equality_and_preserve_raw_values ... ok
+test signed_checked_division_stays_lazy_and_recovers_after_selected_failures ... ok
+test unused_scheduled_checked_node_is_retained_before_match ... ok
+
+test result: ok. 10 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.05s
+
+     Running tests/canonical_artifact_native.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/canonical_artifact_native-9c411e3cea77a6a4)
+
+running 9 tests
+test all_certified_scalar_primitives_match_ordinary_resident_original_and_decoded ... MECH_NATIVE_CI_PROGRESS stage=scalar-integration elapsed_seconds=120.2
+ok
+test checked_u64_failure_matches_resident_and_never_publishes_partial_outputs ... ok
+test direct_constants_and_live_identity_need_no_computed_activation_or_local ... ok
+test finite_denials_and_completion_failure_are_atomic_and_recover ... ok
+test first_arithmetic_error_precedes_later_work_denial_and_denial_skips_later_bad_code ... ok
+test nested_scalar_entry_cannot_refill_an_active_library_account_or_change_its_memory ... ok
+test object_emission_and_same_definition_metadata_are_not_execution_evidence ... ok
+test setup_and_memory_admission_precede_even_input_type_traversal ... ok
+test shared_local_single_evaluation_and_all_declared_outputs_remain_ordered ... ok
+
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.65s
+
+{"stage": "scalar-integration", "reason": "exit", "command_exit_status": 0, "owned_group_cleanup": "complete", "elapsed_seconds": 120.86993183300365, "timeout_seconds": 1800.0, "cleanup_seconds": 30}

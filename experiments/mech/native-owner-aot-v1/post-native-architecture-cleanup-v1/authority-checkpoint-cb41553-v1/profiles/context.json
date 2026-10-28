@@ -1,0 +1,203 @@
+{
+  "source": {
+    "commit": "cb41553b6a8b9a6b0432b4015ca22b9368ddbab6",
+    "tree": "b9d6102d424bffbdeb4e2a92acfa80dd7b6d3f94",
+    "status": ""
+  },
+  "workspace": "/private/tmp/mech-post-native-authority-cleanup-v2",
+  "target_dir": "/private/tmp/native-authority-check-target",
+  "driver_sha256": "ca8743be72315fca351bf36419443c7138afc429697dd8f66bc0ed1d59264bf1",
+  "stage_owner_sha256": "acd27f6101dae7b28bcd947a51125439796eb89a67aa468f4c9abf8e49a7babf",
+  "python": "/private/tmp/pr911-validation/ci-python/bin/python",
+  "toolchain": "nightly-2026-03-03",
+  "stages": [
+    {
+      "stage": "none-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "none-tree",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "tree",
+        "--locked",
+        "--offline",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--edges",
+        "normal,build,features"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "scalar-runtime-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib",
+        "--features",
+        "canonical-native-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "scalar-runtime-tree",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "tree",
+        "--locked",
+        "--offline",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--edges",
+        "normal,build,features",
+        "--features",
+        "canonical-native-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "program-runtime-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib",
+        "--features",
+        "canonical-native-program-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "program-runtime-tree",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "tree",
+        "--locked",
+        "--offline",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--edges",
+        "normal,build,features",
+        "--features",
+        "canonical-native-program-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "host-runtime-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib",
+        "--features",
+        "canonical-native-program-host-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "host-runtime-tree",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "tree",
+        "--locked",
+        "--offline",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--edges",
+        "normal,build,features",
+        "--features",
+        "canonical-native-program-host-runtime"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "scalar-compiler-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib",
+        "--features",
+        "canonical-native"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    },
+    {
+      "stage": "program-compiler-check",
+      "command": [
+        "cargo",
+        "+nightly-2026-03-03",
+        "check",
+        "--locked",
+        "--offline",
+        "-j1",
+        "-p",
+        "mech-gpu",
+        "--no-default-features",
+        "--lib",
+        "--features",
+        "canonical-native-program"
+      ],
+      "tests": false,
+      "timeout_seconds": 1800
+    }
+  ],
+  "reuse_of_old_results": false,
+  "primary_timing_samples": 0
+}

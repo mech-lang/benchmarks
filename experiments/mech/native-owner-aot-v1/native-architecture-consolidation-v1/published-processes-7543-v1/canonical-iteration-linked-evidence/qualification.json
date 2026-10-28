@@ -1,0 +1,3276 @@
+{
+  "benchmark_measurements": 0,
+  "binary": "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/canonical-iteration-linked",
+  "binary_sha256": "0403452609cdcfb6f1863eec8746b72aa0768b4338d9255813a78a1486370f70",
+  "build_count": 1,
+  "cases": [
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 0,
+      "name": "ordinary",
+      "stdout": "true\ntrue\ntrue\nf64:4000000000000000\n-8\n30\n"
+    },
+    {
+      "argv": [
+        "9007199254740993",
+        "-9",
+        "f64:8000000000000000",
+        "false"
+      ],
+      "exit": 0,
+      "name": "wide-and-negative-zero",
+      "stdout": "false\nfalse\nfalse\nf64:8000000000000000\n-12\n9007199254741018\n"
+    },
+    {
+      "argv": [
+        "0",
+        "0",
+        "f64:4010000000000000",
+        "true"
+      ],
+      "exit": 0,
+      "name": "another-valid-input",
+      "stdout": "true\ntrue\ntrue\nf64:3ff0000000000000\n-3\n25\n"
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "work-denial",
+      "option": "--work=0",
+      "stderr": "canonical native iteration execution: Work { origin: None, required: 504, limit: 0 }\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "completion-denial",
+      "option": "--work=38727",
+      "stderr": "canonical native iteration execution: Work { origin: Some(NativeMatchOrigin { node: NodeId(0), block: None, local: None }), required: 38728, limit: 38727 }\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "transport-denial",
+      "option": "--memory=0",
+      "stderr": "canonical native iteration execution: Base(TransportLimit { required: 320, limit: 0 })\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "stack-denial",
+      "option": "--stack=0",
+      "stderr": "canonical native iteration execution: Base(StackLimit { required: 64, limit: 0 })\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "shared-budget-denial",
+      "option": "--budget=0",
+      "stderr": "canonical native iteration execution: Base(Memory { error: BudgetExceeded { operation: None, requested: 360, limit: 0 } })\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "18446744073709551591",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "unsigned-overflow",
+      "stderr": "canonical native iteration execution: Arithmetic { origin: NativeMatchOrigin { node: NodeId(0), block: Some(0), local: Some(0) } }\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-9223372036854775806",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "signed-underflow",
+      "stderr": "canonical native iteration execution: Arithmetic { origin: NativeMatchOrigin { node: NodeId(1), block: Some(0), local: Some(0) } }\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000"
+      ],
+      "exit": 1,
+      "name": "missing-input",
+      "stderr": "expected 4 typed inputs\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "true",
+        "1"
+      ],
+      "exit": 1,
+      "name": "extra-input",
+      "stderr": "expected 4 typed inputs\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "f64:4020000000000000",
+        "TRUE"
+      ],
+      "exit": 1,
+      "name": "invalid-bool",
+      "stderr": "invalid Bool argument\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "-1",
+        "-5",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "invalid-unsigned",
+      "stderr": "invalid U64 argument\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "+1",
+        "f64:4020000000000000",
+        "true"
+      ],
+      "exit": 1,
+      "name": "invalid-signed",
+      "stderr": "invalid I64 argument\n",
+      "stdout": ""
+    },
+    {
+      "argv": [
+        "5",
+        "-5",
+        "1.0",
+        "true"
+      ],
+      "exit": 1,
+      "name": "invalid-floating",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "exit": 0,
+      "name": "exact-work-and-recovery",
+      "stdout": "true\ntrue\ntrue\nf64:4000000000000000\n-8\n30\n",
+      "work": 38728
+    }
+  ],
+  "compiled_units": [
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/proc-macro2-df81175b1d2fbb11/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "name": "proc-macro2",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_ident-e5dbef4596929949.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_ident-e5dbef4596929949.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.24",
+      "name": "unicode-ident",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "unicode_ident",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-ident-1.0.24/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/quote-8567a2e81a5020a5/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "name": "quote",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libproc_macro2-7ec0dba77ccd0c59.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libproc_macro2-7ec0dba77ccd0c59.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+      "name": "proc-macro2",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "proc_macro2",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/proc-macro2-1.0.107/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libquote-e9778d85dda91f18.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libquote-e9778d85dda91f18.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+      "name": "quote",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "quote",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quote-1.0.47/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "clone-impls",
+        "default",
+        "derive",
+        "extra-traits",
+        "fold",
+        "full",
+        "parsing",
+        "printing",
+        "proc-macro",
+        "visit"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsyn-5ad8fa785b5f4db0.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsyn-5ad8fa785b5f4db0.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+      "name": "syn",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "syn",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-2.0.119/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "const-generics"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtypenum-f50ac5a6bc294439.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtypenum-f50ac5a6bc294439.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+      "name": "typenum",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "typenum",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/typenum-1.20.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsynstructure-2cd7ee97216e92fc.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsynstructure-2cd7ee97216e92fc.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#synstructure@0.13.2",
+      "name": "synstructure",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "synstructure",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/synstructure-0.13.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libautocfg-3de9cb57d7c95f8e.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libautocfg-3de9cb57d7c95f8e.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1",
+      "name": "autocfg",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "autocfg",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/autocfg-1.5.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerofrom_derive-7ede41bb5d66942d.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom-derive@0.1.7",
+      "name": "zerofrom-derive",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "zerofrom_derive",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerofrom-derive-0.1.7/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "derive"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerofrom-7ae008576d952eae.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerofrom-7ae008576d952eae.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom@0.1.8",
+      "name": "zerofrom",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "zerofrom",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerofrom-0.1.8/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libyoke_derive-54c45d3cbbb95833.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#yoke-derive@0.8.2",
+      "name": "yoke-derive",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "yoke_derive",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/yoke-derive-0.8.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "arch",
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/libm-0d07f6fce7ed7cbc/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "name": "libm",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libm-0.2.16/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libstable_deref_trait-fa81cd19b7fbc6f2.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libstable_deref_trait-fa81cd19b7fbc6f2.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#stable_deref_trait@1.2.1",
+      "name": "stable_deref_trait",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "stable_deref_trait",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/stable_deref_trait-1.2.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "derive",
+        "zerofrom"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libyoke-99cd60207f066728.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libyoke-99cd60207f066728.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#yoke@0.8.3",
+      "name": "yoke",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "yoke",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/yoke-0.8.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "i128",
+        "libm",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/num-traits-7cf33bdf7dc2c108/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+      "name": "num-traits",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-traits-0.2.19/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "arch",
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibm-004afff1175fba41.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibm-004afff1175fba41.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+      "name": "libm",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "libm",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libm-0.2.16/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libhybrid_array-94285850e77ae6ae.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libhybrid_array-94285850e77ae6ae.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.4.14",
+      "name": "hybrid-array",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "hybrid_array",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hybrid-array-0.4.14/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerovec_derive-4b38d55fbaf2b86f.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zerovec-derive@0.11.3",
+      "name": "zerovec-derive",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "zerovec_derive",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-derive-0.11.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "derive",
+        "yoke"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerovec-2a4d70589405a52b.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerovec-2a4d70589405a52b.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zerovec@0.11.6",
+      "name": "zerovec",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "zerovec",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerovec-0.11.6/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "i128",
+        "libm",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_traits-85e78da3fe85287b.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_traits-85e78da3fe85287b.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+      "name": "num-traits",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "num_traits",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-traits-0.2.19/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libdisplaydoc-a6834c67c975858c.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#displaydoc@0.2.6",
+      "name": "displaydoc",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "displaydoc",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/displaydoc-0.2.6/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/zmij-401b534422a86352/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+      "name": "zmij",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "result",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/serde_core-88be19b8d68a4dd6/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "name": "serde_core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/libc-a3168e3a861e9ab3/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "name": "libc",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.189/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libversion_check-d911fe8eca1f7851.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libversion_check-d911fe8eca1f7851.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+      "name": "version_check",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "version_check",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/version_check-0.9.5/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcfg_if-01862988d95bef0e.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcfg_if-01862988d95bef0e.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+      "name": "cfg-if",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "cfg_if",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cfg-if-1.0.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/generic-array-6e98b3d2d538a329/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "name": "generic-array",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2015",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generic-array-0.14.7/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrypto_common-a1bb60bdf19682d7.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrypto_common-a1bb60bdf19682d7.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
+      "name": "crypto-common",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.2.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libblock_buffer-a7f0c402d2a08cd5.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libblock_buffer-a7f0c402d2a08cd5.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
+      "name": "block-buffer",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/block-buffer-0.12.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "block-api",
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libdigest-86476b8ab57ad151.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libdigest-86476b8ab57ad151.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.11.3",
+      "name": "digest",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/digest-0.11.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzmij-c44bd2360c2dd15c.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzmij-c44bd2360c2dd15c.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+      "name": "zmij",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "zmij",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zmij-1.0.23/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "result",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_core-9bf040ed6f77cdf3.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_core-9bf040ed6f77cdf3.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "name": "serde_core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde_core",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibc-5e54f01bfcc4bb29.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibc-5e54f01bfcc4bb29.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "name": "libc",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "libc",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.189/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/paste-ea6651399c6ea64e/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+      "name": "paste",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2018",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/paste-1.0.15/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbytemuck-56e3638e4915c591.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbytemuck-56e3638e4915c591.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#bytemuck@1.25.2",
+      "name": "bytemuck",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "bytemuck",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bytemuck-1.25.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libitoa-2a4687ec647496f0.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libitoa-2a4687ec647496f0.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18",
+      "name": "itoa",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "itoa",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/itoa-1.0.18/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmemchr-bba9ca44e34454df.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmemchr-bba9ca44e34454df.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+      "name": "memchr",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "memchr",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/memchr-2.8.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "bytemuck",
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsafe_arch-b7858ac1d4e13e99.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsafe_arch-b7858ac1d4e13e99.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#safe_arch@0.7.4",
+      "name": "safe_arch",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "safe_arch",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/safe_arch-0.7.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "more_lengths"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libgeneric_array-1e131c0b8ffe7719.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libgeneric_array-1e131c0b8ffe7719.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+      "name": "generic-array",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "generic_array",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/generic-array-0.14.7/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "zerovec"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinystr-7e7bb2c03effd8ea.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinystr-7e7bb2c03effd8ea.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#tinystr@0.8.3",
+      "name": "tinystr",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "tinystr",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinystr-0.8.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "avx512",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/matrixmultiply-f099d6679131773e/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#matrixmultiply@0.3.11",
+      "name": "matrixmultiply",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2018",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/matrixmultiply-0.3.11/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "clone-impls",
+        "derive",
+        "parsing",
+        "printing",
+        "proc-macro"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsyn-fc13c73a9cb77704.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsyn-fc13c73a9cb77704.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#syn@3.0.3",
+      "name": "syn",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "syn",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/syn-3.0.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/serde-819a9a409072784c/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "name": "serde",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/icu_properties_data-245a6d732caed44a/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.2.0",
+      "name": "icu_properties_data",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_properties_data-2.2.0/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblitemap-bd29ad7d2fcf722a.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblitemap-bd29ad7d2fcf722a.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#litemap@0.8.2",
+      "name": "litemap",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "litemap",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/litemap-0.8.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libwriteable-fa3b63a2e9eb0c1b.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libwriteable-fa3b63a2e9eb0c1b.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#writeable@0.6.3",
+      "name": "writeable",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "writeable",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/writeable-0.6.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liballoc_no_stdlib-7bcbf61b9c6ca827.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liballoc_no_stdlib-7bcbf61b9c6ca827.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#alloc-no-stdlib@2.0.4",
+      "name": "alloc-no-stdlib",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "alloc_no_stdlib",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/alloc-no-stdlib-2.0.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liballoc_stdlib-a99d9efa2786e011.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liballoc_stdlib-a99d9efa2786e011.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#alloc-stdlib@0.2.4",
+      "name": "alloc-stdlib",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "alloc_stdlib",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/alloc-stdlib-0.2.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "zerovec"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_locale_core-cbacc0137627c8e6.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_locale_core-cbacc0137627c8e6.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_core@2.2.0",
+      "name": "icu_locale_core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "icu_locale_core",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_locale_core-2.2.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_derive-a90aaed4a355e04b.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_derive@1.0.229",
+      "name": "serde_derive",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "serde_derive",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_derive-1.0.229/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libpaste-0f991e0a3484cd7b.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+      "name": "paste",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "paste",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/paste-1.0.15/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libwide-8730edc0a8b970d7.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libwide-8730edc0a8b970d7.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#wide@0.7.33",
+      "name": "wide",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "wide",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/wide-0.7.33/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "yoke",
+        "zerofrom"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerotrie-5f87b8edc94c49b2.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libzerotrie-5f87b8edc94c49b2.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#zerotrie@0.2.4",
+      "name": "zerotrie",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "zerotrie",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/zerotrie-0.2.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libapprox-d97c2b8ca267898a.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libapprox-d97c2b8ca267898a.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#approx@0.5.1",
+      "name": "approx",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "approx",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/approx-0.5.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "i128",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_integer-6e000e4d6142d7ec.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_integer-6e000e4d6142d7ec.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#num-integer@0.1.46",
+      "name": "num-integer",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "num_integer",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-integer-0.1.46/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_complex-e2ee2920d6f31789.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_complex-e2ee2920d6f31789.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#num-complex@0.4.6",
+      "name": "num-complex",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "num_complex",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-complex-0.4.6/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "zerovec"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libpotential_utf-7d78d28dafabd1a4.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libpotential_utf-7d78d28dafabd1a4.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#potential_utf@0.1.5",
+      "name": "potential_utf",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "potential_utf",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/potential_utf-0.1.5/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/librawpointer-e048577ec2a4fb3d.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/librawpointer-e048577ec2a4fb3d.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#rawpointer@0.2.1",
+      "name": "rawpointer",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "rawpointer",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/rawpointer-0.2.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libvirtue-7747d539704a8f50.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libvirtue-7747d539704a8f50.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#virtue@0.0.18",
+      "name": "virtue",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "virtue",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/virtue-0.0.18/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/crc32fast-34dd7e72de19a8da/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.0",
+      "name": "crc32fast",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc32fast-1.5.0/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libutf8_iter-5ac0d137805bb542.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libutf8_iter-5ac0d137805bb542.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#utf8_iter@1.0.4",
+      "name": "utf8_iter",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "utf8_iter",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/utf8_iter-1.0.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "raw_value",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/serde_json-35853f817d780a9f/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "name": "serde_json",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.151/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/libc-69b54b6b2bd7d1a5/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "name": "libc",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.189/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinyvec_macros-5f4c2a6787112db9.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinyvec_macros-5f4c2a6787112db9.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+      "name": "tinyvec_macros",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "tinyvec_macros",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec_macros-0.1.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "tinyvec_macros"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinyvec-4d6d17edf353ffae.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libtinyvec-4d6d17edf353ffae.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.12.0",
+      "name": "tinyvec",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "tinyvec",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/tinyvec-1.12.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_collections-57cae8122e319a90.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_collections-57cae8122e319a90.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_collections@2.2.0",
+      "name": "icu_collections",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "icu_collections",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_collections-2.2.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbincode_derive-e593d6668d5544cd.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#bincode_derive@2.0.1",
+      "name": "bincode_derive",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "bincode_derive",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bincode_derive-2.0.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "avx512",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmatrixmultiply-8dffd7cc867fbc0f.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmatrixmultiply-8dffd7cc867fbc0f.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#matrixmultiply@0.3.11",
+      "name": "matrixmultiply",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "matrixmultiply",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/matrixmultiply-0.3.11/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std",
+        "wide"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsimba-748e3a56040510c6.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsimba-748e3a56040510c6.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#simba@0.9.1",
+      "name": "simba",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "simba",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/simba-0.9.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_rational-c509447f1a01b6ab.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnum_rational-c509447f1a01b6ab.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#num-rational@0.4.2",
+      "name": "num-rational",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "num_rational",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/num-rational-0.4.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "baked"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_provider-18ce81ea1f48681d.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_provider-18ce81ea1f48681d.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_provider@2.2.0",
+      "name": "icu_provider",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "icu_provider",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_provider-2.2.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "derive",
+        "serde_derive",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde-a3e06645fb422fd1.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde-a3e06645fb422fd1.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+      "name": "serde",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde-1.0.229/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_properties_data-5a26e42a7964d4c1.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_properties_data-5a26e42a7964d4c1.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.2.0",
+      "name": "icu_properties_data",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "icu_properties_data",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_properties_data-2.2.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc-stdlib",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbrotli_decompressor-be14bf129192853a.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbrotli_decompressor-be14bf129192853a.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#brotli-decompressor@5.0.3",
+      "name": "brotli-decompressor",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "brotli_decompressor",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/brotli-decompressor-5.0.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrypto_common-1b44a8e900f6d0d1.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrypto_common-1b44a8e900f6d0d1.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+      "name": "crypto-common",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "crypto_common",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crypto-common-0.1.7/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libblock_buffer-e8730ab57531cb9c.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libblock_buffer-e8730ab57531cb9c.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+      "name": "block-buffer",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "block_buffer",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/block-buffer-0.10.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcpufeatures-746f519ae92dc2ba.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcpufeatures-746f519ae92dc2ba.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.3.0",
+      "name": "cpufeatures",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "cpufeatures",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.3.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnalgebra_macros-2321bc14113330ee.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#nalgebra-macros@0.3.0",
+      "name": "nalgebra-macros",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "nalgebra_macros",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nalgebra-macros-0.3.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libhashbrown-e68f7b8bcbe6a0ea.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libhashbrown-e68f7b8bcbe6a0ea.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+      "name": "hashbrown",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "hashbrown",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/hashbrown-0.17.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libequivalent-89fd94c775f919cb.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libequivalent-89fd94c775f919cb.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+      "name": "equivalent",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "equivalent",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/equivalent-1.0.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_segmentation-2f2c97d9d8c96dc3.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_segmentation-2f2c97d9d8c96dc3.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-segmentation@1.13.3",
+      "name": "unicode-segmentation",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "unicode_segmentation",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-segmentation-1.13.3/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunty-f4623223d68b9651.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunty-f4623223d68b9651.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#unty@0.0.4",
+      "name": "unty",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "unty",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unty-0.0.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/serde_core-f25afc287347331d/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "name": "serde_core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "bincode_derive",
+        "default",
+        "derive",
+        "serde",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbincode-714ca885d79ec3b1.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbincode-714ca885d79ec3b1.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#bincode@2.0.1",
+      "name": "bincode",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "bincode",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/bincode-2.0.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libgrapheme_macro-9b6066cceb1f4322.dylib"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#grapheme_macro@2.0.0",
+      "name": "grapheme_macro",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "proc-macro"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "proc-macro"
+        ],
+        "name": "grapheme_macro",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/grapheme_macro-2.0.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "serde",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libindexmap-e3e054356df56999.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libindexmap-e3e054356df56999.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.0",
+      "name": "indexmap",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "indexmap",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/indexmap-2.14.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "macros",
+        "matrixmultiply",
+        "nalgebra-macros",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnalgebra-f4e851c8bf9ac539.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libnalgebra-f4e851c8bf9ac539.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#nalgebra@0.34.2",
+      "name": "nalgebra",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "nalgebra",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/nalgebra-0.34.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsha2-aaa8ae5591e58613.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsha2-aaa8ae5591e58613.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
+      "name": "sha2",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.11.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "block-buffer",
+        "core-api",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libdigest-d53d879c4ad8fa7f.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libdigest-d53d879c4ad8fa7f.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+      "name": "digest",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "digest",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/digest-0.10.7/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc-stdlib",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbrotli-fb032042c6a24861.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbrotli-fb032042c6a24861.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#brotli@8.0.4",
+      "name": "brotli",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "brotli",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/brotli-8.0.4/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "compiled_data",
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_properties-77448c75c35ecf64.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libicu_properties-77448c75c35ecf64.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties@2.2.0",
+      "name": "icu_properties",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "icu_properties",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/icu_properties-2.2.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrc32fast-7f0e247efa2c6edd.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcrc32fast-7f0e247efa2c6edd.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.0",
+      "name": "crc32fast",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "crc32fast",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/crc32fast-1.5.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "raw_value",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_json-b28ae37a0bfef4e8.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_json-b28ae37a0bfef4e8.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "name": "serde_json",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde_json",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.151/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibc-51fd4405a3cec302.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/liblibc-51fd4405a3cec302.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+      "name": "libc",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "libc",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/libc-0.2.189/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_normalization-26517f75434ce23d.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libunicode_normalization-26517f75434ce23d.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-normalization@0.1.25",
+      "name": "unicode-normalization",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "unicode_normalization",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/unicode-normalization-0.1.25/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcpufeatures-0f5456a646160e26.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libcpufeatures-0f5456a646160e26.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+      "name": "cpufeatures",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "cpufeatures",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/cpufeatures-0.2.17/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/serde_json-3e643627210407c6/build-script-build"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "name": "serde_json",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2021",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.151/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbyteorder-1adb4eb6379a7dc1.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbyteorder-1adb4eb6379a7dc1.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+      "name": "byteorder",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "byteorder",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/byteorder-1.5.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libseahash-e877644a775b56ca.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libseahash-e877644a775b56ca.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#seahash@4.1.0",
+      "name": "seahash",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2015",
+        "kind": [
+          "lib"
+        ],
+        "name": "seahash",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/seahash-4.1.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "alloc",
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbase64-1071bcbcdd5a42c3.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libbase64-1071bcbcdd5a42c3.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
+      "name": "base64",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "base64",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/base64-0.22.1/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsmallvec-1a964d349f1ee380.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsmallvec-1a964d349f1ee380.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.2",
+      "name": "smallvec",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "smallvec",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/smallvec-1.15.2/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libgrapheme-f64c05fb253bea2b.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libgrapheme-f64c05fb253bea2b.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#grapheme@1.3.0",
+      "name": "grapheme",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "grapheme",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/grapheme-1.3.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "base64",
+        "bincode",
+        "bool",
+        "brotli",
+        "byteorder",
+        "crc32fast",
+        "f64",
+        "floats",
+        "functions",
+        "i64",
+        "indexmap",
+        "matrix",
+        "matrixd",
+        "nalgebra",
+        "num-traits",
+        "numbers",
+        "program",
+        "range",
+        "resident-execution",
+        "row_vectord",
+        "selective-convert",
+        "serde",
+        "serde_derive",
+        "serde_json",
+        "signed_ints",
+        "std",
+        "symbol_table",
+        "u64",
+        "unsigned_ints",
+        "vectord"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_core-a9eb3c825b8a22ff.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_core-a9eb3c825b8a22ff.rmeta"
+      ],
+      "id": "path+file:///private/tmp/mech-native-consolidation-final/src/core#mech-core@0.3.5",
+      "name": "mech-core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "mech_core",
+        "src_path": "/private/tmp/mech-native-consolidation-final/src/core/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsha2-bf28ae61df9a2192.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libsha2-bf28ae61df9a2192.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+      "name": "sha2",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2018",
+        "kind": [
+          "lib"
+        ],
+        "name": "sha2",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sha2-0.10.9/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_core-361ca920b676afe8.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_core-361ca920b676afe8.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+      "name": "serde_core",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde_core",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_core-1.0.229/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "std"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_json-cb32befd278c1157.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libserde_json-cb32befd278c1157.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+      "name": "serde_json",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "serde_json",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/serde_json-1.0.151/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "artifact-codec",
+        "assign",
+        "bool",
+        "f64",
+        "floats",
+        "functions",
+        "matrix",
+        "matrix_horzcat",
+        "matrix_vertcat",
+        "matrixd",
+        "nalgebra",
+        "native-artifact",
+        "native-capture-pages",
+        "numbers",
+        "program",
+        "resident-artifact",
+        "resident-ekf",
+        "row_vectord",
+        "runtime",
+        "std",
+        "symbol_table",
+        "u64",
+        "unsigned_ints",
+        "vectord"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_engine-269715ef5f39f560.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_engine-269715ef5f39f560.rmeta"
+      ],
+      "id": "path+file:///private/tmp/mech-native-consolidation-final/src/engine#mech-engine@0.3.5",
+      "name": "mech-engine",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "mech_engine",
+        "src_path": "/private/tmp/mech-native-consolidation-final/src/engine/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "default",
+        "runtime-values"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_compute-6f68648630276d3b.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_compute-6f68648630276d3b.rmeta"
+      ],
+      "id": "path+file:///private/tmp/mech-native-consolidation-final/src/compute#mech-compute@0.3.5",
+      "name": "mech-compute",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "mech_compute",
+        "src_path": "/private/tmp/mech-native-consolidation-final/src/compute/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/build/canonical-iteration-linked-9e6f4ab6f40a0d48/build-script-build"
+      ],
+      "id": "path+file:///private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project#canonical-iteration-linked@0.0.0",
+      "name": "canonical-iteration-linked",
+      "root": true,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": false,
+        "doctest": false,
+        "edition": "2024",
+        "kind": [
+          "custom-build"
+        ],
+        "name": "build-script-build",
+        "src_path": "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/build.rs",
+        "test": false
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libweb_time-5187e477f5b4198d.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libweb_time-5187e477f5b4198d.rmeta"
+      ],
+      "id": "registry+https://github.com/rust-lang/crates.io-index#web-time@1.1.0",
+      "name": "web-time",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2021",
+        "kind": [
+          "lib"
+        ],
+        "name": "web_time",
+        "src_path": "/Users/cim310/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/web-time-1.1.0/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [
+        "canonical-native-runtime"
+      ],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_gpu-3c3082cbb7c6b603.rlib",
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/deps/libmech_gpu-3c3082cbb7c6b603.rmeta"
+      ],
+      "id": "path+file:///private/tmp/mech-native-consolidation-final/hosts/gpu#mech-gpu@0.3.5",
+      "name": "mech-gpu",
+      "root": false,
+      "target": {
+        "crate_types": [
+          "lib"
+        ],
+        "doc": true,
+        "doctest": true,
+        "edition": "2024",
+        "kind": [
+          "lib"
+        ],
+        "name": "mech_gpu",
+        "src_path": "/private/tmp/mech-native-consolidation-final/hosts/gpu/src/lib.rs",
+        "test": true
+      }
+    },
+    {
+      "features": [],
+      "filenames": [
+        "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/cargo-target/debug/canonical-iteration-linked"
+      ],
+      "id": "path+file:///private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project#canonical-iteration-linked@0.0.0",
+      "name": "canonical-iteration-linked",
+      "root": true,
+      "target": {
+        "crate_types": [
+          "bin"
+        ],
+        "doc": true,
+        "doctest": false,
+        "edition": "2024",
+        "kind": [
+          "bin"
+        ],
+        "name": "canonical-iteration-linked",
+        "src_path": "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/src/main.rs",
+        "test": true
+      }
+    }
+  ],
+  "decoded_generation": {
+    "executed": false,
+    "linked": false,
+    "object": {
+      "code_bytes": 1832,
+      "executed": false,
+      "identity_symbol": "mech_canonical_scalar_iteration_identity_v1_12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4",
+      "iteration_abi_version": 3,
+      "linked": false,
+      "schema": "mech.canonical-scalar-iteration-object.v1",
+      "stack_bytes": 64,
+      "timing_samples": 0,
+      "typed_ir_sha256": "12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4"
+    },
+    "pins": {
+      "Cargo.toml": "f8a85d37e6335e6a5e1ad793b39db4d6c2f90ca46222a508ed684699cb54d1b8",
+      "application.mec": "879a05c0c1bf51217599ac6409386930a350c3874a64c1d730a72784f2648970",
+      "build.rs": "83f672d5d072b3577c788cf5d67359a4345aa2d58c6efde57cff9449e03cda1c",
+      "factory-profile.json": "93db1411d55c2aceb5edd787a1220faf66dc4dfbafac85ea6f415c771193e979",
+      "object-identity.bin": "3ec1027649223234a26394339675f2888a678fe5ba0cbd3481b5def80c0268d7",
+      "program.mecb": "bde9ffb5d62d1c486f48dbab786fbff23caa8d8b4eec093b2442d62d4f9c22b9",
+      "program.o": "ee401afc42e1a8f8d3ca8d19111a31b86d48dde0cefb1e7ec3bed31f1116572c",
+      "rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+      "src/main.rs": "617573a738d4131b7e3c094f24ff5aaf3cc8c4f556a2bff772d85a1d83ba3c33"
+    },
+    "program_revision": "f46d88828d4483972c68068e612668572bdb70456c9254a2778ec570e41029a0",
+    "route": "canonical-artifact-iteration-cranelift-object",
+    "runtime_features": [
+      "mech-gpu/canonical-native-runtime",
+      "mech-engine/native-artifact",
+      "mech-core/bool",
+      "mech-core/f64",
+      "mech-core/i64",
+      "mech-core/selective-convert",
+      "mech-core/u64"
+    ],
+    "schema": "mech.canonical-linked-iteration-application.v1",
+    "source_is_provenance_only": true,
+    "timing_samples": 0,
+    "typed_ir_sha256": "12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4"
+  },
+  "executed": true,
+  "generated_pins": {
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/Cargo.toml": "f8a85d37e6335e6a5e1ad793b39db4d6c2f90ca46222a508ed684699cb54d1b8",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/application.mec": "879a05c0c1bf51217599ac6409386930a350c3874a64c1d730a72784f2648970",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/build.rs": "83f672d5d072b3577c788cf5d67359a4345aa2d58c6efde57cff9449e03cda1c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/factory-profile.json": "93db1411d55c2aceb5edd787a1220faf66dc4dfbafac85ea6f415c771193e979",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/object-identity.bin": "3ec1027649223234a26394339675f2888a678fe5ba0cbd3481b5def80c0268d7",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/program.mecb": "bde9ffb5d62d1c486f48dbab786fbff23caa8d8b4eec093b2442d62d4f9c22b9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/program.o": "ee401afc42e1a8f8d3ca8d19111a31b86d48dde0cefb1e7ec3bed31f1116572c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/decoded-project/src/main.rs": "617573a738d4131b7e3c094f24ff5aaf3cc8c4f556a2bff772d85a1d83ba3c33",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/Cargo.toml": "f8a85d37e6335e6a5e1ad793b39db4d6c2f90ca46222a508ed684699cb54d1b8",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/application.mec": "879a05c0c1bf51217599ac6409386930a350c3874a64c1d730a72784f2648970",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/build.rs": "83f672d5d072b3577c788cf5d67359a4345aa2d58c6efde57cff9449e03cda1c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/factory-profile.json": "93db1411d55c2aceb5edd787a1220faf66dc4dfbafac85ea6f415c771193e979",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/object-identity.bin": "3ec1027649223234a26394339675f2888a678fe5ba0cbd3481b5def80c0268d7",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/program.mecb": "bde9ffb5d62d1c486f48dbab786fbff23caa8d8b4eec093b2442d62d4f9c22b9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/program.o": "ee401afc42e1a8f8d3ca8d19111a31b86d48dde0cefb1e7ec3bed31f1116572c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-iteration-linked-evidence/project/src/main.rs": "617573a738d4131b7e3c094f24ff5aaf3cc8c4f556a2bff772d85a1d83ba3c33"
+  },
+  "generator": {
+    "executed": false,
+    "linked": false,
+    "object": {
+      "code_bytes": 1832,
+      "executed": false,
+      "identity_symbol": "mech_canonical_scalar_iteration_identity_v1_12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4",
+      "iteration_abi_version": 3,
+      "linked": false,
+      "schema": "mech.canonical-scalar-iteration-object.v1",
+      "stack_bytes": 64,
+      "timing_samples": 0,
+      "typed_ir_sha256": "12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4"
+    },
+    "pins": {
+      "Cargo.toml": "f8a85d37e6335e6a5e1ad793b39db4d6c2f90ca46222a508ed684699cb54d1b8",
+      "application.mec": "879a05c0c1bf51217599ac6409386930a350c3874a64c1d730a72784f2648970",
+      "build.rs": "83f672d5d072b3577c788cf5d67359a4345aa2d58c6efde57cff9449e03cda1c",
+      "factory-profile.json": "93db1411d55c2aceb5edd787a1220faf66dc4dfbafac85ea6f415c771193e979",
+      "object-identity.bin": "3ec1027649223234a26394339675f2888a678fe5ba0cbd3481b5def80c0268d7",
+      "program.mecb": "bde9ffb5d62d1c486f48dbab786fbff23caa8d8b4eec093b2442d62d4f9c22b9",
+      "program.o": "ee401afc42e1a8f8d3ca8d19111a31b86d48dde0cefb1e7ec3bed31f1116572c",
+      "rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+      "src/main.rs": "617573a738d4131b7e3c094f24ff5aaf3cc8c4f556a2bff772d85a1d83ba3c33"
+    },
+    "program_revision": "f46d88828d4483972c68068e612668572bdb70456c9254a2778ec570e41029a0",
+    "route": "canonical-artifact-iteration-cranelift-object",
+    "runtime_features": [
+      "mech-gpu/canonical-native-runtime",
+      "mech-engine/native-artifact",
+      "mech-core/bool",
+      "mech-core/f64",
+      "mech-core/i64",
+      "mech-core/selective-convert",
+      "mech-core/u64"
+    ],
+    "schema": "mech.canonical-linked-iteration-application.v1",
+    "source_is_provenance_only": true,
+    "timing_samples": 0,
+    "typed_ir_sha256": "12c1077dab5f2a5814e153ddcaef54cc40115b78ccde5c43f72f057cef03e0d4"
+  },
+  "linked": true,
+  "lock_sha256": "ddc6f091eb35ccb19ab47e9aa8b9e193b25e9e66d449ec007a65969c0c1ef4b2",
+  "object_emissions": 2,
+  "same_binary": true,
+  "schema": "mech.canonical-iteration-linked-qualification.v1",
+  "scope": "fixed scalar typed-loop linked lifecycle only; no matrix/collection/FSM/resource/full-workload qualification",
+  "source_commit": "7543c56d5efc4df30d0b60961922024d74caa9d7",
+  "source_sha256": "879a05c0c1bf51217599ac6409386930a350c3874a64c1d730a72784f2648970",
+  "workspace_lock_sha256": "36b1a96024775de3aaf1d0bb1c174d54ee6389f8c3923f1e5e9861b07cb8ba17"
+}

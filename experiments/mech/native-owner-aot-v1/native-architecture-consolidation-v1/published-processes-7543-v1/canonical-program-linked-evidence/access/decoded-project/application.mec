@@ -1,0 +1,21 @@
++> text
++> sequence
++> number
++> map
+words := text/lines(input<string>)
+joined := text/join(words, ",")
+size := sequence/length(joined)
+formatted := number/format(size, 0u64)
+counts := map/histogram(words)
+keys := map/keys(counts)
+values := map/values(counts)
+more := size + 1u64
+unique<{string}> := keys
+present := "a" ∈ unique
+absent := "never" ∉ unique
+count := (present? | true => counts{"a"} | false => 0u64)
+first := (size? | 0u64 => 0u64 | * => values[1u64])
+constructed := {"live": more, "next": size + 2u64, "last": size + 3u64, "wider": size + 4u64}
+constructed-value := constructed{"next"}
+packed := (count, first, present, absent)
+quotient := more / divisor<u64>

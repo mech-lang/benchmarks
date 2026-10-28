@@ -1,0 +1,49 @@
+stage=scalar-unit timeout_seconds=1800.0 cleanup_seconds=30 command=['cargo', '+nightly-2026-03-03', 'test', '--locked', '--offline', '-j1', '-p', 'mech-gpu', '--no-default-features', '--features', 'canonical-native', '--lib', 'native_artifact::', '--', '--test-threads=1', '--nocapture']
+   Compiling mech-stdlib v0.3.5 (/private/tmp/mech-post-native-cleanup/src/stdlib)
+   Compiling mech-runtime v0.3.5 (/private/tmp/mech-post-native-cleanup/src/runtime)
+   Compiling mech-build v0.3.5 (/private/tmp/mech-post-native-cleanup/src/build)
+   Compiling mech-gpu v0.3.5 (/private/tmp/mech-post-native-cleanup/hosts/gpu)
+MECH_NATIVE_CI_PROGRESS stage=scalar-unit elapsed_seconds=15.1
+    Finished `test` profile [unoptimized] target(s) in 20.83s
+     Running unittests src/lib.rs (/private/tmp/mech-post-native-cleanup-target/debug/deps/mech_gpu-1ccecd2a0a911427)
+
+running 34 tests
+test native_artifact::application::value_features::tests::dynamic_nested_payloads_keep_complete_conversion_support ... ok
+test native_artifact::application::value_features::tests::nested_payloads_supply_their_own_gates ... ok
+test native_artifact::application::value_features::tests::signed_cells_are_selected_only_by_signed_schema_requirements ... ok
+test native_artifact::compiler::tests::denied_setup_never_invokes_an_entry_or_changes_outputs ... MECH_NATIVE_CI_PROGRESS stage=scalar-unit elapsed_seconds=30.2
+ok
+test native_artifact::compiler::tests::generated_completion_admission_precedes_every_private_output_store ... ok
+test native_artifact::compiler::tests::raw_private_abi_rejects_noncanonical_bool_and_bad_header_before_callbacks_or_stores ... ok
+test native_artifact::control_identity::tests::match_link_identity_binds_exact_cfg_revision_target_entry_and_counts ... ok
+test native_artifact::control_runtime::tests::invalid_cfg_visit_is_rejected_without_publication ... ok
+test native_artifact::control_runtime::tests::setup_and_memory_denial_precede_injected_entry_and_preserve_outputs ... ok
+test native_artifact::identity::tests::cast_identity_rejects_pre_cast_versions_and_equal_width_reverse_direction ... ok
+test native_artifact::identity::tests::identity_is_deterministic_and_binds_real_typed_ir_revision_and_target ... ok
+test native_artifact::iteration_identity::tests::iteration_identity_binds_count_scope_graph_target_and_all_counts ... ok
+test native_artifact::iteration_runtime::tests::callback_progress_rejects_early_exit_and_body_after_exact_count ... ok
+test native_artifact::iteration_runtime::tests::setup_transport_and_shared_budget_deny_before_input_scan_or_entry ... ok
+test native_artifact::memory::admission_tests::typed_transport_admission_includes_exact_initialization_metadata ... ok
+test native_artifact::values::tests::arena_before_promotion_pins_memory_and_retains_the_same_live_handles_and_counter ... ok
+test native_artifact::values::tests::generation_exhaustion_cannot_replace_or_remove_the_live_value ... ok
+test native_artifact::values::tests::late_foreign_imports_do_not_expand_arena_replacement_or_teardown_work ... ok
+test native_artifact::values::tests::promotion_before_arena_rejects_foreign_backing_before_work_or_allocation ... ok
+test native_artifact::values::tests::setup_transport_shared_memory_and_cumulative_work_denials_fail_closed ... ok
+test native_artifact::values::tests::slot_reuse_and_other_arenas_never_revalidate_old_handles ... ok
+test native_artifact::values::tests::strings_maps_and_full_u64_payloads_use_real_same_account_managed_slots ... ok
+test native_artifact::values::tests::wrong_types_unadmitted_and_foreign_budget_values_preserve_existing_slots ... ok
+test native_artifact::work::tests::a_different_shared_ledger_cannot_replace_a_live_library_caller ... ok
+test native_artifact::work::tests::active_library_account_rejects_new_and_preexisting_independent_inline_meters ... ok
+test native_artifact::work::tests::closed_tail_fuel_observes_the_same_spent_account_and_declines_nested_scopes ... ok
+test native_artifact::work::tests::cumulative_overflow_is_a_denial_without_wrapping_the_ledger ... ok
+test native_artifact::work::tests::failed_repeated_promotion_preserves_existing_comparison_allowance ... ok
+test native_artifact::work::tests::promotion_denials_precede_allocation_and_never_refund_prior_work ... ok
+test native_artifact::work::tests::promotion_preserves_scalar_work_and_nested_library_work_is_immediately_visible ... ok
+test native_artifact::work::tests::repeated_library_access_cannot_refill_limits_or_change_memory_identity ... ok
+test native_artifact::work::tests::repeated_phases_share_one_limit_and_denial_does_not_reset_it ... ok
+test native_artifact::work::tests::worker_meter_attaches_without_root_renewal_or_promotion_and_reconciles_to_parent ... ok
+test native_artifact::work::tests::worker_meter_rejects_root_accounts_and_foreign_memory ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 35 filtered out; finished in 5.42s
+
+{"stage": "scalar-unit", "reason": "exit", "command_exit_status": 0, "owned_group_cleanup": "complete", "elapsed_seconds": 31.489398334000725, "timeout_seconds": 1800.0, "cleanup_seconds": 30}

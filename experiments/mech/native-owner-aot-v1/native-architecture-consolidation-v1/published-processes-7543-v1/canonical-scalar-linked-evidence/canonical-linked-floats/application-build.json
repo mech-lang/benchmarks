@@ -1,0 +1,2157 @@
+{
+  "cases": [
+    {
+      "arguments": [
+        "f64:0000000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "positive-zero",
+      "stdout": "f64:0000000000000000\nf64:0000000000000000\ntrue\ntrue\nf64:0000000000000000\nfalse\nfalse\nf64:0000000000000000\nfalse\nf64:8000000000000000\nf64:0000000000000000\nf64:7ff8000000000000\nf64:0000000000000000\ntrue\nf64:0000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8000000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-positive-zero",
+      "stdout": "f64:0000000000000000\nf64:0000000000000000\ntrue\ntrue\nf64:8000000000000000\nfalse\nfalse\nf64:8000000000000000\nfalse\nf64:0000000000000000\nf64:8000000000000000\nf64:7ff8000000000000\nf64:8000000000000000\ntrue\nf64:0000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8000000000000000",
+        "f64:8000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-zeros",
+      "stdout": "f64:8000000000000000\nf64:8000000000000000\ntrue\ntrue\nf64:0000000000000000\nfalse\nfalse\nf64:8000000000000000\nfalse\nf64:0000000000000000\nf64:0000000000000000\nf64:7ff8000000000000\nf64:8000000000000000\ntrue\nf64:8000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:0000000000000000",
+        "f64:8000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "positive-negative-zero",
+      "stdout": "f64:0000000000000000\nf64:0000000000000000\ntrue\ntrue\nf64:0000000000000000\nfalse\nfalse\nf64:0000000000000000\nfalse\nf64:8000000000000000\nf64:8000000000000000\nf64:7ff8000000000000\nf64:0000000000000000\ntrue\nf64:0000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "one-zero",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\ntrue\nfalse\nf64:3ff0000000000000\ntrue\ntrue\nf64:3ff0000000000000\nfalse\nf64:bff0000000000000\nf64:0000000000000000\nf64:7ff0000000000000\nf64:3ff0000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "--work=0",
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "canonical native execution: WorkLimit { phase: Setup, required: 138, limit: 0 }",
+      "name": "float-setup-denial",
+      "stderr": "canonical native execution: WorkLimit { phase: Setup, required: 138, limit: 0 }\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "--work=400",
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "canonical native execution: WorkLimit { phase: Node(NodeId(1)), required: 650, limit: 400 }",
+      "name": "float-node-denial",
+      "stderr": "canonical native execution: WorkLimit { phase: Node(NodeId(1)), required: 650, limit: 400 }\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "--work=3361",
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "canonical native execution: WorkLimit { phase: Completion, required: 3362, limit: 3361 }",
+      "name": "float-completion-denial",
+      "stderr": "canonical native execution: WorkLimit { phase: Completion, required: 3362, limit: 3361 }\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "--memory=0",
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "canonical native execution: TransportLimit { required: 232, limit: 0 }",
+      "name": "float-memory-denial",
+      "stderr": "canonical native execution: TransportLimit { required: 232, limit: 0 }\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "--budget=0",
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "canonical native execution: Memory { error: BudgetExceeded { operation: None, requested: 264, limit: 0 } }",
+      "name": "float-shared-budget-denial",
+      "stderr": "canonical native execution: Memory { error: BudgetExceeded { operation: None, requested: 264, limit: 0 } }\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "1.0",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "invalid F64 bit argument",
+      "name": "float-decimal-rejected",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "NaN",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "invalid F64 bit argument",
+      "name": "float-nan-text-rejected",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "f64:0",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "invalid F64 bit argument",
+      "name": "float-bits-too-short",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "f64:00000000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "invalid F64 bit argument",
+      "name": "float-bits-too-long",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "f64:000000000000000g",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": "invalid F64 bit argument",
+      "name": "float-bits-nonhex",
+      "stderr": "invalid F64 bit argument\n",
+      "stdout": ""
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "float-recovery-after-denials",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\ntrue\nfalse\nf64:3ff0000000000000\ntrue\ntrue\nf64:3ff0000000000000\nfalse\nf64:bff0000000000000\nf64:0000000000000000\nf64:7ff0000000000000\nf64:3ff0000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:bff0000000000000",
+        "f64:0000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-one-zero",
+      "stdout": "f64:bff0000000000000\nf64:bff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:bff0000000000000\ntrue\nf64:3ff0000000000000\nf64:8000000000000000\nf64:fff0000000000000\nf64:7ff8000000000000\nfalse\nf64:bff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:0000000000000001",
+        "f64:0000000000000002"
+      ],
+      "diagnostic": null,
+      "name": "minimum-subnormals",
+      "stdout": "f64:0000000000000003\nf64:0000000000000003\nfalse\ntrue\nf64:8000000000000001\ntrue\nfalse\nf64:0000000000000001\ntrue\nf64:8000000000000001\nf64:0000000000000000\nf64:3fe0000000000000\nf64:1e60000000000000\nfalse\nf64:0000000000000003\n"
+    },
+    {
+      "arguments": [
+        "f64:000fffffffffffff",
+        "f64:0010000000000000"
+      ],
+      "diagnostic": null,
+      "name": "subnormal-normal-edge",
+      "stdout": "f64:001fffffffffffff\nf64:001fffffffffffff\nfalse\ntrue\nf64:8000000000000001\ntrue\nfalse\nf64:000fffffffffffff\ntrue\nf64:800fffffffffffff\nf64:0000000000000000\nf64:3feffffffffffffe\nf64:1fffffffffffffff\nfalse\nf64:001fffffffffffff\n"
+    },
+    {
+      "arguments": [
+        "f64:0010000000000000",
+        "f64:3fe0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "underflow",
+      "stdout": "f64:3fe0000000000000\nf64:3fe0000000000000\nfalse\ntrue\nf64:bfe0000000000000\ntrue\nfalse\nf64:0010000000000000\ntrue\nf64:8010000000000000\nf64:0008000000000000\nf64:0020000000000000\nf64:2000000000000000\nfalse\nf64:3fe0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8000000000000001",
+        "f64:0000000000000002"
+      ],
+      "diagnostic": null,
+      "name": "negative-subnormal",
+      "stdout": "f64:0000000000000001\nf64:0000000000000001\nfalse\ntrue\nf64:8000000000000003\ntrue\nfalse\nf64:8000000000000001\ntrue\nf64:0000000000000001\nf64:8000000000000000\nf64:bfe0000000000000\nf64:7ff8000000000000\nfalse\nf64:0000000000000001\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000001",
+        "f64:3fefffffffffffff"
+      ],
+      "diagnostic": null,
+      "name": "near-one-rounding",
+      "stdout": "f64:4000000000000000\nf64:4000000000000000\ntrue\nfalse\nf64:3cb8000000000000\ntrue\ntrue\nf64:3ff0000000000001\nfalse\nf64:bff0000000000001\nf64:3ff0000000000000\nf64:3ff0000000000002\nf64:3ff0000000000000\nfalse\nf64:4000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:7fefffffffffffff",
+        "f64:4000000000000000"
+      ],
+      "diagnostic": null,
+      "name": "finite-overflow",
+      "stdout": "f64:7fefffffffffffff\nf64:7fefffffffffffff\ntrue\nfalse\nf64:7fefffffffffffff\ntrue\ntrue\nf64:7fefffffffffffff\nfalse\nf64:ffefffffffffffff\nf64:7ff0000000000000\nf64:7fdfffffffffffff\nf64:5fefffffffffffff\nfalse\nf64:7fefffffffffffff\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000000",
+        "f64:7ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "infinities",
+      "stdout": "f64:7ff0000000000000\nf64:7ff0000000000000\ntrue\ntrue\nf64:7ff8000000000000\nfalse\nfalse\nf64:7ff0000000000000\nfalse\nf64:fff0000000000000\nf64:7ff0000000000000\nf64:7ff8000000000000\nf64:7ff0000000000000\ntrue\nf64:7ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000000",
+        "f64:fff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "opposite-infinities",
+      "stdout": "f64:7ff8000000000000\nf64:7ff8000000000000\ntrue\nfalse\nf64:7ff0000000000000\ntrue\ntrue\nf64:7ff0000000000000\nfalse\nf64:fff0000000000000\nf64:fff0000000000000\nf64:7ff8000000000000\nf64:7ff0000000000000\nfalse\nf64:7ff8000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:fff0000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-infinity",
+      "stdout": "f64:fff0000000000000\nf64:fff0000000000000\nfalse\ntrue\nf64:fff0000000000000\ntrue\nfalse\nf64:fff0000000000000\ntrue\nf64:7ff0000000000000\nf64:fff0000000000000\nf64:fff0000000000000\nf64:7ff8000000000000\nfalse\nf64:fff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:7ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "finite-infinity",
+      "stdout": "f64:7ff0000000000000\nf64:7ff0000000000000\nfalse\ntrue\nf64:fff0000000000000\ntrue\nfalse\nf64:3ff0000000000000\ntrue\nf64:bff0000000000000\nf64:7ff0000000000000\nf64:0000000000000000\nf64:3ff0000000000000\nfalse\nf64:7ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff8000000000042",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "qnan-left",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff8000000000042\nfalse\nf64:fff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:7ff800000000cafe"
+      ],
+      "diagnostic": null,
+      "name": "qnan-right",
+      "stdout": "f64:7ff800000000cafe\nf64:7ff800000000cafe\nfalse\nfalse\nf64:7ff800000000cafe\ntrue\nfalse\nf64:3ff0000000000000\nfalse\nf64:bff0000000000000\nf64:7ff800000000cafe\nf64:7ff800000000cafe\nf64:3ff0000000000000\nfalse\nf64:7ff800000000cafe\n"
+    },
+    {
+      "arguments": [
+        "f64:fff8000000001234",
+        "f64:bff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-qnan",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff8000000001234\nfalse\nf64:7ff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff8000000000042",
+        "f64:fff8000000001234"
+      ],
+      "diagnostic": null,
+      "name": "two-qnans",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff8000000000042\nfalse\nf64:fff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:fff8000000001234",
+        "f64:7ff8000000000042"
+      ],
+      "diagnostic": null,
+      "name": "two-qnans-reversed",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff8000000001234\nfalse\nf64:7ff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000042",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "snan-left",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff0000000000042\nfalse\nf64:fff0000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:7ff000000000cafe"
+      ],
+      "diagnostic": null,
+      "name": "snan-right",
+      "stdout": "f64:7ff800000000cafe\nf64:7ff800000000cafe\nfalse\nfalse\nf64:7ff800000000cafe\ntrue\nfalse\nf64:3ff0000000000000\nfalse\nf64:bff0000000000000\nf64:7ff800000000cafe\nf64:7ff800000000cafe\nf64:3ff0000000000000\nfalse\nf64:7ff800000000cafe\n"
+    },
+    {
+      "arguments": [
+        "f64:fff0000000001234",
+        "f64:bff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "negative-snan",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff0000000001234\nfalse\nf64:7ff0000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000042",
+        "f64:fff8000000001234"
+      ],
+      "diagnostic": null,
+      "name": "snan-qnan",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff0000000000042\nfalse\nf64:fff0000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:fff8000000001234",
+        "f64:7ff0000000000042"
+      ],
+      "diagnostic": null,
+      "name": "qnan-snan",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:fff8000000001234\nfalse\nf64:7ff8000000001234\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:fff8000000001234\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000042",
+        "f64:fff0000000001234"
+      ],
+      "diagnostic": null,
+      "name": "two-snans",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff0000000000042\nfalse\nf64:fff0000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:fff0000000001234",
+        "f64:7ff0000000000042"
+      ],
+      "diagnostic": null,
+      "name": "two-snans-reversed",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff0000000001234\nfalse\nf64:7ff0000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    },
+    {
+      "arguments": [
+        "f64:0000000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-0",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:0000000000000000\ntrue\nf64:8000000000000000\nf64:0000000000000000\nf64:0000000000000000\nf64:0000000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8000000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-1",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:8000000000000000\ntrue\nf64:0000000000000000\nf64:8000000000000000\nf64:8000000000000000\nf64:8000000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:0000000000000001",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-2",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:0000000000000001\ntrue\nf64:8000000000000001\nf64:0000000000000001\nf64:0000000000000001\nf64:1e60000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8000000000000001",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-3",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:8000000000000001\ntrue\nf64:0000000000000001\nf64:8000000000000001\nf64:8000000000000001\nf64:7ff8000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:000fffffffffffff",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-4",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:000fffffffffffff\ntrue\nf64:800fffffffffffff\nf64:000fffffffffffff\nf64:000fffffffffffff\nf64:1fffffffffffffff\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:0010000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-5",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:0010000000000000\ntrue\nf64:8010000000000000\nf64:0010000000000000\nf64:0010000000000000\nf64:2000000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:8010000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-6",
+      "stdout": "f64:3ff0000000000000\nf64:3ff0000000000000\nfalse\ntrue\nf64:bff0000000000000\ntrue\nfalse\nf64:8010000000000000\ntrue\nf64:0010000000000000\nf64:8010000000000000\nf64:8010000000000000\nf64:7ff8000000000000\nfalse\nf64:3ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:3ff0000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-7",
+      "stdout": "f64:4000000000000000\nf64:4000000000000000\ntrue\ntrue\nf64:0000000000000000\nfalse\nfalse\nf64:3ff0000000000000\nfalse\nf64:bff0000000000000\nf64:3ff0000000000000\nf64:3ff0000000000000\nf64:3ff0000000000000\ntrue\nf64:4000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:bff0000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-8",
+      "stdout": "f64:0000000000000000\nf64:0000000000000000\nfalse\ntrue\nf64:c000000000000000\ntrue\nfalse\nf64:bff0000000000000\ntrue\nf64:3ff0000000000000\nf64:bff0000000000000\nf64:bff0000000000000\nf64:7ff8000000000000\nfalse\nf64:0000000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:4000000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-9",
+      "stdout": "f64:4008000000000000\nf64:4008000000000000\ntrue\nfalse\nf64:3ff0000000000000\ntrue\ntrue\nf64:4000000000000000\nfalse\nf64:c000000000000000\nf64:4000000000000000\nf64:4000000000000000\nf64:3ff6a09e667f3bcd\nfalse\nf64:4008000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:7fefffffffffffff",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-10",
+      "stdout": "f64:7fefffffffffffff\nf64:7fefffffffffffff\ntrue\nfalse\nf64:7fefffffffffffff\ntrue\ntrue\nf64:7fefffffffffffff\nfalse\nf64:ffefffffffffffff\nf64:7fefffffffffffff\nf64:7fefffffffffffff\nf64:5fefffffffffffff\nfalse\nf64:7fefffffffffffff\n"
+    },
+    {
+      "arguments": [
+        "f64:ffefffffffffffff",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-11",
+      "stdout": "f64:ffefffffffffffff\nf64:ffefffffffffffff\nfalse\ntrue\nf64:ffefffffffffffff\ntrue\nfalse\nf64:ffefffffffffffff\ntrue\nf64:7fefffffffffffff\nf64:ffefffffffffffff\nf64:ffefffffffffffff\nf64:7ff8000000000000\nfalse\nf64:ffefffffffffffff\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-12",
+      "stdout": "f64:7ff0000000000000\nf64:7ff0000000000000\ntrue\nfalse\nf64:7ff0000000000000\ntrue\ntrue\nf64:7ff0000000000000\nfalse\nf64:fff0000000000000\nf64:7ff0000000000000\nf64:7ff0000000000000\nf64:7ff0000000000000\nfalse\nf64:7ff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:fff0000000000000",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-13",
+      "stdout": "f64:fff0000000000000\nf64:fff0000000000000\nfalse\ntrue\nf64:fff0000000000000\ntrue\nfalse\nf64:fff0000000000000\ntrue\nf64:7ff0000000000000\nf64:fff0000000000000\nf64:fff0000000000000\nf64:7ff8000000000000\nfalse\nf64:fff0000000000000\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff8000000000042",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-14",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff8000000000042\nfalse\nf64:fff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:fff8000000001234",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-15",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff8000000001234\nfalse\nf64:7ff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    },
+    {
+      "arguments": [
+        "f64:7ff0000000000042",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-16",
+      "stdout": "f64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nfalse\nf64:7ff8000000000042\ntrue\nfalse\nf64:7ff0000000000042\nfalse\nf64:fff0000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nf64:7ff8000000000042\nfalse\nf64:7ff8000000000042\n"
+    },
+    {
+      "arguments": [
+        "f64:fff0000000001234",
+        "f64:3ff0000000000000"
+      ],
+      "diagnostic": null,
+      "name": "unary-17",
+      "stdout": "f64:fff8000000001234\nf64:fff8000000001234\nfalse\nfalse\nf64:fff8000000001234\ntrue\nfalse\nf64:fff0000000001234\nfalse\nf64:7ff0000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nf64:fff8000000001234\nfalse\nf64:fff8000000001234\n"
+    }
+  ],
+  "executable": "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/cargo-target/debug/canonical-linked-floats",
+  "pins": {
+    "/private/tmp/mech-native-consolidation-final/Cargo.lock": "36b1a96024775de3aaf1d0bb1c174d54ee6389f8c3923f1e5e9861b07cb8ba17",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/application.mec": "9a6d6c35ef5fbc897091f5181dd44c669e3f87fb32f779b0b21a6ced151da78c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-generation.json": "f72defbf971119843cc7910666a7eba637f6d2556c2c0f6347fbb6ee75bee458",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/Cargo.toml": "9ebcc58491f8b9574cb3ab58f364e3eec14a56926fc90f3d4e9c30f7f1f60c34",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/application.mec": "9a6d6c35ef5fbc897091f5181dd44c669e3f87fb32f779b0b21a6ced151da78c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/build.rs": "cbb707c9c0db00108769a43d7cdfae098f70c5ab0a1251a92eae27772c76edd9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/factory-profile.json": "b33a8362362d9526c306b2830f00d07d38946f2289ab75b2cd0786a99fbf4f43",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/linked-manifest.json": "f72defbf971119843cc7910666a7eba637f6d2556c2c0f6347fbb6ee75bee458",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/object-identity.bin": "401007879da6cf1f472cad1a9227e8fea235be20fa99fb6a4cb41335cda7ece3",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/program.mecb": "6b9ad60022091d3e0ecaee44e1be46944820db22ce928012833ee0127012e236",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/program.o": "25c7ac8ba71a973dc30fdb472edc29737c4e41d7b7a270e341d1afc4624d396e",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/decoded-project/src/main.rs": "07b4ef20ce53ac9d974667b9a0dc617ed23cd0b49b0f99c2dda4f2ff22e75096",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/metadata.stdout": "87b6ad545086e796fc712d7de6f82ed83b892acf5f0d680868a44d2c341b4cbe",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/original-generation.json": "f72defbf971119843cc7910666a7eba637f6d2556c2c0f6347fbb6ee75bee458",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/Cargo.lock": "9abbae908b0803739b0d494406deed43be6dd131e3fc8bab739a66fb11d01479",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/Cargo.toml": "9ebcc58491f8b9574cb3ab58f364e3eec14a56926fc90f3d4e9c30f7f1f60c34",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/application.mec": "9a6d6c35ef5fbc897091f5181dd44c669e3f87fb32f779b0b21a6ced151da78c",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/build.rs": "cbb707c9c0db00108769a43d7cdfae098f70c5ab0a1251a92eae27772c76edd9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/factory-profile.json": "b33a8362362d9526c306b2830f00d07d38946f2289ab75b2cd0786a99fbf4f43",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/linked-manifest.json": "f72defbf971119843cc7910666a7eba637f6d2556c2c0f6347fbb6ee75bee458",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/object-identity.bin": "401007879da6cf1f472cad1a9227e8fea235be20fa99fb6a4cb41335cda7ece3",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/program.mecb": "6b9ad60022091d3e0ecaee44e1be46944820db22ce928012833ee0127012e236",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/program.o": "25c7ac8ba71a973dc30fdb472edc29737c4e41d7b7a270e341d1afc4624d396e",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project/src/main.rs": "07b4ef20ce53ac9d974667b9a0dc617ed23cd0b49b0f99c2dda4f2ff22e75096",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/typed-ir-review.json": "d7f2277ade4d27a25fee10eea13d909d64847948fc5cc26a9f3915a98ea53e39",
+    "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/cargo-target/debug/canonical-linked-floats": "ddbfceea3e6f17673d9d831792e2acef8779d01e453b8862bcfde6af2b633906"
+  },
+  "receipt": {
+    "benchmark_measurements": 0,
+    "binary": "/private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/cargo-target/debug/canonical-linked-floats",
+    "binary_sha256": "ddbfceea3e6f17673d9d831792e2acef8779d01e453b8862bcfde6af2b633906",
+    "build_count": 1,
+    "bytecode_sha256": "6b9ad60022091d3e0ecaee44e1be46944820db22ce928012833ee0127012e236",
+    "generated_runtime_feature_closure": [
+      {
+        "features": [
+          "canonical-native-runtime"
+        ],
+        "id": "path+file:///private/tmp/mech-native-consolidation-final/hosts/gpu#mech-gpu@0.3.5",
+        "name": "mech-gpu",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "mech_gpu",
+        "version": "0.3.5"
+      },
+      {
+        "features": [
+          "default",
+          "runtime-values"
+        ],
+        "id": "path+file:///private/tmp/mech-native-consolidation-final/src/compute#mech-compute@0.3.5",
+        "name": "mech-compute",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "mech_compute",
+        "version": "0.3.5"
+      },
+      {
+        "features": [
+          "base64",
+          "bincode",
+          "bool",
+          "brotli",
+          "byteorder",
+          "crc32fast",
+          "f64",
+          "floats",
+          "functions",
+          "indexmap",
+          "matrix",
+          "matrixd",
+          "nalgebra",
+          "num-traits",
+          "numbers",
+          "program",
+          "range",
+          "resident-execution",
+          "row_vectord",
+          "selective-convert",
+          "serde",
+          "serde_derive",
+          "serde_json",
+          "std",
+          "string",
+          "symbol_table",
+          "u64",
+          "unsigned_ints",
+          "vectord"
+        ],
+        "id": "path+file:///private/tmp/mech-native-consolidation-final/src/core#mech-core@0.3.5",
+        "name": "mech-core",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "mech_core",
+        "version": "0.3.5"
+      },
+      {
+        "features": [
+          "artifact-codec",
+          "assign",
+          "bool",
+          "f64",
+          "floats",
+          "functions",
+          "matrix",
+          "matrix_horzcat",
+          "matrix_vertcat",
+          "matrixd",
+          "nalgebra",
+          "native-artifact",
+          "native-capture-pages",
+          "numbers",
+          "program",
+          "pure_text",
+          "resident-artifact",
+          "resident-ekf",
+          "row_vectord",
+          "runtime",
+          "std",
+          "string",
+          "symbol_table",
+          "u64",
+          "unsigned_ints",
+          "vectord"
+        ],
+        "id": "path+file:///private/tmp/mech-native-consolidation-final/src/engine#mech-engine@0.3.5",
+        "name": "mech-engine",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "mech_engine",
+        "version": "0.3.5"
+      },
+      {
+        "features": [],
+        "id": "path+file:///private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project#canonical-linked-floats@0.0.0",
+        "name": "canonical-linked-floats",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.0.0"
+      },
+      {
+        "features": [],
+        "id": "path+file:///private/tmp/native-published-architecture-processes-v1/canonical-scalar-linked-evidence/canonical-linked-floats/project#canonical-linked-floats@0.0.0",
+        "name": "canonical-linked-floats",
+        "target_kind": [
+          "bin"
+        ],
+        "target_name": "canonical-linked-floats",
+        "version": "0.0.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#alloc-no-stdlib@2.0.4",
+        "name": "alloc-no-stdlib",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "alloc_no_stdlib",
+        "version": "2.0.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#alloc-stdlib@0.2.4",
+        "name": "alloc-stdlib",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "alloc_stdlib",
+        "version": "0.2.4"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#approx@0.5.1",
+        "name": "approx",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "approx",
+        "version": "0.5.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#autocfg@1.5.1",
+        "name": "autocfg",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "autocfg",
+        "version": "1.5.1"
+      },
+      {
+        "features": [
+          "alloc",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#base64@0.22.1",
+        "name": "base64",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "base64",
+        "version": "0.22.1"
+      },
+      {
+        "features": [
+          "alloc",
+          "bincode_derive",
+          "default",
+          "derive",
+          "serde",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#bincode@2.0.1",
+        "name": "bincode",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "bincode",
+        "version": "2.0.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#bincode_derive@2.0.1",
+        "name": "bincode_derive",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "bincode_derive",
+        "version": "2.0.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.10.4",
+        "name": "block-buffer",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "block_buffer",
+        "version": "0.10.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#block-buffer@0.12.1",
+        "name": "block-buffer",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "block_buffer",
+        "version": "0.12.1"
+      },
+      {
+        "features": [
+          "alloc-stdlib",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#brotli-decompressor@5.0.3",
+        "name": "brotli-decompressor",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "brotli_decompressor",
+        "version": "5.0.3"
+      },
+      {
+        "features": [
+          "alloc-stdlib",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#brotli@8.0.4",
+        "name": "brotli",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "brotli",
+        "version": "8.0.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#bytemuck@1.25.2",
+        "name": "bytemuck",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "bytemuck",
+        "version": "1.25.2"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#byteorder@1.5.0",
+        "name": "byteorder",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "byteorder",
+        "version": "1.5.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#cfg-if@1.0.4",
+        "name": "cfg-if",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "cfg_if",
+        "version": "1.0.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.2.17",
+        "name": "cpufeatures",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "cpufeatures",
+        "version": "0.2.17"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#cpufeatures@0.3.0",
+        "name": "cpufeatures",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "cpufeatures",
+        "version": "0.3.0"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.0",
+        "name": "crc32fast",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.5.0"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#crc32fast@1.5.0",
+        "name": "crc32fast",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "crc32fast",
+        "version": "1.5.0"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.1.7",
+        "name": "crypto-common",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "crypto_common",
+        "version": "0.1.7"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#crypto-common@0.2.2",
+        "name": "crypto-common",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "crypto_common",
+        "version": "0.2.2"
+      },
+      {
+        "features": [
+          "alloc",
+          "block-buffer",
+          "core-api",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.10.7",
+        "name": "digest",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "digest",
+        "version": "0.10.7"
+      },
+      {
+        "features": [
+          "block-api",
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#digest@0.11.3",
+        "name": "digest",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "digest",
+        "version": "0.11.3"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#displaydoc@0.2.6",
+        "name": "displaydoc",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "displaydoc",
+        "version": "0.2.6"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#equivalent@1.0.2",
+        "name": "equivalent",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "equivalent",
+        "version": "1.0.2"
+      },
+      {
+        "features": [
+          "more_lengths"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+        "name": "generic-array",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.14.7"
+      },
+      {
+        "features": [
+          "more_lengths"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#generic-array@0.14.7",
+        "name": "generic-array",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "generic_array",
+        "version": "0.14.7"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#grapheme@1.3.0",
+        "name": "grapheme",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "grapheme",
+        "version": "1.3.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#grapheme_macro@2.0.0",
+        "name": "grapheme_macro",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "grapheme_macro",
+        "version": "2.0.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#hashbrown@0.17.1",
+        "name": "hashbrown",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "hashbrown",
+        "version": "0.17.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#hybrid-array@0.4.14",
+        "name": "hybrid-array",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "hybrid_array",
+        "version": "0.4.14"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_collections@2.2.0",
+        "name": "icu_collections",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "icu_collections",
+        "version": "2.2.0"
+      },
+      {
+        "features": [
+          "zerovec"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_locale_core@2.2.0",
+        "name": "icu_locale_core",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "icu_locale_core",
+        "version": "2.2.0"
+      },
+      {
+        "features": [
+          "compiled_data",
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties@2.2.0",
+        "name": "icu_properties",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "icu_properties",
+        "version": "2.2.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.2.0",
+        "name": "icu_properties_data",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "2.2.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_properties_data@2.2.0",
+        "name": "icu_properties_data",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "icu_properties_data",
+        "version": "2.2.0"
+      },
+      {
+        "features": [
+          "baked"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#icu_provider@2.2.0",
+        "name": "icu_provider",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "icu_provider",
+        "version": "2.2.0"
+      },
+      {
+        "features": [
+          "default",
+          "serde",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#indexmap@2.14.0",
+        "name": "indexmap",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "indexmap",
+        "version": "2.14.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#itoa@1.0.18",
+        "name": "itoa",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "itoa",
+        "version": "1.0.18"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+        "name": "libc",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.2.189"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+        "name": "libc",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "libc",
+        "version": "0.2.189"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+        "name": "libc",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.2.189"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libc@0.2.189",
+        "name": "libc",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "libc",
+        "version": "0.2.189"
+      },
+      {
+        "features": [
+          "arch",
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+        "name": "libm",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.2.16"
+      },
+      {
+        "features": [
+          "arch",
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#libm@0.2.16",
+        "name": "libm",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "libm",
+        "version": "0.2.16"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#litemap@0.8.2",
+        "name": "litemap",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "litemap",
+        "version": "0.8.2"
+      },
+      {
+        "features": [
+          "avx512",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#matrixmultiply@0.3.11",
+        "name": "matrixmultiply",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.3.11"
+      },
+      {
+        "features": [
+          "avx512",
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#matrixmultiply@0.3.11",
+        "name": "matrixmultiply",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "matrixmultiply",
+        "version": "0.3.11"
+      },
+      {
+        "features": [
+          "alloc",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#memchr@2.8.3",
+        "name": "memchr",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "memchr",
+        "version": "2.8.3"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#nalgebra-macros@0.3.0",
+        "name": "nalgebra-macros",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "nalgebra_macros",
+        "version": "0.3.0"
+      },
+      {
+        "features": [
+          "default",
+          "macros",
+          "matrixmultiply",
+          "nalgebra-macros",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#nalgebra@0.34.2",
+        "name": "nalgebra",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "nalgebra",
+        "version": "0.34.2"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#num-complex@0.4.6",
+        "name": "num-complex",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "num_complex",
+        "version": "0.4.6"
+      },
+      {
+        "features": [
+          "i128",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#num-integer@0.1.46",
+        "name": "num-integer",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "num_integer",
+        "version": "0.1.46"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#num-rational@0.4.2",
+        "name": "num-rational",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "num_rational",
+        "version": "0.4.2"
+      },
+      {
+        "features": [
+          "i128",
+          "libm",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+        "name": "num-traits",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "0.2.19"
+      },
+      {
+        "features": [
+          "i128",
+          "libm",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#num-traits@0.2.19",
+        "name": "num-traits",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "num_traits",
+        "version": "0.2.19"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+        "name": "paste",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.15"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#paste@1.0.15",
+        "name": "paste",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "paste",
+        "version": "1.0.15"
+      },
+      {
+        "features": [
+          "zerovec"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#potential_utf@0.1.5",
+        "name": "potential_utf",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "potential_utf",
+        "version": "0.1.5"
+      },
+      {
+        "features": [
+          "default",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+        "name": "proc-macro2",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.107"
+      },
+      {
+        "features": [
+          "default",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#proc-macro2@1.0.107",
+        "name": "proc-macro2",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "proc_macro2",
+        "version": "1.0.107"
+      },
+      {
+        "features": [
+          "default",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+        "name": "quote",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.47"
+      },
+      {
+        "features": [
+          "default",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#quote@1.0.47",
+        "name": "quote",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "quote",
+        "version": "1.0.47"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#rawpointer@0.2.1",
+        "name": "rawpointer",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "rawpointer",
+        "version": "0.2.1"
+      },
+      {
+        "features": [
+          "bytemuck",
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#safe_arch@0.7.4",
+        "name": "safe_arch",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "safe_arch",
+        "version": "0.7.4"
+      },
+      {
+        "features": [
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#seahash@4.1.0",
+        "name": "seahash",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "seahash",
+        "version": "4.1.0"
+      },
+      {
+        "features": [
+          "alloc",
+          "default",
+          "derive",
+          "serde_derive",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+        "name": "serde",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "alloc",
+          "default",
+          "derive",
+          "serde_derive",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde@1.0.229",
+        "name": "serde",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "serde",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "alloc",
+          "result",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+        "name": "serde_core",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "alloc",
+          "result",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+        "name": "serde_core",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "serde_core",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+        "name": "serde_core",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_core@1.0.229",
+        "name": "serde_core",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "serde_core",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "default"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_derive@1.0.229",
+        "name": "serde_derive",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "serde_derive",
+        "version": "1.0.229"
+      },
+      {
+        "features": [
+          "default",
+          "raw_value",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+        "name": "serde_json",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.151"
+      },
+      {
+        "features": [
+          "default",
+          "raw_value",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+        "name": "serde_json",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "serde_json",
+        "version": "1.0.151"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+        "name": "serde_json",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.151"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#serde_json@1.0.151",
+        "name": "serde_json",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "serde_json",
+        "version": "1.0.151"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.10.9",
+        "name": "sha2",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "sha2",
+        "version": "0.10.9"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#sha2@0.11.0",
+        "name": "sha2",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "sha2",
+        "version": "0.11.0"
+      },
+      {
+        "features": [
+          "std",
+          "wide"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#simba@0.9.1",
+        "name": "simba",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "simba",
+        "version": "0.9.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#smallvec@1.15.2",
+        "name": "smallvec",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "smallvec",
+        "version": "1.15.2"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#stable_deref_trait@1.2.1",
+        "name": "stable_deref_trait",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "stable_deref_trait",
+        "version": "1.2.1"
+      },
+      {
+        "features": [
+          "clone-impls",
+          "default",
+          "derive",
+          "extra-traits",
+          "fold",
+          "full",
+          "parsing",
+          "printing",
+          "proc-macro",
+          "visit"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#syn@2.0.119",
+        "name": "syn",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "syn",
+        "version": "2.0.119"
+      },
+      {
+        "features": [
+          "clone-impls",
+          "derive",
+          "parsing",
+          "printing",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#syn@3.0.3",
+        "name": "syn",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "syn",
+        "version": "3.0.3"
+      },
+      {
+        "features": [
+          "default",
+          "proc-macro"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#synstructure@0.13.2",
+        "name": "synstructure",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "synstructure",
+        "version": "0.13.2"
+      },
+      {
+        "features": [
+          "zerovec"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#tinystr@0.8.3",
+        "name": "tinystr",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "tinystr",
+        "version": "0.8.3"
+      },
+      {
+        "features": [
+          "alloc",
+          "default",
+          "tinyvec_macros"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec@1.12.0",
+        "name": "tinyvec",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "tinyvec",
+        "version": "1.12.0"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#tinyvec_macros@0.1.1",
+        "name": "tinyvec_macros",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "tinyvec_macros",
+        "version": "0.1.1"
+      },
+      {
+        "features": [
+          "const-generics"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#typenum@1.20.1",
+        "name": "typenum",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "typenum",
+        "version": "1.20.1"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-ident@1.0.24",
+        "name": "unicode-ident",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "unicode_ident",
+        "version": "1.0.24"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-normalization@0.1.25",
+        "name": "unicode-normalization",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "unicode_normalization",
+        "version": "0.1.25"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#unicode-segmentation@1.13.3",
+        "name": "unicode-segmentation",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "unicode_segmentation",
+        "version": "1.13.3"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#unty@0.0.4",
+        "name": "unty",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "unty",
+        "version": "0.0.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#utf8_iter@1.0.4",
+        "name": "utf8_iter",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "utf8_iter",
+        "version": "1.0.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#version_check@0.9.5",
+        "name": "version_check",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "version_check",
+        "version": "0.9.5"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#virtue@0.0.18",
+        "name": "virtue",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "virtue",
+        "version": "0.0.18"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#web-time@1.1.0",
+        "name": "web-time",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "web_time",
+        "version": "1.1.0"
+      },
+      {
+        "features": [
+          "default",
+          "std"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#wide@0.7.33",
+        "name": "wide",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "wide",
+        "version": "0.7.33"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#writeable@0.6.3",
+        "name": "writeable",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "writeable",
+        "version": "0.6.3"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#yoke-derive@0.8.2",
+        "name": "yoke-derive",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "yoke_derive",
+        "version": "0.8.2"
+      },
+      {
+        "features": [
+          "derive",
+          "zerofrom"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#yoke@0.8.3",
+        "name": "yoke",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "yoke",
+        "version": "0.8.3"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom-derive@0.1.7",
+        "name": "zerofrom-derive",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "zerofrom_derive",
+        "version": "0.1.7"
+      },
+      {
+        "features": [
+          "derive"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zerofrom@0.1.8",
+        "name": "zerofrom",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "zerofrom",
+        "version": "0.1.8"
+      },
+      {
+        "features": [
+          "yoke",
+          "zerofrom"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zerotrie@0.2.4",
+        "name": "zerotrie",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "zerotrie",
+        "version": "0.2.4"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zerovec-derive@0.11.3",
+        "name": "zerovec-derive",
+        "target_kind": [
+          "proc-macro"
+        ],
+        "target_name": "zerovec_derive",
+        "version": "0.11.3"
+      },
+      {
+        "features": [
+          "derive",
+          "yoke"
+        ],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zerovec@0.11.6",
+        "name": "zerovec",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "zerovec",
+        "version": "0.11.6"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+        "name": "zmij",
+        "target_kind": [
+          "custom-build"
+        ],
+        "target_name": "build-script-build",
+        "version": "1.0.23"
+      },
+      {
+        "features": [],
+        "id": "registry+https://github.com/rust-lang/crates.io-index#zmij@1.0.23",
+        "name": "zmij",
+        "target_kind": [
+          "lib"
+        ],
+        "target_name": "zmij",
+        "version": "1.0.23"
+      }
+    ],
+    "generator": {
+      "executed": false,
+      "linked": false,
+      "object": {
+        "abi_version": 1,
+        "code_bytes": 1360,
+        "entry_symbol": "mech_canonical_scalar_entry_v1",
+        "executed": false,
+        "generated_entry_stack_bytes": 64,
+        "identity_sha256": "401007879da6cf1f472cad1a9227e8fea235be20fa99fb6a4cb41335cda7ece3",
+        "identity_symbol": "mech_canonical_scalar_identity_v1_4e5c394f421195fa1980b009a4bf9e5a90ebe0ada18f019ecc87b0771f9921a9",
+        "inputs": [
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          }
+        ],
+        "linked": false,
+        "object_bytes": 2048,
+        "ordered_nodes": [
+          {
+            "node": 0,
+            "op": "F64Add"
+          },
+          {
+            "node": 1,
+            "op": "F64Sub"
+          },
+          {
+            "node": 2,
+            "op": "F64Mul"
+          },
+          {
+            "node": 3,
+            "op": "F64Div"
+          },
+          {
+            "node": 4,
+            "op": "F64Neg"
+          },
+          {
+            "node": 5,
+            "op": "F64Sqrt"
+          },
+          {
+            "node": 6,
+            "op": "F64Eq"
+          },
+          {
+            "node": 7,
+            "op": "F64Ne"
+          },
+          {
+            "node": 8,
+            "op": "F64Lt"
+          },
+          {
+            "node": 9,
+            "op": "F64Le"
+          },
+          {
+            "node": 10,
+            "op": "F64Gt"
+          },
+          {
+            "node": 11,
+            "op": "F64Ge"
+          }
+        ],
+        "outputs": [
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          },
+          {
+            "kind": "Bool",
+            "schema_key": "ae4fd11fd6195a3547c6aa0a5dc7e31a491ae0a604d1ff6543ed6472e88cbadb"
+          },
+          {
+            "kind": "F64",
+            "schema_key": "ae4b870aa1e427f32cf87ad584f9786a0ae3c4144f16efcb1fe28696fd4c8dee"
+          }
+        ],
+        "program_revision": "91f5d8fa2d1d9e831b213b06824a2998bc6958b48161bc91ec891fa9eddc8c44",
+        "schema": "mech.canonical-native-object.v1",
+        "target_tag": [
+          1,
+          2,
+          1,
+          64,
+          1,
+          0,
+          0,
+          0
+        ],
+        "timing_samples": 0,
+        "typed_ir_sha256": "4e5c394f421195fa1980b009a4bf9e5a90ebe0ada18f019ecc87b0771f9921a9",
+        "work_policy_version": 1
+      },
+      "pins": {
+        "Cargo.toml": "9ebcc58491f8b9574cb3ab58f364e3eec14a56926fc90f3d4e9c30f7f1f60c34",
+        "application.mec": "9a6d6c35ef5fbc897091f5181dd44c669e3f87fb32f779b0b21a6ced151da78c",
+        "build.rs": "cbb707c9c0db00108769a43d7cdfae098f70c5ab0a1251a92eae27772c76edd9",
+        "factory-profile.json": "b33a8362362d9526c306b2830f00d07d38946f2289ab75b2cd0786a99fbf4f43",
+        "object-identity.bin": "401007879da6cf1f472cad1a9227e8fea235be20fa99fb6a4cb41335cda7ece3",
+        "program.mecb": "6b9ad60022091d3e0ecaee44e1be46944820db22ce928012833ee0127012e236",
+        "program.o": "25c7ac8ba71a973dc30fdb472edc29737c4e41d7b7a270e341d1afc4624d396e",
+        "rust-toolchain.toml": "19219593d7dba33a75623287af94da940a93fac92eeef99e8fff9b7fd804fcf9",
+        "src/main.rs": "07b4ef20ce53ac9d974667b9a0dc617ed23cd0b49b0f99c2dda4f2ff22e75096"
+      },
+      "program_revision": "91f5d8fa2d1d9e831b213b06824a2998bc6958b48161bc91ec891fa9eddc8c44",
+      "route": "canonical-artifact-cranelift-object",
+      "runtime_features": [
+        "mech-gpu/canonical-native-runtime",
+        "mech-engine/native-artifact",
+        "mech-core/bool",
+        "mech-core/f64",
+        "mech-core/selective-convert"
+      ],
+      "schema": "mech.canonical-linked-application.v1",
+      "source_is_provenance_only": true,
+      "timing_samples": 0,
+      "typed_ir_sha256": "4e5c394f421195fa1980b009a4bf9e5a90ebe0ada18f019ecc87b0771f9921a9"
+    },
+    "name": "canonical-linked-floats",
+    "object_emissions": 2,
+    "original_and_decoded_pair_equal": true,
+    "program_revision": "91f5d8fa2d1d9e831b213b06824a2998bc6958b48161bc91ec891fa9eddc8c44",
+    "reference": "ordinary canonical resident and JIT original+decoded; all outputs exact; finite native denials compared with JIT, not resident cost policy",
+    "source_sha256": "9a6d6c35ef5fbc897091f5181dd44c669e3f87fb32f779b0b21a6ced151da78c",
+    "typed_ir_review_sha256": "d7f2277ade4d27a25fee10eea13d909d64847948fc5cc26a9f3915a98ea53e39",
+    "typed_ir_sha256": "4e5c394f421195fa1980b009a4bf9e5a90ebe0ada18f019ecc87b0771f9921a9"
+  }
+}

@@ -1,0 +1,169 @@
+{
+  "schema": "mech.native-build-plan.v1",
+  "bytecode_version": 1,
+  "mech_version": "0.3.5",
+  "application_kind": "hosted",
+  "runtime_config": {
+    "name": "canonical-cli-qualification",
+    "resident_durability": "volatile",
+    "limits": {
+      "max_steps_per_turn": 10000,
+      "max_turn_duration_ms": 1000,
+      "max_memory_bytes": null,
+      "max_tasks": 10000,
+      "max_actors": 10000,
+      "max_actor_mailbox_len": 10000,
+      "max_source_bytes": 10485760,
+      "max_in_memory_events": 100000
+    },
+    "diagnostics": {
+      "trace_enabled": false,
+      "profile_enabled": false,
+      "debug_enabled": false,
+      "log_level": "Info"
+    }
+  },
+  "actor_bootstrap": null,
+  "bytecode_sha256": "1547911c5930e85f8cc8fa4e91cf06e950a0eb4c5f24ffa97265bf0408cbfb78",
+  "plan_sha256": "c358fc7a3fd2c5d0abd77af4f4f37f74134594d16066991a3c64029839aa5eaa",
+  "target": null,
+  "profile": "debug",
+  "binary_name": "canonical_cli_stdin",
+  "runtime_functions": [],
+  "runtime_types": [],
+  "application_requirements": [
+    {
+      "kind": "resource",
+      "request": {
+        "base_uri": "cli://cli/stdin",
+        "path": "text",
+        "context_name": "stdin",
+        "operation": "read",
+        "intent": "Read",
+        "delivery": "Live"
+      },
+      "owner": {
+        "host_instance": "cli",
+        "provider": "cli",
+        "host_context": "stdin",
+        "canonical_base_uri": "cli://cli/stdin"
+      }
+    },
+    {
+      "kind": "resource",
+      "request": {
+        "base_uri": "cli://cli/stdout",
+        "path": "text",
+        "context_name": "stdout",
+        "operation": "write",
+        "intent": "Send",
+        "delivery": "Snapshot"
+      },
+      "owner": {
+        "host_instance": "cli",
+        "provider": "cli",
+        "host_context": "stdout",
+        "canonical_base_uri": "cli://cli/stdout"
+      }
+    }
+  ],
+  "packages": [
+    {
+      "package": "mech-core",
+      "crate_name": "mech_core",
+      "source": {
+        "source": "workspace",
+        "path": "src/core"
+      },
+      "cargo_features": [
+        "program",
+        "string"
+      ]
+    },
+    {
+      "package": "mech-engine",
+      "crate_name": "mech_engine",
+      "source": {
+        "source": "workspace",
+        "path": "src/engine"
+      },
+      "cargo_features": [
+        "runtime",
+        "string"
+      ]
+    },
+    {
+      "package": "mech-runtime",
+      "crate_name": "mech_runtime",
+      "source": {
+        "source": "workspace",
+        "path": "src/runtime"
+      },
+      "cargo_features": [
+        "resident-routing",
+        "runtime",
+        "string"
+      ]
+    },
+    {
+      "package": "mech-terminal",
+      "crate_name": "mech_terminal",
+      "source": {
+        "source": "workspace",
+        "path": "hosts/terminal"
+      },
+      "cargo_features": [
+        "provider"
+      ]
+    }
+  ],
+  "core_features": [
+    "program",
+    "string"
+  ],
+  "engine_features": [
+    "runtime",
+    "string"
+  ],
+  "runtime_features": [
+    "resident-routing",
+    "runtime",
+    "string"
+  ],
+  "hosts": [
+    {
+      "name": "cli",
+      "provider": "cli",
+      "package": "mech-terminal",
+      "crate_name": "mech_terminal",
+      "cargo_features": [
+        "provider"
+      ],
+      "factory_path": "mech_terminal::CliHostFactory::with_arguments",
+      "factory_input": "program_arguments",
+      "settings": {
+        "Map": {}
+      }
+    }
+  ],
+  "run_grants": [
+    {
+      "host_instance": "cli",
+      "host_context": "stdin",
+      "operation": "read",
+      "path": "text"
+    },
+    {
+      "host_instance": "cli",
+      "host_context": "stdout",
+      "operation": "write",
+      "path": "text"
+    }
+  ],
+  "live": true,
+  "dependency_source": {
+    "source": "workspace"
+  },
+  "dependency_resolution_seed_sha256": "36b1a96024775de3aaf1d0bb1c174d54ee6389f8c3923f1e5e9861b07cb8ba17",
+  "workspace_fingerprint": "48d285ea0f8b4c6a9fe444a5ffd6553092be2804ea5ef67d0ba00a5478a070db"
+}

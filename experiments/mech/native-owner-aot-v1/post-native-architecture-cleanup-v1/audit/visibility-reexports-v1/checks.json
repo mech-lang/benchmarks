@@ -1,0 +1,87 @@
+[
+  {
+    "name": "format",
+    "command": [
+      "cargo",
+      "+nightly-2026-03-03",
+      "fmt",
+      "--all",
+      "--",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 5.764,
+    "log": "format.log"
+  },
+  {
+    "name": "module-layout",
+    "command": [
+      "python3",
+      "scripts/check-rust-module-layout.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.211,
+    "log": "module-layout.log"
+  },
+  {
+    "name": "whitespace",
+    "command": [
+      "git",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "seconds": 0.069,
+    "log": "whitespace.log"
+  },
+  {
+    "name": "unsafe-boundaries",
+    "command": [
+      "sh",
+      "scripts/check-unsafe-boundaries.sh"
+    ],
+    "exit_code": 0,
+    "seconds": 87.344,
+    "log": "unsafe-boundaries.log"
+  },
+  {
+    "name": "runtime-factory-safety",
+    "command": [
+      "python3",
+      "scripts/check-runtime-factory-safety.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.642,
+    "log": "runtime-factory-safety.log"
+  },
+  {
+    "name": "build-analysis-layout",
+    "command": [
+      "python3",
+      "scripts/check-native-build-analysis-layout.py"
+    ],
+    "exit_code": 0,
+    "seconds": 0.036,
+    "log": "build-analysis-layout.log"
+  },
+  {
+    "name": "warning-policy",
+    "command": [
+      "python3",
+      "scripts/check-warning-policy.py"
+    ],
+    "exit_code": 0,
+    "seconds": 8.792,
+    "log": "warning-policy.log"
+  },
+  {
+    "name": "compiler-planning-quarantine",
+    "command": [
+      "python3",
+      "scripts/check-compiler-planning-quarantine.py"
+    ],
+    "exit_code": 0,
+    "seconds": 88.714,
+    "log": "compiler-planning-quarantine.log"
+  }
+]

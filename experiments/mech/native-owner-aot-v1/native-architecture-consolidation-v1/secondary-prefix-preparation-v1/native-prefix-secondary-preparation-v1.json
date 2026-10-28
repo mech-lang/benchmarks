@@ -1,0 +1,647 @@
+{
+  "schema": "mech.secondary-prefix-preparation.v1",
+  "status": "prepared-only; no subject execution; final F/I and primary-session completion pending",
+  "scope": "Prospective complete-process one-million-base prefix diagnostic, separate from primary192 and from compile/size observations",
+  "performance_qualified": false,
+  "primary_timing_samples": 0,
+  "secondary_observations_collected": 0,
+  "oracle": {
+    "input": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/input.fasta",
+      "sha256": "e9a7a743b0cda5b46863eaec0483370c3eb2cdb20c6a0f24c2bfac776abfe4bb",
+      "bytes": 1016674
+    },
+    "expected_output": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/rust-span-diagnostic-v2/expected.txt",
+      "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+      "bytes": 249
+    },
+    "independent_oracle": {
+      "path": "/private/tmp/native-prefix-independent-oracle-v1.txt",
+      "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+      "bytes": 249
+    },
+    "oracle_method": "Independent byte-window Counter for widths1/2; overlapping byte search for queries; independent f64 and rounded f32 percentage paths agree; no subject executable invoked",
+    "headers": [
+      ">THREE"
+    ],
+    "record_bases": 1000000,
+    "uppercase_record_sha256": "9bb2a32d485a8242e43ee97b771d3e1504de43dd3be4cc3e03c84a46e24ebd48",
+    "full_input": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/janet/.build/inputs/fasta-n25000000.stdin",
+      "sha256": "3fcf4f78104c8a65ef210fe1d469f4e473456c791225f2f1f9114f4986aa09fa",
+      "bytes": 254166745
+    },
+    "full_headers_before_selected_record": [
+      ">ONE Homo sapiens alu",
+      ">TWO IUB ambiguity codes",
+      ">THREE Homo sapiens frequency"
+    ],
+    "exact_THREE_prefix_of_full_input": true,
+    "frequency_counts": {
+      "1": {
+        "A": 302905,
+        "C": 198003,
+        "G": 197460,
+        "T": 301632
+      },
+      "2": {
+        "AA": 91745,
+        "AC": 60019,
+        "AG": 59806,
+        "AT": 91335,
+        "CA": 59986,
+        "CC": 39175,
+        "CG": 39076,
+        "CT": 59765,
+        "GA": 59804,
+        "GC": 39071,
+        "GG": 39024,
+        "GT": 59561,
+        "TA": 91370,
+        "TC": 59737,
+        "TG": 59554,
+        "TT": 90971
+      }
+    },
+    "query_counts": {
+      "GGT": 11778,
+      "GGTA": 3572,
+      "GGTATT": 384,
+      "GGTATTTTAATT": 7,
+      "GGTATTTTAATTTATAGT": 7
+    },
+    "histogram_widths": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      12,
+      18
+    ],
+    "updates_per_histogram": [
+      1000000,
+      999999,
+      999998,
+      999997,
+      999995,
+      999989,
+      999983
+    ],
+    "expected_updates": 6999961,
+    "update_derivation": "sum(N-k+1), k=[1,2,3,4,6,12,18] = 7*N-39",
+    "funded_batch_capacity": 1024,
+    "expected_funded_batches": 6839,
+    "batch_derivation": "sum(ceil((N-k+1)/1024)) with ample retained finite work caps; this is a diagnostic check, not a new budget",
+    "execution_observations": 0,
+    "primary_timing_samples": 0
+  },
+  "oracle_derivation_script": {
+    "path": "/private/tmp/native-prefix-independent-oracle-v1.py",
+    "sha256": "dc6533614f32e66ec7ab708b6ad866a9c178169f44bb4576e68b6c76127c572a",
+    "bytes": 4595
+  },
+  "source_compatibility": {
+    "full_public_source": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/knucleotide-source-map.mec",
+      "sha256": "ddd2a78102f727abd838dfc8628bf877410532377b00e5e6bcdf34c2d33410da",
+      "bytes": 3156
+    },
+    "bytecode": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-paired-candidate-values.project/program.mecb",
+      "sha256": "050db3a016f0caea04900d48940db5bbefc880c3ada507eff82c22c5b84418b0",
+      "bytes": 42928
+    },
+    "guest_object": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-paired-candidate-values.project/program.o",
+      "sha256": "a45687cbcb1d8824a1de595545192e14b075462e309cbd3796286f04b1667f4c",
+      "bytes": 131440
+    },
+    "historical_results": {
+      "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/results.json",
+      "sha256": "251f352041c2dfadd36d2416155b50ef0aa48486a65c69cb30c25ae840956b78",
+      "bytes": 103536
+    },
+    "conclusion": "The original public source computes N from the selected THREE record; no hard-coded full/prefix length. Original W and R already produced the exact retained prefix output. F/I eligibility requires their adopted public receipts, same source/bytecode/Object checks and completed primary sessions; no replacements or rebuilding."
+  },
+  "historical_prefix_policy": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/full-timing-v1/launch.json",
+    "sha256": "3110571a37e660392e06494f51b5185e53b9df73ce28f7fb2fd0daf57cdb43ec",
+    "bytes": 746
+  },
+  "proposed_policy": {
+    "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/full-disjoint-state-v1/launch.json",
+    "sha256": "73a693c1a1f107a6546bddf943d62ff4b20ee0611efb4bd823a7ee35b4770aa9",
+    "bytes": 749
+  },
+  "policy_changes_from_historical_prefix": {
+    "library.comparison_work": {
+      "historical": 1125899906842624,
+      "proposed": 72057594037927936
+    },
+    "work": {
+      "historical": 72057594037927936,
+      "proposed": 1152921504606846976
+    }
+  },
+  "policy_choice": "Use the currently adopted primary secured policy unchanged for every new Mech prefix observation; only input changes. Historical prefix times are not pooled or compared as new samples.",
+  "retained_controls": {
+    "W": {
+      "executable": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/.build/counting-paired-candidate-values",
+        "sha256": "43ec6990256fec678e99bc7726ce2f203a4191154e19963fee4a43b355fc70ca",
+        "bytes": 5517792
+      },
+      "rebuild": false
+    },
+    "R": {
+      "executable": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/.build/knucleotide-rust-7",
+        "sha256": "f084777c37420ac822b4cfc1be72fa6b9bc8438d833f1647856d13b40d1ee763",
+        "bytes": 755872
+      },
+      "rebuild": false
+    }
+  },
+  "shared_runtime_environment": {
+    "path": "/private/tmp/benchmarks-native-consolidation/experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/runtime-environment-v1.json",
+    "sha256": "9eb02e4e90eab72fa151b3f6f7dc90ed81e2af8f8a03af9579b46021b8e78e06",
+    "bytes": 1458
+  },
+  "shared_execution_owners": {
+    "study": {
+      "path": "/private/tmp/benchmarks-native-consolidation/experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/study.py",
+      "sha256": "cb9692dfc07569a4e47cb52f4855c8a0f15077b2250ce27b2d1393735d7ee952",
+      "bytes": 5668
+    },
+    "campaign": {
+      "path": "/private/tmp/benchmarks-native-consolidation/experiments/mech/native-owner-aot-v1/native-architecture-consolidation-v1/campaign.py",
+      "sha256": "eb29d0070184144a8775f61da66e63f30316868c6587a8c71b730d6479e3cdc8",
+      "bytes": 14912
+    },
+    "process": {
+      "path": "/private/tmp/benchmarks-native-consolidation/experiments/janet/knucleotide-bytes-v1/process.py",
+      "sha256": "e0c6c1260af4900cd4b307252b54461b3f7cee90e2c102ec157d9b1429a5ce3b",
+      "bytes": 4652
+    },
+    "supervisor": {
+      "path": "/private/tmp/benchmarks-native-consolidation/tools/qualification/prolog_supervisor.py",
+      "sha256": "5458bdf5e58465cb21156a2140657066b4706aa2a0941fe3efde8758207574b4",
+      "bytes": 11090
+    }
+  },
+  "protocol": {
+    "per_study_observations": 16,
+    "orders": [
+      [
+        "F",
+        "I",
+        "R",
+        "W"
+      ],
+      [
+        "I",
+        "W",
+        "F",
+        "R"
+      ],
+      [
+        "W",
+        "R",
+        "I",
+        "F"
+      ],
+      [
+        "R",
+        "F",
+        "W",
+        "I"
+      ]
+    ],
+    "warmups": 0,
+    "excluded_outliers": 0,
+    "retries_or_replacement_samples": 0,
+    "run_when": "Only after both primary sessions are complete and validate_reports passes; preferably after primary campaigns in both studies so these diagnostics cannot warm another pending primary campaign.",
+    "subject_resolution": "Existing study.subjects() from explicitly adopted receipts; same F/I/W/R executable hashes as primary sessions",
+    "runtime_environment": "Existing study.runtime_environment(plan), identical for all four subjects, without overrides",
+    "policy": "Existing study.inputs() policy, pinned to proposed_policy above",
+    "process": "Existing process.execute with stdin=retained prefix, deadline=30, quantitative=True; same r+ shared mutex, no replacement inode",
+    "mutex": {
+      "path": "/private/tmp/mech-clbg-timing.lock",
+      "inode": 83858837
+    },
+    "commands": {
+      "F/I/W": [
+        "<adopted executable>",
+        "<unchanged primary policy>",
+        "<unique secondary native report>",
+        "--"
+      ],
+      "R": [
+        "<retained R executable>"
+      ]
+    },
+    "verification": "Validate before/after source and executable/input/policy/controller pins; raw receipt exit0, no error/signals/unfinished observer, cleanup_errors empty, group_closed/reaped; output exact249 bytes; unique birth identities; retain every raw stdout/stderr/report including failures",
+    "summary": "Show all16 elapsed observations and four-sample medians per subject; descriptive within-row ratios allowed; no bootstrap acceptance, no speedup/no-regression claim, no pooling with primary or old prefix timings",
+    "archives": "New per-study secondary-prefix-v1 directory plus immutable prospective protocol; leave all old attempts unchanged"
+  },
+  "native_checks": {
+    "exact_counters": {
+      "native_hash_table_regions": 7,
+      "native_packed_map_regions": 7,
+      "native_packed_ssa_regions": 7,
+      "native_guarded_loop_regions": 7,
+      "native_guarded_call_regions": 7,
+      "native_parallel_tasks": 7,
+      "native_hash_table_updates": 6999961,
+      "native_packed_map_updates": 6999961,
+      "native_fused_string_map_bytes": 1000000,
+      "native_worker_credit_batches": 6839,
+      "native_parallel_batches": 1,
+      "native_parallel_regions": 2,
+      "native_frozen_map_regions": 5,
+      "native_direct_lookup_regions": 5,
+      "native_frozen_map_reads": 10
+    },
+    "required_flags": {
+      "native_aot": true,
+      "jit": false,
+      "source_parser": false,
+      "resident_body_evaluation": false,
+      "policy": "secured",
+      "shutdown": "completed"
+    },
+    "schedule_dependent_checks": {
+      "native_parallel_peak_workers": "integer in1..7, not exact7 for short input",
+      "native_worker_credit_claims": "positive integer",
+      "native_worker_credit_reclaims": "equals claims after complete shutdown",
+      "native_work": "positive and within unchanged finite policy work cap",
+      "native_comparison_work": "positive and within unchanged finite comparison cap"
+    },
+    "independent_derivation": "Seven histogram widths from unchanged source; updates sum(N-k+1)=7*N-39. Full funded batches sum(ceil((N-k+1)/1024)); unchanged runtime BATCH1024 and ample finite caps. Source has2+5 histogram tasks in two comprehensions, five query maps and two lookups per query.",
+    "do_not_hardcode": {
+      "native_work": [
+        1903615695293631,
+        1903615695293887,
+        1903615695294095,
+        1903615695294159
+      ],
+      "native_comparison_work": [
+        29732192101682,
+        29732192101694,
+        29732192101712
+      ],
+      "native_worker_credit_claims": [
+        443,
+        444,
+        445,
+        453
+      ],
+      "native_worker_credit_reclaims": [
+        443,
+        444,
+        445,
+        453
+      ]
+    }
+  },
+  "visible_separate_metrics": {
+    "prefix_time": "New16-observation diagnostic only, seconds to complete process exit",
+    "executable_size": "File stat bytes of actual primary-pinned public executable, verified SHA before/after; F/I resolved when adopted; W5517792/R755872 now",
+    "compile_time": {
+      "F/I": "Read their adopted compiler-build/process.json and aot-build/process.json separately; no new build or runtime sum",
+      "retained_observations": {
+        "W": {
+          "seconds": 91.154431084,
+          "receipt": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/build/process.json",
+            "sha256": "f27cf3682c3d9790d8b01dfd7db06e2b41a76cb58c15157cd0c8b7418bba4da1",
+            "bytes": 1241
+          },
+          "scope": "Historical public AOT build: source emission and Rust host compilation/link; includes existing cache state",
+          "fresh_cold_compile_comparison": false
+        },
+        "R": {
+          "seconds": 0.722274042,
+          "receipt": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/rust-comparison-v2/rust-build/process.json",
+            "sha256": "cddfcd0875d5168dbfd14bf52e8c4882f2b59e2b07e2030f8e8ba91ea4453e93",
+            "bytes": 2067
+          },
+          "scope": "Historical direct rustc build of retained R; dependency compilation excluded",
+          "fresh_cold_compile_comparison": false
+        },
+        "R_dependency_preparation": {
+          "seconds": 0.046440042,
+          "receipt": {
+            "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-hashmap-work-v1/rust-comparison-v2/rust-dependencies/process.json",
+            "sha256": "7e1f8b981453f1ff1f67d5d188e81df29b9f87729d087e21ce29e233c4d6a4a8",
+            "bytes": 1011
+          },
+          "scope": "Historical Cargo dependency stage; cache-dependent, separate from direct rustc"
+        }
+      },
+      "caveat": "Build elapsed receipts are historical/cache-dependent observations with different scopes, not a controlled comparative compilation benchmark."
+    }
+  },
+  "historical_prefix_process_evidence": [
+    {
+      "label": "candidate",
+      "round": "warmup",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-candidate/process.json",
+        "sha256": "75c2845d87d57165291b1ae65b70727fb1fe939f25e9870387919272beedf21d",
+        "bytes": 1013
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-candidate/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-candidate/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": false,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-candidate.report.json",
+        "sha256": "c05f54df45c4b9f226421b21f30ee2ff921463e397f8db7b7397f008c5151d39",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "baseline",
+      "round": "warmup",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-baseline/process.json",
+        "sha256": "acdbbe9992b2d7e05a694d55ed0ab810c1f9c7db5161b17d978fc8cbd4aa6fa9",
+        "bytes": 995
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-baseline/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-baseline/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": false,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-baseline.report.json",
+        "sha256": "d94e2d3ecafa54653df3290e236dfaa7f96a618db7fd669c16a30ff55f797676",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "rust",
+      "round": "warmup",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-rust/process.json",
+        "sha256": "e1cfbb748558c962b0993f2a668eca61d158eb6bbe724e5783fe10cfb25cd022",
+        "bytes": 720
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-rust/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/warmup-rust/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": false,
+      "reused_as_new_observation": false
+    },
+    {
+      "label": "candidate",
+      "round": "0",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-candidate/process.json",
+        "sha256": "c75f6c5e504eaa5f5982a38bb921ba3830d4c2de792a313da28845bc47f7fe17",
+        "bytes": 1008
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-candidate/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-candidate/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-candidate.report.json",
+        "sha256": "9a30c6a79b8be9e4e4fbe12092e38f05e8fa6881c97c06d1193de7bc72e62d56",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "baseline",
+      "round": "0",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-baseline/process.json",
+        "sha256": "7c7be7d19166dc93a5a7f2f983586b938d13420acaef94b66da624e4807f71df",
+        "bytes": 989
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-baseline/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-baseline/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-baseline.report.json",
+        "sha256": "a0730fb916a527f3650daf1f6de31767fe294a6485040843834e2025d8b74fdb",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "rust",
+      "round": "0",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-rust/process.json",
+        "sha256": "dace0b10808fdda4f98e3fe6d2f9074c9c27d2ac6f300ea19992296dcc320f89",
+        "bytes": 723
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-rust/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/0-rust/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false
+    },
+    {
+      "label": "candidate",
+      "round": "1",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-candidate/process.json",
+        "sha256": "f87099b1ec1b5f78c67a5dfc0c229fd349727d66a6f8e93dc6230be9cec31bde",
+        "bytes": 995
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-candidate/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-candidate/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-candidate.report.json",
+        "sha256": "47771ff67e71487d8986fdb26164fc78d5d9623d00f0a0544b3ab43a8dc69221",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "baseline",
+      "round": "1",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-baseline/process.json",
+        "sha256": "cf2daa53b157dab313dd4b08a71cc7dfc31ae49c7c8617f5dec3398f0c65de61",
+        "bytes": 1000
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-baseline/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-baseline/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-baseline.report.json",
+        "sha256": "05269366dd4bc9c64b94c9c54e96a2a43753026a8c94dc276de1fde3f0f8a685",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "rust",
+      "round": "1",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-rust/process.json",
+        "sha256": "982c89f095d898c7f0eacb282f058876600a7f81b3d0d59292c70d31bf152b25",
+        "bytes": 722
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-rust/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/1-rust/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false
+    },
+    {
+      "label": "candidate",
+      "round": "2",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-candidate/process.json",
+        "sha256": "2c8c3af1888bace99e859d94716bd36beb995aeaefc7637078605f2142d4d61b",
+        "bytes": 995
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-candidate/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-candidate/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-candidate.report.json",
+        "sha256": "e1b93034201c620339044274a00a319654a12f997bd3351d9a31967888e983d6",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "baseline",
+      "round": "2",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-baseline/process.json",
+        "sha256": "3a1de4c025f371e4a7ebbce96c3c6ed6fc3e1fe045f05dda154fb7fb0fdf4754",
+        "bytes": 1000
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-baseline/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-baseline/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false,
+      "native_report": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-baseline.report.json",
+        "sha256": "bb6411fa21b7380877d8c5a24d7f5bf7448d7f864783eb329ecf15c6b337ee63",
+        "bytes": 1781
+      }
+    },
+    {
+      "label": "rust",
+      "round": "2",
+      "process": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-rust/process.json",
+        "sha256": "b158bb923e9b80dc19a2aa6582b57f98edf90c1032890517c2d25c437de51da3",
+        "bytes": 722
+      },
+      "stdout": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-rust/stdout.bin",
+        "sha256": "f14defab6d0218adf873d1b3c9ecde472b9c8c7141da7be51ea0c9877a6cebfa",
+        "bytes": 249
+      },
+      "stderr": {
+        "path": "/private/tmp/mech-benchmark-publication/experiments/mech/native-owner-aot-v1/paired-candidate-loads-timing-v1/2-rust/stderr.bin",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      "quantitative_benchmark": true,
+      "reused_as_new_observation": false
+    }
+  ],
+  "pending": [
+    "Final F/I receipt pins",
+    "All required primary sessions and evidence validation",
+    "Prospective secondary protocol adoption before first diagnostic sample"
+  ]
+}
