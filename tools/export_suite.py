@@ -73,7 +73,7 @@ def export(output, root=ROOT):
         destination = evidence / path.parent.name
         destination.mkdir(parents=True)
         for item in path.parent.rglob('*'):
-            if item.is_file() and item.suffix in ('.json', '.txt', '.md', '.mec', '.rs', '.toml', '.lock', '.gz') and 'raw' not in item.relative_to(path.parent).parts:
+            if item.is_file() and item.suffix in ('.json', '.txt', '.md', '.mec', '.rs', '.c', '.h', '.toml', '.lock', '.gz') and 'raw' not in item.relative_to(path.parent).parts:
                 target = destination / item.relative_to(path.parent)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(item, target)

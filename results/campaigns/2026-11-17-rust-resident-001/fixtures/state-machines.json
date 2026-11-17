@@ -1,0 +1,56 @@
+{
+  "progress": "implemented",
+  "backends": [
+    "source",
+    "bytecode"
+  ],
+  "task": {
+    "oracle": "fsm",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "UTF-8 capture → bool",
+    "arithmetic": "Exact raw UTF-8 match on the captured argument",
+    "absolute_tolerance": 0,
+    "relative_tolerance": 0,
+    "logical_input_elements": 1,
+    "ordering": "source order for matrices; canonical set order for sets",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values",
+    "state": "First turn suspends without publication; next turn resumes using original capture despite changed live input",
+    "effects": "Pure FSM: no external effects permitted; effectful FSM coverage is a separate case"
+  },
+  "measurement": {
+    "boundary": "resident_turn",
+    "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+    "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+    "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+    "reset": "fresh instance after warmup; state evolves within each block",
+    "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        "é"
+      ],
+      [
+        "é"
+      ]
+    ],
+    "scenario": "changing_values",
+    "retain_snapshots": false,
+    "abort_before_accept": false,
+    "input_kind": "string",
+    "cycles": 1,
+    "warmup": 2
+  },
+  "id": "state-machines",
+  "title": "FSM suspension and frozen-capture resume",
+  "family": "state",
+  "source": "suite/fixtures/state-machines.mec",
+  "compiler_tests": [
+    {
+      "repository": "mech-lang/mech",
+      "path": "src/stdlib/tests/string_literal_match.rs"
+    }
+  ]
+}

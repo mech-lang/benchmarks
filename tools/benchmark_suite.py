@@ -240,7 +240,13 @@ def validate_campaign(directory, campaign):
                         raise ValueError('case receipt parent observation is not pinned')
                     source=json.loads(reader.read(parent_name))
                     matches=[entry for entry in source.get('application_results',[]) if entry.get('name')==parent['case']]
-                    if source.get('outcome')!='ok' or len(matches)!=1 or observation.get('metrics')!={**matches[0]['metrics'],**source['metrics']}:
+                    if source.get('outcome')!='ok' or len(matches)!=1:
+                        raise ValueError('case receipt differs from its actual program worker observation')
+                    expected_metrics={**matches[0]['metrics'],**source['metrics']}
+                    if observation.get('derived_metrics'):
+                        if observation['derived_metrics']!=['output_bytes']:raise ValueError('unknown derived program metric')
+                        expected_metrics['output_bytes']=len(bytes.fromhex(matches[0]['raw_hex']))
+                    if observation.get('metrics')!=expected_metrics:
                         raise ValueError('case receipt differs from its actual program worker observation')
                     if hashlib.sha256(bytes.fromhex(matches[0]['raw_hex'])).hexdigest()!=observation.get('final_output',{}).get('sha256'):
                         raise ValueError('case receipt output differs from its actual program output')

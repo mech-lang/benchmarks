@@ -13,12 +13,37 @@ not erase a successful result; named campaigns and “Needs attention” retain
 failed observations. Tasks without a result for the selected view are omitted
 instead of appearing with empty timing cells. Each result links to its own run.
 
-Unmeasured Rust controls say **Rust · not measured**. They are not replaced with
-previous Mech results or an unrelated language. Resident diagnostics still need
-qualified Rust implementations with matching task and timing obligations.
+Every active task now has a measured control in the default view. The new paired
+campaigns cover all 44 resident/scalar-JIT cases, 1/2/4-process scaling, the native
+build, full K-nucleotide and all 12 compressor inputs. N-body and Related Post Gen
+retain their previously qualified controls. Each control exposes its individual
+observations and exact source. Earlier campaigns retain their original missing
+controls rather than receiving fabricated or mismatched historical timings.
 Existing previous-compiler comparisons remain under **History comparison**.
-Roc and libdeflate measurements remain in the compressor detail and downloads;
-their different allocation/transport boundaries do not establish Rust ratios.
+
+The [independent Rust package](controls/rust/README.md) links no Mech code and
+does not read oracle answers. Python checks full trajectories, publication before
+execution, recovery, retained snapshots and ownership teardown. Mech additionally
+performs its runtime scheduling, admission and budget accounting; these are task
+comparisons rather than claims of identical internal machinery. Native Rust
+ownership is not reported as a fictitious Mech resource ledger or artifact.
+
+The resident campaign uses five independent forks and 1,000 complete input
+schedule cycles, with fixed catalog cycles for EKF and the suspended state
+machine. Source, decoded and Rust workers run in seeded random order within each
+block on the same machine. Every measured observation, including adverse ones,
+is preserved. The separate verification clocks are not accepted timings.
+The capacity cases use a later independent five-fork repeat with 256 complete
+cycles after disabling an expensive progress monitor. The first sweep remains
+inspectable and is identified in the findings; its samples were not removed.
+
+Compression reports **output size alongside time**. Rust uses genuine Rust
+zlib-rs 0.6.8 at maximum level 9; Mech level 12 must match its pinned Roc stream.
+Both consume the complete input, preserve the prefix and aliases, produce an
+independently owned stream and pass independent inflation/EOF/no-trailing-data
+checks. Different compressed sizes make the time ratio a codec tradeoff rather
+than an equal-quality speed claim. Historical Roc/libdeflate observations remain
+in their original campaigns and downloads.
 
 ## Fixed Mech controls
 

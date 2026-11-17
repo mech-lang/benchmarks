@@ -228,6 +228,27 @@ class NativeFootprint(unittest.TestCase):
 
 
 class RetainedMeasurements(unittest.TestCase):
+    def test_compressed_size_is_bound_to_the_actual_worker_bytes(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); parent=root/'raw/program/stdout.json'
+            save(parent,{'outcome':'ok','application_results':[{'name':'case','raw_hex':'abcdef','metrics':{'seconds':1}}],'metrics':{'artifact_bytes':12}})
+            metrics={'seconds':1,'artifact_bytes':12,'output_bytes':3}
+            receipt={'outcome':'ok','metrics':metrics,'derived_metrics':['output_bytes'],
+                'final_output':{'sha256':hashlib.sha256(bytes.fromhex('abcdef')).hexdigest()},
+                'parent_observation':{'path':'raw/program/stdout.json','sha256':file_digest(parent),'case':'case'}}
+            record={'case_id':'case','backend':'program-jit','lane':'candidate','progress':'measured','outcome':'ok',
+                'task':{},'task_hash':digest({}),'measurement':{},'measurement_hash':digest({}),
+                'source':'test','source_sha256':hashlib.sha256(b'test').hexdigest(),'environment_hash':digest({}),
+                'samples':[{'fork':0,'raw':'raw/fork-1','metrics':metrics}]}
+            record['summary']=summarize(record['samples'])
+            campaign={'schema':'mech.benchmark-campaign.v1','complete':True,'environment':{},'environment_hash':digest({}),'results':[record]}
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            self.assertTrue(validate_campaign(root,campaign))
+            metrics['output_bytes']=2;record['summary']=summarize(record['samples'])
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            with self.assertRaisesRegex(ValueError,'actual program worker'):validate_campaign(root,campaign)
+
     def test_resealed_receipt_cannot_replace_original_retained_timing(self):
         import gzip
         import hashlib
@@ -255,6 +276,18 @@ class RetainedMeasurements(unittest.TestCase):
 
 
 class ExportPreservation(unittest.TestCase):
+    def test_independent_c_oracle_source_is_downloadable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); campaign=root/'results/campaigns/oracle-source'
+            campaign.mkdir(parents=True)
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'oracle-source','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':digest({}),'results':[]})
+            (campaign/'oracle.c').write_text('int main(void) { return 0; }\n')
+            seal_evidence(campaign)
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                export_suite.export(root/'public',root)
+            self.assertEqual((root/'public/campaign-evidence/oracle-source/oracle.c').read_bytes(),(campaign/'oracle.c').read_bytes())
+
     def test_bad_incoming_evidence_preserves_existing_export(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)

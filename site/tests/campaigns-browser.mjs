@@ -25,8 +25,10 @@ try {
   check('latest view and all retained campaigns are selectable',await page.locator('#campaign option').count()===bundle.campaigns.length+1);
   check('the default view combines measured results',await page.locator('#campaign').inputValue()==='$latest');
   check('every default task row has a Mech measurement',await page.locator('.mech-value').evaluateAll(cells=>cells.every(c=>!c.textContent.includes('—'))));
+  check('every default task has an actual measured control',await page.locator('.control-value').evaluateAll(cells=>cells.every(c=>c.querySelector('strong')&&!c.textContent.includes('not measured'))));
+  check('every default row has a numeric control comparison',await page.locator('#cases .change').evaluateAll(cells=>cells.every(c=>/[%×]|Baseline held/.test(c.textContent))));
   check('controls have a dedicated column',(await page.locator('thead').innerText()).includes('Control'));
-  check('external controls are not execution paths',await page.locator('#backend option[value="jvm"], #backend option[value="roc"], #backend option[value="libdeflate"]').count()===0);
+  check('external controls are not execution paths',await page.locator('#backend option[value="jvm"], #backend option[value="rust"], #backend option[value="roc"], #backend option[value="libdeflate"]').count()===0);
   check('JVM is not a task row',await page.locator('[data-case="jvm"]').count()===0);
   const nbodyRow=page.locator('#cases tr').filter({has:page.locator('[data-case="nbody"]')});
   check('N-body has its measured Rust control',(await nbodyRow.locator('.control-value').innerText()).includes('Rust · Benchmarks Game #3'));
@@ -69,7 +71,8 @@ try {
   await page.locator('#progress').selectOption('all');
 
   await page.locator('#backend').selectOption('native');
-  check('native selection finds its measured campaign',await page.locator('#campaign').inputValue()==='2026-11-16-native-build-003');
+  const nativeRun=bundle.campaigns.findLast(c=>c.results.some(r=>r.backend==='native'&&r.progress==='measured'));
+  check('native selection finds its measured campaign',await page.locator('#campaign').inputValue()===nativeRun.id);
   await page.locator('#metric').selectOption('object_text_bytes');
   check('native code size is measured',(await page.locator('#detail .measurement strong').innerText())!=='—');
   await page.locator('#campaign').selectOption('2026-11-16-native-build-001');
@@ -79,7 +82,8 @@ try {
   const applicationRun=bundle.campaigns.find(c=>c.results.some(r=>r.backend==='program-jit-bytecode'&&r.progress==='measured'));
   if(applicationRun) {
     await page.locator('#backend').selectOption('program-jit-bytecode');
-    check('decoded full application selects its measured run',await page.locator('#campaign').inputValue()===applicationRun.id);
+    await page.locator('#campaign').selectOption(applicationRun.id);
+    check('historical decoded full application remains selectable',await page.locator('#campaign').inputValue()===applicationRun.id);
     await page.locator('[data-case="deflate"]').click();
     check('full application chooses its checked-call measurement',(await page.locator('#detail .measurement').innerText()).includes('Checked program call'));
     check('full application has three independent forks',await page.locator('#detail .sample-list a').count()===3);
@@ -90,6 +94,19 @@ try {
     check('scaling chooses the whole group measurement',(await page.locator('#detail .measurement').innerText()).includes('Complete worker group'));
     check('all tasks have accepted measurements somewhere',(await page.locator('#coverage-summary').innerText()).includes(`${bundle.catalog.cases.length} of ${bundle.catalog.cases.length}`));
   }
+  await page.goto(base,{waitUntil:'networkidle'});
+  await page.locator('[data-case="deflate"]').click();
+  check('current compressor has a measured Rust implementation',(await page.locator('#detail .control-detail').innerText()).includes('Rust · zlib-rs level 9'));
+  check('compression size accompanies the timing comparison',(await page.locator('#detail .compression-quality').innerText()).includes('Different codecs and levels'));
+  await page.getByText('Control measurements',{exact:true}).click();
+  check('all five Rust compressor samples are inspectable',await page.locator('#detail .control-samples a').count()===5);
+  const rustLink=await page.locator('#detail .control-samples a').first().getAttribute('href');
+  const rustResponse=await page.request.get(rustLink);
+  const rustRaw=await rustResponse.json();
+  check('Rust sample link contains a real validated stream',rustResponse.status()===200&&rustRaw.final_output.complete_stream===true&&rustRaw.final_output.complete_input_consumption===true);
+  await page.goto(base,{waitUntil:'networkidle'});
+  await page.locator('[data-case="scalar-changed"]').click();
+  check('current scalar control retains its actual five forks',await page.locator('#detail .control-samples a').count()===5);
   await page.goto(base,{waitUntil:'networkidle'});
   if(output){await mkdir(output,{recursive:true});await page.screenshot({path:path.join(output,'metrics-desktop.png'),fullPage:true});}
   const shared=page.url();

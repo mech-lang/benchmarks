@@ -1,0 +1,1022 @@
+{
+  "schema": "mech.benchmark-campaign.v1",
+  "id": "2026-11-17-rust-native-001",
+  "started_at": "2026-11-17T17:21:26.572573+00:00",
+  "profile": "paired-rust-native",
+  "environment": {
+    "system": "Darwin",
+    "release": "25.2.0",
+    "machine": "arm64",
+    "cpu": "Apple M3",
+    "logical_cpus": 8,
+    "python": "3.14.8",
+    "thread_environment": {}
+  },
+  "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+  "workers": {
+    "candidate": {
+      "protocol": 1,
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "source_checkout": "/Users/cim310/.codex/worktrees/level12-compile-profile/mech",
+      "dirty": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/canonical-complete-9087/target/release/mech-benchmark-worker",
+      "binary_sha256": "83f6ed8427ed8219383a8dcfd2358a1e54a4850f7ba14fc4be12c5038e5c2ac4",
+      "adapter_sha256": "213cce5409530b9b632e20d5c4c9c399579f97bdfcb72fdaa3b39ef23dd098df",
+      "manifest_sha256": "57e1d8c3efac72a80ca18a0ae3404cf15e66cdfec1aac415fa0e6cdf9ac77def",
+      "lock_sha256": "bbab11f0a3a09351b1a12e2f2820405b5e3b696dd87ddc6c91e840cd38b72746",
+      "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0",
+      "cargo": "cargo 1.96.0-nightly (f298b8c82 2026-02-24)",
+      "build_command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/canonical-complete-9087/Cargo.toml",
+        "--offline",
+        "--features",
+        "native"
+      ],
+      "feature_profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+      "native_generation": true,
+      "applications": {},
+      "auxiliary_adapter_sha256": {
+        "application.rs": "e222e1d6f8b0237f3dd0086d41588d968b69a060203db2e02ab633e62c5ee628",
+        "numerical_application.rs": "765caa3d80273ddf6966d4f5534e38e206380cde3a2a0a5a3c86c56618953e3a"
+      },
+      "worker_build_seconds": 1.9535677917301655,
+      "build_environment": {
+        "RUSTC_BOOTSTRAP": "1",
+        "CARGO_TARGET_DIR": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/canonical-complete-9087/target"
+      },
+      "manifest_path": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/canonical-complete-9087/worker.json"
+    }
+  },
+  "sampling": {
+    "forks": 5,
+    "cycles": 1000,
+    "seed": 202611172,
+    "order": "Seeded random order within every case/fork block; verification separate; all measured observations retained"
+  },
+  "results": [
+    {
+      "case_id": "native-build",
+      "title": "Native compilation, linked execution and code size",
+      "family": "compilation",
+      "backend": "native",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "task": {
+        "oracle": "chain",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "task_hash": "90c7d6237d3c891554be1253d201bb1d2c579c7e1a6c6480ec96f41ddb2917d8",
+      "measurement": {
+        "boundary": "source_to_executable_and_native_process",
+        "input_submission": "one exact f64 command-line input per fresh process; included",
+        "output_observation": "all declared scalar outputs, complete stdout included; named result independently verified",
+        "setup": "compiler/toolchain built ahead of campaign; support dependencies warmed by qualification build",
+        "reset": "fresh native process per input; new generated project per build fork",
+        "destruction": "shutdown included in process time",
+        "cache": "Untimed qualification warms support dependencies; fresh project per measured build",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "primary_metric": "source_to_executable_seconds",
+        "comparison_note": "Source to linked executable, with a fresh source/project per fork and warmed support dependencies. Mech includes its compiler worker, dependency resolution, checked runtime support build and link; Rust includes rustc and final link with prebuilt standard library. Both produce a complete scalar CLI checked against all scheduled inputs. This compares deployment paths, including their different support machinery.",
+        "stripping_policy": "strip=symbols"
+      },
+      "measurement_hash": "acf3770d6e914f5b6e64758e7af9fba0581c987ed3e0081d359c011c9b909e56",
+      "source": "x := signal<f64>\nn0 := x * 1.0001 + 0.01\nn1 := n0 * 1.0001 + 0.01\nn2 := n1 * 1.0001 + 0.01\nn3 := n2 * 1.0001 + 0.01\nn4 := n3 * 1.0001 + 0.01\nn5 := n4 * 1.0001 + 0.01\nn6 := n5 * 1.0001 + 0.01\nn7 := n6 * 1.0001 + 0.01\nn8 := n7 * 1.0001 + 0.01\nn9 := n8 * 1.0001 + 0.01\nn10 := n9 * 1.0001 + 0.01\nn11 := n10 * 1.0001 + 0.01\nn12 := n11 * 1.0001 + 0.01\nn13 := n12 * 1.0001 + 0.01\nn14 := n13 * 1.0001 + 0.01\nn15 := n14 * 1.0001 + 0.01\nn16 := n15 * 1.0001 + 0.01\nn17 := n16 * 1.0001 + 0.01\nn18 := n17 * 1.0001 + 0.01\nn19 := n18 * 1.0001 + 0.01\nn20 := n19 * 1.0001 + 0.01\nn21 := n20 * 1.0001 + 0.01\nn22 := n21 * 1.0001 + 0.01\nn23 := n22 * 1.0001 + 0.01\nn24 := n23 * 1.0001 + 0.01\nn25 := n24 * 1.0001 + 0.01\nn26 := n25 * 1.0001 + 0.01\nn27 := n26 * 1.0001 + 0.01\nn28 := n27 * 1.0001 + 0.01\nn29 := n28 * 1.0001 + 0.01\nn30 := n29 * 1.0001 + 0.01\nn31 := n30 * 1.0001 + 0.01\nn32 := n31 * 1.0001 + 0.01\nn33 := n32 * 1.0001 + 0.01\nn34 := n33 * 1.0001 + 0.01\nn35 := n34 * 1.0001 + 0.01\nn36 := n35 * 1.0001 + 0.01\nn37 := n36 * 1.0001 + 0.01\nn38 := n37 * 1.0001 + 0.01\nn39 := n38 * 1.0001 + 0.01\nn40 := n39 * 1.0001 + 0.01\nn41 := n40 * 1.0001 + 0.01\nn42 := n41 * 1.0001 + 0.01\nn43 := n42 * 1.0001 + 0.01\nn44 := n43 * 1.0001 + 0.01\nn45 := n44 * 1.0001 + 0.01\nn46 := n45 * 1.0001 + 0.01\nn47 := n46 * 1.0001 + 0.01\nn48 := n47 * 1.0001 + 0.01\nn49 := n48 * 1.0001 + 0.01\nn50 := n49 * 1.0001 + 0.01\nn51 := n50 * 1.0001 + 0.01\nn52 := n51 * 1.0001 + 0.01\nn53 := n52 * 1.0001 + 0.01\nn54 := n53 * 1.0001 + 0.01\nn55 := n54 * 1.0001 + 0.01\nn56 := n55 * 1.0001 + 0.01\nn57 := n56 * 1.0001 + 0.01\nn58 := n57 * 1.0001 + 0.01\nn59 := n58 * 1.0001 + 0.01\nn60 := n59 * 1.0001 + 0.01\nn61 := n60 * 1.0001 + 0.01\nn62 := n61 * 1.0001 + 0.01\nn63 := n62 * 1.0001 + 0.01\nn64 := n63 * 1.0001 + 0.01\nn65 := n64 * 1.0001 + 0.01\nn66 := n65 * 1.0001 + 0.01\nn67 := n66 * 1.0001 + 0.01\nn68 := n67 * 1.0001 + 0.01\nn69 := n68 * 1.0001 + 0.01\nn70 := n69 * 1.0001 + 0.01\nn71 := n70 * 1.0001 + 0.01\nn72 := n71 * 1.0001 + 0.01\nn73 := n72 * 1.0001 + 0.01\nn74 := n73 * 1.0001 + 0.01\nn75 := n74 * 1.0001 + 0.01\nn76 := n75 * 1.0001 + 0.01\nn77 := n76 * 1.0001 + 0.01\nn78 := n77 * 1.0001 + 0.01\nn79 := n78 * 1.0001 + 0.01\nn80 := n79 * 1.0001 + 0.01\nn81 := n80 * 1.0001 + 0.01\nn82 := n81 * 1.0001 + 0.01\nn83 := n82 * 1.0001 + 0.01\nn84 := n83 * 1.0001 + 0.01\nn85 := n84 * 1.0001 + 0.01\nn86 := n85 * 1.0001 + 0.01\nn87 := n86 * 1.0001 + 0.01\nn88 := n87 * 1.0001 + 0.01\nn89 := n88 * 1.0001 + 0.01\nn90 := n89 * 1.0001 + 0.01\nn91 := n90 * 1.0001 + 0.01\nn92 := n91 * 1.0001 + 0.01\nn93 := n92 * 1.0001 + 0.01\nn94 := n93 * 1.0001 + 0.01\nn95 := n94 * 1.0001 + 0.01\nn96 := n95 * 1.0001 + 0.01\nn97 := n96 * 1.0001 + 0.01\nn98 := n97 * 1.0001 + 0.01\nn99 := n98 * 1.0001 + 0.01\nn100 := n99 * 1.0001 + 0.01\nn101 := n100 * 1.0001 + 0.01\nn102 := n101 * 1.0001 + 0.01\nn103 := n102 * 1.0001 + 0.01\nn104 := n103 * 1.0001 + 0.01\nn105 := n104 * 1.0001 + 0.01\nn106 := n105 * 1.0001 + 0.01\nn107 := n106 * 1.0001 + 0.01\nn108 := n107 * 1.0001 + 0.01\nn109 := n108 * 1.0001 + 0.01\nn110 := n109 * 1.0001 + 0.01\nn111 := n110 * 1.0001 + 0.01\nn112 := n111 * 1.0001 + 0.01\nn113 := n112 * 1.0001 + 0.01\nn114 := n113 * 1.0001 + 0.01\nn115 := n114 * 1.0001 + 0.01\nn116 := n115 * 1.0001 + 0.01\nn117 := n116 * 1.0001 + 0.01\nn118 := n117 * 1.0001 + 0.01\nn119 := n118 * 1.0001 + 0.01\nn120 := n119 * 1.0001 + 0.01\nn121 := n120 * 1.0001 + 0.01\nn122 := n121 * 1.0001 + 0.01\nn123 := n122 * 1.0001 + 0.01\nn124 := n123 * 1.0001 + 0.01\nn125 := n124 * 1.0001 + 0.01\nn126 := n125 * 1.0001 + 0.01\nn127 := n126 * 1.0001 + 0.01\nanswer := n127\nanswer\n",
+      "source_sha256": "c8b535b8607fdcc6e1b13fb0151105981e4514136a88bac0e42edd68b1ba37bf",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact"
+      },
+      "control_contract": "9ece330cc56c902278b08c4e84da4966739732fd9b4732a4008dca679f617b85",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/native-build/native/fork-1",
+          "metrics": {
+            "source_to_executable_seconds": 7.157429917249829,
+            "source_to_artifact_seconds": 0.086500292,
+            "native_generation_seconds": 0.008604458,
+            "support_build_link_seconds": 6.903057457879186,
+            "native_process_seconds": 0.05180144441934923,
+            "object_bytes": 21824,
+            "executable_bytes": 2968960,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2076508
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/native-build/native/fork-2",
+          "metrics": {
+            "source_to_executable_seconds": 6.40238704206422,
+            "source_to_artifact_seconds": 0.087257417,
+            "native_generation_seconds": 0.007865208,
+            "support_build_link_seconds": 6.136259166058153,
+            "native_process_seconds": 0.04739606908212105,
+            "object_bytes": 21824,
+            "executable_bytes": 2968960,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2076508
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/native-build/native/fork-3",
+          "metrics": {
+            "source_to_executable_seconds": 7.960660375189036,
+            "source_to_artifact_seconds": 0.0842925,
+            "native_generation_seconds": 0.007992958,
+            "support_build_link_seconds": 7.737187374848872,
+            "native_process_seconds": 0.03730884023631612,
+            "object_bytes": 21824,
+            "executable_bytes": 2968960,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2076508
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/native-build/native/fork-4",
+          "metrics": {
+            "source_to_executable_seconds": 7.534776334185153,
+            "source_to_artifact_seconds": 0.091160875,
+            "native_generation_seconds": 0.008749041,
+            "support_build_link_seconds": 7.2576371668837965,
+            "native_process_seconds": 0.04138695130435129,
+            "object_bytes": 21824,
+            "executable_bytes": 2968960,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2076508
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/native-build/native/fork-5",
+          "metrics": {
+            "source_to_executable_seconds": 6.8462661248631775,
+            "source_to_artifact_seconds": 0.090365208,
+            "native_generation_seconds": 0.008336375,
+            "support_build_link_seconds": 6.593296666163951,
+            "native_process_seconds": 0.052004923578351736,
+            "object_bytes": 21824,
+            "executable_bytes": 2968960,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2076508
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/native-build/native/verify",
+        "reason": "Fresh complete source-to-executable build, object/linked footprint and every scheduled native process output checked.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 4.326807111881431
+          },
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 0.2752806220996599
+          },
+          {
+            "kind": "scalar",
+            "value": 1.2881622445451093
+          },
+          {
+            "kind": "scalar",
+            "value": 8.37833360166323
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "executable_bytes": {
+          "median": 2968960,
+          "min": 2968960,
+          "max": 2968960,
+          "stdev": 0.0,
+          "samples": [
+            2968960,
+            2968960,
+            2968960,
+            2968960,
+            2968960
+          ]
+        },
+        "linked_text_bytes": {
+          "median": 2076508,
+          "min": 2076508,
+          "max": 2076508,
+          "stdev": 0.0,
+          "samples": [
+            2076508,
+            2076508,
+            2076508,
+            2076508,
+            2076508
+          ]
+        },
+        "native_generation_seconds": {
+          "median": 0.008336375,
+          "min": 0.007865208,
+          "max": 0.008749041,
+          "stdev": 0.0003803001902372654,
+          "samples": [
+            0.008604458,
+            0.007865208,
+            0.007992958,
+            0.008749041,
+            0.008336375
+          ]
+        },
+        "native_process_seconds": {
+          "median": 0.04739606908212105,
+          "min": 0.03730884023631612,
+          "max": 0.052004923578351736,
+          "stdev": 0.006489978394383598,
+          "samples": [
+            0.05180144441934923,
+            0.04739606908212105,
+            0.03730884023631612,
+            0.04138695130435129,
+            0.052004923578351736
+          ]
+        },
+        "object_bytes": {
+          "median": 21824,
+          "min": 21824,
+          "max": 21824,
+          "stdev": 0.0,
+          "samples": [
+            21824,
+            21824,
+            21824,
+            21824,
+            21824
+          ]
+        },
+        "object_text_bytes": {
+          "median": 21136,
+          "min": 21136,
+          "max": 21136,
+          "stdev": 0.0,
+          "samples": [
+            21136,
+            21136,
+            21136,
+            21136,
+            21136
+          ]
+        },
+        "source_to_artifact_seconds": {
+          "median": 0.087257417,
+          "min": 0.0842925,
+          "max": 0.091160875,
+          "stdev": 0.002832646457034003,
+          "samples": [
+            0.086500292,
+            0.087257417,
+            0.0842925,
+            0.091160875,
+            0.090365208
+          ]
+        },
+        "source_to_executable_seconds": {
+          "median": 7.157429917249829,
+          "min": 6.40238704206422,
+          "max": 7.960660375189036,
+          "stdev": 0.6024670171744836,
+          "samples": [
+            7.157429917249829,
+            6.40238704206422,
+            7.960660375189036,
+            7.534776334185153,
+            6.8462661248631775
+          ]
+        },
+        "support_build_link_seconds": {
+          "median": 6.903057457879186,
+          "min": 6.136259166058153,
+          "max": 7.737187374848872,
+          "stdev": 0.6129672315898144,
+          "samples": [
+            6.903057457879186,
+            6.136259166058153,
+            7.737187374848872,
+            7.2576371668837965,
+            6.593296666163951
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "native-build",
+      "title": "Rust · task control",
+      "family": "compilation",
+      "backend": "rust",
+      "lane": "control",
+      "revision": "f4a0041fc0b523ead75d8ce72ee967cf71e890a8e8dd49172bbef9515f2ae779",
+      "task": {
+        "oracle": "chain",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "task_hash": "90c7d6237d3c891554be1253d201bb1d2c579c7e1a6c6480ec96f41ddb2917d8",
+      "measurement": {
+        "boundary": "source_to_executable_and_native_process",
+        "input_submission": "one exact f64 command-line input per fresh process; included",
+        "output_observation": "all declared scalar outputs, complete stdout included; named result independently verified",
+        "setup": "compiler/toolchain built ahead of campaign; support dependencies warmed by qualification build",
+        "reset": "fresh native process per input; new generated project per build fork",
+        "destruction": "shutdown included in process time",
+        "cache": "Untimed qualification warms support dependencies; fresh project per measured build",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "primary_metric": "source_to_executable_seconds",
+        "comparison_note": "Source to linked executable, with a fresh source/project per fork and warmed support dependencies. Mech includes its compiler worker, dependency resolution, checked runtime support build and link; Rust includes rustc and final link with prebuilt standard library. Both produce a complete scalar CLI checked against all scheduled inputs. This compares deployment paths, including their different support machinery.",
+        "stripping_policy": "strip=symbols"
+      },
+      "measurement_hash": "acf3770d6e914f5b6e64758e7af9fba0581c987ed3e0081d359c011c9b909e56",
+      "source": "fn main(){let a=std::env::args().nth(1).unwrap();let bits=u64::from_str_radix(a.strip_prefix(\"f64:\").unwrap(),16).unwrap();let mut x=f64::from_bits(bits);assert!(x.is_finite());x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;x=x*1.0001+0.01;println!(\"f64:{:016x}\",x.to_bits());}\n",
+      "source_sha256": "f4a0041fc0b523ead75d8ce72ee967cf71e890a8e8dd49172bbef9515f2ae779",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "rust-aot"
+      },
+      "control_contract": "9ece330cc56c902278b08c4e84da4966739732fd9b4732a4008dca679f617b85",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/native-build/rust/fork-1",
+          "metrics": {
+            "source_to_executable_seconds": 0.18062033271417022,
+            "native_process_seconds": 0.06060847927195331,
+            "object_bytes": 8832,
+            "executable_bytes": 342080,
+            "object_text_bytes": 2276,
+            "linked_text_bytes": 218804
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/native-build/rust/fork-2",
+          "metrics": {
+            "source_to_executable_seconds": 0.15339420782402158,
+            "native_process_seconds": 0.05816387478262186,
+            "object_bytes": 8832,
+            "executable_bytes": 342080,
+            "object_text_bytes": 2276,
+            "linked_text_bytes": 218804
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/native-build/rust/fork-3",
+          "metrics": {
+            "source_to_executable_seconds": 0.16312095895409584,
+            "native_process_seconds": 0.05266390973702073,
+            "object_bytes": 8832,
+            "executable_bytes": 342080,
+            "object_text_bytes": 2276,
+            "linked_text_bytes": 218804
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/native-build/rust/fork-4",
+          "metrics": {
+            "source_to_executable_seconds": 0.14851649990305305,
+            "native_process_seconds": 0.07299429853446782,
+            "object_bytes": 8832,
+            "executable_bytes": 342080,
+            "object_text_bytes": 2276,
+            "linked_text_bytes": 218804
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/native-build/rust/fork-5",
+          "metrics": {
+            "source_to_executable_seconds": 0.16085420781746507,
+            "native_process_seconds": 0.06099947192706168,
+            "object_bytes": 8832,
+            "executable_bytes": 342080,
+            "object_text_bytes": 2276,
+            "linked_text_bytes": 218804
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 4.326807111881431
+            },
+            {
+              "kind": "scalar",
+              "value": 3.3139254894359795
+            },
+            {
+              "kind": "scalar",
+              "value": 0.2752806220996599
+            },
+            {
+              "kind": "scalar",
+              "value": 1.2881622445451093
+            },
+            {
+              "kind": "scalar",
+              "value": 8.37833360166323
+            }
+          ]
+        }
+      ],
+      "implementation": {
+        "toolchain": "nightly-2026-03-03",
+        "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+        "adapter_sha256": "f4a0041fc0b523ead75d8ce72ee967cf71e890a8e8dd49172bbef9515f2ae779",
+        "build_policy": "rustc -Copt-level=3 -Ctarget-cpu=native -Ccodegen-units=1 -Cstrip=symbols --emit=obj,link",
+        "builds": [
+          {
+            "fork": null,
+            "object_sha256": "ff78d2909abd928bf6f1137dbeffe181cad72506b715c2cae5f4ffb608f073ae",
+            "binary_sha256": "19939f5b85bdff5417d60e6db7cff8229d20724384a7a00aebc06afb13b3ec06",
+            "raw": "raw/native-build/rust/verify"
+          },
+          {
+            "fork": 0,
+            "object_sha256": "dd90470ef1dfa2a1bf3188919dbf6a8c1a0a6cd7cd840ad7187b908f1d1779b4",
+            "binary_sha256": "980a631c869a905c9c11b7ad42bea9d23a904566587fc2c0bf6b01668c96a228",
+            "raw": "raw/native-build/rust/fork-1"
+          },
+          {
+            "fork": 1,
+            "object_sha256": "484b2c1d96cf4114dc6b54ddcc441f6a193e71e2c2972717b270734e80270bd3",
+            "binary_sha256": "6519e37d7ff4c6e0cc4784216eee708130f7da2e787d36d8effb3d048a2897ef",
+            "raw": "raw/native-build/rust/fork-2"
+          },
+          {
+            "fork": 2,
+            "object_sha256": "32e908ebce0a8969f84b6e2d05dedcbaed099ae3fd773a06e8b49a2ee93e0cbb",
+            "binary_sha256": "7bf6e467acaf4078f9539b29915878a9d0e601e0e56432f7044012d82bd3cd7b",
+            "raw": "raw/native-build/rust/fork-3"
+          },
+          {
+            "fork": 3,
+            "object_sha256": "5f3bf3fcc2d1abd81181e3d77ed9124d24829d89ed24e4bb8dd8684e08a068fd",
+            "binary_sha256": "6530706447ba01894de6573d406b0205517238aba44d4cdf5141f5f578760e06",
+            "raw": "raw/native-build/rust/fork-4"
+          },
+          {
+            "fork": 4,
+            "object_sha256": "7fc8ca6b0692df623559a1e6c2af3cf62776b34fdae87c08b8b8b78903689cf2",
+            "binary_sha256": "044f6c10f705adeace274904bd8b5b648044bd6d2d6030a3f9585edcd25cb152",
+            "raw": "raw/native-build/rust/fork-5"
+          }
+        ]
+      },
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/native-build/rust/verify",
+        "reason": "Fresh complete source-to-executable build, object/linked footprint and every scheduled native process output checked.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 4.326807111881431
+          },
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 0.2752806220996599
+          },
+          {
+            "kind": "scalar",
+            "value": 1.2881622445451093
+          },
+          {
+            "kind": "scalar",
+            "value": 8.37833360166323
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "executable_bytes": {
+          "median": 342080,
+          "min": 342080,
+          "max": 342080,
+          "stdev": 0.0,
+          "samples": [
+            342080,
+            342080,
+            342080,
+            342080,
+            342080
+          ]
+        },
+        "linked_text_bytes": {
+          "median": 218804,
+          "min": 218804,
+          "max": 218804,
+          "stdev": 0.0,
+          "samples": [
+            218804,
+            218804,
+            218804,
+            218804,
+            218804
+          ]
+        },
+        "native_process_seconds": {
+          "median": 0.06060847927195331,
+          "min": 0.05266390973702073,
+          "max": 0.07299429853446782,
+          "stdev": 0.0074416649233001245,
+          "samples": [
+            0.06060847927195331,
+            0.05816387478262186,
+            0.05266390973702073,
+            0.07299429853446782,
+            0.06099947192706168
+          ]
+        },
+        "object_bytes": {
+          "median": 8832,
+          "min": 8832,
+          "max": 8832,
+          "stdev": 0.0,
+          "samples": [
+            8832,
+            8832,
+            8832,
+            8832,
+            8832
+          ]
+        },
+        "object_text_bytes": {
+          "median": 2276,
+          "min": 2276,
+          "max": 2276,
+          "stdev": 0.0,
+          "samples": [
+            2276,
+            2276,
+            2276,
+            2276,
+            2276
+          ]
+        },
+        "source_to_executable_seconds": {
+          "median": 0.16085420781746507,
+          "min": 0.14851649990305305,
+          "max": 0.18062033271417022,
+          "stdev": 0.012275069198595718,
+          "samples": [
+            0.18062033271417022,
+            0.15339420782402158,
+            0.16312095895409584,
+            0.14851649990305305,
+            0.16085420781746507
+          ]
+        }
+      }
+    }
+  ],
+  "order": [
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "fork": 0,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "rust",
+      "fork": 0,
+      "lane": "control"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "rust",
+      "fork": 1,
+      "lane": "control"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "fork": 1,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "rust",
+      "fork": 2,
+      "lane": "control"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "fork": 2,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "fork": 3,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "rust",
+      "fork": 3,
+      "lane": "control"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "fork": 4,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "native-build",
+      "backend": "rust",
+      "fork": 4,
+      "lane": "control"
+    }
+  ],
+  "comparisons": [],
+  "complete": true,
+  "performance_gate": false,
+  "catalog_sha256": "31c14d1625099f88df24433ddefdd9714a7c09c451b619c3ba66e7080b27100b",
+  "harness_sha256": {
+    "run_rust_suite.py": "e2fce4dbca53a9427ddb55aaf7e27b404e6861217996fea874a99615c4205721",
+    "run_concurrent.py": "2c36666a9be7e85bc89b823b062f2c610490a28ae16cccdcbef763e39f267784",
+    "benchmark_suite.py": "acf4463f26f00bef4c5e6b31d9d812c8fa7c610656629d77bb22a00614945ab4",
+    "application_tasks.py": "566db6bc0b347278bb722a0163a17c9c54358adb5232ec5ac377c0748ceb1f98",
+    "run_native.py": "ef41be90a18779c89d04e396b6bd1c03f4931a5357e11310b081aa94a679791c",
+    "extended_oracles.py": "3533d575e4e8ba51b3038ecf3daa25ce4097968237000a11e47777cb2090fbe1",
+    "suite_oracle.py": "1e7454f72bcf05ed0798ecb307c3b204029f119dfa48d1c99a9eea980f53bdb7"
+  },
+  "rust": {
+    "toolchain": "nightly-2026-03-03",
+    "version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+    "build_command": [
+      "cargo",
+      "+nightly-2026-03-03",
+      "build",
+      "--release",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/results/campaigns/2026-11-17-rust-native-001/rust-source/Cargo.toml",
+      "--target-dir",
+      "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target"
+    ],
+    "build_environment": {
+      "RUSTFLAGS": "-Ctarget-cpu=native"
+    },
+    "source_sha256": {
+      "Cargo.toml": "cef1b8e7d5d85ae5d4f3dfd816f58cb557ceac2f0e305a26a6778709822802fa",
+      "resident.rs": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "deflate.rs": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+      "Cargo.lock": "47d8ff6a31a8acff770609d0a1094c024dffda1eb243848b5f3ddec6b516e488",
+      "README.md": "511cc872d9e35afbc85fdb6f9894d8966be065087886a7127815c2529bd48012"
+    },
+    "binaries": {
+      "resident": {
+        "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/resident",
+        "binary_sha256": "4f5d399fa1d2ada3a0edf8726c7830a93977b10d1f60afdfba9290b7dc020b13"
+      },
+      "deflate": {
+        "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/deflate",
+        "binary_sha256": "6d1bb6686fe695369de30c8e2aa2f3ac78395c70ee4b58db9a77b9c61a7ba6fd"
+      }
+    }
+  },
+  "outcome": "ok",
+  "finished_at": "2026-11-17T17:22:16.840160+00:00"
+}
