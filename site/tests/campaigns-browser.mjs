@@ -8,6 +8,7 @@ const {chromium}=await import(process.env.PLAYWRIGHT_MODULE??'playwright');
 const base=process.env.METRICS_TEST_URL??'http://127.0.0.1:8766/metrics/';
 const output=process.argv[2];
 const manifest=JSON.parse(await readFile('site/public/build.json','utf8'));
+const assetVersion=manifest.post_build_patches?.findLast(patch=>patch.files?.['campaigns.mjs'])?.asset_version??manifest.version;
 const bundle=JSON.parse(await readFile('site/public/campaigns.json','utf8'));
 const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY?{executablePath:process.env.CHROME_BINARY}:{})});
 const errors=[],checks=[];
@@ -44,7 +45,7 @@ try {
   check('the first held checkpoint is labeled as a baseline',(await relatedRow.innerText()).includes('Baseline held'));
   await chooseTask(page,'related-post-gen');
   check('opening one task does not fetch other task details',detailRequests.length===2);
-  check('detail requests use the current build version',detailRequests.every(url=>new URL(url).searchParams.get('v')===manifest.version));
+  check('detail requests use the current asset version',detailRequests.every(url=>new URL(url).searchParams.get('v')===assetVersion));
   check('Related Post Gen keeps its 13 confirmation observations',await page.locator('#detail .sample-list a').count()===13);
   check('Rust pool timing advantage is disclosed',(await page.locator('#detail').innerText()).includes('pool-before-timer'));
   await page.locator('#metric').selectOption('native_process_seconds');
@@ -52,7 +53,7 @@ try {
   check('Related Post Gen whole-process comparison uses Rust',(await page.locator('#detail .control-detail').innerText()).includes('Rust · unchanged rust_con'));
   await page.locator('#metric').selectOption('$primary');
   await detailReady(page);
-  check('data request uses the published build version',dataRequests.some(url=>new URL(url).searchParams.get('v')===manifest.version));
+  check('data request uses the published asset version',dataRequests.some(url=>new URL(url).searchParams.get('v')===assetVersion));
   check('comparison navigation uses /benchmarks',await page.locator('nav a').first().getAttribute('href')==='/benchmarks/');
 
   await page.locator('#campaign').selectOption('2026-11-16-canonical-standard-001');
@@ -155,7 +156,7 @@ try {
   check('mobile task selection updates the details',(await mobile.locator('#detail-title').innerText()).includes('unchanged input'));
   if(output)await mobile.screenshot({path:path.join(output,'metrics-mobile.png'),fullPage:true});
   check('no browser errors',errors.length===0);
-  const receipt={schema:'mech-metrics-browser.v1',status:'passed',url:base,build:manifest.version,browser:browser.version(),checked_at:new Date().toISOString(),checks,errors};
+  const receipt={schema:'mech-metrics-browser.v1',status:'passed',url:base,build:manifest.version,asset_version:assetVersion,browser:browser.version(),checked_at:new Date().toISOString(),checks,errors};
   if(output)await writeFile(path.join(output,'browser.json'),JSON.stringify(receipt,null,2)+'\n');
   console.log(JSON.stringify(receipt,null,2));
 } finally {await browser.close();}
