@@ -23,18 +23,20 @@ def port_number(value):
 class ExplorerHandler(SimpleHTTPRequestHandler):
     def route(self):
         path = urlsplit(self.path).path
-        if path in ("/", "/benchmarks", "/metrics"):
+        if path in ("/", "/benchmarks", "/metrics", "/metrics/project"):
             self.send_response(HTTPStatus.FOUND)
-            self.send_header("Location", "/metrics/" if path == "/metrics" else "/benchmarks/")
+            self.send_header("Location", path + "/" if path.startswith("/metrics") else "/benchmarks/")
             self.send_header("Content-Length", "0")
             self.end_headers()
             return False
-        if not path.startswith("/benchmarks/") and path not in ("/metrics/", "/metrics/index.html"):
+        if not path.startswith("/benchmarks/") and path not in ("/metrics/", "/metrics/index.html", "/metrics/project/", "/metrics/project/index.html"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return False
         return True
 
     def translate_path(self, path):
+        if urlsplit(path).path in ("/metrics/project/", "/metrics/project/index.html"):
+            return super().translate_path("/project.html")
         if urlsplit(path).path in ("/metrics/", "/metrics/index.html"):
             return super().translate_path("/campaigns.html")
         return super().translate_path(path[len("/benchmarks"):])

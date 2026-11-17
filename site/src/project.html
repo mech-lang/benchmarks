@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Mech project metrics: source size, test inventory, dependencies, CI and repository activity, pinned to dated revisions.">
+  <title>Mech · Project metrics</title>
+  <link rel="canonical" href="https://mech-lang.org/metrics/project/">
+  <link rel="stylesheet" href="/benchmarks/mech-palette.css">
+  <link rel="stylesheet" href="/benchmarks/campaigns.css">
+  <link rel="stylesheet" href="/benchmarks/project.css">
+  <script type="module" src="/benchmarks/project.mjs"></script>
+</head>
+<body>
+  <header><a class="brand" href="/metrics/">MECH <span>/ metrics</span></a><nav aria-label="Metric views"><a href="/benchmarks/">Language comparison</a><a href="/metrics/">Benchmarks</a><a href="/metrics/project/" aria-current="page">Project metrics</a></nav></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">The whole project</p><h1>Mech, in numbers.</h1><p class="intro">Code, tests and delivery. Recorded against the source.</p></div><span class="policy">Dated project snapshots</span></div>
+    <div id="load-error" role="alert" hidden></div>
+    <div class="controls project-controls"><label>Project track<select id="track"></select></label><label>Snapshot<select id="snapshot"></select></label><label>History measurement<select id="history-metric"></select></label></div>
+    <p class="boundary" id="revision">Loading project metrics…</p>
+    <section class="stats" id="project-stats" aria-label="Source and test inventory"></section>
+    <div class="project-grid">
+      <section class="panel"><div class="section-title"><h2>Source over time</h2><span id="history-count"></span></div><div class="panel-body" id="project-history"></div></section>
+      <section class="panel"><div class="section-title"><h2>Tests and delivery</h2></div><div class="panel-body" id="delivery"></div></section>
+      <section class="panel"><div class="section-title"><h2>Source by language</h2></div><div class="table-scroll"><table><thead><tr><th>Language</th><th>Files</th><th>Physical lines</th><th>Bytes</th></tr></thead><tbody id="languages"></tbody></table></div></section>
+      <section class="panel"><div class="section-title"><h2>Largest components</h2></div><div class="panel-body" id="components"></div></section>
+      <section class="panel wide"><div class="section-title"><h2>CI attached to this revision</h2><span id="ci-count"></span></div><div class="table-scroll"><table><thead><tr><th>Workflow</th><th>Result</th><th>Triggered</th><th>Recorded</th></tr></thead><tbody id="ci-runs"></tbody></table></div><p class="panel-note" id="ci-note"></p></section>
+      <section class="panel"><div class="section-title"><h2>Dependencies</h2></div><div class="panel-body" id="dependencies"></div></section>
+      <section class="panel"><div class="section-title"><h2>Repository activity</h2><span>GitHub observation</span></div><div class="panel-body" id="activity"></div></section>
+    </div>
+    <details class="method"><summary>What these metrics measure</summary><p>Source counts read immutable Git objects. Working edits and untracked files are excluded. Physical lines include comments and blank lines. The inventory excludes vendor, build-output and dependency directories; checked-in source remains counted. These are repository size measurements, not a language-neutral complexity score.</p><p>Rust test files are identified by test directory and filename conventions. Inline tests remain in their owning source files, and generated test cases are not enumerated. A test-file inventory is distinct from executed tests and line coverage. Coverage stays unavailable until a real coverage report is retained.</p><p>Dependency declarations include optional, development, build and target-specific entries. Locked packages describe the recorded root Cargo.lock, not the dependencies enabled for one build. CI rows identify GitHub workflows associated with the selected revision; their jobs can include build and validation steps. Source tracks keep different branches and measurement policies separate.</p></details>
+    <p class="downloads" id="project-downloads"></p>
+  </main>
+  <footer><span>Mech project metrics · dated sources and retained evidence</span><a href="https://github.com/mech-lang/benchmarks">Metrics repository</a></footer>
+</body>
+</html>

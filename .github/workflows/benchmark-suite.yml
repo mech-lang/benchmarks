@@ -2,9 +2,9 @@ name: Benchmark correctness
 
 on:
   push:
-    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', 'results/project/**', '.github/workflows/benchmark-suite.yml']
   pull_request:
-    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', 'results/project/**', '.github/workflows/benchmark-suite.yml']
   workflow_dispatch:
 
 permissions:
@@ -24,6 +24,7 @@ jobs:
       - run: python3 -m unittest discover -s tools/tests -v
       - run: node site/tests/campaigns.mjs
       - run: node site/tests/campaigns-render.mjs
+      - run: node site/tests/project-model.mjs
       - run: node site/tests/layers.mjs
       - run: node site/tests/languages.mjs data/benchmarks.json
       - run: python3 tools/build_site.py

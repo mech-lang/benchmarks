@@ -1,0 +1,24 @@
+import assert from 'node:assert/strict';
+import {number,bytes,latestByTrack,historyFor,jobSeconds,jobTotals,previousSnapshot} from '../src/project-model.mjs';
+
+const first={id:'one',track:'candidate',captured_at:'2026-11-15T12:00:00Z',policy_hash:'v1',summary:{physical_lines:100,files:10}};
+const second={...first,id:'two',captured_at:'2026-11-16T12:00:00Z',summary:{physical_lines:110,files:11}};
+const otherTrack={...second,id:'main',track:'default-branch'};
+const otherPolicy={...second,id:'changed-policy',policy_hash:'v2'};
+const missing={...second,id:'missing',summary:{physical_lines:null}};
+const snapshots=[second,otherTrack,first,otherPolicy,missing];
+assert.equal(latestByTrack(snapshots).length,2);
+assert.deepEqual(historyFor(snapshots,second,'physical_lines').map(s=>s.id),['one','two']);
+assert.equal(previousSnapshot(snapshots,second).id,'one');
+assert.equal(previousSnapshot(snapshots,first),null);
+assert.equal(number(null),'—');
+assert.equal(number(1234),'1,234');
+assert.equal(bytes(1024),'1.0 KiB');
+assert.equal(bytes(null),'—');
+assert.equal(jobSeconds({started_at:'2026-11-16T00:00:00Z',completed_at:'2026-11-16T00:02:00Z'}),120);
+assert.equal(jobSeconds({started_at:'2026-11-16T00:00:00Z',completed_at:null}),null);
+assert.equal(jobSeconds({started_at:'invalid',completed_at:'invalid'}),null);
+assert.equal(jobSeconds({started_at:'2026-11-16T00:02:00Z',completed_at:'2026-11-16T00:00:00Z'}),null);
+assert.deepEqual(jobTotals({jobs:[{status:'completed',conclusion:'success'},{status:'completed',conclusion:'skipped'},{status:'in_progress'},{status:'completed',conclusion:'neutral'}]}),{success:1,failure:0,cancelled:0,skipped:1,pending:1,other:1});
+assert.equal(jobTotals(null).success,0);
+console.log('Project metrics: separate tracks/policies, missing values, job outcomes, durations and history passed.');
