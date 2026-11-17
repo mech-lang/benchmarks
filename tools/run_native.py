@@ -13,7 +13,22 @@ import sys
 import time
 
 from benchmark_suite import (ROOT, SCHEMA, campaign_lock, digest, environment, equal, execute,
-    file_digest, invoke, load_catalog, save, summarize, worker_provenance)
+    file_digest, invoke, load_catalog, save, summarize, worker_provenance, preserve_worker, seal_evidence, archive_evidence)
+
+
+def parse_sections(output, system):
+    if system!='Darwin':
+        return {name:int(size) for name,size in re.findall(r'^\s*(\.\S+)\s+(\d+)\s+',output,re.M)} or None
+    result={}
+    segment=''
+    for line in output.splitlines():
+        heading=re.match(r'Segment\s+(.*?):\s*\d+',line)
+        if heading:segment=heading[1]
+        explicit=re.search(r'Section\s+\(([^,]+),\s*([^)]+)\):\s*(\d+)',line)
+        simple=re.search(r'Section\s+(\S+):\s*(\d+)',line)
+        if explicit:result[explicit[1]+'/'+explicit[2]]=int(explicit[3])
+        elif simple:result[segment+'/'+simple[1]]=int(simple[2])
+    return result or None
 
 
 def sections(path, directory, timeout):
@@ -22,17 +37,13 @@ def sections(path, directory, timeout):
     if result['outcome'] != 'ok':
         return None
     output = (directory / 'stdout.txt').read_text()
-    if sys.platform == 'darwin':
-        found = re.findall(r'Section\s+(\S+):\s*(\d+)', output)
-    else:
-        found = re.findall(r'^\s*(\.\S+)\s+(\d+)\s+', output, re.M)
-    return {name: int(size) for name, size in found} or None
+    return parse_sections(output,platform.system())
 
 
 def text_size(section_sizes):
     if not section_sizes:
         return None
-    names = [key for key in section_sizes if key == '__text' or key == '.text' or key.startswith('.text.')]
+    names = [key for key in section_sizes if key.rsplit('/',1)[-1] in ('__text','.text') or key.startswith('.text.')]
     return sum(section_sizes[key] for key in names) if names else None
 
 
@@ -41,7 +52,8 @@ def build_and_run(worker, case, directory, target, timeout):
     source = (ROOT / case['source']).read_text()
     started = time.perf_counter()
     generated = invoke([worker['binary']], {'protocol':1,'action':'native_generate','source':source,
-        'workspace':worker['source_checkout'],'native_directory':str(directory/'project')}, directory/'generate', timeout)
+        'workspace':worker['source_checkout'],'schedule':case['measurement']['schedule'],
+        'native_directory':str(directory/'project')}, directory/'generate', timeout)
     if generated.get('outcome') != 'ok':
         return {'outcome':generated.get('outcome','error'),'reason':generated.get('error','native generation failed')}
     project = directory/'project'
@@ -51,6 +63,7 @@ def build_and_run(worker, case, directory, target, timeout):
     if lock['outcome'] != 'ok':
         return {'outcome':lock['outcome'],'reason':'generated-project dependency resolution failed'}
     built = execute(['cargo','build','--release','--offline','--locked','--message-format=json',
+                     '--features','mech-engine/pure_text',
                      '--manifest-path',str(project/'Cargo.toml'),'--target-dir',str(target)],
                     directory/'build',timeout,env)
     source_to_executable = time.perf_counter()-started
@@ -130,9 +143,14 @@ def run(args):
     host=environment()
     measurement={**case['measurement'],'cache':'runtime/support dependencies warmed by untimed qualification; new generated project per fork',
                  'stripping_policy':'generated release profile strip=symbols','native_route':'checked scalar linked application',
+                 'memory_budget_bytes':1 << 34,'native_limits':'checked scalar launcher defaults',
+                 'support_features':['mech-engine/pure_text'],
+                 'support_feature_reason':'pinned engine native scalar metadata requires program_image_proofs, exposed through pure_text',
+                 'support_build_environment':{key:os.environ[key] for key in ('RUSTFLAGS','CARGO_ENCODED_RUSTFLAGS') if key in os.environ},
                  'timing':'source compiler worker start through dependency resolution, support build and link; separately complete native process for every input'}
     record={'case_id':case['id'],'title':case['title'],'family':case['family'],'backend':'native','lane':'candidate',
             'revision':worker['revision'],'progress':'implemented','capability':'unknown','outcome':'pending',
+            'feature_profile':{'profile':worker['feature_profile'],'native_generation':True},
             'task':case['task'],'measurement':measurement,'task_hash':digest(case['task']),
             'measurement_hash':digest(measurement),'source_sha256':file_digest(ROOT/case['source']),
             'source':(ROOT/case['source']).read_text(),'environment_hash':digest(host),'samples':[]}
@@ -143,6 +161,7 @@ def run(args):
     target=ROOT/'.local/native-target'/worker['revision']
     with campaign_lock(ROOT/'.local'):
         output.mkdir(parents=True)
+        preserve_worker(worker,output/'workers/candidate')
         save(output/'campaign.json',campaign)
         print('Qualify native object, linked executable and complete output trajectory',flush=True)
         verified=build_and_run(worker,case,output/'raw/verify',target,args.timeout)
@@ -184,6 +203,8 @@ def run(args):
                 'Exact object/executable hashes, code-section reports, compiler logs, generated input pins and raw process samples are retained. '
                 'Compiler-process-tree memory is not measured. These scalar measurements make no general hosted-application or resident-turn claim.','']
         (output/'report.md').write_text('\n'.join(lines))
+        seal_evidence(output)
+        archive_evidence(output)
         print(f"Native campaign {campaign['outcome']}: {output/'report.md'}",flush=True)
     return 0 if campaign['outcome']=='ok' else 1
 

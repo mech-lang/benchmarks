@@ -188,6 +188,7 @@ fn run(request: &Value) -> Result<Value, String> {
         .map_err(|e| format!("activate: {e:?}"))
     };
     let verify = request["action"] == "verify";
+    let mut initial_turn_seconds = 0.0;
     if !verify {
         let mut warm = activate_instance()?;
         for index in 0..request["warmup"].as_u64().unwrap_or(0) as usize {
@@ -195,8 +196,14 @@ fn run(request: &Value) -> Result<Value, String> {
                 slot: input.slot,
                 value: ResidentValueRef::F64(&frames[index % frames.len()]),
             });
-            warm.turn(inputs.as_slice())
-                .map_err(|e| format!("warmup: {e:?}"))?;
+            if index == 0 {
+                let (result, duration) = timed(|| warm.turn(inputs.as_slice()));
+                result.map_err(|e| format!("initial turn: {e:?}"))?;
+                initial_turn_seconds = duration;
+            } else {
+                warm.turn(inputs.as_slice())
+                    .map_err(|e| format!("warmup: {e:?}"))?;
+            }
         }
         drop(warm);
     }
@@ -207,11 +214,7 @@ fn run(request: &Value) -> Result<Value, String> {
         return Err("adapter admits one scalar/vector f64 input".into());
     }
     let slot = instance.plan.inputs.first().map(|input| input.slot);
-    let iterations = if verify {
-        frames.len()
-    } else {
-        request["iterations"].as_u64().ok_or("missing iterations")? as usize
-    };
+    let iterations = request["iterations"].as_u64().ok_or("missing iterations")? as usize;
     let mut outputs = Vec::new();
     let mut before_execution = Vec::new();
     let mut touched = 0u64;
@@ -324,7 +327,7 @@ fn run(request: &Value) -> Result<Value, String> {
         "output_name":output_name,
         "metrics": {"source_to_artifact_seconds":compile_seconds,"artifact_encode_seconds":encode_seconds,
             "artifact_decode_seconds":decode_seconds,"activation_seconds":activation_seconds,
-            "resident_turn_seconds":execution_seconds / iterations as f64,
+            "resident_turn_seconds":execution_seconds / iterations as f64,"initial_turn_seconds":initial_turn_seconds,
             "execution_block_seconds":execution_seconds,"borrow_output_seconds":borrow_seconds,
             "owned_snapshot_seconds":snapshot_seconds,"teardown_seconds":teardown_seconds,
             "artifact_bytes":bytes.len(),"execution_nodes":node_count,

@@ -13,6 +13,9 @@ import statistics
 import subprocess
 import sys
 import time
+import threading
+import gzip
+import tarfile
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA = 'mech.benchmark-campaign.v1'
@@ -39,7 +42,7 @@ def save(path, value):
     temporary.replace(path)
 
 
-def load_catalog(path=ROOT / 'suite/catalog.json'):
+def load_catalog(path=ROOT / 'suite/catalog.json', root=ROOT):
     catalog = json.loads(Path(path).read_text())
     if catalog.get('schema') != 'mech.benchmark-suite.v1':
         raise ValueError('unsupported catalog schema')
@@ -53,8 +56,8 @@ def load_catalog(path=ROOT / 'suite/catalog.json'):
             raise ValueError(f'invalid progress: {identifier}')
         if case['progress'] == 'planned':
             continue
-        source = (ROOT / case['source']).resolve()
-        if not source.is_relative_to(ROOT) or not source.is_file():
+        source = (Path(root) / case['source']).resolve()
+        if not source.is_relative_to(Path(root)) or not source.is_file():
             raise ValueError(f'invalid source: {identifier}')
         if case['task']['outputs'] != ['result']:
             raise ValueError('v1 adapter requires an explicitly named result output')
@@ -89,9 +92,145 @@ def worker_provenance(path):
         raise ValueError(f'worker binary missing or hash mismatch: {binary}')
     if not worker.get('revision') or not worker.get('adapter_sha256') or not worker.get('lock_sha256'):
         raise ValueError('incomplete worker provenance')
+    for name, field in (('src/main.rs','adapter_sha256'),('Cargo.toml','manifest_sha256'),('Cargo.lock','lock_sha256')):
+        if not (path.parent/name).is_file() or file_digest(path.parent/name)!=worker.get(field):
+            raise ValueError(f'worker reproduction input changed: {name}')
     worker['binary'] = str(binary)
     worker['manifest_path'] = str(path)
     return worker
+
+
+def preserve_worker(worker, destination):
+    import shutil
+    destination = Path(destination)
+    destination.mkdir(parents=True, exist_ok=True)
+    source = Path(worker['manifest_path']).parent
+    for name in ('worker.json', 'Cargo.toml', 'Cargo.lock', 'src/main.rs'):
+        file = source / name
+        if not file.is_file():
+            raise ValueError(f'worker reproduction input missing: {file}')
+        target = destination / Path(name).name
+        shutil.copyfile(file, target)
+
+
+def seal_evidence(directory):
+    directory = Path(directory)
+    files = {str(file.relative_to(directory)): file_digest(file) for file in sorted(directory.rglob('*'))
+             if file.is_file() and file.name not in ('campaign.json', 'report.md', 'evidence.json')}
+    save(directory / 'evidence.json', {'schema':'mech.benchmark-evidence.v1','files':files})
+
+
+class EvidenceReader:
+    """Read the same pinned bytes from a checkout or its lossless raw archive."""
+    def __init__(self, directory):
+        self.directory=Path(directory).resolve()
+        self.manifest=json.loads((self.directory/'evidence.json').read_text())
+        self.archive=None
+        self.members={}
+
+    def __enter__(self):
+        archives=self.manifest.get('archives',{})
+        if archives:
+            if set(archives)!={'raw.tar.gz'}:raise ValueError('unsupported evidence archive')
+            path=self.directory/'raw.tar.gz'
+            if file_digest(path)!=archives['raw.tar.gz']:raise ValueError('raw archive hash mismatch')
+            self.archive=tarfile.open(path,'r:gz')
+            for member in self.archive.getmembers():
+                name=member.name
+                if (not member.isfile() or not name.startswith('raw/') or Path(name).is_absolute()
+                        or '..' in Path(name).parts or name in self.members):
+                    self.archive.close()
+                    raise ValueError('unsafe or duplicate raw archive member')
+                self.members[name]=member
+        return self
+
+    def __exit__(self, *_):
+        if self.archive:self.archive.close()
+
+    def read(self, name):
+        path=(self.directory/name).resolve()
+        if not path.is_relative_to(self.directory):raise ValueError('unsafe evidence path')
+        if self.archive and name.startswith('raw/'):
+            member=self.members.get(name)
+            if member is None:raise ValueError(f'missing archived observation: {name}')
+            return self.archive.extractfile(member).read()
+        return path.read_bytes()
+
+
+def archive_evidence(directory):
+    directory=Path(directory)
+    manifest=json.loads((directory/'evidence.json').read_text())
+    if manifest.get('archives'):
+        with EvidenceReader(directory) as reader:
+            for name,checksum in manifest['files'].items():
+                if hashlib.sha256(reader.read(name)).hexdigest()!=checksum:raise ValueError('evidence hash mismatch')
+        return
+    temporary=directory/'raw.tar.gz.tmp'
+    with temporary.open('wb') as file:
+        with gzip.GzipFile(filename='',fileobj=file,mode='wb',mtime=0) as compressed:
+            with tarfile.open(fileobj=compressed,mode='w') as archive:
+                for name in sorted(manifest['files']):
+                    if not name.startswith('raw/'):continue
+                    path=directory/name
+                    if path.is_symlink() or file_digest(path)!=manifest['files'][name]:raise ValueError('raw evidence changed before archiving')
+                    member=tarfile.TarInfo(name)
+                    member.size=path.stat().st_size
+                    member.mode=0o644
+                    with path.open('rb') as source:archive.addfile(member,source)
+    temporary.replace(directory/'raw.tar.gz')
+    manifest['archives']={'raw.tar.gz':file_digest(directory/'raw.tar.gz')}
+    save(directory/'evidence.json',manifest)
+    # Verify every archived byte before treating it as the portable evidence.
+    with EvidenceReader(directory) as reader:
+        for name,checksum in manifest['files'].items():
+            if hashlib.sha256(reader.read(name)).hexdigest()!=checksum:raise ValueError('archived evidence hash mismatch')
+
+
+def validate_campaign(directory, campaign):
+    directory = Path(directory).resolve()
+    if campaign.get('schema')!=SCHEMA or not campaign.get('complete'):
+        raise ValueError(f'incomplete or unsupported campaign: {directory}')
+    evidence = json.loads((directory/'evidence.json').read_text())
+    if evidence.get('schema')!='mech.benchmark-evidence.v1':
+        raise ValueError('unsupported evidence schema')
+    wanted={sample['raw']+'/supervised.json' for result in campaign['results'] for sample in result['samples']}
+    observations={}
+    with EvidenceReader(directory) as reader:
+        for name, checksum in evidence['files'].items():
+            content=reader.read(name)
+            if hashlib.sha256(content).hexdigest()!=checksum:
+                raise ValueError(f'campaign evidence changed: {name}')
+            if name in wanted:observations[name]=json.loads(content)
+    host_hash=digest(campaign['environment'])
+    if campaign['environment_hash']!=host_hash:
+        raise ValueError('campaign environment hash mismatch')
+    identities=set()
+    for result in campaign['results']:
+        identity=result['case_id'],result['backend'],result['lane']
+        if identity in identities:raise ValueError('duplicate campaign result')
+        identities.add(identity)
+        if (digest(result['task'])!=result['task_hash'] or digest(result['measurement'])!=result['measurement_hash']
+                or hashlib.sha256(result['source'].encode()).hexdigest()!=result['source_sha256']
+                or result['environment_hash']!=host_hash):
+            raise ValueError('campaign contract or source hash mismatch')
+        if result.get('progress')=='measured' and result['outcome']!='ok':
+            raise ValueError('failed result marked measured')
+        if result['outcome']!='ok':
+            if result.get('summary'):raise ValueError('failed result has accepted summary')
+            continue
+        samples=result['samples']
+        if result['progress']=='measured' and (not samples or result.get('summary')!=summarize(samples)):
+            raise ValueError('campaign summary differs from retained samples')
+        forks=set()
+        for sample in samples:
+            if sample['fork'] in forks:raise ValueError('duplicate fork')
+            forks.add(sample['fork'])
+            raw=sample['raw']+'/supervised.json'
+            if raw not in observations:raise ValueError('missing raw sample')
+            recorded=observations[raw]
+            if recorded['outcome']!='ok' or sample['metrics']!=recorded['metrics']:
+                raise ValueError('sample differs from raw worker observation')
+    return True
 
 
 @contextmanager
@@ -112,22 +251,43 @@ def campaign_lock(directory):
         lock.unlink(missing_ok=True)
 
 
+def signal_group(identifier, sig):
+    try:
+        os.killpg(identifier,sig)
+    except ProcessLookupError:
+        pass
+    except PermissionError:
+        # On macOS an exiting orphaned group can briefly contain only zombies
+        # and reject SIGKILL. Ignore that race only after proving no live member
+        # remains; a real permission failure must still stop the campaign.
+        rows=subprocess.check_output(['ps','-axo','pgid=,stat='],text=True)
+        for row in rows.splitlines():
+            fields=row.split()
+            if len(fields)>=2 and fields[0]==str(identifier) and not fields[1].startswith(('Z','X')):
+                raise
+
+
 def stop_group(process):
     # Every owned worker starts a new session. Reap the leader and stop lingering
     # compiler/linker descendants even when the leader has already exited.
-    try:
-        os.killpg(process.pid, signal.SIGTERM)
-    except ProcessLookupError:
-        pass
+    signal_group(process.pid,signal.SIGTERM)
     try:
         process.wait(timeout=0.25)
     except subprocess.TimeoutExpired:
         pass
-    try:
-        os.killpg(process.pid, signal.SIGKILL)
-    except ProcessLookupError:
-        pass
+    signal_group(process.pid,signal.SIGKILL)
     process.wait()
+
+
+def deadline(process, timeout):
+    expired = threading.Event()
+    def terminate():
+        expired.set()
+        signal_group(process.pid,signal.SIGKILL)
+    timer = threading.Timer(timeout, terminate)
+    timer.daemon = True
+    timer.start()
+    return timer, expired
 
 
 def invoke(command, request, directory, timeout):
@@ -140,10 +300,13 @@ def invoke(command, request, directory, timeout):
         started = time.perf_counter()
         process = subprocess.Popen(command, stdin=subprocess.PIPE, stdout=stdout, stderr=stderr,
                                    start_new_session=True)
+        timer, expired = deadline(process, timeout)
         try:
-            process.communicate(json.dumps(request, allow_nan=False).encode(), timeout=timeout)
+            process.communicate(json.dumps(request, allow_nan=False).encode())
             wall = time.perf_counter() - started
-            if process.returncode != 0:
+            if expired.is_set():
+                outcome = {'outcome': 'timeout', 'error': f'worker exceeded {timeout:g}s'}
+            elif process.returncode != 0:
                 outcome = {'outcome': 'crash', 'error': f'worker exited {process.returncode}'}
             elif (directory / 'stdout.json').stat().st_size > 16 * 1024 * 1024:
                 outcome = {'outcome': 'error', 'error': 'worker response exceeds protocol limit'}
@@ -154,10 +317,8 @@ def invoke(command, request, directory, timeout):
                         raise ValueError('invalid protocol response')
                 except (ValueError, UnicodeError) as error:
                     outcome = {'outcome': 'error', 'error': f'malformed worker response: {error}'}
-        except subprocess.TimeoutExpired:
-            wall = time.perf_counter() - started
-            outcome = {'outcome': 'timeout', 'error': f'worker exceeded {timeout:g}s'}
         finally:
+            timer.cancel()
             stop_group(process)
     outcome['worker_protocol_process_seconds'] = wall
     save(directory / 'supervised.json', outcome)
@@ -173,13 +334,16 @@ def execute(command, directory, timeout, env=None):
         started = time.perf_counter()
         process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
                                    start_new_session=True, env=env)
+        timer, expired = deadline(process, timeout)
         try:
-            process.wait(timeout=timeout)
-            result = {'outcome': 'ok' if process.returncode == 0 else 'error', 'returncode': process.returncode}
-        except subprocess.TimeoutExpired:
-            result = {'outcome': 'timeout', 'error': f'command exceeded {timeout:g}s'}
+            # Blocking wait observes actual process completion, avoiding the
+            # exponential polling delay of Popen.wait(timeout=...) in timings.
+            process.wait()
+            result = {'outcome': 'timeout', 'error': f'command exceeded {timeout:g}s'} if expired.is_set() else {
+                'outcome': 'ok' if process.returncode == 0 else 'error', 'returncode': process.returncode}
         finally:
             duration = time.perf_counter() - started
+            timer.cancel()
             stop_group(process)
     result['seconds'] = duration
     save(directory / 'supervised.json', result)
@@ -243,7 +407,7 @@ def summarize(samples):
 
 
 def comparison(baseline, candidate, metric='resident_turn_seconds', seed=0, threshold=0.05):
-    for key in ('task_hash', 'measurement_hash', 'source_sha256', 'backend', 'environment_hash'):
+    for key in ('task_hash', 'measurement_hash', 'source_sha256', 'backend', 'environment_hash', 'feature_profile'):
         if baseline.get(key) != candidate.get(key):
             return {'status': 'incompatible', 'reason': f'{key} differs'}
     if baseline['outcome'] != 'ok' or candidate['outcome'] != 'ok':

@@ -49,6 +49,11 @@ verified model IDs, original attribution, license terms and explicit evidence ga
 
 ## Run locally
 
+The [repeatable Mech suite](suite/README.md) adds current-compiler, resident,
+memory and native build measurements with an interface for tracking results over
+time. It uses existing compiler tests as coverage references and keeps dated
+campaigns separate from the cross-language chart.
+
 Python 3 is sufficient to build and serve the explorer:
 
 ```sh
@@ -62,6 +67,8 @@ python3 tools/build_site.py
 ```
 
 Generated files are written to `site/public/`.
+The **Mech over time** link opens `/benchmarks/campaigns.html`, with task/family
+filters, compatible comparisons, source, contracts and raw fork observations.
 
 ## Validate the dataset and explorer
 
@@ -82,6 +89,8 @@ node site/tests/benchmark_traits.mjs
 node site/tests/density.mjs
 node site/tests/view_state.mjs
 node site/tests/sample_data.mjs
+python3 -m unittest discover -s tools/tests -v
+node site/tests/campaigns.mjs
 ```
 
 With Playwright and Chrome installed, `node site/tests/sample-table.mjs site/public`

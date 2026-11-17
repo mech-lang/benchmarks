@@ -11,7 +11,7 @@ import sys
 
 from benchmark_suite import (ROOT, SCHEMA, campaign_lock, comparison, digest, environment,
     file_digest, invoke, load_catalog, measurement_response, report, save, summarize,
-    verify_response, worker_provenance)
+    verify_response, worker_provenance, preserve_worker, seal_evidence, archive_evidence)
 
 
 def run(args):
@@ -46,6 +46,8 @@ def run(args):
                 'performance_gate': False, 'results': [], 'order': [], 'comparisons': [], 'complete': False}
     with campaign_lock(ROOT / '.local'):
         output.mkdir(parents=True)
+        for lane, worker in workers.items():
+            preserve_worker(worker, output / 'workers' / lane)
         save(output / 'campaign.json', campaign)
         for case in cases:
             print(f"Verify {case['id']}", flush=True)
@@ -53,7 +55,9 @@ def run(args):
             save(output / 'fixtures' / (case['id'] + '.json'), case)
             (output / 'fixtures' / (case['id'] + '.mec')).write_text(source)
             measurement = {**case['measurement'], 'warmup': profile['warmup'], 'cycles': profile['cycles'],
-                           'output': case['task']['outputs'][0], 'timing_loop': 'v1 explicit Instant block; setup/destruction outside'}
+                           'output': case['task']['outputs'][0], 'timing_loop': 'v1 explicit Instant block; setup/destruction outside',
+                           'memory_budget_bytes':1 << 34,'summary':'included in turn',
+                           'allocator':'global allocation/reallocation counter with relaxed atomics'}
             count = len(measurement['schedule']) * profile['cycles']
             oracle = invoke([sys.executable, str(ROOT / 'tools/suite_oracle.py')],
                             {'case': case, 'count': count}, output / 'raw' / case['id'] / 'oracle', args.timeout)
@@ -67,6 +71,7 @@ def run(args):
                 for lane, worker in workers.items():
                     record = {'case_id': case['id'], 'title': case['title'], 'family': case['family'],
                               'backend': backend, 'lane': lane, 'revision': worker['revision'], 'progress': 'implemented',
+                              'feature_profile':{'profile':worker['feature_profile'],'native_generation':worker.get('native_generation',False)},
                               'capability': 'unknown', 'outcome': 'pending', 'task_hash': digest(case['task']),
                               'measurement_hash': digest(measurement), 'source_sha256': hashlib.sha256(source.encode()).hexdigest(),
                               'environment_hash': campaign['environment_hash'], 'task': case['task'],
@@ -77,7 +82,7 @@ def run(args):
                                'output': case['task']['outputs'][0], **measurement, 'iterations': count}
                     raw = Path('raw') / case['id'] / backend / lane / 'verify'
                     response = invoke([worker['binary']], request, output / raw, args.timeout)
-                    status, reason = verify_response(response, expected[:len(measurement['schedule'])], case)
+                    status, reason = verify_response(response, expected, case)
                     record['verification'] = {'outcome': status, 'reason': reason, 'raw': raw.as_posix(),
                                               'outputs': response.get('outputs'), 'before_execution': response.get('before_execution')}
                     if status == 'ok':
@@ -127,6 +132,8 @@ def run(args):
         campaign['outcome'] = 'ok' if all(r['outcome'] == 'ok' for r in campaign['results']) else 'failed'
         save(output / 'campaign.json', campaign)
         (output / 'report.md').write_text(report(campaign))
+        seal_evidence(output)
+        archive_evidence(output)
         print(f"Campaign {campaign['outcome']}: {output / 'report.md'}", flush=True)
     return 0 if campaign['outcome'] == 'ok' else 1
 

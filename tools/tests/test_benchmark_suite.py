@@ -7,11 +7,15 @@ import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from benchmark_suite import (campaign_lock, comparison, digest, equal, file_digest, invoke,
     load_catalog, measurement_response, summarize, verify_response, worker_provenance)
+from benchmark_suite import save, seal_evidence, validate_campaign, archive_evidence, EvidenceReader, signal_group
 from suite_oracle import outputs
+from run_native import parse_sections, text_size
+import export_suite
 
 
 class Contracts(unittest.TestCase):
@@ -91,7 +95,7 @@ class Comparison(unittest.TestCase):
                 'samples':[{'fork':i,'metrics':{'resident_turn_seconds':value}} for i,value in enumerate(values)]}
 
     def test_boundary_source_environment_and_backend_must_match(self):
-        for field in ('task_hash','measurement_hash','source_sha256','environment_hash','backend'):
+        for field in ('task_hash','measurement_hash','source_sha256','environment_hash','backend','feature_profile'):
             a,b=self.record([1]*5),self.record([2]*5)
             b[field]='changed'
             self.assertEqual(comparison(a,b)['status'],'incompatible',field)
@@ -127,6 +131,13 @@ class Comparison(unittest.TestCase):
 
 
 class Supervision(unittest.TestCase):
+    def test_orphaned_zombie_group_permission_race_is_harmless(self):
+        with patch('benchmark_suite.os.killpg',side_effect=PermissionError), patch('benchmark_suite.subprocess.check_output',return_value='100 Z+\n'):
+            signal_group(100,9)
+
+    def test_permission_failure_for_live_group_is_not_hidden(self):
+        with patch('benchmark_suite.os.killpg',side_effect=PermissionError), patch('benchmark_suite.subprocess.check_output',return_value='100 S\n'):
+            with self.assertRaises(PermissionError):signal_group(100,9)
     def test_valid_malformed_crash_and_timeout(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)
@@ -162,12 +173,77 @@ class Supervision(unittest.TestCase):
             root=Path(directory)
             binary=root/'worker'
             binary.write_text('worker')
+            (root/'src').mkdir()
+            for name in ('src/main.rs','Cargo.toml','Cargo.lock'):(root/name).write_text(name)
             manifest=root/'worker.json'
             manifest.write_text(json.dumps({'protocol':1,'binary':str(binary),'binary_sha256':file_digest(binary),
-                'revision':'revision','adapter_sha256':'adapter','lock_sha256':'lock'}))
+                'revision':'revision','adapter_sha256':file_digest(root/'src/main.rs'),
+                'manifest_sha256':file_digest(root/'Cargo.toml'),'lock_sha256':file_digest(root/'Cargo.lock')}))
             worker_provenance(manifest)
             binary.write_text('changed')
             with self.assertRaises(ValueError):worker_provenance(manifest)
+
+    def test_sealed_evidence_cannot_be_silently_changed(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            save(root/'raw/one/supervised.json',{'outcome':'ok','metrics':{'seconds':1}})
+            seal_evidence(root)
+            campaign={'schema':'mech.benchmark-campaign.v1','complete':True,'environment':{},
+                      'environment_hash':digest({}),'results':[]}
+            self.assertTrue(validate_campaign(root,campaign))
+            (root/'raw/one/supervised.json').write_text('changed')
+            with self.assertRaises(ValueError):validate_campaign(root,campaign)
+
+    def test_raw_archive_is_portable_and_detects_tampering(self):
+        import shutil
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            save(root/'raw/one/supervised.json',{'outcome':'ok','metrics':{'seconds':1}})
+            expected=(root/'raw/one/supervised.json').read_bytes()
+            seal_evidence(root)
+            archive_evidence(root)
+            shutil.rmtree(root/'raw')
+            with EvidenceReader(root) as reader:self.assertEqual(reader.read('raw/one/supervised.json'),expected)
+            with (root/'raw.tar.gz').open('ab') as stream:stream.write(b'changed')
+            with self.assertRaises(ValueError):
+                with EvidenceReader(root):pass
+
+
+class NativeFootprint(unittest.TestCase):
+    def test_macho_object_sections_keep_segment_identity(self):
+        sections=parse_sections('Segment : 220\n\tSection (__TEXT, __text): 200\n\tSection (__TEXT, __const): 20\n','Darwin')
+        self.assertEqual(sections,{'__TEXT/__text':200,'__TEXT/__const':20})
+        self.assertEqual(text_size(sections),200)
+
+    def test_linked_const_sections_do_not_overwrite_each_other(self):
+        sections=parse_sections('Segment __TEXT: 300\nSection __text: 200\nSection __const: 100\nSegment __DATA_CONST: 80\nSection __const: 80\n','Darwin')
+        self.assertEqual(sections['__TEXT/__const'],100)
+        self.assertEqual(sections['__DATA_CONST/__const'],80)
+        self.assertEqual(text_size(sections),200)
+
+    def test_elf_text_excludes_data_and_debug_sections(self):
+        sections=parse_sections('.text 120 0\n.text.entry 20 0\n.data 80 0\n.debug_info 90 0\n','Linux')
+        self.assertEqual(text_size(sections),140)
+        self.assertIsNone(text_size({'__TEXT/__const':20}))
+
+
+class ExportPreservation(unittest.TestCase):
+    def test_bad_incoming_evidence_preserves_existing_export(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            campaign=root/'results/campaigns/broken'
+            campaign.mkdir(parents=True)
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'broken','complete':True,
+                'environment':{},'environment_hash':digest({}),'results':[]})
+            (campaign/'sample.txt').write_text('original')
+            seal_evidence(campaign)
+            (campaign/'sample.txt').write_text('tampered')
+            previous=root/'public/campaign-evidence/saved.txt'
+            previous.parent.mkdir(parents=True)
+            previous.write_text('previous successful export')
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                with self.assertRaises(ValueError):export_suite.export(root/'public',root)
+            self.assertEqual(previous.read_text(),'previous successful export')
 
 
 if __name__ == '__main__':

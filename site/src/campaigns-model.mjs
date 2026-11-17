@@ -5,6 +5,7 @@ export const metrics = {
   linked_text_bytes: {label:'Linked code section',unit:'bytes',note:'Linked executable __text/.text section bytes. The generated release profile strips symbols.'},
   executable_bytes: {label:'Executable size',unit:'bytes',note:'Entire linked native executable under the generated release profile (strip=symbols).'},
   resident_turn_seconds: {label:'Resident turn',unit:'seconds',note:'Captured-input submission + managed turn + publication. Setup, output copying and destruction are separate; snapshot-retention and abort cases declare wider boundaries.'},
+  initial_turn_seconds: {label:'Initial accepted turn',unit:'seconds',note:'First managed turn on the temporary warmup instance, separately timed. The main fresh-instance block also includes its own first accepted turn; its mean is not a pure unchanged-turn latency.'},
   source_to_artifact_seconds: {label:'Source → artifact',unit:'seconds',note:'Canonical ProgramCompiler source parsing and semantic compilation to ProgramArtifact. No native code generation or linking is implied.'},
   artifact_decode_seconds: {label:'Artifact decoding',unit:'seconds',note:'Bytecode-v1 decoding, reconstruction and validation. Execution is measured separately.'},
   activation_seconds: {label:'Resident activation',unit:'seconds',note:'Physical/memory planning, storage realization and instance creation, after process warmup.'},
@@ -39,8 +40,8 @@ export function recordFor(campaign,id,backend,lane='candidate') {
 
 export function compareRecords(baseline,candidate,metric) {
   if(!baseline||!candidate)return {status:'unavailable',label:'—'};
-  for(const field of ['task_hash','measurement_hash','source_sha256','environment_hash','backend']) {
-    if(baseline[field]!==candidate[field])return {status:'incompatible',label:'Different contract',reason:`${field} differs`};
+  for(const field of ['task_hash','measurement_hash','source_sha256','environment_hash','backend','feature_profile']) {
+    if(JSON.stringify(baseline[field])!==JSON.stringify(candidate[field]))return {status:'incompatible',label:'Different contract',reason:`${field} differs`};
   }
   const a=baseline.summary?.[metric]?.median,b=candidate.summary?.[metric]?.median;
   if(baseline.outcome!=='ok'||candidate.outcome!=='ok'||!(a>0)||!Number.isFinite(b))return {status:'unavailable',label:'—'};

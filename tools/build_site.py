@@ -264,7 +264,7 @@ def build():
                               logical_reports=logical_source_reports())
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
-    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'tools/export_suite.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json'))
+    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'tools/export_suite.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json'))
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():
@@ -297,7 +297,8 @@ def build():
     if recipe_payload:
         (output/'reproduction.json').write_bytes(recipe_payload)
         (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
-    export_suite(output)
+    if (ROOT/'suite/catalog.json').exists():
+        export_suite(output, root=ROOT)
     manifest = {'version': version, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in sorted(output.iterdir()) if p.is_file() and p.name != 'build.json'}}
     (output / 'build.json').write_text(json.dumps(manifest, indent=2) + '\n')

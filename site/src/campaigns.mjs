@@ -51,11 +51,11 @@ function renderDetail() {
       <h3>Over time</h3>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}
       <details open><summary>Raw fork observations</summary>${summary?`<div class="sample-list">${record.samples.map(sample=>`<a href="${rawLink(current,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[metric],metric))}</span></a>`).join('')}</div>`:'<p>No accepted timings. Failed and partial observations remain in the campaign evidence.</p>'}</details>
       <details><summary>Task and measurement contracts</summary><p>Output: <code>${escape(record.task.outputs.join(', '))}</code></p><p>${escape(record.measurement.boundary)}</p><dl>${Object.entries(record.measurement).filter(([key])=>key!=='schedule').map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(typeof value==='string'?value:JSON.stringify(value))}</dd>`).join('')}</dl><p>Deterministic input schedule</p><pre>${escape(JSON.stringify(record.measurement.schedule))}</pre><p>${escape(record.task.arithmetic)}</p><p>Task <code>${escape(short(record.task_hash))}</code> · measurement <code>${escape(short(record.measurement_hash))}</code></p></details>
-      <details><summary>Correctness and negative control</summary><p>${escape(record.verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p><a href="${rawLink(current,record.verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations ↗</a><pre>${escape(JSON.stringify(record.verification.outputs,null,2))}</pre></details>
+      <details><summary>Correctness and negative control</summary><p>${escape(record.verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${record.verification.output_count?`<p>${record.verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,record.verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations ↗</a><pre>${escape(JSON.stringify(record.verification.preview_outputs??record.verification.outputs,null,2))}</pre></details>
       <details><summary>Mech source</summary><p>SHA-256 <code>${escape(record.source_sha256)}</code></p><pre class="source"><code>${escape(record.source)}</code></pre></details>
       <details><summary>All measured outcomes</summary><dl>${Object.entries(record.summary??{}).map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(metrics[key]?formatMetric(value.median,key):value.median.toLocaleString(undefined,{maximumFractionDigits:6}))}</dd>`).join('')}</dl></details>
       <details><summary>Compiler and environment</summary><dl><dt>Revision</dt><dd><code>${escape(record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(current.workers[record.lane].binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(current.workers[record.lane].adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(current.workers[record.lane].rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
-      <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON ↓</a><a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report ↗</a></p>`;
+      <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON ↓</a>${current.raw_archive?`<a href="${rawLink(current,null,current.raw_archive)}" download>Raw evidence archive ↓</a>`:''}<a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report ↗</a></p>`;
   }
   if(definition.compiler_tests?.length)html+=`<details><summary>Existing compiler test coverage</summary><ul>${definition.compiler_tests.map(test=>`<li><a href="https://github.com/${pathURL(test.repository)}/blob/${bundle.catalog.candidate_revision}/${pathURL(test.path)}" target="_blank" rel="noopener">${escape(test.path)}</a></li>`).join('')}</ul></details>`;
   $('#detail').innerHTML=html;
@@ -96,14 +96,26 @@ async function start() {
   $('#baseline').innerHTML=option('','No comparison')+option('$paired','Paired baseline worker')+choices.map(c=>option(c.id,c.id)).join('');
   $('#metric').innerHTML=Object.entries(metrics).map(([key,meta])=>option(key,meta.label)).join('');
   $('#family').innerHTML+=Array.from(new Set(bundle.catalog.cases.map(c=>c.family))).sort().map(f=>option(f,nice(f))).join('');
+  if(!parameters.has('campaign')){
+    const resident=choices.find(c=>c.results.some(r=>r.backend==='source'&&r.lane==='candidate'));
+    if(resident)$('#campaign').value=resident.id;
+  }
   for(const selector of ['campaign','baseline','metric','backend'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
   if(!parameters.has('backend')&&campaign()?.results.length)$('#backend').value=campaign().results[0].backend;
   if(!parameters.has('metric'))$('#metric').value=$('#backend').value==='native'?'source_to_executable_seconds':'resident_turn_seconds';
   if(!parameters.has('baseline')&&campaign()?.workers.baseline)$('#baseline').value='$paired';
-  selected=parameters.get('case')??bundle.catalog.cases[0]?.id;
+  selected=parameters.get('case')??campaign()?.results.find(r=>r.backend===$('#backend').value)?.case_id??bundle.catalog.cases[0]?.id;
   for(const selector of ['#campaign','#baseline','#metric','#backend','#family','#progress'])$(selector).addEventListener('change',()=>{
+    if(selector==='#backend'&&!campaign()?.results.some(r=>r.backend===$('#backend').value)){
+      const matching=choices.find(c=>c.results.some(r=>r.backend===$('#backend').value));
+      if(matching)$('#campaign').value=matching.id;
+    }
     if(selector==='#campaign'&&campaign()?.results.length&&!campaign().results.some(r=>r.backend===$('#backend').value))$('#backend').value=campaign().results[0].backend;
-    if(['#campaign','#backend'].includes(selector))$('#metric').value=$('#backend').value==='native'?'source_to_executable_seconds':'resident_turn_seconds';
+    if(['#campaign','#backend'].includes(selector)){
+      $('#metric').value=$('#backend').value==='native'?'source_to_executable_seconds':'resident_turn_seconds';
+      selected=campaign()?.results.find(r=>r.backend===$('#backend').value)?.case_id??selected;
+      if(!campaign()?.workers.baseline&&$('#baseline').value==='$paired')$('#baseline').value='';
+    }
     render();
   });
   $('#search').addEventListener('input',render);

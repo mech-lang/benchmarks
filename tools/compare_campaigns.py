@@ -7,11 +7,11 @@ from pathlib import Path
 import random
 import statistics
 
-from benchmark_suite import save
+from benchmark_suite import save, validate_campaign
 
 
 def compare(baseline, candidate, metric, seed=1729):
-    for field in ('task_hash','measurement_hash','source_sha256','backend','environment_hash'):
+    for field in ('task_hash','measurement_hash','source_sha256','backend','environment_hash','feature_profile'):
         if baseline.get(field)!=candidate.get(field):return {'status':'incompatible','reason':f'{field} differs'}
     if baseline['outcome']!='ok' or candidate['outcome']!='ok':
         return {'status':'inconclusive','reason':'one or both records did not qualify'}
@@ -42,6 +42,8 @@ def main():
     parser.add_argument('--output',type=Path,required=True)
     args=parser.parse_args()
     a=json.loads(args.baseline.read_text());b=json.loads(args.candidate.read_text())
+    validate_campaign(args.baseline.parent,a)
+    validate_campaign(args.candidate.parent,b)
     previous={(r['case_id'],r['backend']):r for r in a['results'] if r['lane']=='candidate'}
     results=[]
     for record in b['results']:

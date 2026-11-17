@@ -1,0 +1,367 @@
+{
+  "schema": "mech.benchmark-campaign.v1",
+  "id": "2026-11-16-native-baseline-001",
+  "started_at": "2026-11-17T02:33:11.052433+00:00",
+  "profile": "native",
+  "environment": {
+    "system": "Darwin",
+    "release": "25.2.0",
+    "machine": "arm64",
+    "cpu": "Apple M3",
+    "logical_cpus": 8,
+    "python": "3.14.8",
+    "thread_environment": {}
+  },
+  "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+  "workers": {
+    "candidate": {
+      "protocol": 1,
+      "revision": "fc2b73103ce97a1907b3c8ba6792bc248e01e3b5",
+      "source_checkout": "/private/tmp/mech-benchmark-baseline-fc2",
+      "dirty": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/baseline-fc2/target/release/mech-benchmark-worker",
+      "binary_sha256": "51951d0402346cc8adec9d5450d6e933b38cf421cd7f28e2bc32325865321730",
+      "adapter_sha256": "6ddaf4df360b50e917394be98e74ad90b4c673b86a86473b363c9bb07fe17005",
+      "manifest_sha256": "98bc082fc428e1982e71b96e4a59430d9d27d65f51d28690b63eab752a56ba54",
+      "lock_sha256": "276b2dcc3054f0ccf58234cfe8e33cb6ae1a5da60757e438577f00b35a2b36f8",
+      "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0",
+      "cargo": "cargo 1.96.0-nightly (f298b8c82 2026-02-24)",
+      "build_command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/baseline-fc2/Cargo.toml",
+        "--offline",
+        "--features",
+        "native"
+      ],
+      "feature_profile": "standard_compiler f64/dynamic-shape + resident-artifact",
+      "native_generation": true,
+      "worker_build_seconds": 1.3886917908675969,
+      "build_environment": {
+        "RUSTC_BOOTSTRAP": "1",
+        "CARGO_TARGET_DIR": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/baseline-fc2/target"
+      },
+      "manifest_path": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/baseline-fc2/worker.json"
+    }
+  },
+  "performance_gate": false,
+  "results": [
+    {
+      "case_id": "native-build",
+      "title": "Native compilation, linked execution and code size",
+      "family": "compilation",
+      "backend": "native",
+      "lane": "candidate",
+      "revision": "fc2b73103ce97a1907b3c8ba6792bc248e01e3b5",
+      "progress": "measured",
+      "capability": "supported",
+      "outcome": "ok",
+      "feature_profile": {
+        "profile": "standard_compiler f64/dynamic-shape + resident-artifact",
+        "native_generation": true
+      },
+      "task": {
+        "oracle": "chain",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "source_to_executable_and_native_process",
+        "input_submission": "one exact f64 command-line input per fresh process; included",
+        "output_observation": "all declared scalar outputs, complete stdout included; named result independently verified",
+        "setup": "compiler/toolchain built ahead of campaign; support dependencies warmed by qualification build",
+        "reset": "fresh native process per input; new generated project per build fork",
+        "destruction": "shutdown included in process time",
+        "cache": "runtime/support dependencies warmed by untimed qualification; new generated project per fork",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "stripping_policy": "generated release profile strip=symbols",
+        "native_route": "checked scalar linked application",
+        "memory_budget_bytes": 17179869184,
+        "native_limits": "checked scalar launcher defaults",
+        "support_features": [
+          "mech-engine/pure_text"
+        ],
+        "support_feature_reason": "pinned engine native scalar metadata requires program_image_proofs, exposed through pure_text",
+        "support_build_environment": {},
+        "timing": "source compiler worker start through dependency resolution, support build and link; separately complete native process for every input"
+      },
+      "task_hash": "90c7d6237d3c891554be1253d201bb1d2c579c7e1a6c6480ec96f41ddb2917d8",
+      "measurement_hash": "d4528adfa9ae31a73cadc459c9760d6239b78c205a4b12ad7e85a2bcf1fdb848",
+      "source_sha256": "c8b535b8607fdcc6e1b13fb0151105981e4514136a88bac0e42edd68b1ba37bf",
+      "source": "x := signal<f64>\nn0 := x * 1.0001 + 0.01\nn1 := n0 * 1.0001 + 0.01\nn2 := n1 * 1.0001 + 0.01\nn3 := n2 * 1.0001 + 0.01\nn4 := n3 * 1.0001 + 0.01\nn5 := n4 * 1.0001 + 0.01\nn6 := n5 * 1.0001 + 0.01\nn7 := n6 * 1.0001 + 0.01\nn8 := n7 * 1.0001 + 0.01\nn9 := n8 * 1.0001 + 0.01\nn10 := n9 * 1.0001 + 0.01\nn11 := n10 * 1.0001 + 0.01\nn12 := n11 * 1.0001 + 0.01\nn13 := n12 * 1.0001 + 0.01\nn14 := n13 * 1.0001 + 0.01\nn15 := n14 * 1.0001 + 0.01\nn16 := n15 * 1.0001 + 0.01\nn17 := n16 * 1.0001 + 0.01\nn18 := n17 * 1.0001 + 0.01\nn19 := n18 * 1.0001 + 0.01\nn20 := n19 * 1.0001 + 0.01\nn21 := n20 * 1.0001 + 0.01\nn22 := n21 * 1.0001 + 0.01\nn23 := n22 * 1.0001 + 0.01\nn24 := n23 * 1.0001 + 0.01\nn25 := n24 * 1.0001 + 0.01\nn26 := n25 * 1.0001 + 0.01\nn27 := n26 * 1.0001 + 0.01\nn28 := n27 * 1.0001 + 0.01\nn29 := n28 * 1.0001 + 0.01\nn30 := n29 * 1.0001 + 0.01\nn31 := n30 * 1.0001 + 0.01\nn32 := n31 * 1.0001 + 0.01\nn33 := n32 * 1.0001 + 0.01\nn34 := n33 * 1.0001 + 0.01\nn35 := n34 * 1.0001 + 0.01\nn36 := n35 * 1.0001 + 0.01\nn37 := n36 * 1.0001 + 0.01\nn38 := n37 * 1.0001 + 0.01\nn39 := n38 * 1.0001 + 0.01\nn40 := n39 * 1.0001 + 0.01\nn41 := n40 * 1.0001 + 0.01\nn42 := n41 * 1.0001 + 0.01\nn43 := n42 * 1.0001 + 0.01\nn44 := n43 * 1.0001 + 0.01\nn45 := n44 * 1.0001 + 0.01\nn46 := n45 * 1.0001 + 0.01\nn47 := n46 * 1.0001 + 0.01\nn48 := n47 * 1.0001 + 0.01\nn49 := n48 * 1.0001 + 0.01\nn50 := n49 * 1.0001 + 0.01\nn51 := n50 * 1.0001 + 0.01\nn52 := n51 * 1.0001 + 0.01\nn53 := n52 * 1.0001 + 0.01\nn54 := n53 * 1.0001 + 0.01\nn55 := n54 * 1.0001 + 0.01\nn56 := n55 * 1.0001 + 0.01\nn57 := n56 * 1.0001 + 0.01\nn58 := n57 * 1.0001 + 0.01\nn59 := n58 * 1.0001 + 0.01\nn60 := n59 * 1.0001 + 0.01\nn61 := n60 * 1.0001 + 0.01\nn62 := n61 * 1.0001 + 0.01\nn63 := n62 * 1.0001 + 0.01\nn64 := n63 * 1.0001 + 0.01\nn65 := n64 * 1.0001 + 0.01\nn66 := n65 * 1.0001 + 0.01\nn67 := n66 * 1.0001 + 0.01\nn68 := n67 * 1.0001 + 0.01\nn69 := n68 * 1.0001 + 0.01\nn70 := n69 * 1.0001 + 0.01\nn71 := n70 * 1.0001 + 0.01\nn72 := n71 * 1.0001 + 0.01\nn73 := n72 * 1.0001 + 0.01\nn74 := n73 * 1.0001 + 0.01\nn75 := n74 * 1.0001 + 0.01\nn76 := n75 * 1.0001 + 0.01\nn77 := n76 * 1.0001 + 0.01\nn78 := n77 * 1.0001 + 0.01\nn79 := n78 * 1.0001 + 0.01\nn80 := n79 * 1.0001 + 0.01\nn81 := n80 * 1.0001 + 0.01\nn82 := n81 * 1.0001 + 0.01\nn83 := n82 * 1.0001 + 0.01\nn84 := n83 * 1.0001 + 0.01\nn85 := n84 * 1.0001 + 0.01\nn86 := n85 * 1.0001 + 0.01\nn87 := n86 * 1.0001 + 0.01\nn88 := n87 * 1.0001 + 0.01\nn89 := n88 * 1.0001 + 0.01\nn90 := n89 * 1.0001 + 0.01\nn91 := n90 * 1.0001 + 0.01\nn92 := n91 * 1.0001 + 0.01\nn93 := n92 * 1.0001 + 0.01\nn94 := n93 * 1.0001 + 0.01\nn95 := n94 * 1.0001 + 0.01\nn96 := n95 * 1.0001 + 0.01\nn97 := n96 * 1.0001 + 0.01\nn98 := n97 * 1.0001 + 0.01\nn99 := n98 * 1.0001 + 0.01\nn100 := n99 * 1.0001 + 0.01\nn101 := n100 * 1.0001 + 0.01\nn102 := n101 * 1.0001 + 0.01\nn103 := n102 * 1.0001 + 0.01\nn104 := n103 * 1.0001 + 0.01\nn105 := n104 * 1.0001 + 0.01\nn106 := n105 * 1.0001 + 0.01\nn107 := n106 * 1.0001 + 0.01\nn108 := n107 * 1.0001 + 0.01\nn109 := n108 * 1.0001 + 0.01\nn110 := n109 * 1.0001 + 0.01\nn111 := n110 * 1.0001 + 0.01\nn112 := n111 * 1.0001 + 0.01\nn113 := n112 * 1.0001 + 0.01\nn114 := n113 * 1.0001 + 0.01\nn115 := n114 * 1.0001 + 0.01\nn116 := n115 * 1.0001 + 0.01\nn117 := n116 * 1.0001 + 0.01\nn118 := n117 * 1.0001 + 0.01\nn119 := n118 * 1.0001 + 0.01\nn120 := n119 * 1.0001 + 0.01\nn121 := n120 * 1.0001 + 0.01\nn122 := n121 * 1.0001 + 0.01\nn123 := n122 * 1.0001 + 0.01\nn124 := n123 * 1.0001 + 0.01\nn125 := n124 * 1.0001 + 0.01\nn126 := n125 * 1.0001 + 0.01\nn127 := n126 * 1.0001 + 0.01\nanswer := n127\nanswer\n",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/fork-1",
+          "metrics": {
+            "source_to_executable_seconds": 6.293346416205168,
+            "source_to_artifact_seconds": 0.090707458,
+            "native_generation_seconds": 0.007804792,
+            "support_build_link_seconds": 6.033519041724503,
+            "native_process_seconds": 0.05166015952515105,
+            "object_bytes": 21824,
+            "executable_bytes": 2968976,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2077528
+          },
+          "object_sha256": "755ffb169f0506fc30ebd748ba0c955e33bfcde50694a6ef80c43d8e895e6d26",
+          "executable_sha256": "a06141f5efc1db7e6d991f7a0c7728dbdfb911df585531d4dbaa47e65d2bcb6e",
+          "lock_sha256": "d5dc5d2a43089bc597c2ad1c605c3f4bdd53629709c8b2eeef61b7f59f34a65e",
+          "process_samples": [
+            0.2172522502951324,
+            0.020986124873161316,
+            0.020612832624465227,
+            0.02060429099947214,
+            0.015862208791077137,
+            0.014643249567598104
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/fork-2",
+          "metrics": {
+            "source_to_executable_seconds": 6.433637541718781,
+            "source_to_artifact_seconds": 0.090038667,
+            "native_generation_seconds": 0.007717208,
+            "support_build_link_seconds": 6.168863582890481,
+            "native_process_seconds": 0.05018540285527706,
+            "object_bytes": 21824,
+            "executable_bytes": 2968976,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2077528
+          },
+          "object_sha256": "755ffb169f0506fc30ebd748ba0c955e33bfcde50694a6ef80c43d8e895e6d26",
+          "executable_sha256": "a06141f5efc1db7e6d991f7a0c7728dbdfb911df585531d4dbaa47e65d2bcb6e",
+          "lock_sha256": "d5dc5d2a43089bc597c2ad1c605c3f4bdd53629709c8b2eeef61b7f59f34a65e",
+          "process_samples": [
+            0.22203129110857844,
+            0.016017124988138676,
+            0.016655125189572573,
+            0.016124541871249676,
+            0.015671500004827976,
+            0.014612833969295025
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/fork-3",
+          "metrics": {
+            "source_to_executable_seconds": 6.349940957967192,
+            "source_to_artifact_seconds": 0.090474209,
+            "native_generation_seconds": 0.007671792,
+            "support_build_link_seconds": 6.084374541416764,
+            "native_process_seconds": 0.049426243330041565,
+            "object_bytes": 21824,
+            "executable_bytes": 2968976,
+            "object_text_bytes": 21136,
+            "linked_text_bytes": 2077528
+          },
+          "object_sha256": "755ffb169f0506fc30ebd748ba0c955e33bfcde50694a6ef80c43d8e895e6d26",
+          "executable_sha256": "a06141f5efc1db7e6d991f7a0c7728dbdfb911df585531d4dbaa47e65d2bcb6e",
+          "lock_sha256": "d5dc5d2a43089bc597c2ad1c605c3f4bdd53629709c8b2eeef61b7f59f34a65e",
+          "process_samples": [
+            0.21151895867660642,
+            0.016125166788697243,
+            0.01637095818296075,
+            0.018023333977907896,
+            0.017059500329196453,
+            0.017459542024880648
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "reason": null,
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 4.326807111881431
+          },
+          {
+            "kind": "scalar",
+            "value": 3.3139254894359795
+          },
+          {
+            "kind": "scalar",
+            "value": 0.2752806220996599
+          },
+          {
+            "kind": "scalar",
+            "value": 1.2881622445451093
+          },
+          {
+            "kind": "scalar",
+            "value": 8.37833360166323
+          }
+        ],
+        "raw": "raw/verify"
+      },
+      "summary": {
+        "executable_bytes": {
+          "median": 2968976,
+          "min": 2968976,
+          "max": 2968976,
+          "stdev": 0.0,
+          "samples": [
+            2968976,
+            2968976,
+            2968976
+          ]
+        },
+        "linked_text_bytes": {
+          "median": 2077528,
+          "min": 2077528,
+          "max": 2077528,
+          "stdev": 0.0,
+          "samples": [
+            2077528,
+            2077528,
+            2077528
+          ]
+        },
+        "native_generation_seconds": {
+          "median": 0.007717208,
+          "min": 0.007671792,
+          "max": 0.007804792,
+          "stdev": 6.760494325121474e-05,
+          "samples": [
+            0.007804792,
+            0.007717208,
+            0.007671792
+          ]
+        },
+        "native_process_seconds": {
+          "median": 0.05018540285527706,
+          "min": 0.049426243330041565,
+          "max": 0.05166015952515105,
+          "stdev": 0.0011358999359440405,
+          "samples": [
+            0.05166015952515105,
+            0.05018540285527706,
+            0.049426243330041565
+          ]
+        },
+        "object_bytes": {
+          "median": 21824,
+          "min": 21824,
+          "max": 21824,
+          "stdev": 0.0,
+          "samples": [
+            21824,
+            21824,
+            21824
+          ]
+        },
+        "object_text_bytes": {
+          "median": 21136,
+          "min": 21136,
+          "max": 21136,
+          "stdev": 0.0,
+          "samples": [
+            21136,
+            21136,
+            21136
+          ]
+        },
+        "source_to_artifact_seconds": {
+          "median": 0.090474209,
+          "min": 0.090038667,
+          "max": 0.090707458,
+          "stdev": 0.0003394562641062916,
+          "samples": [
+            0.090707458,
+            0.090038667,
+            0.090474209
+          ]
+        },
+        "source_to_executable_seconds": {
+          "median": 6.349940957967192,
+          "min": 6.293346416205168,
+          "max": 6.433637541718781,
+          "stdev": 0.07058052161280835,
+          "samples": [
+            6.293346416205168,
+            6.433637541718781,
+            6.349940957967192
+          ]
+        },
+        "support_build_link_seconds": {
+          "median": 6.084374541416764,
+          "min": 6.033519041724503,
+          "max": 6.168863582890481,
+          "stdev": 0.06836522605526633,
+          "samples": [
+            6.033519041724503,
+            6.168863582890481,
+            6.084374541416764
+          ]
+        }
+      }
+    }
+  ],
+  "order": [
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "lane": "candidate",
+      "fork": 0
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "lane": "candidate",
+      "fork": 1
+    },
+    {
+      "case_id": "native-build",
+      "backend": "native",
+      "lane": "candidate",
+      "fork": 2
+    }
+  ],
+  "comparisons": [],
+  "complete": true,
+  "harness_sha256": "1fd46c3a103a479267f3d275bffcc0b24f7c3f909f5cc5154d3578da758947b8",
+  "experiment": "code_generation",
+  "outcome": "ok",
+  "finished_at": "2026-11-17T02:34:19.527722+00:00"
+}

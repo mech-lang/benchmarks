@@ -2,9 +2,9 @@ name: Benchmark correctness
 
 on:
   push:
-    paths: ['suite/**', 'tools/**', 'site/**', '.github/workflows/benchmark-suite.yml']
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
   pull_request:
-    paths: ['suite/**', 'tools/**', 'site/**', '.github/workflows/benchmark-suite.yml']
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
   workflow_dispatch:
 
 permissions:
@@ -23,6 +23,7 @@ jobs:
           node-version: '22'
       - run: python3 -m unittest discover -s tools/tests -v
       - run: node site/tests/campaigns.mjs
+      - run: node site/tests/campaigns-render.mjs
       - run: node site/tests/layers.mjs
       - run: node site/tests/languages.mjs data/benchmarks.json
       - run: python3 tools/build_site.py
@@ -40,7 +41,9 @@ jobs:
           repository: mech-lang/mech
           ref: 9087b1f07727a9bfcb7c09059f48edaca6dc2301
           path: .local/mech-candidate
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-03-03
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
