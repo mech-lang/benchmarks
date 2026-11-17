@@ -161,7 +161,7 @@ def main():
         name,expected=item
         # Match the application's versioned dataset/module/style URLs and its
         # bare HTML entry point. Other retained reports use a fresh probe.
-        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz','campaigns.json','campaigns.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
+        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz','campaigns.json','campaigns.json.gz','project.json','project.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
         url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='/')+'?'+query
         return name,check_live_asset(url,expected)
 
@@ -171,12 +171,14 @@ def main():
     mismatches={name:dict(expected=local[name],observed=row) for name,row in files.items() if row!=local[name]}
     if mismatches:pending(observation,'live-assets',mismatches=mismatches)
     entry_points={}
-    if 'campaigns.html' in local:
-        for url in ('https://mech-lang.org/metrics','https://mech-lang.org/metrics/'):
-            actual=check_live_asset(url+'?verify='+nonce,local['campaigns.html'])
-            if actual!=local['campaigns.html']:
+    for asset,urls in {'campaigns.html':('https://mech-lang.org/metrics','https://mech-lang.org/metrics/'),
+                       'project.html':('https://mech-lang.org/metrics/project','https://mech-lang.org/metrics/project/')}.items():
+        if asset not in local:continue
+        for url in urls:
+            actual=check_live_asset(url+'?verify='+nonce,local[asset])
+            if actual!=local[asset]:
                 pending(observation,'metrics-entry-point',url=url,observed=actual)
-            entry_points[url]=dict(asset='campaigns.html',**actual)
+            entry_points[url]=dict(asset=asset,**actual)
     require(files['data.json']['sha256']==publication['dataset_sha256'],'Live dataset differs')
     internal=[];inspection_error=None
     try:

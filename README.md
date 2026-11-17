@@ -9,6 +9,10 @@ repeatable compiler/runtime campaigns, version comparisons, memory and native
 code size, with downloadable sources and raw observations. See the
 [campaign guide](suite/README.md) to add the next run.
 
+**[Project metrics](https://mech-lang.org/metrics/project/)** tracks source size,
+test-file inventories, dependencies, CI observations and repository activity for
+explicit revisions. See the [project metrics guide](suite/project-metrics.md).
+
 The catalog contains 63 execution variants across 54 language families. The suite covers ten workloads: binary trees, fannkuch-redux, FASTA, k-nucleotide, Mandelbrot, N-body, pi digits, regex-redux, reverse complement, and spectral norm. Implementations span interpreted, JIT-compiled, and ahead-of-time compiled execution. Results include individual timing samples, source hashes, output validation, and measurement provenance.
 
 ## Explore the results

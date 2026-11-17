@@ -1,0 +1,8 @@
+export const inventoryMetrics={physical_lines:'Physical source lines',files:'Source files',bytes:'Source bytes',rust_test_files:'Rust test files',mech_test_files:'Mech test/fixture files'};
+export const number=value=>Number.isFinite(value)?value.toLocaleString('en-US'):'—';
+export function bytes(value){if(!Number.isFinite(value))return '—';if(value<1024)return `${value} B`;if(value<1024**2)return `${(value/1024).toFixed(1)} KiB`;return `${(value/1024**2).toFixed(1)} MiB`;}
+export function latestByTrack(snapshots){const result=new Map();for(const snapshot of snapshots){const old=result.get(snapshot.track);if(!old||snapshot.captured_at>old.captured_at)result.set(snapshot.track,snapshot);}return [...result.values()];}
+export function historyFor(snapshots,current,metric){return snapshots.filter(s=>s.track===current.track&&s.policy_hash===current.policy_hash&&Number.isFinite(s.summary[metric])).sort((a,b)=>a.captured_at.localeCompare(b.captured_at));}
+export function jobSeconds(job){if(!job.started_at||!job.completed_at)return null;const value=(Date.parse(job.completed_at)-Date.parse(job.started_at))/1000;return Number.isFinite(value)&&value>=0?value:null;}
+export function jobTotals(ci){const result={success:0,failure:0,cancelled:0,skipped:0,pending:0,other:0};for(const job of ci?.jobs??[]){const key=job.status!=='completed'?'pending':Object.hasOwn(result,job.conclusion)?job.conclusion:'other';result[key]++;}return result;}
+export function previousSnapshot(snapshots,current){return historyFor(snapshots,current,'physical_lines').filter(s=>s.captured_at<current.captured_at).at(-1)??null;}
