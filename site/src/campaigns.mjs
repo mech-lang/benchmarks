@@ -14,7 +14,7 @@ function baselineRecord(id,backend) {return $('#baseline').value==='$paired'?rec
 function option(value,label){return `<option value="${escape(value)}">${escape(label)}</option>`;}
 function badge(value,extra=''){return `<span class="badge ${escape(extra)}">${escape(nice(value))}</span>`;}
 function rawLink(campaign,record,suffix='campaign.json') {
-  return `${pathURL(campaign.evidence_path)}/${record?pathURL(record)+'/':''}${pathURL(suffix)}`;
+  return new URL(`${pathURL(campaign.evidence_path)}/${record?pathURL(record)+'/':''}${pathURL(suffix)}`,import.meta.url).href;
 }
 
 function trend(points,metric) {
@@ -87,7 +87,9 @@ function render() {
 }
 
 async function start() {
-  const response=await fetch(new URL('./campaigns.json',import.meta.url));
+  const dataURL=new URL('./campaigns.json',import.meta.url);
+  dataURL.search=new URL(import.meta.url).search;
+  const response=await fetch(dataURL);
   if(!response.ok)throw new Error(`Could not load campaign data (${response.status})`);
   bundle=await response.json();
   if(bundle.schema!=='mech.benchmark-dashboard.v1')throw new Error('Unsupported dashboard data');

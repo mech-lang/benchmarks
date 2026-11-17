@@ -23,18 +23,20 @@ def port_number(value):
 class ExplorerHandler(SimpleHTTPRequestHandler):
     def route(self):
         path = urlsplit(self.path).path
-        if path in ("/", "/benchmarks"):
+        if path in ("/", "/benchmarks", "/metrics"):
             self.send_response(HTTPStatus.FOUND)
-            self.send_header("Location", "/benchmarks/")
+            self.send_header("Location", "/metrics/" if path == "/metrics" else "/benchmarks/")
             self.send_header("Content-Length", "0")
             self.end_headers()
             return False
-        if not path.startswith("/benchmarks/"):
+        if not path.startswith("/benchmarks/") and path not in ("/metrics/", "/metrics/index.html"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return False
         return True
 
     def translate_path(self, path):
+        if urlsplit(path).path in ("/metrics/", "/metrics/index.html"):
+            return super().translate_path("/campaigns.html")
         return super().translate_path(path[len("/benchmarks"):])
 
     def do_GET(self):
@@ -57,6 +59,7 @@ def main():
     handler = partial(ExplorerHandler, directory=str(dist))
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"Saved chart: http://127.0.0.1:{args.port}/benchmarks/", flush=True)
+        print(f"Mech metrics: http://127.0.0.1:{args.port}/metrics/", flush=True)
         try:
             server.serve_forever()
         except KeyboardInterrupt:

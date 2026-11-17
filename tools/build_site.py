@@ -283,7 +283,7 @@ def build():
             continue
         if path.suffix in {'.html', '.mjs'}:
             text = path.read_text()
-            text = re.sub(r"(\./[A-Za-z0-9_.-]+\.(?:mjs|css))(?:\?v=[A-Za-z0-9_.-]+)?", lambda m: m[1] + '?v=' + version, text)
+            text = re.sub(r"((?:\./|/benchmarks/)[A-Za-z0-9_.-]+\.(?:mjs|css))(?:\?v=[A-Za-z0-9_.-]+)?", lambda m: m[1] + '?v=' + version, text)
             (output / path.name).write_text(text)
         else:
             shutil.copyfile(path, output / path.name)

@@ -4,7 +4,7 @@ A benchmark suite comparing execution time and source size across programming la
 
 **[Explore the benchmarks](https://mech-lang.org/benchmarks/)**
 
-**[Track Mech over time](https://mech-lang.org/benchmarks/campaigns.html)**:
+**[Track Mech over time](https://mech-lang.org/metrics/)**:
 repeatable compiler/runtime campaigns, version comparisons, memory and native
 code size, with downloadable sources and raw observations. See the
 [campaign guide](suite/README.md) to add the next run.
@@ -72,7 +72,7 @@ python3 tools/build_site.py
 ```
 
 Generated files are written to `site/public/`.
-The **Mech over time** link opens `/benchmarks/campaigns.html`, with task/family
+The **Mech over time** link opens `/metrics/`, with task/family
 filters, compatible comparisons, source, contracts and raw fork observations.
 
 ## Validate the dataset and explorer

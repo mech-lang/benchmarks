@@ -13,7 +13,7 @@ class Element {
 }
 
 const source=fs.readFileSync(new URL('../src/campaigns.mjs',import.meta.url),'utf8')
-  .replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'http://localhost/benchmarks/campaigns.mjs'")
+  .replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'http://localhost/benchmarks/campaigns.mjs?v=test-build'")
   .replace('start().catch(error=>','globalThis.ready=start().catch(error=>');
 
 async function mount(bundle,query='') {
@@ -23,13 +23,14 @@ async function mount(bundle,query='') {
   element('#family').innerHTML='<option value="all">Every family</option>';
   element('#backend').options=['source','bytecode','native'].map(value=>({value}));
   const history={replaceState(_a,_b,url){this.url=url;}};
+  let fetchedURL;
   const context=vm.createContext({...model,document:{querySelector:element},URL,URLSearchParams,console,
-    location:{search:query,pathname:'/benchmarks/campaigns.html'},history,
-    fetch:async()=>({ok:true,json:async()=>bundle})});
+    location:{search:query,pathname:'/metrics/'},history,
+    fetch:async url=>{fetchedURL=String(url);return {ok:true,json:async()=>bundle};}});
   vm.runInContext(source,context);
   await context.ready;
   assert.equal(element('#load-error').textContent,'');
-  return {element,history};
+  return {element,history,fetchedURL};
 }
 
 const task={outputs:['result'],arithmetic:'f64',absolute_tolerance:1e-9,relative_tolerance:1e-10};
@@ -47,12 +48,13 @@ const catalog={candidate_revision:'abc123',cases:[{id:'scalar',title:'Scalar <sa
   {id:'graphs',title:'Graphs',family:'graphs',progress:'planned',notes:'Future coverage'}]};
 const bundle={schema:'mech.benchmark-dashboard.v1',catalog,campaigns:[campaign]};
 
-let {element,history}=await mount(bundle);
+let {element,history,fetchedURL}=await mount(bundle);
+assert.equal(fetchedURL,'http://localhost/benchmarks/campaigns.json?v=test-build');
 assert.ok(element('#cases').innerHTML.includes('Scalar &lt;safe&gt;'));
 assert.ok(element('#detail').innerHTML.includes('100.00 µs'));
 assert.ok(element('#detail').innerHTML.includes('&lt;script&gt;'));
 assert.ok(!element('#detail').innerHTML.includes('<script>'));
-assert.ok(element('#detail').innerHTML.includes('campaign-evidence/run-001/raw/fork-1/supervised.json'));
+assert.ok(element('#detail').innerHTML.includes('href="http://localhost/benchmarks/campaign-evidence/run-001/raw/fork-1/supervised.json"'));
 assert.ok(history.url.includes('case=scalar'));
 element('#search').value='graphs';element('#search').events.input();
 assert.ok(element('#cases').innerHTML.includes('Graphs'));

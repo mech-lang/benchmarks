@@ -87,6 +87,19 @@ def check_local_assets(directory,manifest):
     return files
 
 
+def check_live_asset(url,expected):
+    measured=hashlib.sha256();size=0
+    try: response=request(url)
+    except Exception as error: raise RuntimeError('Live asset request failed: '+url) from error
+    with response:
+        require(response.status==200,'Unexpected live asset status: '+url)
+        for chunk in iter(lambda:response.read(1024*1024),b''):
+            size+=len(chunk)
+            require(size<=expected['bytes'],'Live asset exceeds expected size: '+url)
+            measured.update(chunk)
+    return dict(sha256=measured.hexdigest(),bytes=size)
+
+
 def pending(observation,stage,**details):
     value=dict(observation,status='pending',stage=stage,
                observed_at=datetime.now(timezone.utc).isoformat(),**details)
@@ -145,26 +158,25 @@ def main():
     if live!=manifest_raw:pending(observation,'live-manifest')
 
     def verify(item):
-        name,expected=item;measured=hashlib.sha256();size=0
+        name,expected=item
         # Match the application's versioned dataset/module/style URLs and its
         # bare HTML entry point. Other retained reports use a fresh probe.
-        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
+        query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz','campaigns.json','campaigns.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
         url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='/')+'?'+query
-        try: response=request(url)
-        except Exception as error: raise RuntimeError('Live asset request failed: '+name) from error
-        with response:
-            require(response.status==200,'Unexpected live asset status: '+name)
-            for chunk in iter(lambda:response.read(1024*1024),b''):
-                size+=len(chunk)
-                require(size<=expected['bytes'],'Live asset exceeds expected size: '+name)
-                measured.update(chunk)
-        return name,dict(sha256=measured.hexdigest(),bytes=size)
+        return name,check_live_asset(url,expected)
 
     with ThreadPoolExecutor(max_workers=4) as pool:
         files=dict(pool.map(verify,local.items()))
     require(len(files)==publication['asset_count'],'Live asset inventory incomplete')
     mismatches={name:dict(expected=local[name],observed=row) for name,row in files.items() if row!=local[name]}
     if mismatches:pending(observation,'live-assets',mismatches=mismatches)
+    entry_points={}
+    if 'campaigns.html' in local:
+        for url in ('https://mech-lang.org/metrics','https://mech-lang.org/metrics/'):
+            actual=check_live_asset(url+'?verify='+nonce,local['campaigns.html'])
+            if actual!=local['campaigns.html']:
+                pending(observation,'metrics-entry-point',url=url,observed=actual)
+            entry_points[url]=dict(asset='campaigns.html',**actual)
     require(files['data.json']['sha256']==publication['dataset_sha256'],'Live dataset differs')
     internal=[];inspection_error=None
     try:
@@ -191,6 +203,7 @@ def main():
         dataset_sha256=publication['dataset_sha256'],publication_receipt_sha256=digest(publication_raw),
         verified_assets=publication['asset_count'],files=files,request_user_agent=USER_AGENT,pipeline=observation['pipeline'],jobs=observation['jobs'],
         pages_deployment_jobs=internal,live_manifest_rechecked_after_assets=True,
+        entry_points=entry_points,
         dataset_requested_with_application_build_version=manifest['version'])
     if inspection_error is not None:receipt['pages_deployment_job_inspection_error']=inspection_error
     output.parent.mkdir(parents=True,exist_ok=True)
