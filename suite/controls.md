@@ -101,8 +101,17 @@ Use new campaign directories; never overwrite an earlier measurement.
 
 ## Evidence downloads
 
+The metrics page initially fetches only the compressed summary index (medians,
+control identities and history). Sources, contracts, schedules, fork observations
+and machine details live in separate per-observation and per-campaign JSON files.
+Opening a task fetches its measurement and control; returning to the summary and
+reopening the same task uses the cached details. Shared task links load that task
+directly. Browsers without gzip stream support can use the plain summary index.
+
 Large individual observations are served as lossless gzip downloads; the explorer
-links to the exact exported file. Bulk raw archives remain byte-identical in their
+links to the exact exported receipt. Raw request/stdout copies and reproduction
+files are available through the complete archive and pinned repository link,
+instead of being duplicated in the Pages export. Bulk raw archives remain byte-identical in their
 immutable benchmark-repository commit, pinned by `evidence-hosting.json`. Pages
 redirects preserve the archive download URLs under mech-lang.org. The deployment
 verifier checks every on-site file and follows every archive redirect, checking

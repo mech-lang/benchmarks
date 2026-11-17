@@ -86,39 +86,43 @@ def export(output, root=ROOT):
     archives=archive_locations(root,validated)
     external={}
     # Validate every incoming record before replacing the last successful export.
-    if evidence.exists():
-        shutil.rmtree(evidence)
+    for directory in (evidence, output/'campaign-details'):
+        if directory.exists():shutil.rmtree(directory)
+    definitions={case['id']:case for case in catalog['cases']}
+    def write_json(path,value):
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps(value,ensure_ascii=False,separators=(',',':'))+'\n')
     for path,campaign in validated:
-        # Preserve raw requests, stdout, supervision outcomes and reports as inspectable downloads.
+        # The page only needs supervision receipts. Complete requests, stdout,
+        # reproduction sources and binaries remain in the immutable archive/repo.
         destination = evidence / path.parent.name
         destination.mkdir(parents=True)
+        compressed={}
+        def write_evidence(name,content):
+            target=destination/name
+            target.parent.mkdir(parents=True,exist_ok=True)
+            packed=gzip.compress(content,mtime=0) if len(content)>64*1024 and not name.endswith('.gz') else None
+            if packed is not None and len(packed)<len(content):
+                target=target.with_name(target.name+'.gz')
+                target.write_bytes(packed)
+                compressed[name]=name+'.gz'
+            else:target.write_bytes(content)
         for item in path.parent.rglob('*'):
             if item.is_file() and item.suffix in ('.json', '.txt', '.md', '.mec', '.rs', '.c', '.h', '.toml', '.lock', '.gz') and 'raw' not in item.relative_to(path.parent).parts:
                 if item.name=='raw.tar.gz' and campaign['id'] in archives:continue
-                target = destination / item.relative_to(path.parent)
-                target.parent.mkdir(parents=True, exist_ok=True)
-                shutil.copyfile(item, target)
+                name=item.relative_to(path.parent).as_posix()
+                if campaign['id'] in archives and name not in {'campaign.json','report.md','evidence.json'}:continue
+                write_evidence(name,item.read_bytes())
         with EvidenceReader(path.parent) as reader:
-            compressed={}
             for name in reader.manifest['files']:
-                if name.startswith('raw/'):
-                    if name.endswith('.class'):
-                        continue  # Compiled JVM products and their exact names remain in the lossless archive.
-                    target=destination/name
-                    target.parent.mkdir(parents=True,exist_ok=True)
-                    content=reader.read(name)
-                    packed=gzip.compress(content,mtime=0) if len(content)>64*1024 and not name.endswith('.gz') else None
-                    if packed is not None and len(packed)<len(content):
-                        target=target.with_name(target.name+'.gz')
-                        target.write_bytes(packed)
-                        compressed[name]=name+'.gz'
-                    else:
-                        target.write_bytes(content)
+                if name.startswith('raw/') and name.endswith('/supervised.json'):
+                    write_evidence(name,reader.read(name))
             if reader.manifest.get('archives'):campaign['raw_archive']='raw.tar.gz'
             if compressed:campaign['compressed_evidence']=compressed
         if campaign['id'] in archives:
             pin=archives[campaign['id']]
             campaign['raw_archive_url']=pin['url']
+            campaign['reproduction_url']=pin['url'].replace('raw.githubusercontent.com','github.com').replace('/benchmarks/','/benchmarks/tree/',1).removesuffix('/raw.tar.gz')
             external['campaign-evidence/'+campaign['id']+'/raw.tar.gz']=pin
         campaign['evidence_path'] = 'campaign-evidence/' + path.parent.name
         for record in campaign['results']:
@@ -134,8 +138,28 @@ def export(output, root=ROOT):
                     verification[field+'_count']=len(values)
                     verification['preview_'+field]=values[:3]+values[-3:]
                     del verification[field]
-        campaigns.append(campaign)
-    bundle = {'schema': 'mech.benchmark-dashboard.v1', 'catalog': catalog,'control_policy':policy,
+        detail_root='campaign-details/'+campaign['id']
+        context_path=detail_root+'/context.json'
+        write_json(output/context_path,{'schema':'mech.benchmark-context.v1',
+            'campaign':{k:v for k,v in campaign.items() if k not in {'results','order'}}})
+        index={k:campaign[k] for k in ('id','started_at','complete')}
+        index['workers']={lane:{'revision':worker['revision']} for lane,worker in campaign.get('workers',{}).items() if 'revision' in worker}
+        index['context_path']=context_path
+        index['results']=[]
+        for number,record in enumerate(campaign['results']):
+            detail_path=f'{detail_root}/{number:04}.json'
+            write_json(output/detail_path,{'schema':'mech.benchmark-observation.v1','campaign_id':campaign['id'],
+                'definition':definitions.get(record['case_id'],{k:record[k] for k in ('title','family','progress') if k in record}|{'id':record['case_id']}),'record':record})
+            summary={k:record[k] for k in ('case_id','title','family','backend','lane','revision','progress','capability','outcome',
+                'task_hash','measurement_hash','source_sha256','environment_hash','feature_profile','control_contract') if k in record}
+            summary['measurement']={k:v for k,v in record.get('measurement',{}).items() if k in {'primary_metric','metric_mapping','comparison_note'}}
+            summary['summary']={key:{'median':value['median'],'samples':len(value.get('samples',[]))} for key,value in record.get('summary',{}).items()}
+            summary['detail_path']=detail_path
+            index['results'].append(summary)
+        campaigns.append(index)
+    catalog_summary={k:catalog[k] for k in ('schema','candidate_revision') if k in catalog}
+    catalog_summary['cases']=[{k:case[k] for k in ('id','title','family','progress','backends') if k in case} for case in catalog['cases']]
+    bundle = {'schema': 'mech.benchmark-dashboard.v2', 'catalog': catalog_summary,'control_policy':policy,
               'campaigns': sorted(campaigns, key=lambda c: c['started_at']),'external_evidence':external}
     payload=(json.dumps(bundle,ensure_ascii=False,separators=(',',':'))+'\n').encode()
     (output / 'campaigns.json').write_bytes(payload)

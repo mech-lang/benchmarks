@@ -290,7 +290,9 @@ class ExportPreservation(unittest.TestCase):
             save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':pin}})
             with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
                 bundle=export_suite.export(root/'public',root)
-            record=bundle['campaigns'][0]
+            index=bundle['campaigns'][0]
+            self.assertNotIn('compressed_evidence',index)
+            record=json.loads((root/'public'/index['context_path']).read_text())['campaign']
             self.assertEqual(record['compressed_evidence']['raw/verify/supervised.json'],'raw/verify/supervised.json.gz')
             self.assertEqual(gzip.decompress((root/'public/campaign-evidence/compressed/raw/verify/supervised.json.gz').read_bytes()),original)
             self.assertFalse((root/'public/campaign-evidence/compressed/raw.tar.gz').exists())
@@ -300,6 +302,35 @@ class ExportPreservation(unittest.TestCase):
             save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':{**pin,'sha256':'0'*64}}})
             with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
                 with self.assertRaisesRegex(ValueError,'differs from retained bytes'):export_suite.export(root/'public',root)
+
+    def test_summary_defers_sources_schedules_and_observations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);campaign=root/'results/campaigns/lazy'
+            case=copy.deepcopy(load_catalog()['cases'][0]);host=digest({})
+            samples=[{'fork':0,'raw':'raw/fork-1','metrics':{'resident_turn_seconds':.00001}}]
+            record={'case_id':case['id'],'backend':'source','lane':'candidate','revision':'revision',
+                'task':case['task'],'task_hash':digest(case['task']),'measurement':case['measurement'],
+                'measurement_hash':digest(case['measurement']),'source':'exact measured source',
+                'source_sha256':__import__('hashlib').sha256(b'exact measured source').hexdigest(),
+                'environment_hash':host,'outcome':'ok','progress':'measured','samples':samples,'summary':summarize(samples)}
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'lazy','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':host,'results':[record]})
+            save(campaign/'raw/fork-1/supervised.json',{'outcome':'ok','metrics':samples[0]['metrics']})
+            save(campaign/'raw/fork-1/request.json',{'schedule':case['measurement']['schedule']})
+            seal_evidence(campaign)
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[case]}):
+                bundle=export_suite.export(root/'public',root)
+            self.assertEqual(bundle['schema'],'mech.benchmark-dashboard.v2')
+            summary=bundle['campaigns'][0]['results'][0]
+            for field in ('source','samples','task','verification'):self.assertNotIn(field,summary)
+            self.assertNotIn('schedule',summary['measurement'])
+            self.assertNotIn('measurement',bundle['catalog']['cases'][0])
+            detail=json.loads((root/'public'/summary['detail_path']).read_text())
+            self.assertEqual(detail['record'],record)
+            self.assertEqual(detail['definition'],case)
+            self.assertEqual(summary['summary']['resident_turn_seconds']['median'],record['summary']['resident_turn_seconds']['median'])
+            self.assertFalse((root/'public/campaign-evidence/lazy/raw/fork-1/request.json').exists())
+            self.assertEqual((root/'public/campaign-evidence/lazy/raw/fork-1/supervised.json').read_bytes(),(campaign/'raw/fork-1/supervised.json').read_bytes())
 
     def test_independent_c_oracle_source_is_downloadable(self):
         with tempfile.TemporaryDirectory() as directory:

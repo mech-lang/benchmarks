@@ -13,15 +13,22 @@ const browser=await chromium.launch({headless:true,...(process.env.CHROME_BINARY
 const errors=[],checks=[];
 const check=(name,value)=>{assert.ok(value,name);checks.push(name);};
 const hash=raw=>createHash('sha256').update(raw).digest('hex');
+const detailReady=page=>page.locator('#detail-title').waitFor();
+const chooseTask=async(page,id)=>{await page.locator(`[data-case="${id}"]`).click();await detailReady(page);};
 
 try {
   const page=await browser.newPage({viewport:{width:1440,height:1000}});
   page.on('pageerror',error=>errors.push(error.message));
-  const dataRequests=[];
-  page.on('request',request=>{if(new URL(request.url()).pathname==='/benchmarks/campaigns.json')dataRequests.push(request.url());});
+  const dataRequests=[],detailRequests=[];
+  page.on('request',request=>{const pathname=new URL(request.url()).pathname;if(['/benchmarks/campaigns.json','/benchmarks/campaigns.json.gz'].includes(pathname))dataRequests.push(request.url());if(pathname.startsWith('/benchmarks/campaign-details/'))detailRequests.push(request.url());});
   await page.goto(base,{waitUntil:'networkidle',timeout:45000});
   await page.locator('#cases [data-case="scalar-changed"]').waitFor();
   check('catalog loads at /metrics',await page.locator('#cases tr').count()===bundle.catalog.cases.length);
+  check('the initial page only loads summary data',detailRequests.length===0);
+  check('task details are closed initially',!(await page.locator('#detail').isVisible()));
+  check('summary data excludes program sources and observations',bundle.campaigns.every(c=>!c.environment&&c.results.every(r=>!r.source&&!r.samples&&!r.verification&&!r.measurement.schedule)));
+  check('the compressed summary is under 100 KiB',(await readFile('site/public/campaigns.json.gz')).byteLength<100*1024);
+  check('the browser fetches the compressed summary',dataRequests.length===1&&new URL(dataRequests[0]).pathname.endsWith('.json.gz'));
   check('latest view and all retained campaigns are selectable',await page.locator('#campaign option').count()===bundle.campaigns.length+1);
   check('the default view combines measured results',await page.locator('#campaign').inputValue()==='$latest');
   check('every default task row has a Mech measurement',await page.locator('.mech-value').evaluateAll(cells=>cells.every(c=>!c.textContent.includes('—'))));
@@ -35,18 +42,22 @@ try {
   const relatedRow=page.locator('#cases tr').filter({has:page.locator('[data-case="related-post-gen"]')});
   check('Related Post Gen retains the confirmed Mech control',(await relatedRow.locator('.control-value').innerText()).includes('Mech · IR355 baseline'));
   check('the first held checkpoint is labeled as a baseline',(await relatedRow.innerText()).includes('Baseline held'));
-  await page.locator('[data-case="related-post-gen"]').click();
+  await chooseTask(page,'related-post-gen');
+  check('opening one task does not fetch other task details',detailRequests.length===2);
+  check('detail requests use the current build version',detailRequests.every(url=>new URL(url).searchParams.get('v')===manifest.version));
   check('Related Post Gen keeps its 13 confirmation observations',await page.locator('#detail .sample-list a').count()===13);
   check('Rust pool timing advantage is disclosed',(await page.locator('#detail').innerText()).includes('pool-before-timer'));
   await page.locator('#metric').selectOption('native_process_seconds');
+  await detailReady(page);
   check('Related Post Gen whole-process comparison uses Rust',(await page.locator('#detail .control-detail').innerText()).includes('Rust · unchanged rust_con'));
   await page.locator('#metric').selectOption('$primary');
+  await detailReady(page);
   check('data request uses the published build version',dataRequests.some(url=>new URL(url).searchParams.get('v')===manifest.version));
   check('comparison navigation uses /benchmarks',await page.locator('nav a').first().getAttribute('href')==='/benchmarks/');
 
   await page.locator('#campaign').selectOption('2026-11-16-canonical-standard-001');
   await page.locator('#baseline').selectOption('$paired');
-  await page.locator('[data-case="scalar-changed"]').click();
+  await chooseTask(page,'scalar-changed');
   check('paired version comparison is visible',(await page.locator('#detail').innerText()).includes('relative to the selected baseline'));
   check('compatible history is plotted',await page.locator('#detail svg.trend').count()===1);
 
@@ -63,6 +74,7 @@ try {
   }
 
   await page.locator('#backend').selectOption('bytecode');
+  await detailReady(page);
   check('decoded artifact observations are visible',await page.locator('#detail .sample-list a').count()===3);
   await page.locator('#search').fill('matrix');
   const filtered=await page.locator('#cases tr').count();
@@ -73,11 +85,14 @@ try {
   await page.locator('#progress').selectOption('all');
 
   await page.locator('#backend').selectOption('native');
+  await chooseTask(page,'native-build');
   const nativeRun=bundle.campaigns.findLast(c=>c.results.some(r=>r.backend==='native'&&r.progress==='measured'));
   check('native selection finds its measured campaign',await page.locator('#campaign').inputValue()===nativeRun.id);
   await page.locator('#metric').selectOption('object_text_bytes');
+  await detailReady(page);
   check('native code size is measured',(await page.locator('#detail .measurement strong').innerText())!=='—');
   await page.locator('#campaign').selectOption('2026-11-16-native-build-001');
+  await detailReady(page);
   check('failed qualification has no accepted timings',(await page.locator('#detail').innerText()).includes('No accepted timings'));
   check('failed qualification has no sample links',await page.locator('#detail .sample-list a').count()===0);
 
@@ -86,18 +101,19 @@ try {
     await page.locator('#backend').selectOption('program-jit-bytecode');
     await page.locator('#campaign').selectOption(applicationRun.id);
     check('historical decoded full application remains selectable',await page.locator('#campaign').inputValue()===applicationRun.id);
-    await page.locator('[data-case="deflate"]').click();
+    await chooseTask(page,'deflate');
     check('full application chooses its checked-call measurement',(await page.locator('#detail .measurement').innerText()).includes('Checked program call'));
     check('full application has three independent forks',await page.locator('#detail .sample-list a').count()===3);
     await page.getByText('Other retained compressor observations',{exact:true}).click();
     check('older compressor controls remain inspectable',(await page.locator('#detail').innerText()).includes('d99c7b838fb05bb1047eb0c18d4d06d0f86f345d'));
     check('unmeasured Rust control is explicit',(await page.locator('#detail .control-detail').innerText()).includes('Rust has not been measured'));
     await page.locator('#backend').selectOption('process-workers');
+    await chooseTask(page,'concurrent');
     check('scaling chooses the whole group measurement',(await page.locator('#detail .measurement').innerText()).includes('Complete worker group'));
     check('all tasks have accepted measurements somewhere',(await page.locator('#coverage-summary').innerText()).includes(`${bundle.catalog.cases.length} of ${bundle.catalog.cases.length}`));
   }
   await page.goto(base,{waitUntil:'networkidle'});
-  await page.locator('[data-case="deflate"]').click();
+  await chooseTask(page,'deflate');
   check('current compressor has a measured Rust implementation',(await page.locator('#detail .control-detail').innerText()).includes('Rust · zlib-rs level 9'));
   check('compression size accompanies the timing comparison',(await page.locator('#detail .compression-quality').innerText()).includes('Different codecs and levels'));
   await page.getByText('Control measurements',{exact:true}).click();
@@ -107,8 +123,13 @@ try {
   const rustRaw=await rustResponse.json();
   check('Rust sample link contains a real validated stream',rustResponse.status()===200&&rustRaw.final_output.complete_stream===true&&rustRaw.final_output.complete_input_consumption===true);
   await page.goto(base,{waitUntil:'networkidle'});
-  await page.locator('[data-case="scalar-changed"]').click();
+  await chooseTask(page,'scalar-changed');
   check('current scalar control retains its actual five forks',await page.locator('#detail .control-samples a').count()===5);
+  const requestsBeforeClose=detailRequests.length;
+  await page.locator('[data-close-detail]').click();
+  check('returning to the summary closes task details',!(await page.locator('#detail').isVisible()));
+  await chooseTask(page,'scalar-changed');
+  check('reopening the same task uses cached details',detailRequests.length===requestsBeforeClose);
   await page.goto(base,{waitUntil:'networkidle'});
   if(output){await mkdir(output,{recursive:true});await page.screenshot({path:path.join(output,'metrics-desktop.png'),fullPage:true});}
   const shared=page.url();
@@ -122,7 +143,7 @@ try {
   check('mobile layout stays inside the viewport',await mobile.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1));
   await mobile.locator('#search').fill('unchanged input');
   check('mobile search remains usable',await mobile.locator('#cases tr').count()===1);
-  await mobile.locator('[data-case="scalar-unchanged"]').click();
+  await chooseTask(mobile,'scalar-unchanged');
   check('mobile task selection updates the details',(await mobile.locator('#detail-title').innerText()).includes('unchanged input'));
   if(output)await mobile.screenshot({path:path.join(output,'metrics-mobile.png'),fullPage:true});
   check('no browser errors',errors.length===0);
