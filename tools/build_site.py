@@ -6,6 +6,7 @@ import hashlib
 import json
 import re
 import shutil
+from export_suite import export as export_suite
 from source_metrics import canonical, metadata_for, partition_text, totals
 from logical_source_payload import bind as bind_logical_source_units, load_reports as logical_source_reports
 
@@ -263,7 +264,7 @@ def build():
                               logical_reports=logical_source_reports())
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
-    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py']
+    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'tools/export_suite.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json'))
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():
@@ -282,7 +283,7 @@ def build():
             continue
         if path.suffix in {'.html', '.mjs'}:
             text = path.read_text()
-            text = re.sub(r"(\./[A-Za-z0-9_.-]+\.(?:mjs|css))(?:\?v=[A-Za-z0-9_.-]+)?", lambda m: m[1] + '?v=' + version, text)
+            text = re.sub(r"((?:\./|/benchmarks/)[A-Za-z0-9_.-]+\.(?:mjs|css))(?:\?v=[A-Za-z0-9_.-]+)?", lambda m: m[1] + '?v=' + version, text)
             (output / path.name).write_text(text)
         else:
             shutil.copyfile(path, output / path.name)
@@ -296,8 +297,10 @@ def build():
     if recipe_payload:
         (output/'reproduction.json').write_bytes(recipe_payload)
         (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
-    manifest = {'version': version, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                for p in sorted(output.iterdir()) if p.is_file() and p.name != 'build.json'}}
+    if (ROOT/'suite/catalog.json').exists():
+        export_suite(output, root=ROOT)
+    manifest = {'version': version, 'files': {p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(output.rglob('*')) if p.is_file() and p != output / 'build.json'}}
     (output / 'build.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(f'Built site/public ({len(manifest["files"])} files, {version})')
     return output

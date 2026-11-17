@@ -1,0 +1,61 @@
+name: Benchmark correctness
+
+on:
+  push:
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
+  pull_request:
+    paths: ['suite/**', 'tools/**', 'site/**', 'results/campaigns/**', '.github/workflows/benchmark-suite.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  harness-and-explorer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: python3 -m unittest discover -s tools/tests -v
+      - run: node site/tests/campaigns.mjs
+      - run: node site/tests/campaigns-render.mjs
+      - run: node site/tests/layers.mjs
+      - run: node site/tests/languages.mjs data/benchmarks.json
+      - run: python3 tools/build_site.py
+
+  canonical-correctness:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      RUSTC_BOOTSTRAP: '1'
+      CARGO_BUILD_JOBS: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: mech-lang/mech
+          ref: 9087b1f07727a9bfcb7c09059f48edaca6dc2301
+          path: .local/mech-candidate
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-03-03
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Build the pinned adapter
+        run: python3 tools/build_worker.py --mech .local/mech-candidate --revision 9087b1f07727a9bfcb7c09059f48edaca6dc2301 --output .local/worker --online
+      - name: Check timing-boundary mechanics
+        run: cargo test --release --manifest-path .local/worker/Cargo.toml
+      - name: Verify source and decoded-artifact trajectories
+        run: python3 tools/run_suite.py --worker .local/worker/worker.json --profile smoke --output .local/ci-campaign
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: canonical-correctness-evidence
+          path: .local/ci-campaign
+      # Shared-runner samples are informational. Only protocol/correctness failures fail this job.

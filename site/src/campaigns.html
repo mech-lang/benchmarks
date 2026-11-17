@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Track Mech performance, compilation, memory and benchmark coverage over time.">
+  <title>Mech · Benchmark history</title>
+  <link rel="canonical" href="https://mech-lang.org/metrics/">
+  <link rel="stylesheet" href="/benchmarks/mech-palette.css">
+  <link rel="stylesheet" href="/benchmarks/campaigns.css">
+  <script type="module" src="/benchmarks/campaigns.mjs"></script>
+</head>
+<body>
+  <header><a class="brand" href="/benchmarks/">MECH <span>/ benchmarks</span></a><nav aria-label="Benchmark views"><a href="/benchmarks/">Language comparison</a><a href="/metrics/" aria-current="page">Mech over time</a></nav></header>
+  <main>
+    <div class="heading"><div><p class="eyebrow">A continuing record</p><h1>How Mech is changing.</h1><p class="intro">Run the same tasks. Check the answers. Keep the evidence.</p></div><span class="policy">Informational measurements</span></div>
+    <div id="load-error" role="alert" hidden></div>
+    <section class="stats" aria-label="Suite coverage" id="stats"><p>Loading benchmark history…</p></section>
+    <div class="controls">
+      <label>Campaign<select id="campaign" aria-label="Campaign"></select></label>
+      <label>Compare with<select id="baseline" aria-label="Baseline campaign"></select></label>
+      <label>Measurement<select id="metric" aria-label="Measurement"></select></label>
+      <label>Backend<select id="backend"><option value="source">Source artifact</option><option value="bytecode">Decoded bytecode</option><option value="native">Linked native application</option></select></label>
+    </div>
+    <p class="boundary" id="boundary"></p>
+    <div class="workspace">
+      <section class="catalog" aria-labelledby="catalog-title">
+        <div class="section-title"><h2 id="catalog-title">The benchmark suite</h2><span id="case-count"></span></div>
+        <div class="filters"><label class="search"><span class="sr-only">Search cases</span><input id="search" type="search" placeholder="Find a task or family…"></label><label><span class="sr-only">Family</span><select id="family"><option value="all">Every family</option></select></label><label><span class="sr-only">Progress</span><select id="progress"><option value="all">Every stage</option><option value="measured">Measured</option><option value="verified">Verified</option><option value="implemented">Implemented</option><option value="planned">Planned</option><option value="failed">Needs attention</option></select></label></div>
+        <div class="table-scroll"><table><thead><tr><th scope="col">Task</th><th scope="col">Stage / outcome</th><th scope="col" id="metric-heading">Median</th><th scope="col">Change</th></tr></thead><tbody id="cases"></tbody></table></div>
+        <p id="empty" class="empty" hidden>No cases match these filters.</p>
+      </section>
+      <aside class="detail" aria-labelledby="detail-title" id="detail"><p>Select a task to inspect its source, timing boundary and raw observations.</p></aside>
+    </div>
+    <details class="method"><summary>What makes these results comparable?</summary><p>Comparisons require the same task, source, input schedule, measured boundary, backend and environment. Preparation, managed execution, output ownership and destruction have separate measurements. A changed input is checked against an independent oracle, and a no-execution control verifies that the published answer stays unchanged until a turn runs.</p><p>Raw observations are independent process forks. Three forks support exploration; five paired forks support an initial screening interval. Suspected regressions need a separate confirmation campaign. Shared-runner timings never fail CI. Planned coverage makes no claim about runtime support.</p><p>Resident turns are diagnostic measurements. The language comparison preserves its own recorded whole-process and interpreted boundaries. Managed admission counters and process RSS measure different things.</p></details>
+  </main>
+  <footer><span>Mech benchmark suite · exact sources, retained evidence</span><a href="https://github.com/mech-lang/benchmarks">Repository</a></footer>
+</body>
+</html>

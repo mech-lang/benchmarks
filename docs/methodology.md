@@ -73,6 +73,14 @@ totals. The older `recorded_samples_*` fields count sample entries.
 
 ## Provenance and reproduction
 
+The [repeatable Mech campaigns](../suite/README.md) use the current canonical
+compiler and resident architecture. Their declared runtime, activation, artifact,
+native build and memory boundaries form a separate history. Resident-phase
+samples do not enter the public cross-language rankings. Each campaign retains
+ordinary source, named outputs, independent correctness trajectories, contracts,
+exact revision/binary/toolchain provenance, process-fork samples and failure
+observations. The campaign dashboard compares only compatible measurements.
+
 The current dataset links profiles to sources, saved reports, hashes, and validation evidence. `programs/` provides inspectable source bundles; `archive/` preserves detailed reports and experiments, and `migration/reorganization-paths.tsv` resolves their old repository paths.
 
 A preserved source bundle does not by itself recreate a complete build environment. Historical commands may name local SDKs, compiler builds, dynamic libraries, or files no longer present. Exact historical flags and executable bytes were not captured for every profile. Those gaps remain explicit provenance limitations; they do not erase an otherwise established runtime family such as .NET or JVM. Reproduction on another machine requires checking the recorded dependencies and rerunning the full validation and measurement protocol.

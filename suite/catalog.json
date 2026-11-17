@@ -1,0 +1,1346 @@
+{
+  "schema": "mech.benchmark-suite.v1",
+  "protocol": 1,
+  "candidate_revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+  "baseline_revision": "fc2b73103ce97a1907b3c8ba6792bc248e01e3b5",
+  "baseline_question": "Compare the generated-code-volume revision with the later qualified compiler on identical sources. Independently built workers required.",
+  "profiles": {
+    "smoke": {
+      "forks": 1,
+      "cycles": 2,
+      "warmup": 2
+    },
+    "standard": {
+      "forks": 3,
+      "cycles": 50,
+      "warmup": 32
+    },
+    "regression": {
+      "forks": 5,
+      "cycles": 200,
+      "warmup": 64
+    }
+  },
+  "cases": [
+    {
+      "id": "scalar-changed",
+      "title": "Scalar arithmetic \u00b7 changing inputs",
+      "family": "arithmetic",
+      "progress": "implemented",
+      "source": "suite/fixtures/scalar.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "scalar",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/runtime/tests/source_acceptance_cases/numeric.rs"
+        }
+      ]
+    },
+    {
+      "id": "scalar-unchanged",
+      "title": "Scalar arithmetic \u00b7 unchanged input",
+      "family": "incremental",
+      "progress": "implemented",
+      "source": "suite/fixtures/scalar.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "scalar",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            2.0
+          ],
+          [
+            2.0
+          ],
+          [
+            2.0
+          ],
+          [
+            2.0
+          ],
+          [
+            2.0
+          ]
+        ],
+        "scenario": "unchanged",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "numerical-pipeline",
+      "title": "Nonlinear numerical pipeline",
+      "family": "numerical",
+      "progress": "implemented",
+      "source": "suite/fixtures/pipeline.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "matrix-product",
+      "title": "Matrix multiplication and downstream reduction",
+      "family": "matrices",
+      "progress": "implemented",
+      "source": "suite/fixtures/matrix.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "matrix",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/runtime/tests/source_acceptance_cases/numeric.rs"
+        }
+      ]
+    },
+    {
+      "id": "filter-cardinality",
+      "title": "Filter and materialize \u00b7 changing cardinality",
+      "family": "collections",
+      "progress": "implemented",
+      "source": "suite/fixtures/filter.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "filter",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 8,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            -1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            -1,
+            -2,
+            -3,
+            0,
+            -4,
+            -5,
+            -6,
+            -7
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        ],
+        "scenario": "changing_shape",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_source_collections.rs"
+        },
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "map-lookup",
+      "title": "Map lookup and downstream consumer",
+      "family": "containers",
+      "progress": "implemented",
+      "source": "suite/fixtures/map.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "map",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            1.0
+          ],
+          [
+            2.0
+          ],
+          [
+            1.0
+          ],
+          [
+            3.0
+          ]
+        ],
+        "scenario": "changing_membership",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "branch-selection",
+      "title": "Live branch selection",
+      "family": "control",
+      "progress": "implemented",
+      "source": "suite/fixtures/branch.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "branch",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            0.0
+          ],
+          [
+            2.0
+          ],
+          [
+            0.0
+          ],
+          [
+            -1.0
+          ]
+        ],
+        "scenario": "changing_branch",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/runtime/tests/source_acceptance_cases/live_control.rs"
+        }
+      ]
+    },
+    {
+      "id": "function-call",
+      "title": "Function call and scalar arithmetic",
+      "family": "functions",
+      "progress": "implemented",
+      "source": "suite/fixtures/function.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "scalar",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/runtime/tests/source_acceptance_cases/live_control.rs"
+        }
+      ]
+    },
+    {
+      "id": "tail-recursion",
+      "title": "Tail-recursive sum",
+      "family": "functions",
+      "progress": "implemented",
+      "source": "suite/fixtures/recursion.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "recursion",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            7.0
+          ],
+          [
+            8.0
+          ],
+          [
+            7.0
+          ],
+          [
+            31.0
+          ],
+          [
+            32.0
+          ],
+          [
+            33.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/runtime/tests/source_acceptance_cases/live_control.rs"
+        }
+      ]
+    },
+    {
+      "id": "state-evolution",
+      "title": "Stateful counter trajectory",
+      "family": "state",
+      "progress": "implemented",
+      "source": "suite/fixtures/state.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "state",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 0,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "scenario": "stateful",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "set-union",
+      "title": "Set union with duplicate removal",
+      "family": "collections",
+      "progress": "implemented",
+      "source": "suite/fixtures/collection.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "collection",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_source_collections.rs"
+        },
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "record-projection",
+      "title": "Record construction and field projection",
+      "family": "containers",
+      "progress": "implemented",
+      "source": "suite/fixtures/record.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "record",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "numerical-application",
+      "title": "Spring simulation \u00b7 stateful integration",
+      "family": "applications",
+      "progress": "implemented",
+      "source": "suite/fixtures/oscillator.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "oscillator",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 0,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "scenario": "stateful",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "dependency-fanout",
+      "title": "Wide dependency fanout \u00b7 32 consumers",
+      "family": "incremental",
+      "progress": "implemented",
+      "source": "suite/fixtures/wide.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "wide",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "touched-equal",
+      "title": "Touched input with equal computed output",
+      "family": "incremental",
+      "progress": "implemented",
+      "source": "suite/fixtures/scalar.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "scalar",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            -2.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -2.0
+          ]
+        ],
+        "scenario": "touched_equal",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/canonical_document_state.rs"
+        }
+      ]
+    },
+    {
+      "id": "retained-snapshots",
+      "title": "Owned output snapshots retained across turns",
+      "family": "memory",
+      "progress": "implemented",
+      "source": "suite/fixtures/filter.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "filter",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 8,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn_with_retained_snapshot",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "copy named result and retain one owned snapshot per turn; included",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            -1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            1,
+            2,
+            -1,
+            0,
+            3,
+            -2,
+            4,
+            -3
+          ],
+          [
+            -1,
+            -2,
+            -3,
+            0,
+            -4,
+            -5,
+            -6,
+            -7
+          ],
+          [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8
+          ]
+        ],
+        "scenario": "changing_shape",
+        "retain_snapshots": true,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/memory_runtime.rs"
+        }
+      ]
+    },
+    {
+      "id": "abort-recovery",
+      "title": "Abort prepared candidate, then accept next turn",
+      "family": "lifecycle",
+      "progress": "implemented",
+      "source": "suite/fixtures/state.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "state",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 0,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "abort_then_resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [],
+          [],
+          [],
+          [],
+          [],
+          []
+        ],
+        "scenario": "stateful",
+        "retain_snapshots": false,
+        "abort_before_accept": true
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/memory_runtime.rs"
+        }
+      ]
+    },
+    {
+      "id": "compile-chain",
+      "title": "Compilation and artifact size \u00b7 128-node chain",
+      "family": "compilation",
+      "progress": "implemented",
+      "source": "suite/fixtures/compile-chain.mec",
+      "backends": [
+        "source",
+        "bytecode"
+      ],
+      "task": {
+        "oracle": "chain",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "resident_turn",
+        "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+        "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+        "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+        "reset": "fresh instance after warmup; state evolves within each block",
+        "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/program_artifact_contract.rs"
+        }
+      ]
+    },
+    {
+      "id": "knucleotide",
+      "title": "K-nucleotide \u00b7 qualified full application",
+      "family": "applications",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Preserve FASTA N=25,000,000, complete counts and qualified fresh-process boundary.",
+      "historical_contract": "benchmarks/knucleotide/workload.json"
+    },
+    {
+      "id": "deflate",
+      "title": "Deflate \u00b7 complete stream and ownership",
+      "family": "applications",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Import the qualified source, complete input-consumption and stream-validity contracts; retain Roc/libdeflate controls."
+    },
+    {
+      "id": "nbody",
+      "title": "N-body \u00b7 qualified 50 million steps",
+      "family": "applications",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Keep the full existing workload and output contract.",
+      "historical_contract": "benchmarks/nbody/workload.json"
+    },
+    {
+      "id": "ekf",
+      "title": "Extended Kalman filter",
+      "family": "numerical",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Preserve the established 4,096-turn trajectory and numerical policy."
+    },
+    {
+      "id": "table-joins",
+      "title": "Table joins \u00b7 duplicates, ordering and cardinality",
+      "family": "tables",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Verify inner/outer/semi/anti joins separately."
+    },
+    {
+      "id": "graphs",
+      "title": "Graph traversal and updates",
+      "family": "graphs",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Specify vertex/edge multiplicity and reachable-node oracle."
+    },
+    {
+      "id": "strings",
+      "title": "UTF-8 strings and pattern matching",
+      "family": "strings",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Specify codepoint/byte behavior and allocation."
+    },
+    {
+      "id": "state-machines",
+      "title": "State-machine transitions",
+      "family": "state",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Include transition, suspension, resume and effect obligations."
+    },
+    {
+      "id": "native-build",
+      "title": "Native compilation, linked execution and code size",
+      "family": "compilation",
+      "progress": "implemented",
+      "source": "suite/fixtures/compile-chain.mec",
+      "backends": [
+        "native"
+      ],
+      "task": {
+        "oracle": "chain",
+        "outputs": [
+          "result"
+        ],
+        "dtype": "f64",
+        "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "logical_input_elements": 1,
+        "ordering": "source order for matrices; canonical set order for sets",
+        "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+      },
+      "measurement": {
+        "boundary": "source_to_executable_and_native_process",
+        "input_submission": "one exact f64 command-line input per fresh process; included",
+        "output_observation": "all declared scalar outputs, complete stdout included; named result independently verified",
+        "setup": "compiler/toolchain built ahead of campaign; support dependencies warmed by qualification build",
+        "reset": "fresh native process per input; new generated project per build fork",
+        "destruction": "shutdown included in process time",
+        "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+        "threads": 1,
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "scenario": "changing_values",
+        "retain_snapshots": false,
+        "abort_before_accept": false
+      },
+      "compiler_tests": [
+        {
+          "repository": "mech-lang/mech",
+          "path": "src/engine/tests/program_artifact_contract.rs"
+        }
+      ]
+    },
+    {
+      "id": "jit",
+      "title": "JIT preparation and warm invocation",
+      "family": "compilation",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Isolate setup from managed invocation; preserve process lifecycle."
+    },
+    {
+      "id": "capacity-growth",
+      "title": "Managed storage \u00b7 capacity threshold sweep",
+      "family": "memory",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Sweep below/at/above capacity; account for replacement and publication."
+    },
+    {
+      "id": "rejected-recovery",
+      "title": "Rejected candidate then successful turn",
+      "family": "lifecycle",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Verify rollback, then a valid accepted trajectory."
+    },
+    {
+      "id": "concurrent",
+      "title": "Concurrency and worker scaling",
+      "family": "concurrency",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Declare thread policy and workload partitioning."
+    },
+    {
+      "id": "jvm",
+      "title": "Optional JVM comparison",
+      "family": "comparisons",
+      "progress": "planned",
+      "backends": [],
+      "notes": "Add after the initial protocols and current Mech adapters are qualified."
+    }
+  ]
+}

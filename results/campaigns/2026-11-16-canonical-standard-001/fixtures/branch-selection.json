@@ -1,0 +1,57 @@
+{
+  "id": "branch-selection",
+  "title": "Live branch selection",
+  "family": "control",
+  "progress": "implemented",
+  "source": "suite/fixtures/branch.mec",
+  "backends": [
+    "source",
+    "bytecode"
+  ],
+  "task": {
+    "oracle": "branch",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "f64",
+    "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+    "absolute_tolerance": 1e-09,
+    "relative_tolerance": 1e-10,
+    "logical_input_elements": 1,
+    "ordering": "source order for matrices; canonical set order for sets",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+  },
+  "measurement": {
+    "boundary": "resident_turn",
+    "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+    "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+    "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+    "reset": "fresh instance after warmup; state evolves within each block",
+    "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        0.0
+      ],
+      [
+        2.0
+      ],
+      [
+        0.0
+      ],
+      [
+        -1.0
+      ]
+    ],
+    "scenario": "changing_branch",
+    "retain_snapshots": false,
+    "abort_before_accept": false
+  },
+  "compiler_tests": [
+    {
+      "repository": "mech-lang/mech",
+      "path": "src/runtime/tests/source_acceptance_cases/live_control.rs"
+    }
+  ]
+}
