@@ -1,0 +1,42 @@
+[package]
+name = "mech-benchmark-worker"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+native = ["dep:mech-gpu"]
+
+[dependencies]
+mech-core = { path = "@MECH@/src/core", default-features = false }
+mech-engine = { path = "@MECH@/src/engine", default-features = false, features = ["full_compiler", "resident-artifact"] }
+mech-runtime = { path = "@MECH@/src/runtime", default-features = false, features = ["compiler", "resident-routing-source"] }
+mech-stdlib = { path = "@MECH@/src/stdlib", default-features = false, features = ["full_compiler"] }
+serde_json = "1"
+libc = "=0.2.189"
+mech-gpu = { path = "@MECH@/hosts/gpu", default-features = false, features = ["canonical-native-program"], optional = true }
+
+[patch.crates-io]
+mech-core = { path = "@MECH@/src/core" }
+mech-engine = { path = "@MECH@/src/engine" }
+mech-runtime = { path = "@MECH@/src/runtime" }
+mech-stdlib = { path = "@MECH@/src/stdlib" }
+mech-syntax = { path = "@MECH@/src/syntax" }
+mech-combinatorics = { path = "@MECH@/machines/combinatorics" }
+mech-compare = { path = "@MECH@/machines/compare" }
+mech-logic = { path = "@MECH@/machines/logic" }
+mech-math = { path = "@MECH@/machines/math" }
+mech-matrix = { path = "@MECH@/machines/matrix" }
+mech-range = { path = "@MECH@/machines/range" }
+mech-set = { path = "@MECH@/machines/set" }
+mech-stats = { path = "@MECH@/machines/stats" }
+mech-string = { path = "@MECH@/machines/string" }
+cranelift-codegen = { path = "@MECH@/vendor/cranelift-codegen" }
+cranelift-frontend = { path = "@MECH@/vendor/cranelift-frontend" }
+regalloc2 = { path = "@MECH@/vendor/regalloc2" }
+
+[profile.release]
+debug = false
+strip = "none"
+
+[workspace]
