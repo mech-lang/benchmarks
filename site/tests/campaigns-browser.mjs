@@ -33,7 +33,7 @@ try {
   check('the default view combines measured results',await page.locator('#campaign').inputValue()==='$latest');
   check('every default task row has a Mech measurement',await page.locator('.mech-value').evaluateAll(cells=>cells.every(c=>!c.textContent.includes('—'))));
   check('every default task has an actual measured control',await page.locator('.control-value').evaluateAll(cells=>cells.every(c=>c.querySelector('strong')&&!c.textContent.includes('not measured'))));
-  check('every default row has a numeric control comparison',await page.locator('#cases .change').evaluateAll(cells=>cells.every(c=>/[%×]|Baseline held/.test(c.textContent))));
+  check('every default row has a qualified comparison or an explicit reference',await page.locator('#cases .change').evaluateAll(cells=>cells.every(c=>/[%×]|Baseline held|Reference only/.test(c.textContent))));
   check('controls have a dedicated column',(await page.locator('thead').innerText()).includes('Control'));
   check('external controls are not execution paths',await page.locator('#backend option[value="jvm"], #backend option[value="rust"], #backend option[value="roc"], #backend option[value="libdeflate"]').count()===0);
   check('JVM is not a task row',await page.locator('[data-case="jvm"]').count()===0);
@@ -106,7 +106,8 @@ try {
     check('full application has three independent forks',await page.locator('#detail .sample-list a').count()===3);
     await page.getByText('Other retained compressor observations',{exact:true}).click();
     check('older compressor controls remain inspectable',(await page.locator('#detail').innerText()).includes('d99c7b838fb05bb1047eb0c18d4d06d0f86f345d'));
-    check('unmeasured Rust control is explicit',(await page.locator('#detail .control-detail').innerText()).includes('Rust has not been measured'));
+    check('historical compression uses its retained level-12 reference',(await page.locator('#detail .control-detail').innerText()).includes('libdeflate · level 12'));
+    check('historical timing boundary mismatch suppresses a speed ratio',(await page.locator('#detail .control-detail').innerText()).includes('Reference only'));
     await page.locator('#backend').selectOption('process-workers');
     await chooseTask(page,'concurrent');
     check('scaling chooses the whole group measurement',(await page.locator('#detail .measurement').innerText()).includes('Complete worker group'));
@@ -114,14 +115,16 @@ try {
   }
   await page.goto(base,{waitUntil:'networkidle'});
   await chooseTask(page,'deflate');
-  check('current compressor has a measured Rust implementation',(await page.locator('#detail .control-detail').innerText()).includes('Rust · zlib-rs level 9'));
-  check('compression size accompanies the timing comparison',(await page.locator('#detail .compression-quality').innerText()).includes('Different codecs and levels'));
+  check('current compressor uses libdeflate level 12',(await page.locator('#detail .control-detail').innerText()).includes('libdeflate · level 12'));
+  check('mixed-level and unmatched-boundary speed ratios are not displayed',(await page.locator('#detail .control-detail').innerText()).includes('Reference only'));
+  check('compression size accompanies the timing reference',(await page.locator('#detail .compression-quality').innerText()).includes('Level-12 reference'));
   await page.getByText('Control measurements',{exact:true}).click();
-  check('all five Rust compressor samples are inspectable',await page.locator('#detail .control-samples a').count()===5);
-  const rustLink=await page.locator('#detail .control-samples a').first().getAttribute('href');
-  const rustResponse=await page.request.get(rustLink);
-  const rustRaw=await rustResponse.json();
-  check('Rust sample link contains a real validated stream',rustResponse.status()===200&&rustRaw.final_output.complete_stream===true&&rustRaw.final_output.complete_input_consumption===true);
+  check('all three level-12 libdeflate samples are inspectable',await page.locator('#detail .control-samples a').count()===3);
+  const libdeflateLink=await page.locator('#detail .control-samples a').first().getAttribute('href');
+  const libdeflateResponse=await page.request.get(libdeflateLink);
+  const libdeflateRaw=await libdeflateResponse.json();
+  check('level-12 sample link resolves to its retained campaign',libdeflateResponse.status()===200&&new URL(libdeflateLink).pathname.includes('/2026-11-17-full-applications-001/'));
+  check('libdeflate sample contains a real validated stream',libdeflateRaw.final_output.complete_stream===true&&libdeflateRaw.final_output.complete_input_consumption===true);
   await page.goto(base,{waitUntil:'networkidle'});
   await chooseTask(page,'scalar-changed');
   check('current scalar control retains its actual five forks',await page.locator('#detail .control-samples a').count()===5);
