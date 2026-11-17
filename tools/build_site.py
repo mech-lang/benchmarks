@@ -299,8 +299,8 @@ def build():
         (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
     if (ROOT/'suite/catalog.json').exists():
         export_suite(output, root=ROOT)
-    manifest = {'version': version, 'files': {p.name: hashlib.sha256(p.read_bytes()).hexdigest()
-                for p in sorted(output.iterdir()) if p.is_file() and p.name != 'build.json'}}
+    manifest = {'version': version, 'files': {p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in sorted(output.rglob('*')) if p.is_file() and p != output / 'build.json'}}
     (output / 'build.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(f'Built site/public ({len(manifest["files"])} files, {version})')
     return output

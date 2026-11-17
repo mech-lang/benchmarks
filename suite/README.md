@@ -6,10 +6,25 @@ native build/footprint experiment to the existing ten application workloads.
 `catalog.json` also names the remaining coverage explicitly as planned work.
 An implemented family does not imply that all of its operations are qualified.
 
-The **Mech over time** link in the existing explorer opens the campaign dashboard.
+The **[Mech over time](https://mech-lang.org/benchmarks/campaigns.html)** link in
+the existing explorer opens the campaign dashboard.
 Run `python3 tools/serve.py --port 8766` from the repository root, then open
 <http://127.0.0.1:8766/benchmarks/campaigns.html>. No additional web dependencies
 or hosted service are required. Rebuild or restart the server after adding a run.
+
+## Publish on mech-lang.org
+
+The existing [website repository](https://gitlab.com/mech-lang/web/website)
+hosts this dashboard with GitLab Pages. Build with `python3 tools/build_site.py`,
+then copy the complete `site/public/` tree into that repository's
+`public/benchmarks/`, including `campaign-evidence/`. Preserve separately hosted
+assets such as the compiler optimization videos. Its existing Pages job
+publishes `public/` when `main` is pushed.
+
+`build.json` pins every generated file, including nested source and raw-result
+downloads. `tools/verify_pages.py` checks an exact publication receipt against
+the successful GitLab pipeline and the live bytes of every pinned file.
+Publishing only the HTML or top-level files leaves the evidence links broken.
 
 ## Build independently pinned workers
 

@@ -4,6 +4,11 @@ A benchmark suite comparing execution time and source size across programming la
 
 **[Explore the benchmarks](https://mech-lang.org/benchmarks/)**
 
+**[Track Mech over time](https://mech-lang.org/benchmarks/campaigns.html)**:
+repeatable compiler/runtime campaigns, version comparisons, memory and native
+code size, with downloadable sources and raw observations. See the
+[campaign guide](suite/README.md) to add the next run.
+
 The catalog contains 63 execution variants across 54 language families. The suite covers ten workloads: binary trees, fannkuch-redux, FASTA, k-nucleotide, Mandelbrot, N-body, pi digits, regex-redux, reverse complement, and spectral norm. Implementations span interpreted, JIT-compiled, and ahead-of-time compiled execution. Results include individual timing samples, source hashes, output validation, and measurement provenance.
 
 ## Explore the results

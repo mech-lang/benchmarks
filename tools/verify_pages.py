@@ -69,14 +69,18 @@ def paged_jobs(pipeline_id,nonce):
 
 
 def check_local_assets(directory,manifest):
+    entries=list(directory.rglob('*'))
+    require(not any(p.is_symlink() for p in entries),'Symlinks are not publication assets')
     names=set(manifest['files'])|{'build.json'}
-    require({p.name for p in directory.iterdir()}==names,'Local asset inventory differs')
+    require({p.relative_to(directory).as_posix() for p in entries if p.is_file()}==names,
+            'Local asset inventory differs')
     files={}
     for name,wanted in manifest['files'].items():
-        require(type(name) is str and re.fullmatch('[A-Za-z0-9_.-]+',name) and name not in ('.','..') and
+        require(type(name) is str and all(re.fullmatch('[A-Za-z0-9_.-]+',part) and part not in ('.','..')
+                for part in name.split('/')) and
                 type(wanted) is str and re.fullmatch('[0-9a-f]{64}',wanted),'Invalid manifest entry')
         path=directory/name
-        require(path.is_file() and not path.is_symlink() and path.resolve().parent==directory,
+        require(path.is_file() and path.resolve().is_relative_to(directory),
                 'Unsafe local asset: '+name)
         require(file_digest(path)==wanted,'Local asset differs from reviewed manifest: '+name)
         files[name]=dict(sha256=wanted,bytes=path.stat().st_size)
@@ -145,7 +149,7 @@ def main():
         # Match the application's versioned dataset/module/style URLs and its
         # bare HTML entry point. Other retained reports use a fresh probe.
         query=urllib.parse.urlencode(dict(v=manifest['version'])) if name in ('data.json','data.json.gz','reproduction.json','reproduction.json.gz') or name.endswith(('.mjs','.css')) else 'verify='+nonce
-        url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='')+'?'+query
+        url=BASE if name=='index.html' else BASE+urllib.parse.quote(name,safe='/')+'?'+query
         try: response=request(url)
         except Exception as error: raise RuntimeError('Live asset request failed: '+name) from error
         with response:
