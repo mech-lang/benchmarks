@@ -64,3 +64,30 @@ assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).percent,-50);
 newer.results[0]={...newer.results[0],source_sha256:'new-source'};
 assert.equal(controlFor(data,measuredRows(data)[0]).kind,'pending','changed source cannot silently inherit a qualified Mech control');
 console.log('Consolidated measured rows, side-by-side Rust controls and fixed Mech promotion checks passed.');
+
+const compressor={...candidate,case_id:'deflate',backend:'program-jit',control_contract:'old-mixed-level-contract',
+  measurement:{primary_metric:'native_program_call_seconds'},summary:{native_program_call_seconds:{median:2}}};
+const zlib9={...compressor,backend:'rust',lane:'control',title:'Rust · zlib-rs level 9',summary:{native_program_call_seconds:{median:.1}}};
+const lib12={...compressor,backend:'libdeflate',lane:'candidate',
+  revision:'92e6a0db9fa848d742f9eb286c92afc60f2c3dda',
+  source_sha256:'a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05',
+  summary:{control_call_seconds:{median:1},output_bytes:{median:100}}};
+const compressionRun={id:'compression',started_at:'2026-11-17',results:[compressor,zlib9]};
+const compressionBundle={campaigns:[{id:'lib12',started_at:'2026-11-16',results:[lib12]},compressionRun]};
+const compressionRow={record:compressor,campaign:compressionRun,metric:'native_program_call_seconds'};
+const level12=controlFor(compressionBundle,compressionRow);
+assert.equal(level12.record,lib12,'DEFLATE level 12 uses libdeflate, even with a faster same-contract zlib-rs level-9 row');
+assert.equal(level12.label,'libdeflate · level 12');
+assert.equal(level12.metric,'control_call_seconds');
+assert.equal(controlComparison(compressionRow,level12).label,'Reference only');
+assert.equal(controlComparison(compressionRow,level12).ratio,undefined,'different timing boundaries do not produce a speed ratio');
+for(const field of ['source_sha256','revision','task_hash','environment_hash']) {
+  const altered={...compressionBundle,campaigns:[{id:'altered',started_at:'2026-11-16',results:[{...lib12,[field]:'mismatch'}]},compressionRun]};
+  assert.equal(controlFor(altered,compressionRow).kind,'pending',`${field} mismatch must not fall back to level 9`);
+}
+assert.equal(controlFor({campaigns:[compressionRun]},compressionRow).kind,'pending','absence of level 12 must not select level 9');
+assert.equal(controlFor(compressionBundle,{...compressionRow,metric:'jit_compile_seconds'}).kind,'pending','an execution reference is not a compilation reference');
+const edge={...compressor,case_id:'deflate-empty'};
+assert.equal(controlFor({campaigns:[{...compressionRun,results:[edge,{...zlib9,case_id:edge.case_id}]}]},
+  {...compressionRow,record:edge}).kind,'pending','the rule covers the complete DEFLATE corpus');
+console.log('DEFLATE level-12 reference selection, provenance guards and mixed-level ratio exclusion passed.');
