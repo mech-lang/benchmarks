@@ -75,7 +75,7 @@ def load_catalog(path=ROOT / 'suite/catalog.json', root=ROOT):
         if not schedule or not all(isinstance(frame, list) and all(
                 (isinstance(n, str) if measurement.get('input_kind') == 'string' else isinstance(n, (int, float)) and not isinstance(n, bool) and math.isfinite(n)) for n in frame) for frame in schedule):
             raise ValueError(f'invalid schedule: {identifier}')
-        if not set(case['backends']) <= {'source', 'bytecode', 'native', 'jit', 'process', 'jvm', 'process-workers', 'source-native', 'fused-native', 'program-jit', 'program-jit-bytecode', 'program-linked', 'roc', 'libdeflate'}:
+        if not set(case['backends']) <= {'source', 'bytecode', 'native', 'jit', 'process', 'process-workers', 'source-native', 'fused-native', 'program-jit', 'program-jit-bytecode', 'program-linked', 'roc', 'libdeflate', 'related-managed', 'related-compact'}:
             raise ValueError(f'invalid backend: {identifier}')
     return catalog
 
@@ -208,6 +208,7 @@ def validate_campaign(directory, campaign):
         raise ValueError('unsupported evidence schema')
     wanted={sample['raw']+'/supervised.json' for result in campaign['results'] for sample in result['samples']}
     observations={}
+    retained_reports={}
     with EvidenceReader(directory) as reader:
         for name, checksum in evidence['files'].items():
             content=reader.read(name)
@@ -215,6 +216,23 @@ def validate_campaign(directory, campaign):
                 raise ValueError(f'campaign evidence changed: {name}')
             if name in wanted:
                 observation=json.loads(content)
+                retained=observation.get('retained_observation')
+                if retained:
+                    from import_related_posts import retained_metrics
+                    import gzip
+                    retained_name=retained['path']
+                    if retained_name not in evidence['files'] or evidence['files'][retained_name]!=retained['sha256']:
+                        raise ValueError('retained observation report is not pinned')
+                    if retained_name not in retained_reports:retained_reports[retained_name]=json.loads(gzip.decompress(reader.read(retained_name)))
+                    cohort=retained['cohort']
+                    if cohort not in ('primary','confirmation'):raise ValueError('unknown retained cohort')
+                    index='sample' if cohort=='primary' else 'round'
+                    matches=[x for x in retained_reports[retained_name]['samples'] if x['variant']==retained['variant'] and x[index]==retained['round']]
+                    if len(matches)!=1:raise ValueError('retained observation identity changed')
+                    source=matches[0]
+                    exact='exact_rust_output' if cohort=='primary' else 'exact_output'
+                    if source['exit']!=0 or not source[exact] or observation['metrics']!=retained_metrics(source,cohort,retained['variant']=='rust-preinitialized'):
+                        raise ValueError('retained receipt differs from original measurement')
                 parent=observation.get('parent_observation')
                 if parent:
                     parent_name=parent['path']
