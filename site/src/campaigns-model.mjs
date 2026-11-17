@@ -1,6 +1,30 @@
+export const backendLabels = {
+  source:'Source artifact', bytecode:'Decoded bytecode', native:'Linked scalar application', jit:'Checked scalar JIT',
+  'source-native':'K-nucleotide application', 'fused-native':'Numerical application',
+  'program-jit':'Checked program JIT · source', 'program-jit-bytecode':'Checked program JIT · decoded',
+  'program-linked':'Linked program qualification', roc:'Roc compressor control', libdeflate:'libdeflate control', jvm:'JVM control', 'process-workers':'Worker scaling',
+};
+export function primaryMetric(campaign,backend) {
+  return campaign?.results.find(r=>r.backend===backend&&r.lane==='candidate')?.measurement?.primary_metric ?? (backend==='native'?'source_to_executable_seconds':'resident_turn_seconds');
+}
+export function implementationFor(campaign,record) {
+  if(record.backend==='jvm')return {binary_sha256:campaign.java?.runtime_binary_sha256,adapter_sha256:record.source_sha256,rustc:campaign.java?.version};
+  if(campaign.controls?.[record.backend])return {...campaign.controls[record.backend],adapter_sha256:campaign.controls.wrapper_sha256,rustc:record.backend==='roc'?`Roc ${campaign.controls.roc.compiler_revision}`:'Pinned libdeflate 1.26 · C release O2; host O3'};
+  if(['source-native','fused-native'].includes(record.backend)) {
+    const worker=campaign.workers?.applications;
+    return {...worker,...worker?.applications?.[record.backend==='source-native'?'mech-application':'mech-numerical-application']};
+  }
+  return campaign.workers?.[record.lane]??{};
+}
 export const metrics = {
+  jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
+  jit_compile_seconds: {label:'JIT preparation',unit:'seconds',note:'Checked native code generation and executable-memory preparation. The complete Deflate program is compiled once per independent fork, shared by its 12 corpus cases.'},
+  native_program_call_seconds: {label:'Checked program call',unit:'seconds',note:'Complete stateless canonical native call, including activation, managed checks, publication and scratch cleanup. Input import, warmup and returned-output destruction are outside the call.'},
+  control_call_seconds: {label:'Compressor control call',unit:'seconds',note:'Complete pinned Roc/libdeflate compressor call including scratch allocation and cleanup. Input loading, held aliases and output preparation are outside. Transport, allocator and ownership details differ from Mech; no automatic cross-runtime ratio is qualified.'},
+  worker_group_process_seconds: {label:'Complete worker group',unit:'seconds',note:'Fixed total 196,608 accepted turns across 1, 2 or 4 independent Mech processes. Includes supervisor/process startup, compilation, activation, warmup, execution and complete teardown.'},
+  accepted_turns_per_second: {label:'Accepted turns per second',unit:'rate',higherBetter:true,note:'Fixed total accepted turns divided by complete group lifecycle time. Higher is better. Worker counts are separate, explicit strong-scaling cases.'},
   source_to_executable_seconds: {label:'Source → executable',unit:'seconds',note:'Complete source compiler worker, dependency resolution, generated support build and final link. The separate qualification build warms support dependencies; each measured fork generates a new project.'},
-  native_process_seconds: {label:'Native process lifecycle',unit:'seconds',note:'Complete fresh-process startup, metadata admission, checked scalar invocation, output and shutdown. Mean across the declared input schedule within each independent build fork.'},
+  native_process_seconds: {label:'Whole process lifecycle',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. The task contract identifies source-native, fused numerical, JVM or linked scalar execution. Compilation and JIT preparation are included when the selected application performs them at startup.'},
   object_text_bytes: {label:'Object code section',unit:'bytes',note:'Emitted object __text/.text section bytes, from the saved platform size report.'},
   linked_text_bytes: {label:'Linked code section',unit:'bytes',note:'Linked executable __text/.text section bytes. The generated release profile strips symbols.'},
   executable_bytes: {label:'Executable size',unit:'bytes',note:'Entire linked native executable under the generated release profile (strip=symbols).'},

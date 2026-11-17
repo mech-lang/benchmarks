@@ -3,24 +3,43 @@
 import json
 import math
 import sys
+from extended_oracles import table_join, graph, ekf
 
 
 def outputs(case, count):
     name = case['task']['oracle']
     schedule = case['measurement']['schedule']
+    if name == "ekf":
+        return ekf(schedule, count)
     result = []
     position, velocity = 1.0, 0.0
     for index in range(count):
         frame = schedule[index % len(schedule)]
         x = frame[0] if frame else 0.0
-        if name == 'filter':
+        if name.startswith('table-'):
+            result.append(table_join(name[6:], x))
+            continue
+        if name == 'graph':
+            result.append(graph(x))
+            continue
+        if name == 'strings':
+            value = {'':0,'é':1,'é':2,'👩🏽‍💻':3,'\r\n':4}.get(x,9)
+        elif name == 'graphemes':
+            # The declared corpus supplies the second grapheme after ASCII x.
+            value = 2 if x.startswith('xé') else 1 if x.startswith('xé') else 3
+        elif name == 'fsm':
+            result.append({'kind':'unpublished'} if index==0 else {'kind':'scalar','value':schedule[0][0]=='é'})
+            continue
+        elif name == 'filter':
             values = [n * n for n in frame if n > 0]
             result.append({'kind': 'matrix', 'shape': [1, len(values)], 'values': values})
             continue
         if name == 'collection':
             result.append({'kind': 'set', 'values': sorted({x, 2.0, 3.0})})
             continue
-        if name == 'scalar':
+        if name in ('strings','graphemes'):
+            pass
+        elif name == 'scalar':
             value = x * x + 1.0
         elif name == 'pipeline':
             value = math.sqrt(x * x + 1.0) + math.sin(x)

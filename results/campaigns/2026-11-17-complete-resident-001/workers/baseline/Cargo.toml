@@ -1,0 +1,57 @@
+[package]
+name = "mech-benchmark-worker"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+native = ["dep:mech-gpu"]
+applications = ["dep:mech-gpu", "mech-gpu/native-build", "mech-gpu/system-gmp"]
+
+[dependencies]
+mech-core = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/core", default-features = false }
+mech-engine = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/engine", default-features = false, features = ["compiler", "resident-artifact", "variable_assign", "kind_define", "kind_annotation"] }
+mech-runtime = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/runtime", default-features = false, features = ["compiler", "resident-routing-source"] }
+mech-stdlib = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/stdlib", default-features = false, features = ["standard_compiler", "math_add_assign", "u8", "u64", "integer_bits"] }
+serde_json = "1"
+libc = "=0.2.189"
+mech-gpu = { path = "/private/tmp/mech-benchmark-baseline-fc2/hosts/gpu", default-features = false, features = ["canonical-native-program"], optional = true }
+
+[patch.crates-io]
+mech-core = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/core" }
+mech-engine = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/engine" }
+mech-runtime = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/runtime" }
+mech-stdlib = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/stdlib" }
+mech-syntax = { path = "/private/tmp/mech-benchmark-baseline-fc2/src/syntax" }
+mech-combinatorics = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/combinatorics" }
+mech-compare = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/compare" }
+mech-logic = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/logic" }
+mech-math = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/math" }
+mech-matrix = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/matrix" }
+mech-range = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/range" }
+mech-set = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/set" }
+mech-stats = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/stats" }
+mech-string = { path = "/private/tmp/mech-benchmark-baseline-fc2/machines/string" }
+cranelift-codegen = { path = "/private/tmp/mech-benchmark-baseline-fc2/vendor/cranelift-codegen" }
+cranelift-frontend = { path = "/private/tmp/mech-benchmark-baseline-fc2/vendor/cranelift-frontend" }
+regalloc2 = { path = "/private/tmp/mech-benchmark-baseline-fc2/vendor/regalloc2" }
+
+[profile.release]
+debug = false
+strip = "none"
+
+[workspace]
+
+[[bin]]
+name = "mech-benchmark-worker"
+path = "src/main.rs"
+
+[[bin]]
+name = "mech-application"
+path = "src/application.rs"
+required-features = ["applications"]
+
+[[bin]]
+name = "mech-numerical-application"
+path = "src/numerical_application.rs"
+required-features = ["applications"]

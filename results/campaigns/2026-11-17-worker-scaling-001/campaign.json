@@ -1,0 +1,804 @@
+{
+  "schema": "mech.benchmark-campaign.v1",
+  "id": "2026-11-17-worker-scaling-001",
+  "started_at": "2026-11-17T14:32:25.660887+00:00",
+  "profile": "strong-scaling",
+  "sampling": {
+    "forks": 3
+  },
+  "environment": {
+    "system": "Darwin",
+    "release": "25.2.0",
+    "machine": "arm64",
+    "cpu": "Apple M3",
+    "logical_cpus": 8,
+    "python": "3.14.8",
+    "thread_environment": {}
+  },
+  "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+  "workers": {
+    "candidate": {
+      "protocol": 1,
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "source_checkout": "/Users/cim310/.codex/worktrees/level12-compile-profile/mech",
+      "dirty": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/target/release/mech-benchmark-worker",
+      "binary_sha256": "2746bd2ce9f5d633086e6b06d4ebebed348e3d984251c8d734d110cc4290fc4d",
+      "adapter_sha256": "bd5e6f51c55a1a8b2ceda48bf4241382115902acb7d465b3377de1ba7d554e16",
+      "manifest_sha256": "57e1d8c3efac72a80ca18a0ae3404cf15e66cdfec1aac415fa0e6cdf9ac77def",
+      "lock_sha256": "bbab11f0a3a09351b1a12e2f2820405b5e3b696dd87ddc6c91e840cd38b72746",
+      "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0",
+      "cargo": "cargo 1.96.0-nightly (f298b8c82 2026-02-24)",
+      "build_command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/Cargo.toml",
+        "--offline",
+        "--features",
+        "native"
+      ],
+      "feature_profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+      "native_generation": true,
+      "applications": {},
+      "auxiliary_adapter_sha256": {
+        "application.rs": "e222e1d6f8b0237f3dd0086d41588d968b69a060203db2e02ab633e62c5ee628",
+        "numerical_application.rs": "765caa3d80273ddf6966d4f5534e38e206380cde3a2a0a5a3c86c56618953e3a",
+        "program.rs": "fad83badc89f6d7f62bea145f964d90e5f8acb6101551d01f7d02901cd8b2a2c"
+      },
+      "worker_build_seconds": 2.219266875181347,
+      "build_environment": {
+        "RUSTC_BOOTSTRAP": "1",
+        "CARGO_TARGET_DIR": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/target"
+      },
+      "manifest_path": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/worker.json"
+    }
+  },
+  "performance_gate": false,
+  "results": [
+    {
+      "case_id": "concurrent",
+      "title": "Worker scaling · 1 process",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "progress": "measured",
+      "capability": "supported",
+      "outcome": "ok",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+        "native_generation": true
+      },
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 1,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap"
+      },
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement_hash": "02babfa19770eeeac4e64dd36fc291facd2c153c8a7ab925a90daf1a2627fbf6",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.09776795795187354,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2010965.5977143417,
+            "sum_worker_execution_block_seconds": 0.073537125,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.13898566691204906,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1414591.9098579763,
+            "sum_worker_execution_block_seconds": 0.076948333,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.1019859160296619,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1927795.5981963032,
+            "sum_worker_execution_block_seconds": 0.073981166,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "reason": "Every independent worker verified all distinct pure inputs and the no-execution control. Measured partitions preserve complete schedule cycles; every accepted turn count and endpoint is checked.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "raw": "raw/concurrent/verify"
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 1927795.5981963032,
+          "min": 1414591.9098579763,
+          "max": 2010965.5977143417,
+          "stdev": 322995.5753338052,
+          "samples": [
+            2010965.5977143417,
+            1414591.9098579763,
+            1927795.5981963032
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.073981166,
+          "min": 0.073537125,
+          "max": 0.076948333,
+          "stdev": 0.001854615523265939,
+          "samples": [
+            0.073537125,
+            0.076948333,
+            0.073981166
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.1019859160296619,
+          "min": 0.09776795795187354,
+          "max": 0.13898566691204906,
+          "stdev": 0.022677713978082912,
+          "samples": [
+            0.09776795795187354,
+            0.13898566691204906,
+            0.1019859160296619
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-2",
+      "title": "Worker scaling · 2 processes",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "progress": "measured",
+      "capability": "supported",
+      "outcome": "ok",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+        "native_generation": true
+      },
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 2,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap"
+      },
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement_hash": "5ae3587e750cbdd8e4766487a74280993146f7763597c76d7d4a607ffcdfad41",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-2/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.07158762495964766,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2746396.4632270387,
+            "sum_worker_execution_block_seconds": 0.075818209,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-2/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.07194608310237527,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2732713.0473557226,
+            "sum_worker_execution_block_seconds": 0.075717917,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-2/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.0718039171770215,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2738123.5972863883,
+            "sum_worker_execution_block_seconds": 0.0761345,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "reason": "Every independent worker verified all distinct pure inputs and the no-execution control. Measured partitions preserve complete schedule cycles; every accepted turn count and endpoint is checked.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "raw": "raw/concurrent-2/verify"
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 2738123.5972863883,
+          "min": 2732713.0473557226,
+          "max": 2746396.4632270387,
+          "stdev": 6891.422583322761,
+          "samples": [
+            2746396.4632270387,
+            2732713.0473557226,
+            2738123.5972863883
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.075818209,
+          "min": 0.075717917,
+          "max": 0.0761345,
+          "stdev": 0.00021742426951086382,
+          "samples": [
+            0.075818209,
+            0.075717917,
+            0.0761345
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.0718039171770215,
+          "min": 0.07158762495964766,
+          "max": 0.07194608310237527,
+          "stdev": 0.00018050194538006065,
+          "samples": [
+            0.07158762495964766,
+            0.07194608310237527,
+            0.0718039171770215
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-4",
+      "title": "Worker scaling · 4 processes",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "progress": "measured",
+      "capability": "supported",
+      "outcome": "ok",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+        "native_generation": true
+      },
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 4,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap"
+      },
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement_hash": "7c79659c0eb4bf7cc3eb34a2e3245874dd61736681cd4b406ad37c90b79c408e",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-4/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.061221291311085224,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 3211431.771358285,
+            "sum_worker_execution_block_seconds": 0.07750670900000001,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-4/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.0628278749063611,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 3129311.6358467527,
+            "sum_worker_execution_block_seconds": 0.07738149899999999,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-4/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.05636262521147728,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 3488269.030448996,
+            "sum_worker_execution_block_seconds": 0.078069584,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "reason": "Every independent worker verified all distinct pure inputs and the no-execution control. Measured partitions preserve complete schedule cycles; every accepted turn count and endpoint is checked.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "raw": "raw/concurrent-4/verify"
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 3211431.771358285,
+          "min": 3129311.6358467527,
+          "max": 3488269.030448996,
+          "stdev": 188074.89457523762,
+          "samples": [
+            3211431.771358285,
+            3129311.6358467527,
+            3488269.030448996
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.07750670900000001,
+          "min": 0.07738149899999999,
+          "max": 0.078069584,
+          "stdev": 0.0003665075663043442,
+          "samples": [
+            0.07750670900000001,
+            0.07738149899999999,
+            0.078069584
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.061221291311085224,
+          "min": 0.05636262521147728,
+          "max": 0.0628278749063611,
+          "stdev": 0.003366184802148282,
+          "samples": [
+            0.061221291311085224,
+            0.0628278749063611,
+            0.05636262521147728
+          ]
+        }
+      }
+    }
+  ],
+  "order": [
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 0
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 0
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 0
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 1
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 1
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 1
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 2
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 2
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "fork": 2
+    }
+  ],
+  "comparisons": [],
+  "complete": true,
+  "harness_sha256": {
+    "run_concurrent.py": "2c36666a9be7e85bc89b823b062f2c610490a28ae16cccdcbef763e39f267784",
+    "suite_oracle.py": "1e7454f72bcf05ed0798ecb307c3b204029f119dfa48d1c99a9eea980f53bdb7",
+    "extended_oracles.py": "3533d575e4e8ba51b3038ecf3daa25ce4097968237000a11e47777cb2090fbe1",
+    "benchmark_suite.py": "c1b05fb4f9a2d30664e06c6a4c09f9edf94c80980ed97e0fedb1bd507a04a33c"
+  },
+  "outcome": "ok",
+  "finished_at": "2026-11-17T14:32:27.141982+00:00",
+  "index_compaction": {
+    "complete_campaign": "complete-campaign.json.gz",
+    "sha256": "3cad3a07d0e900497c58eed2540b55272850beb6b915c1c2949f079c32adb4ac",
+    "gzip_sha256": "1d1f8520822b0990498eedff85389de980211a182b740204751434f6423dc201",
+    "note": "Full verification trajectories and all original fields are retained losslessly; accepted samples and contracts are unchanged."
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "id": "knucleotide",
+  "title": "K-nucleotide · full FASTA N=25,000,000",
+  "family": "applications",
+  "progress": "implemented",
+  "source": "suite/applications/knucleotide.mec",
+  "backends": [
+    "source-native"
+  ],
+  "task": {
+    "oracle": "knucleotide-application",
+    "outputs": [
+      "result"
+    ],
+    "absolute_tolerance": 0,
+    "relative_tolerance": 0,
+    "dtype": "ASCII DNA bytes and exact u64 counts",
+    "logical_input_elements": 125000000,
+    "input_bytes": 254166745,
+    "ordering": "Frequency tables count descending/key ascending; complete five query counts in prescribed order",
+    "arithmetic": "Exact integer counts; frequencies formatted to three decimal places",
+    "ownership": "Complete stdin consumed; complete stdout captured; process owns and releases all data",
+    "input_generator": "suite/applications/fasta.c",
+    "generator_argument": 25000000,
+    "required_output": "suite/applications/knucleotide-25000000.expected"
+  },
+  "measurement": {
+    "boundary": "fresh_process_complete",
+    "primary_metric": "native_process_seconds",
+    "schedule": [
+      []
+    ],
+    "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+    "reset": "Fresh process for every independent fork",
+    "warmup": "None outside process; runtime JIT preparation included where applicable",
+    "destruction": "Complete shutdown and owned output release included",
+    "cache": "OS caches uncontrolled; independent process forks",
+    "threads": 1,
+    "retain_snapshots": false,
+    "abort_before_accept": false
+  },
+  "compiler_tests": []
+}

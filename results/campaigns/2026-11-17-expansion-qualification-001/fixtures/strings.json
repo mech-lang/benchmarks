@@ -1,0 +1,74 @@
+{
+  "progress": "implemented",
+  "backends": [
+    "source",
+    "bytecode"
+  ],
+  "task": {
+    "oracle": "strings",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "UTF-8 string → u64",
+    "arithmetic": "Exact u64 branch result; raw UTF-8 equality; no Unicode normalization",
+    "absolute_tolerance": 0,
+    "relative_tolerance": 0,
+    "logical_input_elements": 1,
+    "ordering": "Literal source order; empty, CRLF, NUL, composed/decomposed and ZWJ inputs are distinct",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+  },
+  "measurement": {
+    "boundary": "resident_turn",
+    "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+    "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+    "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+    "reset": "fresh instance after warmup; state evolves within each block",
+    "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        ""
+      ],
+      [
+        "é"
+      ],
+      [
+        "é"
+      ],
+      [
+        "👩🏽‍💻"
+      ],
+      [
+        "\r\n"
+      ],
+      [
+        "\n"
+      ],
+      [
+        "\u0000"
+      ],
+      [
+        "éx"
+      ],
+      [
+        "é"
+      ],
+      [
+        "abc"
+      ],
+      [
+        "é"
+      ]
+    ],
+    "scenario": "changing_values",
+    "retain_snapshots": false,
+    "abort_before_accept": false,
+    "input_kind": "string"
+  },
+  "id": "strings",
+  "title": "UTF-8 literal pattern matching",
+  "family": "strings",
+  "source": "suite/fixtures/strings.mec",
+  "compiler_tests": []
+}

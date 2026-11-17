@@ -8,6 +8,7 @@ from pathlib import Path
 import random
 import subprocess
 import sys
+import shutil
 
 from benchmark_suite import (ROOT, SCHEMA, campaign_lock, comparison, digest, environment,
     file_digest, invoke, load_catalog, measurement_response, report, save, summarize,
@@ -20,7 +21,7 @@ def run(args):
     if selected - {c['id'] for c in catalog['cases']}:
         raise ValueError('unknown case id: ' + ', '.join(sorted(selected - {c['id'] for c in catalog['cases']})))
     cases = [c for c in catalog['cases'] if (not selected or c['id'] in selected) and c['progress'] != 'planned'
-             and set(c['backends']) & {'source', 'bytecode'}]
+             and set(c['backends']) & {'source', 'bytecode', 'jit'}]
     if not cases:
         raise ValueError('selection has no implemented cases; planned coverage cannot be reported as unsupported')
     profile = dict(catalog['profiles'][args.profile])
@@ -42,10 +43,14 @@ def run(args):
                 'profile': args.profile, 'sampling': profile, 'seed': args.seed, 'environment': host,
                 'environment_hash': digest(host), 'workers': workers, 'catalog_sha256': file_digest(args.catalog),
                 'harness_sha256': {name: file_digest(ROOT / 'tools' / name) for name in
-                    ('run_suite.py', 'benchmark_suite.py', 'suite_oracle.py')},
+                    ('run_suite.py', 'benchmark_suite.py', 'suite_oracle.py', 'extended_oracles.py')},
                 'performance_gate': False, 'results': [], 'order': [], 'comparisons': [], 'complete': False}
     with campaign_lock(ROOT / '.local'):
         output.mkdir(parents=True)
+        shutil.copyfile(args.catalog,output/'catalog.json')
+        (output/'harness').mkdir()
+        for name in campaign['harness_sha256']:
+            shutil.copyfile(ROOT/'tools'/name,output/'harness'/name)
         for lane, worker in workers.items():
             preserve_worker(worker, output / 'workers' / lane)
         save(output / 'campaign.json', campaign)
@@ -54,11 +59,11 @@ def run(args):
             source = (ROOT / case['source']).read_text()
             save(output / 'fixtures' / (case['id'] + '.json'), case)
             (output / 'fixtures' / (case['id'] + '.mec')).write_text(source)
-            measurement = {**case['measurement'], 'warmup': profile['warmup'], 'cycles': profile['cycles'],
+            measurement = {**case['measurement'], 'warmup': case['measurement'].get('warmup',profile['warmup']), 'cycles': case['measurement'].get('cycles',profile['cycles']),
                            'output': case['task']['outputs'][0], 'timing_loop': 'v1 explicit Instant block; setup/destruction outside',
                            'memory_budget_bytes':1 << 34,'summary':'included in turn',
                            'allocator':'global allocation/reallocation counter with relaxed atomics'}
-            count = len(measurement['schedule']) * profile['cycles']
+            count = len(measurement['schedule']) * measurement['cycles']
             oracle = invoke([sys.executable, str(ROOT / 'tools/suite_oracle.py')],
                             {'case': case, 'count': count}, output / 'raw' / case['id'] / 'oracle', args.timeout)
             if oracle.get('outcome') != 'ok' or len(oracle.get('outputs', [])) != count:
@@ -125,7 +130,7 @@ def run(args):
                         record['summary'] = {}  # Partial/incorrect samples never become accepted timings.
                 if args.baseline:
                     campaign['comparisons'].append({'case_id': case['id'], 'backend': backend,
-                        **comparison(records[backend, 'baseline'], records[backend, 'candidate'], seed=args.seed)})
+                        **comparison(records[backend, 'baseline'], records[backend, 'candidate'], metric=measurement.get('primary_metric','resident_turn_seconds'), seed=args.seed)})
             save(output / 'campaign.json', campaign)
         campaign['complete'] = True
         campaign['finished_at'] = datetime.now(timezone.utc).isoformat()
@@ -146,7 +151,7 @@ def main():
     parser.add_argument('--catalog', type=Path, default=ROOT / 'suite/catalog.json')
     parser.add_argument('--profile', choices=('smoke', 'standard', 'regression'), default='standard')
     parser.add_argument('--case', action='append', help='repeat to select cases')
-    parser.add_argument('--backend', action='append', choices=('source', 'bytecode'))
+    parser.add_argument('--backend', action='append', choices=('source', 'bytecode', 'jit'))
     parser.add_argument('--forks', type=int)
     parser.add_argument('--cycles', type=int)
     parser.add_argument('--seed', type=int, default=1729)

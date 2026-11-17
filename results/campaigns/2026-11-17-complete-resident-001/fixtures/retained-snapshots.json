@@ -1,0 +1,95 @@
+{
+  "id": "retained-snapshots",
+  "title": "Owned output snapshots retained across turns",
+  "family": "memory",
+  "progress": "implemented",
+  "source": "suite/fixtures/filter.mec",
+  "backends": [
+    "source",
+    "bytecode"
+  ],
+  "task": {
+    "oracle": "filter",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "f64",
+    "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+    "absolute_tolerance": 1e-09,
+    "relative_tolerance": 1e-10,
+    "logical_input_elements": 8,
+    "ordering": "source order for matrices; canonical set order for sets",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+  },
+  "measurement": {
+    "boundary": "resident_turn_with_retained_snapshot",
+    "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+    "output_observation": "copy named result and retain one owned snapshot per turn; included",
+    "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+    "reset": "fresh instance after warmup; state evolves within each block",
+    "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        1,
+        2,
+        -1,
+        0,
+        3,
+        -2,
+        4,
+        -3
+      ],
+      [
+        -1,
+        2,
+        -1,
+        0,
+        3,
+        -2,
+        4,
+        -3
+      ],
+      [
+        1,
+        2,
+        -1,
+        0,
+        3,
+        -2,
+        4,
+        -3
+      ],
+      [
+        -1,
+        -2,
+        -3,
+        0,
+        -4,
+        -5,
+        -6,
+        -7
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8
+      ]
+    ],
+    "scenario": "changing_shape",
+    "retain_snapshots": true,
+    "abort_before_accept": false
+  },
+  "compiler_tests": [
+    {
+      "repository": "mech-lang/mech",
+      "path": "src/engine/tests/memory_runtime.rs"
+    }
+  ]
+}

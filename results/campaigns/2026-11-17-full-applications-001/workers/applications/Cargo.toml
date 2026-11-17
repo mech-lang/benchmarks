@@ -1,0 +1,57 @@
+[package]
+name = "mech-benchmark-worker"
+version = "0.1.0"
+edition = "2024"
+publish = false
+
+[features]
+native = ["dep:mech-gpu"]
+applications = ["dep:mech-gpu", "mech-gpu/native-build", "mech-gpu/system-gmp"]
+
+[dependencies]
+mech-core = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/core", default-features = false }
+mech-engine = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/engine", default-features = false, features = ["compiler", "resident-artifact", "variable_assign", "kind_define", "kind_annotation"] }
+mech-runtime = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/runtime", default-features = false, features = ["compiler", "resident-routing-source"] }
+mech-stdlib = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/stdlib", default-features = false, features = ["standard_compiler", "math_add_assign", "u8", "u64", "integer_bits"] }
+serde_json = "1"
+libc = "=0.2.189"
+mech-gpu = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/hosts/gpu", default-features = false, features = [], optional = true }
+
+[patch.crates-io]
+mech-core = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/core" }
+mech-engine = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/engine" }
+mech-runtime = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/runtime" }
+mech-stdlib = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/stdlib" }
+mech-syntax = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/src/syntax" }
+mech-combinatorics = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/combinatorics" }
+mech-compare = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/compare" }
+mech-logic = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/logic" }
+mech-math = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/math" }
+mech-matrix = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/matrix" }
+mech-range = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/range" }
+mech-set = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/set" }
+mech-stats = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/stats" }
+mech-string = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/machines/string" }
+cranelift-codegen = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/vendor/cranelift-codegen" }
+cranelift-frontend = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/vendor/cranelift-frontend" }
+regalloc2 = { path = "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/vendor/regalloc2" }
+
+[profile.release]
+debug = false
+strip = "none"
+
+[workspace]
+
+[[bin]]
+name = "mech-benchmark-worker"
+path = "src/main.rs"
+
+[[bin]]
+name = "mech-application"
+path = "src/application.rs"
+required-features = ["applications"]
+
+[[bin]]
+name = "mech-numerical-application"
+path = "src/numerical_application.rs"
+required-features = ["applications"]

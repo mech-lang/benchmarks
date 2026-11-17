@@ -50,8 +50,10 @@ try {
   await page.locator('#search').fill('');
   await page.locator('#progress').selectOption('planned');
   check('planned work is separate from measured results',await page.locator('#cases tr').count()===bundle.catalog.cases.filter(c=>c.progress==='planned').length);
-  await page.locator('#cases button').first().click();
-  check('planned tasks have no timing samples',await page.locator('#detail .sample-list a').count()===0);
+  if(bundle.catalog.cases.some(c=>c.progress==='planned')) {
+    await page.locator('#cases button').first().click();
+    check('planned tasks have no timing samples',await page.locator('#detail .sample-list a').count()===0);
+  } else check('all named tasks now have implementations',await page.locator('#cases tr').count()===0);
   await page.locator('#progress').selectOption('all');
 
   await page.locator('#backend').selectOption('native');
@@ -62,6 +64,25 @@ try {
   check('failed qualification has no accepted timings',(await page.locator('#detail').innerText()).includes('No accepted timings'));
   check('failed qualification has no sample links',await page.locator('#detail .sample-list a').count()===0);
 
+  const applicationRun=bundle.campaigns.find(c=>c.results.some(r=>r.backend==='program-jit-bytecode'&&r.progress==='measured'));
+  if(applicationRun) {
+    await page.locator('#backend').selectOption('program-jit-bytecode');
+    check('decoded full application selects its measured run',await page.locator('#campaign').inputValue()===applicationRun.id);
+    await page.locator('[data-case="deflate"]').click();
+    check('full application chooses its checked-call measurement',await page.locator('#metric').inputValue()==='native_program_call_seconds');
+    check('full application has three independent forks',await page.locator('#detail .sample-list a').count()===3);
+    await page.locator('#backend').selectOption('roc');
+    check('Roc uses its own complete-call measurement',await page.locator('#metric').inputValue()==='control_call_seconds');
+    await page.getByText('Compiler and environment',{exact:true}).click();
+    check('Roc compiler provenance is not the Mech worker',(await page.locator('#detail').innerText()).includes('d99c7b838fb05bb1047eb0c18d4d06d0f86f345d'));
+    await page.locator('#backend').selectOption('jvm');
+    check('JVM chooses whole-process time',await page.locator('#metric').inputValue()==='native_process_seconds');
+    await page.getByText('Compiler and environment',{exact:true}).click();
+    check('JVM provenance names the real runtime',(await page.locator('#detail').innerText()).includes('OpenJDK'));
+    await page.locator('#backend').selectOption('process-workers');
+    check('scaling chooses the whole group measurement',await page.locator('#metric').inputValue()==='worker_group_process_seconds');
+    check('all tasks have accepted measurements somewhere',(await page.locator('#coverage-summary').innerText()).includes(`${bundle.catalog.cases.length} of ${bundle.catalog.cases.length}`));
+  }
   await page.goto(base,{waitUntil:'networkidle'});
   if(output){await mkdir(output,{recursive:true});await page.screenshot({path:path.join(output,'metrics-desktop.png'),fullPage:true});}
   const shared=page.url();

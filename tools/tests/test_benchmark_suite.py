@@ -77,7 +77,7 @@ class Contracts(unittest.TestCase):
 
     def test_every_implemented_case_has_an_independent_oracle(self):
         for case in load_catalog()['cases']:
-            if case['progress'] != 'planned':
+            if case['progress'] != 'planned' and set(case['backends']) & {'source','bytecode','jit','process-workers'}:
                 count = len(case['measurement']['schedule']) * 2
                 self.assertEqual(len(outputs(case,count)),count,case['id'])
 

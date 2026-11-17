@@ -1,4 +1,4 @@
-import {metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory} from './campaigns-model.mjs';
+import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory} from './campaigns-model.mjs';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -28,7 +28,7 @@ function trend(points,metric) {
     <polyline points="${points.map((p,i)=>`${x(i)},${y(p.value)}`).join(' ')}"/>
     ${points.map((p,i)=>`<circle cx="${x(i)}" cy="${y(p.value)}" r="4"><title>${escape(p.campaign)} · ${escape(short(p.revision))} · ${escape(formatMetric(p.value,metric))}</title></circle>`).join('')}
     <text x="55" y="180">${escape(new Date(points[0].date).toLocaleDateString())}</text><text x="525" y="180" text-anchor="end">${escape(new Date(points.at(-1).date).toLocaleDateString())}</text>
-    </svg><p class="caption">${points.length===1?'First compatible campaign. Subsequent runs will build this history.':`${points.length} compatible campaigns · medians shown · lower is better.`}</p>`;
+    </svg><p class="caption">${points.length===1?'First compatible campaign. Subsequent runs will build this history.':`${points.length} compatible campaigns · medians shown · ${metrics[metric].higherBetter?'higher':'lower'} is better.`}</p>`;
 }
 
 function renderDetail() {
@@ -39,9 +39,13 @@ function renderDetail() {
   let html=`<p class="eyebrow">${escape(definition.family)}</p><h2 id="detail-title">${escape(definition.title)}</h2>
     <div class="badges">${badge(stageFor(definition,record))}${record?badge(record.outcome,record.outcome):''}</div>`;
   if(!record) {
-    html+=`<p class="detail-note">${escape(definition.notes??'This case has an implementation. Run a campaign to qualify this backend and record measurements.')}</p>`;
+    const available=[...bundle.campaigns].reverse().flatMap(c=>c.results.filter(r=>r.case_id===selected&&r.lane==='candidate'&&r.progress==='measured').map(r=>({c,r})));
+    if(available.length)html+=`<p class="detail-note">Measured in another view:</p><div class="run-links">${available.slice(0,6).map(({c,r})=>`<a href="?${new URLSearchParams({campaign:c.id,backend:r.backend,metric:r.measurement.primary_metric??'resident_turn_seconds',case:selected})}">${escape(backendLabels[r.backend]??r.backend)} ↗</a>`).join('')}</div>`;
+    html+=`<p class="detail-note">${escape(definition.notes??'This run does not include the selected execution path. Choose an available measurement or another run.')}</p>`;
     if(definition.historical_contract)html+=`<p><a href="https://github.com/mech-lang/benchmarks/blob/main/${pathURL(definition.historical_contract)}">Preserved application contract ↗</a></p>`;
   } else {
+    const implementation=implementationFor(current,record);
+    const verification=record.verification??{};
     const summary=record.summary?.[metric],comparison=compareRecords(baselineRecord(selected,backend),record,metric);
     const screening=current.comparisons?.find(result=>result.case_id===selected&&result.backend===backend);
     html+=`<div class="measurement"><strong>${escape(formatMetric(summary?.median,metric))}</strong><span>${escape(metrics[metric].label)} · ${record.samples.length} independent ${record.samples.length===1?'fork':'forks'}</span></div>
@@ -51,10 +55,10 @@ function renderDetail() {
       <h3>Over time</h3>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}
       <details open><summary>Raw fork observations</summary>${summary?`<div class="sample-list">${record.samples.map(sample=>`<a href="${rawLink(current,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[metric],metric))}</span></a>`).join('')}</div>`:'<p>No accepted timings. Failed and partial observations remain in the campaign evidence.</p>'}</details>
       <details><summary>Task and measurement contracts</summary><p>Output: <code>${escape(record.task.outputs.join(', '))}</code></p><p>${escape(record.measurement.boundary)}</p><dl>${Object.entries(record.measurement).filter(([key])=>key!=='schedule').map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(typeof value==='string'?value:JSON.stringify(value))}</dd>`).join('')}</dl><p>Deterministic input schedule</p><pre>${escape(JSON.stringify(record.measurement.schedule))}</pre><p>${escape(record.task.arithmetic)}</p><p>Task <code>${escape(short(record.task_hash))}</code> · measurement <code>${escape(short(record.measurement_hash))}</code></p></details>
-      <details><summary>Correctness and negative control</summary><p>${escape(record.verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${record.verification.output_count?`<p>${record.verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,record.verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations ↗</a><pre>${escape(JSON.stringify(record.verification.preview_outputs??record.verification.outputs,null,2))}</pre></details>
-      <details><summary>Mech source</summary><p>SHA-256 <code>${escape(record.source_sha256)}</code></p><pre class="source"><code>${escape(record.source)}</code></pre></details>
+      <details><summary>Correctness and negative control</summary><p>${escape(verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${verification.output_count?`<p>${verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations ↗</a><pre>${escape(JSON.stringify(verification.preview_outputs??verification.outputs,null,2))}</pre></details>
+      <details><summary>Program source</summary><p>SHA-256 <code>${escape(record.source_sha256)}</code></p><pre class="source"><code>${escape(record.source)}</code></pre></details>
       <details><summary>All measured outcomes</summary><dl>${Object.entries(record.summary??{}).map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(metrics[key]?formatMetric(value.median,key):value.median.toLocaleString(undefined,{maximumFractionDigits:6}))}</dd>`).join('')}</dl></details>
-      <details><summary>Compiler and environment</summary><dl><dt>Revision</dt><dd><code>${escape(record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(current.workers[record.lane].binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(current.workers[record.lane].adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(current.workers[record.lane].rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
+      <details><summary>Compiler and environment</summary><dl><dt>Version / revision</dt><dd><code>${escape(record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(implementation.binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(implementation.adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(implementation.rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
       <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON ↓</a>${current.raw_archive?`<a href="${rawLink(current,null,current.raw_archive)}" download>Raw evidence archive ↓</a>`:''}<a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report ↗</a></p>`;
   }
   if(definition.compiler_tests?.length)html+=`<details><summary>Existing compiler test coverage</summary><ul>${definition.compiler_tests.map(test=>`<li><a href="https://github.com/${pathURL(test.repository)}/blob/${bundle.catalog.candidate_revision}/${pathURL(test.path)}" target="_blank" rel="noopener">${escape(test.path)}</a></li>`).join('')}</ul></details>`;
@@ -68,7 +72,7 @@ function render() {
   const measured=records.filter(r=>r.progress==='measured'&&r.outcome==='ok').length;
   const failed=records.filter(r=>r.outcome!=='ok').length;
   const planned=cases.filter(c=>c.progress==='planned').length;
-  $('#stats').innerHTML=[['Measured tasks',measured],['Families',new Set(cases.map(c=>c.family)).size],['Planned tasks',planned],['Need attention',failed]].map(([label,value])=>`<div><strong>${value}</strong><span>${label}</span></div>`).join('');
+  $('#stats').innerHTML=[['Measured in this view',measured],['Families',new Set(cases.map(c=>c.family)).size],['Planned tasks',planned],['Need attention',failed]].map(([label,value])=>`<div><strong>${value}</strong><span>${label}</span></div>`).join('');
   $('#boundary').textContent=metrics[metric].note;
   $('#metric-heading').textContent=metrics[metric].label;
   const visible=filteredCases(cases,current,{query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend});
@@ -94,6 +98,10 @@ async function start() {
   bundle=await response.json();
   if(bundle.schema!=='mech.benchmark-dashboard.v1')throw new Error('Unsupported dashboard data');
   const choices=[...bundle.campaigns].reverse();
+  $('#backend').innerHTML=Object.entries(backendLabels).map(([key,label])=>option(key,label)).join('');
+  const complete=new Set(bundle.campaigns.flatMap(c=>c.results.filter(r=>r.progress==='measured'&&r.outcome==='ok'&&r.lane==='candidate').map(r=>r.case_id)));
+  $('#coverage-summary').textContent=`${complete.size} of ${bundle.catalog.cases.length} tasks have accepted measurements across all runs.`;
+  $('#run-links').innerHTML=[['Resident suite','source'],['Full applications','program-jit'],['Worker scaling','process-workers'],['Native compilation','native']].flatMap(([label,backend])=>{const c=choices.find(c=>c.results.some(r=>r.backend===backend&&r.progress==='measured'));const r=c?.results.find(r=>r.backend===backend&&r.progress==='measured');return r?[`<a href="?${new URLSearchParams({campaign:c.id,backend,metric:primaryMetric(c,backend),case:r.case_id})}">${escape(label)} ↗</a>`]:[];}).join('');
   $('#campaign').innerHTML=choices.length?choices.map(c=>option(c.id,`${c.id} · ${short(c.workers.candidate.revision)}`)).join(''):option('','No campaigns yet');
   $('#baseline').innerHTML=option('','No comparison')+option('$paired','Paired baseline worker')+choices.map(c=>option(c.id,c.id)).join('');
   $('#metric').innerHTML=Object.entries(metrics).map(([key,meta])=>option(key,meta.label)).join('');
@@ -104,7 +112,7 @@ async function start() {
   }
   for(const selector of ['campaign','baseline','metric','backend'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
   if(!parameters.has('backend')&&campaign()?.results.length)$('#backend').value=campaign().results[0].backend;
-  if(!parameters.has('metric'))$('#metric').value=$('#backend').value==='native'?'source_to_executable_seconds':'resident_turn_seconds';
+  if(!parameters.has('metric'))$('#metric').value=primaryMetric(campaign(),$('#backend').value);
   if(!parameters.has('baseline')&&campaign()?.workers.baseline)$('#baseline').value='$paired';
   selected=parameters.get('case')??campaign()?.results.find(r=>r.backend===$('#backend').value)?.case_id??bundle.catalog.cases[0]?.id;
   for(const selector of ['#campaign','#baseline','#metric','#backend','#family','#progress'])$(selector).addEventListener('change',()=>{
@@ -114,7 +122,7 @@ async function start() {
     }
     if(selector==='#campaign'&&campaign()?.results.length&&!campaign().results.some(r=>r.backend===$('#backend').value))$('#backend').value=campaign().results[0].backend;
     if(['#campaign','#backend'].includes(selector)){
-      $('#metric').value=$('#backend').value==='native'?'source_to_executable_seconds':'resident_turn_seconds';
+      $('#metric').value=primaryMetric(campaign(),$('#backend').value);
       selected=campaign()?.results.find(r=>r.backend===$('#backend').value)?.case_id??selected;
       if(!campaign()?.workers.baseline&&$('#baseline').value==='$paired')$('#baseline').value='';
     }

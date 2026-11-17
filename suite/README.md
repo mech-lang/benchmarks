@@ -197,19 +197,24 @@ records, optimization history and application source bundles remain authoritativ
 The campaign exporter writes `campaigns.json` beside that catalog and never
 imports resident timings into cross-language rankings.
 
-K-nucleotide and N-body retain links to their full historical task contracts.
-Automating those qualified full-size programs, the relevant Deflate stream
-contract (including Roc/libdeflate controls), EKF, broader table/graph/string
-coverage, rejected-candidate scenarios, capacity sweeps, JVM comparisons and
-controlled-runner performance gates are named planned cases. The small spring
-simulation is a numerical mechanism application, not a replacement qualification
-for N-body or EKF.
+All 63 named cases now have executable implementations. The expanded cases cover
+six joins with duplicate/unmatched rows, graph edge updates, Unicode literal and
+grapheme behavior, real FSM suspension/resumption, the complete 4,096-turn EKF
+state/covariance trace, checked scalar JIT preparation/calls, 13 output-cardinality
+threshold schedules, rejected-capture recovery, full applications, a JVM control,
+and fixed-work scaling across 1/2/4 processes.
 
-Add a new ordinary `.mec` fixture, independent oracle and task/measurement entry
-to broaden the suite. Deterministic alternate values, signs, empty/nonempty
-outputs and sizes around 7/8 and 31/32/33 already exercise generalization within
-the initial fixtures. Larger size/source-form sweeps should become explicit
-cases, with their own task contracts and preserved inputs.
+See [full-applications.md](full-applications.md) for exact workload sizes, public
+execution paths, limitations, pinned Roc/libdeflate controls and reproduction
+commands. Coverage claims follow the explicit task contract: the pure FSM case
+does not claim external-effect coverage, worker processes do not claim shared-state
+parallelism, and requested output sizes do not assert a physical capacity change.
+Controlled-runner regression gates remain a future operational step.
+
+Add ordinary source, an independent oracle, and separate task/measurement contracts
+to extend coverage. Keep complete verification trajectories and failures in raw
+evidence. `tools/compact_campaign.py` makes a small index with previews while
+retaining the complete original campaign losslessly in `complete-campaign.json.gz`.
 
 ## Checks
 

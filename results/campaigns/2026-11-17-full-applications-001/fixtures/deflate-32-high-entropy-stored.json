@@ -1,0 +1,45 @@
+{
+  "id": "deflate-32-high-entropy-stored",
+  "title": "Deflate · 32-high-entropy-stored",
+  "family": "applications",
+  "progress": "implemented",
+  "source": "suite/applications/deflate.mec",
+  "backends": [
+    "program-jit",
+    "program-jit-bytecode",
+    "roc",
+    "libdeflate"
+  ],
+  "task": {
+    "oracle": "deflate-application",
+    "outputs": [
+      "result"
+    ],
+    "absolute_tolerance": 0,
+    "relative_tolerance": 0,
+    "dtype": "u8 stream, exact level-12 Mech/Roc bytes",
+    "logical_input_elements": 32,
+    "fixture": "32-high-entropy-stored",
+    "prefix_bytes": 0,
+    "arithmetic": "Checked unsigned integer operations; level 12; complete input consumed; valid raw DEFLATE stream required",
+    "ordering": "Owned prefix followed by complete DEFLATE stream; no trailing data; Mech/Roc must equal pinned/reference bytes; libdeflate may produce different valid bytes",
+    "ownership": "Input and prefix snapshots survive the call unchanged; result remains independently owned; all managed storage released after outputs and inputs drop"
+  },
+  "measurement": {
+    "boundary": "checked_native_program_call",
+    "primary_metric": "native_program_call_seconds",
+    "schedule": [
+      []
+    ],
+    "setup": "Source/bytecode compilation, JIT preparation, input snapshot admission and warmup excluded and recorded separately; fresh compiler process per fork",
+    "reset": "Fresh process for every independent fork",
+    "warmup": "None outside process; runtime JIT preparation included where applicable",
+    "destruction": "Compressor scratch cleanup included; returned output and caller snapshots released after the timed call",
+    "cache": "OS caches uncontrolled; independent process forks",
+    "threads": 1,
+    "retain_snapshots": false,
+    "abort_before_accept": false,
+    "transport": "Mech typed snapshots; Roc borrowed list aliases; libdeflate borrowed slices with separately owned output; boundaries differ and no cross-runtime speed ratio is automatically qualified"
+  },
+  "compiler_tests": []
+}

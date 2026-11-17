@@ -1,0 +1,39 @@
+{
+  "id": "jvm",
+  "title": "JVM control · full 50,000,000-step N-body",
+  "family": "comparisons",
+  "progress": "implemented",
+  "source": "suite/applications/nbody.java",
+  "backends": [
+    "jvm"
+  ],
+  "task": {
+    "oracle": "nbody-application",
+    "outputs": [
+      "result"
+    ],
+    "absolute_tolerance": 1e-08,
+    "relative_tolerance": 1e-08,
+    "dtype": "Java double, 5 bodies",
+    "logical_input_elements": 50000000,
+    "arithmetic": "Default strict Java double semantics; HotSpot tiered JIT",
+    "ordering": "Initial then final energy, nine decimal places",
+    "ownership": "Full JVM startup, JIT execution, output and shutdown; class compilation excluded"
+  },
+  "measurement": {
+    "boundary": "fresh_process_complete",
+    "primary_metric": "native_process_seconds",
+    "schedule": [
+      []
+    ],
+    "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+    "reset": "Fresh process for every independent fork",
+    "warmup": "None outside process; runtime JIT preparation included where applicable",
+    "destruction": "Complete shutdown and owned output release included",
+    "cache": "OS caches uncontrolled; independent process forks",
+    "threads": 1,
+    "retain_snapshots": false,
+    "abort_before_accept": false
+  },
+  "compiler_tests": []
+}
