@@ -1,0 +1,58 @@
+{
+  "id": "concurrent-4",
+  "title": "Worker scaling · 4 processes",
+  "family": "concurrency",
+  "progress": "implemented",
+  "source": "suite/fixtures/pipeline.mec",
+  "backends": [
+    "process-workers"
+  ],
+  "task": {
+    "oracle": "pipeline",
+    "outputs": [
+      "result"
+    ],
+    "absolute_tolerance": 1e-09,
+    "relative_tolerance": 1e-10,
+    "dtype": "f64",
+    "logical_input_elements": 196608,
+    "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+    "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+  },
+  "measurement": {
+    "boundary": "worker_group_process_lifecycle",
+    "primary_metric": "worker_group_process_seconds",
+    "schedule": [
+      [
+        2.0
+      ],
+      [
+        3.0
+      ],
+      [
+        2.0
+      ],
+      [
+        -1.0
+      ],
+      [
+        0.0
+      ],
+      [
+        7.0
+      ]
+    ],
+    "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+    "reset": "Fresh process for every independent fork",
+    "warmup": 32,
+    "destruction": "Complete shutdown and owned output release included",
+    "cache": "OS caches uncontrolled; independent process forks",
+    "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+    "retain_snapshots": false,
+    "abort_before_accept": false,
+    "workers": 4,
+    "total_turns": 196608,
+    "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap"
+  },
+  "compiler_tests": []
+}

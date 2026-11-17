@@ -1,0 +1,55 @@
+{
+  "progress": "implemented",
+  "backends": [
+    "source",
+    "bytecode"
+  ],
+  "task": {
+    "oracle": "table-left-semi-join",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "f64 keys and payloads; nullable outer payloads",
+    "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+    "absolute_tolerance": 0,
+    "relative_tolerance": 0,
+    "logical_input_elements": 8,
+    "ordering": "Canonical schema column order; stable left row then matching right row order; duplicate Cartesian multiplicity; outer unmatched rows contain explicit nulls",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+  },
+  "measurement": {
+    "boundary": "resident_turn",
+    "input_submission": "CapturedSignalInput passed to ReactiveInstance.turn; included",
+    "output_observation": "named result borrowed after timed block; owned snapshot timed separately",
+    "setup": "catalog, compilation, encoding, decoding, activation, and warmup excluded from turn",
+    "reset": "fresh instance after warmup; state evolves within each block",
+    "destruction": "instance and returned owned snapshots excluded; teardown separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        1.0
+      ],
+      [
+        2.0
+      ],
+      [
+        4.0
+      ],
+      [
+        1.0
+      ],
+      [
+        7.0
+      ]
+    ],
+    "scenario": "changing_values",
+    "retain_snapshots": false,
+    "abort_before_accept": false
+  },
+  "id": "table-left-semi-join",
+  "title": "Table left-semi-join · duplicates and unmatched rows",
+  "family": "tables",
+  "source": "suite/fixtures/table-left-semi-join.mec",
+  "compiler_tests": []
+}

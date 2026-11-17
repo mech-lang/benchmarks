@@ -59,13 +59,23 @@ def load_catalog(path=ROOT / 'suite/catalog.json', root=ROOT):
         source = (Path(root) / case['source']).resolve()
         if not source.is_relative_to(Path(root)) or not source.is_file():
             raise ValueError(f'invalid source: {identifier}')
-        if case['task']['outputs'] != ['result']:
-            raise ValueError('v1 adapter requires an explicitly named result output')
-        schedule = case['measurement']['schedule']
+        if len(case['task']['outputs']) != 1 or not isinstance(case['task']['outputs'][0], str):
+            raise ValueError('adapter requires one explicitly named output')
+        measurement = case['measurement']
+        if 'schedule_file' in measurement:
+            import struct
+            trace = (Path(root) / measurement['schedule_file']).resolve()
+            if not trace.is_relative_to(Path(root)) or measurement.get('schedule_encoding') != 'f64le-rows-4':
+                raise ValueError('invalid schedule file or encoding')
+            raw = trace.read_bytes()
+            if len(raw) % 32:
+                raise ValueError('truncated four-element f64 trace')
+            measurement['schedule'] = [list(row) for row in struct.iter_unpack('<4d', raw)]
+        schedule = measurement['schedule']
         if not schedule or not all(isinstance(frame, list) and all(
-                isinstance(n, (int, float)) and math.isfinite(n) for n in frame) for frame in schedule):
+                (isinstance(n, str) if measurement.get('input_kind') == 'string' else isinstance(n, (int, float)) and not isinstance(n, bool) and math.isfinite(n)) for n in frame) for frame in schedule):
             raise ValueError(f'invalid schedule: {identifier}')
-        if not set(case['backends']) <= {'source', 'bytecode', 'native'}:
+        if not set(case['backends']) <= {'source', 'bytecode', 'native', 'jit', 'process', 'jvm', 'process-workers', 'source-native', 'fused-native', 'program-jit', 'program-jit-bytecode', 'program-linked', 'roc', 'libdeflate'}:
             raise ValueError(f'invalid backend: {identifier}')
     return catalog
 
@@ -95,6 +105,9 @@ def worker_provenance(path):
     for name, field in (('src/main.rs','adapter_sha256'),('Cargo.toml','manifest_sha256'),('Cargo.lock','lock_sha256')):
         if not (path.parent/name).is_file() or file_digest(path.parent/name)!=worker.get(field):
             raise ValueError(f'worker reproduction input changed: {name}')
+    for name, checksum in worker.get('auxiliary_adapter_sha256', {}).items():
+        if file_digest(path.parent/'src'/name) != checksum:
+            raise ValueError('worker auxiliary adapter changed: '+name)
     worker['binary'] = str(binary)
     worker['manifest_path'] = str(path)
     return worker
@@ -105,7 +118,7 @@ def preserve_worker(worker, destination):
     destination = Path(destination)
     destination.mkdir(parents=True, exist_ok=True)
     source = Path(worker['manifest_path']).parent
-    for name in ('worker.json', 'Cargo.toml', 'Cargo.lock', 'src/main.rs'):
+    for name in ('worker.json', 'Cargo.toml', 'Cargo.lock', 'src/main.rs', *('src/'+name for name in worker.get('auxiliary_adapter_sha256', {}))):
         file = source / name
         if not file.is_file():
             raise ValueError(f'worker reproduction input missing: {file}')
@@ -200,7 +213,20 @@ def validate_campaign(directory, campaign):
             content=reader.read(name)
             if hashlib.sha256(content).hexdigest()!=checksum:
                 raise ValueError(f'campaign evidence changed: {name}')
-            if name in wanted:observations[name]=json.loads(content)
+            if name in wanted:
+                observation=json.loads(content)
+                parent=observation.get('parent_observation')
+                if parent:
+                    parent_name=parent['path']
+                    if parent_name not in evidence['files'] or evidence['files'][parent_name]!=parent['sha256']:
+                        raise ValueError('case receipt parent observation is not pinned')
+                    source=json.loads(reader.read(parent_name))
+                    matches=[entry for entry in source.get('application_results',[]) if entry.get('name')==parent['case']]
+                    if source.get('outcome')!='ok' or len(matches)!=1 or observation.get('metrics')!={**matches[0]['metrics'],**source['metrics']}:
+                        raise ValueError('case receipt differs from its actual program worker observation')
+                    if hashlib.sha256(bytes.fromhex(matches[0]['raw_hex'])).hexdigest()!=observation.get('final_output',{}).get('sha256'):
+                        raise ValueError('case receipt output differs from its actual program output')
+                observations[name]=observation
     host_hash=digest(campaign['environment'])
     if campaign['environment_hash']!=host_hash:
         raise ValueError('campaign environment hash mismatch')
@@ -325,14 +351,16 @@ def invoke(command, request, directory, timeout):
     return outcome
 
 
-def execute(command, directory, timeout, env=None):
+def execute(command, directory, timeout, env=None, stdin_path=None):
     """File-backed non-protocol command, used for build/link and complete program lifecycles."""
     directory = Path(directory)
     directory.mkdir(parents=True, exist_ok=False)
     save(directory / 'command.json', command)
-    with (directory / 'stdout.txt').open('wb') as stdout, (directory / 'stderr.txt').open('wb') as stderr:
+    if stdin_path is not None:
+        save(directory / 'stdin.json', {'path':str(Path(stdin_path).resolve()),'sha256':file_digest(stdin_path),'bytes':Path(stdin_path).stat().st_size})
+    with (Path(stdin_path).open('rb') if stdin_path is not None else open(os.devnull,'rb')) as stdin, (directory / 'stdout.txt').open('wb') as stdout, (directory / 'stderr.txt').open('wb') as stderr:
         started = time.perf_counter()
-        process = subprocess.Popen(command, stdin=subprocess.DEVNULL, stdout=stdout, stderr=stderr,
+        process = subprocess.Popen(command, stdin=stdin, stdout=stdout, stderr=stderr,
                                    start_new_session=True, env=env)
         timer, expired = deadline(process, timeout)
         try:
@@ -351,7 +379,11 @@ def execute(command, directory, timeout, env=None):
 
 
 def equal(actual, expected, task):
-    if isinstance(expected, bool) or isinstance(expected, str) or expected is None:
+    if isinstance(expected, bool):
+        return isinstance(actual, bool) and actual == expected
+    if isinstance(expected, str) or expected is None:
+        return actual == expected
+    if type(expected) is int and type(actual) is int and task['absolute_tolerance'] == task['relative_tolerance'] == 0:
         return actual == expected
     if isinstance(expected, (int, float)):
         return isinstance(actual, (int, float)) and not isinstance(actual, bool) and math.isfinite(actual) and math.isclose(
@@ -390,11 +422,12 @@ def measurement_response(response, endpoint, case, iterations):
     if not equal(response.get('final_output'), endpoint, case['task']):
         return 'incorrect', 'measured endpoint differs from independent oracle'
     metrics = response.get('metrics', {})
-    required = ('resident_turn_seconds', 'source_to_artifact_seconds', 'artifact_bytes', 'managed_after_drop_bytes')
+    primary = case['measurement'].get('primary_metric', 'resident_turn_seconds')
+    required = (primary, 'source_to_artifact_seconds', 'artifact_bytes', 'managed_after_drop_bytes')
     if any(key not in metrics for key in required) or any(
             not isinstance(n, (int, float)) or not math.isfinite(n) or n < 0 for n in metrics.values()):
         return 'error', 'invalid or missing numeric metrics'
-    if metrics['resident_turn_seconds'] <= 0 or metrics['managed_after_drop_bytes'] != 0:
+    if metrics[primary] <= 0 or metrics['managed_after_drop_bytes'] != 0:
         return 'incorrect', 'invalid timed duration or unreclaimed managed ownership'
     return 'ok', None
 

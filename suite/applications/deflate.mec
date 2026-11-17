@@ -1,0 +1,1983 @@
+// Shared DEFLATE match-finder routines, translated from libdeflate
+// b122c8be1d78b19f6d0a6efc5bb79bfcbb30dd51 and roc-deflate
+// 671077457ff7ef3a3d44caf715a3fc595addf379. See deflate-huffman-LICENSES.md.
+// Input positions below are zero-based; Mech's matrix selectors are one-based.
++> bits
++> sequence
+
+byte-readable(input<[u8]>, at<u64>) => (out<u64>) :=
+  out<u64> := input[at + 1u64].
+// List.get defaults to zero; the one-based selector is only formed on the
+// readable path, so an arbitrary zero-based U64 offset cannot overflow it.
+byte(input<[u8]>, at<u64>) => (out<u64>) :=
+  out := ((at < sequence/length(input))? | true => byte-readable(input, at) | false => 0u64).
+prefix-readable(input<[u8]>, at<u64>) => (out<u32>) :=
+  lo := bits/or(byte-readable(input, at), bits/shift-left-wrap(byte-readable(input, at + 1u64), 8u64))
+  hi := bits/or(byte-readable(input, at + 2u64), bits/shift-left-wrap(byte-readable(input, at + 3u64), 8u64))
+  out<u32> := bits/or(lo, bits/shift-left-wrap(hi, 16u64)).
+// from_le_bytes defaults the entire word to zero when its window is short.
+// Guard subtraction before forming any index; this also covers U64::MAX.
+load-prefix(input<[u8]>, at<u64>) => (out<u32>) :=
+  available := sequence/length(input)
+  out := ((available >= 4u64)? | true => ((at <= available - 4u64)? | true => prefix-readable(input, at) | false => 0u32) | false => 0u32).
+word-readable(input<[u8]>, at<u64>) => (out<u64>) :=
+  a := bits/or(byte-readable(input, at), bits/shift-left-wrap(byte-readable(input, at + 1u64), 8u64))
+  b := bits/or(byte-readable(input, at + 2u64), bits/shift-left-wrap(byte-readable(input, at + 3u64), 8u64))
+  c := bits/or(byte-readable(input, at + 4u64), bits/shift-left-wrap(byte-readable(input, at + 5u64), 8u64))
+  d := bits/or(byte-readable(input, at + 6u64), bits/shift-left-wrap(byte-readable(input, at + 7u64), 8u64))
+  lo := bits/or(a, bits/shift-left-wrap(b, 16u64))
+  hi := bits/or(c, bits/shift-left-wrap(d, 16u64))
+  out := bits/or(lo, bits/shift-left-wrap(hi, 32u64)).
+load-word(input<[u8]>, at<u64>) => (out<u64>) :=
+  available := sequence/length(input)
+  out := ((available >= 8u64)? | true => ((at <= available - 8u64)? | true => word-readable(input, at) | false => 0u64) | false => 0u64).
+lz-hash(sequence<u32>, num-bits<u64>) => (out<u64>) :=
+  wide<u64> := sequence
+  product := bits/and(bits/wrapping-mul(wide, 506832829u64), 4294967295u64)
+  out := bits/shift-right-wrap(product, 32u64 - num-bits).
+
+// The caller supplies start <= maximum and an already matched prefix. Roc's
+// entry predicate checks the readable window and candidate ordering before
+// any loop work. The compressor limits maximum to 258.
+// The same three loops as pinned Roc: the first four words, remaining words,
+// then trailing bytes. Source recursion keeps each loop's actual arguments.
+word-difference(input<[u8]>, str-at<u64>, match-at<u64>, length<u64>) => (out<u64>) :=
+  str-word := load-word(input, bits/wrapping-add(str-at, length))
+  match-word := load-word(input, bits/wrapping-add(match-at, length))
+  out := bits/xor(match-word, str-word).
+extend-tail(input<[u8]>, str-at<u64>, match-at<u64>, length<u64>, maximum<u64>) => <u64>
+  | (input, str-at, match-at, length, maximum) => ((length < maximum)?
+      | false => length
+      | true => ((byte(input, bits/wrapping-add(str-at, length)) == byte(input, bits/wrapping-add(match-at, length)))?
+          | true => extend-tail(input, str-at, match-at, bits/wrapping-add(length, 1u64), maximum)
+          | false => length)).
+extend-words(input<[u8]>, str-at<u64>, match-at<u64>, length<u64>, maximum<u64>) => <u64>
+  | (input, str-at, match-at, length, maximum) => ((length + 8u64 <= maximum)?
+      | false => extend-tail(input, str-at, match-at, length, maximum)
+      | true => (word-difference(input, str-at, match-at, length)?
+          | 0u64 => extend-words(input, str-at, match-at, bits/wrapping-add(length, 8u64), maximum)
+          | difference => bits/wrapping-add(length, bits/shift-right-wrap(bits/trailing-zeros(difference), 3u64)))).
+extend-four(input<[u8]>, str-at<u64>, match-at<u64>, length<u64>, four-end<u64>, maximum<u64>) => <u64>
+  | (input, str-at, match-at, length, four-end, maximum) => ((length + 8u64 <= four-end)?
+      | false => extend-words(input, str-at, match-at, length, maximum)
+      | true => (word-difference(input, str-at, match-at, length)?
+          | 0u64 => extend-four(input, str-at, match-at, bits/wrapping-add(length, 8u64), four-end, maximum)
+          | difference => bits/wrapping-add(length, bits/shift-right-wrap(bits/trailing-zeros(difference), 3u64)))).
+extend-length(input<[u8]>, str-at<u64>, match-at<u64>, start<u64>, maximum<u64>) => (out<u64>) :=
+  window! := (str-at + maximum <= sequence/length(input)) && (match-at < str-at)
+  four-end := start + 32u64
+  out := ((four-end <= maximum)?
+    | true => extend-four(input, str-at, match-at, start, four-end, maximum)
+    | false => extend-words(input, str-at, match-at, start, maximum)).
+
+
+initial-nodes(count<u64>) => (out<[u16]>) :=
+  out := [0u16 | i <- 0u64..=count, i < count].
+rebase-node(node<u16>) => (out<u16>) :=
+  wide<u64> := node
+  out<u16> := ((wide < 32768u64)? | true => 0u64 | false => wide - 32768u64).
+rebase-nodes(nodes<[u16]>) => (out<[u16]>) :=
+  out := rebase-node(nodes).
+node-index(base<u64>, node<u16>) => (out<u64>) :=
+  wide<u64> := node
+  out := bits/wrapping-sub(bits/wrapping-add(base, wide), 32768u64).
+
+// Binary-tree DEFLATE matching, translated from roc-deflate
+// 671077457ff7ef3a3d44caf715a3fc595addf379, BtMatchfinder.roc.
+// Concatenate after deflate-matchfinder.mec. See deflate-huffman-LICENSES.md.
+// Positions are zero-based; checked Mech matrix selectors are one-based.
+// Known parity work before timing: unaligned LE loads,
+// prefetch hints, wrapping narrow casts, and physical buffer ownership.
+
+<bt-advanced> := <{tables<[u16]> next-hash3<u64> next-hash4<u64> cache<[u32]> cache-ptr<u64>}>
+<bt-state> := <{tables<[u16]> next-hash3<u64> next-hash4<u64>}>
+<bt-descent> := <([u16],u64,u64,u16,u64,u64,u64,u64,bool)>
+<bt-search-turn> := <([u16],[u32],u64,u64,u64,u16,u64,u64,u64,u64,u64,bool)>
+
+bt-word16(value<u16>) => (out<u64>) :=
+  out<u64> := value.
+bt-word32(value<u32>) => (out<u64>) :=
+  out<u64> := value.
+bt-narrow16(value<u64>) => (out<u16>) :=
+  out<u16> := bits/and(value, 65535u64).
+bt-narrow32(value<u64>) => (out<u32>) :=
+  out<u32> := bits/and(value, 4294967295u64).
+bt-minimum(a<u64>, b<u64>) => (out<u64>) :=
+  out := ((a < b)? | true => a | false => b).
+bt-saturating-sub(a<u64>, b<u64>) => (out<u64>) :=
+  out := ((a < b)? | true => 0u64 | false => a - b).
+bt-pack-entry(low<u64>, high<u64>) => (out<u32>) :=
+  out := bt-narrow32(bits/or(bits/and(low, 65535u64), bits/shift-left-wrap(high, 16u64))).
+bt-put-entry(cache<[u32]>, ptr<u64>, length<u64>, offset<u64>) => (out<[u32]>) :=
+  ~next := cache
+  next[bits/wrapping-add(ptr, 1u64)] = bt-pack-entry(length, offset)
+  out := next.
+bt-child-slot(node<u64>) => (out<u64>) :=
+  out := bits/wrapping-mul(bits/and(node, 32767u64), 2u64).
+bt-clear(tables<[u16]>, pending-lt<u64>, pending-gt<u64>) => (out<[u16]>) :=
+  ~next := tables
+  next[bits/wrapping-add(pending-lt, 1u64)] = 0u16
+  next[bits/wrapping-add(pending-gt, 1u64)] = 0u16
+  out := next.
+bt-attach(tables<[u16]>, pending-lt<u64>, pending-gt<u64>, node<u16>) => (out<[u16]>) :=
+  ns := bt-child-slot(bt-word16(node))
+  node-lt := tables[bits/wrapping-add(ns, 1u64)]
+  node-gt := tables[bits/wrapping-add(ns, 2u64)]
+  ~next := tables
+  next[bits/wrapping-add(pending-lt, 1u64)] = node-lt
+  next[bits/wrapping-add(pending-gt, 1u64)] = node-gt
+  out := next.
+
+// The same branch and prefix-bound updates are used in both compiled walks.
+bt-descend-left(tables<[u16]>, pending-lt<u64>, pending-gt<u64>, node<u16>, best-gt<u64>, length<u64>) => (out<([u16],u64,u64,u16,u64,u64,u64)>) :=
+  ns := bt-child-slot(bt-word16(node))
+  ~next := tables
+  next[bits/wrapping-add(pending-lt, 1u64)] = node
+  new-lt := bits/wrapping-add(ns, 1u64)
+  new-node := next[bits/wrapping-add(new-lt, 1u64)]
+  out := (next, new-lt, pending-gt, new-node, length, best-gt, bt-minimum(best-gt, length)).
+bt-descend-right(tables<[u16]>, pending-lt<u64>, pending-gt<u64>, node<u16>, best-lt<u64>, length<u64>) => (out<([u16],u64,u64,u16,u64,u64,u64)>) :=
+  ns := bt-child-slot(bt-word16(node))
+  ~next := tables
+  next[bits/wrapping-add(pending-gt, 1u64)] = node
+  new-node := next[bits/wrapping-add(ns, 1u64)]
+  out := (next, pending-lt, ns, new-node, best-lt, length, bt-minimum(best-lt, length)).
+bt-descend(tables<[u16]>, input<[u8]>, in-next<u64>, match-at<u64>, cur-pos<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>) => (out<bt-descent>) :=
+  lesser := byte(input, bits/wrapping-add(match-at, length)) < byte(input, bits/wrapping-add(in-next, length))
+  (mf, lt, gt, next-node, new-best-lt, new-best-gt, new-length) := (lesser?
+    | true => bt-descend-left(tables, pending-lt, pending-gt, node, best-gt, length)
+    | false => bt-descend-right(tables, pending-lt, pending-gt, node, best-lt, length))
+  new-depth := bits/wrapping-sub(depth, 1u64)
+  stopped := (bt-word16(next-node) <= cur-pos) || (new-depth == 0u64)
+  next := (stopped? | true => bt-clear(mf, lt, gt) | false => mf)
+  out := (next, lt, gt, next-node, new-depth, new-best-lt, new-best-gt, new-length, !stopped).
+
+bt-search-after(tables<[u16]>, cache<[u32]>, cache-ptr<u64>, input<[u8]>, in-next<u64>, match-at<u64>, cur-pos<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>, best-length<u64>) => (out<bt-search-turn>) :=
+  (mf, lt, gt, new-node, new-depth, new-best-lt, new-best-gt, new-length, walking) := bt-descend(tables, input, in-next, match-at, cur-pos, pending-lt, pending-gt, node, depth, best-lt, best-gt, length)
+  out := (mf, cache, cache-ptr, lt, gt, new-node, new-depth, new-best-lt, new-best-gt, new-length, best-length, walking).
+bt-search-step(tables<[u16]>, cache<[u32]>, cache-ptr<u64>, input<[u8]>, in-next<u64>, cur-pos<u64>, maximum<u64>, nice<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>, best-length<u64>) => (out<bt-search-turn>) :=
+  distance := bits/and(bits/wrapping-sub(bits/wrapping-add(cur-pos, 32768u64), bt-word16(node)), 32767u64)
+  match-at := bt-saturating-sub(in-next, distance)
+  matched := byte(input, bits/wrapping-add(match-at, length)) == byte(input, bits/wrapping-add(in-next, length))
+  extended := (matched? | true => extend-length(input, in-next, match-at, bits/wrapping-add(length, 1u64), maximum) | false => length)
+  record := matched && (extended > best-length)
+  next-cache := (record? | true => bt-put-entry(cache, cache-ptr, extended, bits/wrapping-sub(in-next, match-at)) | false => cache)
+  next-ptr := (record? | true => bits/wrapping-add(cache-ptr, 1u64) | false => cache-ptr)
+  new-best := (record? | true => extended | false => best-length)
+  stopped := record && (extended >= nice)
+  out := (stopped?
+    | true => (bt-attach(tables, pending-lt, pending-gt, node), next-cache, next-ptr, pending-lt, pending-gt, node, depth, best-lt, best-gt, extended, new-best, false)
+    | false => bt-search-after(tables, next-cache, next-ptr, input, in-next, match-at, cur-pos, pending-lt, pending-gt, node, depth, best-lt, best-gt, extended, new-best)).
+
+bt-search-loop(tables<[u16]>, cache<[u32]>, cache-ptr<u64>, input<[u8]>, in-next<u64>, cur-pos<u64>, maximum<u64>, nice<u64>, out-hash3<u64>, out-hash4<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>, best-length<u64>) => (out<bt-advanced>) :=
+  (mf, next-cache, next-ptr, lt, gt, next-node, next-depth, next-best-lt, next-best-gt, next-length, next-best, walking) := ((length < maximum)?
+    | true => bt-search-step(tables, cache, cache-ptr, input, in-next, cur-pos, maximum, nice, pending-lt, pending-gt, node, depth, best-lt, best-gt, length, best-length)
+    | false => (tables, cache, cache-ptr, pending-lt, pending-gt, node, depth, best-lt, best-gt, length, best-length, false))
+  out := (walking?
+    | true => bt-search-loop(mf, next-cache, next-ptr, input, in-next, cur-pos, maximum, nice, out-hash3, out-hash4, lt, gt, next-node, next-depth, next-best-lt, next-best-gt, next-length, next-best)
+    | false => {tables: mf, next-hash3: out-hash3, next-hash4: out-hash4, cache: next-cache, cache-ptr: next-ptr}).
+
+bt-short-candidates(input<[u8]>, in-next<u64>, in-base<u64>, cur-pos<u64>, node<u16>, older<u16>) => (out<u64>) :=
+  seq3 := bits/and(bt-word32(load-prefix(input, in-next)), 16777215u64)
+  out := ((seq3 == bits/and(bt-word32(load-prefix(input, node-index(in-base, node))), 16777215u64))?
+        | true => bits/wrapping-sub(in-next, node-index(in-base, node))
+        | false => ((bt-word16(older) > cur-pos)?
+            | false => 0u64
+            | true => ((seq3 == bits/and(bt-word32(load-prefix(input, node-index(in-base, older))), 16777215u64))?
+                | true => bits/wrapping-sub(in-next, node-index(in-base, older))
+                | false => 0u64))).
+bt-short-distance(input<[u8]>, in-next<u64>, in-base<u64>, cur-pos<u64>, node<u16>, older<u16>) => (out<u64>) :=
+  out := ((bt-word16(node) > cur-pos)?
+    | false => 0u64
+    | true => bt-short-candidates(input, in-next, in-base, cur-pos, node, older)).
+bt-short-record(cache<[u32]>, cache-ptr<u64>, input<[u8]>, in-next<u64>, in-base<u64>, cur-pos<u64>, node<u16>, older<u16>) => (out<([u32],u64)>) :=
+  distance := bt-short-distance(input, in-next, in-base, cur-pos, node, older)
+  next := ((distance > 0u64)? | true => bt-put-entry(cache, cache-ptr, 3u64, distance) | false => cache)
+  ptr := ((distance > 0u64)? | true => bits/wrapping-add(cache-ptr, 1u64) | false => cache-ptr)
+  out := (next, ptr).
+
+bt-get-matches(tables<[u16]>, hash3<u64>, hash4<u64>, input<[u8]>, in-base<u64>, cur-pos<u64>, maximum<u64>, nice<u64>, search-depth<u64>, cache<[u32]>, cache-ptr<u64>) => (out<bt-advanced>) :=
+  table-size! := sequence/length(tables) >= 262144u64
+  in-next := bits/wrapping-add(in-base, cur-pos)
+  window! := in-next + maximum <= sequence/length(input)
+  next-sequence := load-prefix(input, bits/wrapping-add(in-next, 1u64))
+  seq3 := bt-narrow32(bits/and(bt-word32(next-sequence), 16777215u64))
+  next-hash3 := lz-hash(seq3, 16u64)
+  next-hash4 := lz-hash(next-sequence, 16u64)
+  pos := bt-narrow16(bits/wrapping-add(cur-pos, 32768u64))
+  slot3 := bits/wrapping-add(131072u64, bits/wrapping-mul(bits/and(hash3, 65535u64), 2u64))
+  node3 := tables[bits/wrapping-add(slot3, 1u64)]
+  older := tables[bits/wrapping-add(slot3, 2u64)]
+  ~mf := tables
+  mf[bits/wrapping-add(slot3, 1u64)] = pos
+  mf[bits/wrapping-add(slot3, 2u64)] = node3
+  (next-cache, next-ptr) := bt-short-record(cache, cache-ptr, input, in-next, in-base, cur-pos, node3, older)
+  slot4 := bits/wrapping-add(65536u64, bits/and(hash4, 65535u64))
+  node4 := mf[bits/wrapping-add(slot4, 1u64)]
+  mf[bits/wrapping-add(slot4, 1u64)] = pos
+  lt := bt-child-slot(cur-pos)
+  gt := bits/wrapping-add(lt, 1u64)
+  out := ((bt-word16(node4) <= cur-pos)?
+    | true => {tables: bt-clear(mf, lt, gt), next-hash3: next-hash3, next-hash4: next-hash4, cache: next-cache, cache-ptr: next-ptr}
+    | false => bt-search-loop(mf, next-cache, next-ptr, input, in-next, cur-pos, maximum, nice, next-hash3, next-hash4, lt, gt, node4, search-depth, 0u64, 0u64, 0u64, 3u64)).
+
+// Skip has its own walk, with no cache, recording branch, or best-length state.
+bt-skip-step(tables<[u16]>, input<[u8]>, in-next<u64>, cur-pos<u64>, nice<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>) => (out<bt-descent>) :=
+  distance := bits/and(bits/wrapping-sub(bits/wrapping-add(cur-pos, 32768u64), bt-word16(node)), 32767u64)
+  match-at := bt-saturating-sub(in-next, distance)
+  matched := byte(input, bits/wrapping-add(match-at, length)) == byte(input, bits/wrapping-add(in-next, length))
+  extended := (matched? | true => extend-length(input, in-next, match-at, bits/wrapping-add(length, 1u64), nice) | false => length)
+  stopped := matched && (extended >= nice)
+  out := (stopped?
+    | true => (bt-attach(tables, pending-lt, pending-gt, node), pending-lt, pending-gt, node, depth, best-lt, best-gt, extended, false)
+    | false => bt-descend(tables, input, in-next, match-at, cur-pos, pending-lt, pending-gt, node, depth, best-lt, best-gt, extended)).
+bt-skip-loop(tables<[u16]>, input<[u8]>, in-next<u64>, cur-pos<u64>, nice<u64>, out-hash3<u64>, out-hash4<u64>, pending-lt<u64>, pending-gt<u64>, node<u16>, depth<u64>, best-lt<u64>, best-gt<u64>, length<u64>) => (out<bt-state>) :=
+  (mf, lt, gt, next-node, next-depth, next-best-lt, next-best-gt, next-length, walking) := ((length < nice)?
+    | true => bt-skip-step(tables, input, in-next, cur-pos, nice, pending-lt, pending-gt, node, depth, best-lt, best-gt, length)
+    | false => (tables, pending-lt, pending-gt, node, depth, best-lt, best-gt, length, false))
+  out := (walking?
+    | true => bt-skip-loop(mf, input, in-next, cur-pos, nice, out-hash3, out-hash4, lt, gt, next-node, next-depth, next-best-lt, next-best-gt, next-length)
+    | false => {tables: mf, next-hash3: out-hash3, next-hash4: out-hash4}).
+bt-skip-byte(tables<[u16]>, hash3<u64>, hash4<u64>, input<[u8]>, in-base<u64>, cur-pos<u64>, nice<u64>, search-depth<u64>) => (out<bt-state>) :=
+  table-size! := sequence/length(tables) >= 262144u64
+  in-next := bits/wrapping-add(in-base, cur-pos)
+  window! := in-next + nice <= sequence/length(input)
+  next-sequence := load-prefix(input, bits/wrapping-add(in-next, 1u64))
+  seq3 := bt-narrow32(bits/and(bt-word32(next-sequence), 16777215u64))
+  next-hash3 := lz-hash(seq3, 16u64)
+  next-hash4 := lz-hash(next-sequence, 16u64)
+  pos := bt-narrow16(bits/wrapping-add(cur-pos, 32768u64))
+  slot3 := bits/wrapping-add(131072u64, bits/wrapping-mul(bits/and(hash3, 65535u64), 2u64))
+  node3 := tables[bits/wrapping-add(slot3, 1u64)]
+  ~mf := tables
+  mf[bits/wrapping-add(slot3, 1u64)] = pos
+  mf[bits/wrapping-add(slot3, 2u64)] = node3
+  slot4 := bits/wrapping-add(65536u64, bits/and(hash4, 65535u64))
+  node4 := mf[bits/wrapping-add(slot4, 1u64)]
+  mf[bits/wrapping-add(slot4, 1u64)] = pos
+  lt := bt-child-slot(cur-pos)
+  gt := bits/wrapping-add(lt, 1u64)
+  out := ((bt-word16(node4) <= cur-pos)?
+    | true => {tables: bt-clear(mf, lt, gt), next-hash3: next-hash3, next-hash4: next-hash4}
+    | false => bt-skip-loop(mf, input, in-next, cur-pos, nice, next-hash3, next-hash4, lt, gt, node4, search-depth, 0u64, 0u64, 0u64)).
+
+// Level-12 collection-position transition from CompressOptimal.roc,
+// 671077457ff7ef3a3d44caf715a3fc595addf379, lines 783-916.
+// Concatenate after the shared matchfinder and binary-tree functions.
+// This prefix witness stops before the block decision/statistics code. It is
+// not a complete block collector or compressor.
+
+<optimal-position> := <{tables<[u16]> cache<[u32]> next-hash3<u64> next-hash4<u64> next-position<u64> cache-ptr<u64> base<u64> next-slide<u64> maximum<u64> nice<u64> skip<u64>}>
+
+optimal-skip-position(tables<[u16]>, hash3<u64>, hash4<u64>, input<[u8]>, base<u64>, position<u64>, nice<u64>, cache<[u32]>, pointer<u64>) => (out<bt-advanced>) :=
+  advanced := bt-skip-byte(tables, hash3, hash4, input, base, position, nice, 300u64)
+  out := {tables: advanced.tables, next-hash3: advanced.next-hash3, next-hash4: advanced.next-hash4, cache: cache, cache-ptr: pointer}.
+
+optimal-collect-position(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, skip<u64>, pointer<u64>) => (out<optimal-position>) :=
+  remaining := bits/wrapping-sub(sequence/length(input), position)
+  slide := position == next-slide
+  mf := (slide? | true => rebase-nodes(tables) | false => tables)
+  current-base := (slide? | true => position | false => base)
+  slide-at := (slide? | true => bits/wrapping-add(position, bt-minimum(remaining, 32768u64)) | false => next-slide)
+  max-length := ((remaining < 258u64)? | true => remaining | false => maximum)
+  nice-length := ((remaining < 258u64)? | true => bt-minimum(nice, max-length) | false => nice)
+  skipping := skip != 0u64
+  advanced := ((max-length >= 5u64)?
+    | true => (skipping?
+        | true => optimal-skip-position(mf, hash3, hash4, input, current-base, bits/wrapping-sub(position, current-base), nice-length, cache, pointer)
+        | false => bt-get-matches(mf, hash3, hash4, input, current-base, bits/wrapping-sub(position, current-base), max-length, nice-length, 300u64, cache, pointer))
+    | false => {tables: mf, next-hash3: hash3, next-hash4: hash4, cache: cache, cache-ptr: pointer})
+  next-tables := advanced.tables
+  next-hash3 := advanced.next-hash3
+  next-hash4 := advanced.next-hash4
+  next-cache := advanced.cache
+  next-pointer := advanced.cache-ptr
+  found := next-pointer > pointer
+  best := (found? | true => bits/and(bt-word32(next-cache[next-pointer]), 65535u64) | false => 0u64)
+  with-header := bt-put-entry(next-cache, next-pointer, bits/wrapping-sub(next-pointer, pointer), byte(input, position))
+  next-skip := (skipping?
+    | true => bits/wrapping-sub(skip, 1u64)
+    | false => (((best >= 3u64) && (best >= nice-length))? | true => bits/wrapping-sub(best, 1u64) | false => 0u64))
+  out := {tables: next-tables, cache: with-header, next-hash3: next-hash3, next-hash4: next-hash4, next-position: bits/wrapping-add(position, 1u64), cache-ptr: bits/wrapping-add(next-pointer, 1u64), base: current-base, next-slide: slide-at, maximum: max-length, nice: nice-length, skip: next-skip}.
+
+// The bounded witness uses the same consecutive transition and keeps the
+// table/cache separate at call sites, as the full compression loop does.
+optimal-collect-prefix-loop(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, skip<u64>, pointer<u64>, end<u64>) => (out<optimal-position>) :=
+  collecting := position < end
+  next := (collecting?
+    | false => {tables: tables, cache: cache, next-hash3: hash3, next-hash4: hash4, next-position: position, cache-ptr: pointer, base: base, next-slide: next-slide, maximum: maximum, nice: nice, skip: skip}
+    | true => optimal-collect-position(tables, cache, hash3, hash4, input, position, base, next-slide, maximum, nice, skip, pointer))
+  next-tables := next.tables
+  next-cache := next.cache
+  next-hash3 := next.next-hash3
+  next-hash4 := next.next-hash4
+  next-position := next.next-position
+  next-base := next.base
+  slide-at := next.next-slide
+  max-length := next.maximum
+  nice-length := next.nice
+  next-skip := next.skip
+  next-pointer := next.cache-ptr
+  out := (collecting?
+    | false => {tables: next-tables, cache: next-cache, next-hash3: next-hash3, next-hash4: next-hash4, next-position: next-position, cache-ptr: next-pointer, base: next-base, next-slide: slide-at, maximum: max-length, nice: nice-length, skip: next-skip}
+    | true => optimal-collect-prefix-loop(next-tables, next-cache, next-hash3, next-hash4, input, next-position, next-base, slide-at, max-length, nice-length, next-skip, next-pointer, end)).
+
+optimal-collect-prefix(input<[u8]>, end<u64>) => (out<optimal-position>) :=
+  tables := initial-nodes(262144u64)
+  cache := [0u32 | i <- 0u64..=1500513u64, i < 1500513u64]
+  out := optimal-collect-prefix-loop(tables, cache, 0u64, 0u64, input, 0u64, 0u64, bt-minimum(sequence/length(input), 32768u64), 258u64, 258u64, 0u64, 0u64, bt-minimum(end, sequence/length(input))).
+
+// Block statistics from CompressOptimal.merge_match_len_freqs and
+// CompressLazy.merge_observations, pinned at
+// 671077457ff7ef3a3d44caf715a3fc595addf379. Concatenate after shared helpers.
+// Counters retain their original U32 representation and checked merge addition.
+// These functions are components of the block collector, not its complete loop.
+
+<optimal-merged-frequencies> := <{total<[u32]> fresh<[u32]>}>
+<optimal-merged-observations> := <{new-observations<[u32]> observations<[u32]> num-new-observations<u64> num-observations<u64>}>
+
+optimal-counter(counters<[u32]>, index<u64>) => (out<u32>) :=
+  out := ((index < sequence/length(counters))? | true => counters[index + 1u64] | false => 0u32).
+
+optimal-merge-frequency(total<[u32]>, fresh<[u32]>, index<u64>, amount<u32>) => (out<optimal-merged-frequencies>) :=
+  merged := optimal-counter(total, index) + amount
+  ~next-total := total
+  next-total[index + 1u64] = merged
+  ~next-fresh := fresh
+  next-fresh[index + 1u64] = 0u32
+  out := {total: next-total, fresh: next-fresh}.
+
+optimal-merge-frequency-if(total<[u32]>, fresh<[u32]>, index<u64>) => (out<optimal-merged-frequencies>) :=
+  amount := optimal-counter(fresh, index)
+  out := ((amount != 0u32)?
+    | true => optimal-merge-frequency(total, fresh, index, amount)
+    | false => {total: total, fresh: fresh}).
+
+optimal-merge-frequencies-loop(total<[u32]>, fresh<[u32]>, index<u64>) => (out<optimal-merged-frequencies>) :=
+  merged := ((index <= 258u64)?
+    | true => optimal-merge-frequency-if(total, fresh, index)
+    | false => {total: total, fresh: fresh})
+  next-total := merged.total
+  next-fresh := merged.fresh
+  out := ((index <= 258u64)?
+    | false => {total: next-total, fresh: next-fresh}
+    | true => optimal-merge-frequencies-loop(next-total, next-fresh, index + 1u64)).
+
+optimal-merge-frequencies(total<[u32]>, fresh<[u32]>) => (out<optimal-merged-frequencies>) :=
+  out := optimal-merge-frequencies-loop(total, fresh, 0u64).
+
+optimal-merge-observation(new-observations<[u32]>, new-base<u64>, observations<[u32]>, index<u64>) => (out<optimal-merged-frequencies>) :=
+  merged := optimal-counter(observations, index) + optimal-counter(new-observations, new-base + index)
+  ~next-total := observations
+  next-total[index + 1u64] = merged
+  ~next-fresh := new-observations
+  next-fresh[new-base + index + 1u64] = 0u32
+  out := {total: next-total, fresh: next-fresh}.
+
+optimal-merge-observations-loop(new-observations<[u32]>, new-base<u64>, observations<[u32]>, index<u64>) => (out<optimal-merged-frequencies>) :=
+  merged := ((index < 10u64)?
+    | true => optimal-merge-observation(new-observations, new-base, observations, index)
+    | false => {total: observations, fresh: new-observations})
+  next-total := merged.total
+  next-fresh := merged.fresh
+  out := ((index < 10u64)?
+    | false => {total: next-total, fresh: next-fresh}
+    | true => optimal-merge-observations-loop(next-fresh, new-base, next-total, index + 1u64)).
+
+optimal-merge-observations(new-observations<[u32]>, new-base<u64>, observations<[u32]>, num-new-observations<u64>, num-observations<u64>) => (out<optimal-merged-observations>) :=
+  merged := optimal-merge-observations-loop(new-observations, new-base, observations, 0u64)
+  out := {new-observations: merged.fresh, observations: merged.total, num-new-observations: 0u64, num-observations: num-observations + num-new-observations}.
+
+// Level-12-reachable block heuristics from CompressLazy.roc at
+// 671077457ff7ef3a3d44caf715a3fc595addf379. Shared helpers precede this file.
+
+optimal-choose-minimum(used<u64>) => (out<u64>) :=
+  lengths := [9u8,9u8,9u8,9u8,9u8,9u8,8u8,8u8,7u8,7u8,6u8,6u8,6u8,6u8,6u8,6u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,5u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8,4u8]
+  out := ((used >= 80u64)? | true => 3u64 | false => byte(lengths, used)).
+
+optimal-used-count(used<[u8]>, index<u64>, count<u64>) => (out<u64>) :=
+  out := ((index < 256u64)?
+    | true => optimal-used-count(used, index + 1u64, count + byte(used, index))
+    | false => count).
+
+optimal-mark-used(used<[u8]>, input<[u8]>, at<u64>) => (out<[u8]>) :=
+  ~next := used
+  next[byte(input, at) + 1u64] = 1u8
+  out := next.
+
+optimal-sample-used(used<[u8]>, input<[u8]>, at<u64>, count<u64>, index<u64>) => (out<[u8]>) :=
+  next := ((index < count)? | true => optimal-mark-used(used, input, at + index) | false => used)
+  out := ((index < count)?
+    | true => optimal-sample-used(next, input, at, count, index + 1u64)
+    | false => next).
+
+optimal-sampled-minimum(input<[u8]>, at<u64>, count<u64>) => (out<u64>) :=
+  used := [0u8 | index <- 0u64..=256u64, index < 256u64]
+  sampled := optimal-sample-used(used, input, at, bt-minimum(count, 4096u64), 0u64)
+  out := optimal-choose-minimum(optimal-used-count(sampled, 0u64, 0u64)).
+
+optimal-minimum-match(input<[u8]>, at<u64>, count<u64>) => (out<u64>) :=
+  out := ((count < 512u64)? | true => 3u64 | false => optimal-sampled-minimum(input, at, count)).
+
+optimal-maximum-block-end(begin<u64>, end<u64>) => (out<u64>) :=
+  out := ((end - begin < 305000u64)? | true => end | false => begin + 300000u64).
+
+optimal-observation-delta(fresh<[u32]>, total<[u32]>, num-fresh<u64>, num-total<u64>, index<u64>, delta<u64>) => (out<u64>) :=
+  expected := ((index < 10u64)? | true => bt-word32(optimal-counter(total, index)) * num-fresh | false => 0u64)
+  actual := ((index < 10u64)? | true => bt-word32(optimal-counter(fresh, index)) * num-total | false => 0u64)
+  difference := ((actual > expected)? | true => actual - expected | false => expected - actual)
+  out := ((index < 10u64)?
+    | true => optimal-observation-delta(fresh, total, num-fresh, num-total, index + 1u64, delta + difference)
+    | false => delta).
+
+optimal-end-check-present(fresh<[u32]>, total<[u32]>, num-fresh<u64>, num-total<u64>, block-length<u64>) => (out<u64>) :=
+  delta := optimal-observation-delta(fresh, total, num-fresh, num-total, 0u64, 0u64)
+  items := num-total + num-fresh
+  initial-cutoff := (num-fresh * 200u64 / 512u64) * num-total
+  cutoff := (((block-length < 10000u64) && (items < 8192u64))?
+    | true => initial-cutoff + initial-cutoff * (8192u64 - items) / 8192u64
+    | false => initial-cutoff)
+  out := ((delta + (block-length / 4096u64) * num-total >= cutoff)? | true => 1u64 | false => 0u64).
+
+optimal-end-block-check(fresh<[u32]>, total<[u32]>, num-fresh<u64>, num-total<u64>, block-length<u64>) => (out<u64>) :=
+  out := ((num-total > 0u64)?
+    | true => optimal-end-check-present(fresh, total, num-fresh, num-total, block-length)
+    | false => 0u64).
+
+// Level-12 match collection from CompressOptimal.roc:753-970 and 1232-1273,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Concatenate after matchfinder, binary-tree, prefix, statistics and heuristics.
+// Large buffers remain separate function arguments. The actual tree skip has
+// no cache argument: its caller writes each position's zero-match header.
+
+<optimal-sample> := <{fresh-frequencies<[u32]> fresh-observations<[u32]> number-fresh<u64> next-observation<u64>}>
+<optimal-sampled-position> := <{tables<[u16]> cache<[u32]> next-hash3<u64> next-hash4<u64> next-position<u64> cache-ptr<u64> base<u64> next-slide<u64> maximum<u64> nice<u64> skip<u64> fresh-frequencies<[u32]> fresh-observations<[u32]> number-fresh<u64> next-observation<u64>}>
+<optimal-block-decision> := <{frequencies<[u32]> fresh-frequencies<[u32]> observations<[u32]> fresh-observations<[u32]> number-observations<u64> number-fresh<u64> previous-check<u64> have-previous-check<u64> changed<u64> keep-going<bool>}>
+<optimal-collected-block> := <{tables<[u16]> cache<[u32]> next-hash3<u64> next-hash4<u64> next-position<u64> cache-ptr<u64> base<u64> next-slide<u64> maximum<u64> nice<u64> frequencies<[u32]> fresh-frequencies<[u32]> observations<[u32]> fresh-observations<[u32]> number-observations<u64> number-fresh<u64> block-begin<u64> block-end<u64> cache-end<u64> rewound<u64> is-final<u64> changed<u64> previous-check<u64> have-previous-check<u64>}>
+<optimal-carried-block> := <{cache<[u32]> cache-ptr<u64> frequencies<[u32]> fresh-frequencies<[u32]> observations<[u32]> fresh-observations<[u32]> number-observations<u64> number-fresh<u64> block-begin<u64>}>
+
+optimal-increment-counter(counters<[u32]>, index<u64>) => (out<[u32]>) :=
+  value := bt-narrow32(bits/wrapping-add(bt-word32(optimal-counter(counters, index)), 1u64))
+  ~next := counters
+  next[index + 1u64] = value
+  out := next.
+
+optimal-sample-match(frequencies<[u32]>, observations<[u32]>, number<u64>, position<u64>, best<u64>) => (out<optimal-sample>) :=
+  kind := 8u64 + ((best >= 9u64)? | true => 1u64 | false => 0u64)
+  fresh-observations := optimal-increment-counter(observations, kind)
+  next-number := bits/wrapping-add(number, 1u64)
+  next-observation := bits/wrapping-add(position, best)
+  fresh-frequencies := optimal-increment-counter(frequencies, best)
+  out := {fresh-frequencies: fresh-frequencies, fresh-observations: fresh-observations, number-fresh: next-number, next-observation: next-observation}.
+
+optimal-sample-literal(frequencies<[u32]>, observations<[u32]>, number<u64>, position<u64>, input<[u8]>) => (out<optimal-sample>) :=
+  literal := byte(input, position)
+  kind := bits/or(bits/and(bits/shift-right-wrap(literal, 5u64), 6u64), bits/and(literal, 1u64))
+  fresh := optimal-increment-counter(observations, kind)
+  out := {fresh-frequencies: frequencies, fresh-observations: fresh, number-fresh: bits/wrapping-add(number, 1u64), next-observation: bits/wrapping-add(position, 1u64)}.
+
+optimal-sample-position(frequencies<[u32]>, observations<[u32]>, number<u64>, next-observation<u64>, position<u64>, best<u64>, minimum<u64>, input<[u8]>) => (out<optimal-sample>) :=
+  out := ((position >= next-observation)?
+    | false => {fresh-frequencies: frequencies, fresh-observations: observations, number-fresh: number, next-observation: next-observation}
+    | true => ((best >= minimum)?
+        | true => optimal-sample-match(frequencies, observations, number, position, best)
+        | false => optimal-sample-literal(frequencies, observations, number, position, input))).
+
+optimal-search-position(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, pointer<u64>, frequencies<[u32]>, observations<[u32]>, number<u64>, next-observation<u64>, minimum<u64>) => (out<optimal-sampled-position>) :=
+  remaining := bits/wrapping-sub(sequence/length(input), position)
+  slide := position == next-slide
+  mf := (slide? | true => rebase-nodes(tables) | false => tables)
+  current-base := (slide? | true => position | false => base)
+  slide-at := (slide? | true => bits/wrapping-add(position, bt-minimum(remaining, 32768u64)) | false => next-slide)
+  max-length := ((remaining < 258u64)? | true => remaining | false => maximum)
+  nice-length := ((remaining < 258u64)? | true => bt-minimum(nice, max-length) | false => nice)
+  advanced := ((max-length >= 5u64)?
+    | true => bt-get-matches(mf, hash3, hash4, input, current-base, bits/wrapping-sub(position, current-base), max-length, nice-length, 300u64, cache, pointer)
+    | false => {tables: mf, next-hash3: hash3, next-hash4: hash4, cache: cache, cache-ptr: pointer})
+  next-tables := advanced.tables
+  next-cache := advanced.cache
+  next-hash3 := advanced.next-hash3
+  next-hash4 := advanced.next-hash4
+  next-pointer := advanced.cache-ptr
+  best := ((next-pointer > pointer)? | true => bits/and(bt-word32(next-cache[next-pointer]), 65535u64) | false => 0u64)
+  sampled := optimal-sample-position(frequencies, observations, number, next-observation, position, best, minimum, input)
+  fresh-frequencies := sampled.fresh-frequencies
+  fresh-observations := sampled.fresh-observations
+  number-fresh := sampled.number-fresh
+  observe-at := sampled.next-observation
+  with-header := bt-put-entry(next-cache, next-pointer, bits/wrapping-sub(next-pointer, pointer), byte(input, position))
+  skip := (((best >= 3u64) && (best >= nice-length))? | true => bits/wrapping-sub(best, 1u64) | false => 0u64)
+  out := {tables: next-tables, cache: with-header, next-hash3: next-hash3, next-hash4: next-hash4, next-position: bits/wrapping-add(position, 1u64), cache-ptr: bits/wrapping-add(next-pointer, 1u64), base: current-base, next-slide: slide-at, maximum: max-length, nice: nice-length, skip: skip, fresh-frequencies: fresh-frequencies, fresh-observations: fresh-observations, number-fresh: number-fresh, next-observation: observe-at}.
+
+optimal-skip-run(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, skip<u64>, pointer<u64>) => (out<optimal-position>) :=
+  next := ((skip != 0u64)?
+    | true => optimal-collect-position(tables, cache, hash3, hash4, input, position, base, next-slide, maximum, nice, skip, pointer)
+    | false => {tables: tables, cache: cache, next-hash3: hash3, next-hash4: hash4, next-position: position, cache-ptr: pointer, base: base, next-slide: next-slide, maximum: maximum, nice: nice, skip: skip})
+  next-tables := next.tables
+  next-cache := next.cache
+  next-hash3 := next.next-hash3
+  next-hash4 := next.next-hash4
+  next-position := next.next-position
+  next-base := next.base
+  slide-at := next.next-slide
+  max-length := next.maximum
+  nice-length := next.nice
+  next-skip := next.skip
+  next-pointer := next.cache-ptr
+  out := ((skip != 0u64)?
+    | true => optimal-skip-run(next-tables, next-cache, next-hash3, next-hash4, input, next-position, next-base, slide-at, max-length, nice-length, next-skip, next-pointer)
+    | false => {tables: next-tables, cache: next-cache, next-hash3: next-hash3, next-hash4: next-hash4, next-position: next-position, cache-ptr: next-pointer, base: next-base, next-slide: slide-at, maximum: max-length, nice: nice-length, skip: next-skip}).
+
+optimal-merge-checkpoint(frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, position<u64>) => (out<optimal-block-decision>) :=
+  ms := optimal-merge-observations(fresh-observations, 0u64, observations, number-fresh, number-observations)
+  merged := optimal-merge-frequencies(frequencies, fresh-frequencies)
+  out := {frequencies: merged.total, fresh-frequencies: merged.fresh, observations: ms.observations, fresh-observations: ms.new-observations, number-observations: ms.num-observations, number-fresh: ms.num-new-observations, previous-check: position, have-previous-check: 1u64, changed: 0u64, keep-going: true}.
+
+optimal-block-decision(frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, position<u64>, begin<u64>, maximum-end<u64>, pointer<u64>, end<u64>, previous-check<u64>, have-previous-check<u64>) => (out<optimal-block-decision>) :=
+  at-limit := (position >= maximum-end) || (pointer >= 1500000u64)
+  check := !at-limit && (number-fresh >= 512u64) && (bits/wrapping-sub(position, begin) >= 5000u64) && (bits/wrapping-sub(end, position) >= 5000u64)
+  changed := (check? | true => optimal-end-block-check(fresh-observations, observations, number-fresh, number-observations, bits/wrapping-sub(position, begin)) | false => 0u64)
+  out := ((check && (changed == 0u64))?
+    | true => optimal-merge-checkpoint(frequencies, fresh-frequencies, observations, fresh-observations, number-observations, number-fresh, position)
+    | false => {frequencies: frequencies, fresh-frequencies: fresh-frequencies, observations: observations, fresh-observations: fresh-observations, number-observations: number-observations, number-fresh: number-fresh, previous-check: previous-check, have-previous-check: have-previous-check, changed: changed, keep-going: !at-limit && (changed == 0u64)}).
+
+optimal-rewind-cache(cache<[u32]>, end<u64>, count<u64>) => (out<u64>) :=
+  header-at := ((count != 0u64)? | true => end - 1u64 | false => end)
+  previous := ((count != 0u64)? | true => header-at - bits/and(bt-word32(optimal-counter(cache, header-at)), 65535u64) | false => end)
+  out := ((count != 0u64)? | true => optimal-rewind-cache(cache, previous, count - 1u64) | false => previous).
+
+optimal-finish-block(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, position<u64>, pointer<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, begin<u64>, end<u64>, previous-check<u64>, have-previous-check<u64>, changed<u64>) => (out<optimal-collected-block>) :=
+  rewind := (changed == 1u64) && (have-previous-check == 1u64)
+  block-end := (rewind? | true => previous-check | false => position)
+  cache-end := (rewind? | true => optimal-rewind-cache(cache, pointer, position - previous-check) | false => pointer)
+  rewound := (rewind? | true => pointer - cache-end | false => 0u64)
+  merged := (rewind? | true => {total: frequencies, fresh: fresh-frequencies} | false => optimal-merge-frequencies(frequencies, fresh-frequencies))
+  ms := (rewind?
+    | true => {new-observations: fresh-observations, observations: observations, num-new-observations: number-fresh, num-observations: number-observations}
+    | false => optimal-merge-observations(fresh-observations, 0u64, observations, number-fresh, number-observations))
+  final := ((!rewind && (position == end))? | true => 1u64 | false => 0u64)
+  out := {tables: tables, cache: cache, next-hash3: hash3, next-hash4: hash4, next-position: position, cache-ptr: pointer, base: base, next-slide: next-slide, maximum: maximum, nice: nice, frequencies: merged.total, fresh-frequencies: merged.fresh, observations: ms.observations, fresh-observations: ms.new-observations, number-observations: ms.num-observations, number-fresh: ms.num-new-observations, block-begin: begin, block-end: block-end, cache-end: cache-end, rewound: rewound, is-final: final, changed: changed, previous-check: previous-check, have-previous-check: have-previous-check}.
+
+optimal-block-loop(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, pointer<u64>, frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, next-observation<u64>, begin<u64>, maximum-end<u64>, minimum<u64>, previous-check<u64>, have-previous-check<u64>) => (out<optimal-collected-block>) :=
+  searched := optimal-search-position(tables, cache, hash3, hash4, input, position, base, next-slide, maximum, nice, pointer, fresh-frequencies, fresh-observations, number-fresh, next-observation, minimum)
+  mf := searched.tables
+  matches := searched.cache
+  nh3 := searched.next-hash3
+  nh4 := searched.next-hash4
+  at := searched.next-position
+  current-base := searched.base
+  slide-at := searched.next-slide
+  max-length := searched.maximum
+  nice-length := searched.nice
+  skip := searched.skip
+  ptr := searched.cache-ptr
+  new-frequencies := searched.fresh-frequencies
+  new-observations := searched.fresh-observations
+  new-number := searched.number-fresh
+  observe-at := searched.next-observation
+  advanced := optimal-skip-run(mf, matches, nh3, nh4, input, at, current-base, slide-at, max-length, nice-length, skip, ptr)
+  next-tables := advanced.tables
+  next-cache := advanced.cache
+  next-hash3 := advanced.next-hash3
+  next-hash4 := advanced.next-hash4
+  next-position := advanced.next-position
+  next-base := advanced.base
+  next-slide-at := advanced.next-slide
+  next-maximum := advanced.maximum
+  next-nice := advanced.nice
+  next-pointer := advanced.cache-ptr
+  decision := optimal-block-decision(frequencies, new-frequencies, observations, new-observations, number-observations, new-number, next-position, begin, maximum-end, next-pointer, sequence/length(input), previous-check, have-previous-check)
+  total-frequencies := decision.frequencies
+  fresh-freqs := decision.fresh-frequencies
+  total-observations := decision.observations
+  fresh-obs := decision.fresh-observations
+  num-total := decision.number-observations
+  num-fresh := decision.number-fresh
+  prev-check := decision.previous-check
+  have-prev := decision.have-previous-check
+  changed := decision.changed
+  out := (decision.keep-going?
+    | true => optimal-block-loop(next-tables, next-cache, next-hash3, next-hash4, input, next-position, next-base, next-slide-at, next-maximum, next-nice, next-pointer, total-frequencies, fresh-freqs, total-observations, fresh-obs, num-total, num-fresh, observe-at, begin, maximum-end, minimum, prev-check, have-prev)
+    | false => optimal-finish-block(next-tables, next-cache, next-hash3, next-hash4, next-position, next-pointer, next-base, next-slide-at, next-maximum, next-nice, total-frequencies, fresh-freqs, total-observations, fresh-obs, num-total, num-fresh, begin, sequence/length(input), prev-check, have-prev, changed)).
+
+optimal-collect-block(tables<[u16]>, cache<[u32]>, hash3<u64>, hash4<u64>, input<[u8]>, position<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, pointer<u64>, frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, begin<u64>, previous-only-literals<u64>) => (out<optimal-collected-block>) :=
+  maximum-end := optimal-maximum-block-end(begin, sequence/length(input))
+  minimum := ((previous-only-literals == 1u64)? | true => 259u64 | false => optimal-minimum-match(input, begin, maximum-end - begin))
+  out := optimal-block-loop(tables, cache, hash3, hash4, input, position, base, next-slide, maximum, nice, pointer, frequencies, fresh-frequencies, observations, fresh-observations, number-observations, number-fresh, position, begin, maximum-end, minimum, 0u64, 0u64).
+
+optimal-first-block(input<[u8]>) => (out<optimal-collected-block>) :=
+  tables := initial-nodes(262144u64)
+  cache := [0u32 | index <- 0u64..=1500513u64, index < 1500513u64]
+  frequencies := [0u32 | index <- 0u64..=259u64, index < 259u64]
+  fresh-frequencies := [0u32 | index <- 0u64..=259u64, index < 259u64]
+  observations := [0u32 | index <- 0u64..=10u64, index < 10u64]
+  fresh-observations := [0u32 | index <- 0u64..=10u64, index < 10u64]
+  out := optimal-collect-block(tables, cache, 0u64, 0u64, input, 0u64, 0u64, bt-minimum(sequence/length(input), 32768u64), 258u64, 258u64, 0u64, frequencies, fresh-frequencies, observations, fresh-observations, 0u64, 0u64, 0u64, 0u64).
+
+optimal-move-carry-entry(cache<[u32]>, index<u64>, value<u32>) => (out<[u32]>) :=
+  ~next := cache
+  next[index + 1u64] = value
+  out := next.
+
+optimal-move-carry(cache<[u32]>, source<u64>, count<u64>, index<u64>) => (out<[u32]>) :=
+  value := ((index < count)? | true => optimal-counter(cache, source + index) | false => 0u32)
+  next := ((index < count)? | true => optimal-move-carry-entry(cache, index, value) | false => cache)
+  out := ((index < count)? | true => optimal-move-carry(next, source, count, index + 1u64) | false => next).
+
+optimal-carry-rewound(cache<[u32]>, cache-end<u64>, rewound<u64>, fresh-frequencies<[u32]>, fresh-observations<[u32]>, number-fresh<u64>, block-end<u64>) => (out<optimal-carried-block>) :=
+  next-cache := optimal-move-carry(cache, cache-end, rewound, 0u64)
+  observations := [0u32 | index <- 0u64..=10u64, index < 10u64]
+  frequencies := [0u32 | index <- 0u64..=259u64, index < 259u64]
+  out := {cache: next-cache, cache-ptr: rewound, frequencies: frequencies, fresh-frequencies: fresh-frequencies, observations: observations, fresh-observations: fresh-observations, number-observations: 0u64, number-fresh: number-fresh, block-begin: block-end}.
+
+optimal-carry-reset(cache<[u32]>, position<u64>) => (out<optimal-carried-block>) :=
+  fresh-observations := [0u32 | index <- 0u64..=10u64, index < 10u64]
+  observations := [0u32 | index <- 0u64..=10u64, index < 10u64]
+  fresh-frequencies := [0u32 | index <- 0u64..=259u64, index < 259u64]
+  frequencies := [0u32 | index <- 0u64..=259u64, index < 259u64]
+  out := {cache: cache, cache-ptr: 0u64, frequencies: frequencies, fresh-frequencies: fresh-frequencies, observations: observations, fresh-observations: fresh-observations, number-observations: 0u64, number-fresh: 0u64, block-begin: position}.
+
+optimal-carry-block(cache<[u32]>, cache-end<u64>, rewound<u64>, changed<u64>, have-previous-check<u64>, fresh-frequencies<[u32]>, fresh-observations<[u32]>, number-fresh<u64>, position<u64>, block-end<u64>) => (out<optimal-carried-block>) :=
+  out := (((changed == 1u64) && (have-previous-check == 1u64))?
+    | true => optimal-carry-rewound(cache, cache-end, rewound, fresh-frequencies, fresh-observations, number-fresh, block-end)
+    | false => optimal-carry-reset(cache, position)).
+
+// Near-optimal backward path search from roc-deflate
+// 671077457ff7ef3a3d44caf715a3fc595addf379, CompressOptimal.roc.
+// U64 nodes contain U32 cost and item halves. Cost arithmetic wraps at 32 bits.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
++> bits
++> sequence
+<optimal-path> := <{nodes<[u64]>}>
+<optimal-choice> := <{best<u32> item<u32> k<u64>}>
+<optimal-matches> := <{best<u32> item<u32> cache-ptr<u64>}>
+
+optimal-word32(value<u32>) => (out<u64>) :=
+  out<u64> := value.
+optimal-narrow32(value<u64>) => (out<u32>) :=
+  out<u32> := bits/and(value, 4294967295u64).
+optimal-add-cost(left<u32>, right<u32>) => (out<u32>) :=
+  out := optimal-narrow32(bits/wrapping-add(optimal-word32(left), optimal-word32(right))).
+optimal-get32(values<[u32]>, at<u64>) => <u32>
+  | (values, at) => ((at < sequence/length(values))? | true => values[bits/wrapping-add(at, 1u64)] | false => 0u32).
+optimal-get64(values<[u64]>, at<u64>) => <u64>
+  | (values, at) => ((at < sequence/length(values))? | true => values[bits/wrapping-add(at, 1u64)] | false => 0u64).
+optimal-offset-slot(offset<u64>, slots<[u8]>) => (out<u64>) :=
+  n := bits/shift-right-wrap(bits/and(bits/wrapping-sub(256u64, optimal-word32(optimal-narrow32(offset))), 4294967295u64), 29u64)
+  at := bits/shift-right-wrap(bits/wrapping-sub(offset, 1u64), n)
+  byte := ((at < sequence/length(slots))? | true => slots[bits/wrapping-add(at, 1u64)] | false => 0u8)
+  wide<u64> := byte
+  out := bits/wrapping-add(wide, bits/shift-left-wrap(n, 1u64)).
+optimal-node-top(block-length<u64>) => (out<u64>) :=
+  out := bits/wrapping-add(bits/wrapping-sub(block-length, 1u64), 258u64).
+optimal-checked-match-length(value<u64>) => (out<u64>) :=
+  cached-length! := (value <= 258u64) && (value >= 3u64)
+  out := value.
+
+optimal-path-guards(nodes<[u64]>, guard<u64>, block-length<u64>) => <[u64]>
+  | (nodes, guard, block-length) => ((guard != block-length)?
+      | true => optimal-path-guards(sequence/append(nodes, 2147483648u64), bits/wrapping-sub(guard, 1u64), block-length)
+      | false => nodes).
+
+// The read-only tables are captures; only scalar cursors and choices change.
+#OptimalPathLengths(nodes<[u64]>, length-costs<[u32]>, offset-cost<u32>, offset<u64>, len-count<u64>, k<u64>, best<u32>, item<u32>) => <optimal-choice>
+  | :Try(k<u64>, best<u32>, item<u32>)
+  | :Done(k<u64>, best<u32>, item<u32>).
+#OptimalPathLengths(nodes, length-costs, offset-cost, offset, len-count, k, best, item) -> :Try(k, best, item)
+  :Try(k, best, item)
+    | k < len-count -> {
+        length := bits/wrapping-add(k, 3u64)
+        length-cost := optimal-get32(length-costs, length)
+        partial-cost := optimal-add-cost(offset-cost, length-cost)
+        tail-cost := optimal-narrow32(optimal-get64(nodes, bits/wrapping-sub(sequence/length(nodes), length)))
+        cost := optimal-add-cost(partial-cost, tail-cost)
+        next-best := ((cost < best)? | true => cost | false => best)
+        next-item := ((cost < best)? | true => optimal-narrow32(bits/or(length, bits/shift-left-wrap(optimal-word32(optimal-narrow32(offset)), 9u64))) | false => item)
+      } -> :Try(bits/wrapping-add(k, 1u64), next-best, next-item)
+    | * -> :Done(k, best, item)
+  :Done(k, best, item) => {best: best, item: item, k: k}.
+
+#OptimalPathMatches(nodes<[u64]>, cache<[u32]>, cp<u64>, number<u64>, length-costs<[u32]>, offset-costs<[u32]>, slots<[u8]>, best<u32>, item<u32>) => <optimal-matches>
+  | :Try(m<u64>, k<u64>, best<u32>, item<u32>)
+  | :Done(best<u32>, item<u32>).
+#OptimalPathMatches(nodes, cache, cp, number, length-costs, offset-costs, slots, best, item) -> :Try(bits/wrapping-sub(cp, number), 0u64, best, item)
+  :Try(m, k, best, item)
+    | m != cp -> {
+        offset := bits/shift-right-wrap(optimal-word32(optimal-get32(cache, m)), 16u64)
+        offset-cost := optimal-get32(offset-costs, optimal-offset-slot(offset, slots))
+        this-length := bits/and(optimal-word32(optimal-get32(cache, m)), 65535u64)
+        len-count := optimal-checked-match-length(this-length) - 2u64
+        choice := #OptimalPathLengths(nodes, length-costs, offset-cost, offset, len-count, k, best, item)
+      } -> :Try(bits/wrapping-add(m, 1u64), choice.k, choice.best, choice.item)
+    | * -> :Done(best, item)
+  :Done(best, item) => {best: best, item: item, cache-ptr: bits/wrapping-sub(cp, number)}.
+
+optimal-path-position(nodes<[u64]>, cur<u64>, cp<u64>, cache<[u32]>, literal-costs<[u32]>, length-costs<[u32]>, offset-costs<[u32]>, slots<[u8]>) => (out<([u64],u64,u64)>) :=
+  next-cur := bits/wrapping-sub(cur, 1u64)
+  header-ptr := bits/wrapping-sub(cp, 1u64)
+  number := bits/and(optimal-word32(optimal-get32(cache, header-ptr)), 65535u64)
+  literal := bits/shift-right-wrap(optimal-word32(optimal-get32(cache, header-ptr)), 16u64)
+  best := optimal-add-cost(optimal-get32(literal-costs, literal), optimal-narrow32(optimal-get64(nodes, bits/wrapping-sub(sequence/length(nodes), 1u64))))
+  item := optimal-narrow32(bits/or(bits/shift-left-wrap(optimal-word32(optimal-narrow32(literal)), 9u64), 1u64))
+  choice := #OptimalPathMatches(nodes, cache, header-ptr, number, length-costs, offset-costs, slots, best, item)
+  node := bits/or(optimal-word32(choice.best), bits/shift-left-wrap(optimal-word32(choice.item), 32u64))
+  out := (sequence/append(nodes, node), next-cur, choice.cache-ptr).
+
+optimal-path-scan(nodes<[u64]>, cur<u64>, cp<u64>, cache<[u32]>, literal-costs<[u32]>, length-costs<[u32]>, offset-costs<[u32]>, slots<[u8]>) => (out<[u64]>) :=
+  more := cur != 0u64
+  step := (more? | true => optimal-path-position(nodes, cur, cp, cache, literal-costs, length-costs, offset-costs, slots) | false => (nodes, cur, cp))
+  (next-nodes, next-cur, next-cp) := step
+  out := (more? | true => optimal-path-scan(next-nodes, next-cur, next-cp, cache, literal-costs, length-costs, offset-costs, slots) | false => nodes).
+
+optimal-find-min-cost-path(block-length<u64>, cache<[u32]>, cache-end<u64>, nodes0<[u64]>, literal-costs<[u32]>, length-costs<[u32]>, offset-costs<[u32]>, slots<[u8]>) => (out<optimal-path>) :=
+  top := optimal-node-top(block-length)
+  length-table! := sequence/length(length-costs) >= 259u64
+  cleared := sequence/clear(nodes0)
+  guarded := optimal-path-guards(cleared, top, block-length)
+  nodes := sequence/append(guarded, 0u64)
+  node-window! := sequence/length(nodes) >= 258u64
+  result := optimal-path-scan(nodes, block-length, cache-end, cache, literal-costs, length-costs, offset-costs, slots)
+  out := {nodes: result}.
+
+// Length-limited canonical Huffman construction for DEFLATE.
+// Port of libdeflate b122c8be1d78b19f6d0a6efc5bb79bfcbb30dd51,
+// following roc-deflate 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Copyright 2016 Eric Biggers (MIT); Copyright 2024 Niclas Åhdén (Apache-2.0).
+// See deflate-huffman-LICENSES.md for attribution and licenses.
++> bits
++> sequence
+<huff-code> := <{lens<[u8]> codewords<[u32]>}>
+<huff-sorted> := <{symout<[u32]> lens<[u8]> num-used-syms<u64>}>
+<huff-counted> := <{a<[u32]> len-counts<[u64]>}>
+<huff-generated> := <{a<[u32]> lens<[u8]>}>
+
+huff-word(value<u32>) => (out<u64>) :=
+  out<u64> := value.
+huff-packed(value<u64>) => (out<u32>) :=
+  out<u32> := bits/and(value, 4294967295u64).
+huff-byte(value<u64>) => (out<u8>) :=
+  out<u8> := bits/and(value, 255u64).
+huff-minimum(a<u64>, b<u64>) => (out<u64>) :=
+  out := ((a < b)? | true => a | false => b).
+huff-get8(values<[u8]>, at<u64>) => <u8>
+  | (values, at) => ((at < sequence/length(values))? | true => values[bits/wrapping-add(at, 1u64)] | false => 0u8).
+huff-get32(values<[u32]>, at<u64>) => <u32>
+  | (values, at) => ((at < sequence/length(values))? | true => values[bits/wrapping-add(at, 1u64)] | false => 0u32).
+huff-get64(values<[u64]>, at<u64>) => <u64>
+  | (values, at) => ((at < sequence/length(values))? | true => values[bits/wrapping-add(at, 1u64)] | false => 0u64).
+huff-set8(values<[u8]>, at<u64>, value<u8>) => (out<[u8]>) :=
+  ~next := values
+  next[bits/wrapping-add(at, 1u64)] = value
+  out := next.
+huff-set32(values<[u32]>, at<u64>, value<u32>) => (out<[u32]>) :=
+  ~next := values
+  next[bits/wrapping-add(at, 1u64)] = value
+  out := next.
+huff-set64(values<[u64]>, at<u64>, value<u64>) => (out<[u64]>) :=
+  ~next := values
+  next[bits/wrapping-add(at, 1u64)] = value
+  out := next.
+huff-add-wrap32(a<u32>, b<u32>) => (out<u32>) :=
+  out := huff-packed(bits/wrapping-add(huff-word(a), huff-word(b))).
+huff-tree-frequency(a<[u32]>, at<u64>) => (out<u64>) :=
+  out := bits/and(huff-word(huff-get32(a, at)), 4294966272u64).
+huff-reverse-byte(value<u64>) => (out<u64>) :=
+  a := bits/or(bits/shift-right-wrap(value, 4u64), bits/and(bits/shift-left-wrap(value, 4u64), 255u64))
+  b := bits/or(bits/shift-right-wrap(bits/and(a, 204u64), 2u64), bits/shift-left-wrap(bits/and(a, 51u64), 2u64))
+  out := bits/or(bits/shift-right-wrap(bits/and(b, 170u64), 1u64), bits/shift-left-wrap(bits/and(b, 85u64), 1u64)).
+huff-reverse-codeword(value<u32>, width<u64>, reversed<[u8]>) => (out<u32>) :=
+  wide := huff-word(value)
+  low<u64> := huff-get8(reversed, bits/and(wide, 255u64))
+  high<u64> := huff-get8(reversed, bits/shift-right-wrap(wide, 8u64))
+  out := huff-packed(bits/shift-right-wrap(bits/or(bits/shift-left-wrap(low, 8u64), high), 16u64 - width)).
+huff-build-reversal-at(table<[u8]>, i<u64>) => <[u8]>
+  | (table, i) => ((i < 256u64)? | true => huff-build-reversal-at(sequence/append(table, huff-byte(huff-reverse-byte(i))), i + 1u64) | false => table).
+huff-build-reversal() => (out<[u8]>) :=
+  out := huff-build-reversal-at(sequence/with-capacity(0u8, 256u64), 0u64).
+
+huff-count-step(freqs<[u32]>, counts<[u64]>, sym<u64>, top<u64>) => (out<[u64]>) :=
+  slot := huff-minimum(huff-word(huff-get32(freqs, sym)), top)
+  count := huff-get64(counts, slot) + 1u64
+  out := huff-set64(counts, slot, count).
+huff-count-symbols(freqs<[u32]>, n<u64>, counts<[u64]>, sym<u64>, top<u64>) => <[u64]>
+  | (freqs, n, counts, sym, top) => ((sym < n)? | true => huff-count-symbols(freqs, n, huff-count-step(freqs, counts, sym, top), sym + 1u64, top) | false => counts).
+huff-cumulative-step(counts<[u64]>, used<u64>, i<u64>) => (out<([u64],u64)>) :=
+  count := huff-get64(counts, i)
+  next := huff-set64(counts, i, used)
+  out := (next, used + count).
+huff-cumulative(counts<[u64]>, n<u64>, used<u64>, i<u64>) => (out<([u64],u64)>) :=
+  more := i < n
+  step := (more? | true => huff-cumulative-step(counts, used, i) | false => (counts, used))
+  (next, next-used) := step
+  out := (more? | true => huff-cumulative(next, n, next-used, i + 1u64) | false => (counts, used)).
+huff-place-nonzero(counts<[u64]>, lens<[u8]>, a<[u32]>, freq<u32>, sym<u64>, top<u64>) => (out<([u64],[u8],[u32])>) :=
+  slot := huff-minimum(huff-word(freq), top)
+  at := huff-get64(counts, slot)
+  next-counts := huff-set64(counts, slot, at + 1u64)
+  packed := huff-packed(bits/or(huff-word(huff-packed(sym)), bits/shift-left-wrap(huff-word(freq), 10u64)))
+  next-a := huff-set32(a, at, packed)
+  out := (next-counts, lens, next-a).
+huff-place-step(freqs<[u32]>, counts<[u64]>, lens<[u8]>, a<[u32]>, sym<u64>, top<u64>) => (out<([u64],[u8],[u32])>) :=
+  freq := huff-get32(freqs, sym)
+  out := ((freq != 0u32)? | true => huff-place-nonzero(counts, lens, a, freq, sym, top) | false => (counts, huff-set8(lens, sym, 0u8), a)).
+huff-place-symbols(freqs<[u32]>, n<u64>, counts<[u64]>, lens<[u8]>, a<[u32]>, sym<u64>, top<u64>) => (out<([u64],[u8],[u32])>) :=
+  more := sym < n
+  step := (more? | true => huff-place-step(freqs, counts, lens, a, sym, top) | false => (counts, lens, a))
+  (next-counts, next-lens, next-a) := step
+  out := (more? | true => huff-place-symbols(freqs, n, next-counts, next-lens, next-a, sym + 1u64, top) | false => (counts, lens, a)).
+
+huff-sift-child(a<[u32]>, base<u64>, size<u64>, child<u64>) => (out<u64>) :=
+  out := ((child < size && huff-get32(a, base + child) > huff-get32(a, base + child - 1u64))? | true => child + 1u64 | false => child).
+huff-sift-descend(a<[u32]>, base<u64>, size<u64>, parent<u64>, child0<u64>, value<u32>) => (out<([u32],u64,bool)>) :=
+  child := huff-sift-child(a, base, size, child0)
+  child-value := huff-get32(a, base + child - 1u64)
+  more := value < child-value
+  next := (more? | true => huff-set32(a, base + parent - 1u64, child-value) | false => a)
+  next-parent := (more? | true => child | false => parent)
+  out := (next, next-parent, more).
+huff-sift-loop(a<[u32]>, base<u64>, size<u64>, parent<u64>, value<u32>) => (out<[u32]>) :=
+  child0 := parent * 2u64
+  step := ((child0 > size)? | true => (a, parent, false) | false => huff-sift-descend(a, base, size, parent, child0, value))
+  (next, next-parent, more) := step
+  out := (more? | true => huff-sift-loop(next, base, size, next-parent, value) | false => huff-set32(next, base + next-parent - 1u64, value)).
+huff-heapify(a<[u32]>, base<u64>, size<u64>, root<u64>) => (out<[u32]>) :=
+  value := huff-get32(a, base + root - 1u64)
+  out := huff-sift-loop(a, base, size, root, value).
+huff-heap-build(a<[u32]>, base<u64>, size<u64>, root<u64>) => <[u32]>
+  | (a, base, size, root) => ((root >= 1u64)? | true => huff-heap-build(huff-heapify(a, base, size, root), base, size, root - 1u64) | false => a).
+huff-heap-sort-step(a<[u32]>, base<u64>, left<u64>) => (out<([u32],u64)>) :=
+  last := huff-get32(a, base + left - 1u64)
+  first := huff-get32(a, base)
+  moved := huff-set32(a, base + left - 1u64, first)
+  swapped := huff-set32(moved, base, last)
+  shrunk := left - 1u64
+  out := (huff-heapify(swapped, base, shrunk, 1u64), shrunk).
+huff-heap-sort-loop(a<[u32]>, base<u64>, left<u64>) => (out<[u32]>) :=
+  more := left >= 2u64
+  step := (more? | true => huff-heap-sort-step(a, base, left) | false => (a, left))
+  (next, next-left) := step
+  out := (more? | true => huff-heap-sort-loop(next, base, next-left) | false => a).
+huff-heap-sort(a<[u32]>, base<u64>, size<u64>) => (out<[u32]>) :=
+  built := huff-heap-build(a, base, size, size / 2u64)
+  out := huff-heap-sort-loop(built, base, size).
+huff-sort-symbols(n<u64>, freqs<[u32]>, lens0<[u8]>, words0<[u32]>) => (out<huff-sorted>) :=
+  top := n - 1u64
+  counters := [0u64 | i <- 0u64..=n, i < n]
+  counted := huff-count-symbols(freqs, n, counters, 0u64, top)
+  (cumulative, used) := huff-cumulative(counted, n, 0u64, 1u64)
+  (placed, lens, words) := huff-place-symbols(freqs, n, cumulative, lens0, words0, 0u64, top)
+  base := huff-get64(placed, n - 2u64)
+  size := huff-get64(placed, top) - base
+  sorted := huff-heap-sort(words, base, size)
+  out := {symout: sorted, lens: lens, num-used-syms: used}.
+
+huff-tree-two-branches(a<[u32]>, leaf<u64>, branch<u64>, parent<u64>, fb<u64>, fb1<u64>) => (out<([u32],u64,u64,u32)>) :=
+  sym-b := bits/and(huff-word(huff-get32(a, branch)), 1023u64)
+  sym-b1 := bits/and(huff-word(huff-get32(a, branch + 1u64)), 1023u64)
+  first := huff-set32(a, branch, huff-packed(bits/or(parent, sym-b)))
+  second := huff-set32(first, branch + 1u64, huff-packed(bits/or(parent, sym-b1)))
+  out := (second, leaf, branch + 2u64, huff-packed(bits/wrapping-add(fb, fb1))).
+huff-tree-mixed(a<[u32]>, leaf<u64>, branch<u64>, parent<u64>, fi<u64>, fb<u64>) => (out<([u32],u64,u64,u32)>) :=
+  sym-b := bits/and(huff-word(huff-get32(a, branch)), 1023u64)
+  next := huff-set32(a, branch, huff-packed(bits/or(parent, sym-b)))
+  out := (next, leaf + 1u64, branch + 1u64, huff-packed(bits/wrapping-add(fi, fb))).
+huff-tree-choose(a<[u32]>, leaf<u64>, branch<u64>, built<u64>, last<u64>, fi<u64>, fi1<u64>, fb<u64>, fb1<u64>) => (out<([u32],u64,u64,u32)>) :=
+  parent := huff-word(huff-packed(bits/shift-left-wrap(huff-word(huff-packed(built)), 10u64)))
+  out := ((leaf + 1u64 <= last && (branch == built || fi1 <= fb))?
+    | true => (a, leaf + 2u64, branch, huff-packed(bits/wrapping-add(fi, fi1)))
+    | false => ((branch + 2u64 <= built && (leaf > last || fb1 < fi))? | true => huff-tree-two-branches(a, leaf, branch, parent, fb, fb1) | false => huff-tree-mixed(a, leaf, branch, parent, fi, fb))).
+huff-tree-step(a<[u32]>, leaf<u64>, branch<u64>, built<u64>, last<u64>) => (out<([u32],u64,u64,u64)>) :=
+  fi := huff-tree-frequency(a, leaf)
+  fi1 := huff-tree-frequency(a, leaf + 1u64)
+  fb := huff-tree-frequency(a, branch)
+  fb1 := huff-tree-frequency(a, branch + 1u64)
+  (updated, next-leaf, next-branch, frequency) := huff-tree-choose(a, leaf, branch, built, last, fi, fi1, fb, fb1)
+  sym-e := bits/and(huff-word(huff-get32(updated, built)), 1023u64)
+  next := huff-set32(updated, built, huff-packed(bits/or(huff-word(frequency), sym-e)))
+  out := (next, next-leaf, next-branch, built + 1u64).
+huff-build-tree-loop(a<[u32]>, leaf<u64>, branch<u64>, built<u64>, last<u64>) => (out<[u32]>) :=
+  more := built < last
+  step := (more? | true => huff-tree-step(a, leaf, branch, built, last) | false => (a, leaf, branch, built))
+  (next, next-leaf, next-branch, next-built) := step
+  out := (more? | true => huff-build-tree-loop(next, next-leaf, next-branch, next-built, last) | false => a).
+huff-build-tree(a<[u32]>, used<u64>) => (out<[u32]>) :=
+  out := huff-build-tree-loop(a, 0u64, 0u64, 0u64, used - 1u64).
+
+huff-clamp-depth(counts<[u64]>, depth<u64>) => <u64>
+  | (counts, depth) => (((huff-get64(counts, depth - 1u64)) != 0u64)? | true => depth - 1u64 | false => huff-clamp-depth(counts, depth - 1u64)).
+huff-length-count-step(a<[u32]>, counts<[u64]>, node-plus-one<u64>, maximum<u64>) => (out<([u32],[u64],u64)>) :=
+  node := node-plus-one - 1u64
+  entry := huff-word(huff-get32(a, node))
+  parent := bits/shift-right-wrap(entry, 10u64)
+  parent-depth := bits/shift-right-wrap(huff-word(huff-get32(a, parent)), 10u64)
+  depth := parent-depth + 1u64
+  next-a := huff-set32(a, node, huff-packed(bits/or(bits/and(entry, 1023u64), bits/shift-left-wrap(huff-word(huff-packed(depth)), 10u64))))
+  effective := ((depth >= maximum)? | true => huff-clamp-depth(counts, maximum) | false => depth)
+  minus := huff-get64(counts, effective) - 1u64
+  decremented := huff-set64(counts, effective, minus)
+  plus := huff-get64(decremented, effective + 1u64) + 2u64
+  next-counts := huff-set64(decremented, effective + 1u64, plus)
+  out := (next-a, next-counts, node).
+huff-length-count-loop(a<[u32]>, counts<[u64]>, node-plus-one<u64>, maximum<u64>) => (out<([u32],[u64])>) :=
+  more := node-plus-one >= 1u64
+  step := (more? | true => huff-length-count-step(a, counts, node-plus-one, maximum) | false => (a, counts, node-plus-one))
+  (next-a, next-counts, next-node) := step
+  out := (more? | true => huff-length-count-loop(next-a, next-counts, next-node, maximum) | false => (a, counts)).
+huff-compute-length-counts(a<[u32]>, root<u64>, maximum<u64>) => (out<huff-counted>) :=
+  size := maximum + 2u64
+  zero := [0u64 | i <- 0u64..=size, i < size]
+  counts := huff-set64(zero, 1u64, 2u64)
+  root-sym := bits/and(huff-word(huff-get32(a, root)), 1023u64)
+  rooted := huff-set32(a, root, huff-packed(root-sym))
+  (depths, lengths) := huff-length-count-loop(rooted, counts, root, maximum)
+  out := {a: depths, len-counts: lengths}.
+
+huff-assign-one(a<[u32]>, lens<[u8]>, width<u64>, i<u64>) => (out<[u8]>) :=
+  sym := bits/and(huff-word(huff-get32(a, i)), 1023u64)
+  out := huff-set8(lens, sym, huff-byte(width)).
+huff-assign-symbols(a<[u32]>, lens<[u8]>, width<u64>, i<u64>, left<u64>) => <([u8],u64)>
+  | (a, lens, width, i, left) => ((left > 0u64)? | true => huff-assign-symbols(a, huff-assign-one(a, lens, width, i), width, i + 1u64, left - 1u64) | false => (lens, i)).
+huff-assign-lengths(a<[u32]>, lens<[u8]>, counts<[u64]>, width<u64>, i<u64>) => (out<[u8]>) :=
+  more := width >= 1u64
+  step := (more? | true => huff-assign-symbols(a, lens, width, i, huff-get64(counts, width)) | false => (lens, i))
+  (next, next-i) := step
+  out := (more? | true => huff-assign-lengths(a, next, counts, width - 1u64, next-i) | false => lens).
+huff-next-code-step(counts<[u64]>, codes<[u32]>, width<u64>) => (out<[u32]>) :=
+  previous := huff-get32(codes, width - 1u64)
+  previous-count := huff-packed(huff-get64(counts, width - 1u64))
+  sum := huff-add-wrap32(previous, previous-count)
+  out := huff-set32(codes, width, huff-packed(bits/shift-left-wrap(huff-word(sum), 1u64))).
+huff-next-codes(counts<[u64]>, codes<[u32]>, maximum<u64>, width<u64>) => <[u32]>
+  | (counts, codes, maximum, width) => ((width <= maximum)? | true => huff-next-codes(counts, huff-next-code-step(counts, codes, width), maximum, width + 1u64) | false => codes).
+huff-generate-step(a<[u32]>, lens<[u8]>, codes<[u32]>, sym<u64>, reversed<[u8]>) => (out<([u32],[u32])>) :=
+  width<u64> := huff-get8(lens, sym)
+  code := huff-get32(codes, width)
+  next-codes := huff-set32(codes, width, code + 1u32)
+  next-a := huff-set32(a, sym, huff-reverse-codeword(code, width, reversed))
+  out := (next-a, next-codes).
+huff-generate-loop(a<[u32]>, lens<[u8]>, codes<[u32]>, n<u64>, sym<u64>, reversed<[u8]>) => (out<[u32]>) :=
+  more := sym < n
+  step := (more? | true => huff-generate-step(a, lens, codes, sym, reversed) | false => (a, codes))
+  (next-a, next-codes) := step
+  out := (more? | true => huff-generate-loop(next-a, lens, next-codes, n, sym + 1u64, reversed) | false => a).
+huff-gen-codewords(a<[u32]>, lens<[u8]>, counts<[u64]>, maximum<u64>, n<u64>, reversed<[u8]>) => (out<huff-generated>) :=
+  next-lens := huff-assign-lengths(a, lens, counts, maximum, 0u64)
+  zero := [0u32 | i <- 0u64..=17u64, i < 17u64]
+  next-codes := huff-next-codes(counts, zero, maximum, 2u64)
+  words := huff-generate-loop(a, next-lens, next-codes, n, 0u64, reversed)
+  out := {a: words, lens: next-lens}.
+
+huff-degenerate-code(used<u64>, lens<[u8]>, words<[u32]>) => (out<huff-code>) :=
+  sym := ((used == 1u64)? | true => bits/and(huff-word(huff-get32(words, 0u64)), 1023u64) | false => 0u64)
+  nonzero := ((sym != 0u64)? | true => sym | false => 1u64)
+  words-first := huff-set32(words, 0u64, 0u32)
+  lens-first := huff-set8(lens, 0u64, 1u8)
+  words-second := huff-set32(words-first, nonzero, 1u32)
+  lens-second := huff-set8(lens-first, nonzero, 1u8)
+  out := {lens: lens-second, codewords: words-second}.
+huff-normal-code(used<u64>, lens<[u8]>, words<[u32]>, maximum<u64>, n<u64>, reversed<[u8]>) => (out<huff-code>) :=
+  tree := huff-build-tree(words, used)
+  counted := huff-compute-length-counts(tree, used - 2u64, maximum)
+  depths := counted.a
+  lengths := counted.len-counts
+  generated := huff-gen-codewords(depths, lens, lengths, maximum, n, reversed)
+  out := {lens: generated.lens, codewords: generated.a}.
+huff-make-code(n<u64>, maximum<u64>, freqs<[u32]>, lens0<[u8]>, words0<[u32]>, reversed<[u8]>) => (out<huff-code>) :=
+  sorted := huff-sort-symbols(n, freqs, lens0, words0)
+  used := sorted.num-used-syms
+  lens := sorted.lens
+  words := sorted.symout
+  out := ((used < 2u64)? | true => huff-degenerate-code(used, lens, words) | false => huff-normal-code(used, lens, words, maximum, n, reversed)).
+
+// Forward symbol tally and code construction from CompressOptimal.roc,
+// roc-deflate 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-optimal-path.mec and deflate-huffman-level12.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<optimal-tally> := <{freqs-litlen<[u32]> freqs-offset<[u32]> litlen-lens<[u8]> litlen-codewords<[u32]> offset-lens<[u8]> offset-codewords<[u32]>}>
+
+optimal-tally-increment(freqs<[u32]>, at<u64>) => (out<[u32]>) :=
+  count := huff-add-wrap32(huff-get32(freqs, at), 1u32)
+  out := huff-set32(freqs, at, count).
+optimal-tally-match(litlen<[u32]>, offsets<[u32]>, length<u64>, offset<u64>, lengths<[u8]>, slots<[u8]>) => (out<([u32],[u32])>) :=
+  length-slot<u64> := huff-get8(lengths, length)
+  sym := bits/wrapping-add(257u64, length-slot)
+  next-litlen := optimal-tally-increment(litlen, sym)
+  slot := optimal-offset-slot(offset, slots)
+  next-offsets := optimal-tally-increment(offsets, slot)
+  out := (next-litlen, next-offsets).
+optimal-tally-step(nodes<[u64]>, top<u64>, at<u64>, litlen<[u32]>, offsets<[u32]>, lengths<[u8]>, slots<[u8]>) => (out<([u32],[u32],u64)>) :=
+  item := huff-packed(bits/shift-right-wrap(optimal-get64(nodes, bits/wrapping-sub(top, at)), 32u64))
+  length := bits/and(huff-word(item), 511u64)
+  offset := bits/shift-right-wrap(huff-word(item), 9u64)
+  choice := ((length == 1u64)? | true => (optimal-tally-increment(litlen, bits/and(offset, 255u64)), offsets) | false => optimal-tally-match(litlen, offsets, length, offset, lengths, slots))
+  (next-litlen, next-offsets) := choice
+  out := (next-litlen, next-offsets, bits/wrapping-add(at, length)).
+optimal-tally-loop(nodes<[u64]>, top<u64>, at<u64>, end<u64>, litlen<[u32]>, offsets<[u32]>, lengths<[u8]>, slots<[u8]>) => (out<([u32],[u32])>) :=
+  more := at != end
+  step := (more? | true => optimal-tally-step(nodes, top, at, litlen, offsets, lengths, slots) | false => (litlen, offsets, at))
+  (next-litlen, next-offsets, next-at) := step
+  out := (more? | true => optimal-tally-loop(nodes, top, next-at, end, next-litlen, next-offsets, lengths, slots) | false => (litlen, offsets)).
+optimal-tally-and-build-codes(nodes<[u64]>, block-length<u64>, lengths<[u8]>, slots<[u8]>, reversed<[u8]>) => (out<optimal-tally>) :=
+  litlen0 := [0u32 | i <- 0u64..=513u64, i < 513u64]
+  offset0 := [0u32 | i <- 0u64..=270u64, i < 270u64]
+  top := optimal-node-top(block-length)
+  (litlen-counts, offset-counts) := optimal-tally-loop(nodes, top, 0u64, block-length, litlen0, offset0, lengths, slots)
+  eof-count := huff-get32(litlen-counts, 256u64) + 1u32
+  freqs-litlen := huff-set32(litlen-counts, 256u64, eof-count)
+  litlen-lens0 := [0u8 | i <- 0u64..=288u64, i < 288u64]
+  litlen-words0 := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  litlen-code := huff-make-code(288u64, 14u64, freqs-litlen, litlen-lens0, litlen-words0, reversed)
+  offset-lens0 := [0u8 | i <- 0u64..=32u64, i < 32u64]
+  offset-words0 := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  offset-code := huff-make-code(32u64, 15u64, offset-counts, offset-lens0, offset-words0, reversed)
+  out := {freqs-litlen: freqs-litlen, freqs-offset: offset-counts, litlen-lens: litlen-code.lens, litlen-codewords: litlen-code.codewords, offset-lens: offset-code.lens, offset-codewords: offset-code.codewords}.
+
+// Cost-table updates from CompressOptimal.roc at
+// 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-huffman-level12.mec for the checked access/update helpers.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<optimal-costs> := <{literal<[u32]> length<[u32]> offset-slot<[u32]>}>
+
+optimal-default-length-cost(length<u64>, symbol-cost<u64>, length-slots<[u8]>, extra-length-bits<[u8]>) => (out<u64>) :=
+  slot<u64> := huff-get8(length-slots, length)
+  extra<u64> := huff-get8(extra-length-bits, slot)
+  out := symbol-cost + extra * 16u64.
+optimal-default-offset-cost(slot<u64>, extra-offset-bits<[u8]>) => (out<u64>) :=
+  extra<u64> := huff-get8(extra-offset-bits, slot)
+  out := 78u64 + extra * 16u64.
+optimal-default-literals(values<[u32]>, cost<u64>, i<u64>) => <[u32]>
+  | (values, cost, i) => ((i < 256u64)? | true => optimal-default-literals(huff-set32(values, i, huff-packed(cost)), cost, i + 1u64) | false => values).
+optimal-default-lengths(values<[u32]>, cost<u64>, i<u64>, slots<[u8]>, extras<[u8]>) => <[u32]>
+  | (values, cost, i, slots, extras) => ((i <= 258u64)? | true => optimal-default-lengths(huff-set32(values, i, huff-packed(optimal-default-length-cost(i, cost, slots, extras))), cost, i + 1u64, slots, extras) | false => values).
+optimal-default-offsets(values<[u32]>, i<u64>, extras<[u8]>) => <[u32]>
+  | (values, i, extras) => ((i < 32u64)? | true => optimal-default-offsets(huff-set32(values, i, huff-packed(optimal-default-offset-cost(i, extras))), i + 1u64, extras) | false => values).
+optimal-set-default-costs(literal-cost<u64>, length-cost<u64>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>) => (out<optimal-costs>) :=
+  literal := optimal-default-literals(literal0, literal-cost, 0u64)
+  length := optimal-default-lengths(length0, length-cost, 3u64, slots, extra-lengths)
+  offsets := optimal-default-offsets(offset0, 0u64, extra-offsets)
+  out := {literal: literal, length: length, offset-slot: offsets}.
+
+optimal-cost-bits(width<u8>, fallback<u64>) => (out<u64>) :=
+  wide<u64> := width
+  out := ((wide != 0u64)? | true => wide | false => fallback).
+optimal-code-literal-step(values<[u32]>, lens<[u8]>, i<u64>) => (out<[u32]>) :=
+  cost := optimal-cost-bits(huff-get8(lens, i), 13u64)
+  out := huff-set32(values, i, huff-packed(cost * 16u64)).
+optimal-code-literals(values<[u32]>, lens<[u8]>, i<u64>) => <[u32]>
+  | (values, lens, i) => ((i < 256u64)? | true => optimal-code-literals(optimal-code-literal-step(values, lens, i), lens, i + 1u64) | false => values).
+optimal-code-length-step(values<[u32]>, lens<[u8]>, i<u64>, slots<[u8]>, extras<[u8]>) => (out<[u32]>) :=
+  slot<u64> := huff-get8(slots, i)
+  sym := 257u64 + slot
+  cost := optimal-cost-bits(huff-get8(lens, sym), 13u64)
+  extra<u64> := huff-get8(extras, slot)
+  total := cost + extra
+  out := huff-set32(values, i, huff-packed(total * 16u64)).
+optimal-code-lengths(values<[u32]>, lens<[u8]>, i<u64>, slots<[u8]>, extras<[u8]>) => <[u32]>
+  | (values, lens, i, slots, extras) => ((i <= 258u64)? | true => optimal-code-lengths(optimal-code-length-step(values, lens, i, slots, extras), lens, i + 1u64, slots, extras) | false => values).
+optimal-code-offset-step(values<[u32]>, lens<[u8]>, i<u64>, extras<[u8]>) => (out<[u32]>) :=
+  cost := optimal-cost-bits(huff-get8(lens, i), 10u64)
+  extra<u64> := huff-get8(extras, i)
+  total := cost + extra
+  out := huff-set32(values, i, huff-packed(total * 16u64)).
+optimal-code-offsets(values<[u32]>, lens<[u8]>, i<u64>, extras<[u8]>) => <[u32]>
+  | (values, lens, i, extras) => ((i < 32u64)? | true => optimal-code-offsets(optimal-code-offset-step(values, lens, i, extras), lens, i + 1u64, extras) | false => values).
+optimal-set-costs-from-codes(litlen-lens<[u8]>, offset-lens<[u8]>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>) => (out<optimal-costs>) :=
+  literal := optimal-code-literals(literal0, litlen-lens, 0u64)
+  length := optimal-code-lengths(length0, litlen-lens, 3u64, slots, extra-lengths)
+  offsets := optimal-code-offsets(offset0, offset-lens, 0u64, extra-offsets)
+  out := {literal: literal, length: length, offset-slot: offsets}.
+
+optimal-adjust-cost(cur<u32>, default-cost<u64>, change<u64>) => (out<u32>) :=
+  current<u64> := cur
+  out := ((change == 0u64)?
+    | true => huff-packed((default-cost + 3u64 * current) / 4u64)
+    | false => ((change == 1u64)?
+      | true => huff-packed((default-cost + current) / 2u64)
+      | false => ((change == 2u64)? | true => huff-packed((5u64 * default-cost + 3u64 * current) / 8u64) | false => huff-packed((3u64 * default-cost + current) / 4u64)))).
+optimal-adjust-literal-step(values<[u32]>, cost<u64>, change<u64>, i<u64>) => (out<[u32]>) :=
+  cur := huff-get32(values, i)
+  out := huff-set32(values, i, optimal-adjust-cost(cur, cost, change)).
+optimal-adjust-literals(values<[u32]>, cost<u64>, change<u64>, i<u64>) => <[u32]>
+  | (values, cost, change, i) => ((i < 256u64)? | true => optimal-adjust-literals(optimal-adjust-literal-step(values, cost, change, i), cost, change, i + 1u64) | false => values).
+optimal-adjust-length-step(values<[u32]>, cost<u64>, change<u64>, i<u64>, slots<[u8]>, extras<[u8]>) => (out<[u32]>) :=
+  cur := huff-get32(values, i)
+  default-cost := optimal-default-length-cost(i, cost, slots, extras)
+  out := huff-set32(values, i, optimal-adjust-cost(cur, default-cost, change)).
+optimal-adjust-lengths(values<[u32]>, cost<u64>, change<u64>, i<u64>, slots<[u8]>, extras<[u8]>) => <[u32]>
+  | (values, cost, change, i, slots, extras) => ((i <= 258u64)? | true => optimal-adjust-lengths(optimal-adjust-length-step(values, cost, change, i, slots, extras), cost, change, i + 1u64, slots, extras) | false => values).
+optimal-adjust-offset-step(values<[u32]>, change<u64>, i<u64>, extras<[u8]>) => (out<[u32]>) :=
+  cur := huff-get32(values, i)
+  default-cost := optimal-default-offset-cost(i, extras)
+  out := huff-set32(values, i, optimal-adjust-cost(cur, default-cost, change)).
+optimal-adjust-offsets(values<[u32]>, change<u64>, i<u64>, extras<[u8]>) => <[u32]>
+  | (values, change, i, extras) => ((i < 32u64)? | true => optimal-adjust-offsets(optimal-adjust-offset-step(values, change, i, extras), change, i + 1u64, extras) | false => values).
+optimal-adjust-costs-impl(literal-cost<u64>, length-cost<u64>, change<u64>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>) => (out<optimal-costs>) :=
+  literal := optimal-adjust-literals(literal0, literal-cost, change, 0u64)
+  length := optimal-adjust-lengths(length0, length-cost, change, 3u64, slots, extra-lengths)
+  offsets := optimal-adjust-offsets(offset0, change, 0u64, extra-offsets)
+  out := {literal: literal, length: length, offset-slot: offsets}.
+
+<optimal-default-costs> := <{lit-cost<u64> len-sym-cost<u64>}>
+optimal-to-i64-wrap(value<u64>) => (out<i64>) :=
+  low<i64> := bits/and(value, 9223372036854775807u64)
+  out := ((value <= 9223372036854775807u64)? | true => low | false => low + (-9223372036854775807i64 - 1i64)).
+optimal-cost-count-step(counts<[u32]>, input<[u8]>, begin<u64>, i<u64>) => (out<[u32]>) :=
+  literal<u64> := huff-get8(input, begin + i)
+  count := huff-get32(counts, literal) + 1u32
+  out := huff-set32(counts, literal, count).
+optimal-cost-count-literals(counts<[u32]>, input<[u8]>, begin<u64>, length<u64>, i<u64>) => <[u32]>
+  | (counts, input, begin, length, i) => ((i < length)? | true => optimal-cost-count-literals(optimal-cost-count-step(counts, input, begin, i), input, begin, length, i + 1u64) | false => counts).
+optimal-cost-count-used(counts<[u32]>, cutoff<u64>, i<u64>, used<u64>) => (out<u64>) :=
+  more := i < 256u64
+  count := (more? | true => huff-word(huff-get32(counts, i)) | false => 0u64)
+  next := ((count > cutoff)? | true => used + 1u64 | false => used)
+  out := (more? | true => optimal-cost-count-used(counts, cutoff, i + 1u64, next) | false => used).
+optimal-cost-minimum-shallow(minimum<u64>, depth<u64>) => (out<u64>) :=
+  out := ((depth < 5u64)? | true => huff-minimum(minimum, 4u64) | false => ((depth < 10u64)? | true => huff-minimum(minimum, 5u64) | false => huff-minimum(minimum, 7u64))).
+optimal-cost-minimum(used<u64>, depth<u64>) => (out<u64>) :=
+  minimum := optimal-choose-minimum(used)
+  out := ((used >= 80u64)? | true => 3u64 | false => ((depth < 16u64)? | true => optimal-cost-minimum-shallow(minimum, depth) | false => minimum)).
+optimal-default-frequency-step(freqs<[u32]>, j<u64>, matches<i64>, literals<i64>) => (out<(i64,i64)>) :=
+  f<i64> := huff-word(huff-get32(freqs, j))
+  next-matches := matches + f
+  signed-j := optimal-to-i64-wrap(j)
+  next-literals := literals - signed-j * f
+  out := (next-matches, next-literals).
+optimal-default-frequencies(freqs<[u32]>, j<u64>, matches<i64>, literals<i64>) => (out<(i64,i64)>) :=
+  more := j <= 258u64
+  step := (more? | true => optimal-default-frequency-step(freqs, j, matches, literals) | false => (matches, literals))
+  (next-matches, next-literals) := step
+  out := (more? | true => optimal-default-frequencies(freqs, j + 1u64, next-matches, next-literals) | false => (matches, literals)).
+optimal-default-which(matches<i64>, literals<i64>) => (out<u64>) :=
+  clamped := ((literals < 0i64)? | true => 0i64 | false => literals)
+  out := ((matches > clamped)? | true => 2u64 | false => ((matches * 4i64 > clamped)? | true => 1u64 | false => 0u64)).
+optimal-choose-default-costs(input<[u8]>, begin<u64>, length<u64>, match-freqs<[u32]>, depth<u64>, table0<[u8]>, table1<[u8]>, table2<[u8]>, symbol-costs<[u8]>) => (out<optimal-default-costs>) :=
+  zero := [0u32 | i <- 0u64..=256u64, i < 256u64]
+  cutoff := bits/shift-right-wrap(length, 11u64)
+  counts := optimal-cost-count-literals(zero, input, begin, length, 0u64)
+  number := optimal-cost-count-used(counts, cutoff, 0u64, 0u64)
+  used := ((number == 0u64)? | true => 1u64 | false => number)
+  matches0 := 0i64
+  literals0 := optimal-to-i64-wrap(length)
+  minimum := optimal-cost-minimum(used, depth)
+  (matches, literals) := optimal-default-frequencies(match-freqs, minimum, matches0, literals0)
+  which := optimal-default-which(matches, literals)
+  table := ((which == 2u64)? | true => table2 | false => ((which == 1u64)? | true => table1 | false => table0))
+  lit-cost<u64> := huff-get8(table, used)
+  sym-cost<u64> := huff-get8(symbol-costs, which)
+  out := {lit-cost: lit-cost, len-sym-cost: sym-cost}.
+
+// Dynamic header precomputation from BlockOut.roc:66-247,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-huffman-level12.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<block-precode-items> := <{freqs<[u32]> items<[u32]> num-items<u64>}>
+<block-precode> := <{freqs<[u32]> lens<[u8]> codewords<[u32]> items<[u32]> num-items<u64> num-litlen-syms<u64> num-offset-syms<u64> num-explicit-lens<u64>}>
+
+block-header-run-end(lens<[u8]>, number<u64>, value<u8>, end<u64>) => <u64>
+  | (lens, number, value, end) => (((end != number) && (value == huff-get8(lens, end)))? | true => block-header-run-end(lens, number, value, end + 1u64) | false => end).
+block-header-token(freqs<[u32]>, items<[u32]>, number<u64>, symbol<u64>, extra<u64>) => (out<([u32],[u32],u64)>) :=
+  count := huff-get32(freqs, symbol) + 1u32
+  next-freqs := huff-set32(freqs, symbol, count)
+  item := huff-packed(bits/or(symbol, bits/shift-left-wrap(huff-word(huff-packed(extra)), 5u64)))
+  next-items := huff-set32(items, number, item)
+  out := (next-freqs, next-items, number + 1u64).
+block-header-zero-long-step(freqs<[u32]>, items<[u32]>, number<u64>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  extra := huff-minimum((end - start) - 11u64, 127u64)
+  (next-freqs, next-items, next-number) := block-header-token(freqs, items, number, 18u64, extra)
+  out := (next-freqs, next-items, next-number, start + 11u64 + extra).
+block-header-zero-long(freqs<[u32]>, items<[u32]>, number<u64>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  more := (end - start) >= 11u64
+  step := (more? | true => block-header-zero-long-step(freqs, items, number, start, end) | false => (freqs, items, number, start))
+  (next-freqs, next-items, next-number, next-start) := step
+  out := (more? | true => block-header-zero-long(next-freqs, next-items, next-number, next-start, end) | false => (freqs, items, number, start)).
+block-header-zero-short-step(freqs<[u32]>, items<[u32]>, number<u64>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  extra := huff-minimum((end - start) - 3u64, 7u64)
+  (next-freqs, next-items, next-number) := block-header-token(freqs, items, number, 17u64, extra)
+  out := (next-freqs, next-items, next-number, start + 3u64 + extra).
+block-header-zero-run(freqs<[u32]>, items<[u32]>, number<u64>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  (next-freqs, next-items, next-number, next-start) := block-header-zero-long(freqs, items, number, start, end)
+  out := (((end - next-start) >= 3u64)? | true => block-header-zero-short-step(next-freqs, next-items, next-number, next-start, end) | false => (next-freqs, next-items, next-number, next-start)).
+block-header-repeat(freqs<[u32]>, items<[u32]>, number<u64>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  extra := huff-minimum((end - start) - 3u64, 3u64)
+  (next-freqs, next-items, next-number) := block-header-token(freqs, items, number, 16u64, extra)
+  next-start := start + 3u64 + extra
+  out := (((end - next-start) >= 3u64)? | true => block-header-repeat(next-freqs, next-items, next-number, next-start, end) | false => (next-freqs, next-items, next-number, next-start)).
+block-header-nonzero-repeat(freqs<[u32]>, items<[u32]>, number<u64>, value<u8>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  symbol<u64> := value
+  (next-freqs, next-items, next-number) := block-header-token(freqs, items, number, symbol, 0u64)
+  next-start := start + 1u64
+  out := block-header-repeat(next-freqs, next-items, next-number, next-start, end).
+block-header-nonzero-run(freqs<[u32]>, items<[u32]>, number<u64>, value<u8>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  out := (((end - start) >= 4u64)? | true => block-header-nonzero-repeat(freqs, items, number, value, start, end) | false => (freqs, items, number, start)).
+block-header-plain-step(freqs<[u32]>, items<[u32]>, number<u64>, value<u8>, start<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  symbol<u64> := value
+  (next-freqs, next-items, next-number) := block-header-token(freqs, items, number, symbol, 0u64)
+  out := (next-freqs, next-items, next-number, start + 1u64).
+block-header-plain(freqs<[u32]>, items<[u32]>, number<u64>, value<u8>, start<u64>, end<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  more := start != end
+  step := (more? | true => block-header-plain-step(freqs, items, number, value, start) | false => (freqs, items, number, start))
+  (next-freqs, next-items, next-number, next-start) := step
+  out := (more? | true => block-header-plain(next-freqs, next-items, next-number, value, next-start, end) | false => (freqs, items, number, start)).
+block-header-run(lens<[u8]>, num-lens<u64>, freqs<[u32]>, items<[u32]>, number<u64>, start<u64>) => (out<([u32],[u32],u64,u64)>) :=
+  value := huff-get8(lens, start)
+  end := block-header-run-end(lens, num-lens, value, start + 1u64)
+  step := ((value == 0u8)? | true => block-header-zero-run(freqs, items, number, start, end) | false => block-header-nonzero-run(freqs, items, number, value, start, end))
+  (next-freqs, next-items, next-number, next-start) := step
+  out := block-header-plain(next-freqs, next-items, next-number, value, next-start, end).
+block-header-runs(lens<[u8]>, num-lens<u64>, freqs<[u32]>, items<[u32]>, number<u64>, start<u64>) => (out<block-precode-items>) :=
+  more := start != num-lens
+  step := (more? | true => block-header-run(lens, num-lens, freqs, items, number, start) | false => (freqs, items, number, start))
+  (next-freqs, next-items, next-number, next-start) := step
+  out := (more? | true => block-header-runs(lens, num-lens, next-freqs, next-items, next-number, next-start) | false => {freqs: freqs, items: items, num-items: number}).
+block-compute-precode-items(lens<[u8]>, num-lens<u64>, freqs0<[u32]>, items0<[u32]>) => (out<block-precode-items>) :=
+  out := block-header-runs(lens, num-lens, freqs0, items0, 0u64, 0u64).
+
+block-header-trim(lens<[u8]>, number<u64>, minimum<u64>) => (out<u64>) :=
+  more := number > minimum
+  last := (more? | true => huff-get8(lens, number - 1u64) | false => 1u8)
+  out := ((more && (last == 0u8))? | true => block-header-trim(lens, number - 1u64, minimum) | false => number).
+block-header-append-lens(lens<[u8]>, source<[u8]>, i<u64>, number<u64>) => <[u8]>
+  | (lens, source, i, number) => ((i < number)? | true => block-header-append-lens(sequence/append(lens, huff-get8(source, i)), source, i + 1u64, number) | false => lens).
+block-header-trim-precode(lens<[u8]>, permutation<[u8]>, number<u64>) => (out<u64>) :=
+  more := number > 4u64
+  perm<u64> := (more? | true => huff-get8(permutation, number - 1u64) | false => 0u8)
+  last := (more? | true => huff-get8(lens, perm) | false => 1u8)
+  out := ((more && (last == 0u8))? | true => block-header-trim-precode(lens, permutation, number - 1u64) | false => number).
+block-precompute-huffman-header(litlen-lens<[u8]>, offset-lens<[u8]>, permutation<[u8]>, reversed<[u8]>) => (out<block-precode>) :=
+  num-litlen := block-header-trim(litlen-lens, 288u64, 257u64)
+  num-offset := block-header-trim(offset-lens, 32u64, 1u64)
+  num-lens := num-litlen + num-offset
+  lens0 := sequence/with-capacity(0u8, num-lens)
+  lens1 := block-header-append-lens(lens0, litlen-lens, 0u64, num-litlen)
+  lens := block-header-append-lens(lens1, offset-lens, 0u64, num-offset)
+  freqs0 := [0u32 | i <- 0u64..=19u64, i < 19u64]
+  items0 := [0u32 | i <- 0u64..=320u64, i < 320u64]
+  computed := block-compute-precode-items(lens, num-lens, freqs0, items0)
+  precode-lens0 := [0u8 | i <- 0u64..=19u64, i < 19u64]
+  precode-words0 := [0u32 | i <- 0u64..=19u64, i < 19u64]
+  precode := huff-make-code(19u64, 7u64, computed.freqs, precode-lens0, precode-words0, reversed)
+  explicit := block-header-trim-precode(precode.lens, permutation, 19u64)
+  out := {freqs: computed.freqs, lens: precode.lens, codewords: precode.codewords, items: computed.items, num-items: computed.num-items, num-litlen-syms: num-litlen, num-offset-syms: num-offset, num-explicit-lens: explicit}.
+
+optimal-true-cost-extra(freqs<[u32]>, lens<[u8]>, extras<[u8]>, base<u64>, sym<u64>, end<u64>, cost<u64>) => (out<u64>) :=
+  more := sym < end
+  extra<u64> := (more? | true => huff-get8(extras, sym - base) | false => 0u8)
+  frequency := (more? | true => huff-word(huff-get32(freqs, sym)) | false => 0u64)
+  width<u64> := (more? | true => huff-get8(lens, sym) | false => 0u8)
+  next := cost + frequency * (width + extra)
+  out := (more? | true => optimal-true-cost-extra(freqs, lens, extras, base, sym + 1u64, end, next) | false => cost).
+optimal-true-cost-literals(freqs<[u32]>, lens<[u8]>, sym<u64>, cost<u64>) => (out<u64>) :=
+  more := sym < 257u64
+  frequency := (more? | true => huff-word(huff-get32(freqs, sym)) | false => 0u64)
+  width<u64> := (more? | true => huff-get8(lens, sym) | false => 0u8)
+  next := cost + frequency * width
+  out := (more? | true => optimal-true-cost-literals(freqs, lens, sym + 1u64, next) | false => cost).
+optimal-compute-true-cost(litlen-lens<[u8]>, offset-lens<[u8]>, freqs-litlen<[u32]>, freqs-offset<[u32]>, permutation<[u8]>, extra-precode<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, reversed<[u8]>) => (out<u64>) :=
+  precode := block-precompute-huffman-header(litlen-lens, offset-lens, permutation, reversed)
+  cost0 := 5u64 + 5u64 + 4u64 + 3u64 * precode.num-explicit-lens
+  cost1 := optimal-true-cost-extra(precode.freqs, precode.lens, extra-precode, 0u64, 0u64, 19u64, cost0)
+  cost2 := optimal-true-cost-literals(freqs-litlen, litlen-lens, 0u64, cost1)
+  cost3 := optimal-true-cost-extra(freqs-litlen, litlen-lens, extra-lengths, 257u64, 257u64, 286u64, cost2)
+  out := optimal-true-cost-extra(freqs-offset, offset-lens, extra-offsets, 0u64, 0u64, 32u64, cost3).
+
+// Dynamic optimization loop from CompressOptimal.roc:1055-1108,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Level 12 uses ten passes and a one-bit improvement threshold.
+// Include the costs, path, tally, Huffman and header components first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<optimal-optimization> := <{nodes<[u64]> costs<optimal-costs> saved<optimal-costs> tallied<optimal-tally> best-true-cost<u64> actual-cost<u64> passes-remaining<u64>}>
+
+optimal-optimize-loop(block-length<u64>, cache<[u32]>, cache-end<u64>, nodes0<[u64]>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, saved-literal<[u32]>, saved-length<[u32]>, saved-offset<[u32]>, best<u64>, remaining<u64>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>, permutation<[u8]>, extra-precode<[u8]>, reversed<[u8]>) => (out<optimal-optimization>) :=
+  path := optimal-find-min-cost-path(block-length, cache, cache-end, nodes0, literal0, length0, offset0, offset-slots)
+  tallied := optimal-tally-and-build-codes(path.nodes, block-length, length-slots, offset-slots, reversed)
+  actual-cost := optimal-compute-true-cost(tallied.litlen-lens, tallied.offset-lens, tallied.freqs-litlen, tallied.freqs-offset, permutation, extra-precode, extra-lengths, extra-offsets, reversed)
+  improving := actual-cost + 1u64 <= best
+  next-best := (improving? | true => actual-cost | false => best)
+  saved := (improving? | true => {literal: literal0, length: length0, offset-slot: offset0} | false => {literal: saved-literal, length: saved-length, offset-slot: saved-offset})
+  costs := (improving? | true => optimal-set-costs-from-codes(tallied.litlen-lens, tallied.offset-lens, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets) | false => {literal: literal0, length: length0, offset-slot: offset0})
+  passes := (improving? | true => remaining - 1u64 | false => remaining)
+  next-literal := costs.literal
+  next-length := costs.length
+  next-offset := costs.offset-slot
+  next-saved-literal := saved.literal
+  next-saved-length := saved.length
+  next-saved-offset := saved.offset-slot
+  nodes := path.nodes
+  out := ((improving && (passes != 0u64))?
+    | true => optimal-optimize-loop(block-length, cache, cache-end, nodes, next-literal, next-length, next-offset, next-saved-literal, next-saved-length, next-saved-offset, next-best, passes, length-slots, extra-lengths, extra-offsets, offset-slots, permutation, extra-precode, reversed)
+    | false => {nodes: nodes, costs: costs, saved: saved, tallied: tallied, best-true-cost: next-best, actual-cost: actual-cost, passes-remaining: passes}).
+
+// All-literals block alternative from CompressOptimal.roc:608-649,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include the qualified Huffman component first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<optimal-literal-choice> := <{freqs-litlen<[u32]> freqs-offset<[u32]> litlen-lens<[u8]> litlen-codewords<[u32]> offset-lens<[u8]> offset-codewords<[u32]>}>
+
+optimal-literal-count-step(input<[u8]>, begin<u64>, at<u64>, frequencies<[u32]>) => (out<[u32]>) :=
+  position := begin + at
+  symbol<u64> := huff-get8(input, position)
+  count := huff-get32(frequencies, symbol) + 1u32
+  out := huff-set32(frequencies, symbol, count).
+optimal-literal-counts(input<[u8]>, begin<u64>, length<u64>, at<u64>, frequencies<[u32]>) => (out<[u32]>) :=
+  more := at < length
+  next := (more? | true => optimal-literal-count-step(input, begin, at, frequencies) | false => frequencies)
+  out := (more? | true => optimal-literal-counts(input, begin, length, at + 1u64, next) | false => frequencies).
+optimal-choose-all-literals(input<[u8]>, begin<u64>, length<u64>, reversed<[u8]>) => (out<optimal-literal-choice>) :=
+  litlen0 := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  offsets := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  counts := optimal-literal-counts(input, begin, length, 0u64, litlen0)
+  eof-count := huff-get32(counts, 256u64) + 1u32
+  frequencies := huff-set32(counts, 256u64, eof-count)
+  litlen-lens0 := [0u8 | i <- 0u64..=288u64, i < 288u64]
+  litlen-words0 := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  litlen := huff-make-code(288u64, 14u64, frequencies, litlen-lens0, litlen-words0, reversed)
+  offset-lens0 := [0u8 | i <- 0u64..=32u64, i < 32u64]
+  offset-words0 := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  offset := huff-make-code(32u64, 15u64, offsets, offset-lens0, offset-words0, reversed)
+  out := {freqs-litlen: frequencies, freqs-offset: offsets, litlen-lens: litlen.lens, litlen-codewords: litlen.codewords, offset-lens: offset.lens, offset-codewords: offset.codewords}.
+
+// Fixed code tables from CompressLazy.roc:214-251 at
+// 671077457ff7ef3a3d44caf715a3fc595addf379; reachable from level 12.
+// Include the qualified Huffman component first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<block-codes> := <{litlen-lens<[u8]> litlen-codewords<[u32]> offset-lens<[u8]> offset-codewords<[u32]>}>
+block-static-width(sym<u64>) => (out<u8>) :=
+  out := ((sym < 144u64)? | true => 8u8 | false => ((sym < 256u64)? | true => 9u8 | false => ((sym < 280u64)? | true => 7u8 | false => 8u8))).
+block-static-word(sym<u64>, reversed<[u8]>) => (out<u32>) :=
+  word := ((sym < 144u64)? | true => 48u64 + sym | false => ((sym < 256u64)? | true => 400u64 + sym - 144u64 | false => ((sym < 280u64)? | true => sym - 256u64 | false => 192u64 + sym - 280u64)))
+  width<u64> := block-static-width(sym)
+  out := huff-reverse-codeword(huff-packed(word), width, reversed).
+block-static-lens(lens<[u8]>, sym<u64>) => <[u8]>
+  | (lens, sym) => ((sym < 288u64)? | true => block-static-lens(huff-set8(lens, sym, block-static-width(sym)), sym + 1u64) | false => lens).
+block-static-litlen-words(words<[u32]>, sym<u64>, reversed<[u8]>) => <[u32]>
+  | (words, sym, reversed) => ((sym < 288u64)? | true => block-static-litlen-words(huff-set32(words, sym, block-static-word(sym, reversed)), sym + 1u64, reversed) | false => words).
+block-static-offset-words(words<[u32]>, sym<u64>, reversed<[u8]>) => <[u32]>
+  | (words, sym, reversed) => ((sym < 32u64)? | true => block-static-offset-words(huff-set32(words, sym, huff-reverse-codeword(huff-packed(sym), 5u64, reversed)), sym + 1u64, reversed) | false => words).
+block-build-static-codes(reversed<[u8]>) => (out<block-codes>) :=
+  litlen-lens0 := [0u8 | i <- 0u64..=288u64, i < 288u64]
+  litlen-lens := block-static-lens(litlen-lens0, 0u64)
+  litlen-words0 := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  litlen-words := block-static-litlen-words(litlen-words0, 0u64, reversed)
+  offset-lens := [5u8 | i <- 0u64..=32u64, i < 32u64]
+  offset-words0 := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  offset-words := block-static-offset-words(offset-words0, 0u64, reversed)
+  out := {litlen-lens: litlen-lens, litlen-codewords: litlen-words, offset-lens: offset-lens, offset-codewords: offset-words}.
+
+// BlockOut.roc pack_codes and pack_offsets at
+// 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-huffman-level12.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+block-pack-code(codewords<[u32]>, lens<[u8]>, i<u64>) => (out<u64>) :=
+  word<u64> := huff-get32(codewords, i)
+  width<u64> := huff-get8(lens, i)
+  out := bits/or(word, bits/shift-left-wrap(width, 32u64)).
+block-pack-codes-at(codewords<[u32]>, lens<[u8]>, packed<[u64]>, i<u64>, n<u64>) => <[u64]>
+  | (codewords, lens, packed, i, n) => ((i < n)? | true => block-pack-codes-at(codewords, lens, sequence/append(packed, block-pack-code(codewords, lens, i)), i + 1u64, n) | false => packed).
+block-pack-codes(codewords<[u32]>, lens<[u8]>) => (out<[u64]>) :=
+  n := sequence/length(codewords)
+  packed := sequence/with-capacity(0u64, n)
+  out := block-pack-codes-at(codewords, lens, packed, 0u64, n).
+block-pack-offset(codewords<[u32]>, lens<[u8]>, extra-bits<[u8]>, bases<[u32]>, i<u64>) => (out<u64>) :=
+  word<u64> := huff-get32(codewords, i)
+  width<u64> := huff-get8(lens, i)
+  extra<u64> := huff-get8(extra-bits, i)
+  base<u64> := huff-get32(bases, i)
+  out := bits/or(bits/or(bits/or(word, bits/shift-left-wrap(width, 16u64)), bits/shift-left-wrap(extra, 24u64)), bits/shift-left-wrap(base, 32u64)).
+block-pack-offsets-at(codewords<[u32]>, lens<[u8]>, extra-bits<[u8]>, bases<[u32]>, packed<[u64]>, i<u64>, n<u64>) => <[u64]>
+  | (codewords, lens, extra-bits, bases, packed, i, n) => ((i < n)? | true => block-pack-offsets-at(codewords, lens, extra-bits, bases, sequence/append(packed, block-pack-offset(codewords, lens, extra-bits, bases, i)), i + 1u64, n) | false => packed).
+block-pack-offsets(codewords<[u32]>, lens<[u8]>, extra-bits<[u8]>, bases<[u32]>) => (out<[u64]>) :=
+  n := sequence/length(codewords)
+  packed := sequence/with-capacity(0u64, n)
+  out := block-pack-offsets-at(codewords, lens, extra-bits, bases, packed, 0u64, n).
+
+<block-full-lens> := <{codewords<[u32]> lens<[u8]>}>
+block-full-length-step(litlen-lens<[u8]>, litlen-words<[u32]>, slots<[u8]>, bases<[u32]>, extra-bits<[u8]>, words<[u32]>, lens<[u8]>, length<u64>) => (out<block-full-lens>) :=
+  slot<u64> := huff-get8(slots, length)
+  symbol := 257u64 + slot
+  length32<u32> := length
+  extra := length32 - huff-get32(bases, slot)
+  width := huff-get8(litlen-lens, symbol)
+  wide-width<u64> := width
+  shifted := huff-packed(bits/shift-left-wrap(huff-word(extra), bits/and(wide-width, 31u64)))
+  word := huff-packed(bits/or(huff-word(huff-get32(litlen-words, symbol)), huff-word(shifted)))
+  next-words := huff-set32(words, length, word)
+  next-lens := huff-set8(lens, length, width + huff-get8(extra-bits, slot))
+  out := {codewords: next-words, lens: next-lens}.
+block-full-length-at(litlen-lens<[u8]>, litlen-words<[u32]>, slots<[u8]>, bases<[u32]>, extra-bits<[u8]>, words<[u32]>, lens<[u8]>, length<u64>) => (out<block-full-lens>) :=
+  more := length <= 258u64
+  step := (more? | true => block-full-length-step(litlen-lens, litlen-words, slots, bases, extra-bits, words, lens, length) | false => {codewords: words, lens: lens})
+  out := (more? | true => block-full-length-at(litlen-lens, litlen-words, slots, bases, extra-bits, step.codewords, step.lens, length + 1u64) | false => step).
+block-compute-full-length-codewords(litlen-lens<[u8]>, litlen-words<[u32]>, slots<[u8]>, bases<[u32]>, extra-bits<[u8]>) => (out<block-full-lens>) :=
+  words := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  lens := [0u8 | i <- 0u64..=259u64, i < 259u64]
+  out := block-full-length-at(litlen-lens, litlen-words, slots, bases, extra-bits, words, lens, 3u64).
+
+// BlockOut.flush_block's path-node loop, pinned at
+// 671077457ff7ef3a3d44caf715a3fc595addf379 (lines 711–746).
+// Include deflate-huffman-level12.mec and deflate-optimal-path.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<path-written> := <{bytes<[u8]> bitbuf<u64> bitcount<u64>}>
+
+path-write-flush(bytes<[u8]>, bitbuf<u64>, bitcount<u64>) => (out<path-written>) :=
+  n := bits/shift-right-wrap(bitcount, 3u64)
+  count<u8> := bits/and(n, 255u64)
+  written := sequence/append-le-bytes(bytes, bitbuf, count)
+  out := {bytes: written, bitbuf: bits/shift-right-wrap(bitbuf, bits/and(bits/shift-left-wrap(n, 3u64), 255u64)), bitcount: bits/and(bitcount, 7u64)}.
+
+path-write-literal(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, payload<u64>, litlen-words<[u32]>, litlen-lens<[u8]>) => (out<path-written>) :=
+  word<u64> := huff-get32(litlen-words, payload)
+  buf := bits/or(bitbuf, bits/shift-left-wrap(word, bits/and(bitcount, 255u64)))
+  size<u64> := huff-get8(litlen-lens, payload)
+  count := bits/wrapping-add(bitcount, size)
+  out := path-write-flush(bytes, buf, count).
+
+path-write-match(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, length<u64>, payload<u64>, full-words<[u32]>, full-lens<[u8]>, offset-words<[u32]>, offset-lens<[u8]>, offset-slots<[u8]>, offset-bases<[u32]>, offset-extra<[u8]>) => (out<path-written>) :=
+  slot := optimal-offset-slot(payload, offset-slots)
+  length-word<u64> := huff-get32(full-words, length)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(length-word, bits/and(bitcount, 255u64)))
+  length-size<u64> := huff-get8(full-lens, length)
+  count0 := bits/wrapping-add(bitcount, length-size)
+  offset-word<u64> := huff-get32(offset-words, slot)
+  buf1 := bits/or(buf0, bits/shift-left-wrap(offset-word, bits/and(count0, 255u64)))
+  offset-size<u64> := huff-get8(offset-lens, slot)
+  count1 := bits/wrapping-add(count0, offset-size)
+  base<u64> := huff-get32(offset-bases, slot)
+  buf2 := bits/or(buf1, bits/shift-left-wrap(bits/wrapping-sub(payload, base), bits/and(count1, 255u64)))
+  extra<u64> := huff-get8(offset-extra, slot)
+  count2 := bits/wrapping-add(count1, extra)
+  out := path-write-flush(bytes, buf2, count2).
+
+path-write-at(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, items<[u64]>, top<u64>, at<u64>, block-length<u64>, litlen-words<[u32]>, litlen-lens<[u8]>, full-words<[u32]>, full-lens<[u8]>, offset-words<[u32]>, offset-lens<[u8]>, offset-slots<[u8]>, offset-bases<[u32]>, offset-extra<[u8]>) => (out<path-written>) :=
+  more := at != block-length
+  word := (more? | true => huff-get64(items, bits/wrapping-sub(top, at)) | false => 0u64)
+  item := bits/and(bits/shift-right-wrap(word, 32u64), 4294967295u64)
+  length := bits/and(item, 511u64)
+  payload := bits/shift-right-wrap(item, 9u64)
+  step := (more? | true => ((length == 1u64)? | true => path-write-literal(bytes, bitbuf, bitcount, payload, litlen-words, litlen-lens) | false => path-write-match(bytes, bitbuf, bitcount, length, payload, full-words, full-lens, offset-words, offset-lens, offset-slots, offset-bases, offset-extra)) | false => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount})
+  out := (more? | true => path-write-at(step.bytes, step.bitbuf, step.bitcount, items, top, bits/wrapping-add(at, length), block-length, litlen-words, litlen-lens, full-words, full-lens, offset-words, offset-lens, offset-slots, offset-bases, offset-extra) | false => step).
+
+path-write-items(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, items<[u64]>, block-length<u64>, litlen-words<[u32]>, litlen-lens<[u8]>, full-words<[u32]>, full-lens<[u8]>, offset-words<[u32]>, offset-lens<[u8]>, offset-slots<[u8]>, offset-bases<[u32]>, offset-extra<[u8]>) => (out<path-written>) :=
+  top := bits/wrapping-sub(sequence/length(items), 1u64)
+  out := path-write-at(bytes, bitbuf, bitcount, items, top, 0u64, block-length, litlen-words, litlen-lens, full-words, full-lens, offset-words, offset-lens, offset-slots, offset-bases, offset-extra).
+
+// BlockOut.write_sequences, pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-huffman-level12.mec and deflate-matchfinder.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<block-sequence> := <{litrunlen-and-length<u32> offset<u16> offset-slot<u16>}>
+<block-writer-state> := <{bytes<[u8]> bitbuf<u64> bitcount<u64> in-next<u64>}>
+<block-literal-state> := <{bytes<[u8]> bitbuf<u64> bitcount<u64> in-next<u64> left<u64>}>
+<block-written> := <{bytes<[u8]> bitbuf<u64> bitcount<u64>}>
+
+block-write-literals-4(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>) => (out<block-writer-state>) :=
+  word<u64> := load-prefix(input, in-next)
+  lit0 := bits/and(word, 255u64)
+  packed0 := huff-get64(packed, lit0)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(bits/and(packed0, 4294967295u64), bits/and(bitcount, 255u64)))
+  count0 := bits/wrapping-add(bitcount, bits/shift-right-wrap(packed0, 32u64))
+  lit1 := bits/and(bits/shift-right-wrap(word, 8u64), 255u64)
+  packed1 := huff-get64(packed, lit1)
+  buf1 := bits/or(buf0, bits/shift-left-wrap(bits/and(packed1, 4294967295u64), bits/and(count0, 255u64)))
+  count1 := bits/wrapping-add(count0, bits/shift-right-wrap(packed1, 32u64))
+  lit2 := bits/and(bits/shift-right-wrap(word, 16u64), 255u64)
+  packed2 := huff-get64(packed, lit2)
+  buf2 := bits/or(buf1, bits/shift-left-wrap(bits/and(packed2, 4294967295u64), bits/and(count1, 255u64)))
+  count2 := bits/wrapping-add(count1, bits/shift-right-wrap(packed2, 32u64))
+  lit3 := bits/shift-right-wrap(word, 24u64)
+  packed3 := huff-get64(packed, lit3)
+  buf3 := bits/or(buf2, bits/shift-left-wrap(bits/and(packed3, 4294967295u64), bits/and(count2, 255u64)))
+  count3 := bits/wrapping-add(count2, bits/shift-right-wrap(packed3, 32u64))
+  next3 := bits/wrapping-add(in-next, 4u64)
+  whole := bits/and(bits/shift-right-wrap(count3, 3u64), 7u64)
+  byte-count<u8> := whole
+  written := sequence/append-le-bytes(bytes, buf3, byte-count)
+  remaining := bits/shift-right-wrap(buf3, bits/and(bits/shift-left-wrap(whole, 3u64), 255u64))
+  out := {bytes: written, bitbuf: remaining, bitcount: bits/and(count3, 7u64), in-next: next3}.
+
+block-write-literals-1(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>) => (out<block-writer-state>) :=
+  lit0<u64> := huff-get8(input, in-next)
+  packed0 := huff-get64(packed, lit0)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(bits/and(packed0, 4294967295u64), bits/and(bitcount, 255u64)))
+  count0 := bits/wrapping-add(bitcount, bits/shift-right-wrap(packed0, 32u64))
+  next0 := bits/wrapping-add(in-next, 1u64)
+  whole := bits/and(bits/shift-right-wrap(count0, 3u64), 7u64)
+  byte-count<u8> := whole
+  written := sequence/append-le-bytes(bytes, buf0, byte-count)
+  remaining := bits/shift-right-wrap(buf0, bits/and(bits/shift-left-wrap(whole, 3u64), 255u64))
+  out := {bytes: written, bitbuf: remaining, bitcount: bits/and(count0, 7u64), in-next: next0}.
+
+block-write-literals-2(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>) => (out<block-writer-state>) :=
+  lit0<u64> := huff-get8(input, in-next)
+  packed0 := huff-get64(packed, lit0)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(bits/and(packed0, 4294967295u64), bits/and(bitcount, 255u64)))
+  count0 := bits/wrapping-add(bitcount, bits/shift-right-wrap(packed0, 32u64))
+  next0 := bits/wrapping-add(in-next, 1u64)
+  lit1<u64> := huff-get8(input, next0)
+  packed1 := huff-get64(packed, lit1)
+  buf1 := bits/or(buf0, bits/shift-left-wrap(bits/and(packed1, 4294967295u64), bits/and(count0, 255u64)))
+  count1 := bits/wrapping-add(count0, bits/shift-right-wrap(packed1, 32u64))
+  next1 := bits/wrapping-add(next0, 1u64)
+  whole := bits/and(bits/shift-right-wrap(count1, 3u64), 7u64)
+  byte-count<u8> := whole
+  written := sequence/append-le-bytes(bytes, buf1, byte-count)
+  remaining := bits/shift-right-wrap(buf1, bits/and(bits/shift-left-wrap(whole, 3u64), 255u64))
+  out := {bytes: written, bitbuf: remaining, bitcount: bits/and(count1, 7u64), in-next: next1}.
+
+block-write-literals-3(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>) => (out<block-writer-state>) :=
+  lit0<u64> := huff-get8(input, in-next)
+  packed0 := huff-get64(packed, lit0)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(bits/and(packed0, 4294967295u64), bits/and(bitcount, 255u64)))
+  count0 := bits/wrapping-add(bitcount, bits/shift-right-wrap(packed0, 32u64))
+  next0 := bits/wrapping-add(in-next, 1u64)
+  lit1<u64> := huff-get8(input, next0)
+  packed1 := huff-get64(packed, lit1)
+  buf1 := bits/or(buf0, bits/shift-left-wrap(bits/and(packed1, 4294967295u64), bits/and(count0, 255u64)))
+  count1 := bits/wrapping-add(count0, bits/shift-right-wrap(packed1, 32u64))
+  next1 := bits/wrapping-add(next0, 1u64)
+  lit2<u64> := huff-get8(input, next1)
+  packed2 := huff-get64(packed, lit2)
+  buf2 := bits/or(buf1, bits/shift-left-wrap(bits/and(packed2, 4294967295u64), bits/and(count1, 255u64)))
+  count2 := bits/wrapping-add(count1, bits/shift-right-wrap(packed2, 32u64))
+  next2 := bits/wrapping-add(next1, 1u64)
+  whole := bits/and(bits/shift-right-wrap(count2, 3u64), 7u64)
+  byte-count<u8> := whole
+  written := sequence/append-le-bytes(bytes, buf2, byte-count)
+  remaining := bits/shift-right-wrap(buf2, bits/and(bits/shift-left-wrap(whole, 3u64), 255u64))
+  out := {bytes: written, bitbuf: remaining, bitcount: bits/and(count2, 7u64), in-next: next2}.
+
+block-write-fours(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>, left<u64>) => (out<block-literal-state>) :=
+  more := left >= 4u64
+  step := (more? | true => block-write-literals-4(bytes, bitbuf, bitcount, input, in-next, packed) | false => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount, in-next: in-next})
+  out := (more? | true => block-write-fours(step.bytes, step.bitbuf, step.bitcount, input, step.in-next, packed, bits/wrapping-sub(left, 4u64)) | false => {bytes: step.bytes, bitbuf: step.bitbuf, bitcount: step.bitcount, in-next: step.in-next, left: left}).
+
+block-write-tail(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>, left<u64>) => (out<block-writer-state>) :=
+  out := (left? | 0u64 => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount, in-next: in-next} | 1u64 => block-write-literals-1(bytes, bitbuf, bitcount, input, in-next, packed) | 2u64 => block-write-literals-2(bytes, bitbuf, bitcount, input, in-next, packed) | * => block-write-literals-3(bytes, bitbuf, bitcount, input, in-next, packed)).
+
+block-write-match(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, in-next<u64>, packed<[u64]>, length<u64>, offset<u64>, slot<u64>) => (out<block-writer-state>) :=
+  packed-len := huff-get64(packed, bits/wrapping-add(288u64, length))
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(bits/and(packed-len, 4294967295u64), bits/and(bitcount, 255u64)))
+  count0 := bits/wrapping-add(bitcount, bits/shift-right-wrap(packed-len, 32u64))
+  packed-off := huff-get64(packed, bits/wrapping-add(800u64, bits/and(slot, 31u64)))
+  buf1 := bits/or(buf0, bits/shift-left-wrap(bits/and(packed-off, 65535u64), bits/and(count0, 255u64)))
+  count1 := bits/wrapping-add(count0, bits/and(bits/shift-right-wrap(packed-off, 16u64), 255u64))
+  buf2 := bits/or(buf1, bits/shift-left-wrap(bits/wrapping-sub(offset, bits/shift-right-wrap(packed-off, 32u64)), bits/and(count1, 255u64)))
+  count2 := bits/wrapping-add(count1, bits/and(bits/shift-right-wrap(packed-off, 24u64), 255u64))
+  whole := bits/and(bits/shift-right-wrap(count2, 3u64), 7u64)
+  byte-count<u8> := whole
+  written := sequence/append-le-bytes(bytes, buf2, byte-count)
+  remaining := bits/shift-right-wrap(buf2, bits/and(bits/shift-left-wrap(whole, 3u64), 255u64))
+  out := {bytes: written, bitbuf: remaining, bitcount: bits/and(count2, 7u64), in-next: bits/wrapping-add(in-next, length)}.
+
+block-write-selected-match(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, in-next<u64>, packed<[u64]>, length<u64>, current<block-sequence>) => (out<block-writer-state>) :=
+  offset<u64> := current.offset
+  slot<u64> := current.offset-slot
+  out := block-write-match(bytes, bitbuf, bitcount, in-next, packed, length, offset, slot).
+
+block-write-sequence(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, packed<[u64]>, current<block-sequence>) => (out<block-writer-state>) :=
+  combined<u64> := current.litrunlen-and-length
+  literals := bits/and(combined, 8388607u64)
+  length := bits/shift-right-wrap(combined, 23u64)
+  groups := block-write-fours(bytes, bitbuf, bitcount, input, in-next, packed, literals)
+  tail := block-write-tail(groups.bytes, groups.bitbuf, groups.bitcount, input, groups.in-next, packed, groups.left)
+  out := ((length != 0u64)? | true => block-write-selected-match(tail.bytes, tail.bitbuf, tail.bitcount, tail.in-next, packed, length, current) | false => tail).
+
+block-write-sequences-at(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, seqs<[block-sequence]>, packed<[u64]>, at<u64>) => (out<block-written>) :=
+  more := at < sequence/length(seqs)
+  step := (more? | true => block-write-sequence(bytes, bitbuf, bitcount, input, in-next, packed, seqs[bits/wrapping-add(at, 1u64)]) | false => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount, in-next: in-next})
+  out := (more? | true => block-write-sequences-at(step.bytes, step.bitbuf, step.bitcount, input, step.in-next, seqs, packed, bits/wrapping-add(at, 1u64)) | false => {bytes: step.bytes, bitbuf: step.bitbuf, bitcount: step.bitcount}).
+
+block-write-sequences(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, seqs<[block-sequence]>, packed<[u64]>) => (out<block-written>) :=
+  packed-readable! := sequence/length(packed) >= 832u64
+  out := block-write-sequences-at(bytes, bitbuf, bitcount, input, in-next, seqs, packed, 0u64).
+
+// BlockOut.flush_block cost calculation, pinned at
+// 671077457ff7ef3a3d44caf715a3fc595addf379, lines 503–569.
+// Include deflate-huffman-level12.mec and deflate-header.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+<block-costs> := <{dynamic<u64> fixed<u64> stored<u64> kind<u64>}>
+block-cost-literals(freqs<[u32]>, lens<[u8]>, sym<u64>, end<u64>, fixed-width<u64>, dynamic<u64>, fixed<u64>) => (out<(u64,u64)>) :=
+  more := sym < end
+  freq := (more? | true => huff-word(huff-get32(freqs, sym)) | false => 0u64)
+  width<u64> := (more? | true => huff-get8(lens, sym) | false => 0u8)
+  out := (more? | true => block-cost-literals(freqs, lens, sym + 1u64, end, fixed-width, dynamic + freq * width, fixed + freq * fixed-width) | false => (dynamic, fixed)).
+block-cost-lengths(freqs<[u32]>, lens<[u8]>, fixed-lens<[u8]>, extras<[u8]>, slot<u64>, dynamic<u64>, fixed<u64>) => (out<(u64,u64)>) :=
+  more := slot < 29u64
+  symbol := 257u64 + slot
+  freq := (more? | true => huff-word(huff-get32(freqs, symbol)) | false => 0u64)
+  extra<u64> := (more? | true => huff-get8(extras, slot) | false => 0u8)
+  width<u64> := (more? | true => huff-get8(lens, symbol) | false => 0u8)
+  fixed-width<u64> := (more? | true => huff-get8(fixed-lens, symbol) | false => 0u8)
+  out := (more? | true => block-cost-lengths(freqs, lens, fixed-lens, extras, slot + 1u64, dynamic + freq * (extra + width), fixed + freq * (extra + fixed-width)) | false => (dynamic, fixed)).
+block-cost-offsets(freqs<[u32]>, lens<[u8]>, extras<[u8]>, slot<u64>, dynamic<u64>, fixed<u64>) => (out<(u64,u64)>) :=
+  more := slot < 30u64
+  freq := (more? | true => huff-word(huff-get32(freqs, slot)) | false => 0u64)
+  extra<u64> := (more? | true => huff-get8(extras, slot) | false => 0u8)
+  width<u64> := (more? | true => huff-get8(lens, slot) | false => 0u8)
+  out := (more? | true => block-cost-offsets(freqs, lens, extras, slot + 1u64, dynamic + freq * (extra + width), fixed + freq * (extra + 5u64)) | false => (dynamic, fixed)).
+block-choose-kind(dynamic<u64>, fixed<u64>, stored<u64>) => (out<u64>) :=
+  best := huff-minimum(huff-minimum(dynamic, fixed), stored)
+  out := ((best == stored)? | true => 0u64 | false => ((best == fixed)? | true => 1u64 | false => 2u64)).
+block-compute-costs(precode<block-precode>, freqs-litlen<[u32]>, freqs-offset<[u32]>, litlen-lens<[u8]>, offset-lens<[u8]>, fixed-litlen-lens<[u8]>, extra-precode<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, block-length<u64>, bitcount<u64>) => (out<block-costs>) :=
+  dynamic0 := 3u64 + 5u64 + 5u64 + 4u64 + 3u64 * precode.num-explicit-lens
+  dynamic1 := optimal-true-cost-extra(precode.freqs, precode.lens, extra-precode, 0u64, 0u64, 19u64, dynamic0)
+  (dynamic2, fixed2) := block-cost-literals(freqs-litlen, litlen-lens, 0u64, 144u64, 8u64, dynamic1, 3u64)
+  (dynamic3, fixed3) := block-cost-literals(freqs-litlen, litlen-lens, 144u64, 256u64, 9u64, dynamic2, fixed2)
+  eob<u64> := huff-get8(litlen-lens, 256u64)
+  dynamic4 := dynamic3 + eob
+  fixed4 := fixed3 + 7u64
+  (dynamic5, fixed5) := block-cost-lengths(freqs-litlen, litlen-lens, fixed-litlen-lens, extra-lengths, 0u64, dynamic4, fixed4)
+  (dynamic, fixed) := block-cost-offsets(freqs-offset, offset-lens, extra-offsets, 0u64, dynamic5, fixed5)
+  blocks := (block-length + 65534u64) / 65535u64
+  stored := 3u64 + bits/and(bits/wrapping-sub(0u64, bitcount + 3u64), 7u64) + 32u64 + 40u64 * (blocks - 1u64) + 8u64 * block-length
+  out := {dynamic: dynamic, fixed: fixed, stored: stored, kind: block-choose-kind(dynamic, fixed, stored)}.
+
+// Compressed-block prefix emission from BlockOut.flush_block lines 627–698,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-header.mec and deflate-path-writer.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+block-write-static-header(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, final<u64>) => (out<path-written>) :=
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(final, bits/and(bitcount, 255u64)))
+  count0 := bitcount + 1u64
+  buf1 := bits/or(buf0, bits/shift-left-wrap(1u64, bits/and(count0, 255u64)))
+  out := path-write-flush(bytes, buf1, count0 + 2u64).
+block-write-precode-lens(lens<[u8]>, permutation<[u8]>, number<u64>, i<u64>, bitbuf<u64>, bitcount<u64>) => (out<(u64,u64)>) :=
+  more := i < number
+  perm<u64> := (more? | true => huff-get8(permutation, i) | false => 0u8)
+  width<u64> := (more? | true => huff-get8(lens, perm) | false => 0u8)
+  buf := bits/or(bitbuf, bits/shift-left-wrap(width, bits/and(bitcount, 255u64)))
+  out := (more? | true => block-write-precode-lens(lens, permutation, number, i + 1u64, buf, bitcount + 3u64) | false => (bitbuf, bitcount)).
+block-write-precode-item(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, item<u32>, words<[u32]>, lens<[u8]>, extra-bits<[u8]>) => (out<path-written>) :=
+  wide<u64> := item
+  symbol := bits/and(wide, 31u64)
+  word<u64> := huff-get32(words, symbol)
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(word, bits/and(bitcount, 255u64)))
+  width<u64> := huff-get8(lens, symbol)
+  count0 := bitcount + width
+  buf1 := bits/or(buf0, bits/shift-left-wrap(bits/shift-right-wrap(wide, 5u64), bits/and(count0, 255u64)))
+  extra<u64> := huff-get8(extra-bits, symbol)
+  out := path-write-flush(bytes, buf1, count0 + extra).
+block-write-precode-items(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, items<[u32]>, number<u64>, words<[u32]>, lens<[u8]>, extra-bits<[u8]>, i<u64>) => (out<path-written>) :=
+  more := i < number
+  step := (more? | true => block-write-precode-item(bytes, bitbuf, bitcount, huff-get32(items, i), words, lens, extra-bits) | false => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount})
+  out := (more? | true => block-write-precode-items(step.bytes, step.bitbuf, step.bitcount, items, number, words, lens, extra-bits, i + 1u64) | false => step).
+block-write-dynamic-header(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, final<u64>, precode<block-precode>, permutation<[u8]>, extra-bits<[u8]>) => (out<path-written>) :=
+  buf0 := bits/or(bitbuf, bits/shift-left-wrap(final, bits/and(bitcount, 255u64)))
+  count0 := bitcount + 1u64
+  buf1 := bits/or(buf0, bits/shift-left-wrap(2u64, bits/and(count0, 255u64)))
+  count1 := count0 + 2u64
+  buf2 := bits/or(buf1, bits/shift-left-wrap(precode.num-litlen-syms - 257u64, bits/and(count1, 255u64)))
+  count2 := count1 + 5u64
+  buf3 := bits/or(buf2, bits/shift-left-wrap(precode.num-offset-syms - 1u64, bits/and(count2, 255u64)))
+  count3 := count2 + 5u64
+  buf4 := bits/or(buf3, bits/shift-left-wrap(precode.num-explicit-lens - 4u64, bits/and(count3, 255u64)))
+  count4 := count3 + 4u64
+  perm<u64> := huff-get8(permutation, 0u64)
+  width<u64> := huff-get8(precode.lens, perm)
+  buf5 := bits/or(buf4, bits/shift-left-wrap(width, bits/and(count4, 255u64)))
+  first := path-write-flush(bytes, buf5, count4 + 3u64)
+  (buf6, count6) := block-write-precode-lens(precode.lens, permutation, precode.num-explicit-lens, 1u64, first.bitbuf, first.bitcount)
+  rest := path-write-flush(first.bytes, buf6, count6)
+  out := block-write-precode-items(rest.bytes, rest.bitbuf, rest.bitcount, precode.items, precode.num-items, precode.codewords, precode.lens, extra-bits, 0u64).
+
+// Stored-block emission from BlockOut.flush_block lines 578–610,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include deflate-huffman-level12.mec and deflate-path-writer.mec first.
+// See deflate-huffman-LICENSES.md for source attribution and licenses.
+block-store-at(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, in-next<u64>, in-end<u64>, final<u64>) => (out<path-written>) :=
+  remaining := in-end - in-next
+  length := huff-minimum(remaining, 65535u64)
+  block-final := ((remaining <= 65535u64)? | true => final | false => 0u64)
+  first := huff-byte(bits/or(bits/shift-left-wrap(block-final, bits/and(bitcount, 255u64)), bitbuf))
+  header0 := sequence/append(bytes, first)
+  header1 := ((bitcount > 5u64)? | true => sequence/append(header0, 0u8) | false => header0)
+  header2 := sequence/append-le-bytes(header1, length, 2u8)
+  header3 := sequence/append-le-bytes(header2, bits/not(length), 2u8)
+  payload := sequence/append-sublist(header3, input, in-next, length)
+  next := in-next + length
+  out := ((next == in-end)? | true => {bytes: payload, bitbuf: 0u64, bitcount: 0u64} | false => block-store-at(payload, 0u64, 0u64, input, next, in-end, final)).
+block-write-stored(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, begin<u64>, length<u64>, final<u64>) => (out<path-written>) :=
+  out := block-store-at(bytes, bitbuf, bitcount, input, begin, begin + length, final).
+
+// BlockOut.flush_block at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include the qualified Huffman/header/cost/table/path/sequence/stored writers.
+// See deflate-huffman-LICENSES.md for attribution and licenses.
+block-pad-packed(packed<[u64]>, n<u64>) => (out<[u64]>) :=
+  length := sequence/length(packed)
+  out := ((length < n)? | true => [packed [0u64 | i <- 0u64..=n, i < n - length]] | false => packed).
+block-write-packed(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, begin<u64>, seqs<[block-sequence]>, litlen-words<[u32]>, litlen-lens<[u8]>, full-words<[u32]>, full-lens<[u8]>, offset-words<[u32]>, offset-lens<[u8]>, offset-extra<[u8]>, offset-bases<[u32]>) => (out<path-written>) :=
+  literals := block-pad-packed(block-pack-codes(litlen-words, litlen-lens), 288u64)
+  lengths := block-pad-packed(block-pack-codes(full-words, full-lens), 512u64)
+  offsets := block-pad-packed(block-pack-offsets(offset-words, offset-lens, offset-extra, offset-bases), 32u64)
+  packed := [[literals lengths] offsets]
+  out := block-write-sequences(bytes, bitbuf, bitcount, input, begin, seqs, packed).
+<block-flushed> := <{bytes<[u8]> bitbuf<u64> bitcount<u64> seqs<[block-sequence]> items<[u64]> litlen-lens<[u8]> litlen-codewords<[u32]> offset-lens<[u8]> offset-codewords<[u32]> static-litlen-lens<[u8]> static-litlen-codewords<[u32]> static-offset-lens<[u8]> static-offset-codewords<[u32]>}>
+block-write-compressed(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, begin<u64>, length<u64>, seqs<[block-sequence]>, items<[u64]>, use-items<u64>, final<u64>, use-static<bool>, precode<block-precode>, litlen-lens<[u8]>, litlen-codewords<[u32]>, offset-lens<[u8]>, offset-codewords<[u32]>, static-litlen-lens<[u8]>, static-litlen-codewords<[u32]>, static-offset-lens<[u8]>, static-offset-codewords<[u32]>, permutation<[u8]>, extra-precode<[u8]>, length-slots<[u8]>, length-bases<[u32]>, length-extra<[u8]>, offset-slots<[u8]>, offset-bases<[u32]>, offset-extra<[u8]>) => (out<path-written>) :=
+  header := (use-static? | true => block-write-static-header(bytes, bitbuf, bitcount, final) | false => block-write-dynamic-header(bytes, bitbuf, bitcount, final, precode, permutation, extra-precode))
+  w-litlen-lens := (use-static? | true => static-litlen-lens | false => litlen-lens)
+  w-litlen-words := (use-static? | true => static-litlen-codewords | false => litlen-codewords)
+  w-offset-lens := (use-static? | true => static-offset-lens | false => offset-lens)
+  w-offset-words := (use-static? | true => static-offset-codewords | false => offset-codewords)
+  full := block-compute-full-length-codewords(w-litlen-lens, w-litlen-words, length-slots, length-bases, length-extra)
+  top := bits/wrapping-sub(sequence/length(items), 1u64)
+  at := ((use-items == 1u64)? | true => 0u64 | false => length)
+  path := path-write-at(header.bytes, header.bitbuf, header.bitcount, items, top, at, length, w-litlen-words, w-litlen-lens, full.codewords, full.lens, w-offset-words, w-offset-lens, offset-slots, offset-bases, offset-extra)
+  payload := ((use-items == 0u64)? | true => block-write-packed(path.bytes, path.bitbuf, path.bitcount, input, begin, seqs, w-litlen-words, w-litlen-lens, full.codewords, full.lens, w-offset-words, w-offset-lens, offset-extra, offset-bases) | false => path)
+  word<u64> := huff-get32(w-litlen-words, 256u64)
+  buf := bits/or(payload.bitbuf, bits/shift-left-wrap(word, bits/and(payload.bitcount, 255u64)))
+  width<u64> := huff-get8(w-litlen-lens, 256u64)
+  out := path-write-flush(payload.bytes, buf, payload.bitcount + width).
+block-flush(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, begin<u64>, length<u64>, seqs<[block-sequence]>, freqs-litlen<[u32]>, freqs-offset<[u32]>, litlen-lens<[u8]>, litlen-codewords<[u32]>, offset-lens<[u8]>, offset-codewords<[u32]>, static-litlen-lens<[u8]>, static-litlen-codewords<[u32]>, static-offset-lens<[u8]>, static-offset-codewords<[u32]>, items<[u64]>, use-items<u64>, final<u64>, permutation<[u8]>, reversed<[u8]>, extra-precode<[u8]>, length-slots<[u8]>, length-bases<[u32]>, length-extra<[u8]>, offset-slots<[u8]>, offset-bases<[u32]>, offset-extra<[u8]>) => (out<block-flushed>) :=
+  precode := block-precompute-huffman-header(litlen-lens, offset-lens, permutation, reversed)
+  costs := block-compute-costs(precode, freqs-litlen, freqs-offset, litlen-lens, offset-lens, static-litlen-lens, extra-precode, length-extra, offset-extra, length, bitcount)
+  in-end := begin + length
+  written := ((costs.kind == 0u64)? | true => block-store-at(bytes, bitbuf, bitcount, input, begin, in-end, final) | false => block-write-compressed(bytes, bitbuf, bitcount, input, begin, length, seqs, items, use-items, final, costs.kind == 1u64, precode, litlen-lens, litlen-codewords, offset-lens, offset-codewords, static-litlen-lens, static-litlen-codewords, static-offset-lens, static-offset-codewords, permutation, extra-precode, length-slots, length-bases, length-extra, offset-slots, offset-bases, offset-extra))
+  out := {bytes: written.bytes, bitbuf: written.bitbuf, bitcount: written.bitcount, seqs: seqs, items: items, litlen-lens: litlen-lens, litlen-codewords: litlen-codewords, offset-lens: offset-lens, offset-codewords: offset-codewords, static-litlen-lens: static-litlen-lens, static-litlen-codewords: static-litlen-codewords, static-offset-lens: static-offset-lens, static-offset-codewords: static-offset-codewords}.
+
+// Final level-12 parse selection from CompressOptimal.roc:1107-1201,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include literal choice, cost models, optimal path, tally and optimization.
+// See deflate-huffman-LICENSES.md for attribution and licenses.
+<optimal-selected-block> := <{nodes<[u64]> costs<optimal-costs> tallied<optimal-tally> seqs<[block-sequence]> use-items<u64> used-only-literals<u64>}>
+
+optimal-select-literals(input<[u8]>, begin<u64>, length<u64>, nodes<[u64]>, costs<optimal-costs>, seqs<[block-sequence]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, reversed<[u8]>) => (out<optimal-selected-block>) :=
+  relits := optimal-choose-all-literals(input, begin, length, reversed)
+  next-costs := optimal-set-costs-from-codes(relits.litlen-lens, relits.offset-lens, costs.literal, costs.length, costs.offset-slot, length-slots, extra-lengths, extra-offsets)
+  ~next-seqs := seqs
+  next-seqs[1u64] = {litrunlen-and-length: bt-narrow32(length), offset: 0u16, offset-slot: 0u16}
+  tallied := {freqs-litlen: relits.freqs-litlen, freqs-offset: relits.freqs-offset, litlen-lens: relits.litlen-lens, litlen-codewords: relits.litlen-codewords, offset-lens: relits.offset-lens, offset-codewords: relits.offset-codewords}
+  out := {nodes: nodes, costs: next-costs, tallied: tallied, seqs: next-seqs, use-items: 0u64, used-only-literals: 1u64}.
+
+optimal-select-static(length<u64>, cache<[u32]>, cache-end<u64>, nodes<[u64]>, costs<optimal-costs>, seqs<[block-sequence]>, static-litlen-lens<[u8]>, static-offset-lens<[u8]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>, reversed<[u8]>) => (out<optimal-selected-block>) :=
+  next-costs := optimal-set-costs-from-codes(static-litlen-lens, static-offset-lens, costs.literal, costs.length, costs.offset-slot, length-slots, extra-lengths, extra-offsets)
+  path := optimal-find-min-cost-path(length, cache, cache-end, nodes, next-costs.literal, next-costs.length, next-costs.offset-slot, offset-slots)
+  tallied := optimal-tally-and-build-codes(path.nodes, length, length-slots, offset-slots, reversed)
+  out := {nodes: path.nodes, costs: next-costs, tallied: tallied, seqs: seqs, use-items: 1u64, used-only-literals: 0u64}.
+
+optimal-select-saved(length<u64>, cache<[u32]>, cache-end<u64>, nodes<[u64]>, saved<optimal-costs>, seqs<[block-sequence]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>, reversed<[u8]>) => (out<optimal-selected-block>) :=
+  path := optimal-find-min-cost-path(length, cache, cache-end, nodes, saved.literal, saved.length, saved.offset-slot, offset-slots)
+  tallied := optimal-tally-and-build-codes(path.nodes, length, length-slots, offset-slots, reversed)
+  next-costs := optimal-set-costs-from-codes(tallied.litlen-lens, tallied.offset-lens, saved.literal, saved.length, saved.offset-slot, length-slots, extra-lengths, extra-offsets)
+  out := {nodes: path.nodes, costs: next-costs, tallied: tallied, seqs: seqs, use-items: 1u64, used-only-literals: 0u64}.
+
+optimal-select-block(input<[u8]>, begin<u64>, length<u64>, cache<[u32]>, cache-end<u64>, optimized<optimal-optimization>, seqs<[block-sequence]>, only-literals-cost<u64>, static-cost<u64>, static-litlen-lens<[u8]>, static-offset-lens<[u8]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>, reversed<[u8]>) => (out<optimal-selected-block>) :=
+  alternative := bt-minimum(only-literals-cost, static-cost) < optimized.best-true-cost
+  out := (alternative?
+    | true => ((only-literals-cost < static-cost)?
+      | true => optimal-select-literals(input, begin, length, optimized.nodes, optimized.costs, seqs, length-slots, extra-lengths, extra-offsets, reversed)
+      | false => optimal-select-static(length, cache, cache-end, optimized.nodes, optimized.costs, seqs, static-litlen-lens, static-offset-lens, length-slots, extra-lengths, extra-offsets, offset-slots, reversed))
+    | false => ((optimized.actual-cost >= optimized.best-true-cost + 1u64)?
+      | true => optimal-select-saved(length, cache, cache-end, optimized.nodes, optimized.saved, seqs, length-slots, extra-lengths, extra-offsets, offset-slots, reversed)
+      | false => {nodes: optimized.nodes, costs: optimized.costs, tallied: optimized.tallied, seqs: seqs, use-items: 1u64, used-only-literals: 0u64})).
+
+// Level-12 candidate setup and model carryover from CompressOptimal.roc:970-1106
+// and 1319-1349, pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include block heuristics, cost/path/tally/header/optimization and selection.
+// See deflate-huffman-LICENSES.md for attribution and licenses.
+<optimal-static-pass> := <{nodes<[u64]> cost<u64>}>
+<optimal-planned-block> := <{selected<optimal-selected-block> saved<optimal-costs>}>
+
+optimal-static-candidate(length<u64>, cache<[u32]>, cache-end<u64>, nodes<[u64]>, static-litlen-lens<[u8]>, static-offset-lens<[u8]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>) => (out<optimal-static-pass>) :=
+  literal0 := [0u32 | i <- 0u64..=256u64, i < 256u64]
+  length0 := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  offset0 := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  costs := optimal-set-costs-from-codes(static-litlen-lens, static-offset-lens, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+  path := optimal-find-min-cost-path(length, cache, cache-end, nodes, costs.literal, costs.length, costs.offset-slot, offset-slots)
+  count := sequence/length(path.nodes)
+  last := ((count != 0u64)? | true => path.nodes[count] | false => 0u64)
+  cost := bits/and(last, 4294967295u64) / 16u64 + 7u64
+  out := {nodes: path.nodes, cost: cost}.
+
+optimal-adjust-block-costs(literal-cost<u64>, length-cost<u64>, previous-observations<[u32]>, previous-number<u64>, observations<[u32]>, number<u64>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>) => (out<optimal-costs>) :=
+  delta := optimal-observation-delta(observations, previous-observations, number, previous-number, 0u64, 0u64)
+  cutoff := previous-number * number * 200u64 / 512u64
+  out := ((delta > 3u64 * cutoff)?
+    | true => optimal-set-default-costs(literal-cost, length-cost, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+    | false => ((4u64 * delta > 9u64 * cutoff)?
+      | true => optimal-adjust-costs-impl(literal-cost, length-cost, 3u64, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+      | false => ((2u64 * delta > 3u64 * cutoff)?
+        | true => optimal-adjust-costs-impl(literal-cost, length-cost, 2u64, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+        | false => ((2u64 * delta > cutoff)?
+          | true => optimal-adjust-costs-impl(literal-cost, length-cost, 1u64, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+          | false => optimal-adjust-costs-impl(literal-cost, length-cost, 0u64, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets))))).
+
+optimal-plan-block(input<[u8]>, begin<u64>, length<u64>, first<u64>, frequencies<[u32]>, cache<[u32]>, cache-end<u64>, nodes<[u64]>, literal0<[u32]>, length0<[u32]>, offset0<[u32]>, saved-literal<[u32]>, saved-length<[u32]>, saved-offset<[u32]>, previous-observations<[u32]>, previous-number<u64>, observations<[u32]>, number<u64>, seqs<[block-sequence]>, static-litlen-lens<[u8]>, static-offset-lens<[u8]>, length-slots<[u8]>, extra-lengths<[u8]>, extra-offsets<[u8]>, offset-slots<[u8]>, table0<[u8]>, table1<[u8]>, table2<[u8]>, symbol-costs<[u8]>, permutation<[u8]>, extra-precode<[u8]>, reversed<[u8]>) => (out<optimal-planned-block>) :=
+  literals := optimal-choose-all-literals(input, begin, length, reversed)
+  only-literals-cost := optimal-compute-true-cost(literals.litlen-lens, literals.offset-lens, literals.freqs-litlen, literals.freqs-offset, permutation, extra-precode, extra-lengths, extra-offsets, reversed)
+  static := ((length <= 10000u64)? | true => optimal-static-candidate(length, cache, cache-end, nodes, static-litlen-lens, static-offset-lens, length-slots, extra-lengths, extra-offsets, offset-slots) | false => {nodes: nodes, cost: 18446744073709551615u64})
+  defaults := optimal-choose-default-costs(input, begin, length, frequencies, 300u64, table0, table1, table2, symbol-costs)
+  initial := ((first == 1u64)?
+    | true => optimal-set-default-costs(defaults.lit-cost, defaults.len-sym-cost, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets)
+    | false => optimal-adjust-block-costs(defaults.lit-cost, defaults.len-sym-cost, previous-observations, previous-number, observations, number, literal0, length0, offset0, length-slots, extra-lengths, extra-offsets))
+  initial-freqs-litlen := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  initial-freqs-offset := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  initial-litlen-lens := [0u8 | i <- 0u64..=288u64, i < 288u64]
+  initial-litlen-codewords := [0u32 | i <- 0u64..=288u64, i < 288u64]
+  initial-offset-lens := [0u8 | i <- 0u64..=32u64, i < 32u64]
+  initial-offset-codewords := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  optimized := optimal-optimize-loop(length, cache, cache-end, static.nodes, initial.literal, initial.length, initial.offset-slot, saved-literal, saved-length, saved-offset, 18446744073709551615u64, 10u64, length-slots, extra-lengths, extra-offsets, offset-slots, permutation, extra-precode, reversed)
+  selected := optimal-select-block(input, begin, length, cache, cache-end, optimized, seqs, only-literals-cost, static.cost, static-litlen-lens, static-offset-lens, length-slots, extra-lengths, extra-offsets, offset-slots, reversed)
+  out := {selected: selected, saved: optimized.saved}.
+
+// Immutable tables from pinned DeflateTables and HuffmanEncode.
+// Package 671077457ff7ef3a3d44caf715a3fc595addf379; see deflate-huffman-LICENSES.md.
+// Typed literal matrices become canonical artifact constants.
+deflate-table-length-slots := [0u8 0u8 0u8 0u8 1u8 2u8 3u8 4u8 5u8 6u8 7u8 8u8 8u8 9u8 9u8 10u8 10u8 11u8 11u8 12u8 12u8 12u8 12u8 13u8 13u8 13u8 13u8 14u8 14u8 14u8 14u8 15u8 15u8 15u8 15u8 16u8 16u8 16u8 16u8 16u8 16u8 16u8 16u8 17u8 17u8 17u8 17u8 17u8 17u8 17u8 17u8 18u8 18u8 18u8 18u8 18u8 18u8 18u8 18u8 19u8 19u8 19u8 19u8 19u8 19u8 19u8 19u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 20u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 21u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 22u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 23u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 24u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 25u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 26u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 27u8 28u8]
+deflate-table-length-extra := [0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 1u8 1u8 1u8 1u8 2u8 2u8 2u8 2u8 3u8 3u8 3u8 3u8 4u8 4u8 4u8 4u8 5u8 5u8 5u8 5u8 0u8]
+deflate-table-offset-extra := [0u8 0u8 0u8 0u8 1u8 1u8 2u8 2u8 3u8 3u8 4u8 4u8 5u8 5u8 6u8 6u8 7u8 7u8 8u8 8u8 9u8 9u8 10u8 10u8 11u8 11u8 12u8 12u8 13u8 13u8]
+deflate-table-offset-slots := [0u8 1u8 2u8 3u8 4u8 4u8 5u8 5u8 6u8 6u8 6u8 6u8 7u8 7u8 7u8 7u8 8u8 8u8 8u8 8u8 8u8 8u8 8u8 8u8 9u8 9u8 9u8 9u8 9u8 9u8 9u8 9u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 10u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 11u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 12u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 13u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 14u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8 15u8]
+deflate-table-default0 := [6u8 6u8 22u8 32u8 38u8 43u8 48u8 51u8 54u8 57u8 59u8 61u8 64u8 65u8 67u8 69u8 70u8 72u8 73u8 74u8 75u8 76u8 77u8 79u8 80u8 80u8 81u8 82u8 83u8 84u8 85u8 85u8 86u8 87u8 88u8 88u8 89u8 89u8 90u8 91u8 91u8 92u8 92u8 93u8 93u8 94u8 95u8 95u8 96u8 96u8 96u8 97u8 97u8 98u8 98u8 99u8 99u8 99u8 100u8 100u8 101u8 101u8 101u8 102u8 102u8 102u8 103u8 103u8 104u8 104u8 104u8 105u8 105u8 105u8 105u8 106u8 106u8 106u8 107u8 107u8 107u8 108u8 108u8 108u8 108u8 109u8 109u8 109u8 109u8 110u8 110u8 110u8 111u8 111u8 111u8 111u8 112u8 112u8 112u8 112u8 112u8 113u8 113u8 113u8 113u8 114u8 114u8 114u8 114u8 114u8 115u8 115u8 115u8 115u8 115u8 116u8 116u8 116u8 116u8 116u8 117u8 117u8 117u8 117u8 117u8 118u8 118u8 118u8 118u8 118u8 118u8 119u8 119u8 119u8 119u8 119u8 120u8 120u8 120u8 120u8 120u8 120u8 121u8 121u8 121u8 121u8 121u8 121u8 121u8 122u8 122u8 122u8 122u8 122u8 122u8 123u8 123u8 123u8 123u8 123u8 123u8 123u8 124u8 124u8 124u8 124u8 124u8 124u8 124u8 125u8 125u8 125u8 125u8 125u8 125u8 125u8 125u8 126u8 126u8 126u8 126u8 126u8 126u8 126u8 127u8 127u8 127u8 127u8 127u8 127u8 127u8 127u8 128u8 128u8 128u8 128u8 128u8 128u8 128u8 128u8 128u8 129u8 129u8 129u8 129u8 129u8 129u8 129u8 129u8 129u8 130u8 130u8 130u8 130u8 130u8 130u8 130u8 130u8 130u8 131u8 131u8 131u8 131u8 131u8 131u8 131u8 131u8 131u8 131u8 132u8 132u8 132u8 132u8 132u8 132u8 132u8 132u8 132u8 132u8 133u8 133u8 133u8 133u8 133u8 133u8 133u8 133u8 133u8 133u8 134u8 134u8 134u8 134u8 134u8 134u8 134u8 134u8]
+deflate-table-default1 := [16u8 16u8 32u8 41u8 48u8 53u8 57u8 60u8 64u8 66u8 69u8 71u8 73u8 75u8 76u8 78u8 80u8 81u8 82u8 83u8 85u8 86u8 87u8 88u8 89u8 90u8 91u8 92u8 92u8 93u8 94u8 95u8 96u8 96u8 97u8 98u8 98u8 99u8 99u8 100u8 101u8 101u8 102u8 102u8 103u8 103u8 104u8 104u8 105u8 105u8 106u8 106u8 107u8 107u8 108u8 108u8 108u8 109u8 109u8 110u8 110u8 110u8 111u8 111u8 112u8 112u8 112u8 113u8 113u8 113u8 114u8 114u8 114u8 115u8 115u8 115u8 115u8 116u8 116u8 116u8 117u8 117u8 117u8 118u8 118u8 118u8 118u8 119u8 119u8 119u8 119u8 120u8 120u8 120u8 120u8 121u8 121u8 121u8 121u8 122u8 122u8 122u8 122u8 122u8 123u8 123u8 123u8 123u8 124u8 124u8 124u8 124u8 124u8 125u8 125u8 125u8 125u8 125u8 126u8 126u8 126u8 126u8 126u8 127u8 127u8 127u8 127u8 127u8 128u8 128u8 128u8 128u8 128u8 128u8 129u8 129u8 129u8 129u8 129u8 129u8 130u8 130u8 130u8 130u8 130u8 130u8 131u8 131u8 131u8 131u8 131u8 131u8 131u8 132u8 132u8 132u8 132u8 132u8 132u8 133u8 133u8 133u8 133u8 133u8 133u8 133u8 134u8 134u8 134u8 134u8 134u8 134u8 134u8 134u8 135u8 135u8 135u8 135u8 135u8 135u8 135u8 135u8 136u8 136u8 136u8 136u8 136u8 136u8 136u8 136u8 137u8 137u8 137u8 137u8 137u8 137u8 137u8 137u8 138u8 138u8 138u8 138u8 138u8 138u8 138u8 138u8 138u8 139u8 139u8 139u8 139u8 139u8 139u8 139u8 139u8 139u8 140u8 140u8 140u8 140u8 140u8 140u8 140u8 140u8 140u8 141u8 141u8 141u8 141u8 141u8 141u8 141u8 141u8 141u8 141u8 142u8 142u8 142u8 142u8 142u8 142u8 142u8 142u8 142u8 142u8 142u8 143u8 143u8 143u8 143u8 143u8 143u8 143u8 143u8 143u8 143u8 144u8]
+deflate-table-default2 := [32u8 32u8 48u8 57u8 64u8 69u8 73u8 76u8 80u8 82u8 85u8 87u8 89u8 91u8 92u8 94u8 96u8 97u8 98u8 99u8 101u8 102u8 103u8 104u8 105u8 106u8 107u8 108u8 108u8 109u8 110u8 111u8 112u8 112u8 113u8 114u8 114u8 115u8 115u8 116u8 117u8 117u8 118u8 118u8 119u8 119u8 120u8 120u8 121u8 121u8 122u8 122u8 123u8 123u8 124u8 124u8 124u8 125u8 125u8 126u8 126u8 126u8 127u8 127u8 128u8 128u8 128u8 129u8 129u8 129u8 130u8 130u8 130u8 131u8 131u8 131u8 131u8 132u8 132u8 132u8 133u8 133u8 133u8 134u8 134u8 134u8 134u8 135u8 135u8 135u8 135u8 136u8 136u8 136u8 136u8 137u8 137u8 137u8 137u8 138u8 138u8 138u8 138u8 138u8 139u8 139u8 139u8 139u8 140u8 140u8 140u8 140u8 140u8 141u8 141u8 141u8 141u8 141u8 142u8 142u8 142u8 142u8 142u8 143u8 143u8 143u8 143u8 143u8 144u8 144u8 144u8 144u8 144u8 144u8 145u8 145u8 145u8 145u8 145u8 145u8 146u8 146u8 146u8 146u8 146u8 146u8 147u8 147u8 147u8 147u8 147u8 147u8 147u8 148u8 148u8 148u8 148u8 148u8 148u8 149u8 149u8 149u8 149u8 149u8 149u8 149u8 150u8 150u8 150u8 150u8 150u8 150u8 150u8 150u8 151u8 151u8 151u8 151u8 151u8 151u8 151u8 151u8 152u8 152u8 152u8 152u8 152u8 152u8 152u8 152u8 153u8 153u8 153u8 153u8 153u8 153u8 153u8 153u8 154u8 154u8 154u8 154u8 154u8 154u8 154u8 154u8 154u8 155u8 155u8 155u8 155u8 155u8 155u8 155u8 155u8 155u8 156u8 156u8 156u8 156u8 156u8 156u8 156u8 156u8 156u8 157u8 157u8 157u8 157u8 157u8 157u8 157u8 157u8 157u8 157u8 158u8 158u8 158u8 158u8 158u8 158u8 158u8 158u8 158u8 158u8 158u8 159u8 159u8 159u8 159u8 159u8 159u8 159u8 159u8 159u8 159u8 160u8]
+deflate-table-symbol-costs := [109u8 93u8 84u8]
+deflate-table-permutation := [16u8 17u8 18u8 0u8 8u8 7u8 9u8 6u8 10u8 5u8 11u8 4u8 12u8 3u8 13u8 2u8 14u8 1u8 15u8]
+deflate-table-precode-extra := [0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 0u8 2u8 3u8 7u8]
+deflate-table-length-bases := [3u32 4u32 5u32 6u32 7u32 8u32 9u32 10u32 11u32 13u32 15u32 17u32 19u32 23u32 27u32 31u32 35u32 43u32 51u32 59u32 67u32 83u32 99u32 115u32 131u32 163u32 195u32 227u32 258u32]
+deflate-table-offset-bases := [1u32 2u32 3u32 4u32 5u32 7u32 9u32 13u32 17u32 25u32 33u32 49u32 65u32 97u32 129u32 193u32 257u32 385u32 513u32 769u32 1025u32 1537u32 2049u32 3073u32 4097u32 6145u32 8193u32 12289u32 16385u32 24577u32]
+deflate-table-reversed := [0u8 128u8 64u8 192u8 32u8 160u8 96u8 224u8 16u8 144u8 80u8 208u8 48u8 176u8 112u8 240u8 8u8 136u8 72u8 200u8 40u8 168u8 104u8 232u8 24u8 152u8 88u8 216u8 56u8 184u8 120u8 248u8 4u8 132u8 68u8 196u8 36u8 164u8 100u8 228u8 20u8 148u8 84u8 212u8 52u8 180u8 116u8 244u8 12u8 140u8 76u8 204u8 44u8 172u8 108u8 236u8 28u8 156u8 92u8 220u8 60u8 188u8 124u8 252u8 2u8 130u8 66u8 194u8 34u8 162u8 98u8 226u8 18u8 146u8 82u8 210u8 50u8 178u8 114u8 242u8 10u8 138u8 74u8 202u8 42u8 170u8 106u8 234u8 26u8 154u8 90u8 218u8 58u8 186u8 122u8 250u8 6u8 134u8 70u8 198u8 38u8 166u8 102u8 230u8 22u8 150u8 86u8 214u8 54u8 182u8 118u8 246u8 14u8 142u8 78u8 206u8 46u8 174u8 110u8 238u8 30u8 158u8 94u8 222u8 62u8 190u8 126u8 254u8 1u8 129u8 65u8 193u8 33u8 161u8 97u8 225u8 17u8 145u8 81u8 209u8 49u8 177u8 113u8 241u8 9u8 137u8 73u8 201u8 41u8 169u8 105u8 233u8 25u8 153u8 89u8 217u8 57u8 185u8 121u8 249u8 5u8 133u8 69u8 197u8 37u8 165u8 101u8 229u8 21u8 149u8 85u8 213u8 53u8 181u8 117u8 245u8 13u8 141u8 77u8 205u8 45u8 173u8 109u8 237u8 29u8 157u8 93u8 221u8 61u8 189u8 125u8 253u8 3u8 131u8 67u8 195u8 35u8 163u8 99u8 227u8 19u8 147u8 83u8 211u8 51u8 179u8 115u8 243u8 11u8 139u8 75u8 203u8 43u8 171u8 107u8 235u8 27u8 155u8 91u8 219u8 59u8 187u8 123u8 251u8 7u8 135u8 71u8 199u8 39u8 167u8 103u8 231u8 23u8 151u8 87u8 215u8 55u8 183u8 119u8 247u8 15u8 143u8 79u8 207u8 47u8 175u8 111u8 239u8 31u8 159u8 95u8 223u8 63u8 191u8 127u8 255u8]
+
+// Level-12 stream control from CompressOptimal.roc:694-1281 and Deflate.roc:81-116,
+// pinned at 671077457ff7ef3a3d44caf715a3fc595addf379.
+// Include the qualified collector, planner, selector and block writer components,
+// and the pinned immutable deflate-table-* definitions before this file.
+// Large mutable buffers remain separate function arguments.
+// See deflate-huffman-LICENSES.md for attribution and licenses.
+
+deflate-compress-bound(length<u64>) => (out<u64>) :=
+  blocks := (length + 4999u64) / 5000u64
+  nonzero := ((blocks == 0u64)? | true => 1u64 | false => blocks)
+  out := 5u64 * nonzero + length.
+
+optimal-compress-blocks(input<[u8]>, bytes<[u8]>, bitbuf<u64>, bitcount<u64>, tables<[u16]>, cache<[u32]>, nodes<[u64]>, hash3<u64>, hash4<u64>, position<u64>, begin<u64>, base<u64>, next-slide<u64>, maximum<u64>, nice<u64>, pointer<u64>, literal<[u32]>, length-costs<[u32]>, offset-costs<[u32]>, saved-literal<[u32]>, saved-length<[u32]>, saved-offset<[u32]>, frequencies<[u32]>, fresh-frequencies<[u32]>, previous-observations<[u32]>, previous-number<u64>, observations<[u32]>, fresh-observations<[u32]>, number-observations<u64>, number-fresh<u64>, seqs<[block-sequence]>, previous-only-literals<u64>, static-litlen-lens<[u8]>, static-litlen-words<[u32]>, static-offset-lens<[u8]>, static-offset-words<[u32]>) => (out<path-written>) :=
+  collected := optimal-collect-block(tables, cache, hash3, hash4, input, position, base, next-slide, maximum, nice, pointer, frequencies, fresh-frequencies, observations, fresh-observations, number-observations, number-fresh, begin, previous-only-literals)
+  block-length := collected.block-end - collected.block-begin
+  first := ((collected.block-begin == 0u64)? | true => 1u64 | false => 0u64)
+  planned := optimal-plan-block(input, collected.block-begin, block-length, first, collected.frequencies, collected.cache, collected.cache-end, nodes, literal, length-costs, offset-costs, saved-literal, saved-length, saved-offset, previous-observations, previous-number, collected.observations, collected.number-observations, seqs, static-litlen-lens, static-offset-lens, deflate-table-length-slots, deflate-table-length-extra, deflate-table-offset-extra, deflate-table-offset-slots, deflate-table-default0, deflate-table-default1, deflate-table-default2, deflate-table-symbol-costs, deflate-table-permutation, deflate-table-precode-extra, deflate-table-reversed)
+  selected := planned.selected
+  tallied := selected.tallied
+  flushed := block-flush(bytes, bitbuf, bitcount, input, collected.block-begin, block-length, selected.seqs, tallied.freqs-litlen, tallied.freqs-offset, tallied.litlen-lens, tallied.litlen-codewords, tallied.offset-lens, tallied.offset-codewords, static-litlen-lens, static-litlen-words, static-offset-lens, static-offset-words, selected.nodes, selected.use-items, collected.is-final, deflate-table-permutation, deflate-table-reversed, deflate-table-precode-extra, deflate-table-length-slots, deflate-table-length-bases, deflate-table-length-extra, deflate-table-offset-slots, deflate-table-offset-bases, deflate-table-offset-extra)
+  carried := optimal-carry-block(collected.cache, collected.cache-end, collected.rewound, collected.changed, collected.have-previous-check, collected.fresh-frequencies, collected.fresh-observations, collected.number-fresh, collected.next-position, collected.block-end)
+  next-tables := collected.tables
+  next-cache := carried.cache
+  next-nodes := flushed.items
+  next-hash3 := collected.next-hash3
+  next-hash4 := collected.next-hash4
+  next-position := collected.next-position
+  next-begin := carried.block-begin
+  next-base := collected.base
+  next-slide-at := collected.next-slide
+  next-maximum := collected.maximum
+  next-nice := collected.nice
+  next-pointer := carried.cache-ptr
+  next-literal := selected.costs.literal
+  next-length := selected.costs.length
+  next-offset := selected.costs.offset-slot
+  next-saved-literal := planned.saved.literal
+  next-saved-length := planned.saved.length
+  next-saved-offset := planned.saved.offset-slot
+  next-frequencies := carried.frequencies
+  next-fresh-frequencies := carried.fresh-frequencies
+  next-previous := collected.observations
+  next-previous-number := collected.number-observations
+  next-observations := carried.observations
+  next-fresh-observations := carried.fresh-observations
+  next-number := carried.number-observations
+  next-fresh-number := carried.number-fresh
+  next-seqs := flushed.seqs
+  next-only-literals := selected.used-only-literals
+  next-bytes := flushed.bytes
+  next-bitbuf := flushed.bitbuf
+  next-bitcount := flushed.bitcount
+  next-static-litlen-lens := flushed.static-litlen-lens
+  next-static-litlen-words := flushed.static-litlen-codewords
+  next-static-offset-lens := flushed.static-offset-lens
+  next-static-offset-words := flushed.static-offset-codewords
+  out := ((next-position == sequence/length(input))?
+    | true => {bytes: next-bytes, bitbuf: next-bitbuf, bitcount: next-bitcount}
+    | false => optimal-compress-blocks(input, next-bytes, next-bitbuf, next-bitcount, next-tables, next-cache, next-nodes, next-hash3, next-hash4, next-position, next-begin, next-base, next-slide-at, next-maximum, next-nice, next-pointer, next-literal, next-length, next-offset, next-saved-literal, next-saved-length, next-saved-offset, next-frequencies, next-fresh-frequencies, next-previous, next-previous-number, next-observations, next-fresh-observations, next-number, next-fresh-number, next-seqs, next-only-literals, next-static-litlen-lens, next-static-litlen-words, next-static-offset-lens, next-static-offset-words)).
+
+
+// A nonempty all-literal dynamic block produced by this encoder has two
+// one-bit distance lengths. Symbol 1 requires at least 18 precode lengths.
+// The header is at least 17 + 3*18 bits; at least three precode items are
+// needed for >=258 lengths, and payload needs >= n+1 bits. Thus dynamic
+// costs >=75+n bits. Fixed costs <=10+9*n, and stored costs >=35+8*n.
+// For n <=8 fixed is strictly smaller than either alternative.
+// Unique three-byte windows are a sufficient condition for no LZ match.
+// The real collector still runs and checks that its cached parse is forced.
+optimal-short-triple(input<[u8]>, at<u64>) => (out<u64>) :=
+  first := byte(input, at)
+  second := bits/shift-left-wrap(byte(input, at + 1u64), 8u64)
+  third := bits/shift-left-wrap(byte(input, at + 2u64), 16u64)
+  out := bits/or(first, bits/or(second, third)).
+optimal-short-distinct-from(input<[u8]>, word<u64>, at<u64>, end<u64>) => (out<bool>) :=
+  out := ((at < end)?
+    | true => ((optimal-short-triple(input, at) == word)?
+      | true => false
+      | false => optimal-short-distinct-from(input, word, at + 1u64, end))
+    | false => true).
+optimal-short-distinct-triples(input<[u8]>, at<u64>, end<u64>) => (out<bool>) :=
+  out := ((at < end)?
+    | true => ((optimal-short-distinct-from(input, optimal-short-triple(input, at), at + 1u64, end))?
+      | true => optimal-short-distinct-triples(input, at + 1u64, end)
+      | false => false)
+    | false => true).
+optimal-short-forced-literals(input<[u8]>) => (out<bool>) :=
+  n := sequence/length(input)
+  limit := (75u64 - 10u64 - 1u64) / (9u64 - 1u64)
+  out := ((n <= limit)?
+    | true => ((n >= 3u64)? | true => optimal-short-distinct-triples(input, 0u64, n - 2u64) | false => true)
+    | false => false).
+optimal-short-write-literals(bytes<[u8]>, bitbuf<u64>, bitcount<u64>, input<[u8]>, at<u64>, end<u64>, words<[u32]>, lens<[u8]>) => (out<path-written>) :=
+  next := ((at < end)?
+    | true => path-write-literal(bytes, bitbuf, bitcount, byte(input, at), words, lens)
+    | false => {bytes: bytes, bitbuf: bitbuf, bitcount: bitcount})
+  out := ((at < end)?
+    | true => optimal-short-write-literals(next.bytes, next.bitbuf, next.bitcount, input, at + 1u64, end, words, lens)
+    | false => next).
+optimal-short-final-block(input<[u8]>, bytes<[u8]>, tables<[u16]>, cache<[u32]>, frequencies<[u32]>, fresh-frequencies<[u32]>, observations<[u32]>, fresh-observations<[u32]>, static-lens<[u8]>, static-words<[u32]>) => (out<path-written>) :=
+  n := sequence/length(input)
+  short-input! := n <= 8u64
+  collected := optimal-collect-block(tables, cache, 0u64, 0u64, input, 0u64, 0u64, bt-minimum(n, 32768u64), 258u64, 258u64, 0u64, frequencies, fresh-frequencies, observations, fresh-observations, 0u64, 0u64, 0u64, 0u64)
+  forced-final! := (collected.cache-end == n) && (collected.is-final == 1u64)
+  header := block-write-static-header(bytes, 0u64, 0u64, 1u64)
+  payload := optimal-short-write-literals(header.bytes, header.bitbuf, header.bitcount, input, 0u64, n, static-words, static-lens)
+  out := path-write-literal(payload.bytes, payload.bitbuf, payload.bitcount, 256u64, static-words, static-lens).
+
+optimal-compress(input<[u8]>, output<[u8]>) => (out<[u8]>) :=
+  n := sequence/length(input)
+  static := block-build-static-codes(deflate-table-reversed)
+  bytes := sequence/reserve(output, deflate-compress-bound(n))
+  tables := initial-nodes(262144u64)
+  cache := [0u32 | i <- 0u64..=1500513u64, i < 1500513u64]
+  nodes := sequence/with-capacity(0u64, 305257u64)
+  literal := [0u32 | i <- 0u64..=256u64, i < 256u64]
+  length-costs := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  offset-costs := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  saved-literal := [0u32 | i <- 0u64..=256u64, i < 256u64]
+  saved-length := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  saved-offset := [0u32 | i <- 0u64..=32u64, i < 32u64]
+  frequencies := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  fresh-frequencies := [0u32 | i <- 0u64..=259u64, i < 259u64]
+  previous-observations := [0u32 | i <- 0u64..=10u64, i < 10u64]
+  fresh-observations := [0u32 | i <- 0u64..=10u64, i < 10u64]
+  observations := [0u32 | i <- 0u64..=10u64, i < 10u64]
+  seqs := [{litrunlen-and-length: 0u32, offset: 0u16, offset-slot: 0u16}]
+  stream := (optimal-short-forced-literals(input)?
+    | true => optimal-short-final-block(input, bytes, tables, cache, frequencies, fresh-frequencies, observations, fresh-observations, static.litlen-lens, static.litlen-codewords)
+    | false => optimal-compress-blocks(input, bytes, 0u64, 0u64, tables, cache, nodes, 0u64, 0u64, 0u64, 0u64, 0u64, bt-minimum(n, 32768u64), 258u64, 258u64, 0u64, literal, length-costs, offset-costs, saved-literal, saved-length, saved-offset, frequencies, fresh-frequencies, previous-observations, 0u64, observations, fresh-observations, 0u64, 0u64, seqs, 0u64, static.litlen-lens, static.litlen-codewords, static.offset-lens, static.offset-codewords))
+  out := ((stream.bitcount > 0u64)? | true => sequence/append(stream.bytes, huff-byte(stream.bitbuf)) | false => stream.bytes).
+
+deflate-store-uncompressed(input<[u8]>, output<[u8]>) => (out<[u8]>) :=
+  n := sequence/length(input)
+  bytes := sequence/reserve(output, n + 5u64 * (n / 65535u64 + 1u64))
+  stored := ((n == 0u64)?
+    | true => {bytes: sequence/append-le-bytes(sequence/append(bytes, 1u8), 4294901760u64, 4u8), bitbuf: 0u64, bitcount: 0u64}
+    | false => block-write-stored(bytes, 0u64, 0u64, input, 0u64, n, 1u64))
+  out := stored.bytes.
+
+deflate-compress-into(input<[u8]>, output<[u8]>) => (out<[u8]>) :=
+  out := ((sequence/length(input) <= 7u64)? | true => deflate-store-uncompressed(input, output) | false => optimal-compress(input, output)).
+
+buffer := sequence/with-capacity(0u8, 6633832u64)
+prefixed := sequence/append-sublist(buffer, prefix<[u8]>, 0u64, sequence/length(prefix))
+deflate-compress-into(input<[u8]>, prefixed)

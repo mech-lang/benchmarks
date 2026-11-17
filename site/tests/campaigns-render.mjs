@@ -73,5 +73,14 @@ assert.ok(element('#detail').innerHTML.includes('1.000 s'));
 
 ({element}=await mount({...bundle,campaigns:[]}));
 assert.ok(element('#campaign').innerHTML.includes('No campaigns yet'));
-assert.ok(element('#detail').innerHTML.includes('Run a campaign'));
+assert.ok(element('#detail').innerHTML.includes('does not include'));
 console.log('Campaign entry point: rendering, filters, source escaping, raw links, empty history and native selection passed.');
+
+const program={...base,case_id:'deflate',backend:'program-jit-bytecode',measurement:{boundary:'checked_native_program_call',primary_metric:'native_program_call_seconds',schedule:[[]]},summary:{native_program_call_seconds:{median:.004,samples:[.004]}},samples:[{fork:0,raw:'raw/fork-1',metrics:{native_program_call_seconds:.004}}]};
+({element}=await mount({...bundle,catalog:{...catalog,cases:[{id:'deflate',title:'Deflate',family:'applications',progress:'implemented'}]},campaigns:[{...campaign,results:[program]}]}));
+assert.equal(element('#metric').value,'native_program_call_seconds');
+assert.equal(element('#backend').value,'program-jit-bytecode');
+assert.ok(element('#detail').innerHTML.includes('4.00 ms'));
+assert.ok(element('#coverage-summary').textContent.includes('1 of 1'));
+assert.ok(element('#backend').innerHTML.includes('JVM control'));
+console.log('Complete application paths and per-contract primary metrics passed.');

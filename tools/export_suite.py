@@ -44,9 +44,16 @@ def export(output, root=ROOT):
         with EvidenceReader(path.parent) as reader:
             for name in reader.manifest['files']:
                 if name.startswith('raw/'):
+                    if name.endswith('.class'):
+                        continue  # Compiled JVM products and their exact names remain in the lossless archive.
                     target=destination/name
                     target.parent.mkdir(parents=True,exist_ok=True)
-                    target.write_bytes(reader.read(name))
+                    content=reader.read(name)
+                    if len(content)>4*1024*1024:
+                        target=target.with_name(target.name+'.gz')
+                        target.write_bytes(gzip.compress(content,mtime=0))
+                    else:
+                        target.write_bytes(content)
             if reader.manifest.get('archives'):campaign['raw_archive']='raw.tar.gz'
         campaign['evidence_path'] = 'campaign-evidence/' + path.parent.name
         for record in campaign['results']:
@@ -56,6 +63,12 @@ def export(output, root=ROOT):
                 verification['output_count']=len(outputs)
                 verification['preview_outputs']=outputs if len(outputs)<=6 else outputs[:3]+outputs[-3:]
                 del verification['outputs']
+            for field in ('before_execution','retained_outputs'):
+                values=verification.get(field)
+                if isinstance(values,list) and len(values)>6:
+                    verification[field+'_count']=len(values)
+                    verification['preview_'+field]=values[:3]+values[-3:]
+                    del verification[field]
         campaigns.append(campaign)
     bundle = {'schema': 'mech.benchmark-dashboard.v1', 'catalog': catalog,
               'campaigns': sorted(campaigns, key=lambda c: c['started_at'])}

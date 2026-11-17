@@ -1,0 +1,39 @@
+{
+  "id": "nbody",
+  "title": "N-body · full 50,000,000 steps",
+  "family": "applications",
+  "progress": "implemented",
+  "source": "suite/applications/nbody.mec",
+  "backends": [
+    "fused-native"
+  ],
+  "task": {
+    "oracle": "nbody-application",
+    "outputs": [
+      "result"
+    ],
+    "absolute_tolerance": 1e-08,
+    "relative_tolerance": 1e-08,
+    "dtype": "ordered f64 state, 5 bodies",
+    "logical_input_elements": 50000000,
+    "arithmetic": "IEEE-754 f64; SIMD lane packing; no FMA contraction, reciprocal approximation or algebraic reassociation requested",
+    "ordering": "Initial then final energy, nine decimal places",
+    "ownership": "Canonical artifact activation followed by the public fused numerical CLI; complete process includes JIT preparation and shutdown; this lane omits per-turn resident admission"
+  },
+  "measurement": {
+    "boundary": "fresh_process_complete",
+    "primary_metric": "native_process_seconds",
+    "schedule": [
+      []
+    ],
+    "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+    "reset": "Fresh process for every independent fork",
+    "warmup": "None outside process; runtime JIT preparation included where applicable",
+    "destruction": "Complete shutdown and owned output release included",
+    "cache": "OS caches uncontrolled; independent process forks",
+    "threads": 1,
+    "retain_snapshots": false,
+    "abort_before_accept": false
+  },
+  "compiler_tests": []
+}

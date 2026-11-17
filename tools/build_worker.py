@@ -39,9 +39,13 @@ def build(args):
     adapter = args.adapter.resolve()
     (output / 'src').mkdir(exist_ok=True)
     shutil.copyfile(adapter, output / 'src/main.rs')
+    for name in ('application.rs', 'numerical_application.rs', 'program.rs'):
+        shutil.copyfile(ROOT / 'suite/workers' / name, output / 'src' / name)
     # JSON string escaping is also valid for these TOML basic strings.
     escaped = json.dumps(str(mech))[1:-1]
     manifest = (ROOT / 'suite/workers/Cargo.toml.in').read_text().replace('@MECH@', escaped)
+    if args.applications:
+        manifest = manifest.replace('features = ["canonical-native-program"]', 'features = []')
     (output / 'Cargo.toml').write_text(manifest)
     if args.lockfile:
         if args.lockfile.resolve() != (output/'Cargo.lock').resolve():
@@ -52,7 +56,9 @@ def build(args):
     build_command = ['cargo', 'build', '--release', '--manifest-path', str(output / 'Cargo.toml')]
     if not args.online:
         build_command.append('--offline')
-    if args.native:
+    if args.applications:
+        build_command.extend(['--features', 'applications'])
+    elif args.native:
         build_command.extend(['--features', 'native'])
     if args.lockfile:
         build_command.append('--locked')
@@ -71,11 +77,13 @@ def build(args):
         'adapter_sha256': sha(output / 'src/main.rs'), 'manifest_sha256': sha(output / 'Cargo.toml'),
         'lock_sha256': sha(output / 'Cargo.lock'),
         'rustc': command('rustc', '-Vv'), 'cargo': command('cargo', '-V'),
-        'build_command': build_command, 'feature_profile': 'standard_compiler f64/dynamic-shape + resident-artifact',
-        'native_generation': args.native,
+        'build_command': build_command, 'feature_profile': 'standard_compiler + u8/u64 + integer_bits + resident-artifact',
+        'native_generation': args.native and not args.applications,
+        'applications': {name: {'binary': str(output/'target/release'/name), 'binary_sha256':sha(output/'target/release'/name)} for name in ('mech-application','mech-numerical-application')} if args.applications else {},
+        'auxiliary_adapter_sha256': {name: sha(output/'src'/name) for name in ('application.rs','numerical_application.rs','program.rs')},
         'worker_build_seconds': build_seconds,
         'build_environment': {key: environment[key] for key in
-            ('RUSTC_BOOTSTRAP', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS') if key in environment},
+            ('RUSTC_BOOTSTRAP', 'CARGO_TARGET_DIR', 'RUSTFLAGS', 'CARGO_ENCODED_RUSTFLAGS', 'C_INCLUDE_PATH', 'LIBRARY_PATH') if key in environment},
     }
     (output / 'worker.json').write_text(json.dumps(provenance, indent=2) + '\n')
     print(f'Worker ready: {output / "worker.json"}', flush=True)
@@ -90,6 +98,7 @@ def main():
     parser.add_argument('--lockfile', type=Path, help='reproduce a retained worker dependency lock; build with --locked')
     parser.add_argument('--allow-dirty', action='store_true')
     parser.add_argument('--online', action='store_true', help='allow Cargo dependency downloads')
+    parser.add_argument('--applications', action='store_true', help='include public full-application source-native and numeric runners')
     parser.add_argument('--native', action='store_true', help='include the canonical native object/application generator')
     args = parser.parse_args()
     try:
