@@ -276,6 +276,31 @@ class RetainedMeasurements(unittest.TestCase):
 
 
 class ExportPreservation(unittest.TestCase):
+    def test_large_download_is_compressed_without_changing_any_bytes(self):
+        import gzip
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); campaign=root/'results/campaigns/compressed'
+            campaign.mkdir(parents=True)
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'compressed','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':digest({}),'results':[]})
+            raw=campaign/'raw/verify/supervised.json';save(raw,{'outputs':['complete trajectory']*10000})
+            original=raw.read_bytes();seal_evidence(campaign);archive_evidence(campaign)
+            archive=campaign/'raw.tar.gz'
+            pin={'sha256':file_digest(archive),'bytes':archive.stat().st_size}
+            save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':pin}})
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                bundle=export_suite.export(root/'public',root)
+            record=bundle['campaigns'][0]
+            self.assertEqual(record['compressed_evidence']['raw/verify/supervised.json'],'raw/verify/supervised.json.gz')
+            self.assertEqual(gzip.decompress((root/'public/campaign-evidence/compressed/raw/verify/supervised.json.gz').read_bytes()),original)
+            self.assertFalse((root/'public/campaign-evidence/compressed/raw.tar.gz').exists())
+            self.assertEqual(bundle['external_evidence']['campaign-evidence/compressed/raw.tar.gz']['sha256'],pin['sha256'])
+            self.assertIn('/'+('a'*40)+'/results/campaigns/compressed/raw.tar.gz',record['raw_archive_url'])
+            self.assertEqual(file_digest(archive),pin['sha256'])
+            save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':{**pin,'sha256':'0'*64}}})
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                with self.assertRaisesRegex(ValueError,'differs from retained bytes'):export_suite.export(root/'public',root)
+
     def test_independent_c_oracle_source_is_downloadable(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory); campaign=root/'results/campaigns/oracle-source'

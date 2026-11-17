@@ -87,12 +87,30 @@ def check_local_assets(directory,manifest):
     return files
 
 
-def check_live_asset(url,expected):
+def external_assets(manifest):
+    result=manifest.get('external_files',{})
+    require(type(result) is dict,'Invalid external evidence manifest')
+    for name,pin in result.items():
+        match=re.fullmatch(r'campaign-evidence/([A-Za-z0-9_.-]+)/raw\.tar\.gz',name)
+        require(match is not None and match[1] not in ('.','..') and name not in manifest['files'] and type(pin) is dict,'Invalid external evidence path')
+        require(type(pin.get('sha256')) is str and re.fullmatch('[0-9a-f]{64}',pin['sha256']) and
+                type(pin.get('bytes')) is int and 0<pin['bytes']<=1024**3,'Invalid external evidence pin')
+        require(type(pin.get('url')) is str and re.fullmatch(
+            r'https://raw\.githubusercontent\.com/mech-lang/benchmarks/[0-9a-f]{40}/results/campaigns/'+re.escape(match[1])+r'/raw\.tar\.gz',pin['url']),
+            'External evidence must use an immutable repository commit')
+    return result
+
+
+def check_live_asset(url,expected,final_url=None):
     measured=hashlib.sha256();size=0
     try: response=request(url)
     except Exception as error: raise RuntimeError('Live asset request failed: '+url) from error
     with response:
         require(response.status==200,'Unexpected live asset status: '+url)
+        if final_url:
+            actual=urllib.parse.urlsplit(response.geturl());wanted=urllib.parse.urlsplit(final_url)
+            require((actual.scheme,actual.netloc,actual.path)==(wanted.scheme,wanted.netloc,wanted.path),
+                    'Evidence redirect differs from the pinned repository object')
         for chunk in iter(lambda:response.read(1024*1024),b''):
             size+=len(chunk)
             require(size<=expected['bytes'],'Live asset exceeds expected size: '+url)
@@ -136,6 +154,8 @@ def main():
             len(manifest['files'])==publication['asset_count'] and manifest['files'].get('data.json')==publication['dataset_sha256'],
             'Publication and local build manifest disagree')
     local=check_local_assets(directory,manifest)
+    external=external_assets(manifest)
+    require(publication.get('external_asset_count',0)==len(external),'External evidence inventory differs from publication')
     commit=publication['website_commit'];nonce=str(time.time_ns())
     listing=json.loads(fetch(API+'pipelines?'+urllib.parse.urlencode(
         dict(sha=commit,ref='main',per_page=100,probe=nonce))))
@@ -170,6 +190,15 @@ def main():
     require(len(files)==publication['asset_count'],'Live asset inventory incomplete')
     mismatches={name:dict(expected=local[name],observed=row) for name,row in files.items() if row!=local[name]}
     if mismatches:pending(observation,'live-assets',mismatches=mismatches)
+    def verify_external(item):
+        name,pin=item
+        expected={key:pin[key] for key in ('sha256','bytes')}
+        observed=check_live_asset(BASE+urllib.parse.quote(name,safe='/')+'?verify='+nonce,expected,pin['url'])
+        require(observed==expected,'External evidence bytes differ: '+name)
+        return name,{**observed,'url':pin['url']}
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        external_files=dict(pool.map(verify_external,external.items()))
+    require(len(external_files)==len(external),'External evidence verification incomplete')
     entry_points={}
     for asset,urls in {'campaigns.html':('https://mech-lang.org/metrics','https://mech-lang.org/metrics/'),
                        'project.html':('https://mech-lang.org/metrics/project','https://mech-lang.org/metrics/project/')}.items():
@@ -204,6 +233,7 @@ def main():
         build_version=manifest['version'],build_manifest_sha256=publication['build_manifest_sha256'],
         dataset_sha256=publication['dataset_sha256'],publication_receipt_sha256=digest(publication_raw),
         verified_assets=publication['asset_count'],files=files,request_user_agent=USER_AGENT,pipeline=observation['pipeline'],jobs=observation['jobs'],
+        verified_external_assets=len(external_files),external_files=external_files,
         pages_deployment_jobs=internal,live_manifest_rechecked_after_assets=True,
         entry_points=entry_points,
         dataset_requested_with_application_build_version=manifest['version'])

@@ -6,8 +6,26 @@ import shutil
 import gzip
 import hashlib
 import math
+import re
 
 from benchmark_suite import ROOT, SCHEMA, load_catalog, validate_campaign, EvidenceReader
+
+
+def archive_locations(root, campaigns):
+    path=root/'suite/evidence-hosting.json'
+    if not path.exists():return {}
+    policy=json.loads(path.read_text())
+    if policy.get('schema')!='mech.benchmark-evidence-hosting.v1' or not re.fullmatch('[0-9a-f]{40}',policy.get('source_commit','')):
+        raise ValueError('invalid immutable archive hosting policy')
+    by_id={c['id']:p.parent for p,c in campaigns}
+    locations={}
+    for identifier,pin in policy['archives'].items():
+        if identifier not in by_id:raise ValueError('archive hosting refers to missing campaign')
+        archive=by_id[identifier]/'raw.tar.gz'
+        if not archive.is_file() or archive.stat().st_size!=pin['bytes'] or hashlib.sha256(archive.read_bytes()).hexdigest()!=pin['sha256']:
+            raise ValueError('immutable archive hosting pin differs from retained bytes')
+        locations[identifier]={**pin,'url':f"https://raw.githubusercontent.com/mech-lang/benchmarks/{policy['source_commit']}/results/campaigns/{identifier}/raw.tar.gz"}
+    return locations
 
 
 def control_policy(root, campaigns):
@@ -65,6 +83,8 @@ def export(output, root=ROOT):
             raise ValueError(f'symlink in campaign evidence: {path.parent}')
         validated.append((path,campaign))
     policy=control_policy(root,validated)
+    archives=archive_locations(root,validated)
+    external={}
     # Validate every incoming record before replacing the last successful export.
     if evidence.exists():
         shutil.rmtree(evidence)
@@ -74,10 +94,12 @@ def export(output, root=ROOT):
         destination.mkdir(parents=True)
         for item in path.parent.rglob('*'):
             if item.is_file() and item.suffix in ('.json', '.txt', '.md', '.mec', '.rs', '.c', '.h', '.toml', '.lock', '.gz') and 'raw' not in item.relative_to(path.parent).parts:
+                if item.name=='raw.tar.gz' and campaign['id'] in archives:continue
                 target = destination / item.relative_to(path.parent)
                 target.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copyfile(item, target)
         with EvidenceReader(path.parent) as reader:
+            compressed={}
             for name in reader.manifest['files']:
                 if name.startswith('raw/'):
                     if name.endswith('.class'):
@@ -85,12 +107,19 @@ def export(output, root=ROOT):
                     target=destination/name
                     target.parent.mkdir(parents=True,exist_ok=True)
                     content=reader.read(name)
-                    if len(content)>4*1024*1024:
+                    packed=gzip.compress(content,mtime=0) if len(content)>64*1024 and not name.endswith('.gz') else None
+                    if packed is not None and len(packed)<len(content):
                         target=target.with_name(target.name+'.gz')
-                        target.write_bytes(gzip.compress(content,mtime=0))
+                        target.write_bytes(packed)
+                        compressed[name]=name+'.gz'
                     else:
                         target.write_bytes(content)
             if reader.manifest.get('archives'):campaign['raw_archive']='raw.tar.gz'
+            if compressed:campaign['compressed_evidence']=compressed
+        if campaign['id'] in archives:
+            pin=archives[campaign['id']]
+            campaign['raw_archive_url']=pin['url']
+            external['campaign-evidence/'+campaign['id']+'/raw.tar.gz']=pin
         campaign['evidence_path'] = 'campaign-evidence/' + path.parent.name
         for record in campaign['results']:
             verification=record.get('verification',{})
@@ -107,7 +136,7 @@ def export(output, root=ROOT):
                     del verification[field]
         campaigns.append(campaign)
     bundle = {'schema': 'mech.benchmark-dashboard.v1', 'catalog': catalog,'control_policy':policy,
-              'campaigns': sorted(campaigns, key=lambda c: c['started_at'])}
+              'campaigns': sorted(campaigns, key=lambda c: c['started_at']),'external_evidence':external}
     payload=(json.dumps(bundle,ensure_ascii=False,separators=(',',':'))+'\n').encode()
     (output / 'campaigns.json').write_bytes(payload)
     (output / 'campaigns.json.gz').write_bytes(gzip.compress(payload,mtime=0))

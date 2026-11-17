@@ -98,3 +98,13 @@ python3 tools/import_related_posts.py --source /path/to/pinned/mech/benchmarks/r
 ```
 
 Use new campaign directories; never overwrite an earlier measurement.
+
+## Evidence downloads
+
+Large individual observations are served as lossless gzip downloads; the explorer
+links to the exact exported file. Bulk raw archives remain byte-identical in their
+immutable benchmark-repository commit, pinned by `evidence-hosting.json`. Pages
+redirects preserve the archive download URLs under mech-lang.org. The deployment
+verifier checks every on-site file and follows every archive redirect, checking
+its destination, complete byte count and SHA-256. Compression and archive hosting
+do not change measurements, summaries, sources or the original evidence hashes.

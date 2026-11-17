@@ -57,7 +57,9 @@ try {
     const response=await page.request.get(url.href);
     check(label+' is downloadable',response.status()===200);
     const relative=decodeURIComponent(url.pathname.slice('/benchmarks/'.length));
-    check(label+' matches its published hash',hash(await response.body())===manifest.files[relative]);
+    const pin=manifest.external_files?.[relative];
+    check(label+' matches its published hash',hash(await response.body())===(pin?.sha256??manifest.files[relative]));
+    if(pin)check('archive redirect uses its immutable repository copy',new URL(response.url()).pathname===new URL(pin.url).pathname);
   }
 
   await page.locator('#backend').selectOption('bytecode');

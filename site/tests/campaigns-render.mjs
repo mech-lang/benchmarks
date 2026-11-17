@@ -87,3 +87,8 @@ assert.ok(!element('#backend').innerHTML.includes('Roc compressor'));
 assert.ok(element('#cases').innerHTML.includes('Rust · not measured'));
 assert.ok(!element('#cases').innerHTML.includes('>—<'));
 console.log('Complete application paths and per-contract primary metrics passed.');
+
+({element}=await mount({...bundle,campaigns:[{...campaign,raw_archive:'raw.tar.gz',raw_archive_url:'https://raw.githubusercontent.com/mech-lang/benchmarks/abc/results/campaigns/run-001/raw.tar.gz',compressed_evidence:{'raw/fork-1/supervised.json':'raw/fork-1/supervised.json.gz'}}]}));
+assert.ok(element('#detail').innerHTML.includes('/raw/fork-1/supervised.json.gz"'));
+assert.ok(element('#detail').innerHTML.includes('/campaign-evidence/run-001/raw.tar.gz"'),'archive download keeps its site URL for the pinned redirect');
+console.log('Lossless compressed observation links and stable archive download routes passed.');

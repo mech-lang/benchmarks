@@ -14,7 +14,8 @@ function baselineRecord(row) {return $('#baseline').value==='$paired'?recordFor(
 function option(value,label){return `<option value="${escape(value)}">${escape(label)}</option>`;}
 function badge(value,extra=''){return `<span class="badge ${escape(extra)}">${escape(nice(value))}</span>`;}
 function rawLink(campaign,record,suffix='campaign.json') {
-  return new URL(`${pathURL(campaign.evidence_path)}/${record?pathURL(record)+'/':''}${pathURL(suffix)}`,import.meta.url).href;
+  const name=(record?record+'/':'')+suffix;
+  return new URL(`${pathURL(campaign.evidence_path)}/${pathURL(campaign.compressed_evidence?.[name]??name)}`,import.meta.url).href;
 }
 
 function trend(points,metric) {
