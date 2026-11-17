@@ -1,6 +1,7 @@
 # Controls and the metrics view
 
-Rust is the default control for a task. Controls appear beside Mech in the same
+Rust is the default control for other tasks. DEFLATE level 12 uses a retained
+libdeflate level-12 reference. Controls appear beside Mech in the same
 row at [mech-lang.org/metrics](https://mech-lang.org/metrics/). A language runtime
 is not a task. JVM is removed from the active catalog; its original observations
 and Java correctness evidence remain in their unchanged historical campaigns.
@@ -13,7 +14,7 @@ not erase a successful result; named campaigns and “Needs attention” retain
 failed observations. Tasks without a result for the selected view are omitted
 instead of appearing with empty timing cells. Each result links to its own run.
 
-Every active task now has a measured control in the default view. The new paired
+The default view exposes measured controls and explicit reference-only results. The paired
 campaigns cover all 44 resident/scalar-JIT cases, 1/2/4-process scaling, the native
 build, full K-nucleotide and all 12 compressor inputs. N-body and Related Post Gen
 retain their previously qualified controls. Each control exposes its individual
@@ -37,13 +38,22 @@ The capacity cases use a later independent five-fork repeat with 256 complete
 cycles after disabling an expensive progress monitor. The first sweep remains
 inspectable and is identified in the findings; its samples were not removed.
 
-Compression reports **output size alongside time**. Rust uses genuine Rust
-zlib-rs 0.6.8 at maximum level 9; Mech level 12 must match its pinned Roc stream.
-Both consume the complete input, preserve the prefix and aliases, produce an
-independently owned stream and pass independent inflation/EOF/no-trailing-data
-checks. Different compressed sizes make the time ratio a codec tradeoff rather
-than an equal-quality speed claim. Historical Roc/libdeflate observations remain
-in their original campaigns and downloads.
+Compression reports **output size alongside time**. Its reference is libdeflate
+1.26 at level 12, selected from the retained same-task, same-environment
+observations. The immutable wrapper SHA-256
+`a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05`
+binds the explicit `libdeflate_alloc_compressor(12)` call; the library revision
+is `92e6a0db9fa848d742f9eb286c92afc60f2c3dda`. Mech level 12 must match
+its pinned Roc stream. All outputs consume the full input, preserve the prefix
+and aliases, and pass independent inflation/EOF/no-trailing-data checks.
+
+The retained C and Mech timings have different measurement boundaries. Their
+raw medians are shown with **Reference only**, without an automatic speed ratio.
+A mismatched task, environment, source pin or unavailable metric leaves the
+reference pending; it never falls back to zlib-rs level 9. Historical Rust
+zlib-rs 0.6.8 level-9 results remain separately labelled in their original
+campaigns and downloads and are not the level-12 control. No recorded timings,
+source hashes or sample counts are changed by this display correction.
 
 ## Fixed Mech controls
 

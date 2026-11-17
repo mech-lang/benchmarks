@@ -85,9 +85,29 @@ assert.ok(element('#detail').innerHTML.includes('4.00 ms'));
 assert.ok(element('#coverage-summary').textContent.includes('1 of 1'));
 assert.ok(!element('#backend').innerHTML.includes('JVM'));
 assert.ok(!element('#backend').innerHTML.includes('Roc compressor'));
-assert.ok(element('#cases').innerHTML.includes('Rust · not measured'));
+assert.ok(element('#cases').innerHTML.includes('libdeflate · level 12 · not measured'));
 assert.ok(!element('#cases').innerHTML.includes('>—<'));
 console.log('Complete application paths and per-contract primary metrics passed.');
+
+const level12Reference={...program,backend:'libdeflate',lane:'candidate',
+  revision:'92e6a0db9fa848d742f9eb286c92afc60f2c3dda',
+  source_sha256:'a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05',
+  source:'libdeflate_alloc_compressor(12)',
+  summary:{control_call_seconds:{median:.002}},
+  samples:[{fork:0,raw:'raw/lib12-fork',metrics:{control_call_seconds:.002}}]};
+const level9Reference={...program,backend:'rust',lane:'control',title:'Rust · zlib-rs level 9',
+  control_contract:'mixed',summary:{native_program_call_seconds:{median:.0001}}};
+const legacyCompression={...campaign,id:'lib12-run',started_at:'2026-11-15',evidence_path:'campaign-evidence/lib12-run',results:[level12Reference]};
+({element}=await mount({...bundle,catalog:{...catalog,cases:[{id:'deflate',title:'Deflate',family:'applications',progress:'implemented'}]},
+  campaigns:[legacyCompression,{...campaign,results:[{...program,control_contract:'mixed'},level9Reference]}]},'?case=deflate'));
+assert.ok(element('#cases').innerHTML.includes('libdeflate · level 12'));
+assert.ok(element('#cases').innerHTML.includes('Reference only'));
+assert.ok(!element('#cases').innerHTML.includes('zlib-rs level 9'));
+assert.ok(!element('#cases').innerHTML.includes('40× slower'));
+assert.ok(element('#detail').innerHTML.includes('libdeflate_alloc_compressor(12)'));
+assert.ok(element('#detail').innerHTML.includes('/campaign-evidence/lib12-run/raw/lib12-fork/supervised.json'));
+assert.ok(element('#detail').innerHTML.includes('different measurement boundaries'));
+console.log('DEFLATE reference rendering retains level-12 provenance and suppresses the mixed-level speed ratio.');
 
 ({element}=await mount({...bundle,campaigns:[{...campaign,raw_archive:'raw.tar.gz',raw_archive_url:'https://raw.githubusercontent.com/mech-lang/benchmarks/abc/results/campaigns/run-001/raw.tar.gz',compressed_evidence:{'raw/fork-1/supervised.json':'raw/fork-1/supervised.json.gz'}}]},'?case=scalar'));
 assert.ok(element('#detail').innerHTML.includes('/raw/fork-1/supervised.json.gz"'));

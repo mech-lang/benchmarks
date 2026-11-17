@@ -20,7 +20,7 @@ export function implementationFor(campaign,record) {
 }
 export const metrics = {
   rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
-  output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. Mech level 12 and Rust zlib-rs maximum level 9 use different codecs; inspect size alongside time. Smaller is better.'},
+  output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. The level-12 reference is libdeflate. Historical zlib-rs level-9 observations are separate codec results. Smaller is better.'},
   post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
   reported_processing_seconds: {label:'Rust example processing timer',unit:'seconds',note:'Unchanged related_post_gen rust_con timer. Its Rayon pool is initialized before the clock; this is retained as an explicitly asymmetric reference.'},
   jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
@@ -133,6 +133,23 @@ export function measuredRows(bundle,{campaign='$latest',backend='$auto',metric='
 
 export function controlFor(bundle,row) {
   const {record,campaign,metric}=row;
+  if(record.case_id==='deflate'||record.case_id.startsWith('deflate-')) {
+    const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
+    // These immutable source identities bind the retained wrapper's explicit
+    // libdeflate_alloc_compressor(12) call and its pinned libdeflate 1.26 build.
+    const references=mapped?bundle.campaigns.flatMap(origin=>origin.started_at<=campaign.started_at
+      ?origin.results.filter(reference=>reference.case_id===record.case_id&&reference.backend==='libdeflate'&&reference.outcome==='ok'
+        &&reference.revision==='92e6a0db9fa848d742f9eb286c92afc60f2c3dda'
+        &&reference.source_sha256==='a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05'
+        &&reference.task_hash===record.task_hash&&reference.environment_hash===record.environment_hash
+        &&Number.isFinite(reference.summary?.[mapped]?.median)).map(reference=>({origin,reference})):[]):[];
+    references.sort((a,b)=>a.origin.started_at.localeCompare(b.origin.started_at)||a.origin.id.localeCompare(b.origin.id));
+    const retained=references.at(-1);
+    if(retained)return {kind:'reference',label:'libdeflate · level 12',record:retained.reference,campaign:retained.origin,metric:mapped,
+      reason:'Level-12 reference for the same task and environment. Retained C and Mech timings have different measurement boundaries; no speed ratio is qualified.'};
+    return {kind:'pending',label:'libdeflate · level 12 · not measured',
+      reason:'No retained level-12 libdeflate reference matches this task, environment and measurement. zlib-rs level 9 is not a level-12 control.'};
+  }
   const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
   if(held){
     const origin=bundle.campaigns.find(c=>c.id===held.campaign_id);
@@ -150,6 +167,7 @@ export function controlFor(bundle,row) {
 
 export function controlComparison(row,control) {
   if(control.kind==='pending')return {status:'unavailable',label:'Control needed',reason:control.reason};
+  if(control.kind==='reference')return {status:'unavailable',label:'Reference only',reason:control.reason};
   if(control.kind==='mech'){
     if(control.record===row.record)return {status:'baseline',label:'Baseline held',reason:control.reason};
     return compareRecords(control.record,row.record,row.metric);
