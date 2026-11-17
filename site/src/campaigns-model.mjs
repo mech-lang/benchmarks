@@ -2,12 +2,14 @@ export const backendLabels = {
   source:'Source artifact', bytecode:'Decoded bytecode', native:'Linked scalar application', jit:'Checked scalar JIT',
   'source-native':'K-nucleotide application', 'fused-native':'Numerical application',
   'program-jit':'Checked program JIT · source', 'program-jit-bytecode':'Checked program JIT · decoded',
-  'program-linked':'Linked program qualification', roc:'Roc compressor control', libdeflate:'libdeflate control', jvm:'JVM control', 'process-workers':'Worker scaling',
+  'program-linked':'Linked program qualification', 'process-workers':'Worker scaling',
+  'related-managed':'Related posts · managed', 'related-compact':'Related posts · compact',
 };
 export function primaryMetric(campaign,backend) {
   return campaign?.results.find(r=>r.backend===backend&&r.lane==='candidate')?.measurement?.primary_metric ?? (backend==='native'?'source_to_executable_seconds':'resident_turn_seconds');
 }
 export function implementationFor(campaign,record) {
+  if(record.implementation)return record.implementation;
   if(record.backend==='jvm')return {binary_sha256:campaign.java?.runtime_binary_sha256,adapter_sha256:record.source_sha256,rustc:campaign.java?.version};
   if(campaign.controls?.[record.backend])return {...campaign.controls[record.backend],adapter_sha256:campaign.controls.wrapper_sha256,rustc:record.backend==='roc'?`Roc ${campaign.controls.roc.compiler_revision}`:'Pinned libdeflate 1.26 · C release O2; host O3'};
   if(['source-native','fused-native'].includes(record.backend)) {
@@ -17,6 +19,8 @@ export function implementationFor(campaign,record) {
   return campaign.workers?.[record.lane]??{};
 }
 export const metrics = {
+  post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
+  reported_processing_seconds: {label:'Rust example processing timer',unit:'seconds',note:'Unchanged related_post_gen rust_con timer. Its Rayon pool is initialized before the clock; this is retained as an explicitly asymmetric reference.'},
   jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
   jit_compile_seconds: {label:'JIT preparation',unit:'seconds',note:'Checked native code generation and executable-memory preparation. The complete Deflate program is compiled once per independent fork, shared by its 12 corpus cases.'},
   native_program_call_seconds: {label:'Checked program call',unit:'seconds',note:'Complete stateless canonical native call, including activation, managed checks, publication and scratch cleanup. Input import, warmup and returned-output destruction are outside the call.'},
@@ -24,7 +28,7 @@ export const metrics = {
   worker_group_process_seconds: {label:'Complete worker group',unit:'seconds',note:'Fixed total 196,608 accepted turns across 1, 2 or 4 independent Mech processes. Includes supervisor/process startup, compilation, activation, warmup, execution and complete teardown.'},
   accepted_turns_per_second: {label:'Accepted turns per second',unit:'rate',higherBetter:true,note:'Fixed total accepted turns divided by complete group lifecycle time. Higher is better. Worker counts are separate, explicit strong-scaling cases.'},
   source_to_executable_seconds: {label:'Source → executable',unit:'seconds',note:'Complete source compiler worker, dependency resolution, generated support build and final link. The separate qualification build warms support dependencies; each measured fork generates a new project.'},
-  native_process_seconds: {label:'Whole process lifecycle',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. The task contract identifies source-native, fused numerical, JVM or linked scalar execution. Compilation and JIT preparation are included when the selected application performs them at startup.'},
+  native_process_seconds: {label:'Whole process lifecycle',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. Compilation and JIT preparation are included when the selected application performs them at startup.'},
   object_text_bytes: {label:'Object code section',unit:'bytes',note:'Emitted object __text/.text section bytes, from the saved platform size report.'},
   linked_text_bytes: {label:'Linked code section',unit:'bytes',note:'Linked executable __text/.text section bytes. The generated release profile strips symbols.'},
   executable_bytes: {label:'Executable size',unit:'bytes',note:'Entire linked native executable under the generated release profile (strip=symbols).'},
@@ -92,4 +96,64 @@ export function compatibleHistory(campaigns,record,metric) {
     return comparison.status==='informational'?[{campaign:campaign.id,date:campaign.started_at,revision:candidate.revision,
       value:candidate.summary[metric].median,samples:candidate.summary[metric].samples}]:[];
   });
+}
+
+export function isMechRecord(record) {
+  return record.lane==='candidate' && Object.hasOwn(backendLabels,record.backend);
+}
+
+export function rowMetric(record,selected='$primary') {
+  return selected==='$primary' ? record?.measurement?.primary_metric ?? (record?.backend==='native'?'source_to_executable_seconds':'resident_turn_seconds') : selected;
+}
+
+// Prefer the declared execution path, then the newest accepted observation on
+// that path. A later failed qualification never erases a successful measurement.
+export function measuredRows(bundle,{campaign='$latest',backend='$auto',metric='$primary',query='',family='all',progress='all'}={}) {
+  const campaigns=campaign==='$latest'?bundle.campaigns:bundle.campaigns.filter(c=>c.id===campaign);
+  return bundle.catalog.cases.flatMap(definition=>{
+    let entries=campaigns.flatMap(c=>c.results.filter(r=>r.case_id===definition.id&&isMechRecord(r)&&(backend==='$auto'||r.backend===backend)).map(record=>({campaign:c,record,definition})));
+    if(progress==='failed')entries=entries.filter(e=>e.record.outcome!=='ok');
+    else if(progress!=='all')entries=entries.filter(e=>stageFor(definition,e.record)===progress);
+    if(!entries.length||!(family==='all'||definition.family===family)||!`${definition.id} ${definition.title} ${definition.family}`.toLowerCase().includes(query.toLowerCase()))return [];
+    const accepted=entries.filter(e=>e.record.outcome==='ok'&&Number.isFinite(e.record.summary?.[rowMetric(e.record,metric)]?.median));
+    // A requested secondary metric can be absent on an otherwise measured path.
+    if(metric!=='$primary'&&!accepted.length&&progress!=='failed')return [];
+    if(accepted.length)entries=accepted;
+    if(backend==='$auto'){
+      const order=definition.backends??[];
+      const rank=e=>{const i=order.indexOf(e.record.backend);return i<0?Infinity:i;};
+      const first=Math.min(...entries.map(rank));entries=entries.filter(e=>rank(e)===first);
+    }
+    entries.sort((a,b)=>a.campaign.started_at.localeCompare(b.campaign.started_at)||a.campaign.id.localeCompare(b.campaign.id));
+    const row=entries.at(-1);row.metric=rowMetric(row.record,metric);return [row];
+  });
+}
+
+export function controlFor(bundle,row) {
+  const {record,campaign,metric}=row;
+  const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
+  if(held){
+    const origin=bundle.campaigns.find(c=>c.id===held.campaign_id);
+    const reference=recordFor(origin,held.case_id,held.backend);
+    // A retained control remains pinned; new source or boundary needs qualification.
+    if(reference&&origin.started_at<=campaign.started_at&&compareRecords(reference,record,metric).status==='informational')return {kind:'mech',label:held.label,record:reference,campaign:origin,metric,reason:held.reason,promotion:held};
+  }
+  const control=campaign.results.find(r=>r.case_id===record.case_id&&r.lane==='control'&&r.backend==='rust'&&r.outcome==='ok');
+  if(control){
+    const mapped=control.measurement?.metric_mapping?.[metric]??metric;
+    if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:control.title??'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
+  }
+  return {kind:'pending',label:'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
+}
+
+export function controlComparison(row,control) {
+  if(control.kind==='pending')return {status:'unavailable',label:'Control needed',reason:control.reason};
+  if(control.kind==='mech'){
+    if(control.record===row.record)return {status:'baseline',label:'Baseline held',reason:control.reason};
+    return compareRecords(control.record,row.record,row.metric);
+  }
+  const a=control.record.summary[control.metric].median,b=row.record.summary?.[row.metric]?.median;
+  if(!(a>0)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
+  const percent=(b/a-1)*100;
+  return {status:'informational',percent,ratio:b/a,label:`${percent>0?'+':''}${percent.toFixed(1)}%`,reason:control.reason+' Median change; informational.'};
 }

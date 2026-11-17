@@ -94,7 +94,6 @@ def run(args):
         campaign['java']={'runtime_binary_sha256':file_digest(jdk/'java'),'compiler_binary_sha256':file_digest(jdk/'javac'),
             'class_files_sha256':{p.name:file_digest(p) for p in sorted(directory.glob('*.class'))},'command':java_command,
             'version':(output/'raw/prepare/java-version/stderr.txt').read_text()}
-        records['jvm','jvm']['revision']=campaign['java']['version'].splitlines()[0]
         # Full independent FASTA verification lives in its own process, outside Mech's memory high-water mark.
         if args.fasta.stat().st_size!=254_166_745:raise ValueError('FASTA input must be the complete N=25,000,000 fixture')
         required_command(['clang','-O3',ROOT/'suite/controls/knucleotide_oracle.c','-o',output/'raw/prepare/knucleotide-oracle'],output/'raw/prepare/knucleotide-oracle-build',args.timeout)
@@ -102,15 +101,14 @@ def run(args):
         expected_kn=(ROOT/'suite/applications/knucleotide-25000000.expected').read_bytes()
         if raw(output/'raw/prepare/knucleotide-oracle-run')!=expected_kn:raise ValueError('full FASTA differs from the independent/historical output contract')
         campaign['fasta']={'n':FASTA_N,'bytes':args.fasta.stat().st_size,'sha256':file_digest(args.fasta),'generator_source_sha256':file_digest(ROOT/'suite/applications/fasta.c')}
-        # Java is both an independent numerical oracle and a separately labelled cross-runtime control.
+        # Java supplies independent correctness evidence; Rust is the suite control.
         required_command(java_command,output/'raw/oracle/nbody-full',args.timeout)
         expected_nbody=nbody_output(raw(output/'raw/oracle/nbody-full'))
         if not math.isclose(expected_nbody[0],-0.169075164,abs_tol=1e-9) or not math.isclose(expected_nbody[1],-0.169059907,abs_tol=1e-8):raise ValueError('independent full N-body result differs from preserved energies')
         persist()
         env=dict(os.environ,MECH_SEQUENCE_PARTITIONS='4',MECH_SEQUENCE_STD_MAP='1',MECH_SEQUENCE_NARROW='1',MECH_SEQUENCE_ASYNC='0')
         jobs=[('knucleotide','source-native',[apps['applications']['mech-application']['binary'],str(ROOT/'suite/applications/knucleotide.mec'),'jit'],args.fasta,env),
-              ('nbody','fused-native',[apps['applications']['mech-numerical-application']['binary'],str(NBODY_STEPS),str(ROOT/'suite/applications/nbody.mec'),'jit-simd'],None,None),
-              ('jvm','jvm',java_command,None,None)]
+              ('nbody','fused-native',[apps['applications']['mech-numerical-application']['binary'],str(NBODY_STEPS),str(ROOT/'suite/applications/nbody.mec'),'jit-simd'],None,None)]
         for id,backend,command,stdin,environment_ in jobs:
             record=records[id,backend]
             for fork in [None,*range(args.forks)]:
@@ -180,7 +178,7 @@ def run(args):
         campaign.update(complete=True,outcome='ok' if all(r['progress']=='measured' for r in campaign['results']) else 'failed',finished_at=datetime.now(timezone.utc).isoformat())
         persist()
         lines=['# Full application campaign','',f'Outcome: {campaign["outcome"]}. Independent process forks: {args.forks}.',
-            '', 'K-nucleotide consumes FASTA N=25,000,000. N-body and the JVM control each execute 50,000,000 steps. Deflate covers every maintained small stream, both boundary inputs and the entire 6,627,202-byte corpus in source and decoded forms.',
+            '', 'K-nucleotide consumes FASTA N=25,000,000. N-body executes 50,000,000 steps. Deflate covers every maintained small stream, both boundary inputs and the entire 6,627,202-byte corpus in source and decoded forms. Java is retained only as independent numerical correctness evidence.',
             '', 'Deflate calls preserve held input/prefix snapshots, publish a separately owned complete stream, and release all managed storage. Python zlib checks exact decompression, EOF and absence of trailing data. Mech and Roc match the pinned level-12 stream; libdeflate has its own valid stream.',
             '', 'Each Deflate fork compiles the complete program once, then invokes all corpus inputs. Compilation, input snapshot import, warmup and returned-output destruction are excluded from the call timer. The complete fork process is retained separately in raw supervision. Roc/libdeflate have different transport and allocation contracts; these observations do not establish an automatic cross-runtime speed ratio.',
             '', '| Case | Backend | Median primary seconds |','| --- | --- | ---: |']

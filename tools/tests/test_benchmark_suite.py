@@ -227,6 +227,33 @@ class NativeFootprint(unittest.TestCase):
         self.assertIsNone(text_size({'__TEXT/__const':20}))
 
 
+class RetainedMeasurements(unittest.TestCase):
+    def test_resealed_receipt_cannot_replace_original_retained_timing(self):
+        import gzip
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory)
+            source={'samples':[{'round':0,'variant':'mech-test','exit':0,'exact_output':True,
+                                'post_json_seconds':.001,'whole_process_seconds':.03}]}
+            parent=root/'raw/report.json.gz';parent.parent.mkdir()
+            parent.write_bytes(gzip.compress(json.dumps(source).encode(),mtime=0))
+            metrics={'post_json_seconds':.001,'native_process_seconds':.03}
+            receipt={'outcome':'ok','metrics':metrics,'retained_observation':{'path':'raw/report.json.gz',
+                'sha256':file_digest(parent),'cohort':'confirmation','variant':'mech-test','round':0}}
+            record={'case_id':'test','backend':'related-managed','lane':'candidate','progress':'measured','outcome':'ok',
+                'task':{},'task_hash':digest({}),'measurement':{},'measurement_hash':digest({}),
+                'source':'test','source_sha256':hashlib.sha256(b'test').hexdigest(),'environment_hash':digest({}),
+                'samples':[{'fork':0,'raw':'raw/fork-1','metrics':metrics}]}
+            record['summary']=summarize(record['samples'])
+            campaign={'schema':'mech.benchmark-campaign.v1','complete':True,'environment':{},'environment_hash':digest({}),'results':[record]}
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            self.assertTrue(validate_campaign(root,campaign))
+            metrics['post_json_seconds']=.0001
+            record['summary']=summarize(record['samples'])
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            with self.assertRaisesRegex(ValueError,'differs from original measurement'):validate_campaign(root,campaign)
+
+
 class ExportPreservation(unittest.TestCase):
     def test_bad_incoming_evidence_preserves_existing_export(self):
         with tempfile.TemporaryDirectory() as directory:

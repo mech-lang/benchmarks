@@ -7,7 +7,6 @@ The suite keeps its full application anchors alongside the small mechanism cases
 | --- | --- | --- |
 | K-nucleotide | FASTA N=25,000,000; 254,166,745 input bytes; 125,000,000 selected bases | Separate C byte-string oracle; both complete frequency tables and all five query counts match the preserved full output |
 | N-body | Five bodies, 50,000,000 steps | Separate Java implementation; initial and final energy, declared f64 tolerance |
-| JVM | Same complete 50,000,000-step N-body task | Preserved energy reference and separately qualified Mech output; real JDK version, class hashes and JVM flags retained |
 | Deflate | Nine maintained small streams, both 16,384/33,027-byte boundaries, entire 6,627,202-byte Reymont corpus | Pinned Roc level-12 bytes plus independent Python zlib inflation, EOF and trailing-data checks; libdeflate must produce a valid complete stream |
 | Worker scaling | Fixed total 196,608 accepted nonlinear numerical turns across 1, 2 and 4 independent processes | Complete distinct-input schedule, no-execution control, accepted iteration counts, every process endpoint and managed teardown |
 
@@ -18,6 +17,11 @@ large FASTA file is reproduced with the preserved `fasta.c` and argument
 `0eac0114a3dfe6e2ee1f345a0f79d653cb26c3bc9f0ed79238af4933422b7578`.
 The runner refuses a shortened or different corpus. Campaign evidence retains
 the complete compression inputs, prefixes and expected streams losslessly.
+
+Rust is the suite control; see [controls.md](controls.md) for measured Rust and
+retained Mech controls. Java is used only as an independent N-body correctness
+oracle. Its earlier JVM timing remains in historical evidence, outside the active
+catalog. Related Post Gen's full retained cohorts are also available in metrics.
 
 ## Execution and measurement contracts
 

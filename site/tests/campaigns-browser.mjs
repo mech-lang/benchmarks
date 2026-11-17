@@ -22,7 +22,23 @@ try {
   await page.goto(base,{waitUntil:'networkidle',timeout:45000});
   await page.locator('#cases [data-case="scalar-changed"]').waitFor();
   check('catalog loads at /metrics',await page.locator('#cases tr').count()===bundle.catalog.cases.length);
-  check('all retained campaigns are selectable',await page.locator('#campaign option').count()===bundle.campaigns.length);
+  check('latest view and all retained campaigns are selectable',await page.locator('#campaign option').count()===bundle.campaigns.length+1);
+  check('the default view combines measured results',await page.locator('#campaign').inputValue()==='$latest');
+  check('every default task row has a Mech measurement',await page.locator('.mech-value').evaluateAll(cells=>cells.every(c=>!c.textContent.includes('—'))));
+  check('controls have a dedicated column',(await page.locator('thead').innerText()).includes('Control'));
+  check('external controls are not execution paths',await page.locator('#backend option[value="jvm"], #backend option[value="roc"], #backend option[value="libdeflate"]').count()===0);
+  check('JVM is not a task row',await page.locator('[data-case="jvm"]').count()===0);
+  const nbodyRow=page.locator('#cases tr').filter({has:page.locator('[data-case="nbody"]')});
+  check('N-body has its measured Rust control',(await nbodyRow.locator('.control-value').innerText()).includes('Rust · Benchmarks Game #3'));
+  const relatedRow=page.locator('#cases tr').filter({has:page.locator('[data-case="related-post-gen"]')});
+  check('Related Post Gen retains the confirmed Mech control',(await relatedRow.locator('.control-value').innerText()).includes('Mech · IR355 baseline'));
+  check('the first held checkpoint is labeled as a baseline',(await relatedRow.innerText()).includes('Baseline held'));
+  await page.locator('[data-case="related-post-gen"]').click();
+  check('Related Post Gen keeps its 13 confirmation observations',await page.locator('#detail .sample-list a').count()===13);
+  check('Rust pool timing advantage is disclosed',(await page.locator('#detail').innerText()).includes('pool-before-timer'));
+  await page.locator('#metric').selectOption('native_process_seconds');
+  check('Related Post Gen whole-process comparison uses Rust',(await page.locator('#detail .control-detail').innerText()).includes('Rust · unchanged rust_con'));
+  await page.locator('#metric').selectOption('$primary');
   check('data request uses the published build version',dataRequests.some(url=>new URL(url).searchParams.get('v')===manifest.version));
   check('comparison navigation uses /benchmarks',await page.locator('nav a').first().getAttribute('href')==='/benchmarks/');
 
@@ -49,11 +65,7 @@ try {
   check('search narrows the task list',filtered>0&&filtered<bundle.catalog.cases.length);
   await page.locator('#search').fill('');
   await page.locator('#progress').selectOption('planned');
-  check('planned work is separate from measured results',await page.locator('#cases tr').count()===bundle.catalog.cases.filter(c=>c.progress==='planned').length);
-  if(bundle.catalog.cases.some(c=>c.progress==='planned')) {
-    await page.locator('#cases button').first().click();
-    check('planned tasks have no timing samples',await page.locator('#detail .sample-list a').count()===0);
-  } else check('all named tasks now have implementations',await page.locator('#cases tr').count()===0);
+  check('unmeasured catalog placeholders do not appear as empty results',await page.locator('#cases tr').count()===0);
   await page.locator('#progress').selectOption('all');
 
   await page.locator('#backend').selectOption('native');
@@ -69,18 +81,13 @@ try {
     await page.locator('#backend').selectOption('program-jit-bytecode');
     check('decoded full application selects its measured run',await page.locator('#campaign').inputValue()===applicationRun.id);
     await page.locator('[data-case="deflate"]').click();
-    check('full application chooses its checked-call measurement',await page.locator('#metric').inputValue()==='native_program_call_seconds');
+    check('full application chooses its checked-call measurement',(await page.locator('#detail .measurement').innerText()).includes('Checked program call'));
     check('full application has three independent forks',await page.locator('#detail .sample-list a').count()===3);
-    await page.locator('#backend').selectOption('roc');
-    check('Roc uses its own complete-call measurement',await page.locator('#metric').inputValue()==='control_call_seconds');
-    await page.getByText('Compiler and environment',{exact:true}).click();
-    check('Roc compiler provenance is not the Mech worker',(await page.locator('#detail').innerText()).includes('d99c7b838fb05bb1047eb0c18d4d06d0f86f345d'));
-    await page.locator('#backend').selectOption('jvm');
-    check('JVM chooses whole-process time',await page.locator('#metric').inputValue()==='native_process_seconds');
-    await page.getByText('Compiler and environment',{exact:true}).click();
-    check('JVM provenance names the real runtime',(await page.locator('#detail').innerText()).includes('OpenJDK'));
+    await page.getByText('Other retained compressor observations',{exact:true}).click();
+    check('older compressor controls remain inspectable',(await page.locator('#detail').innerText()).includes('d99c7b838fb05bb1047eb0c18d4d06d0f86f345d'));
+    check('unmeasured Rust control is explicit',(await page.locator('#detail .control-detail').innerText()).includes('Rust has not been measured'));
     await page.locator('#backend').selectOption('process-workers');
-    check('scaling chooses the whole group measurement',await page.locator('#metric').inputValue()==='worker_group_process_seconds');
+    check('scaling chooses the whole group measurement',(await page.locator('#detail .measurement').innerText()).includes('Complete worker group'));
     check('all tasks have accepted measurements somewhere',(await page.locator('#coverage-summary').innerText()).includes(`${bundle.catalog.cases.length} of ${bundle.catalog.cases.length}`));
   }
   await page.goto(base,{waitUntil:'networkidle'});

@@ -201,8 +201,10 @@ All 63 named cases now have executable implementations. The expanded cases cover
 six joins with duplicate/unmatched rows, graph edge updates, Unicode literal and
 grapheme behavior, real FSM suspension/resumption, the complete 4,096-turn EKF
 state/covariance trace, checked scalar JIT preparation/calls, 13 output-cardinality
-threshold schedules, rejected-capture recovery, full applications, a JVM control,
-and fixed-work scaling across 1/2/4 processes.
+threshold schedules, rejected-capture recovery, full applications, Related Post Gen,
+and fixed-work scaling across 1/2/4 processes. Rust controls appear beside each
+Mech task; [controls.md](controls.md) describes the fixed controls, retained
+November 12 evidence and fresh N-body comparison. The JVM is outside the active suite.
 
 See [full-applications.md](full-applications.md) for exact workload sizes, public
 execution paths, limitations, pinned Roc/libdeflate controls and reproduction

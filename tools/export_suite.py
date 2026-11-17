@@ -4,8 +4,43 @@ import json
 from pathlib import Path
 import shutil
 import gzip
+import hashlib
+import math
 
 from benchmark_suite import ROOT, SCHEMA, load_catalog, validate_campaign, EvidenceReader
+
+
+def control_policy(root, campaigns):
+    path=root/'suite/control-policy.json'
+    policy=json.loads(path.read_text()) if path.exists() else {'schema':'mech.benchmark-controls.v1','default':'rust','controls':[]}
+    if policy.get('schema')!='mech.benchmark-controls.v1' or policy.get('default')!='rust':
+        raise ValueError('invalid benchmark control policy')
+    identities=set()
+    for held in policy['controls']:
+        key=held['case_id'],held['backend'],held['metric']
+        if key in identities:raise ValueError('duplicate retained control')
+        identities.add(key)
+        found=[(path,c) for path,c in campaigns if c['id']==held['campaign_id']]
+        if len(found)!=1:raise ValueError('retained control campaign missing')
+        campaign_path,campaign=found[0]
+        records=[r for r in campaign['results'] if r['case_id']==held['case_id'] and r['backend']==held['backend'] and r['lane']=='candidate' and r['outcome']=='ok']
+        if len(records)!=1 or held['metric'] not in records[0]['summary']:raise ValueError('retained control observation missing')
+        qualification=(campaign_path.parent/held['qualification']).resolve()
+        if not qualification.is_relative_to(campaign_path.parent.resolve()):raise ValueError('invalid control qualification path')
+        raw=qualification.read_bytes()
+        if hashlib.sha256(raw).hexdigest()!=held['qualification_sha256']:raise ValueError('control qualification changed')
+        proof=json.loads(raw)
+        from import_related_posts import VARIANTS
+        variant=VARIANTS.get(held['backend'])
+        for cohort,pairs in [('primary',31),('confirmation',13)]:
+            comparisons=[x for x in proof['comparisons'] if x['variant']==variant and x['cohort']==cohort]
+            if len(comparisons)!=1:raise ValueError('control needs primary and independent confirmation')
+            comparison=comparisons[0]
+            if comparison['pairs']!=pairs or comparison['reference']!='rust-preinitialized' or comparison['bootstrap95_percent'][1]>=0:
+                raise ValueError('control promotion is not confirmed against fixed Rust')
+            if cohort=='confirmation' and not math.isclose(comparison['median_ms']/1000,records[0]['summary'][held['metric']]['median'],rel_tol=0,abs_tol=1e-15):
+                raise ValueError('retained control differs from confirmed checkpoint')
+    return policy
 
 
 def export(output, root=ROOT):
@@ -29,6 +64,7 @@ def export(output, root=ROOT):
         if path.parent.is_symlink() or any(item.is_symlink() for item in path.parent.rglob('*')):
             raise ValueError(f'symlink in campaign evidence: {path.parent}')
         validated.append((path,campaign))
+    policy=control_policy(root,validated)
     # Validate every incoming record before replacing the last successful export.
     if evidence.exists():
         shutil.rmtree(evidence)
@@ -70,7 +106,7 @@ def export(output, root=ROOT):
                     verification['preview_'+field]=values[:3]+values[-3:]
                     del verification[field]
         campaigns.append(campaign)
-    bundle = {'schema': 'mech.benchmark-dashboard.v1', 'catalog': catalog,
+    bundle = {'schema': 'mech.benchmark-dashboard.v1', 'catalog': catalog,'control_policy':policy,
               'campaigns': sorted(campaigns, key=lambda c: c['started_at'])}
     payload=(json.dumps(bundle,ensure_ascii=False,separators=(',',':'))+'\n').encode()
     (output / 'campaigns.json').write_bytes(payload)

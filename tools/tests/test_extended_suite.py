@@ -59,7 +59,8 @@ class ExtendedContracts(unittest.TestCase):
         self.assertEqual(cases['knucleotide']['task']['logical_input_elements'],125_000_000)
         self.assertEqual(cases['knucleotide']['task']['input_bytes'],254_166_745)
         self.assertEqual(cases['nbody']['task']['logical_input_elements'],NBODY_STEPS)
-        self.assertEqual(cases['jvm']['task']['logical_input_elements'],NBODY_STEPS)
+        self.assertNotIn('jvm',cases)
+        self.assertEqual(cases['related-post-gen']['task']['logical_input_elements'],5000)
         self.assertEqual(cases['deflate']['task']['logical_input_elements'],6_627_202)
         self.assertTrue({'program-jit','program-jit-bytecode','roc','libdeflate'}<=set(cases['deflate']['backends']))
 
