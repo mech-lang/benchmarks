@@ -141,6 +141,11 @@ try {
   await mobile.goto(base,{waitUntil:'networkidle'});
   await mobile.locator('#cases [data-case="scalar-changed"]').waitFor();
   check('mobile layout stays inside the viewport',await mobile.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth+1));
+  await chooseTask(mobile,'scalar-changed');
+  check('mobile selection opens the task without the long summary table',!(await mobile.locator('.catalog').isVisible()));
+  check('mobile selection brings the details into view',await mobile.locator('#detail-title').evaluate(node=>node.getBoundingClientRect().top>=0&&node.getBoundingClientRect().top<window.innerHeight));
+  await mobile.locator('[data-close-detail]').click();
+  check('mobile can return to the complete summary',await mobile.locator('.catalog').isVisible()&&await mobile.locator('#cases tr').count()===bundle.catalog.cases.length);
   await mobile.locator('#search').fill('unchanged input');
   check('mobile search remains usable',await mobile.locator('#cases tr').count()===1);
   await chooseTask(mobile,'scalar-unchanged');

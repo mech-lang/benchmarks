@@ -67,7 +67,10 @@ async function renderDetail() {
   try {
     await Promise.all([loadContext(row.campaign),loadRecord(row.campaign,row.record,row.definition),
       ...(control.record?[loadContext(control.campaign),loadRecord(control.campaign,control.record)]:[])]);
-    if(generation===detailGeneration)renderLoadedDetail(row);
+    if(generation===detailGeneration){
+      renderLoadedDetail(row);
+      if(globalThis.matchMedia?.('(max-width:820px)')?.matches)$('#detail').scrollIntoView({block:'start'});
+    }
   } catch(error){
     if(generation===detailGeneration)$('#detail').innerHTML=`<h2 id="detail-title">${escape(row.definition.title)}</h2><p role="alert">${escape(error.message)}</p><button data-close-detail>Back to summary</button>`;
   }
