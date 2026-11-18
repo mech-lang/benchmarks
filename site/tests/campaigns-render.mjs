@@ -85,7 +85,7 @@ assert.ok(element('#detail').innerHTML.includes('4.00 ms'));
 assert.ok(element('#coverage-summary').textContent.includes('1 of 1'));
 assert.ok(!element('#backend').innerHTML.includes('JVM'));
 assert.ok(!element('#backend').innerHTML.includes('Roc compressor'));
-assert.ok(element('#cases').innerHTML.includes('Rust · not measured'));
+assert.ok(element('#cases').innerHTML.includes('libdeflate · level 12 · not measured'));
 assert.ok(!element('#cases').innerHTML.includes('>—<'));
 console.log('Complete application paths and per-contract primary metrics passed.');
 
