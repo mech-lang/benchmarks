@@ -7,7 +7,7 @@ let data,selected=initial.get('deflate-case'),filter=initial.get('deflate-filter
 let order=initial.get('deflate-order')==='reverse'?'reverse':'forward';
 const ratio=row=>row.runs[order].ratio;
 const direction=row=>ratio(row)<1?'faster':ratio(row)>1?'slower':'equal';
-const label=row=>comparisonLabel({ratio:ratio(row)},'native_program_call_seconds');
+const label=row=>comparisonLabel({ratio:ratio(row)},'native_compression_call_seconds');
 
 function writeParameters() {
   const query=new URLSearchParams(location.search);
@@ -24,7 +24,7 @@ function visibleRows() {
 function readout(row) {
   if(!row)return;
   const run=row.runs[order];
-  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>Mech <strong>${escape(formatMetric(run.mech_seconds,'native_program_call_seconds'))}</strong></span><span>libdeflate <strong>${escape(formatMetric(run.libdeflate_seconds,'native_program_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
+  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>Mech <strong>${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</strong></span><span>libdeflate <strong>${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
 }
 function renderChart(rows=visibleRows()) {
   $('#deflate-chart').innerHTML=comparisonPlot(rows.map(row=>({id:row.id,title:row.title,ratio:ratio(row),direction:direction(row),label:label(row)})),{width:$('#deflate-chart').clientWidth,label:'Mech and libdeflate level 12, one point per input case'});
@@ -35,7 +35,7 @@ function renderTable(rows) {
   $('#deflate-count').textContent=`${rows.length} ${rows.length===1?'case':'cases'}`;
   $('#deflate-cases').innerHTML=rows.map(row=>{
     const run=row.runs[order];
-    return `<tr data-native-row="${escape(row.id)}" class="${selected===row.id?'selected':''}"><td><button data-native-case="${escape(row.id)}">${escape(row.title)}</button><span class="family">${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix`:''}</span></td><td class="number">${escape(formatMetric(run.mech_seconds,'native_program_call_seconds'))}</td><td class="number">${escape(formatMetric(run.libdeflate_seconds,'native_program_call_seconds'))}</td><td><span class="result-tag ${direction(row)}">${escape(label(row))}</span></td><td class="number">${row.mech_output_bytes.toLocaleString()} / ${row.libdeflate_output_bytes.toLocaleString()}</td></tr>`;
+    return `<tr data-native-row="${escape(row.id)}" class="${selected===row.id?'selected':''}"><td><button data-native-case="${escape(row.id)}">${escape(row.title)}</button><span class="family">${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix`:''}</span></td><td class="number">${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</td><td class="number">${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</td><td><span class="result-tag ${direction(row)}">${escape(label(row))}</span></td><td class="number">${row.mech_output_bytes.toLocaleString()} / ${row.libdeflate_output_bytes.toLocaleString()}</td></tr>`;
   }).join('')||'<tr><td colspan="5" class="empty">No input cases match this selection.</td></tr>';
 }
 function render() {

@@ -12,6 +12,7 @@ const buildReference={...build,backend:'rust',lane:'control',summary:{source_to_
 const bundle={schema:'mech.benchmark-dashboard.v2',catalog:{cases:[{id:'scalar',title:'Scalar <safe>',family:'arithmetic',backends:['source']},{id:'native-build',title:'Native build',family:'compilation',backends:['native']}]},campaigns:[{id:'run',started_at:'2026-11-17',results:[base,reference,build,buildReference]}]};
 const all=[...grouping.suiteMeasurements(bundle),...grouping.nativeMeasurements(native)];
 assert.equal(new Set(all.map(row=>row.key)).size,all.length);
+assert.ok(all.filter(row=>row.group==='deflate').every(row=>row.metric==='native_compression_call_seconds'),'native timings retain a distinct measurement label from historical checked calls');
 for(const group of ['runtime','compiler','applications','memory'])assert.ok(all.filter(row=>row.group===group).every(row=>row.control.kind!=='libdeflate'));
 assert.equal(grouping.suiteMeasurements(bundle,{group:'compiler'}).length,2);
 assert.equal(grouping.suiteMeasurements(bundle,{group:'compiler'}).filter(row=>row.control.kind==='rust').length,1);

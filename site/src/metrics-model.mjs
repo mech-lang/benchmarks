@@ -1,7 +1,7 @@
 import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel} from './campaigns-model.mjs';
 
 export const metricGroups=[
-  {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:[]},
+  {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
   {id:'applications',title:'Application runtime',description:'Complete processes and declared application timers · Rust references',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
   {id:'runtime',title:'Resident runtime',description:'Resident turns and warm checked JIT calls · Rust task controls',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
   {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust process controls',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
@@ -52,7 +52,7 @@ export function taskURL(row) {
 }
 export function nativeMeasurements(data,order='forward') {
   return data.cases.flatMap(row=>[
-    {key:`native:${row.id}:time`,group:'deflate',title:row.title,metric:'native_program_call_seconds',value:row.runs[order].mech_seconds,reference:row.runs[order].libdeflate_seconds,
+    {key:`native:${row.id}:time`,group:'deflate',title:row.title,metric:'native_compression_call_seconds',value:row.runs[order].mech_seconds,reference:row.runs[order].libdeflate_seconds,
       ratio:row.runs[order].ratio,scope:`${row.input_bytes.toLocaleString()} input bytes · native call`,kind:'time'},
     {key:`native:${row.id}:size`,group:'size',title:row.title,metric:'output_bytes',value:row.mech_output_bytes,reference:row.libdeflate_output_bytes,
       ratio:row.mech_output_bytes/row.libdeflate_output_bytes,scope:'Native compression · complete output bytes',kind:'size'},

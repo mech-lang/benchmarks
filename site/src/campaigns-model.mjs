@@ -19,6 +19,7 @@ export function implementationFor(campaign,record) {
   return campaign.workers?.[record.lane]??{};
 }
 export const metrics = {
+  native_compression_call_seconds: {label:'Native compression call',unit:'seconds',note:'In-memory native encoder call, including private heap construction, allocation transfer and physical cleanup. Process startup, compilation and external validation are excluded.'},
   rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
   output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. The level-12 reference is libdeflate. Historical zlib-rs level-9 observations are separate codec results. Smaller is better.'},
   post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
