@@ -55,7 +55,9 @@ function renderTable(rows) {
   }).join('')||'<tr><td colspan="5" class="empty">No input cases match this selection.</td></tr>';
 }
 function render() {
-  const rows=visibleRows();renderChart(rows);renderTable(rows);
+  const rows=visibleRows();
+  if(selected&&!rows.some(row=>row.id===selected))selected=undefined;
+  renderChart(rows);renderTable(rows);
   for(const b of document.querySelectorAll('[data-native-filter]'))b.setAttribute('aria-pressed',String(b.dataset.nativeFilter===filter));
   hovered=undefined;
   const row=data.cases.find(r=>r.id===selected);if(row)readout(row);else $('#deflate-readout').textContent='Each point is one input case. Select a point or row for its timings.';
