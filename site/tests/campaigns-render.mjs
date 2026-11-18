@@ -86,8 +86,8 @@ assert.ok(element('#detail').innerHTML.includes('4 ms'));
 assert.ok(element('#coverage-summary').textContent.includes('1 of 1'));
 assert.ok(!element('#backend').innerHTML.includes('JVM'));
 assert.ok(!element('#backend').innerHTML.includes('Roc compressor'));
-assert.ok(element('#cases').innerHTML.includes('No matched libdeflate timing'));
-assert.ok(!element('#cases').innerHTML.includes('>—<'));
+assert.ok(element('#cases').innerHTML.includes('—'));
+assert.ok(element('#cases').innerHTML.includes('>—<'));
 console.log('Complete application paths and per-contract primary metrics passed.');
 
 const unmatchedCompressor={...base,case_id:'deflate',backend:'libdeflate',lane:'control',
@@ -98,7 +98,7 @@ const unmatchedCompressor={...base,case_id:'deflate',backend:'libdeflate',lane:'
 ({element}=await mount({...bundle,catalog:{...catalog,cases:[{id:'deflate',title:'Deflate',family:'applications',progress:'implemented'}]},
   campaigns:[{...campaign,results:[program,unmatchedCompressor]}]},'?case=deflate'));
 assert.ok(element('#cases').innerHTML.includes('4 ms'),'the original Mech observation remains available');
-assert.ok(element('#cases').innerHTML.includes('No matched comparison'));
+assert.ok(element('#cases').innerHTML.includes('—'));
 for(const selector of ['#cases','#detail']){
   assert.ok(!element(selector).innerHTML.includes('99 s'),'unmatched compressor seconds are not presented alongside the Mech timing');
   assert.ok(!element(selector).innerHTML.includes('Reference only'));
@@ -155,7 +155,7 @@ assert.ok(element('#cases').innerHTML.includes('result-tag slower'));
 assert.ok(!element('#cases').innerHTML.includes('Standalone measurement'),'the default comparison view excludes unmatched observations');
 await element('#suite-outcomes').events.click({target:{closest:()=>({dataset:{outcome:'all'}})}});
 assert.ok(element('#cases').innerHTML.includes('Standalone measurement'),'all original measurements remain accessible');
-assert.ok(element('#cases').innerHTML.includes('No matched comparison'));
+assert.ok(element('#cases').innerHTML.includes('—'));
 assert.ok(history.url.includes('result=all'));
 await element('#suite-outcomes').events.click({target:{closest:()=>({dataset:{outcome:'faster'}})}});
 assert.equal(element('#empty').hidden,false,'an empty faster selection cannot invent a win');

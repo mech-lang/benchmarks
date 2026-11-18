@@ -266,7 +266,7 @@ def build():
                               logical_reports=logical_source_reports())
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
-    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'suite/evidence-hosting.json', ROOT/'tools/export_suite.py', ROOT/'tools/project_metrics.py', ROOT/'tools/metrics_pages.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json')) + sorted((ROOT/'results/project').glob('*/snapshot.json')) + sorted((ROOT/'results/project').glob('*/evidence.json'))
+    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'suite/evidence-hosting.json', ROOT/'tools/export_suite.py', ROOT/'tools/project_metrics.py', ROOT/'tools/metrics_pages.py', ROOT/'tools/reference_sources.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json')) + sorted((ROOT/'results/project').glob('*/snapshot.json')) + sorted((ROOT/'results/project').glob('*/evidence.json'))
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():

@@ -55,8 +55,8 @@ assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).label,'0.5× ti
 assert.equal(formatMetric(3e-8,'rust_call_seconds'),'30 ns');
 assert.equal(controlFor(data,rows[1]).kind,'pending');
 data.control_policy={controls:[{case_id:'scalar',backend:'source',metric:'resident_turn_seconds',campaign_id:'resident',label:'Mech frozen baseline'}]};
-assert.equal(controlFor(data,rows[0]).record,measured);
-assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).label,'Baseline held');
+assert.equal(controlFor(data,rows[0]).record,reference,'a retained Mech checkpoint cannot displace a measured Rust reference');
+assert.equal(controlFor(data,rows[0]).label,'Rust');
 const newer={...campaign,id:'new',started_at:'2026-11-19',results:[{...measured,summary:{resident_turn_seconds:{median:.5}}}]};
 data.campaigns.push(newer);rows=measuredRows(data);
 assert.equal(controlFor(data,rows[0]).record,measured,'a faster current run cannot replace the pinned control');

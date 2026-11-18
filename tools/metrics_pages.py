@@ -4,18 +4,18 @@ from pathlib import Path
 import re
 
 PAGES = {
-    '': ('All performance results', 'Every published measurement, grouped by what it measures. See wins, losses and the results still awaiting a matched reference.', 'summary'),
+    '': ('Mech performance', 'Compare Mech with Rust and libdeflate. The reference is always 1×.', 'summary'),
     'deflate': ('DEFLATE compression', 'Native compression calls · libdeflate 1.26, level 12 · Apple M3', 'deflate'),
-    'applications': ('Application runtime', 'Complete processes and declared application timers · Rust references', 'suite'),
-    'runtime': ('Resident runtime', 'Resident turns and warm checked JIT calls · Rust task controls', 'suite'),
-    'scaling': ('Worker scaling', 'Complete worker groups · Rust process controls', 'suite'),
-    'compiler': ('Compiler & preparation', 'Source compilation, artifact decoding and JIT preparation · matched build references where available', 'suite'),
+    'applications': ('Applications', 'Application performance · Rust', 'suite'),
+    'runtime': ('Runtime', 'Small runtime tests · Rust', 'suite'),
+    'scaling': ('Worker scaling', 'Complete worker groups · Rust', 'suite'),
+    'compiler': ('Compiler', 'Source-to-executable build time · Rust', 'suite'),
     'size': ('Code & output size', 'Executable, object, artifact and compressed output bytes', 'suite'),
     'memory': ('Memory & allocations', 'Retained storage, worker peak memory and allocation counts', 'suite'),
     'lifecycle': ('Activation & cleanup', 'Initial turns, activation, snapshots and teardown', 'suite'),
     'compression-history': ('Checked compression · historical', 'Earlier managed program calls · Mech measurements without a matched level-12 timer', 'suite'),
-    'knucleotide': ('K-nucleotide', 'Whole-process runtime · full FASTA N=25,000,000 · Rust upstream #7', 'suite'),
-    'nbody': ('N-body', 'Whole-process runtime · 50,000,000 steps · Rust Benchmarks Game #3', 'suite'),
+    'knucleotide': ('K-nucleotide', 'Whole-process runtime · full FASTA N=25,000,000 · Rust', 'suite'),
+    'nbody': ('N-body', 'Whole-process runtime · 50,000,000 steps · Rust', 'suite'),
     'related-post-gen': ('Related Post Gen', '5,000 posts · post-JSON work and whole-process measurements', 'suite'),
 }
 

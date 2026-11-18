@@ -1,4 +1,4 @@
-import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot} from './campaigns-model.mjs';
+import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot,referenceName,referenceLink} from './campaigns-model.mjs';
 import {metricsRoute,metricGroups,suiteMeasurements} from './metrics-model.mjs';
 
 const $=selector=>document.querySelector(selector);
@@ -13,6 +13,7 @@ const route=metricsRoute(location.pathname,location.search);
 const scoped=route.group!=='all'||!!route.task;
 const defaultMetric=route.task?'$primary':scoped?'$all':'$primary';
 const defaultOutcome=['compiler','size','memory','lifecycle','compression-history'].includes(route.group)||route.task?'all':'matched';
+let suiteSort=['name','mech','reference','ratio'].includes(parameters.get('sort'))?parameters.get('sort'):'name',suiteDescending=parameters.get('dir')==='desc';
 let outcome=parameters.get('result')??(parameters.has('case')?'all':defaultOutcome);
 if(!['matched','faster','slower','all'].includes(outcome))outcome='matched';
 
@@ -117,7 +118,7 @@ function renderLoadedDetail(row) {
       ${record.reason?`<p class="failure">${escape(record.reason)}</p>`:''}
       <p><span class="result-tag ${direction}">${escape(comparisonLabel(change,metric))}</span></p>
       ${current.known_interference&&selected.startsWith(current.known_interference.case_prefix)?`<p class="detail-note">${escape(current.known_interference.reason)} <a href="?${new URLSearchParams({campaign:current.known_interference.replacement_campaign,backend,case:selected})}">Inspect the independent repeat</a></p>`:''}
-      <section class="control-detail" aria-label="Benchmark control"><h3>Reference · ${escape(control.label)}</h3><p>${control.kind==='pending'?'A matched comparison is not available for this measurement.':`${escape(formatMetric(control.record.summary[control.metric].median,control.metric))} · ${escape(comparisonLabel(change,metric))}.`}</p><details><summary>Comparison scope</summary><p>${escape(control.reason)}</p></details>${control.kind!=='pending'?`${record.summary?.output_bytes&&control.record.summary?.output_bytes?`<p class="compression-quality">Compressed output: Mech ${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))}; ${escape(control.label)} ${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))}. Compare output size with time.</p>`:''}<p><a href="${rawLink(control.campaign,null)}">Control run and observations</a></p><details><summary>Control measurements</summary><div class="control-samples">${control.record.samples.map(sample=>`<a href="${rawLink(control.campaign,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[control.metric],control.metric))}</span></a>`).join('')}</div></details><details><summary>Control source and provenance</summary><p>Revision <code>${escape(control.record.revision)}</code></p><p>Source SHA-256 <code>${escape(control.record.source_sha256)}</code></p><pre>${escape(control.record.source)}</pre></details>`:''}${control.promotion?`<p>Confirmed against the fixed Rust example in 31 primary and 13 independent rounds. ${escape(control.promotion.rust_reference_note)}</p>`:''}</section>
+      <section class="control-detail" aria-label="Benchmark control"><h3>Reference · ${referenceLink(control)}</h3><p>${control.kind==='pending'?'A matched comparison is not available for this measurement.':`${escape(formatMetric(control.record.summary[control.metric].median,control.metric))} · ${escape(comparisonLabel(change,metric))}.`}</p><details><summary>Comparison scope</summary><p>${escape(control.reason)}</p></details>${control.kind!=='pending'?`${record.summary?.output_bytes&&control.record.summary?.output_bytes?`<p class="compression-quality">Compressed output: Mech ${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))}; ${referenceLink(control)} ${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))}. Compare output size with time.</p>`:''}<p><a href="${rawLink(control.campaign,null)}">Control run and observations</a></p><details><summary>Control measurements</summary><div class="control-samples">${control.record.samples.map(sample=>`<a href="${rawLink(control.campaign,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[control.metric],control.metric))}</span></a>`).join('')}</div></details><details><summary>Control source and provenance</summary><p>Revision <code>${escape(control.record.revision)}</code></p><p>Source SHA-256 <code>${escape(control.record.source_sha256)}</code></p><pre>${escape(control.record.source)}</pre></details>`:''}${control.promotion?`<p>Confirmed against the fixed Rust example in 31 primary and 13 independent rounds. ${escape(control.promotion.rust_reference_note)}</p>`:''}</section>
       ${$('#baseline').value?`<p class="detail-note">History comparison: ${comparison.status==='informational'?escape(`${comparison.label} relative to the selected baseline. ${comparison.reason}`):escape(comparison.reason??'No compatible baseline observation.')}</p>`:''}
       ${$('#baseline').value==='$paired'&&screening?`<p class="detail-note">Paired turn screening: ${escape(nice(screening.status))}. ${escape(screening.reason??'')}${screening.interval_95?` 95% confidence interval: ${screening.interval_95.map(n=>n.toFixed(3)).join('–')}×.`:''}</p>`:''}
       <details><summary>Earlier matched measurements</summary>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}</details>
@@ -126,7 +127,7 @@ function renderLoadedDetail(row) {
       <details><summary>Correctness and negative control</summary><p>${escape(verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${verification.output_count?`<p>${verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations</a><pre>${escape(JSON.stringify(verification.preview_outputs??verification.outputs,null,2))}</pre></details>
       <details><summary>Program source</summary><p>SHA-256 <code>${escape(record.source_sha256)}</code></p><pre class="source"><code>${escape(record.source)}</code></pre></details>
       <details><summary>All measured outcomes</summary><dl>${Object.entries(record.summary??{}).map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(metrics[key]?formatMetric(value.median,key):value.median.toLocaleString(undefined,{maximumFractionDigits:6}))}</dd>`).join('')}</dl></details>
-      <details><summary>Compiler and environment</summary><dl><dt>Version / revision</dt><dd><code>${escape(record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(implementation.binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(implementation.adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(implementation.rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
+      <details><summary>Compiler and environment</summary><dl><dt>Version / revision</dt><dd><code>${escape(implementation.source_publication_revision??record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(implementation.binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(implementation.adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(implementation.rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
       <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON${current.compressed_evidence?.['campaign.json']?' (gzip)':''}</a>${current.raw_archive?`<a href="${rawLink(current,null,current.raw_archive)}" download>Raw evidence archive</a>`:''}<a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report</a>${current.reproduction_url?`<a href="${escape(current.reproduction_url)}" target="_blank" rel="noopener">Reproduction sources</a>`:''}</p>`;
   }
   if(definition.compiler_tests?.length)html+=`<details><summary>Existing compiler test coverage</summary><ul>${definition.compiler_tests.map(test=>`<li><a href="https://github.com/${pathURL(test.repository)}/blob/${bundle.catalog.candidate_revision}/${pathURL(test.path)}" target="_blank" rel="noopener">${escape(test.path)}</a></li>`).join('')}</ul></details>`;
@@ -138,7 +139,7 @@ function referenceFor(row) {
   const origin=$('#baseline').value==='$paired'?row.campaign:baseline();
   const record=baselineRecord(row),comparison=compareRecords(record,row.record,row.metric);
   if(comparison.status!=='informational')return {kind:'pending',label:'No matched Mech baseline',reason:comparison.reason??'The selected history does not include a comparable observation.'};
-  return {kind:'history',label:`Mech ${short(record.revision)}`,record,campaign:origin,metric:row.metric,reason:'Same task, source, execution path, environment and measurement contract.'};
+  return {kind:'history',label:'Mech',record,campaign:origin,metric:row.metric,reason:'Same task, source, execution path, environment and measurement contract.'};
 }
 function changeFor(row,control=referenceFor(row)) {
   return control.kind==='history'?compareRecords(control.record,row.record,row.metric):controlComparison(row,control);
@@ -154,13 +155,13 @@ function suiteMeasure() {
   return metrics[metric]?.unit==='bytes'?'size':metrics[metric]?.unit==='rate'?'throughput':metrics[metric]?.unit==='count'?'count':'time';
 }
 function renderSuiteChart() {
-  $('#suite-chart').innerHTML=comparisonPlot(rows.map(row=>{const c=changeFor(row);return {id:plotID(row),title:row.definition.title,ratio:c.ratio,direction:comparisonDirection(c,row.metric),label:comparisonLabel(c,row.metric)};}),{width:$('#suite-chart').clientWidth,measure:suiteMeasure(),label:'Matched Mech task comparisons'});
+  $('#suite-chart').innerHTML=comparisonPlot(rows.map(row=>{const c=changeFor(row);return {id:plotID(row),title:row.definition.title,ratio:c.ratio,direction:comparisonDirection(c,row.metric),label:comparisonLabel(c,row.metric)};}),{width:$('#suite-chart').clientWidth,measure:suiteMeasure(),label:'Mech compared with its reference'});
   $('#suite-chart-key').textContent=suiteMeasure()==='throughput'?'Above 1×: Mech has higher throughput. Below 1×: Mech has lower throughput.':suiteMeasure()==='time'?'Below 1×: Mech takes less time. Above 1×: Mech takes more time.':'Below 1×: Mech uses less. Above 1×: Mech uses more.';
 }
 function previewSuite(id) {
   const row=rows.find(r=>r.definition.id===id||plotID(r)===id);if(!row)return;
   const control=referenceFor(row),change=changeFor(row,control);
-  $('#suite-readout').innerHTML=`<strong>${escape(row.definition.title)}</strong><div class="readout-values"><span>Mech <strong>${escape(formatMetric(row.record.summary?.[row.metric]?.median,row.metric))}</strong></span><span>${escape(control.label)}${control.record?` <strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</span><strong class="${comparisonDirection(change,row.metric)}">${escape(comparisonLabel(change,row.metric))}</strong></div>`;
+  $('#suite-readout').innerHTML=`<strong>${escape(row.definition.title)}</strong><div class="readout-values"><span>Mech <strong>${escape(formatMetric(row.record.summary?.[row.metric]?.median,row.metric))}</strong></span><span>${referenceLink(control)}${control.record?` <strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</span><strong class="${comparisonDirection(change,row.metric)}">${escape(comparisonLabel(change,row.metric))}</strong></div>`;
 }
 function pageRows(options={}) {
   if(!scoped)return measuredRows(bundle,options);
@@ -177,11 +178,13 @@ function render() {
   const dates=available.map(row=>row.campaign.started_at).filter(Boolean).sort();
   const asof=dates.at(-1);
   $('#suite-asof').textContent=asof?'Latest measurement '+asof.slice(0,10):'Published measurements';
-  $('#stats').innerHTML=[['Measurement wins',counts.faster,'faster'],['Measurement losses',counts.slower,'slower'],['Ties',counts.equal,'equal'],['Unmatched',counts.unmatched,'unmatched']].map(([label,value,kind])=>`<div><strong class="${kind}">${value}</strong><span>${label}</span></div>`).join('');
+  $('#stats').innerHTML=[['Wins',counts.faster,'faster'],['Losses',counts.slower,'slower'],['Ties',counts.equal,'equal']].map(([label,value,kind])=>`<div><strong class="${kind}">${value}</strong><span>${label}</span></div>`).join('');
   $('#boundary').textContent=['$primary','$all'].includes(metric)?'Every row names its measurement and reference. Ratios are Mech divided by that reference; timings, sizes and counts remain separate measurements.':metrics[metric].note;
   $('#metric-heading').textContent=['$primary','$all'].includes(metric)?'Mech':`Mech · ${metrics[metric].label}`;
   const candidates=pageRows({campaign:$('#campaign').value,query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend,metric});
   rows=candidates.filter(row=>{const state=comparisonDirection(changeFor(row),row.metric);return outcome==='all'||(outcome==='matched'?state!=='unmatched':state===outcome);});
+  rows.sort((a,b)=>{const value=row=>suiteSort==='name'?row.definition.title:suiteSort==='mech'?row.record.summary?.[row.metric]?.median:suiteSort==='reference'?referenceFor(row).record?.summary?.[referenceFor(row).metric]?.median:changeFor(row).ratio;const x=value(a),y=value(b);return (suiteDescending?-1:1)*(typeof x==='string'?x.localeCompare(y):(x??Infinity)-(y??Infinity));});
+  for(const button of $('#suite-headings').querySelectorAll?.('[data-case-sort]')??[])button.closest('th').setAttribute('aria-sort',suiteSort===button.dataset.caseSort?(suiteDescending?'descending':'ascending'):'none');
   $('#case-count').textContent=`${rows.length} ${rows.length===1?'measurement':'measurements'}`;
   $('#empty').hidden=rows.length>0;
   for(const button of $('#suite-outcomes').querySelectorAll?.('[data-outcome]')??[])button.setAttribute('aria-pressed',String(button.dataset.outcome===outcome));
@@ -189,14 +192,14 @@ function render() {
   $('#cases').innerHTML=rows.map(row=>{
     const {definition,record,metric:rowMetric}=row,control=referenceFor(row),change=changeFor(row,control);
     const direction=comparisonDirection(change,rowMetric);
-    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" data-metric="${escape(rowMetric)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span></td><td class="control-value"><span>${escape(control.label)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
+    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" data-metric="${escape(rowMetric)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span></td><td class="control-value"><span>${referenceLink(control)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
   }).join('');
   renderSuiteChart();
   if(selected)previewSuite(selected);else $('#suite-readout').textContent='Select a point or task to see its timings.';
   const details=renderDetail();
   const query=new URLSearchParams(location.search);
-  for(const key of ['campaign','baseline','metric','backend','case','q','family','progress','result'])query.delete(key);
-  for(const [key,value,defaultValue] of [['campaign',$('#campaign').value,'$latest'],['baseline',$('#baseline').value,''],['metric',metric,defaultMetric],['backend',backend,'$auto'],['case',selected,undefined],['q',$('#search').value,''],['family',$('#family').value,'all'],['progress',$('#progress').value,'all'],['result',outcome,defaultOutcome]])if(value&&value!==defaultValue)query.set(key,value);
+  for(const key of ['campaign','baseline','metric','backend','case','q','family','progress','result','sort','dir'])query.delete(key);
+  for(const [key,value,defaultValue] of [['campaign',$('#campaign').value,'$latest'],['baseline',$('#baseline').value,''],['metric',metric,defaultMetric],['backend',backend,'$auto'],['case',selected,undefined],['q',$('#search').value,''],['family',$('#family').value,'all'],['progress',$('#progress').value,'all'],['result',outcome,defaultOutcome],['sort',suiteSort,'name'],['dir',suiteDescending?'desc':'','']])if(value&&value!==defaultValue)query.set(key,value);
   history.replaceState(null,'',location.pathname+(query.size?'?'+query:'')+(location.hash??''));
   return details;
 }
@@ -227,6 +230,8 @@ async function start() {
   selected=route.task??parameters.get('case')??undefined;
   $('#search').value=parameters.get('q')??'';
   for(const selector of ['family','progress'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
+  if(route.task){$('#stats').hidden=true;$('#suite-outcomes').hidden=true;}
+  $('#suite-headings').addEventListener('click',event=>{const button=event.target.closest('[data-case-sort]');if(button){const key=button.dataset.caseSort;suiteDescending=key===suiteSort?!suiteDescending:false;suiteSort=key;return render();}});
   $('#suite-outcomes').addEventListener('click',event=>{const button=event.target.closest('[data-outcome]');if(button){outcome=button.dataset.outcome;return render();}});
   let lastPreview;
   for(const type of ['pointerover','focusin'])$('#suite-chart').addEventListener(type,event=>{const id=event.target.closest('[data-compare]')?.dataset.compare;if(id&&id!==lastPreview){lastPreview=id;previewSuite(id);}});

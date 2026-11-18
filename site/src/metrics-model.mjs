@@ -2,10 +2,10 @@ import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparis
 
 export const metricGroups=[
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
-  {id:'applications',title:'Application runtime',description:'Complete processes and declared application timers · Rust references',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
-  {id:'runtime',title:'Resident runtime',description:'Resident turns and warm checked JIT calls · Rust task controls',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
-  {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust process controls',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
-  {id:'compiler',title:'Compiler & preparation',description:'Source compilation, artifact decoding and JIT preparation · matched build references where available',href:'/metrics/compiler/',metrics:['source_to_executable_seconds','source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds']},
+  {id:'applications',title:'Applications',description:'Application performance · Rust',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
+  {id:'runtime',title:'Runtime',description:'Small runtime tests · Rust',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
+  {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
+  {id:'compiler',title:'Compiler',description:'Source-to-executable build time · Rust',href:'/metrics/compiler/',metrics:['source_to_executable_seconds','source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds']},
   {id:'size',title:'Code & output size',description:'Executable, object, artifact and compressed output bytes',href:'/metrics/size/',metrics:['executable_bytes','linked_text_bytes','object_text_bytes','artifact_bytes','output_bytes']},
   {id:'memory',title:'Memory & allocations',description:'Retained storage, worker peak memory and allocation counts',href:'/metrics/memory/',metrics:['managed_retained_bytes','worker_process_peak_rss_bytes','execution_allocations']},
   {id:'lifecycle',title:'Activation & cleanup',description:'Initial turns, activation, snapshots and teardown',href:'/metrics/lifecycle/',metrics:['initial_turn_seconds','activation_seconds','owned_snapshot_seconds','teardown_seconds']},
@@ -56,7 +56,7 @@ export function nativeMeasurements(data,order='forward') {
       ratio:row.runs[order].ratio,scope:`${row.input_bytes.toLocaleString()} input bytes · native call`,kind:'time'},
     {key:`native:${row.id}:size`,group:'size',title:row.title,metric:'output_bytes',value:row.mech_output_bytes,reference:row.libdeflate_output_bytes,
       ratio:row.mech_output_bytes/row.libdeflate_output_bytes,scope:'Native compression · complete output bytes',kind:'size'},
-  ].map(entry=>({...entry,control:{kind:'libdeflate',label:'libdeflate 1.26 · level 12'},date:'2026-11-18',
+  ].map(entry=>({...entry,control:{kind:'libdeflate',label:'libdeflate'},date:'2026-11-18',
     direction:comparisonDirection({ratio:entry.ratio},entry.metric),label:comparisonLabel({ratio:entry.ratio},entry.metric),
     href:`/metrics/deflate/?${new URLSearchParams({'deflate-case':row.id,...(order==='reverse'?{'deflate-order':order}:{})})}`})));
 }
@@ -70,4 +70,16 @@ export function filterMeasurements(rows,{group='all',result='all',query=''}={}) 
   query=query.trim().toLowerCase();
   return rows.filter(row=>(group==='all'||row.group===group)&&(result==='all'||(result==='matched'?row.direction!=='unmatched':row.direction===result))
     &&`${row.title} ${metrics[row.metric]?.label} ${measurementScope(row)} ${row.control.label}`.toLowerCase().includes(query));
+}
+
+// The comparison overview uses one main timing per task. Supporting measurements
+// stay in task details; size and allocation pages show their matched metrics.
+export function publishedComparisons(bundle,data,{group='all'}={}) {
+  const secondary=['size','memory','lifecycle'].includes(group);
+  const suite=suiteMeasurements(bundle,{group:secondary?group:'all',metric:secondary?'$all':'$primary'})
+    .filter(row=>row.direction!=='unmatched'&&(group==='all'||row.group===group));
+  const native=(!group||group==='all'||group==='deflate')&&data?nativeMeasurements(data).filter(row=>row.group==='deflate'):[];
+  const processing=suite.map(row=>row.definition.id==='related-post-gen'&&row.metric==='post_json_seconds'?{...row,title:row.title+' · processing'}:row);
+  const process=(!secondary&&(group==='all'||group==='applications'))?suiteMeasurements(bundle,{task:'related-post-gen',metric:'native_process_seconds'}).filter(row=>row.direction!=='unmatched').map(row=>({...row,title:row.title+' · whole process'})):[];
+  return [...processing,...process,...native];
 }

@@ -22,7 +22,7 @@ export const metrics = {
   native_compression_call_seconds: {label:'Native compression call',unit:'seconds',note:'In-memory native encoder call, including private heap construction, allocation transfer and physical cleanup. Process startup, compilation and external validation are excluded.'},
   rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
   output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. The level-12 reference is libdeflate. Historical zlib-rs level-9 observations are separate codec results. Smaller is better.'},
-  post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
+  post_json_seconds: {label:'Processing',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
   reported_processing_seconds: {label:'Rust example processing timer',unit:'seconds',note:'Unchanged related_post_gen rust_con timer. Its Rayon pool is initialized before the clock; this is retained as an explicitly asymmetric reference.'},
   jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
   jit_compile_seconds: {label:'JIT preparation',unit:'seconds',note:'Checked native code generation and executable-memory preparation. The complete Deflate program is compiled once per independent fork, shared by its 12 corpus cases.'},
@@ -31,7 +31,7 @@ export const metrics = {
   worker_group_process_seconds: {label:'Complete worker group',unit:'seconds',note:'Fixed total 196,608 accepted turns across 1, 2 or 4 independent Mech processes. Includes supervisor/process startup, compilation, activation, warmup, execution and complete teardown.'},
   accepted_turns_per_second: {label:'Accepted turns per second',unit:'rate',higherBetter:true,note:'Fixed total accepted turns divided by complete group lifecycle time. Higher is better. Worker counts are separate, explicit strong-scaling cases.'},
   source_to_executable_seconds: {label:'Source → executable',unit:'seconds',note:'Complete source compiler worker, dependency resolution, generated support build and final link. The separate qualification build warms support dependencies; each measured fork generates a new project.'},
-  native_process_seconds: {label:'Whole process lifecycle',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. Compilation and JIT preparation are included when the selected application performs them at startup.'},
+  native_process_seconds: {label:'Whole process',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. Compilation and JIT preparation are included when the selected application performs them at startup.'},
   object_text_bytes: {label:'Object code section',unit:'bytes',note:'Emitted object __text/.text section bytes, from the saved platform size report.'},
   linked_text_bytes: {label:'Linked code section',unit:'bytes',note:'Linked executable __text/.text section bytes. The generated release profile strips symbols.'},
   executable_bytes: {label:'Executable size',unit:'bytes',note:'Entire linked native executable under the generated release profile (strip=symbols).'},
@@ -149,22 +149,22 @@ export function controlFor(bundle,row) {
         &&Number.isFinite(reference.summary?.[mapped]?.median)).map(reference=>({origin,reference})):[]):[];
     references.sort((a,b)=>a.origin.started_at.localeCompare(b.origin.started_at)||a.origin.id.localeCompare(b.origin.id));
     const retained=references.at(-1);
-    if(retained)return {kind:'libdeflate',label:'libdeflate · level 12',record:retained.reference,campaign:retained.origin,metric:mapped,
+    if(retained)return {kind:'libdeflate',label:'libdeflate',record:retained.reference,campaign:retained.origin,metric:mapped,
       reason:'Same task, environment and explicitly shared measurement contract; libdeflate 1.26 level 12.'};
     return {kind:'pending',label:'No matched libdeflate timing',
       reason:'This row reports a Mech measurement. No level-12 libdeflate timing has the same task, environment and shared measurement contract.'};
+  }
+  const control=campaign.results.find(r=>r.case_id===record.case_id&&r.lane==='control'&&r.backend==='rust'&&r.outcome==='ok');
+  if(control){
+    const mapped=control.measurement?.metric_mapping?.[metric]??metric;
+    if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
   }
   const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
   if(held){
     const origin=bundle.campaigns.find(c=>c.id===held.campaign_id);
     const reference=recordFor(origin,held.case_id,held.backend);
     // A retained control remains pinned; new source or boundary needs qualification.
-    if(reference&&origin.started_at<=campaign.started_at&&compareRecords(reference,record,metric).status==='informational')return {kind:'mech',label:held.label,record:reference,campaign:origin,metric,reason:held.reason,promotion:held};
-  }
-  const control=campaign.results.find(r=>r.case_id===record.case_id&&r.lane==='control'&&r.backend==='rust'&&r.outcome==='ok');
-  if(control){
-    const mapped=control.measurement?.metric_mapping?.[metric]??metric;
-    if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:control.title??'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
+    if(reference&&origin.started_at<=campaign.started_at&&compareRecords(reference,record,metric).status==='informational')return {kind:'mech',label:'Mech',record:reference,campaign:origin,metric,reason:held.reason,promotion:held};
   }
   return {kind:'pending',label:['source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds','source_to_executable_seconds'].includes(metric)?'No matched compiler reference':'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
 }
@@ -192,7 +192,7 @@ export function comparisonDirection(change,metric) {
 export function comparisonLabel(change,metric) {
   if(change?.status==='baseline')return 'Fixed Mech baseline';
   const direction=comparisonDirection(change,metric);
-  if(direction==='unmatched')return 'No matched comparison';
+  if(direction==='unmatched')return '—';
   if(direction==='equal')return '1× · equal';
   const ratio=change.ratio,unit=metrics[metric]?.unit;
   const suffix=unit==='bytes'?'size':unit==='count'?'count':unit==='rate'?'throughput':'time';
@@ -229,4 +229,19 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
     <text x="${left}" y="${height-30}">Lowest ratio</text><text x="${width-right}" y="${height-30}" text-anchor="end">Highest ratio</text>
     <text x="${(left+width-right)/2}" y="${height-9}" text-anchor="middle">${valid.length} cases, ordered by relative ${escape(measure)}</text>
   </svg>`;
+}
+
+export function referenceName(control) {
+  return control?.kind==='rust'?'Rust':control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+}
+export function referenceURL(control) {
+  if(control?.kind==='pending')return undefined;
+  if(control?.kind==='libdeflate')return 'https://github.com/ebiggers/libdeflate/tree/92e6a0db9fa848d742f9eb286c92afc60f2c3dda';
+  const url=control?.record?.reference_url??(control?.record?.detail_path?'/benchmarks/'+control.record.detail_path:undefined);
+  if(url&&(url.startsWith('/benchmarks/')||/^https?:\/\//.test(url)))return url;
+}
+export function referenceLink(control) {
+  const name=referenceName(control),url=referenceURL(control);
+  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return url?`<a href="${escape(url)}">${name}</a>`:name;
 }

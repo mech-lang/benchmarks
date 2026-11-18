@@ -8,6 +8,7 @@ import hashlib
 import math
 import re
 
+from reference_sources import source_link
 from benchmark_suite import ROOT, SCHEMA, load_catalog, validate_campaign, EvidenceReader
 
 
@@ -155,6 +156,8 @@ def export(output, root=ROOT):
             summary['measurement']={k:v for k,v in record.get('measurement',{}).items() if k in {'primary_metric','metric_mapping','comparison_note'}}
             summary['summary']={key:{'median':value['median'],'samples':len(value.get('samples',[]))} for key,value in record.get('summary',{}).items()}
             summary['detail_path']=detail_path
+            reference=source_link(record,campaign,output,root)
+            if reference:summary['reference_url']=reference
             index['results'].append(summary)
         campaigns.append(index)
     catalog_summary={k:catalog[k] for k in ('schema','candidate_revision') if k in catalog}

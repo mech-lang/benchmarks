@@ -1,17 +1,20 @@
-import {formatMetric,comparisonLabel,comparisonPlot} from './campaigns-model.mjs';
+import {formatMetric,comparisonLabel,comparisonPlot,referenceLink} from './campaigns-model.mjs';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=new URLSearchParams(location.search);
 let data,selected=initial.get('deflate-case'),filter=initial.get('deflate-filter')??'all',hovered;
 let order=initial.get('deflate-order')==='reverse'?'reverse':'forward';
+const legacySort=initial.get('deflate-sort');
+let sort=['name','mech','reference','ratio','output'].includes(legacySort)?legacySort:['slowest','fastest'].includes(legacySort)?'ratio':'name';
+let descending=initial.get('deflate-dir')==='desc'||legacySort==='slowest';
 const ratio=row=>row.runs[order].ratio;
 const direction=row=>ratio(row)<1?'faster':ratio(row)>1?'slower':'equal';
 const label=row=>comparisonLabel({ratio:ratio(row)},'native_compression_call_seconds');
 
 function writeParameters() {
   const query=new URLSearchParams(location.search);
-  for(const [key,value] of [['deflate-order',order==='forward'?'':order],['deflate-filter',filter==='all'?'':filter],['deflate-search',$('#deflate-search').value],['deflate-sort',$('#deflate-sort').value==='slowest'?'':$('#deflate-sort').value],['deflate-case',selected]]){
+  for(const [key,value] of [['deflate-order',order==='forward'?'':order],['deflate-filter',filter==='all'?'':filter],['deflate-search',$('#deflate-search').value],['deflate-sort',sort==='name'?'':sort],['deflate-dir',descending?'desc':''],['deflate-case',selected]]){
     if(value)query.set(key,value);else query.delete(key);
   }
   history.replaceState(null,'',location.pathname+(query.size?'?'+query:'')+location.hash);
@@ -24,14 +27,15 @@ function visibleRows() {
 function readout(row) {
   if(!row)return;
   const run=row.runs[order];
-  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>Mech <strong>${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</strong></span><span>libdeflate <strong>${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
+  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>Mech <strong>${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</strong></span><span>${referenceLink({kind:'libdeflate'})} <strong>${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
 }
 function renderChart(rows=visibleRows()) {
   $('#deflate-chart').innerHTML=comparisonPlot(rows.map(row=>({id:row.id,title:row.title,ratio:ratio(row),direction:direction(row),label:label(row)})),{width:$('#deflate-chart').clientWidth,label:'Mech and libdeflate level 12, one point per input case'});
 }
 function renderTable(rows) {
-  const sort=$('#deflate-sort').value;
-  rows=[...rows].sort((a,b)=>sort==='name'?a.title.localeCompare(b.title):sort==='size'?a.input_bytes-b.input_bytes:sort==='fastest'?ratio(a)-ratio(b):ratio(b)-ratio(a));
+  const value=row=>sort==='name'?row.title:sort==='mech'?row.runs[order].mech_seconds:sort==='reference'?row.runs[order].libdeflate_seconds:sort==='output'?row.mech_output_bytes:ratio(row);
+  rows=[...rows].sort((a,b)=>{const x=value(a),y=value(b);return (descending?-1:1)*(typeof x==='string'?x.localeCompare(y):x-y);});
+  for(const button of $('#deflate-headings').querySelectorAll('[data-native-sort]'))button.closest('th').setAttribute('aria-sort',button.dataset.nativeSort===sort?(descending?'descending':'ascending'):'none');
   $('#deflate-count').textContent=`${rows.length} ${rows.length===1?'case':'cases'}`;
   $('#deflate-cases').innerHTML=rows.map(row=>{
     const run=row.runs[order];
@@ -73,12 +77,11 @@ async function start() {
   }
   $('#deflate-order').value=order;
   $('#deflate-search').value=initial.get('deflate-search')??'';
-  if(['slowest','fastest','name','size'].includes(initial.get('deflate-sort')))$('#deflate-sort').value=initial.get('deflate-sort');
   if(!['all','faster','slower'].includes(filter))filter='all';
   $('#deflate-filters').addEventListener('click',event=>{const b=event.target.closest('[data-native-filter]');if(b){filter=b.dataset.nativeFilter;render();}});
   $('#deflate-order').addEventListener('change',()=>{order=$('#deflate-order').value;render();});
   $('#deflate-search').addEventListener('input',render);
-  $('#deflate-sort').addEventListener('change',render);
+  $('#deflate-headings').addEventListener('click',event=>{const button=event.target.closest('[data-native-sort]');if(button){const key=button.dataset.nativeSort;descending=key===sort?!descending:false;sort=key;render();}});
   for(const element of [$('#deflate-chart'),$('#deflate-cases')]){
     element.addEventListener('pointerover',preview);element.addEventListener('focusin',preview);element.addEventListener('click',choose);
     element.addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)&&event.target.matches('[data-compare]')){event.preventDefault();choose(event);}});
