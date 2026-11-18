@@ -64,5 +64,10 @@ const visible=data.cases.filter(row=>row.runs.reverse.ratio>1&&row.title.toLower
 assert.equal((ui.element('#deflate-cases').innerHTML.match(/data-native-row=/g)||[]).length,visible.length);
 assert.equal(ui.element('#deflate-order').value,'reverse');assert.ok(ui.history.url.includes('deflate-search=prefix'));
 
+ui=await mount();
+ui.element('#deflate-headings').events.click({target:{closest:()=>({dataset:{nativeSort:'mech'}})}});
+assert.ok(ui.history.url.includes('deflate-sort=mech'));
+ui.element('#deflate-headings').events.click({target:{closest:()=>({dataset:{nativeSort:'mech'}})}});
+assert.ok(ui.history.url.includes('deflate-dir=desc'));
 ui=await mount('',{...data,cases:data.cases.slice(1)});assert.equal(ui.element('#deflate-error').textContent,'The compression result set is incomplete.');
 console.log('All 162 native rows match the verified CSV; outcome colors, filtering, reversed order, output sizes, shared links and incomplete-data handling pass.');

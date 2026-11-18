@@ -159,13 +159,6 @@ export function controlFor(bundle,row) {
     const mapped=control.measurement?.metric_mapping?.[metric]??metric;
     if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
   }
-  const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
-  if(held){
-    const origin=bundle.campaigns.find(c=>c.id===held.campaign_id);
-    const reference=recordFor(origin,held.case_id,held.backend);
-    // A retained control remains pinned; new source or boundary needs qualification.
-    if(reference&&origin.started_at<=campaign.started_at&&compareRecords(reference,record,metric).status==='informational')return {kind:'mech',label:'Mech',record:reference,campaign:origin,metric,reason:held.reason,promotion:held};
-  }
   return {kind:'pending',label:['source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds','source_to_executable_seconds'].includes(metric)?'No matched compiler reference':'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
 }
 

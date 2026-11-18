@@ -59,8 +59,8 @@ assert.equal(controlFor(data,rows[0]).record,reference,'a retained Mech checkpoi
 assert.equal(controlFor(data,rows[0]).label,'Rust');
 const newer={...campaign,id:'new',started_at:'2026-11-19',results:[{...measured,summary:{resident_turn_seconds:{median:.5}}}]};
 data.campaigns.push(newer);rows=measuredRows(data);
-assert.equal(controlFor(data,rows[0]).record,measured,'a faster current run cannot replace the pinned control');
-assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).percent,-50);
+assert.equal(controlFor(data,rows[0]).kind,'pending','a missing Rust run does not automatically substitute an internal Mech checkpoint');
+assert.equal(compareRecords(measured,rows[0].record,rows[0].metric).percent,-50,'explicit history comparisons remain available');
 newer.results[0]={...newer.results[0],source_sha256:'new-source'};
 assert.equal(controlFor(data,measuredRows(data)[0]).kind,'pending','changed source cannot silently inherit a qualified Mech control');
 console.log('Consolidated measured rows, side-by-side Rust controls and fixed Mech promotion checks passed.');
