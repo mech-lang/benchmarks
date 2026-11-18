@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import {gzipSync} from 'node:zlib';
 import * as model from '../src/campaigns-model.mjs';
+import * as routing from '../src/metrics-model.mjs';
 
 class Element {
   constructor(){this._html='';this._value='';this.textContent='';this.hidden=false;this.events={};this.options=[];}
@@ -25,7 +26,7 @@ async function mount(bundle,query='',detailFiles={},compressed=true) {
   element('#backend').options=['source','bytecode','native'].map(value=>({value}));
   const history={replaceState(_a,_b,url){this.url=url;}};
   const requests=[];
-  const context=vm.createContext({...model,document:{querySelector:element},URL,URLSearchParams,console,Response,DecompressionStream:compressed?DecompressionStream:undefined,
+  const context=vm.createContext({...model,...routing,document:{querySelector:element},URL,URLSearchParams,console,Response,DecompressionStream:compressed?DecompressionStream:undefined,
     location:{search:query,pathname:'/metrics/'},history,
     fetch:async url=>{requests.push(String(url));const name=new URL(url).pathname.replace('/benchmarks/','');return new Response(name==='campaigns.json.gz'?gzipSync(JSON.stringify(bundle)):JSON.stringify(name==='campaigns.json'?bundle:detailFiles[name]));}});
   vm.runInContext(source,context);

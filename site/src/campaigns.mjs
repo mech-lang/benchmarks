@@ -1,4 +1,5 @@
 import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot} from './campaigns-model.mjs';
+import {metricsRoute,metricGroups,suiteMeasurements} from './metrics-model.mjs';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -8,7 +9,11 @@ const nice=value=>String(value??'unknown').replaceAll('_',' ');
 let bundle,selected,rows=[],detailGeneration=0;
 const recordLoads=new WeakMap(),contextLoads=new WeakMap();
 const parameters=new URLSearchParams(location.search);
-let outcome=parameters.get('result')??(parameters.has('case')?'all':'matched');
+const route=metricsRoute(location.pathname,location.search);
+const scoped=route.group!=='all'||!!route.task;
+const defaultMetric=route.task?'$primary':scoped?'$all':'$primary';
+const defaultOutcome=['compiler','size','memory','lifecycle','compression-history'].includes(route.group)||route.task?'all':'matched';
+let outcome=parameters.get('result')??(parameters.has('case')?'all':defaultOutcome);
 if(!['matched','faster','slower','all'].includes(outcome))outcome='matched';
 
 function campaign() {return bundle.campaigns.find(c=>c.id===$('#campaign').value);}
@@ -71,6 +76,7 @@ async function renderDetail() {
       ...(control.record?[loadContext(control.campaign),loadRecord(control.campaign,control.record)]:[])]);
     if(generation===detailGeneration){
       renderLoadedDetail(row);
+      if(route.task){$('#page-title').textContent=row.definition.title;document.title=`Mech · ${row.definition.title}`;}
       if(globalThis.matchMedia?.('(max-width:820px)')?.matches)$('#detail').scrollIntoView({block:'start'});
     }
   } catch(error){
@@ -113,7 +119,7 @@ function renderLoadedDetail(row) {
       ${current.known_interference&&selected.startsWith(current.known_interference.case_prefix)?`<p class="detail-note">${escape(current.known_interference.reason)} <a href="?${new URLSearchParams({campaign:current.known_interference.replacement_campaign,backend,case:selected})}">Inspect the independent repeat</a></p>`:''}
       <section class="control-detail" aria-label="Benchmark control"><h3>Reference · ${escape(control.label)}</h3><p>${control.kind==='pending'?'A matched comparison is not available for this measurement.':`${escape(formatMetric(control.record.summary[control.metric].median,control.metric))} · ${escape(comparisonLabel(change,metric))}.`}</p><details><summary>Comparison scope</summary><p>${escape(control.reason)}</p></details>${control.kind!=='pending'?`${record.summary?.output_bytes&&control.record.summary?.output_bytes?`<p class="compression-quality">Compressed output: Mech ${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))}; ${escape(control.label)} ${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))}. Compare output size with time.</p>`:''}<p><a href="${rawLink(control.campaign,null)}">Control run and observations</a></p><details><summary>Control measurements</summary><div class="control-samples">${control.record.samples.map(sample=>`<a href="${rawLink(control.campaign,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[control.metric],control.metric))}</span></a>`).join('')}</div></details><details><summary>Control source and provenance</summary><p>Revision <code>${escape(control.record.revision)}</code></p><p>Source SHA-256 <code>${escape(control.record.source_sha256)}</code></p><pre>${escape(control.record.source)}</pre></details>`:''}${control.promotion?`<p>Confirmed against the fixed Rust example in 31 primary and 13 independent rounds. ${escape(control.promotion.rust_reference_note)}</p>`:''}</section>
       ${$('#baseline').value?`<p class="detail-note">History comparison: ${comparison.status==='informational'?escape(`${comparison.label} relative to the selected baseline. ${comparison.reason}`):escape(comparison.reason??'No compatible baseline observation.')}</p>`:''}
-      ${$('#baseline').value==='$paired'&&screening?`<p class="detail-note">Paired turn screening: ${escape(nice(screening.status))}. ${escape(screening.reason??'')}${screening.interval_95?` 95% interval: ${screening.interval_95.map(n=>n.toFixed(3)).join('–')}×.`:''}</p>`:''}
+      ${$('#baseline').value==='$paired'&&screening?`<p class="detail-note">Paired turn screening: ${escape(nice(screening.status))}. ${escape(screening.reason??'')}${screening.interval_95?` 95% confidence interval: ${screening.interval_95.map(n=>n.toFixed(3)).join('–')}×.`:''}</p>`:''}
       <details><summary>Earlier matched measurements</summary>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}</details>
       <details><summary>Individual timing observations</summary>${summary?`<div class="sample-list">${record.samples.map(sample=>`<a href="${rawLink(current,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[metric],metric))}</span></a>`).join('')}</div>`:'<p>No accepted timings. Failed and partial observations remain in the campaign evidence.</p>'}</details>
       <details><summary>Task and measurement contracts</summary><p>Output: <code>${escape(record.task.outputs.join(', '))}</code></p><p>${escape(record.measurement.boundary)}</p><dl>${Object.entries(record.measurement).filter(([key])=>key!=='schedule').map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(typeof value==='string'?value:JSON.stringify(value))}</dd>`).join('')}</dl><p>Deterministic input schedule</p><pre>${escape(JSON.stringify(record.measurement.schedule))}</pre><p>${escape(record.task.arithmetic)}</p><p>Task <code>${escape(short(record.task_hash))}</code> · measurement <code>${escape(short(record.measurement_hash))}</code></p></details>
@@ -143,44 +149,54 @@ function summarize(entries) {
   return counts;
 }
 function suiteMeasure() {
+  if(new Set(rows.map(row=>metrics[row.metric]?.unit)).size>1)return 'measurement';
   const metric=rows[0]?.metric??'native_program_call_seconds';
   return metrics[metric]?.unit==='bytes'?'size':metrics[metric]?.unit==='rate'?'throughput':metrics[metric]?.unit==='count'?'count':'time';
 }
 function renderSuiteChart() {
-  $('#suite-chart').innerHTML=comparisonPlot(rows.map(row=>{const c=changeFor(row);return {id:row.definition.id,title:row.definition.title,ratio:c.ratio,direction:comparisonDirection(c,row.metric),label:comparisonLabel(c,row.metric)};}),{width:$('#suite-chart').clientWidth,measure:suiteMeasure(),label:'Matched Mech task comparisons'});
+  $('#suite-chart').innerHTML=comparisonPlot(rows.map(row=>{const c=changeFor(row);return {id:plotID(row),title:row.definition.title,ratio:c.ratio,direction:comparisonDirection(c,row.metric),label:comparisonLabel(c,row.metric)};}),{width:$('#suite-chart').clientWidth,measure:suiteMeasure(),label:'Matched Mech task comparisons'});
   $('#suite-chart-key').textContent=suiteMeasure()==='throughput'?'Above 1×: Mech has higher throughput. Below 1×: Mech has lower throughput.':suiteMeasure()==='time'?'Below 1×: Mech takes less time. Above 1×: Mech takes more time.':'Below 1×: Mech uses less. Above 1×: Mech uses more.';
 }
 function previewSuite(id) {
-  const row=rows.find(r=>r.definition.id===id);if(!row)return;
+  const row=rows.find(r=>r.definition.id===id||plotID(r)===id);if(!row)return;
   const control=referenceFor(row),change=changeFor(row,control);
   $('#suite-readout').innerHTML=`<strong>${escape(row.definition.title)}</strong><div class="readout-values"><span>Mech <strong>${escape(formatMetric(row.record.summary?.[row.metric]?.median,row.metric))}</strong></span><span>${escape(control.label)}${control.record?` <strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</span><strong class="${comparisonDirection(change,row.metric)}">${escape(comparisonLabel(change,row.metric))}</strong></div>`;
 }
+function pageRows(options={}) {
+  if(!scoped)return measuredRows(bundle,options);
+  return suiteMeasurements(bundle,{...options,group:route.group,task:route.task}).filter(row=>
+    (!options.query||`${row.definition.id} ${row.definition.title} ${row.definition.family}`.toLowerCase().includes(options.query.toLowerCase()))&&
+    (!options.family||options.family==='all'||row.definition.family===options.family)&&
+    (!options.progress||options.progress==='all'||(options.progress==='failed'?row.record.outcome!=='ok':stageFor(row.definition,row.record)===options.progress)));
+}
+const plotID=row=>`${row.definition.id}/${row.record.backend}/${row.metric}`;
 function render() {
   const metric=$('#metric').value,backend=$('#backend').value;
-  const available=measuredRows(bundle,{campaign:$('#campaign').value,backend,metric});
+  const available=pageRows({campaign:$('#campaign').value,backend,metric});
   const counts=summarize(available);
-  const asof=available.map(row=>row.campaign.started_at).filter(Boolean).sort().at(-1);
-  $('#suite-asof').textContent=asof?'Measured '+new Date(asof).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'Published measurements';
-  $('#stats').innerHTML=[['Mech better',counts.faster,'faster'],['Mech worse',counts.slower,'slower'],['Equal',counts.equal,'equal'],['Other measurements',counts.unmatched,'unmatched']].map(([label,value,kind])=>`<div><strong class="${kind}">${value}</strong><span>${label}</span></div>`).join('');
-  $('#boundary').textContent=metric==='$primary'?'Each task reports its declared primary measurement. A comparison requires a shared timing contract and environment. Sources and exact measurement scopes are available with every task.':metrics[metric].note;
-  $('#metric-heading').textContent=metric==='$primary'?'Mech':`Mech · ${metrics[metric].label}`;
-  const candidates=measuredRows(bundle,{campaign:$('#campaign').value,query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend,metric});
+  const dates=available.map(row=>row.campaign.started_at).filter(Boolean).sort();
+  const asof=dates.at(-1);
+  $('#suite-asof').textContent=asof?'Latest measurement '+asof.slice(0,10):'Published measurements';
+  $('#stats').innerHTML=[['Measurement wins',counts.faster,'faster'],['Measurement losses',counts.slower,'slower'],['Ties',counts.equal,'equal'],['Unmatched',counts.unmatched,'unmatched']].map(([label,value,kind])=>`<div><strong class="${kind}">${value}</strong><span>${label}</span></div>`).join('');
+  $('#boundary').textContent=['$primary','$all'].includes(metric)?'Every row names its measurement and reference. Ratios are Mech divided by that reference; timings, sizes and counts remain separate measurements.':metrics[metric].note;
+  $('#metric-heading').textContent=['$primary','$all'].includes(metric)?'Mech':`Mech · ${metrics[metric].label}`;
+  const candidates=pageRows({campaign:$('#campaign').value,query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend,metric});
   rows=candidates.filter(row=>{const state=comparisonDirection(changeFor(row),row.metric);return outcome==='all'||(outcome==='matched'?state!=='unmatched':state===outcome);});
-  $('#case-count').textContent=`${rows.length} ${rows.length===1?'task':'tasks'}`;
+  $('#case-count').textContent=`${rows.length} ${rows.length===1?'measurement':'measurements'}`;
   $('#empty').hidden=rows.length>0;
   for(const button of $('#suite-outcomes').querySelectorAll?.('[data-outcome]')??[])button.setAttribute('aria-pressed',String(button.dataset.outcome===outcome));
   if(!rows.some(r=>r.definition.id===selected))selected=undefined;
   $('#cases').innerHTML=rows.map(row=>{
     const {definition,record,metric:rowMetric}=row,control=referenceFor(row),change=changeFor(row,control);
     const direction=comparisonDirection(change,rowMetric);
-    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}</td><td class="control-value"><span>${escape(control.label)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
+    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" data-metric="${escape(rowMetric)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span></td><td class="control-value"><span>${escape(control.label)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
   }).join('');
   renderSuiteChart();
   if(selected)previewSuite(selected);else $('#suite-readout').textContent='Select a point or task to see its timings.';
   const details=renderDetail();
   const query=new URLSearchParams(location.search);
   for(const key of ['campaign','baseline','metric','backend','case','q','family','progress','result'])query.delete(key);
-  for(const [key,value,defaultValue] of [['campaign',$('#campaign').value,'$latest'],['baseline',$('#baseline').value,''],['metric',metric,'$primary'],['backend',backend,'$auto'],['case',selected,undefined],['q',$('#search').value,''],['family',$('#family').value,'all'],['progress',$('#progress').value,'all'],['result',outcome,'matched']])if(value&&value!==defaultValue)query.set(key,value);
+  for(const [key,value,defaultValue] of [['campaign',$('#campaign').value,'$latest'],['baseline',$('#baseline').value,''],['metric',metric,defaultMetric],['backend',backend,'$auto'],['case',selected,undefined],['q',$('#search').value,''],['family',$('#family').value,'all'],['progress',$('#progress').value,'all'],['result',outcome,defaultOutcome]])if(value&&value!==defaultValue)query.set(key,value);
   history.replaceState(null,'',location.pathname+(query.size?'?'+query:'')+(location.hash??''));
   return details;
 }
@@ -202,26 +218,19 @@ async function start() {
   $('#run-links').innerHTML=`<a href="${location.pathname}">All measured tasks</a>`+[['Resident suite','source'],['Full applications','program-jit'],['Related Post Gen','related-managed'],['Worker scaling','process-workers'],['Native compilation','native']].flatMap(([label,backend])=>{const c=choices.find(c=>c.results.some(r=>r.backend===backend&&r.progress==='measured'));const r=c?.results.find(r=>r.backend===backend&&r.progress==='measured');return r?[`<a href="?${new URLSearchParams({backend,case:r.case_id})}">${escape(label)}</a>`]:[];}).join('');
   $('#campaign').innerHTML=option('$latest','Latest measured result for every task')+choices.map(c=>option(c.id,`${c.id} · ${short(c.workers?.candidate?.revision)}`)).join('');
   $('#baseline').innerHTML=option('','Use task control')+option('$paired','Paired previous Mech worker')+choices.map(c=>option(c.id,c.id)).join('');
-  $('#metric').innerHTML=option('$primary','Primary measurement for each task')+Object.entries(metrics).filter(([,meta])=>!meta.controlOnly).map(([key,meta])=>option(key,meta.label)).join('');
+  $('#metric').innerHTML=(scoped?option('$all','All measurements in this group'):'')+option('$primary','Primary measurement for each task')+Object.entries(metrics).filter(([key,meta])=>!meta.controlOnly&&(route.group==='all'||metricGroups.find(group=>group.id===route.group)?.metrics.includes(key))).map(([key,meta])=>option(key,meta.label)).join('');
   $('#family').innerHTML+=Array.from(new Set(bundle.catalog.cases.map(c=>c.family))).sort().map(f=>option(f,nice(f))).join('');
   for(const selector of ['campaign','baseline','metric','backend'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
   if(!parameters.has('campaign'))$('#campaign').value='$latest';
   if(!parameters.has('backend'))$('#backend').value='$auto';
-  if(!parameters.has('metric'))$('#metric').value='$primary';
-  selected=parameters.get('case')??undefined;
+  if(!parameters.has('metric'))$('#metric').value=defaultMetric;
+  selected=route.task??parameters.get('case')??undefined;
   $('#search').value=parameters.get('q')??'';
   for(const selector of ['family','progress'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
-  const latest=measuredRows(bundle),overall={faster:0,slower:0,equal:0,unmatched:0};
-  for(const row of latest)overall[comparisonDirection(controlComparison(row,controlFor(bundle,row)),row.metric)]++;
-  const matched=overall.faster+overall.slower+overall.equal,lead=overall.faster?'faster':'slower';
-  $('#suite-overview-value').innerHTML=`${overall[lead]}<span>/${matched}</span>`;
-  $('#suite-overview-value').className=matched?lead:'unmatched';
-  $('#suite-overview-result').textContent=matched?`tasks ${lead} than their reference`:'No matched comparisons yet';
-  $('#suite-overview-note').textContent=`${matched} matched comparisons · ${overall.unmatched} other measurements`;
   $('#suite-outcomes').addEventListener('click',event=>{const button=event.target.closest('[data-outcome]');if(button){outcome=button.dataset.outcome;return render();}});
   let lastPreview;
   for(const type of ['pointerover','focusin'])$('#suite-chart').addEventListener(type,event=>{const id=event.target.closest('[data-compare]')?.dataset.compare;if(id&&id!==lastPreview){lastPreview=id;previewSuite(id);}});
-  const choosePlot=event=>{const id=event.target.closest('[data-compare]')?.dataset.compare;if(id){selected=id;return render();}};
+  const choosePlot=event=>{const id=event.target.closest('[data-compare]')?.dataset.compare,row=rows.find(row=>plotID(row)===id);if(row){selected=row.definition.id;$('#metric').value=row.metric;return render();}};
   $('#suite-chart').addEventListener('click',choosePlot);
   $('#suite-chart').addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();return choosePlot(event);}});
   if(globalThis.ResizeObserver){let lastWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width>0&&width!==lastWidth){lastWidth=width;renderSuiteChart();}}).observe($('#suite-chart'));}
@@ -233,13 +242,13 @@ async function start() {
     }
     if(selector==='#campaign'&&campaign()?.results.length&&!campaign().results.some(r=>r.backend===$('#backend').value))$('#backend').value='$auto';
     if(['#campaign','#backend'].includes(selector)){
-      $('#metric').value='$primary';
+      $('#metric').value=defaultMetric;
       if(!campaign()?.workers.baseline&&$('#baseline').value==='$paired')$('#baseline').value='';
     }
     return render();
   });
   $('#search').addEventListener('input',render);
-  $('#cases').addEventListener('click',event=>{const button=event.target.closest('[data-case]');if(button){selected=button.dataset.case;return render();}});
+  $('#cases').addEventListener('click',event=>{const button=event.target.closest('[data-case]');if(button){selected=button.dataset.case;if(button.dataset.metric)$('#metric').value=button.dataset.metric;return render();}});
   $('#detail').addEventListener('click',event=>{if(event.target.closest('[data-close-detail]')){selected=undefined;return render();}});
   await render();
 }

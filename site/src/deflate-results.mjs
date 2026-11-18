@@ -17,22 +17,6 @@ function writeParameters() {
   history.replaceState(null,'',location.pathname+(query.size?'?'+query:'')+location.hash);
 }
 
-function showView(view,write=true) {
-  view=view==='suite'?'suite':'deflate';
-  for(const button of document.querySelectorAll('[data-view]')){
-    const active=button.dataset.view===view;
-    button.classList.toggle('active',active);button.setAttribute('aria-selected',String(active));
-  }
-  $('#deflate-m3').hidden=view!=='deflate';$('#suite-panel').hidden=view!=='suite';
-  if(write){const q=new URLSearchParams(location.search);q.set('view',view);history.replaceState(null,'',location.pathname+'?'+q);}
-}
-for(const button of document.querySelectorAll('[data-view]'))button.addEventListener('click',()=>showView(button.dataset.view));
-$('.overview').addEventListener('keydown',event=>{
-  if(!['ArrowLeft','ArrowRight'].includes(event.key))return;
-  const next=event.target.dataset.view==='suite'?'deflate':'suite';showView(next);$(`[data-view="${next}"]`).focus();event.preventDefault();
-});
-showView(initial.get('view')??(initial.has('case')||initial.has('backend')||initial.has('campaign')?'suite':'deflate'),false);
-
 function visibleRows() {
   const query=$('#deflate-search').value.trim().toLowerCase();
   return data.cases.filter(row=>(filter==='all'||direction(row)===filter)&&`${row.title} ${row.id} ${row.input_bytes}`.toLowerCase().includes(query));

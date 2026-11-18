@@ -58,12 +58,11 @@ assert.ok(ui.history.url.includes('deflate-order=reverse'));
 ui.element('#deflate-cases').events.click({target:{closest:()=>({dataset:{nativeCase:'prefix-random-8192'}})},currentTarget:ui.element('#deflate-cases')});
 assert.ok(ui.history.url.includes('deflate-case=prefix-random-8192'));
 assert.ok(ui.element('#deflate-readout').innerHTML.includes('Prefix random 8192'));
-ui.tabs[1].events.click();assert.equal(ui.element('#suite-panel').hidden,false);assert.equal(ui.element('#deflate-m3').hidden,true);
-assert.ok(ui.history.url.includes('view=suite'));
+
 ui=await mount('?view=deflate&deflate-filter=slower&deflate-order=reverse&deflate-search=prefix&deflate-sort=name');
 const visible=data.cases.filter(row=>row.runs.reverse.ratio>1&&row.title.toLowerCase().includes('prefix'));
 assert.equal((ui.element('#deflate-cases').innerHTML.match(/data-native-row=/g)||[]).length,visible.length);
 assert.equal(ui.element('#deflate-order').value,'reverse');assert.equal(ui.element('#deflate-sort').value,'name');
-ui=await mount('?case=scalar');assert.equal(ui.element('#suite-panel').hidden,false,'existing task links open the runtime/compiler view');
+
 ui=await mount('',{...data,cases:data.cases.slice(1)});assert.equal(ui.element('#deflate-error').textContent,'The compression result set is incomplete.');
 console.log('All 162 native rows match the verified CSV; outcome colors, filtering, reversed order, output sizes, shared links and incomplete-data handling pass.');

@@ -77,7 +77,7 @@ export function compareRecords(baseline,candidate,metric) {
   const a=baseline.summary?.[metric]?.median,b=candidate.summary?.[metric]?.median;
   if(baseline.outcome!=='ok'||candidate.outcome!=='ok'||!(a>0)||!Number.isFinite(b))return {status:'unavailable',label:'—'};
   const percent=(b/a-1)*100;
-  return {status:'informational',percent,ratio:b/a,label:`${percent>0?'+':''}${percent.toFixed(1)}%`,reason:'Median change; informational. Separate campaigns are independent samples.'};
+  return {status:'informational',percent,ratio:b/a,label:comparisonLabel({ratio:b/a},metric),reason:'Median change; informational. Separate campaigns are independent samples.'};
 }
 
 export function stageFor(caseDefinition,record) { return record?.progress ?? caseDefinition.progress; }
@@ -136,6 +136,7 @@ export function controlFor(bundle,row) {
   const {record,campaign,metric}=row;
   if(record.case_id==='deflate'||record.case_id.startsWith('deflate-')) {
     const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
+    if(!mapped)return {kind:'pending',label:'No matched reference',reason:'No reference measures the same compiler, preparation or support operation. A compressor execution time is not a compiler measurement.'};
     // These immutable source identities bind the retained wrapper's explicit
     // libdeflate_alloc_compressor(12) call and its pinned libdeflate 1.26 build.
     const references=mapped&&record.control_contract?bundle.campaigns.flatMap(origin=>origin.started_at<=campaign.started_at
@@ -164,7 +165,7 @@ export function controlFor(bundle,row) {
     const mapped=control.measurement?.metric_mapping?.[metric]??metric;
     if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:control.title??'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
   }
-  return {kind:'pending',label:'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
+  return {kind:'pending',label:['source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds','source_to_executable_seconds'].includes(metric)?'No matched compiler reference':'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
 }
 
 export function controlComparison(row,control) {
@@ -174,17 +175,15 @@ export function controlComparison(row,control) {
     return compareRecords(control.record,row.record,row.metric);
   }
   const a=control.record.summary[control.metric].median,b=row.record.summary?.[row.metric]?.median;
-  if(!(a>0)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
+  if(!(a>=0)||!(b>=0)||!Number.isFinite(a)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
   const percent=(b/a-1)*100;
-  const ratio=b/a,unit=metrics[row.metric]?.unit;
-  const label=unit==='seconds'&&(ratio>=2||ratio<=.5)
-    ?`${(ratio>=2?ratio:1/ratio).toLocaleString(undefined,{maximumFractionDigits:1})}× ${ratio>=2?'slower':'faster'}`
-    :`${percent>0?'+':''}${percent.toFixed(1)}%`;
+  const ratio=a===0?(b===0?1:Infinity):b/a;
+  const label=comparisonLabel({ratio},row.metric);
   return {status:'informational',percent,ratio,label,reason:control.reason+' Median change; informational.'};
 }
 
 export function comparisonDirection(change,metric) {
-  if(!(change?.ratio>0)||!Number.isFinite(change.ratio))return 'unmatched';
+  if(typeof change?.ratio!=='number'||!(change.ratio>=0)||Number.isNaN(change.ratio))return 'unmatched';
   if(change.ratio===1)return 'equal';
   return (change.ratio<1)!==!!metrics[metric]?.higherBetter?'faster':'slower';
 }
@@ -193,15 +192,21 @@ export function comparisonLabel(change,metric) {
   if(change?.status==='baseline')return 'Fixed Mech baseline';
   const direction=comparisonDirection(change,metric);
   if(direction==='unmatched')return 'No matched comparison';
-  if(direction==='equal')return 'Equal';
+  if(direction==='equal')return '1× · equal';
   const ratio=change.ratio,unit=metrics[metric]?.unit;
-  const factor=direction==='faster'?(metrics[metric]?.higherBetter?ratio:1/ratio):(metrics[metric]?.higherBetter?1/ratio:ratio);
-  const word=unit==='bytes'?(direction==='faster'?'smaller':'larger'):unit==='count'?(direction==='faster'?'fewer':'more'):direction;
-  if(factor>=1.1)return `${factor.toLocaleString(undefined,{maximumFractionDigits:factor<10?2:1})}× ${word}`;
-  const percent=Math.abs(ratio-1)*100;
-  const amount=percent<.01?'<0.01':percent.toLocaleString(undefined,{maximumFractionDigits:2});
-  const suffix=metrics[metric]?.higherBetter?(direction==='faster'?'more throughput':'less throughput'):unit==='seconds'?(direction==='faster'?'less time':'more time'):word;
-  return `${amount}% ${suffix}`;
+  const suffix=unit==='bytes'?'size':unit==='count'?'count':unit==='rate'?'throughput':'time';
+  return `${formatRatio(ratio)}× ${suffix}`;
+}
+
+export function formatRatio(ratio) {
+  if(ratio===Infinity)return '∞';
+  let digits=ratio<10?3:ratio<100?2:1;
+  // A rounded label must never turn a non-tie into 1× or a positive value into 0×.
+  if(ratio!==1&&ratio>0){
+    while(digits<15&&(Number(ratio.toFixed(digits))===1||Number(ratio.toFixed(digits))===0))digits++;
+    if(Number(ratio.toFixed(digits))===1)return ratio.toPrecision(17);
+  }
+  return ratio.toLocaleString(undefined,{maximumFractionDigits:digits});
 }
 
 export function comparisonPlot(points,{width=900,label='Mech compared with its reference',measure='time'}={}) {
