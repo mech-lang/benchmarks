@@ -11,6 +11,7 @@ if(!['all','faster','slower','equal'].includes(result))result='all';
 let sort=['name','mech','reference','ratio','outcome'].includes(initial.get('sort'))?initial.get('sort'):'name';
 let descending=initial.get('dir')==='desc';
 const expanded=new Set((initial.get('expand')??'applications,compiler').split(',').filter(id=>groupOrder.includes(id)));
+let lastQuery=initial.has('expand')?(initial.get('q')??''):'';
 const countText=rows=>{const c=countsFor(rows);return `${c.faster} ${c.faster===1?'win':'wins'} · ${c.slower} ${c.slower===1?'loss':'losses'}${c.equal?` · ${c.equal} ${c.equal===1?'tie':'ties'}`:''}`;};
 function renderGroupChart(){
   if(pageGroup)$('#group-chart').innerHTML=comparisonPlot(visible.map(row=>({id:row.key,ratio:row.ratio,direction:row.direction,title:row.title,label:row.label})),{width:$('#group-chart').clientWidth,measure:'measurement',label:'Mech divided by its reference'});
@@ -24,6 +25,8 @@ function render(){
   all=publishedComparisons(bundle,native,{group:pageGroup??'all'});
   const query=$('#summary-search').value;
   visible=filterMeasurements(all,{result,query});
+  if(query.trim()&&query!==lastQuery)for(const row of visible)expanded.add(row.group);
+  lastQuery=query;
   $('#summary-count').textContent=`${visible.length} ${visible.length===1?'comparison':'comparisons'}`;
   for(const button of $('#summary-outcomes').querySelectorAll('[data-summary-outcome]'))button.setAttribute('aria-pressed',String(button.dataset.summaryOutcome===result));
   $('#summary-ties').hidden=!all.some(row=>row.direction==='equal');
@@ -32,7 +35,7 @@ function render(){
   const bodies=groupOrder.flatMap(id=>{
     const group=metricGroups.find(group=>group.id===id),rows=visible.filter(row=>row.group===id).sort(compare);
     if(!rows.length)return [];
-    const open=!!pageGroup||!!query.trim()||result!=='all'||expanded.has(id);
+    const open=!!pageGroup||expanded.has(id);
     const heading=pageGroup?'':`<tr class="group-heading"><th colspan="5" scope="rowgroup"><div><button class="group-toggle" data-group-toggle="${id}" aria-expanded="${open}">${open?'−':'+'} ${escape(group.title)} <span class="group-total">${rows.length}</span></button><span class="group-counts"><span class="faster">${countsFor(rows).faster} wins</span><span class="slower">${countsFor(rows).slower} losses</span>${countsFor(rows).equal?`<span class="equal">${countsFor(rows).equal} ties</span>`:''}</span><a class="group-details" href="${group.href}">View results</a></div></th></tr>`;
     return [`<tbody id="group-${id}">${heading}${rows.map(row=>`<tr data-summary-row="${escape(row.key)}"${open?'':' hidden'}><td><a class="task-link" href="${escape(row.href)}">${escape(row.title)}</a>${pageGroup&&['size','memory','lifecycle'].includes(pageGroup)?`<span class="family">${escape(metrics[row.metric]?.label??row.metric)}</span>`:''}</td><td class="number">${escape(formatMetric(row.value,row.metric))}</td><td class="control-value">${referenceLink(row.control)}<strong>${escape(formatMetric(row.reference,row.metric))}</strong></td><td><span class="result-tag ${row.direction}">${escape(row.label)}</span></td><td class="${row.direction}">${outcomeText(row.direction)}</td></tr>`).join('')}</tbody>`];
   }).join('');

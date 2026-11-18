@@ -63,7 +63,11 @@ assert.equal((ui.element('#summary-bodies').innerHTML.match(/ hidden>/g)||[]).le
 assert.ok(ui.history.url.includes('expand='));
 ui.element('#summary-outcomes').events.click({target:{closest:()=>({dataset:{summaryOutcome:'faster'}})}});
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,61);
-assert.ok(!ui.element('#summary-bodies').innerHTML.includes(' hidden>'),'a chosen result filter reveals matching tests');
+assert.ok(!ui.element('#summary-bodies').innerHTML.includes(' hidden>'),'the manually expanded group stays open while filtering');
+ui=await mount('/metrics/','?q=Prefix');
+assert.ok(!ui.element('#summary-bodies').innerHTML.includes(' hidden>'),'search reveals matching groups');
+ui.element('#summary-bodies').events.click({target:{closest:()=>({dataset:{groupToggle:'deflate'}})}});
+assert.ok(ui.element('#summary-bodies').innerHTML.includes(' hidden>'),'a group can still be collapsed during a search');
 ui=await mount('/metrics/','?expand=none');
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/ hidden>/g)||[]).length,83);
 assert.ok(ui.history.url.includes('expand=none'));
