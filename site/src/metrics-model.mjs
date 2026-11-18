@@ -6,8 +6,8 @@ export const metricGroups=[
   {id:'runtime',title:'Runtime',description:'Small runtime tests · Rust',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
   {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
   {id:'compiler',title:'Compiler',description:'Source-to-executable build time · Rust',href:'/metrics/compiler/',metrics:['source_to_executable_seconds','source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds']},
-  {id:'size',title:'Code & output size',description:'Executable, object, artifact and compressed output bytes',href:'/metrics/size/',metrics:['executable_bytes','linked_text_bytes','object_text_bytes','artifact_bytes','output_bytes']},
-  {id:'memory',title:'Memory & allocations',description:'Retained storage, worker peak memory and allocation counts',href:'/metrics/memory/',metrics:['managed_retained_bytes','worker_process_peak_rss_bytes','execution_allocations']},
+  {id:'size',title:'Code size',description:'Compiled executable and code sizes · Rust',href:'/metrics/size/',metrics:['executable_bytes','linked_text_bytes','object_text_bytes','artifact_bytes','output_bytes']},
+  {id:'memory',title:'Allocations',description:'Allocation counts · Rust',href:'/metrics/memory/',metrics:['managed_retained_bytes','worker_process_peak_rss_bytes','execution_allocations']},
   {id:'lifecycle',title:'Activation & cleanup',description:'Initial turns, activation, snapshots and teardown',href:'/metrics/lifecycle/',metrics:['initial_turn_seconds','activation_seconds','owned_snapshot_seconds','teardown_seconds']},
   {id:'compression-history',title:'Checked compression · historical',description:'Earlier managed program calls · Mech measurements without a matched level-12 timer',href:'/metrics/compression-history/',metrics:['native_program_call_seconds']},
 ];
