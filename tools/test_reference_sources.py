@@ -3,9 +3,19 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
-from reference_sources import source_link
+from reference_sources import source_link, mech_source_link
 
 class ReferenceSourcesTest(unittest.TestCase):
+    def test_mech_link_exposes_exact_program_and_rejects_changed_bytes(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);source='answer := x + 1\n'
+            record={'backend':'source-native','lane':'candidate','source':source,
+                    'source_sha256':hashlib.sha256(source.encode()).hexdigest()}
+            url=mech_source_link(record,root)
+            self.assertEqual((root/url.removeprefix('/benchmarks/')).read_bytes(),source.encode())
+            record['source']+='changed'
+            with self.assertRaises(ValueError):mech_source_link(record,root)
+            self.assertIsNone(mech_source_link({'backend':'libdeflate','lane':'candidate'},root))
     def record(self):
         source='fn main() { println!("result"); }\n'
         return {'case_id':'scalar','backend':'rust','source':source,'source_sha256':hashlib.sha256(source.encode()).hexdigest()}

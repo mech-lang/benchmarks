@@ -4,6 +4,24 @@ import json
 from pathlib import Path
 from urllib.parse import urlsplit
 
+MECH_BACKENDS = {'source', 'bytecode', 'native', 'jit', 'source-native', 'fused-native',
+                 'program-jit', 'program-jit-bytecode', 'program-linked',
+                 'process-workers', 'related-managed', 'related-compact'}
+
+
+def mech_source_link(record, output):
+    """Expose the exact Mech program retained with this measurement."""
+    if record.get('lane') != 'candidate' or record.get('backend') not in MECH_BACKENDS:
+        return None
+    source = record.get('source', '').encode()
+    digest = record.get('source_sha256')
+    if not source or hashlib.sha256(source).hexdigest() != digest:
+        raise ValueError('Mech source does not match its recorded hash')
+    target = Path(output)/'implementation-sources'/f'{digest}.mec.txt'
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(source)
+    return '/benchmarks/implementation-sources/' + target.name
+
 
 def source_link(record, campaign, output, root):
     if record.get('backend') != 'rust':

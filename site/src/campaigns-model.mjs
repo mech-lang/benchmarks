@@ -1,6 +1,6 @@
 export const backendLabels = {
   source:'Source artifact', bytecode:'Decoded bytecode', native:'Linked scalar application', jit:'Checked scalar JIT',
-  'source-native':'K-nucleotide application', 'fused-native':'Numerical application',
+  'source-native':'Source JIT application', 'fused-native':'Numerical application',
   'program-jit':'Checked program JIT · source', 'program-jit-bytecode':'Checked program JIT · decoded',
   'program-linked':'Linked program qualification', 'process-workers':'Worker scaling',
   'related-managed':'Related posts · managed', 'related-compact':'Related posts · compact',
@@ -226,6 +226,21 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
 
 export function referenceName(control) {
   return control?.kind==='rust'?'Rust':control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+}
+export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
+export function implementationName(record) {
+  if(record?.execution_mode==='aot'||['native','program-linked'].includes(record?.backend))return 'Mech (AOT)';
+  if(record?.execution_mode==='jit'||['source-native','program-jit','program-jit-bytecode','jit'].includes(record?.backend))return 'Mech (JIT)';
+  return 'Mech';
+}
+export function implementationURL(record) {
+  const url=record?.source_url;
+  if(typeof url==='string'&&(url.startsWith('/benchmarks/')||/^https?:\/\//.test(url)))return url;
+}
+export function implementationLink(record,label=implementationName(record)) {
+  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const url=implementationURL(record);
+  return url?`<a href="${escape(url)}">${escape(label)}</a>`:escape(label);
 }
 export function referenceURL(control) {
   if(control?.kind==='pending')return undefined;

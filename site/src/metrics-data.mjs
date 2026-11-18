@@ -1,4 +1,4 @@
-let campaignsPromise,nativePromise;
+let campaignsPromise,nativePromise,gamesPromise;
 const assetURL=name=>{const url=new URL('./'+name,import.meta.url);url.search=new URL(import.meta.url).search;return url;};
 export function loadCampaigns() {
   if(!campaignsPromise)campaignsPromise=(async()=>{
@@ -28,4 +28,17 @@ export function loadNative() {
     return validateNative(await response.json());
   })();
   return nativePromise;
+}
+export function validateGames(data) {
+  if(data.schema!=='mech.benchmarks-game-comparisons.v1'||data.cases?.length!==10||new Set(data.cases.map(row=>row.key)).size!==10
+    ||data.cases.some(row=>!['mech','rust'].every(language=>Number.isFinite(row[language]?.seconds)&&row[language].seconds>0&&row[language].source_url)))throw new Error('The Benchmarks Game result set is incomplete.');
+  return data;
+}
+export function loadGames() {
+  if(!gamesPromise)gamesPromise=(async()=>{
+    const response=await fetch(assetURL('game-comparisons.json'));
+    if(!response.ok)throw new Error('The Benchmarks Game comparisons could not be loaded.');
+    return validateGames(await response.json());
+  })();
+  return gamesPromise;
 }

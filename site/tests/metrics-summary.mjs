@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 import * as model from '../src/campaigns-model.mjs';
 import * as grouping from '../src/metrics-model.mjs';
-import {validateNative} from '../src/metrics-data.mjs';
+import {validateNative,validateGames} from '../src/metrics-data.mjs';
 const native=validateNative(JSON.parse(fs.readFileSync(new URL('../src/deflate-m3-results-20261118.json',import.meta.url))));
-const base={case_id:'scalar',backend:'source',lane:'candidate',outcome:'ok',progress:'measured',control_contract:'shared',task_hash:'t',measurement_hash:'m',environment_hash:'e',source_sha256:'s',revision:'r',measurement:{primary_metric:'resident_turn_seconds'},summary:{resident_turn_seconds:{median:1.0489},source_to_artifact_seconds:{median:.03},execution_allocations:{median:0},artifact_bytes:{median:256}}};
+const base={case_id:'scalar',backend:'source',lane:'candidate',outcome:'ok',progress:'measured',control_contract:'shared',task_hash:'t',measurement_hash:'m',environment_hash:'e',source_sha256:'s',source_url:'/benchmarks/implementation-sources/scalar.mec.txt',revision:'r',measurement:{primary_metric:'resident_turn_seconds'},summary:{resident_turn_seconds:{median:1.0489},source_to_artifact_seconds:{median:.03},execution_allocations:{median:0},artifact_bytes:{median:256}}};
 const reference={...base,backend:'rust',lane:'control',title:'Rust · task control',reference_url:'https://example.org/scalar.rs',summary:{resident_turn_seconds:{median:1},execution_allocations:{median:5}}};
 const build={...base,case_id:'native-build',backend:'native',measurement:{primary_metric:'source_to_executable_seconds'},summary:{source_to_executable_seconds:{median:2},native_process_seconds:{median:.5},executable_bytes:{median:900}}};
 const buildReference={...build,backend:'rust',lane:'control',reference_url:'https://example.org/build.rs',summary:{source_to_executable_seconds:{median:1},native_process_seconds:{median:1},executable_bytes:{median:1000}}};
@@ -25,6 +25,22 @@ assert.equal(model.comparisonDirection({ratio:null},'execution_allocations'),'un
 assert.equal(model.referenceLink({kind:'rust',record:reference}),'<a href="https://example.org/scalar.rs">Rust</a>');
 assert.equal(model.referenceLink({kind:'mech',label:'Mech · IR355 baseline',record:{reference_url:'/benchmarks/source.txt'}}),'<a href="/benchmarks/source.txt">Mech</a>');
 assert.equal(model.referenceLink({kind:'rust',record:{reference_url:'javascript:alert(1)'}}),'Rust');
+assert.equal(model.implementationLink(base),'<a href="/benchmarks/implementation-sources/scalar.mec.txt">Mech</a>');
+assert.equal(model.implementationLink({...base,backend:'source-native'}),'<a href="/benchmarks/implementation-sources/scalar.mec.txt">Mech (JIT)</a>');
+assert.equal(model.implementationLink({source_url:'javascript:alert(1)'}),'Mech');
+assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'resident_turn_seconds').id,'applications');
+assert.equal(grouping.groupForMeasurement({id:'numerical-application',family:'applications'},'resident_turn_seconds').id,'applications');
+assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'execution_allocations').id,'memory');
+const games={schema:'mech.benchmarks-game-comparisons.v1',hardware:'Apple M3',cases:Array.from({length:10},(_,i)=>({key:'game-'+i,title:'Game '+i,workload:'full input',mech:{seconds:i===0?.5:2,source_url:'/benchmarks/implementation-sources/game.mec.txt',implementation_url:'/benchmarks/?detail.program=game-'+i},rust:{seconds:1,source_url:'/benchmarks/implementation-sources/game.rs.txt',original_url:'https://example.org/original.rs'}}))};
+assert.equal(validateGames(games),games);
+assert.throws(()=>validateGames({...games,cases:games.cases.slice(1)}),/incomplete/);
+const aotRows=grouping.gameMeasurements(games);
+assert.equal(aotRows.length,10);assert.equal(aotRows[0].ratio,.5);
+assert.equal(model.implementationName(aotRows[0].record),'Mech (AOT)');
+const jit={...base,case_id:'knucleotide',backend:'source-native',measurement:{primary_metric:'native_process_seconds'},summary:{native_process_seconds:{median:2}}};
+const jitBundle={...bundle,catalog:{cases:[{id:'knucleotide',family:'applications',title:'K-nucleotide',backends:['source-native']}]},campaigns:[{...bundle.campaigns[0],results:[jit,{...jit,backend:'rust',lane:'control',summary:{native_process_seconds:{median:1}}}]}]};
+assert.equal(grouping.suiteMeasurements(jitBundle,{task:'knucleotide',metric:'$primary'}).length,1,'the measured JIT record remains available in task details');
+assert.equal(grouping.publishedComparisons(jitBundle,undefined,{games}).length,10,'a JIT observation must not replace an AOT headline');
 assert.equal(grouping.metricsRoute('/metrics/','?view=suite&deflate-order=reverse').kind,'suite');
 
 class Element {
@@ -33,21 +49,25 @@ class Element {
   querySelectorAll(){return [];}
 }
 const source=fs.readFileSync(new URL('../src/metrics-summary.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,'').replace('start().catch(error=>','globalThis.ready=start().catch(error=>');
-async function mount(path='/metrics/',query='',failure){
+async function mount(path='/metrics/',query='',failure,gameData){
   const elements=new Map(),element=selector=>{if(!elements.has(selector))elements.set(selector,new Element());return elements.get(selector);};
   const location={pathname:path,search:query,hash:'',origin:'https://example.org'};
   const history={replaceState(_a,_b,url){this.url=url;}};
-  let nativeRequests=0;
-  const context=vm.createContext({...model,...grouping,URL,URLSearchParams,console,Blob,setTimeout,clearTimeout,location,history,
-    document:{querySelector:element},loadCampaigns:async()=>bundle,loadNative:async()=>{nativeRequests++;if(failure)throw Error(failure);return native;}});
+  let nativeRequests=0,exported;
+  class ExportURL extends URL{static createObjectURL(blob){exported=blob;return 'blob:export';}static revokeObjectURL(){}}
+  const context=vm.createContext({...model,...grouping,URL:ExportURL,URLSearchParams,console,Blob,setTimeout,clearTimeout,location,history,
+    document:{querySelector:element,createElement:()=>({click(){}})},loadCampaigns:async()=>bundle,loadGames:async()=>gameData,loadNative:async()=>{nativeRequests++;if(failure)throw Error(failure);return native;}});
   vm.runInContext(source,context);await context.ready;
-  return {element,history,nativeRequests};
+  return {element,history,nativeRequests,exported:()=>exported.text()};
 }
 let ui=await mount();
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,83);
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/ hidden>/g)||[]).length,82,'compression inputs and small runtime tests start collapsed');
 assert.ok(ui.element('#summary-bodies').innerHTML.includes('Scalar &lt;safe&gt;'));
 assert.ok(ui.element('#summary-bodies').innerHTML.includes('href="https://example.org/scalar.rs">Rust</a>'));
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('href="/benchmarks/implementation-sources/scalar.mec.txt">Mech</a>'));
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('>1 loss</span>'));
+assert.ok(!ui.element('#summary-bodies').innerHTML.includes('>1 losses</span>'));
 assert.ok(!ui.element('#summary-bodies').innerHTML.includes('task control'));
 assert.ok(!ui.element('#summary-bodies').innerHTML.includes('Not a comparison'));
 assert.ok(!ui.element('#summary-bodies').innerHTML.includes('source_to_artifact'));
@@ -75,6 +95,18 @@ ui=await mount('/metrics/compiler/');
 assert.equal(ui.nativeRequests,0);
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,1);
 assert.ok(!ui.element('#summary-bodies').innerHTML.includes('libdeflate'));
+ui=await mount('/metrics/benchmarks-game/','',undefined,games);
+assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,10);
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('>Mech (AOT)</a>'));
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('https://example.org/original.rs'));
+ui.element('#summary-export').events.click();
+const csv=await ui.exported();
+assert.ok(csv.includes('"mech_implementation"'));assert.ok(csv.includes('"Mech (AOT)"'));
+assert.ok(csv.includes('https://example.org/benchmarks/implementation-sources/game.mec.txt'));
+assert.ok(csv.includes('https://example.org/original.rs'));
+ui=await mount('/metrics/','',undefined,games);
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('>1 win</span>'));
+assert.ok(!ui.element('#summary-bodies').innerHTML.includes('>1 wins</span>'));
 ui=await mount('/metrics/','','Unavailable');
 assert.ok(ui.element('#summary-error').textContent.includes('Unavailable'));
 assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,2);

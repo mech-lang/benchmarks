@@ -1,9 +1,10 @@
-import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel} from './campaigns-model.mjs';
+import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,nativeMechSource} from './campaigns-model.mjs';
 
 export const metricGroups=[
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
   {id:'applications',title:'Applications',description:'Application performance · Rust',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
-  {id:'runtime',title:'Runtime',description:'Small runtime tests · Rust',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
+  {id:'benchmarks-game',title:'Benchmarks Game',description:'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process',href:'/metrics/benchmarks-game/',metrics:[]},
+  {id:'runtime',title:'Microbenchmarks',description:'Individual operations and runtime checks · Rust',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
   {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
   {id:'compiler',title:'Compiler',description:'Source-to-executable build time · Rust',href:'/metrics/compiler/',metrics:['source_to_executable_seconds','source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds']},
   {id:'size',title:'Code size',description:'Compiled executable and code sizes · Rust',href:'/metrics/size/',metrics:['executable_bytes','linked_text_bytes','object_text_bytes','artifact_bytes','output_bytes']},
@@ -28,16 +29,20 @@ export function metricsRoute(pathname,search='') {
 export function groupForMetric(metric) {
   return metricGroups.find(group=>group.metrics.includes(metric));
 }
+export function groupForMeasurement(definition,metric) {
+  const group=groupForMetric(metric);
+  if(group?.id==='runtime'&&(definition.family==='applications'||definition.id==='ekf'))return metricGroups.find(group=>group.id==='applications');
+  return group;
+}
 export function countsFor(rows) {
   const counts={faster:0,slower:0,equal:0,unmatched:0};
   for(const row of rows)counts[row.direction]++;
   return counts;
 }
 export function suiteMeasurements(bundle,{group='all',task,campaign='$latest',backend='$auto',metric='$all'}={}) {
-  const groups=metricGroups.filter(item=>group==='all'||item.id===group);
-  const measures=metric==='$all'?groups.flatMap(item=>item.metrics):metric==='$primary'?['$primary']:[metric];
+  const measures=metric==='$all'?metricGroups.flatMap(item=>item.metrics):metric==='$primary'?['$primary']:[metric];
   return measures.flatMap(measure=>measuredRows(bundle,{campaign,backend,metric:measure}).flatMap(row=>{
-    const category=groupForMetric(row.metric);
+    const category=groupForMeasurement(row.definition,row.metric);
     if(!category||(group!=='all'&&category.id!==group)||(task&&row.definition.id!==task))return [];
     const control=controlFor(bundle,row),change=controlComparison(row,control);
     return [{...row,group:category.id,key:`${row.definition.id}:${row.record.backend}:${row.metric}`,title:row.definition.title,
@@ -56,7 +61,7 @@ export function nativeMeasurements(data,order='forward') {
       ratio:row.runs[order].ratio,scope:`${row.input_bytes.toLocaleString()} input bytes · native call`,kind:'time'},
     {key:`native:${row.id}:size`,group:'size',title:row.title,metric:'output_bytes',value:row.mech_output_bytes,reference:row.libdeflate_output_bytes,
       ratio:row.mech_output_bytes/row.libdeflate_output_bytes,scope:'Native compression · complete output bytes',kind:'size'},
-  ].map(entry=>({...entry,control:{kind:'libdeflate',label:'libdeflate'},date:'2026-11-18',
+  ].map(entry=>({...entry,record:{source_url:nativeMechSource},control:{kind:'libdeflate',label:'libdeflate'},date:'2026-11-18',
     direction:comparisonDirection({ratio:entry.ratio},entry.metric),label:comparisonLabel({ratio:entry.ratio},entry.metric),
     href:`/metrics/deflate/?${new URLSearchParams({'deflate-case':row.id,...(order==='reverse'?{'deflate-order':order}:{})})}`})));
 }
@@ -72,14 +77,31 @@ export function filterMeasurements(rows,{group='all',result='all',query=''}={}) 
     &&`${row.title} ${metrics[row.metric]?.label} ${measurementScope(row)} ${row.control.label}`.toLowerCase().includes(query));
 }
 
+export function gameMeasurements(data) {
+  return (data?.cases??[]).map(row=>{
+    const ratio=row.mech.seconds/row.rust.seconds,metric='native_process_seconds';
+    return {key:'game:'+row.key,group:'benchmarks-game',title:row.title+' · '+row.workload,metric,
+      value:row.mech.seconds,reference:row.rust.seconds,ratio,
+      record:{source_url:row.mech.source_url,execution_mode:'aot'},
+      control:{kind:'rust',label:'Rust',record:{reference_url:row.rust.original_url??row.rust.source_url}},
+      scope:'AOT · '+data.hardware+' · October 2026 · whole process',
+      direction:comparisonDirection({ratio},metric),label:comparisonLabel({ratio},metric),
+      date:row.mech.recorded_at,referenceDate:row.rust.recorded_at,
+      href:row.mech.implementation_url};
+  });
+}
+
 // The comparison overview uses one main timing per task. Supporting measurements
 // stay in task details; size and allocation pages show their matched metrics.
-export function publishedComparisons(bundle,data,{group='all'}={}) {
+export function publishedComparisons(bundle,data,{group='all',games}={}) {
   const secondary=['size','memory','lifecycle'].includes(group);
   const suite=suiteMeasurements(bundle,{group:secondary?group:'all',metric:secondary?'$all':'$primary'})
-    .filter(row=>row.direction!=='unmatched'&&(group==='all'||row.group===group));
+    .filter(row=>row.direction!=='unmatched'&&(group==='all'||row.group===group))
+    // The newer source-JIT run is retained in task details. It does not replace
+    // the separately measured Mech AOT/Rust AOT Benchmarks Game comparison.
+    .filter(row=>secondary||row.record.backend!=='source-native');
   const native=(!group||group==='all'||group==='deflate')&&data?nativeMeasurements(data).filter(row=>row.group==='deflate'):[];
   const processing=suite.map(row=>row.definition.id==='related-post-gen'&&row.metric==='post_json_seconds'?{...row,title:row.title+' · processing'}:row);
   const process=(!secondary&&(group==='all'||group==='applications'))?suiteMeasurements(bundle,{task:'related-post-gen',metric:'native_process_seconds'}).filter(row=>row.direction!=='unmatched').map(row=>({...row,title:row.title+' · whole process'})):[];
-  return [...processing,...process,...native];
+  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[])];
 }
