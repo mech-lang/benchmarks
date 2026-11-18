@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory,measuredRows,controlFor,controlComparison} from '../src/campaigns-model.mjs';
+import {metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,comparisonPlot} from '../src/campaigns-model.mjs';
 
 const baseline={case_id:'scalar',backend:'source',lane:'candidate',task_hash:'t',measurement_hash:'m',source_sha256:'s',
   environment_hash:'e',outcome:'ok',progress:'measured',revision:'abc',summary:{resident_turn_seconds:{median:2,samples:[1,2,3]}}};
@@ -12,9 +12,9 @@ for(const field of ['task_hash','measurement_hash','source_sha256','environment_
 assert.equal(compareRecords(null,candidate,'resident_turn_seconds').label,'—');
 assert.equal(compareRecords(baseline,{...candidate,outcome:'incorrect'},'resident_turn_seconds').status,'unavailable');
 assert.equal(formatMetric(undefined,'resident_turn_seconds'),'—');
-assert.equal(formatMetric(2e-7,'resident_turn_seconds'),'200.0 ns');
-assert.equal(formatMetric(.002,'resident_turn_seconds'),'2.00 ms');
-assert.equal(formatMetric(1024,'artifact_bytes'),'1.00 KiB');
+assert.equal(formatMetric(2e-7,'resident_turn_seconds'),'200 ns');
+assert.equal(formatMetric(.002,'resident_turn_seconds'),'2 ms');
+assert.equal(formatMetric(1024,'artifact_bytes'),'1 KiB');
 assert.equal(recordFor(campaign,'scalar','source'),candidate);
 assert.equal(recordFor(campaign,'scalar','bytecode'),undefined);
 const cases=[{id:'scalar',title:'Scalar arithmetic',family:'arithmetic',progress:'implemented'},
@@ -52,7 +52,7 @@ assert.equal(measuredRows(data,{metric:'native_program_call_seconds'}).length,1)
 assert.equal(controlFor(data,rows[0]).kind,'rust');
 assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).percent,-50);
 assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).label,'2× faster');
-assert.equal(formatMetric(3e-8,'rust_call_seconds'),'30.0 ns');
+assert.equal(formatMetric(3e-8,'rust_call_seconds'),'30 ns');
 assert.equal(controlFor(data,rows[1]).kind,'pending');
 data.control_policy={controls:[{case_id:'scalar',backend:'source',metric:'resident_turn_seconds',campaign_id:'resident',label:'Mech frozen baseline'}]};
 assert.equal(controlFor(data,rows[0]).record,measured);
@@ -64,3 +64,41 @@ assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).percent,-50);
 newer.results[0]={...newer.results[0],source_sha256:'new-source'};
 assert.equal(controlFor(data,measuredRows(data)[0]).kind,'pending','changed source cannot silently inherit a qualified Mech control');
 console.log('Consolidated measured rows, side-by-side Rust controls and fixed Mech promotion checks passed.');
+
+// Matching inputs and hardware do not establish an equivalent timed scope.
+const deflate={...candidate,case_id:'deflate',backend:'program-jit-bytecode',control_contract:'checked-call',
+  measurement:{primary_metric:'native_program_call_seconds'},summary:{native_program_call_seconds:{median:1}}};
+const compressor={...baseline,case_id:'deflate',backend:'libdeflate',lane:'control',
+  revision:'92e6a0db9fa848d742f9eb286c92afc60f2c3dda',
+  source_sha256:'a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05',
+  measurement:{primary_metric:'control_call_seconds'},summary:{control_call_seconds:{median:2}}};
+const deflateRun={...campaign,results:[deflate,compressor]};
+const deflateData={campaigns:[deflateRun]};
+const deflateRow={campaign:deflateRun,record:deflate,metric:'native_program_call_seconds'};
+assert.equal(controlFor(deflateData,deflateRow).kind,'pending','a compressor call cannot be attached to a checked call without a shared timing contract');
+assert.equal(controlFor(deflateData,deflateRow).record,undefined,'an unmatched timing is not displayed in the comparison column');
+compressor.control_contract='compressor-call';
+assert.equal(controlFor(deflateData,deflateRow).kind,'pending','different timing contracts remain separate');
+compressor.control_contract='checked-call';
+assert.equal(controlFor(deflateData,deflateRow).kind,'libdeflate');
+assert.equal(controlComparison(deflateRow,controlFor(deflateData,deflateRow)).ratio,.5);
+compressor.environment_hash='different-machine';
+assert.equal(controlFor(deflateData,deflateRow).kind,'pending','a shared timing contract does not permit a different machine');
+console.log('DEFLATE comparisons require the same task, machine and explicit measurement contract.');
+
+assert.equal(comparisonDirection({ratio:.5},'native_program_call_seconds'),'faster');
+assert.equal(comparisonDirection({ratio:2},'native_program_call_seconds'),'slower');
+assert.equal(comparisonDirection({ratio:2},'accepted_turns_per_second'),'faster','higher throughput has the opposite direction from time');
+assert.equal(comparisonDirection({ratio:.5},'accepted_turns_per_second'),'slower');
+assert.equal(comparisonDirection({ratio:1},'native_program_call_seconds'),'equal');
+assert.equal(comparisonDirection({ratio:1.000001},'native_program_call_seconds'),'slower','rounding cannot turn a measured difference into a tie');
+assert.equal(comparisonLabel({ratio:.5},'native_program_call_seconds'),'2× faster');
+assert.equal(comparisonLabel({ratio:2},'artifact_bytes'),'2× larger');
+assert.equal(comparisonLabel({ratio:1.000001},'native_program_call_seconds'),'<0.01% more time');
+const plot=comparisonPlot([{id:'low',title:'Low',ratio:.1},{id:'same',title:'Same',ratio:1},{id:'high',title:'High',ratio:10}],{width:700});
+const coordinates=[...plot.matchAll(/cx="([0-9.]+)" cy="([0-9.]+)"/g)].map(m=>m.slice(1).map(Number));
+assert.equal(coordinates.length,3);
+assert.ok(Math.abs((coordinates[1][0]-coordinates[0][0])-(coordinates[2][0]-coordinates[1][0]))<1e-8,'case positions are evenly spaced');
+assert.ok(Math.abs((coordinates[0][1]-coordinates[1][1])-(coordinates[1][1]-coordinates[2][1]))<1e-8,'equal log intervals occupy equal vertical distances');
+assert.ok(coordinates[0][1]>coordinates[1][1]&&coordinates[1][1]>coordinates[2][1],'smaller time ratios appear below the baseline');
+console.log('Comparison colors respect metric direction; strict ties and logarithmic chart spacing pass.');

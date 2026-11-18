@@ -4,53 +4,51 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="dark">
-  <meta name="description" content="Track Mech performance, compilation, memory and benchmark coverage over time.">
-  <title>Mech · Benchmark history</title>
+  <meta name="description" content="See where Mech is faster or slower, with matched benchmark comparisons and the complete measurements.">
+  <title>Mech · Performance</title>
   <link rel="canonical" href="https://mech-lang.org/metrics/">
   <link rel="stylesheet" href="/benchmarks/mech-palette.css">
   <link rel="stylesheet" href="/benchmarks/campaigns.css">
   <script type="module" src="/benchmarks/campaigns.mjs"></script>
+  <script type="module" src="/benchmarks/deflate-results.mjs"></script>
 </head>
 <body>
-  <header><a class="brand" href="/benchmarks/">MECH <span>/ benchmarks</span></a><nav aria-label="Benchmark views"><a href="/benchmarks/">Language comparison</a><a href="/metrics/" aria-current="page">Mech over time</a><a href="/metrics/project/">Project metrics</a></nav></header>
+  <header><a class="brand" href="/benchmarks/">MECH <span>/ performance</span></a><nav aria-label="Benchmark views"><a href="/benchmarks/">Languages</a><a href="/metrics/" aria-current="page">Performance</a><a href="/metrics/project/">Project</a></nav></header>
   <main>
-    <div class="heading"><div><p class="eyebrow">A continuing record</p><h1>How Mech is changing.</h1><p class="intro">Run the same tasks. Check the answers. Keep the evidence.</p></div><span class="policy">Informational measurements</span></div>
-    <div id="load-error" role="alert" hidden></div>
-    <section class="stats" aria-label="Suite coverage" id="stats"><p>Loading benchmark history…</p></section>
-    <p id="coverage-summary" class="intro"></p>
-    <p class="intro"><a href="/benchmarks/rust-controls-2026-11-17.md">What the measured Rust comparisons show ↗</a></p>
-    <details class="method" id="deflate-m3" open>
-      <summary><strong>DEFLATE · Apple M3</strong> · 81 cases</summary>
-      <p>Reference: libdeflate 1.26 · level 12.</p>
-      <div class="table-scroll"><table><thead><tr><th scope="col">Mech build</th><th scope="col">Wins · forward</th><th scope="col">Wins · reverse</th></tr></thead><tbody>
-        <tr><th scope="row">Current shared build</th><td>61/81</td><td>61/81</td></tr>
-        <tr><th scope="row">Retained confirmation</th><td>61/81</td><td>61/81</td></tr>
-        <tr><th scope="row">Previous build · fresh rerun</th><td>58/81</td><td>60/81</td></tr>
-        <tr><th scope="row">Rebased build · fresh rerun</th><td>58/81</td><td>60/81</td></tr>
-      </tbody></table></div>
-      <p>November 18, 2026. Wins use geometric means of 96 balanced-block Mech/libdeflate time ratios strictly below one; equality is a tie. The libdeflate executable is unchanged. The current shared M1/M3 Mech encoder contains 64,652 bytes of code. Both complete M3 orders passed raw-record replay.</p>
-      <p>The in-memory native diagnostic call includes heap construction, allocation transfer and physical private cleanup. Preparation, validation and process startup are excluded.</p>
-      <p><a href="/benchmarks/deflate-m3-libdeflate-20261118.csv" download>Current timings · seconds and × libdeflate ↓</a> · <a href="/benchmarks/deflate-m3-libdeflate-20261118.json">Measurement details ↗</a> · <a href="https://github.com/mech-lang/mech/releases/download/evidence-native-compression-experiments-6/pr995-deflate-shared-integration-20261118-cbec7c8e2a77.tar.gz">Raw observations ↗</a></p>
-    </details>
-    <nav id="run-links" class="run-links" aria-label="Latest benchmark runs"></nav>
-    <div class="controls">
-      <label>Results<select id="campaign" aria-label="Campaign"></select></label>
-      <label>History comparison<select id="baseline" aria-label="Baseline campaign"></select></label>
-      <label>Measurement<select id="metric" aria-label="Measurement"></select></label>
-      <label>Execution path<select id="backend"></select></label>
+    <div class="heading"><p class="eyebrow">Benchmark results</p><h1>Where Mech stands.</h1><p class="intro">See the wins, the gaps, and the measurements behind them.</p></div>
+    <div class="legend" aria-label="Comparison colors"><span class="faster">Mech better</span><span class="slower">Mech worse</span><span class="unmatched">No matched comparison</span></div>
+    <div class="overview" role="tablist" aria-label="Benchmark groups">
+      <button class="overview-card active" id="deflate-tab" role="tab" data-view="deflate" aria-selected="true" aria-controls="deflate-m3"><span class="card-title">Native compression</span><strong class="faster">61<span>/81</span></strong><span class="card-result">cases faster than libdeflate level 12</span><span class="card-note">20 slower · Apple M3 · two complete runs</span></button>
+      <button class="overview-card" id="suite-tab" role="tab" data-view="suite" aria-selected="false" aria-controls="suite-panel"><span class="card-title">Runtime &amp; compiler</span><strong id="suite-overview-value">…</strong><span class="card-result" id="suite-overview-result">Loading matched comparisons</span><span class="card-note" id="suite-overview-note">Individual tasks, each with its own reference</span></button>
     </div>
-    <p class="boundary" id="boundary"></p>
-    <div class="workspace summary">
-      <section class="catalog" aria-labelledby="catalog-title">
-        <div class="section-title"><h2 id="catalog-title">The benchmark suite</h2><span id="case-count"></span></div>
-        <div class="filters"><label class="search"><span class="sr-only">Search cases</span><input id="search" type="search" placeholder="Find a task or family…"></label><label><span class="sr-only">Family</span><select id="family"><option value="all">Every family</option></select></label><label><span class="sr-only">Progress</span><select id="progress"><option value="all">Every stage</option><option value="measured">Measured</option><option value="verified">Verified</option><option value="implemented">Implemented</option><option value="planned">Planned</option><option value="failed">Needs attention</option></select></label></div>
-        <div class="table-scroll"><table><thead><tr><th scope="col">Task</th><th scope="col" id="metric-heading">Mech</th><th scope="col">Control</th><th scope="col">Change</th></tr></thead><tbody id="cases"></tbody></table></div>
-        <p id="empty" class="empty" hidden>No cases match these filters.</p>
-      </section>
-      <aside class="detail" aria-labelledby="detail-title" id="detail" hidden></aside>
-    </div>
-    <details class="method"><summary>How controls and history work</summary><p>Rust is the default control for other tasks; DEFLATE uses libdeflate 1.26 at level 12. A confirmed Mech win can establish a pinned Mech control for that task and measurement; it stays fixed for future comparisons. A single fast sample never changes the control. Each control links to its actual samples and source.</p><p>The latest view shows one accepted Mech result per task, preferring its declared execution path. Each row identifies its measurement and run; different boundaries are never combined into one score. Choose a run or execution path to inspect earlier observations and failed qualifications.</p><p>Compiler history requires the same task, source, schedule, boundary, backend and environment. Rust task comparisons retain each implementation's source, compiler and timer details. Resident controls use independent typed Rust implementations with native ownership; Mech also performs runtime scheduling, admission and budget accounting. Compression reports output size alongside time. Its level-12 reference is libdeflate; historical zlib-rs level-9 observations remain separate. Related Post Gen preserves the original Rust example's preinitialized pool advantage. Resident turns remain diagnostic measurements; managed storage and process RSS have separate meanings.</p><p>Independent forks and all adverse observations remain available. Suspected regressions need independent confirmation. Shared-runner timings never fail CI.</p></details>
+
+    <section id="deflate-m3" class="results-panel" role="tabpanel" aria-labelledby="deflate-tab">
+      <div class="panel-heading"><div><h2>DEFLATE compression</h2><p class="caption">Mech vs libdeflate 1.26, level 12 · Apple M3 · November 18, 2026</p></div><a class="text-link" href="/benchmarks/deflate-m3-libdeflate-20261118.csv" download>Download timings</a></div>
+      <p class="scope-note">Compression calls, including private allocation and cleanup. Process startup is excluded.</p>
+      <div class="result-toolbar"><div class="result-filters" id="deflate-filters" aria-label="Compression results"><button data-native-filter="all" aria-pressed="true">All <span>81</span></button><button class="faster" data-native-filter="faster" aria-pressed="false">Faster <span>61</span></button><button class="slower" data-native-filter="slower" aria-pressed="false">Slower <span>20</span></button></div><label class="run-selector">Run<select id="deflate-order"><option value="forward">1 · forward order</option><option value="reverse">2 · reverse order</option></select></label></div>
+      <div class="chart-card"><div class="chart-readout" id="deflate-readout" aria-live="polite">Each point is one input case. Select a point or row for its timings.</div><div id="deflate-chart"><p class="empty">Loading 81 matched cases…</p></div><p class="chart-key">Below 1×: Mech takes less time. Above 1×: Mech takes more time.</p></div>
+      <div id="deflate-error" role="alert" hidden></div>
+      <div class="table-heading"><h3>Case results <span id="deflate-count">81 cases</span></h3><div class="table-tools"><input type="search" id="deflate-search" aria-label="Search compression cases" placeholder="Find an input case"><select id="deflate-sort" aria-label="Sort compression results"><option value="slowest">Slowest relative to libdeflate</option><option value="fastest">Fastest relative to libdeflate</option><option value="name">Case name</option><option value="size">Input size</option></select></div></div>
+      <p class="caption">Times are medians; comparisons use paired-block ratios.</p>
+      <div class="table-scroll case-table"><table><thead><tr><th scope="col">Input case</th><th scope="col">Mech</th><th scope="col">libdeflate</th><th scope="col">Mech compared</th><th scope="col">Output bytes<br><span>Mech / libdeflate</span></th></tr></thead><tbody id="deflate-cases"></tbody></table></div>
+      <details class="method"><summary>How this was measured</summary><p>Each run covers the same 81 input cases. The second run reverses their order. Mech is faster in 61 cases and slower in 20 in each run; the exact cases can differ between runs. A ratio strictly below 1 is a win, above 1 is a loss, and exactly 1 is a tie.</p><p>Seconds are the medians of each executable’s timings. Comparisons use the geometric mean of 96 paired-block time ratios, so the comparison is not calculated by dividing the displayed medians. Output sizes include the retained prefix. Both implementations use level 12; their compressed streams can differ.</p><p><a href="/benchmarks/deflate-m3-libdeflate-20261118.json">Measurement record</a> · <a href="https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec">Mech source</a> · <a href="https://github.com/mech-lang/mech/releases/download/evidence-native-compression-experiments-6/pr995-deflate-shared-integration-20261118-cbec7c8e2a77.tar.gz">Original observations</a></p></details>
+      <details class="method"><summary>Earlier builds</summary><div class="table-scroll"><table><thead><tr><th scope="col">Mech build</th><th scope="col">Wins · run 1</th><th scope="col">Wins · run 2</th></tr></thead><tbody><tr><td>Current shared build</td><td class="faster">61/81</td><td class="faster">61/81</td></tr><tr><td>Retained confirmation</td><td>61/81</td><td>61/81</td></tr><tr><td>Previous build · fresh rerun</td><td>58/81</td><td>60/81</td></tr><tr><td>Rebased build · fresh rerun</td><td>58/81</td><td>60/81</td></tr></tbody></table></div></details>
+    </section>
+
+    <section id="suite-panel" class="results-panel" role="tabpanel" aria-labelledby="suite-tab" hidden>
+      <div class="panel-heading"><div><h2>Runtime &amp; compiler tasks</h2><p class="caption"><span id="suite-asof">Published measurements</span> · each task has its own matched reference.</p></div><a class="text-link" href="/benchmarks/rust-controls-2026-11-17.md">Comparison report</a></div>
+      <div id="load-error" role="alert" hidden></div>
+      <section class="stats" aria-label="Comparison outcomes" id="stats"><p>Loading results…</p></section>
+      <div class="result-filters" id="suite-outcomes" aria-label="Task comparison results"><button data-outcome="matched" aria-pressed="true">Matched comparisons</button><button class="faster" data-outcome="faster" aria-pressed="false">Mech better</button><button class="slower" data-outcome="slower" aria-pressed="false">Mech worse</button><button data-outcome="all" aria-pressed="false">All measurements</button></div>
+      <div class="chart-card"><div class="chart-readout" id="suite-readout" aria-live="polite">Select a point or task to see its timings.</div><div id="suite-chart"></div><p class="chart-key" id="suite-chart-key">Below 1×: Mech takes less time. Above 1×: Mech takes more time.</p></div>
+      <details class="method advanced-controls" id="advanced-controls"><summary>History and measurement options</summary><div class="controls"><label>Results<select id="campaign" aria-label="Campaign"></select></label><label>Compare with<select id="baseline" aria-label="Baseline campaign"></select></label><label>Measurement<select id="metric" aria-label="Measurement"></select></label><label>Execution path<select id="backend"></select></label></div><p id="boundary" class="boundary"></p><p id="coverage-summary" class="caption"></p><nav id="run-links" class="run-links" aria-label="Latest benchmark runs"></nav></details>
+      <div class="workspace summary">
+        <section class="catalog" aria-labelledby="catalog-title"><div class="section-title"><h3 id="catalog-title">Task results</h3><span id="case-count"></span></div><div class="filters"><label class="search"><span class="sr-only">Search tasks</span><input id="search" type="search" placeholder="Find a task"></label><label><span class="sr-only">Family</span><select id="family"><option value="all">Every family</option></select></label><label><span class="sr-only">Status</span><select id="progress"><option value="all">Every status</option><option value="measured">Measured</option><option value="verified">Verified</option><option value="implemented">Implemented</option><option value="planned">Planned</option><option value="failed">Needs attention</option></select></label></div><div class="table-scroll"><table><thead><tr><th scope="col">Task</th><th scope="col" id="metric-heading">Mech</th><th scope="col">Reference</th><th scope="col">Mech compared</th></tr></thead><tbody id="cases"></tbody></table></div><p id="empty" class="empty" hidden>No tasks match this selection.</p></section>
+        <aside class="detail" aria-labelledby="detail-title" id="detail" hidden></aside>
+      </div>
+      <details class="method"><summary>What counts as a comparison?</summary><p>A comparison requires the same task, environment and agreed measurement scope. A timing without a matched reference remains available under “All measurements” and has no speed ratio. A fixed Mech baseline records later changes against a previously confirmed build.</p><p>Runtime tasks, compiler builds and native compression calls measure different operations. The task details state what each timer includes. Sources, versions, individual observations and earlier runs remain available with each result.</p></details>
+    </section>
   </main>
-  <footer><span>Mech benchmark suite · exact sources, retained evidence</span><a href="https://github.com/mech-lang/benchmarks">Repository</a></footer>
+  <footer><span>Mech benchmarks · measurements and source included</span><a href="https://github.com/mech-lang/benchmarks">Repository</a></footer>
 </body>
 </html>

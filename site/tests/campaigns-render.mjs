@@ -52,7 +52,7 @@ const bundle={schema:'mech.benchmark-dashboard.v1',catalog,campaigns:[campaign]}
 let {element,history,fetchedURL}=await mount(bundle,'?case=scalar');
 assert.equal(fetchedURL,'http://localhost/benchmarks/campaigns.json.gz?v=test-build');
 assert.ok(element('#cases').innerHTML.includes('Scalar &lt;safe&gt;'));
-assert.ok(element('#detail').innerHTML.includes('100.00 µs'));
+assert.ok(element('#detail').innerHTML.includes('100 µs'));
 assert.ok(element('#detail').innerHTML.includes('&lt;script&gt;'));
 assert.ok(!element('#detail').innerHTML.includes('<script>'));
 assert.ok(element('#detail').innerHTML.includes('href="http://localhost/benchmarks/campaign-evidence/run-001/raw/fork-1/supervised.json"'));
@@ -70,7 +70,7 @@ const native={...base,case_id:'native-build',backend:'native',summary:{source_to
 assert.equal(element('#backend').value,'$auto');
 assert.equal(element('#metric').value,'$primary');
 assert.ok(element('#detail').innerHTML.includes('Native build'));
-assert.ok(element('#detail').innerHTML.includes('1.000 s'));
+assert.ok(element('#detail').innerHTML.includes('1 s'));
 
 ({element}=await mount({...bundle,campaigns:[]}));
 assert.ok(element('#campaign').innerHTML.includes('Latest measured'));
@@ -81,13 +81,29 @@ const program={...base,case_id:'deflate',backend:'program-jit-bytecode',measurem
 ({element}=await mount({...bundle,catalog:{...catalog,cases:[{id:'deflate',title:'Deflate',family:'applications',progress:'implemented'}]},campaigns:[{...campaign,results:[program]}]},'?case=deflate'));
 assert.equal(element('#metric').value,'$primary');
 assert.equal(element('#backend').value,'$auto');
-assert.ok(element('#detail').innerHTML.includes('4.00 ms'));
+assert.ok(element('#detail').innerHTML.includes('4 ms'));
 assert.ok(element('#coverage-summary').textContent.includes('1 of 1'));
 assert.ok(!element('#backend').innerHTML.includes('JVM'));
 assert.ok(!element('#backend').innerHTML.includes('Roc compressor'));
-assert.ok(element('#cases').innerHTML.includes('libdeflate · level 12 · not measured'));
+assert.ok(element('#cases').innerHTML.includes('No matched libdeflate timing'));
 assert.ok(!element('#cases').innerHTML.includes('>—<'));
 console.log('Complete application paths and per-contract primary metrics passed.');
+
+const unmatchedCompressor={...base,case_id:'deflate',backend:'libdeflate',lane:'control',
+  revision:'92e6a0db9fa848d742f9eb286c92afc60f2c3dda',
+  source_sha256:'a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05',
+  measurement:{primary_metric:'control_call_seconds'},summary:{control_call_seconds:{median:99,samples:[99]}},
+  samples:[{fork:0,raw:'raw/compressor',metrics:{control_call_seconds:99}}]};
+({element}=await mount({...bundle,catalog:{...catalog,cases:[{id:'deflate',title:'Deflate',family:'applications',progress:'implemented'}]},
+  campaigns:[{...campaign,results:[program,unmatchedCompressor]}]},'?case=deflate'));
+assert.ok(element('#cases').innerHTML.includes('4 ms'),'the original Mech observation remains available');
+assert.ok(element('#cases').innerHTML.includes('No matched comparison'));
+for(const selector of ['#cases','#detail']){
+  assert.ok(!element(selector).innerHTML.includes('99 s'),'unmatched compressor seconds are not presented alongside the Mech timing');
+  assert.ok(!element(selector).innerHTML.includes('Reference only'));
+  assert.ok(!element(selector).innerHTML.includes('Level-12 reference'));
+}
+console.log('Unmatched compressor timings are absent from task summaries and details.');
 
 ({element}=await mount({...bundle,campaigns:[{...campaign,raw_archive:'raw.tar.gz',raw_archive_url:'https://raw.githubusercontent.com/mech-lang/benchmarks/abc/results/campaigns/run-001/raw.tar.gz',compressed_evidence:{'raw/fork-1/supervised.json':'raw/fork-1/supervised.json.gz'}}]},'?case=scalar'));
 assert.ok(element('#detail').innerHTML.includes('/raw/fork-1/supervised.json.gz"'));
@@ -131,3 +147,15 @@ lazy=await mount(structuredClone(lazyBundle),'?case=scalar',invalid);
 assert.ok(lazy.element('#detail').innerHTML.includes('task_hash differs from its summary'));
 assert.ok(!lazy.element('#detail').innerHTML.includes('class="measurement"'));
 console.log('Summary-only loading, selected task/control requests, cache, shared links and detail identity checks passed.');
+
+const standalone={...base,case_id:'no-reference',title:'Standalone measurement'};
+({element,history}=await mount({...bundle,catalog:{...catalog,cases:[catalog.cases[0],{id:'no-reference',title:'Standalone measurement',family:'arithmetic',progress:'implemented'}]},campaigns:[{...campaign,results:[candidate,control,standalone]}]}));
+assert.ok(element('#cases').innerHTML.includes('result-tag slower'));
+assert.ok(!element('#cases').innerHTML.includes('Standalone measurement'),'the default comparison view excludes unmatched observations');
+await element('#suite-outcomes').events.click({target:{closest:()=>({dataset:{outcome:'all'}})}});
+assert.ok(element('#cases').innerHTML.includes('Standalone measurement'),'all original measurements remain accessible');
+assert.ok(element('#cases').innerHTML.includes('No matched comparison'));
+assert.ok(history.url.includes('result=all'));
+await element('#suite-outcomes').events.click({target:{closest:()=>({dataset:{outcome:'faster'}})}});
+assert.equal(element('#empty').hidden,false,'an empty faster selection cannot invent a win');
+console.log('Default matched results, slower colors, access to standalone observations and shared outcome filters pass.');

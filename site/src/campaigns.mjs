@@ -1,4 +1,4 @@
-import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord} from './campaigns-model.mjs';
+import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot} from './campaigns-model.mjs';
 
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
@@ -8,6 +8,8 @@ const nice=value=>String(value??'unknown').replaceAll('_',' ');
 let bundle,selected,rows=[],detailGeneration=0;
 const recordLoads=new WeakMap(),contextLoads=new WeakMap();
 const parameters=new URLSearchParams(location.search);
+let outcome=parameters.get('result')??(parameters.has('case')?'all':'matched');
+if(!['matched','faster','slower','all'].includes(outcome))outcome='matched';
 
 function campaign() {return bundle.campaigns.find(c=>c.id===$('#campaign').value);}
 function baseline() {return bundle.campaigns.find(c=>c.id===$('#baseline').value);}
@@ -63,7 +65,7 @@ async function renderDetail() {
   $('.workspace').className=row?'workspace':'workspace summary';
   if(!row){$('#detail').innerHTML='';return;}
   $('#detail').innerHTML='<p class="empty" role="status">Loading this task’s measurements and evidence…</p>';
-  const control=controlFor(bundle,row);
+  const control=referenceFor(row);
   try {
     await Promise.all([loadContext(row.campaign),loadRecord(row.campaign,row.record,row.definition),
       ...(control.record?[loadContext(control.campaign),loadRecord(control.campaign,control.record)]:[])]);
@@ -92,61 +94,94 @@ function trend(points,metric) {
 
 function renderLoadedDetail(row) {
   const {definition,campaign:current,record,metric}=row,backend=record.backend;
-  let html=`<button class="back-summary" data-close-detail>← Back to summary</button><p class="eyebrow">${escape(definition.family)}</p><h2 id="detail-title">${escape(definition.title)}</h2>
-    <div class="badges">${badge(stageFor(definition,record))}${record?badge(record.outcome,record.outcome):''}</div>`;
+  let html=`<button class="back-summary" data-close-detail>Back to tasks</button><h2 id="detail-title">${escape(definition.title)}</h2>`;
   if(!record) {
     const available=[...bundle.campaigns].reverse().flatMap(c=>c.results.filter(r=>r.case_id===selected&&r.lane==='candidate'&&r.progress==='measured').map(r=>({c,r})));
-    if(available.length)html+=`<p class="detail-note">Measured in another view:</p><div class="run-links">${available.slice(0,6).map(({c,r})=>`<a href="?${new URLSearchParams({campaign:c.id,backend:r.backend,metric:r.measurement.primary_metric??'resident_turn_seconds',case:selected})}">${escape(backendLabels[r.backend]??r.backend)} ↗</a>`).join('')}</div>`;
+    if(available.length)html+=`<p class="detail-note">Measured in another view:</p><div class="run-links">${available.slice(0,6).map(({c,r})=>`<a href="?${new URLSearchParams({campaign:c.id,backend:r.backend,metric:r.measurement.primary_metric??'resident_turn_seconds',case:selected})}">${escape(backendLabels[r.backend]??r.backend)}</a>`).join('')}</div>`;
     html+=`<p class="detail-note">${escape(definition.notes??'This run does not include the selected execution path. Choose an available measurement or another run.')}</p>`;
-    if(definition.historical_contract)html+=`<p><a href="https://github.com/mech-lang/benchmarks/blob/main/${pathURL(definition.historical_contract)}">Preserved application contract ↗</a></p>`;
+    if(definition.historical_contract)html+=`<p><a href="https://github.com/mech-lang/benchmarks/blob/main/${pathURL(definition.historical_contract)}">Preserved application contract</a></p>`;
   } else {
     const implementation=implementationFor(current,record);
     const verification=record.verification??{};
     const summary=record.summary?.[metric],comparison=compareRecords(baselineRecord(row),record,metric);
-    const control=controlFor(bundle,row),change=controlComparison(row,control);
+    const control=referenceFor(row),change=changeFor(row,control);
+    const direction=comparisonDirection(change,metric);
     const screening=current.comparisons?.find(result=>result.case_id===selected&&result.backend===backend);
     html+=`<div class="measurement"><strong>${escape(formatMetric(summary?.median,metric))}</strong><span>${escape(metrics[metric].label)} · ${record.samples.length} independent ${record.samples.length===1?'fork':'forks'}</span></div>
       ${record.reason?`<p class="failure">${escape(record.reason)}</p>`:''}
-      <p class="detail-note">${escape(backendLabels[backend])} · ${escape(current.id)}. Capability: ${escape(nice(record.capability))}.</p>
-      ${current.known_interference&&selected.startsWith(current.known_interference.case_prefix)?`<p class="detail-note">${escape(current.known_interference.reason)} <a href="?${new URLSearchParams({campaign:current.known_interference.replacement_campaign,backend,case:selected})}">Inspect the independent repeat ↗</a></p>`:''}
-      <section class="control-detail" aria-label="Benchmark control"><h3>Control · ${escape(control.label)}</h3><p>${control.kind==='pending'?'No reference is available for this measurement.':`${escape(formatMetric(control.record.summary[control.metric].median,control.metric))} · ${escape(change.label)}.`} ${escape(control.reason)}</p>${control.kind!=='pending'?`${record.summary?.output_bytes&&control.record.summary?.output_bytes?`<p class="compression-quality">Compressed output: Mech ${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))}; ${escape(control.label)} ${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))}. Level-12 reference; compare output size with time.</p>`:''}<p><a href="${rawLink(control.campaign,null)}">Control run and observations ↗</a></p><details><summary>Control measurements</summary><div class="control-samples">${control.record.samples.map(sample=>`<a href="${rawLink(control.campaign,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[control.metric],control.metric))}</span></a>`).join('')}</div></details><details><summary>Control source and provenance</summary><p>Revision <code>${escape(control.record.revision)}</code></p><p>Source SHA-256 <code>${escape(control.record.source_sha256)}</code></p><pre>${escape(control.record.source)}</pre></details>`:''}${control.promotion?`<p>Confirmed against the fixed Rust example in 31 primary and 13 independent rounds. ${escape(control.promotion.rust_reference_note)}</p>`:''}</section>
+      <p><span class="result-tag ${direction}">${escape(comparisonLabel(change,metric))}</span></p>
+      ${current.known_interference&&selected.startsWith(current.known_interference.case_prefix)?`<p class="detail-note">${escape(current.known_interference.reason)} <a href="?${new URLSearchParams({campaign:current.known_interference.replacement_campaign,backend,case:selected})}">Inspect the independent repeat</a></p>`:''}
+      <section class="control-detail" aria-label="Benchmark control"><h3>Reference · ${escape(control.label)}</h3><p>${control.kind==='pending'?'A matched comparison is not available for this measurement.':`${escape(formatMetric(control.record.summary[control.metric].median,control.metric))} · ${escape(comparisonLabel(change,metric))}.`}</p><details><summary>Comparison scope</summary><p>${escape(control.reason)}</p></details>${control.kind!=='pending'?`${record.summary?.output_bytes&&control.record.summary?.output_bytes?`<p class="compression-quality">Compressed output: Mech ${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))}; ${escape(control.label)} ${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))}. Compare output size with time.</p>`:''}<p><a href="${rawLink(control.campaign,null)}">Control run and observations</a></p><details><summary>Control measurements</summary><div class="control-samples">${control.record.samples.map(sample=>`<a href="${rawLink(control.campaign,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[control.metric],control.metric))}</span></a>`).join('')}</div></details><details><summary>Control source and provenance</summary><p>Revision <code>${escape(control.record.revision)}</code></p><p>Source SHA-256 <code>${escape(control.record.source_sha256)}</code></p><pre>${escape(control.record.source)}</pre></details>`:''}${control.promotion?`<p>Confirmed against the fixed Rust example in 31 primary and 13 independent rounds. ${escape(control.promotion.rust_reference_note)}</p>`:''}</section>
       ${$('#baseline').value?`<p class="detail-note">History comparison: ${comparison.status==='informational'?escape(`${comparison.label} relative to the selected baseline. ${comparison.reason}`):escape(comparison.reason??'No compatible baseline observation.')}</p>`:''}
       ${$('#baseline').value==='$paired'&&screening?`<p class="detail-note">Paired turn screening: ${escape(nice(screening.status))}. ${escape(screening.reason??'')}${screening.interval_95?` 95% interval: ${screening.interval_95.map(n=>n.toFixed(3)).join('–')}×.`:''}</p>`:''}
-      <h3>Over time</h3>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}
-      <details open><summary>Raw fork observations</summary>${summary?`<div class="sample-list">${record.samples.map(sample=>`<a href="${rawLink(current,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[metric],metric))}</span></a>`).join('')}</div>`:'<p>No accepted timings. Failed and partial observations remain in the campaign evidence.</p>'}</details>
+      <details><summary>Earlier matched measurements</summary>${trend(compatibleHistory(bundle.campaigns,record,metric),metric)}</details>
+      <details><summary>Individual timing observations</summary>${summary?`<div class="sample-list">${record.samples.map(sample=>`<a href="${rawLink(current,sample.raw,'supervised.json')}" target="_blank" rel="noopener"><span>Fork ${sample.fork+1}</span><span>${escape(formatMetric(sample.metrics[metric],metric))}</span></a>`).join('')}</div>`:'<p>No accepted timings. Failed and partial observations remain in the campaign evidence.</p>'}</details>
       <details><summary>Task and measurement contracts</summary><p>Output: <code>${escape(record.task.outputs.join(', '))}</code></p><p>${escape(record.measurement.boundary)}</p><dl>${Object.entries(record.measurement).filter(([key])=>key!=='schedule').map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(typeof value==='string'?value:JSON.stringify(value))}</dd>`).join('')}</dl><p>Deterministic input schedule</p><pre>${escape(JSON.stringify(record.measurement.schedule))}</pre><p>${escape(record.task.arithmetic)}</p><p>Task <code>${escape(short(record.task_hash))}</code> · measurement <code>${escape(short(record.measurement_hash))}</code></p></details>
-      <details><summary>Correctness and negative control</summary><p>${escape(verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${verification.output_count?`<p>${verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations ↗</a><pre>${escape(JSON.stringify(verification.preview_outputs??verification.outputs,null,2))}</pre></details>
+      <details><summary>Correctness and negative control</summary><p>${escape(verification.reason??(backend==='native'?'Every complete fresh-process output matched the independent oracle. Each scheduled input starts a new process.':'The complete declared input trajectory matched the independent Python oracle. Previously published outputs stayed unchanged before execution.'))}</p>${verification.output_count?`<p>${verification.output_count} outputs verified. Preview shows the first and last observations; the raw record includes the full trajectory.</p>`:''}<a href="${rawLink(current,verification.raw,'supervised.json')}" target="_blank" rel="noopener">Inspect verification observations</a><pre>${escape(JSON.stringify(verification.preview_outputs??verification.outputs,null,2))}</pre></details>
       <details><summary>Program source</summary><p>SHA-256 <code>${escape(record.source_sha256)}</code></p><pre class="source"><code>${escape(record.source)}</code></pre></details>
       <details><summary>All measured outcomes</summary><dl>${Object.entries(record.summary??{}).map(([key,value])=>`<dt>${escape(nice(key))}</dt><dd>${escape(metrics[key]?formatMetric(value.median,key):value.median.toLocaleString(undefined,{maximumFractionDigits:6}))}</dd>`).join('')}</dl></details>
       <details><summary>Compiler and environment</summary><dl><dt>Version / revision</dt><dd><code>${escape(record.revision)}</code></dd><dt>Binary hash</dt><dd><code>${escape(implementation.binary_sha256)}</code></dd><dt>Adapter hash</dt><dd><code>${escape(implementation.adapter_sha256)}</code></dd><dt>Toolchain</dt><dd><pre>${escape(implementation.rustc)}</pre></dd><dt>Machine</dt><dd>${escape(current.environment.cpu)} · ${escape(current.environment.system)} ${escape(current.environment.release)}</dd></dl></details>
-      <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON${current.compressed_evidence?.['campaign.json']?' (gzip)':''} ↓</a>${current.raw_archive?`<a href="${rawLink(current,null,current.raw_archive)}" download>Raw evidence archive ↓</a>`:''}<a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report ↗</a>${current.reproduction_url?`<a href="${escape(current.reproduction_url)}" target="_blank" rel="noopener">Reproduction sources ↗</a>`:''}</p>`;
+      <p class="downloads"><a href="${rawLink(current,null)}" download>Campaign JSON${current.compressed_evidence?.['campaign.json']?' (gzip)':''}</a>${current.raw_archive?`<a href="${rawLink(current,null,current.raw_archive)}" download>Raw evidence archive</a>`:''}<a href="${rawLink(current,null,'report.md')}" target="_blank" rel="noopener">Full report</a>${current.reproduction_url?`<a href="${escape(current.reproduction_url)}" target="_blank" rel="noopener">Reproduction sources</a>`:''}</p>`;
   }
   if(definition.compiler_tests?.length)html+=`<details><summary>Existing compiler test coverage</summary><ul>${definition.compiler_tests.map(test=>`<li><a href="https://github.com/${pathURL(test.repository)}/blob/${bundle.catalog.candidate_revision}/${pathURL(test.path)}" target="_blank" rel="noopener">${escape(test.path)}</a></li>`).join('')}</ul></details>`;
   $('#detail').innerHTML=html;
 }
 
+function referenceFor(row) {
+  if(!$('#baseline').value)return controlFor(bundle,row);
+  const origin=$('#baseline').value==='$paired'?row.campaign:baseline();
+  const record=baselineRecord(row),comparison=compareRecords(record,row.record,row.metric);
+  if(comparison.status!=='informational')return {kind:'pending',label:'No matched Mech baseline',reason:comparison.reason??'The selected history does not include a comparable observation.'};
+  return {kind:'history',label:`Mech ${short(record.revision)}`,record,campaign:origin,metric:row.metric,reason:'Same task, source, execution path, environment and measurement contract.'};
+}
+function changeFor(row,control=referenceFor(row)) {
+  return control.kind==='history'?compareRecords(control.record,row.record,row.metric):controlComparison(row,control);
+}
+function summarize(entries) {
+  const counts={faster:0,slower:0,equal:0,unmatched:0};
+  for(const row of entries)counts[comparisonDirection(changeFor(row),row.metric)]++;
+  return counts;
+}
+function suiteMeasure() {
+  const metric=rows[0]?.metric??'native_program_call_seconds';
+  return metrics[metric]?.unit==='bytes'?'size':metrics[metric]?.unit==='rate'?'throughput':metrics[metric]?.unit==='count'?'count':'time';
+}
+function renderSuiteChart() {
+  $('#suite-chart').innerHTML=comparisonPlot(rows.map(row=>{const c=changeFor(row);return {id:row.definition.id,title:row.definition.title,ratio:c.ratio,direction:comparisonDirection(c,row.metric),label:comparisonLabel(c,row.metric)};}),{width:$('#suite-chart').clientWidth,measure:suiteMeasure(),label:'Matched Mech task comparisons'});
+  $('#suite-chart-key').textContent=suiteMeasure()==='throughput'?'Above 1×: Mech has higher throughput. Below 1×: Mech has lower throughput.':suiteMeasure()==='time'?'Below 1×: Mech takes less time. Above 1×: Mech takes more time.':'Below 1×: Mech uses less. Above 1×: Mech uses more.';
+}
+function previewSuite(id) {
+  const row=rows.find(r=>r.definition.id===id);if(!row)return;
+  const control=referenceFor(row),change=changeFor(row,control);
+  $('#suite-readout').innerHTML=`<strong>${escape(row.definition.title)}</strong><div class="readout-values"><span>Mech <strong>${escape(formatMetric(row.record.summary?.[row.metric]?.median,row.metric))}</strong></span><span>${escape(control.label)}${control.record?` <strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</span><strong class="${comparisonDirection(change,row.metric)}">${escape(comparisonLabel(change,row.metric))}</strong></div>`;
+}
 function render() {
   const metric=$('#metric').value,backend=$('#backend').value;
-  const cases=bundle.catalog.cases;
   const available=measuredRows(bundle,{campaign:$('#campaign').value,backend,metric});
-  const controls=available.map(row=>controlFor(bundle,row));
-  $('#stats').innerHTML=[['Measured tasks',available.filter(r=>r.record.outcome==='ok').length],['Families',new Set(available.map(r=>r.definition.family)).size],['External references',controls.filter(c=>['rust','reference'].includes(c.kind)).length],['Mech controls held',controls.filter(c=>c.kind==='mech').length]].map(([label,value])=>`<div><strong>${value}</strong><span>${label}</span></div>`).join('');
-  $('#boundary').textContent=metric==='$primary'?'Each task shows its own measured boundary. Rust is the default control for other tasks; DEFLATE uses a libdeflate level-12 reference. A confirmed Mech win establishes a fixed Mech control. Choose a task to inspect the run, control and evidence.':metrics[metric].note;
-  $('#metric-heading').textContent=metric==='$primary'?'Mech · median':`Mech · ${metrics[metric].label}`;
-  rows=measuredRows(bundle,{campaign:$('#campaign').value,query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend,metric});
-  $('#case-count').textContent=`${rows.length} / ${cases.length} tasks`;
+  const counts=summarize(available);
+  const asof=available.map(row=>row.campaign.started_at).filter(Boolean).sort().at(-1);
+  $('#suite-asof').textContent=asof?'Measured '+new Date(asof).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'}):'Published measurements';
+  $('#stats').innerHTML=[['Mech better',counts.faster,'faster'],['Mech worse',counts.slower,'slower'],['Equal',counts.equal,'equal'],['Other measurements',counts.unmatched,'unmatched']].map(([label,value,kind])=>`<div><strong class="${kind}">${value}</strong><span>${label}</span></div>`).join('');
+  $('#boundary').textContent=metric==='$primary'?'Each task reports its declared primary measurement. A comparison requires a shared timing contract and environment. Sources and exact measurement scopes are available with every task.':metrics[metric].note;
+  $('#metric-heading').textContent=metric==='$primary'?'Mech':`Mech · ${metrics[metric].label}`;
+  const candidates=measuredRows(bundle,{campaign:$('#campaign').value,query:$('#search').value,family:$('#family').value,progress:$('#progress').value,backend,metric});
+  rows=candidates.filter(row=>{const state=comparisonDirection(changeFor(row),row.metric);return outcome==='all'||(outcome==='matched'?state!=='unmatched':state===outcome);});
+  $('#case-count').textContent=`${rows.length} ${rows.length===1?'task':'tasks'}`;
   $('#empty').hidden=rows.length>0;
+  for(const button of $('#suite-outcomes').querySelectorAll?.('[data-outcome]')??[])button.setAttribute('aria-pressed',String(button.dataset.outcome===outcome));
   if(!rows.some(r=>r.definition.id===selected))selected=undefined;
   $('#cases').innerHTML=rows.map(row=>{
-    const {definition,record,metric:rowMetric}=row,stage=stageFor(definition,record),control=controlFor(bundle,row);
-    const change=$('#baseline').value?compareRecords(baselineRecord(row),record,rowMetric):controlComparison(row,control);
-    const compressed=record.summary?.output_bytes&&rowMetric!=='output_bytes';
-    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(definition.family)} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span>${compressed?`<span class="family">${escape(formatMetric(record.summary.output_bytes.median,'output_bytes'))} output</span>`:''}</td><td class="control-value" title="${escape(control.reason)}"><span>${escape(control.label)}</span>${control.kind!=='pending'?`<strong>${escape(formatMetric(control.record.summary[control.metric].median,control.metric))}</strong>${compressed&&control.record.summary?.output_bytes?`<span class="family">${escape(formatMetric(control.record.summary.output_bytes.median,'output_bytes'))} output</span>`:''}`:''}</td><td class="number change ${change.percent<0?'faster':''}" title="${escape(change.reason??'')}">${escape(change.label)}${compressed?'<span class="family">Level-12 reference</span>':''}</td></tr>`;
+    const {definition,record,metric:rowMetric}=row,control=referenceFor(row),change=changeFor(row,control);
+    const direction=comparisonDirection(change,rowMetric);
+    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}</td><td class="control-value"><span>${escape(control.label)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
   }).join('');
+  renderSuiteChart();
+  if(selected)previewSuite(selected);else $('#suite-readout').textContent='Select a point or task to see its timings.';
   const details=renderDetail();
-  const query=new URLSearchParams();
-  for(const [key,value] of [['campaign',$('#campaign').value],['baseline',$('#baseline').value],['metric',metric],['backend',backend],['case',selected]])if(value)query.set(key,value);
-  history.replaceState(null,'',`${location.pathname}?${query}`);
+  const query=new URLSearchParams(location.search);
+  for(const key of ['campaign','baseline','metric','backend','case','q','family','progress','result'])query.delete(key);
+  for(const [key,value,defaultValue] of [['campaign',$('#campaign').value,'$latest'],['baseline',$('#baseline').value,''],['metric',metric,'$primary'],['backend',backend,'$auto'],['case',selected,undefined],['q',$('#search').value,''],['family',$('#family').value,'all'],['progress',$('#progress').value,'all'],['result',outcome,'matched']])if(value&&value!==defaultValue)query.set(key,value);
+  history.replaceState(null,'',location.pathname+(query.size?'?'+query:'')+(location.hash??''));
   return details;
 }
 
@@ -164,7 +199,7 @@ async function start() {
   $('#backend').innerHTML=option('$auto','Preferred path for each task')+Object.entries(backendLabels).map(([key,label])=>option(key,label)).join('');
   const complete=new Set(measuredRows(bundle).filter(row=>row.record.progress==='measured'&&row.record.outcome==='ok').map(row=>row.definition.id));
   $('#coverage-summary').textContent=`${complete.size} of ${bundle.catalog.cases.length} tasks have accepted measurements across all runs.`;
-  $('#run-links').innerHTML=`<a href="${location.pathname}">All measured tasks</a>`+[['Resident suite','source'],['Full applications','program-jit'],['Related Post Gen','related-managed'],['Worker scaling','process-workers'],['Native compilation','native']].flatMap(([label,backend])=>{const c=choices.find(c=>c.results.some(r=>r.backend===backend&&r.progress==='measured'));const r=c?.results.find(r=>r.backend===backend&&r.progress==='measured');return r?[`<a href="?${new URLSearchParams({backend,case:r.case_id})}">${escape(label)} ↗</a>`]:[];}).join('');
+  $('#run-links').innerHTML=`<a href="${location.pathname}">All measured tasks</a>`+[['Resident suite','source'],['Full applications','program-jit'],['Related Post Gen','related-managed'],['Worker scaling','process-workers'],['Native compilation','native']].flatMap(([label,backend])=>{const c=choices.find(c=>c.results.some(r=>r.backend===backend&&r.progress==='measured'));const r=c?.results.find(r=>r.backend===backend&&r.progress==='measured');return r?[`<a href="?${new URLSearchParams({backend,case:r.case_id})}">${escape(label)}</a>`]:[];}).join('');
   $('#campaign').innerHTML=option('$latest','Latest measured result for every task')+choices.map(c=>option(c.id,`${c.id} · ${short(c.workers?.candidate?.revision)}`)).join('');
   $('#baseline').innerHTML=option('','Use task control')+option('$paired','Paired previous Mech worker')+choices.map(c=>option(c.id,c.id)).join('');
   $('#metric').innerHTML=option('$primary','Primary measurement for each task')+Object.entries(metrics).filter(([,meta])=>!meta.controlOnly).map(([key,meta])=>option(key,meta.label)).join('');
@@ -174,6 +209,23 @@ async function start() {
   if(!parameters.has('backend'))$('#backend').value='$auto';
   if(!parameters.has('metric'))$('#metric').value='$primary';
   selected=parameters.get('case')??undefined;
+  $('#search').value=parameters.get('q')??'';
+  for(const selector of ['family','progress'])if(parameters.has(selector)&&[...$(`#${selector}`).options].some(o=>o.value===parameters.get(selector)))$(`#${selector}`).value=parameters.get(selector);
+  const latest=measuredRows(bundle),overall={faster:0,slower:0,equal:0,unmatched:0};
+  for(const row of latest)overall[comparisonDirection(controlComparison(row,controlFor(bundle,row)),row.metric)]++;
+  const matched=overall.faster+overall.slower+overall.equal,lead=overall.faster?'faster':'slower';
+  $('#suite-overview-value').innerHTML=`${overall[lead]}<span>/${matched}</span>`;
+  $('#suite-overview-value').className=matched?lead:'unmatched';
+  $('#suite-overview-result').textContent=matched?`tasks ${lead} than their reference`:'No matched comparisons yet';
+  $('#suite-overview-note').textContent=`${matched} matched comparisons · ${overall.unmatched} other measurements`;
+  $('#suite-outcomes').addEventListener('click',event=>{const button=event.target.closest('[data-outcome]');if(button){outcome=button.dataset.outcome;return render();}});
+  let lastPreview;
+  for(const type of ['pointerover','focusin'])$('#suite-chart').addEventListener(type,event=>{const id=event.target.closest('[data-compare]')?.dataset.compare;if(id&&id!==lastPreview){lastPreview=id;previewSuite(id);}});
+  const choosePlot=event=>{const id=event.target.closest('[data-compare]')?.dataset.compare;if(id){selected=id;return render();}};
+  $('#suite-chart').addEventListener('click',choosePlot);
+  $('#suite-chart').addEventListener('keydown',event=>{if(['Enter',' '].includes(event.key)){event.preventDefault();return choosePlot(event);}});
+  if(globalThis.ResizeObserver){let lastWidth=0;new ResizeObserver(entries=>{const width=Math.round(entries[0].contentRect.width);if(width>0&&width!==lastWidth){lastWidth=width;renderSuiteChart();}}).observe($('#suite-chart'));}
+
   for(const selector of ['#campaign','#baseline','#metric','#backend','#family','#progress'])$(selector).addEventListener('change',()=>{
     if(selector==='#backend'&&campaign()&&$('#backend').value!=='$auto'&&!campaign().results.some(r=>r.backend===$('#backend').value)){
       const matching=choices.find(c=>c.results.some(r=>r.backend===$('#backend').value&&isMechRecord(r)));

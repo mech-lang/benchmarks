@@ -50,15 +50,16 @@ export const metrics = {
 export function formatMetric(value, metric) {
   if (!Number.isFinite(value)) return '—';
   const unit=metrics[metric]?.unit;
+  const fixed=(number,digits)=>number.toFixed(digits).replace(/(?:\.0+|(\.\d*?[1-9])0+)$/,'$1');
   if(unit==='seconds') {
-    if(value<1e-6)return `${(value*1e9).toFixed(1)} ns`;
-    if(value<1e-3)return `${(value*1e6).toFixed(2)} µs`;
-    if(value<1)return `${(value*1e3).toFixed(2)} ms`;
-    return `${value.toFixed(3)} s`;
+    if(value<1e-6)return `${fixed(value*1e9,1)} ns`;
+    if(value<1e-3)return `${fixed(value*1e6,2)} µs`;
+    if(value<1)return `${fixed(value*1e3,2)} ms`;
+    return `${fixed(value,3)} s`;
   }
   if(unit==='bytes') {
-    if(value>=1024**2)return `${(value/1024**2).toFixed(2)} MiB`;
-    if(value>=1024)return `${(value/1024).toFixed(2)} KiB`;
+    if(value>=1024**2)return `${fixed(value/1024**2,2)} MiB`;
+    if(value>=1024)return `${fixed(value/1024,2)} KiB`;
     return `${value.toLocaleString()} B`;
   }
   return value.toLocaleString(undefined,{maximumFractionDigits:2});
@@ -137,18 +138,19 @@ export function controlFor(bundle,row) {
     const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
     // These immutable source identities bind the retained wrapper's explicit
     // libdeflate_alloc_compressor(12) call and its pinned libdeflate 1.26 build.
-    const references=mapped?bundle.campaigns.flatMap(origin=>origin.started_at<=campaign.started_at
+    const references=mapped&&record.control_contract?bundle.campaigns.flatMap(origin=>origin.started_at<=campaign.started_at
       ?origin.results.filter(reference=>reference.case_id===record.case_id&&reference.backend==='libdeflate'&&reference.outcome==='ok'
         &&reference.revision==='92e6a0db9fa848d742f9eb286c92afc60f2c3dda'
         &&reference.source_sha256==='a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05'
+        &&reference.control_contract===record.control_contract
         &&reference.task_hash===record.task_hash&&reference.environment_hash===record.environment_hash
         &&Number.isFinite(reference.summary?.[mapped]?.median)).map(reference=>({origin,reference})):[]):[];
     references.sort((a,b)=>a.origin.started_at.localeCompare(b.origin.started_at)||a.origin.id.localeCompare(b.origin.id));
     const retained=references.at(-1);
-    if(retained)return {kind:'reference',label:'libdeflate · level 12',record:retained.reference,campaign:retained.origin,metric:mapped,
-      reason:'Level-12 reference for the same task and environment. Retained C and Mech timings have different measurement boundaries; no speed ratio is qualified.'};
-    return {kind:'pending',label:'libdeflate · level 12 · not measured',
-      reason:'No retained level-12 libdeflate reference matches this task, environment and measurement. zlib-rs level 9 is not a level-12 control.'};
+    if(retained)return {kind:'libdeflate',label:'libdeflate · level 12',record:retained.reference,campaign:retained.origin,metric:mapped,
+      reason:'Same task, environment and explicitly shared measurement contract; libdeflate 1.26 level 12.'};
+    return {kind:'pending',label:'No matched libdeflate timing',
+      reason:'This row reports a Mech measurement. No level-12 libdeflate timing has the same task, environment and shared measurement contract.'};
   }
   const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
   if(held){
@@ -166,8 +168,7 @@ export function controlFor(bundle,row) {
 }
 
 export function controlComparison(row,control) {
-  if(control.kind==='pending')return {status:'unavailable',label:'Control needed',reason:control.reason};
-  if(control.kind==='reference')return {status:'unavailable',label:'Reference only',reason:control.reason};
+  if(control.kind==='pending')return {status:'unavailable',label:'No matched comparison',reason:control.reason};
   if(control.kind==='mech'){
     if(control.record===row.record)return {status:'baseline',label:'Baseline held',reason:control.reason};
     return compareRecords(control.record,row.record,row.metric);
@@ -180,4 +181,46 @@ export function controlComparison(row,control) {
     ?`${(ratio>=2?ratio:1/ratio).toLocaleString(undefined,{maximumFractionDigits:1})}× ${ratio>=2?'slower':'faster'}`
     :`${percent>0?'+':''}${percent.toFixed(1)}%`;
   return {status:'informational',percent,ratio,label,reason:control.reason+' Median change; informational.'};
+}
+
+export function comparisonDirection(change,metric) {
+  if(!(change?.ratio>0)||!Number.isFinite(change.ratio))return 'unmatched';
+  if(change.ratio===1)return 'equal';
+  return (change.ratio<1)!==!!metrics[metric]?.higherBetter?'faster':'slower';
+}
+
+export function comparisonLabel(change,metric) {
+  if(change?.status==='baseline')return 'Fixed Mech baseline';
+  const direction=comparisonDirection(change,metric);
+  if(direction==='unmatched')return 'No matched comparison';
+  if(direction==='equal')return 'Equal';
+  const ratio=change.ratio,unit=metrics[metric]?.unit;
+  const factor=direction==='faster'?(metrics[metric]?.higherBetter?ratio:1/ratio):(metrics[metric]?.higherBetter?1/ratio:ratio);
+  const word=unit==='bytes'?(direction==='faster'?'smaller':'larger'):unit==='count'?(direction==='faster'?'fewer':'more'):direction;
+  if(factor>=1.1)return `${factor.toLocaleString(undefined,{maximumFractionDigits:factor<10?2:1})}× ${word}`;
+  const percent=Math.abs(ratio-1)*100;
+  const amount=percent<.01?'<0.01':percent.toLocaleString(undefined,{maximumFractionDigits:2});
+  const suffix=metrics[metric]?.higherBetter?(direction==='faster'?'more throughput':'less throughput'):unit==='seconds'?(direction==='faster'?'less time':'more time'):word;
+  return `${amount}% ${suffix}`;
+}
+
+export function comparisonPlot(points,{width=900,label='Mech compared with its reference',measure='time'}={}) {
+  const valid=points.filter(p=>p.ratio>0&&Number.isFinite(p.ratio)).sort((a,b)=>a.ratio-b.ratio);
+  if(!valid.length)return '<p class="empty">No matched comparisons in this selection.</p>';
+  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  width=Math.max(300,Math.round(width));
+  const height=300,left=58,right=20,top=26,bottom=58;
+  const logs=valid.map(p=>Math.log10(p.ratio));
+  const low=Math.min(0,...logs)-.18,high=Math.max(0,...logs)+.18;
+  const y=r=>top+(high-Math.log10(r))/(high-low)*(height-top-bottom);
+  const x=i=>left+(valid.length===1?.5:i/(valid.length-1))*(width-left-right);
+  const ticks=Array.from({length:Math.floor(high)-Math.ceil(low)+1},(_,i)=>Math.ceil(low)+i).map(e=>({e,r:10**e}));
+  const tickText=r=>r>=1e6?`${(r/1e6).toLocaleString()}m`:r>=1000?`${(r/1000).toLocaleString()}k`:r<1?r.toLocaleString(undefined,{maximumFractionDigits:Math.min(12,Math.ceil(-Math.log10(r)))}):r.toLocaleString();
+  return `<svg class="comparison-plot" viewBox="0 0 ${width} ${height}" role="group" aria-label="${escape(label)}">
+    ${ticks.map(({r})=>`<line x1="${left}" x2="${width-right}" y1="${y(r)}" y2="${y(r)}" class="${r===1?'reference-line':'chart-grid'}"/><text x="${left-9}" y="${y(r)+4}" text-anchor="end">${tickText(r)}×</text>`).join('')}
+    <text x="${left}" y="15" class="chart-axis-label">Mech / reference ${escape(measure)} · log₁₀</text>
+    ${valid.map((p,i)=>`<circle data-compare="${escape(p.id)}" class="plot-point ${escape(p.direction??(p.ratio<1?'faster':p.ratio>1?'slower':'equal'))}" cx="${x(i)}" cy="${y(p.ratio)}" r="4.2" tabindex="0" role="button" aria-label="${escape(p.title)} · ${escape(p.label??p.ratio+' times reference')}"/>`).join('')}
+    <text x="${left}" y="${height-30}">Lowest ratio</text><text x="${width-right}" y="${height-30}" text-anchor="end">Highest ratio</text>
+    <text x="${(left+width-right)/2}" y="${height-9}" text-anchor="middle">${valid.length} cases, ordered by relative ${escape(measure)}</text>
+  </svg>`;
 }
