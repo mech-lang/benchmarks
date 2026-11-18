@@ -47,7 +47,7 @@ def export_game_comparisons(catalog, output, reproduction=None):
                 'report': program.get('report'), 'recorded_at': recipe.get('recorded_at'),
                 'version': recipe.get('version_label', 'Not recorded'),
                 'host': recipe.get('host'),
-                'implementation_url': '/benchmarks/?' + urlencode({'detail.program': program['key']}),
+                'implementation_url': '/benchmarks/#' + urlencode({'v': '1', 'inspect': '1', 'detail.program': program['key']}),
             }
         cases.append(case)
     bundle = {'schema': 'mech.benchmarks-game-comparisons.v1',

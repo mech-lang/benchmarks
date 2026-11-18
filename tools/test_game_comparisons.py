@@ -36,6 +36,7 @@ class GameComparisonsTest(unittest.TestCase):
                 content = (output/case[language]['source_url'].removeprefix('/benchmarks/')).read_bytes()
                 self.assertEqual(hashlib.sha256(content).hexdigest(), original['files'][0])
                 self.assertIn('detail.program=task%3A' + language, case[language]['implementation_url'])
+                self.assertTrue(case[language]['implementation_url'].startswith('/benchmarks/#v=1&inspect=1&'))
             self.assertEqual(json.loads((output/'game-comparisons.json').read_text()), bundle)
         self.assertEqual(catalog, before)
 
