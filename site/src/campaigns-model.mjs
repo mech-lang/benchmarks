@@ -19,6 +19,7 @@ export function implementationFor(campaign,record) {
   return campaign.workers?.[record.lane]??{};
 }
 export const metrics = {
+  ekf_filter_turn_seconds: {label:'EKF filter-turn',unit:'seconds',note:'Warm numerical kernel time per filter-turn. The measured population, publication boundary, checks, worker count and machine are retained with each result; compilation and setup are excluded.'},
   native_compression_call_seconds: {label:'Native compression call',unit:'seconds',note:'In-memory native encoder call, including private heap construction, allocation transfer and physical cleanup. Process startup, compilation and external validation are excluded.'},
   rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
   output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. The level-12 reference is libdeflate. Historical zlib-rs level-9 observations are separate codec results. Smaller is better.'},
@@ -251,7 +252,7 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
 }
 
 export function referenceName(control) {
-  return control?.kind==='rust'?'Rust':control?.kind==='jit'?(control.label??'JIT reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+  return control?.kind==='rust'?'Rust':['jit','gpu'].includes(control?.kind)?(control.label??'Reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
 }
 export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
 export function isJitRecord(record) {
@@ -261,6 +262,7 @@ export function isManagedResidentRecord(record) {
   return ['source','bytecode','process-workers'].includes(record?.backend);
 }
 export function implementationName(record) {
+  if(record?.execution_mode==='gpu')return 'Mech (GPU)';
   if(record?.execution_mode==='aot'||['native','program-linked'].includes(record?.backend))return 'Mech (AOT)';
   if(isJitRecord(record))return 'Mech (JIT)';
   return 'Mech';

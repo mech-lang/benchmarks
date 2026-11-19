@@ -50,17 +50,17 @@
     </section>
 
     <section id="ekf-results" aria-labelledby="ekf-study-title" hidden>
-      <div class="result-toolbar ekf-controls"><label>Study <select id="ekf-study" aria-label="EKF study"></select></label><div class="table-tools"><button id="ekf-export-selection">Export selection</button><button id="ekf-export-all">Export all samples</button></div></div>
-      <h2 id="ekf-study-title">EKF CPU comparisons</h2><p class="caption" id="ekf-study-meta"></p><p class="scope-note" id="ekf-scope"></p>
-      <div class="ekf-reference-controls" id="ekf-references"></div><p class="caption" id="ekf-comparison-note"></p>
+      <h2 id="ekf-study-title">Mech · extended Kalman filter</h2>
+      <p class="caption">Apple M1 · 500,000 f32 filters · time per filter-turn · warm kernel execution</p>
       <div id="ekf-error" class="empty" role="alert" hidden></div>
-      <div class="result-toolbar"><div class="result-filters" id="ekf-modes"><button data-ekf-mode="both" aria-pressed="true">Both modes</button><button data-ekf-mode="checked">Checked</button><button data-ekf-mode="unchecked">Unchecked</button></div><div class="ekf-view-options"><label><input type="checkbox" id="ekf-samples" checked> Samples</label><label><input type="checkbox" id="ekf-medians" checked> Medians ± MAD</label></div></div>
-      <div class="chart-card"><div class="chart-readout" id="ekf-readout" aria-live="polite">Loading retained measurements…</div><div id="ekf-chart"></div><p class="chart-key">Dots: independent trials. Square: median. Line: median absolute deviation. Yellow: checked; blue: unchecked.</p></div>
-      <div class="table-heading"><h3>Results <span id="ekf-row-count"></span></h3><label><span class="sr-only">Search EKF implementations</span><input id="ekf-search" type="search" placeholder="Find an implementation"></label></div>
-      <p class="caption">These are measured kernel execution costs; fault interfaces and publication boundaries are recorded for each study. Seconds per filter-turn are derived from retained throughput when raw elapsed time is unavailable.</p>
+      <div class="table-heading"><div class="result-filters" id="ekf-modes"><button data-ekf-mode="checked" aria-pressed="true">Checked</button><button data-ekf-mode="unchecked">Unchecked</button><button data-ekf-mode="both">Both modes</button></div><label><span class="sr-only">Find a Mech variant</span><input id="ekf-search" type="search" placeholder="Find a Mech variant"></label></div>
+      <p class="caption">Each row is a Mech execution path. Its multiple is Mech time divided by its closest comparable external peer’s time. Lower is faster.</p>
       <div class="table-scroll ekf-table"><table><thead id="ekf-headings"></thead><tbody id="ekf-rows"></tbody></table></div>
-      <details class="method"><summary>Timing scope, versions and raw evidence</summary><div id="ekf-methods"></div></details>
-      <p class="downloads"><a href="/iros-r4r-2026/index.html">IROS article</a><a href="/benchmarks/ekf-results.json" download>All EKF results (JSON)</a></p>
+      <p class="caption" id="ekf-row-count"></p>
+      <div class="downloads"><button id="ekf-export-selection">Export selection</button><button id="ekf-export-all">Export Mech samples</button></div>
+      <details class="method"><summary>Timing samples</summary><div class="ekf-view-options"><label><input type="checkbox" id="ekf-samples" checked> Samples</label><label><input type="checkbox" id="ekf-medians" checked> Medians ± MAD</label></div><div class="chart-card"><div class="chart-readout" id="ekf-readout" aria-live="polite"></div><div id="ekf-chart"></div><p class="chart-key">Dots: Mech trials. Square: median. Line: median absolute deviation. Yellow: checked; blue: unchecked.</p></div></details>
+      <details class="method"><summary>Sources and measurement scopes</summary><div id="ekf-methods"></div></details>
+      <p class="downloads"><a href="/iros-r4r-2026/index.html">IROS article</a><a href="/benchmarks/ekf-results.json" download>Underlying measurements (JSON)</a></p>
     </section>
     <section id="suite-panel" class="results-panel" aria-labelledby="suite-title" hidden>
       <div class="panel-heading"><div><h2 id="suite-title">Task measurements</h2><p class="caption"><span id="suite-asof">Published measurements</span> · <span id="suite-reference-caption">the reference is named on every row.</span></p></div><a id="suite-report" class="text-link" href="/benchmarks/rust-controls-2026-11-17.md">Comparison report</a></div>

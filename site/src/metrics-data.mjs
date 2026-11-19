@@ -1,5 +1,10 @@
-let campaignsPromise,nativePromise,gamesPromise;
+import {validateEKF} from './ekf-model.mjs';
+let campaignsPromise,nativePromise,gamesPromise,ekfPromise;
 const assetURL=name=>{const url=new URL('./'+name,import.meta.url);url.search=new URL(import.meta.url).search;return url;};
+export function loadEKF(){
+  if(!ekfPromise)ekfPromise=(async()=>{const response=await fetch(assetURL('ekf-results.json'));if(!response.ok)throw Error('The Mech EKF comparisons could not be loaded.');return validateEKF(await response.json());})();
+  return ekfPromise;
+}
 export function loadCampaigns() {
   if(!campaignsPromise)campaignsPromise=(async()=>{
     const compressed=typeof DecompressionStream==='function';

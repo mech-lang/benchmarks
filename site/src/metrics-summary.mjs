@@ -1,12 +1,12 @@
 import {metrics,formatMetric,comparisonPlot,referenceLink,referenceName,referenceURL,implementationLink,implementationURL,implementationName,comparisonStyle} from './campaigns-model.mjs';
 import {metricGroups,publishedComparisons,countsFor,filterMeasurements,outcomeText,metricsRoute} from './metrics-model.mjs';
-import {loadCampaigns,loadNative,loadGames} from './metrics-data.mjs';
+import {loadCampaigns,loadNative,loadGames,loadEKF} from './metrics-data.mjs';
 const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=new URLSearchParams(location.search),route=metricsRoute(location.pathname,location.search);
 const pageGroup=route.group==='all'?undefined:route.group;
 const groupOrder=['benchmarks-game','jit','applications','compiler','deflate','runtime','scaling','size','memory','lifecycle'];
-let bundle,native,games,all=[],visible=[],result=initial.get('result')??'all';
+let bundle,native,games,ekf,all=[],visible=[],result=initial.get('result')??'all';
 if(!['all','faster','slower','equal'].includes(result))result='all';
 let sort=['name','mech','reference','ratio','outcome'].includes(initial.get('sort'))?initial.get('sort'):'name';
 let descending=initial.get('dir')==='desc';
@@ -24,7 +24,7 @@ function compare(a,b){
   return (descending?-1:1)*order||a.title.localeCompare(b.title);
 }
 function render(){
-  all=publishedComparisons(bundle,native,{group:pageGroup??'all',games});
+  all=publishedComparisons(bundle,native,{group:pageGroup??'all',games,ekf});
   const query=$('#summary-search').value;
   visible=filterMeasurements(all,{result,query});
   if(query.trim()&&query!==lastQuery)for(const row of visible)expanded.add(row.group);
@@ -48,7 +48,7 @@ function render(){
       const rows=all.filter(row=>row.group===id),counts=countsFor(rows),group=metricGroups.find(group=>group.id===id);
       const main=id==='deflate'?`${counts.faster}/${rows.length} wins`:countText(rows);
       return `<a class="performance-highlight" href="${group.href}"><span>${title}</span><strong class="${id==='deflate'?'faster':''}">${escape(main)}</strong><span>${id==='deflate'?'libdeflate':id==='benchmarks-game'?'Mech AOT / Rust AOT':'Fastest recorded JIT per workload'}</span></a>`;
-    }).join('')+'<a class="performance-highlight" href="/metrics/ekf/"><span>Extended Kalman filter</span><strong>CPU &amp; GPU</strong><span>Execution modes · checked &amp; unchecked · all samples</span></a>';
+    }).join('')+'<a class="performance-highlight" href="/metrics/ekf/"><span>Extended Kalman filter</span><strong>'+countText(all.filter(row=>row.key.startsWith('ekf:')))+'</strong><span>Mech variants / closest comparable peers</span></a>';
   }
   renderGroupChart();
   const params=new URLSearchParams(location.search);
@@ -59,18 +59,20 @@ function render(){
 function exportCSV(){
   const quote=value=>'"'+String(value??'').replaceAll('"','""')+'"';
   const columns=['group','task','measurement','unit','mech_implementation','mech_value','reference','reference_execution_mode','reference_value','mech_divided_by_reference','outcome','mech_recorded_at','reference_recorded_at','mech_source','reference_source','reference_measured_source','implementation'];
-  const csv=[columns,...visible.map(row=>[row.group,row.title,metrics[row.metric]?.label,metrics[row.metric]?.unit,implementationName(row.record),row.value,referenceName(row.control),row.control.kind==='jit'?'jit':['rust','libdeflate'].includes(row.control.kind)?'aot':'',row.reference,row.ratio,row.direction,row.date,row.referenceDate,implementationURL(row.record)?new URL(implementationURL(row.record),location.origin).href:'',referenceURL(row.control)?new URL(referenceURL(row.control),location.origin).href:'',implementationURL(row.control.record)?new URL(implementationURL(row.control.record),location.origin).href:'',new URL(row.href,location.origin).href])].map(row=>row.map(quote).join(',')).join('\r\n')+'\r\n';
+  const csv=[columns,...visible.map(row=>[row.group,row.title,metrics[row.metric]?.label,metrics[row.metric]?.unit,implementationName(row.record),row.value,referenceName(row.control),row.control.kind==='jit'?'jit':row.control.kind==='gpu'?'gpu':['rust','libdeflate'].includes(row.control.kind)?'aot':'',row.reference,row.ratio,row.direction,row.date,row.referenceDate,implementationURL(row.record)?new URL(implementationURL(row.record),location.origin).href:'',referenceURL(row.control)?new URL(referenceURL(row.control),location.origin).href:'',implementationURL(row.control.record)?new URL(implementationURL(row.control.record),location.origin).href:'',new URL(row.href,location.origin).href])].map(row=>row.map(quote).join(',')).join('\r\n')+'\r\n';
   const url=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})),link=document.createElement('a');link.href=url;link.download='mech-comparisons.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),0);
 }
 async function start(){
   $('#summary-search').value=initial.get('q')??'';
-  const loaded=await Promise.allSettled([loadCampaigns(),!pageGroup?loadNative():Promise.resolve(undefined),!pageGroup||['benchmarks-game','jit'].includes(pageGroup)?loadGames():Promise.resolve(undefined)]);
+  const loaded=await Promise.allSettled([loadCampaigns(),!pageGroup?loadNative():Promise.resolve(undefined),!pageGroup||['benchmarks-game','jit'].includes(pageGroup)?loadGames():Promise.resolve(undefined),!pageGroup||pageGroup==='applications'?loadEKF():Promise.resolve(undefined)]);
   if(loaded[0].status==='rejected')throw loaded[0].reason;
   bundle=loaded[0].value;
   if(loaded[1].status==='fulfilled')native=loaded[1].value;
   else{$('#summary-error').hidden=false;$('#summary-error').textContent='Compression comparisons could not be loaded. '+loaded[1].reason.message;}
   if(loaded[2].status==='fulfilled')games=loaded[2].value;
   else{$('#summary-error').hidden=false;$('#summary-error').textContent+=' Benchmarks Game comparisons could not be loaded. '+loaded[2].reason.message;}
+  if(loaded[3].status==='fulfilled')ekf=loaded[3].value;
+  else{$('#summary-error').hidden=false;$('#summary-error').textContent+=' EKF comparisons could not be loaded. '+loaded[3].reason.message;}
   $('#summary-outcomes').addEventListener('click',event=>{const b=event.target.closest('[data-summary-outcome]');if(b){result=b.dataset.summaryOutcome;render();}});
   $('#summary-bodies').addEventListener('click',event=>{
     const button=event.target.closest('[data-summary-sort],[data-group-toggle]');if(!button)return;

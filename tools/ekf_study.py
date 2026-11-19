@@ -79,7 +79,7 @@ def ekf_study(root, output=None):
             item = row(labels[backend], mode, rates, measured_url, 'f4b69052 · Cranelift 0.131.3',
                        summary['median_million_filter_turns_per_second'],
                        [r['measurement']['elapsed_ns'] for r in records], data['instances'] * data['turns'],
-                       backend=backend, is_mech=True, category=categories[backend])
+                       backend=backend, is_mech=True, category=categories[backend], publication='per-turn')
             assert math.isclose(item['mad'], summary['mad_million_filter_turns_per_second'], abs_tol=1e-10)
             base['rows'].append(item)
     cohorts.append(base)
@@ -127,6 +127,7 @@ def ekf_study(root, output=None):
                             'cpu-jit' if label.startswith(('Mech', 'Julia', 'NumPy', 'Taichi', 'Halide')) else 'cpu-aot')
                 item = row(label, mode, rates, url, version_for(label, data, key), summary['median_million_ekf_turns_per_second'],
                            is_mech=label.startswith('Mech'), category=category,
+                           publication='per-turn' if key == 'metal' or label.startswith(('Mech per-turn', 'Taichi', 'Halide')) else 'fused-block',
                            implementation_url=sources[path]['original_url'] if path else url)
                 assert math.isclose(item['mad'], summary['median_absolute_deviation_million_ekf_turns_per_second'], abs_tol=1e-9)
                 base['rows'].append(item)

@@ -1,9 +1,10 @@
 import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,nativeMechSource} from './campaigns-model.mjs';
+import {mechMeasurements} from './ekf-model.mjs';
 
 export const metricGroups=[
-  {id:'ekf',title:'EKF comparisons',description:'IROS EKF comparisons · Mech backends, CPU implementations and Metal',href:'/metrics/ekf/',metrics:[]},
+  {id:'ekf',title:'EKF comparisons',description:'Mech execution paths and their closest comparable peers',href:'/metrics/ekf/',metrics:[]},
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
-  {id:'applications',title:'Applications',description:'Application performance · Rust',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
+  {id:'applications',title:'Applications',description:'Application timings and their measured peers',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
   {id:'benchmarks-game',title:'Benchmarks Game',description:'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process',href:'/metrics/benchmarks-game/',metrics:[]},
   {id:'jit',title:'JIT comparisons',description:'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup',href:'/metrics/jit/',metrics:[]},
   {id:'runtime',title:'Microbenchmarks',description:'Mech resident operations · no equivalent runtime reference',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
@@ -111,7 +112,22 @@ export function jitMeasurements(data) {
 
 // The comparison overview uses one main timing per task. Supporting measurements
 // stay in task details; size and allocation pages show their matched metrics.
-export function publishedComparisons(bundle,data,{group='all',games}={}) {
+export function ekfMeasurements(data){
+  if(!data)return [];
+  return mechMeasurements(data).filter(row=>row.mode==='checked'&&row.peer).map(row=>{
+    const metric='ekf_filter_turn_seconds';
+    return {key:'ekf:'+row.result_id,group:'applications',title:'EKF · '+row.variant.replace(/^Mech /,''),metric,
+      value:row.time_seconds,reference:row.peer.time_seconds,ratio:row.ratio,
+      record:{source_url:row.source_url,execution_mode:row.category==='cpu-jit'?'jit':'gpu'},
+      control:{kind:row.category==='cpu-jit'?'jit':'gpu',label:row.peer.label,record:{reference_url:row.peer.implementation_url??row.peer.source_url,source_url:row.peer.source_url}},
+      scope:row.study.machine+' · checked · warm kernel · per filter-turn · '+row.publication,
+      direction:comparisonDirection({ratio:row.ratio},metric),label:comparisonLabel({ratio:row.ratio},metric),
+      date:row.study.recorded_at,referenceDate:row.study.recorded_at,
+      href:'/metrics/ekf/?'+new URLSearchParams({q:row.label})};
+  });
+}
+
+export function publishedComparisons(bundle,data,{group='all',games,ekf}={}) {
   const secondary=['size','memory','lifecycle'].includes(group);
   const suite=suiteMeasurements(bundle,{group:secondary?group:'all',metric:secondary?'$all':'$primary'})
     .filter(row=>row.direction!=='unmatched'&&(group==='all'||row.group===group))
@@ -121,5 +137,5 @@ export function publishedComparisons(bundle,data,{group='all',games}={}) {
   const native=(!group||group==='all'||group==='deflate')&&data?nativeMeasurements(data).filter(row=>row.group==='deflate'):[];
   const processing=suite.map(row=>row.definition.id==='related-post-gen'&&row.metric==='post_json_seconds'?{...row,title:row.title+' · processing'}:row);
   const process=(!secondary&&(group==='all'||group==='applications'))?suiteMeasurements(bundle,{task:'related-post-gen',metric:'native_process_seconds'}).filter(row=>row.direction!=='unmatched').map(row=>({...row,title:row.title+' · whole process'})):[];
-  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[]),...(group==='all'||group==='jit'?jitMeasurements(games):[])];
+  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[]),...(group==='all'||group==='jit'?jitMeasurements(games):[]),...(group==='all'||group==='applications'?ekfMeasurements(ekf):[])];
 }

@@ -6,8 +6,8 @@ import re
 PAGES = {
     '': ('Mech performance', 'Compare Mech with measured reference implementations. The reference is always 1×.', 'summary'),
     'deflate': ('DEFLATE compression', 'Native compression calls · libdeflate 1.26, level 12 · Apple M3', 'deflate'),
-    'ekf': ('EKF comparisons', 'IROS EKF comparisons · Mech backends, CPU implementations and Metal', 'ekf'),
-    'applications': ('Applications', 'Application performance · Rust', 'suite'),
+    'ekf': ('Mech EKF comparisons', 'Mech execution paths and their closest comparable peers', 'ekf'),
+    'applications': ('Applications', 'Application timings and their measured peers', 'suite'),
     'benchmarks-game': ('Benchmarks Game', 'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process', 'suite'),
     'jit': ('JIT comparisons', 'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup', 'suite'),
     'runtime': ('Microbenchmarks', 'Mech resident operations · no equivalent runtime reference', 'suite'),

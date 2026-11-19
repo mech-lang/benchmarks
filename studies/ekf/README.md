@@ -1,48 +1,48 @@
-# IROS extended Kalman filter comparisons
+# Mech extended Kalman filter metrics
 
-This study exposes the three retained comparison datasets plotted by the
+The metrics page has one row per Mech execution path, with its execution time,
+closest comparable external peer, peer time and Mech/peer multiple. External
+implementations supply reference measurements; they are not standalone result
+rows and there is no peer-selection interface.
+
+The visible summary retains the single-worker resident numerical evaluator,
+scalar JIT and managed SIMD AOT paths, the eight-worker fused and per-turn JIT
+paths, and the native Metal path. It uses the peer campaign's own Mech result
+for multi-worker JIT and Metal, rather than showing duplicate backend-campaign
+measurements as separate variants. Checked execution is the default;
+unchecked and both-mode views remain available.
+
+A peer must be external to Mech and share the recorded campaign, execution
+category, publication boundary and checking mode. The fastest eligible peer
+supplies the reference: Julia SIMD.jl for fused CPU JIT, Taichi LLVM CPU for
+per-turn CPU JIT, and Rust with hand-written MSL for Metal. Single-worker
+backend measurements have no external control in their campaign and retain
+absolute timings without an invented ratio. The three checked comparisons
+also appear in the main metrics summary under Applications.
+
+The underlying evidence is the three retained datasets plotted by the
 [IROS executable article](https://mech-lang.org/iros-r4r-2026/index.html):
-Mech execution backends, CPU implementations and Metal implementations.
-`provenance.json` identifies each original result, immutable repository
-revision and SHA-256. Source snapshots preserve recorded hashes or files at
-the recorded implementation revision. No benchmark is run by the projection
-or website build.
+Mech backends, CPU implementations and native Metal implementations.
+`provenance.json` records original results, immutable source revisions and
+SHA-256 hashes. Source snapshots retain recorded hashes or the file at the
+recorded implementation revision. The exact measured Mech source is distinct
+from the later corrected camera EKF in the article's live demo.
 
-The five-backend campaign uses 500,000 independent f32 filters and 40
-measured turns after five warmups, with ten fresh processes for each
-backend/mode. It covers the resident numerical instruction evaluator,
-scalar JIT, SIMD AOT through a Mech session, eight-worker SIMD JIT and Metal.
-The retained source is the exact measured program, rather than the later
-corrected camera EKF used by the article's live demo.
+All 40 underlying results and 400 samples remain unchanged and downloadable.
+The summary selects 12 Mech result rows across six paths and two checking
+modes, with 120 Mech samples. Medians and unscaled MAD are recomputed from
+retained samples. Seconds per filter-turn use raw elapsed time when present,
+or recorded throughput otherwise. Compilation and setup are outside these
+warm numerical kernel timers; they do not measure the full reactive host's
+admission, recording and output-delivery lifecycle.
 
-The CPU and Metal comparisons retain their own cohorts, source identities
-and publication boundaries. Their measurements are never substituted into
-the five-backend campaign. The article's source-reuse chart uses a subset
-of the same CPU and Metal records; it is not an additional experiment.
-These numerical kernel timings do not measure the full reactive runtime's
-admission, recording and delivery lifecycle.
+CPU JIT paths include Julia SIMD.jl, NumPy/Numba, Taichi and Halide's
+runtime-compiled callable. CPU AOT paths include Rust, Futhark/ISPC and Mojo.
+The recorded commands and sources establish those execution choices;
+Halide's `compile_to_callable` is documented in its
+[Pipeline API](https://halide-lang.org/docs/api/generated/Pipeline.html).
+Fused CPU blocks and per-turn publication are distinct reference categories.
 
-The projection preserves 40 result rows and 400 timing observations.
-Median throughput and unscaled median absolute deviation are recomputed
-from every retained sample and checked against the archived summaries.
-Seconds per filter-turn use raw elapsed time when present and otherwise
-are derived from recorded throughput. Relative times use an external
-peer in the same cohort, execution category and checked/unchecked mode.
-CPU JIT peers are Julia SIMD.jl, NumPy/Numba, Taichi LLVM CPU and Halide's
-runtime-compiled callable; CPU AOT peers are Rust, Futhark and Mojo. The
-recorded launch commands and implementation sources establish these paths.
-Halide's `compile_to_callable` performs JIT compilation, as documented in
-the [Pipeline API](https://halide-lang.org/docs/api/generated/Pipeline.html).
-Metal peers use their native GPU
-paths. The default reference is the fastest external peer in each
-category/mode, with a selector for every other eligible peer. Mech is
-never its own reference, and search does not change the denominator.
-The Mech-only backend study shows absolute timings without peer ratios.
-These descriptive kernel ratios do not establish identical runtime
-guarantees across all implementations.
-
-`tools/ekf_study.py` exports the compact website dataset, raw records and
-source snapshots. `tools/build_site.py` includes their identities in the
-asset version. The page supports study/mode links, sortable tables,
-independent sample and median layers, fixed hover details and CSV exports
-of all observations or the current selection.
+`tools/ekf_study.py` verifies and projects evidence without running benchmarks.
+The page preserves sortable columns, shared mode/filter/sort selections,
+Mech-only sample plots, fixed hover details and full-precision CSV exports.

@@ -64,7 +64,7 @@ async function mount(path='/metrics/',query='',failure,gameData){
   let nativeRequests=0,exported;
   class ExportURL extends URL{static createObjectURL(blob){exported=blob;return 'blob:export';}static revokeObjectURL(){}}
   const context=vm.createContext({...model,...grouping,URL:ExportURL,URLSearchParams,console,Blob,setTimeout,clearTimeout,location,history,
-    document:{querySelector:element,createElement:()=>({click(){}})},loadCampaigns:async()=>bundle,loadGames:async()=>gameData,loadNative:async()=>{nativeRequests++;if(failure)throw Error(failure);return native;}});
+    document:{querySelector:element,createElement:()=>({click(){}})},loadCampaigns:async()=>bundle,loadGames:async()=>gameData,loadEKF:async()=>undefined,loadNative:async()=>{nativeRequests++;if(failure)throw Error(failure);return native;}});
   vm.runInContext(source,context);await context.ready;
   return {element,history,nativeRequests,exported:()=>exported.text()};
 }
