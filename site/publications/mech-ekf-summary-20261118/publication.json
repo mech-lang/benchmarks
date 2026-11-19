@@ -1,0 +1,1491 @@
+{
+  "schema": "mech.website-publication.v1",
+  "published_at": "2026-11-19T04:01:33.528392+00:00",
+  "source_repository": "https://github.com/mech-lang/benchmarks",
+  "source_commit": "d5d22cd6b1899bc170d93a48e0bb85d98d48f9c6",
+  "source_pull_request": "https://github.com/mech-lang/benchmarks/pull/9",
+  "website_repository": "https://gitlab.com/mech-lang/web/website",
+  "website_commit": "4dcf32d69ff428da1a6f15eea62d6e16da0bb978",
+  "pipeline": {
+    "id": 3087321663,
+    "status": "success",
+    "web_url": "https://gitlab.com/mech-lang/web/website/-/pipelines/3087321663"
+  },
+  "asset_version": "49a2ff237bda106b",
+  "pages": [
+    "https://mech-lang.org/metrics/",
+    "https://mech-lang.org/metrics/ekf/",
+    "https://mech-lang.org/metrics/applications/"
+  ],
+  "mech_rows": [
+    "Resident",
+    "JIT",
+    "AOT",
+    "AOT managed",
+    "GPU",
+    "GPU batched",
+    "8 workers"
+  ],
+  "columns": [
+    "Mech variant",
+    "Mech time",
+    "Closest peer",
+    "Peer time",
+    "Mech / peer"
+  ],
+  "reference_policy": {
+    "ratio": "Mech median seconds per filter-turn divided by the closest eligible external peer median seconds per filter-turn",
+    "matches": [
+      "recorded campaign",
+      "execution category",
+      "checking mode",
+      "publication boundary"
+    ],
+    "selection": "fastest eligible external peer; fixed rather than reader-selected",
+    "default_mode": "checked where available; the archived one-submit GPU batch is explicitly unchecked",
+    "aot_protocol": "Same checked loader/ABI and one host thread; Mech uses four-wide SIMD and the retained Rust library is scalar. This is the direct-library diagnostic, separate from the eight-worker SIMD campaign.",
+    "unpaired_paths": {
+      "Resident": "No external control with equivalent managed runtime semantics is qualified.",
+      "JIT": "The retained single-worker backend campaign contains no external control.",
+      "AOT managed": "The retained single-worker managed-AOT campaign contains no external control.",
+      "GPU batched": "The archived one-submit 120-turn campaign contains no external batched control; per-turn timings are not substituted."
+    }
+  },
+  "changes": [
+    "Replace full implementation tables and study/reference selectors with exactly seven Mech execution paths in a compact five-column summary.",
+    "Use the actual managed f64 Resident record rather than the separate numerical instruction evaluator; keep machine, precision, population and checking mode visible per row.",
+    "Recover the retained direct-AOT library and one-submit batched-GPU observations without rerunning benchmarks.",
+    "Present other languages only as references beside Mech rows. Keep unsupported peer cells empty.",
+    "Include the three paired checked EKF paths in the main Applications summary; retain the original 104 paired comparisons unchanged.",
+    "Keep CSV exports Mech-only, preserve peer/source/version/publication provenance, and normalize optional samples by each path\u2019s fixed peer median.",
+    "Keep large input schedules in linked canonical evidence rather than the page payload; state the archive source-identity limits of the older GPU-batch record."
+  ],
+  "comparison_counts": {
+    "total": 107,
+    "faster": 75,
+    "slower": 32,
+    "equal": 0,
+    "unmatched": 0,
+    "groups": [
+      {
+        "group": "compiler",
+        "total": 1,
+        "faster": 0,
+        "slower": 1,
+        "equal": 0,
+        "unmatched": 0
+      },
+      {
+        "group": "applications",
+        "total": 5,
+        "faster": 3,
+        "slower": 2,
+        "equal": 0,
+        "unmatched": 0
+      },
+      {
+        "group": "deflate",
+        "total": 81,
+        "faster": 61,
+        "slower": 20,
+        "equal": 0,
+        "unmatched": 0
+      },
+      {
+        "group": "benchmarks-game",
+        "total": 10,
+        "faster": 6,
+        "slower": 4,
+        "equal": 0,
+        "unmatched": 0
+      },
+      {
+        "group": "jit",
+        "total": 10,
+        "faster": 5,
+        "slower": 5,
+        "equal": 0,
+        "unmatched": 0
+      }
+    ]
+  },
+  "validation": {
+    "mech_paths": 7,
+    "default_mech_rows": 7,
+    "checked_mech_rows": 6,
+    "all_mode_mech_rows": 11,
+    "paired_default_mech_rows": 3,
+    "mech_samples": 97,
+    "selection_csv_samples": 57,
+    "underlying_samples": 431,
+    "original_400_samples_unchanged": true,
+    "external_implementation_result_rows": 0,
+    "reference_selectors": 0,
+    "columns": 5,
+    "controller_modes_checked": 4,
+    "prepared_assets_verified": 187,
+    "default_comparisons": [
+      {
+        "mech": "8 workers",
+        "seconds_per_filter_turn": 6.60839127662816e-09,
+        "peer": "Julia SIMD.jl",
+        "peer_seconds_per_filter_turn": 7.750594800000001e-09,
+        "ratio": 0.852630210603728
+      },
+      {
+        "mech": "AOT",
+        "seconds_per_filter_turn": 2.8683583842847003e-08,
+        "peer": "Rust scalar",
+        "peer_seconds_per_filter_turn": 4.734687523407111e-08,
+        "ratio": 0.6058178855741279
+      },
+      {
+        "mech": "GPU",
+        "seconds_per_filter_turn": 2.440450540829889e-09,
+        "peer": "Rust + hand-written MSL",
+        "peer_seconds_per_filter_turn": 2.3519843750013406e-09,
+        "ratio": 1.0376134156199477
+      }
+    ],
+    "browser_visual_check": "Unavailable: no accessible native browser window.",
+    "javascript_suites": 5,
+    "python_tests": 21,
+    "verified_live_urls": 266,
+    "original_40_results_and_400_samples_unchanged": true,
+    "recovered_observations": 31,
+    "benchmark_processes_started": 0,
+    "compiler_checkout_modified": false
+  },
+  "assets": [
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns-model.mjs",
+      "sha256": "759abe41ed01ab2f88d171672016d10dedbc98b5555b39a74e5501d6092d8663",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns.css",
+      "sha256": "28ec5bbbfe9b227ceb054d0132e9d876b490cbbbb7ef828fdfc654ba30f6e75f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns.html",
+      "sha256": "cd168a0f3968369ae44da442ab8bfb257d785c6abe86e8571fa2069576aa0015",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns.json",
+      "sha256": "0c33b233edf03a604d293c0138e5b001bd8a801b952bc8f99ef7951129d5b758",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns.json.gz",
+      "sha256": "8dbffd0701f14d5a6998f2235991a39bd1924149e320ad8d52903e5806bd795d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/campaigns.mjs",
+      "sha256": "fc99fc68e4093a0ebc7be5deb8af64227a6b1b6c9bc1c336028690c25d0888af",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/deflate-m3-results-20261118.json",
+      "sha256": "74525ce16657b4fe25564a9567c62e9206600542516149924200faaba17349d4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/deflate-results.mjs",
+      "sha256": "76c9512b77a38f46c2fb2294b6e928823b02fef54d93430277e5a96d8fd336c9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-evidence/apple-m1-aot-vs-rust-dylib-2026-09-24.json",
+      "sha256": "1c9d7990b7b6ab6e785c8e360ad5b29b66c19dc50502f031e34574f1315dbe50",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-evidence/apple-m1-cpu-equal-n10-2026-09-24.json",
+      "sha256": "c64ec81408bd951ff4808e6a51484500c9d1decc2a594c448c6d5b6cfb5e81d3",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-evidence/apple-m1-mech-backend-pairs-n10-2026-09-25.json",
+      "sha256": "8bd64d4ef6dc480f7e5d49c59af4a4dc2342eb30a5171fc8b151b4a1df64d62f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-evidence/apple-m1-mech-progression-2026-09-01.json",
+      "sha256": "1634d0b5f83efdd1b64584bf9d13a78036ab1dc48b342a7bf55cc004c2f16b7d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-evidence/apple-m1-metal-equal-n10-2026-09-24.json",
+      "sha256": "93d75dc4775769d57c30ad1a38f33bca79115fbc18cda8c7e8a6f6e844cde7e9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-model.mjs",
+      "sha256": "ba120832bff2b1443749ac14e2a3da20b44d19b210c031ebe37574920c94dcc0",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-results.json",
+      "sha256": "63e2ed32da6851376118da024269aa5f2015e8515babef6db20bcb07f94a2b99",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-results.mjs",
+      "sha256": "0ee407ecdeadb477ad4ee2627a5475a1d43f4635563c045bbc61321a472535fb",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/01afd8a4f8fa564f5c078453df42fd1a72ecb8e29c9a8e88de1ed7743884e635-taichi-metal-matched.py.txt",
+      "sha256": "01afd8a4f8fa564f5c078453df42fd1a72ecb8e29c9a8e88de1ed7743884e635",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/02eea78d3a802241577fcf68bb16feef7b08f121125c71cbf01f56e6a513acba-julia_simd_threads.jl.txt",
+      "sha256": "02eea78d3a802241577fcf68bb16feef7b08f121125c71cbf01f56e6a513acba",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/04df6a6bc2bd225aa62dd868a6214f8bf55d0b6d6d5673720c95f3a60155e923-ekf.metal.txt",
+      "sha256": "04df6a6bc2bd225aa62dd868a6214f8bf55d0b6d6d5673720c95f3a60155e923",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/09afcf7b354345f33e6b1e5d9b10a275cbfd1eb5763b3d0e691329861ab64224-ekf.mec.txt",
+      "sha256": "09afcf7b354345f33e6b1e5d9b10a275cbfd1eb5763b3d0e691329861ab64224",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/192270bab5b1d226a5a79e9c066a4d1c55f3eff6d70fcf58cb29a618daac521e-ekf-kernel.mec.txt",
+      "sha256": "192270bab5b1d226a5a79e9c066a4d1c55f3eff6d70fcf58cb29a618daac521e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/1a43326cae3cd2cf1a692599c6eaffca7d35b8430f2c79f903d5e3cfd71ecabd-mojo_simd.mojo.txt",
+      "sha256": "1a43326cae3cd2cf1a692599c6eaffca7d35b8430f2c79f903d5e3cfd71ecabd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/3027bd5f68d7bc98f1b81c1bb43fc85acc0b6b915e10a9edd535d56cdc673a9e-rust_simd.rs.txt",
+      "sha256": "3027bd5f68d7bc98f1b81c1bb43fc85acc0b6b915e10a9edd535d56cdc673a9e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/5941d8acbe6e9d04956799d818524d687166102035813c2967b0ab8bb5a99e89-halide-metal-matched.cpp.txt",
+      "sha256": "5941d8acbe6e9d04956799d818524d687166102035813c2967b0ab8bb5a99e89",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/5e32fcc5e2b17bf923718860756b233d4da145b20cff48a20d0c18ec51ccc9a7-rust-ekf-dylib.rs.txt",
+      "sha256": "5e32fcc5e2b17bf923718860756b233d4da145b20cff48a20d0c18ec51ccc9a7",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/61ea88b8f921e5fab233e7334d2a5a15d96ec3fd9e397735c216fbf3f4044d1c-main.rs.txt",
+      "sha256": "61ea88b8f921e5fab233e7334d2a5a15d96ec3fd9e397735c216fbf3f4044d1c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/79bd8713cacb704cdc58addf2da0a881986cf9a551189f4468ee59f567f84bf9.mec.txt",
+      "sha256": "79bd8713cacb704cdc58addf2da0a881986cf9a551189f4468ee59f567f84bf9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/8f662c6bc6c9534551d3c7a8de451931e8076c94b2953531133fcd26eac4a963-futhark_ekf.fut.txt",
+      "sha256": "8f662c6bc6c9534551d3c7a8de451931e8076c94b2953531133fcd26eac4a963",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/b0c9626f0ce10c145cdd20b885e3425030341ebc982ab3258d1a8d2c0f3054c2-mojo-metal-matched.mojo.txt",
+      "sha256": "b0c9626f0ce10c145cdd20b885e3425030341ebc982ab3258d1a8d2c0f3054c2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/c81d575432fa346d7ed4837f3b67d832e840d734a2a3a8c10a69cece23f5566e-julia-metal-matched.jl.txt",
+      "sha256": "c81d575432fa346d7ed4837f3b67d832e840d734a2a3a8c10a69cece23f5566e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/da531cddcb25d002d49f1a77800122e84b573e2685e191c1955908ef6fccd625.mec.txt",
+      "sha256": "da531cddcb25d002d49f1a77800122e84b573e2685e191c1955908ef6fccd625",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/ekf-sources/de3c6036e87b833e489916bef855665b0af5f8ef172b3cb7686ca39d7c149260-numpy_numba.py.txt",
+      "sha256": "de3c6036e87b833e489916bef855665b0af5f8ef172b3cb7686ca39d7c149260",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/game-comparisons.json",
+      "sha256": "d01d5a9c43d1772e6b6245de53516e90a302c9714d48bdcc38c8ef550335fafb",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/0ed6a730047aafc1865b144ca7b8bcc5f5fed58a798f5c1073277d368cf82d1d.mec.txt",
+      "sha256": "0ed6a730047aafc1865b144ca7b8bcc5f5fed58a798f5c1073277d368cf82d1d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/104c7606146faf49f8e660bb4007d31793139e338843423054a766093118c2f5.mec.txt",
+      "sha256": "104c7606146faf49f8e660bb4007d31793139e338843423054a766093118c2f5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/13d153457f05d3410141a2a59e8949923633ea21031bbbd31a4dd24f26902f15.mec.txt",
+      "sha256": "13d153457f05d3410141a2a59e8949923633ea21031bbbd31a4dd24f26902f15",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/1668f9258a1b81868a3d4b0d6a6e282af8f2b182d1d2281bf0bc85dfe4729a53.rs.txt",
+      "sha256": "1668f9258a1b81868a3d4b0d6a6e282af8f2b182d1d2281bf0bc85dfe4729a53",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/222b0912d1574506f2599d30d94abfaf91875783132d3bb86f26ecebe0b16bce.mec.txt",
+      "sha256": "222b0912d1574506f2599d30d94abfaf91875783132d3bb86f26ecebe0b16bce",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/2838e6e464540494997ea84aaf669c20bbe9a4e10c26fab9a0272099442fe766.fs.txt",
+      "sha256": "2838e6e464540494997ea84aaf669c20bbe9a4e10c26fab9a0272099442fe766",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/2def3e7e9910b46cd522b81041e04bbcede2481f69684b683bea605bef598a54.jl.txt",
+      "sha256": "2def3e7e9910b46cd522b81041e04bbcede2481f69684b683bea605bef598a54",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/33eca0e8bfb39f98910c60469512646e2f135697bd8c892cbd94cf9292404db2.rs.txt",
+      "sha256": "33eca0e8bfb39f98910c60469512646e2f135697bd8c892cbd94cf9292404db2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/34c935a74f929712bf8864697763c7d37806eb97ffdbad5e987346f5e761c994.rs.txt",
+      "sha256": "34c935a74f929712bf8864697763c7d37806eb97ffdbad5e987346f5e761c994",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/38063a69a01c45177d377a194ff3f3cd02ed8c9716baa8cc8c39ef078cab4a64.rs.txt",
+      "sha256": "38063a69a01c45177d377a194ff3f3cd02ed8c9716baa8cc8c39ef078cab4a64",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/395c1fd36e6360caacd90a530df144b0198f0d9538574035da35b4db0071dd54.mec.txt",
+      "sha256": "395c1fd36e6360caacd90a530df144b0198f0d9538574035da35b4db0071dd54",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/3a131949844c3875d213af22a16c6744b2e852c769d562eb3b805a31f7071b2f.mec.txt",
+      "sha256": "3a131949844c3875d213af22a16c6744b2e852c769d562eb3b805a31f7071b2f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/3a2f773f1ebc808cd6e7e430a2c9e85cb33ee234e8a44952210525620ab86139.mec.txt",
+      "sha256": "3a2f773f1ebc808cd6e7e430a2c9e85cb33ee234e8a44952210525620ab86139",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/3e46664f01b528f840cd8bea1ebf5a5767290091ecf14e52170e75452d9975ff.java.txt",
+      "sha256": "3e46664f01b528f840cd8bea1ebf5a5767290091ecf14e52170e75452d9975ff",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851.rs.txt",
+      "sha256": "47548a02d18bbc68734b0ef2145e3bd89523f15fa779682031ddbd462dbf7851",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/4c2f8d1f74334d85f16d72cb03075b9888633183d1b82e9cdbb4eed2c805ec2f.rs.txt",
+      "sha256": "4c2f8d1f74334d85f16d72cb03075b9888633183d1b82e9cdbb4eed2c805ec2f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/4d4a9abfb13ab40f4d75269cf00e472cb73be9ea96359377d84e8920b4820466.cs.txt",
+      "sha256": "4d4a9abfb13ab40f4d75269cf00e472cb73be9ea96359377d84e8920b4820466",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/4d8ff75c291364e32b3f9f9e979c4209f39d746099a3f29e06c1c291a46d4c28.rs.txt",
+      "sha256": "4d8ff75c291364e32b3f9f9e979c4209f39d746099a3f29e06c1c291a46d4c28",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/4f2066a301612f2a240840a03e7ba201c36948d063bea9258f3825092b9b26d5.mec.txt",
+      "sha256": "4f2066a301612f2a240840a03e7ba201c36948d063bea9258f3825092b9b26d5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/4ff08e9d0816e172d312741eba6cecd1126e8653c271692102ac4cfcdd6de0d7.rs.txt",
+      "sha256": "4ff08e9d0816e172d312741eba6cecd1126e8653c271692102ac4cfcdd6de0d7",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/5139594fdf47efc70a034bc044c4032e69d51602f531672de4fe33f03df92304.mec.txt",
+      "sha256": "5139594fdf47efc70a034bc044c4032e69d51602f531672de4fe33f03df92304",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/53bab5c0eef9b2b6710919eb8c1f1082afb05a3ee19d1d83be6a7e8bdf8390fb.mec.txt",
+      "sha256": "53bab5c0eef9b2b6710919eb8c1f1082afb05a3ee19d1d83be6a7e8bdf8390fb",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/5551286c12ced7541ba11eba6d4d9ae0036ff9c5d2431fda0c71dd12555cc6aa.mec.txt",
+      "sha256": "5551286c12ced7541ba11eba6d4d9ae0036ff9c5d2431fda0c71dd12555cc6aa",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/57d6e050d25ff37d9fe1a5d46a599b178117aaea77daadb8c2a6e8e3ccfa6cac.mec.txt",
+      "sha256": "57d6e050d25ff37d9fe1a5d46a599b178117aaea77daadb8c2a6e8e3ccfa6cac",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/587db1f71be199b0af69a4629104c497d15a363dd43ada76b1181d16cd6747de.mec.txt",
+      "sha256": "587db1f71be199b0af69a4629104c497d15a363dd43ada76b1181d16cd6747de",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/5d7cbf0a4536913670781be454d9fc95817e7f09cacd7082186b176bab08830c.rs.txt",
+      "sha256": "5d7cbf0a4536913670781be454d9fc95817e7f09cacd7082186b176bab08830c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/5e1617fc6ea47e2428ccb13826dc6a9ca1012c4b35acd5910dd5db53ed9a8555.mec.txt",
+      "sha256": "5e1617fc6ea47e2428ccb13826dc6a9ca1012c4b35acd5910dd5db53ed9a8555",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/5e68341ac5640b9bfc1b598d3fa8a2f582ebf66471811a4a4c9f8aac1a707cb5.cs.txt",
+      "sha256": "5e68341ac5640b9bfc1b598d3fa8a2f582ebf66471811a4a4c9f8aac1a707cb5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/6113de2381115b198008df6fc3b69cb85480560aef01489c2b0e0665980ff02c.mec.txt",
+      "sha256": "6113de2381115b198008df6fc3b69cb85480560aef01489c2b0e0665980ff02c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/61bf56bb82472d9b389db48d593d8387f246659f6d8fbef5c62a88b1348b4fe5.mec.txt",
+      "sha256": "61bf56bb82472d9b389db48d593d8387f246659f6d8fbef5c62a88b1348b4fe5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f.mec.txt",
+      "sha256": "61e30dc7a1dc570f164dbc2342b9192a0009c5477d3e46f491e53bc86e4d6b2f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/636aaf11a6c1a3a38602638b6329d43d1e351a39f35637c828f44244adde6f08.mec.txt",
+      "sha256": "636aaf11a6c1a3a38602638b6329d43d1e351a39f35637c828f44244adde6f08",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/69b4a43724aef3d161cae8ba29c683928027435b61bd0e270e9bd1d969a0741d.mec.txt",
+      "sha256": "69b4a43724aef3d161cae8ba29c683928027435b61bd0e270e9bd1d969a0741d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/6a3022a0385efd1bf3dcdc9a76409607d20237260b21bf6745416d84da3d027a.mec.txt",
+      "sha256": "6a3022a0385efd1bf3dcdc9a76409607d20237260b21bf6745416d84da3d027a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/7079dab9ee52637f5397547adac3a37cf73eda17c290ae5d6593ef45f93eeb8e.mec.txt",
+      "sha256": "7079dab9ee52637f5397547adac3a37cf73eda17c290ae5d6593ef45f93eeb8e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/72c192c97a5b6da47c0d11c506606eb3c990d2bc6ac8dcb1b474d28fd4f0eafe.mec.txt",
+      "sha256": "72c192c97a5b6da47c0d11c506606eb3c990d2bc6ac8dcb1b474d28fd4f0eafe",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/742567bc0abc6f37209ac5f82c1e2a05647f35db8ea6368bef81d04b9a03b552.mec.txt",
+      "sha256": "742567bc0abc6f37209ac5f82c1e2a05647f35db8ea6368bef81d04b9a03b552",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/79bd8713cacb704cdc58addf2da0a881986cf9a551189f4468ee59f567f84bf9.mec.txt",
+      "sha256": "79bd8713cacb704cdc58addf2da0a881986cf9a551189f4468ee59f567f84bf9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/7abb15eb3bf95a30a5317b2184d70696bc82ccb38174cc6f5b64badd4c784961.mec.txt",
+      "sha256": "7abb15eb3bf95a30a5317b2184d70696bc82ccb38174cc6f5b64badd4c784961",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/7c5fec0596a710c8c97a2e90e598d2a007f67a73e171cf540e9c6c62d00e6dea.mec.txt",
+      "sha256": "7c5fec0596a710c8c97a2e90e598d2a007f67a73e171cf540e9c6c62d00e6dea",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d.mec.txt",
+      "sha256": "7ca0b4ff377cc51f9104c4dd5c78a2db8c0bee5ec4690ab4f0685706fc46695d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20.mec.txt",
+      "sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/85c762083ded97a756fcb1cade5d8a3dd23b04f0890039618aef0cca54e484f1.mec.txt",
+      "sha256": "85c762083ded97a756fcb1cade5d8a3dd23b04f0890039618aef0cca54e484f1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/88917f6b5393aaf3c049f3c9e9bc99b9b044dcb6c9dd9a9fd1dfe4d9a982f8f5.mec.txt",
+      "sha256": "88917f6b5393aaf3c049f3c9e9bc99b9b044dcb6c9dd9a9fd1dfe4d9a982f8f5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/8e0e5b101a695ff5164858a7da1ed597d72980db0e928a5e780593c84891bfb1.mec.txt",
+      "sha256": "8e0e5b101a695ff5164858a7da1ed597d72980db0e928a5e780593c84891bfb1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/8e5aa15c24ede4e6931870cca22e1071916e8b3b73d4a91c00b82f592d901a28.mec.txt",
+      "sha256": "8e5aa15c24ede4e6931870cca22e1071916e8b3b73d4a91c00b82f592d901a28",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/9259fbdf14cbfd4a579e60b03d7c3c8123d11d2d187ca8d5ccfd963c3cf825d4.mec.txt",
+      "sha256": "9259fbdf14cbfd4a579e60b03d7c3c8123d11d2d187ca8d5ccfd963c3cf825d4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/a2edb1ad0c97b40eda9628f818f26b53367ae403ffda37f63c49f33bef6503f9.mec.txt",
+      "sha256": "a2edb1ad0c97b40eda9628f818f26b53367ae403ffda37f63c49f33bef6503f9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/a355c5804474d2ecd074a8030af671538bc8f9a9fc6e0d4d0c68efce3c194f67.fs.txt",
+      "sha256": "a355c5804474d2ecd074a8030af671538bc8f9a9fc6e0d4d0c68efce3c194f67",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/a5e9734cd31f06a454ac4d2ed11bb249e8be236ea84eead9cf4677d8fe99679c.cs.txt",
+      "sha256": "a5e9734cd31f06a454ac4d2ed11bb249e8be236ea84eead9cf4677d8fe99679c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/b188d5a48eb264c052d12ba606d4bc718144c2f780b03d71d2dd2359a0f4fbac.mec.txt",
+      "sha256": "b188d5a48eb264c052d12ba606d4bc718144c2f780b03d71d2dd2359a0f4fbac",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/b3219d992d9a1e0eb7fd61d1684235ce9a211084d391cc489435ba0b4e983004.mec.txt",
+      "sha256": "b3219d992d9a1e0eb7fd61d1684235ce9a211084d391cc489435ba0b4e983004",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/b4627085d6f417a825c804b88f8f70520e8a2ba369669c079cfdd3d4380eecdf.mec.txt",
+      "sha256": "b4627085d6f417a825c804b88f8f70520e8a2ba369669c079cfdd3d4380eecdf",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/b8a2ce6509db36487e42bb3ded0e054b4cde743e05cb05c94f8f3c6e45780ebe.mec.txt",
+      "sha256": "b8a2ce6509db36487e42bb3ded0e054b4cde743e05cb05c94f8f3c6e45780ebe",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/b98ea612ac4c7f93b266e00d799a254d1b17778fcb1584b10f9a39034f669602.mec.txt",
+      "sha256": "b98ea612ac4c7f93b266e00d799a254d1b17778fcb1584b10f9a39034f669602",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/baf1cc933c9d5f1741f9b20319d66a488fca177940fa5a23bafdd2917a333cde.mec.txt",
+      "sha256": "baf1cc933c9d5f1741f9b20319d66a488fca177940fa5a23bafdd2917a333cde",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/c28a0b7f1bfb705b5cf11c523362114e312df69acf531ee6a8a2f1ca86bab57f.java.txt",
+      "sha256": "c28a0b7f1bfb705b5cf11c523362114e312df69acf531ee6a8a2f1ca86bab57f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/c8131e57450a6c0387ce49074f98db3a5f5689575b9279de52192fea31110f90.mec.txt",
+      "sha256": "c8131e57450a6c0387ce49074f98db3a5f5689575b9279de52192fea31110f90",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/c8b535b8607fdcc6e1b13fb0151105981e4514136a88bac0e42edd68b1ba37bf.mec.txt",
+      "sha256": "c8b535b8607fdcc6e1b13fb0151105981e4514136a88bac0e42edd68b1ba37bf",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/c8b986178798089a9b7afab3cbee030e5daecacb966ef019c4b2cedaf8fdb33e.mec.txt",
+      "sha256": "c8b986178798089a9b7afab3cbee030e5daecacb966ef019c4b2cedaf8fdb33e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/c9c90844bf2f9ad3c2e7f09fabc01a6fcd3660694b64a1a5a01404fb61b49c4d.cs.txt",
+      "sha256": "c9c90844bf2f9ad3c2e7f09fabc01a6fcd3660694b64a1a5a01404fb61b49c4d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/d21aa639f72979120f6f196e06e0a2869e1b2b6f67b92280e56ead07b0b1bb6a.mec.txt",
+      "sha256": "d21aa639f72979120f6f196e06e0a2869e1b2b6f67b92280e56ead07b0b1bb6a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/e0eeaf849574af7fb568f48670b99274dc4c50a9f95333760e880e93177aabd4.jl.txt",
+      "sha256": "e0eeaf849574af7fb568f48670b99274dc4c50a9f95333760e880e93177aabd4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/e247f3e945e3c2692df0c22301207084f663b447fcdd0e5aa2efd8471eff1357.mec.txt",
+      "sha256": "e247f3e945e3c2692df0c22301207084f663b447fcdd0e5aa2efd8471eff1357",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/e8812a78babb260271feb35f8707aa0e0164ad97d7b5a10edd5c47f51d0fbfc5.rs.txt",
+      "sha256": "e8812a78babb260271feb35f8707aa0e0164ad97d7b5a10edd5c47f51d0fbfc5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/eb5d5a828c795161f446aced3c71631591175df9b13d26257d0ea2de32e9c290.mec.txt",
+      "sha256": "eb5d5a828c795161f446aced3c71631591175df9b13d26257d0ea2de32e9c290",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/implementation-sources/f6a7f25aefb9341bd75daf4cef6f5e53b3b6a9e87b773153e00d1d30b131b175.mec.txt",
+      "sha256": "f6a7f25aefb9341bd75daf4cef6f5e53b3b6a9e87b773153e00d1d30b131b175",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/metrics-data.mjs",
+      "sha256": "03d5a358e38bba1d7844da2bfd081d8fef0d6be89b3c4880191f1736044a1d41",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/metrics-model.mjs",
+      "sha256": "08018c5758d48a6d63e98814ac7fc08f31156f02a41a35672bcb77f270ae03b2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/metrics-page.mjs",
+      "sha256": "47d12d85c6b4c0440a6d117940c85ea0e96adb01400a044c21bec27fc5130a4f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/metrics-summary.mjs",
+      "sha256": "c5ed7ebee4b16c13725f2d186a87fe60613c20db5c68ce686ba8a8e65e7947d3",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/reference-sources/2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c.rs.txt",
+      "sha256": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/reference-sources/47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8.rs.txt",
+      "sha256": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/reference-sources/dbbc4d9bba28a662cca7c352330cd2f5099d13bb5011cfc6bac1e58a3f7d1eca.rs.txt",
+      "sha256": "dbbc4d9bba28a662cca7c352330cd2f5099d13bb5011cfc6bac1e58a3f7d1eca",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/benchmarks/reference-sources/f4a0041fc0b523ead75d8ce72ee967cf71e890a8e8dd49172bbef9515f2ae779.rs.txt",
+      "sha256": "f4a0041fc0b523ead75d8ce72ee967cf71e890a8e8dd49172bbef9515f2ae779",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/",
+      "sha256": "fabc705cb19d579caa287951b0850347adc8a30eafa709be526222b2c0663080",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/applications/",
+      "sha256": "46c376d459e84d71ed095a0dde9366ff5673c41f90224cf191bcda5eae2ae7d8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/applications/index.html",
+      "sha256": "46c376d459e84d71ed095a0dde9366ff5673c41f90224cf191bcda5eae2ae7d8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/benchmarks-game/",
+      "sha256": "7c4fadbafaa839fd9de5d20aa2f09d2f9d856dc8d9a47ae4da63bd73c10eaa6d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/benchmarks-game/index.html",
+      "sha256": "7c4fadbafaa839fd9de5d20aa2f09d2f9d856dc8d9a47ae4da63bd73c10eaa6d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/compiler/",
+      "sha256": "912bb62a1acb3c622583d26c69dec4d5628009ee5f955d2775daeeed665758a0",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/compiler/index.html",
+      "sha256": "912bb62a1acb3c622583d26c69dec4d5628009ee5f955d2775daeeed665758a0",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/compression-history/",
+      "sha256": "69fc07236c62134477e6215ccce376f5499c96ce55dc0a161a5c72cf3ce86a07",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/compression-history/index.html",
+      "sha256": "69fc07236c62134477e6215ccce376f5499c96ce55dc0a161a5c72cf3ce86a07",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/deflate/",
+      "sha256": "975d14eaff5e218dfa7410638c9d7026ba578e9e67eb25e869ccd78314f5fcb4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/deflate/index.html",
+      "sha256": "975d14eaff5e218dfa7410638c9d7026ba578e9e67eb25e869ccd78314f5fcb4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/ekf/",
+      "sha256": "ad05a98b883958caf79e612a2d423f23dc4e0163f39e5dc35045fbd82b9469d9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/ekf/index.html",
+      "sha256": "ad05a98b883958caf79e612a2d423f23dc4e0163f39e5dc35045fbd82b9469d9",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/index.html",
+      "sha256": "fabc705cb19d579caa287951b0850347adc8a30eafa709be526222b2c0663080",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/jit/",
+      "sha256": "62132fd561f315e5ca4c1cc03331671002365be67368861fdbbbd7dd075f55d5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/jit/index.html",
+      "sha256": "62132fd561f315e5ca4c1cc03331671002365be67368861fdbbbd7dd075f55d5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/knucleotide/",
+      "sha256": "00ece33ebd878d91bba196398d96933a7c453515ca8931b39a63b6f2e4ffa007",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/knucleotide/index.html",
+      "sha256": "00ece33ebd878d91bba196398d96933a7c453515ca8931b39a63b6f2e4ffa007",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/lifecycle/",
+      "sha256": "db3626781ccdea810b8566d1059450234146d1be493d94e88852392b9c96a41a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/lifecycle/index.html",
+      "sha256": "db3626781ccdea810b8566d1059450234146d1be493d94e88852392b9c96a41a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/memory/",
+      "sha256": "7d07c83a9dc659dede4d53856ad7ce8dc328bd84da1347adcca0098c60b1df9e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/memory/index.html",
+      "sha256": "7d07c83a9dc659dede4d53856ad7ce8dc328bd84da1347adcca0098c60b1df9e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/nbody/",
+      "sha256": "0936ee4423502bbe497f0f319b8d0f5e1e7c92c621d487cbf1abdb99543365da",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/nbody/index.html",
+      "sha256": "0936ee4423502bbe497f0f319b8d0f5e1e7c92c621d487cbf1abdb99543365da",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/related-post-gen/",
+      "sha256": "212f585cf0413e0aeeba0acabb6413671425570f6f5f9a8c33cd5759e2832593",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/related-post-gen/index.html",
+      "sha256": "212f585cf0413e0aeeba0acabb6413671425570f6f5f9a8c33cd5759e2832593",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/runtime/",
+      "sha256": "0061824f3ee2d782bae86fcf52cc987555fdacca3bad2a5894dd8432c5169273",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/runtime/index.html",
+      "sha256": "0061824f3ee2d782bae86fcf52cc987555fdacca3bad2a5894dd8432c5169273",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/scaling/",
+      "sha256": "50d883e81bbfb624b2ce94737d09150b0872537209c58bc050c6899833fd6453",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/scaling/index.html",
+      "sha256": "50d883e81bbfb624b2ce94737d09150b0872537209c58bc050c6899833fd6453",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/size/",
+      "sha256": "4149ae84d41a3f155f42f0e9ee8fd19f8e526f9274b207a2aa1e94a073bc5620",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/size/index.html",
+      "sha256": "4149ae84d41a3f155f42f0e9ee8fd19f8e526f9274b207a2aa1e94a073bc5620",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/abort-recovery/",
+      "sha256": "6cb50ff56beab3afb27b99d3c5c69bdbd58eb2e0360efb12e20bbe0187a17ab5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/abort-recovery/index.html",
+      "sha256": "6cb50ff56beab3afb27b99d3c5c69bdbd58eb2e0360efb12e20bbe0187a17ab5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/branch-selection/",
+      "sha256": "ef5ea3c2945318f63649c8f812040920f58c80747998307ba65c8b9dc8928894",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/branch-selection/index.html",
+      "sha256": "ef5ea3c2945318f63649c8f812040920f58c80747998307ba65c8b9dc8928894",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-15/",
+      "sha256": "23c2116e077bc621668d719a66ce7bc98aed94a211dcfb07f2f32772920438b2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-15/index.html",
+      "sha256": "23c2116e077bc621668d719a66ce7bc98aed94a211dcfb07f2f32772920438b2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-16/",
+      "sha256": "d38fe3b2f8dc30384fea41fd0b6f180958d97414af35c85beab11149a531b638",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-16/index.html",
+      "sha256": "d38fe3b2f8dc30384fea41fd0b6f180958d97414af35c85beab11149a531b638",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-17/",
+      "sha256": "8b2ad4959670d116c8ba34f3da8f1c6203f5918ff96f9e39a41b28b38bc87d1e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-17/index.html",
+      "sha256": "8b2ad4959670d116c8ba34f3da8f1c6203f5918ff96f9e39a41b28b38bc87d1e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-31/",
+      "sha256": "a354ac5de209bf1b9679985a9457ce824c0678fd0eb934171e1f660cb96e78d1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-31/index.html",
+      "sha256": "a354ac5de209bf1b9679985a9457ce824c0678fd0eb934171e1f660cb96e78d1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-32/",
+      "sha256": "c2b7689cb08ad015c24203c11dc20bd347f7e3fc55757d650c55e404f1e79018",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-32/index.html",
+      "sha256": "c2b7689cb08ad015c24203c11dc20bd347f7e3fc55757d650c55e404f1e79018",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-33/",
+      "sha256": "f97ddfde6b7d759e6f406a4784672cb53d9184851e3a8e99c2ed3794bf951579",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-33/index.html",
+      "sha256": "f97ddfde6b7d759e6f406a4784672cb53d9184851e3a8e99c2ed3794bf951579",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-63/",
+      "sha256": "6d0c3a904d16b0308a98586908d44c9567a1e4f8f65c8f2c772da87b914b86be",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-63/index.html",
+      "sha256": "6d0c3a904d16b0308a98586908d44c9567a1e4f8f65c8f2c772da87b914b86be",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-64/",
+      "sha256": "fb58cc99f9b48be566474ff675107fd076b0b44b7f86507659b957ad2173db4b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-64/index.html",
+      "sha256": "fb58cc99f9b48be566474ff675107fd076b0b44b7f86507659b957ad2173db4b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-65/",
+      "sha256": "934af0848e5689ecf3998752429bd1ad50803e3324042b9618c48e430da8275f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-65/index.html",
+      "sha256": "934af0848e5689ecf3998752429bd1ad50803e3324042b9618c48e430da8275f",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-7/",
+      "sha256": "913e7b54e66453af72f3aaee0b352be4eb84bbf9b72ac06fb05ee7748bbf15c8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-7/index.html",
+      "sha256": "913e7b54e66453af72f3aaee0b352be4eb84bbf9b72ac06fb05ee7748bbf15c8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-8/",
+      "sha256": "e27366dd1502040ed060b829303483ff6102996b2c89123961f028d4fa445a57",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-8/index.html",
+      "sha256": "e27366dd1502040ed060b829303483ff6102996b2c89123961f028d4fa445a57",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-9/",
+      "sha256": "36d3cbc9c41a8bf7ddb4582acba5f9ddf001199f8624c82673c84c804f858097",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth-9/index.html",
+      "sha256": "36d3cbc9c41a8bf7ddb4582acba5f9ddf001199f8624c82673c84c804f858097",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth/",
+      "sha256": "966fbabda78885fa9d58d3681d957ea6ea67da01f3ac37590fef11b5fe422e32",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/capacity-growth/index.html",
+      "sha256": "966fbabda78885fa9d58d3681d957ea6ea67da01f3ac37590fef11b5fe422e32",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/compile-chain/",
+      "sha256": "b46a5f757d40ffcb2c534447856b78aca9b521864ea724445bf8b93f6c1f52a6",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/compile-chain/index.html",
+      "sha256": "b46a5f757d40ffcb2c534447856b78aca9b521864ea724445bf8b93f6c1f52a6",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent-2/",
+      "sha256": "7504a94c09fe35d2b81ee2e4391c30c5780527f6a2e58c14f77796b483b5f395",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent-2/index.html",
+      "sha256": "7504a94c09fe35d2b81ee2e4391c30c5780527f6a2e58c14f77796b483b5f395",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent-4/",
+      "sha256": "c008880babf89be50d325b737d9f9ed831da4d5793616e73caae09b6328ed8e6",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent-4/index.html",
+      "sha256": "c008880babf89be50d325b737d9f9ed831da4d5793616e73caae09b6328ed8e6",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent/",
+      "sha256": "4d67eb2e2a07144ef1e5b18bfb70e64723d1f520c2e8579ceef2aab4a96c5cd2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/concurrent/index.html",
+      "sha256": "4d67eb2e2a07144ef1e5b18bfb70e64723d1f520c2e8579ceef2aab4a96c5cd2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-128-biased-dynamic/",
+      "sha256": "7e2bc3e42fa1291beaf94bf98b56ddea7240521622eafb9577730348e5155a5e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-128-biased-dynamic/index.html",
+      "sha256": "7e2bc3e42fa1291beaf94bf98b56ddea7240521622eafb9577730348e5155a5e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-16384-distribution-change/",
+      "sha256": "a4f55736f25c684fe39d83123e189c3f39785c901cf10cfe3bd9e97c38ef07f2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-16384-distribution-change/index.html",
+      "sha256": "a4f55736f25c684fe39d83123e189c3f39785c901cf10cfe3bd9e97c38ef07f2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-32-high-entropy-stored/",
+      "sha256": "508ed1a822d92ffc7849f0877c1962ffcd5fac7bb2b11f479050a75524095b4b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-32-high-entropy-stored/index.html",
+      "sha256": "508ed1a822d92ffc7849f0877c1962ffcd5fac7bb2b11f479050a75524095b4b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-320-overlap/",
+      "sha256": "71e354921a6fc86de66fce2f9b0c182b4bf5061908a5c221438c50ded1a67614",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-320-overlap/index.html",
+      "sha256": "71e354921a6fc86de66fce2f9b0c182b4bf5061908a5c221438c50ded1a67614",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-33027-periodic-window/",
+      "sha256": "5524175dc502b92c3cd6be64b51da82149195926b7a28998aee82cb636353bc7",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-33027-periodic-window/index.html",
+      "sha256": "5524175dc502b92c3cd6be64b51da82149195926b7a28998aee82cb636353bc7",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-literals-prefix/",
+      "sha256": "c689fdedbceceab0287c48bc848297350172e8107d2a7c365fcaf5370fd16c0c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-literals-prefix/index.html",
+      "sha256": "c689fdedbceceab0287c48bc848297350172e8107d2a7c365fcaf5370fd16c0c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-literals/",
+      "sha256": "e68994fba4110c9c3ba3b1ab4d3381dfea540f38bfec55f7db9f806c4b2aa26e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-literals/index.html",
+      "sha256": "e68994fba4110c9c3ba3b1ab4d3381dfea540f38bfec55f7db9f806c4b2aa26e",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-overlap/",
+      "sha256": "6750477b1eff63a642c1663ed6d8b607fd204f79324c0fcc16b679aef2ac393d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-eight-overlap/index.html",
+      "sha256": "6750477b1eff63a642c1663ed6d8b607fd204f79324c0fcc16b679aef2ac393d",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-empty/",
+      "sha256": "972fdd815fed96f3ede6ac3ad4747fae0880b622134ee95ea22edba1526e8339",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-empty/index.html",
+      "sha256": "972fdd815fed96f3ede6ac3ad4747fae0880b622134ee95ea22edba1526e8339",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-one-stored/",
+      "sha256": "9d7d12e2d84d61d709b8efa59e7497959b12006256912b0c01e359498148f05b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-one-stored/index.html",
+      "sha256": "9d7d12e2d84d61d709b8efa59e7497959b12006256912b0c01e359498148f05b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-seven-stored-prefix/",
+      "sha256": "288d7eff56294b5375b25513c440243ff20a0adb20825dc981ae054079691507",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate-seven-stored-prefix/index.html",
+      "sha256": "288d7eff56294b5375b25513c440243ff20a0adb20825dc981ae054079691507",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate/",
+      "sha256": "c243fdc301ba585cc148bb29dee6786ce3eee00dbcfd660766085f14be7192f4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/deflate/index.html",
+      "sha256": "c243fdc301ba585cc148bb29dee6786ce3eee00dbcfd660766085f14be7192f4",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/dependency-fanout/",
+      "sha256": "77afdd0426f2fe5dfd16d927f297521df94c47a73bcd37678f29c9e2f31c1543",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/dependency-fanout/index.html",
+      "sha256": "77afdd0426f2fe5dfd16d927f297521df94c47a73bcd37678f29c9e2f31c1543",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/ekf/",
+      "sha256": "8ae779fd8b1ad2d3f98731f599c0a5efe566de6b018abbeb3f4f2e8aa27e39f8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/ekf/index.html",
+      "sha256": "8ae779fd8b1ad2d3f98731f599c0a5efe566de6b018abbeb3f4f2e8aa27e39f8",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/filter-cardinality/",
+      "sha256": "12963b22ea5a8ec0dae24571a312bee410bf6ab2e538f57dfe2f1fb1655bf3fd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/filter-cardinality/index.html",
+      "sha256": "12963b22ea5a8ec0dae24571a312bee410bf6ab2e538f57dfe2f1fb1655bf3fd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/function-call/",
+      "sha256": "2e510a4b44fb652baddac679058ae78a3545b74e9ff880ca1db190bc5716831c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/function-call/index.html",
+      "sha256": "2e510a4b44fb652baddac679058ae78a3545b74e9ff880ca1db190bc5716831c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/graphs/",
+      "sha256": "9feb4ea22ec880b08783ee93a513af0edaee86c1a02c16b6711975ceb65e2f45",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/graphs/index.html",
+      "sha256": "9feb4ea22ec880b08783ee93a513af0edaee86c1a02c16b6711975ceb65e2f45",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/jit/",
+      "sha256": "8b14871457667804e03af0f4801a9d38f81fa32d42a8d83af29c75effa3a3b14",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/jit/index.html",
+      "sha256": "8b14871457667804e03af0f4801a9d38f81fa32d42a8d83af29c75effa3a3b14",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/knucleotide/",
+      "sha256": "b902c1978dbb00e94900406961d7d496933b177de05af9a12d34822cae698dfd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/knucleotide/index.html",
+      "sha256": "b902c1978dbb00e94900406961d7d496933b177de05af9a12d34822cae698dfd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/map-lookup/",
+      "sha256": "4a9ba700394a30e5976ef7566885882998f972c22766285c7c27f91dbcb548e1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/map-lookup/index.html",
+      "sha256": "4a9ba700394a30e5976ef7566885882998f972c22766285c7c27f91dbcb548e1",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/matrix-product/",
+      "sha256": "3f6d25e0d92b283df77d7a6e8760dcdcf68926e1f1208c4c760836d32964d3dd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/matrix-product/index.html",
+      "sha256": "3f6d25e0d92b283df77d7a6e8760dcdcf68926e1f1208c4c760836d32964d3dd",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/native-build/",
+      "sha256": "a51f4557fdc158b733cac1d2711a4cc7732aa445f07673e500fd127c6d1f94d5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/native-build/index.html",
+      "sha256": "a51f4557fdc158b733cac1d2711a4cc7732aa445f07673e500fd127c6d1f94d5",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/nbody/",
+      "sha256": "f82dae6a8fa797189ffc05bf4b3b516d14cc9fa86460df0d075ac261e85c9856",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/nbody/index.html",
+      "sha256": "f82dae6a8fa797189ffc05bf4b3b516d14cc9fa86460df0d075ac261e85c9856",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/numerical-application/",
+      "sha256": "e86b5e697fb8ea9a2836133dc28f7d872be974fe28293ff52a4bc287e58bd829",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/numerical-application/index.html",
+      "sha256": "e86b5e697fb8ea9a2836133dc28f7d872be974fe28293ff52a4bc287e58bd829",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/numerical-pipeline/",
+      "sha256": "1af9a3faa3cb1e2b78a1fd3f821d96401d1a40d43fd5748772266c862a236417",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/numerical-pipeline/index.html",
+      "sha256": "1af9a3faa3cb1e2b78a1fd3f821d96401d1a40d43fd5748772266c862a236417",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/record-projection/",
+      "sha256": "3d82dfda3a4d988f22a172bd4e4bd7a196742ac996921fdd72af4540667a9e77",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/record-projection/index.html",
+      "sha256": "3d82dfda3a4d988f22a172bd4e4bd7a196742ac996921fdd72af4540667a9e77",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/rejected-recovery/",
+      "sha256": "795acbe2d171f451303d4efe27439042ada31c7d87f08982ccf3dffd4c88a689",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/rejected-recovery/index.html",
+      "sha256": "795acbe2d171f451303d4efe27439042ada31c7d87f08982ccf3dffd4c88a689",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/related-post-gen/",
+      "sha256": "12f6014448b8753ba6910d19e138e1fe3814e4e8e830eb51212c374832508902",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/related-post-gen/index.html",
+      "sha256": "12f6014448b8753ba6910d19e138e1fe3814e4e8e830eb51212c374832508902",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/retained-snapshots/",
+      "sha256": "9f416f2f1411129cfbb96aff5da81b0ce16c6845293b11bae64697e04e8b5c04",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/retained-snapshots/index.html",
+      "sha256": "9f416f2f1411129cfbb96aff5da81b0ce16c6845293b11bae64697e04e8b5c04",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/scalar-changed/",
+      "sha256": "43a1a16e42974c60768d535b264114fbd294b4355f8e6d85c74fc270f750efde",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/scalar-changed/index.html",
+      "sha256": "43a1a16e42974c60768d535b264114fbd294b4355f8e6d85c74fc270f750efde",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/scalar-unchanged/",
+      "sha256": "11ae31dc0a36369331758a51d9a8cba50b61df52e8cbe2cbdfbb06138e0a3190",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/scalar-unchanged/index.html",
+      "sha256": "11ae31dc0a36369331758a51d9a8cba50b61df52e8cbe2cbdfbb06138e0a3190",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/set-union/",
+      "sha256": "296d0a1b96e3a860f0a49f9545610a54fab879101d3c8ce5c00312ecfb7fe164",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/set-union/index.html",
+      "sha256": "296d0a1b96e3a860f0a49f9545610a54fab879101d3c8ce5c00312ecfb7fe164",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/state-evolution/",
+      "sha256": "a5148308751d7b08ee089ca9f79f81c2fb7c69d8593ab9f5960b67d4be2c441a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/state-evolution/index.html",
+      "sha256": "a5148308751d7b08ee089ca9f79f81c2fb7c69d8593ab9f5960b67d4be2c441a",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/state-machines/",
+      "sha256": "6dbc97f95c13921a0363ac61ecdf293c9ae827bfbe47455a3fbc9dc8417c764b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/state-machines/index.html",
+      "sha256": "6dbc97f95c13921a0363ac61ecdf293c9ae827bfbe47455a3fbc9dc8417c764b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/string-graphemes/",
+      "sha256": "248663293df2211a5046a56f4cc057b65b30469127873bf689e04290dcf8611b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/string-graphemes/index.html",
+      "sha256": "248663293df2211a5046a56f4cc057b65b30469127873bf689e04290dcf8611b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/strings/",
+      "sha256": "fab208d0f3f0b696c497bfe0f53aa46999a98497461ca91f5751afedc81d9b9b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/strings/index.html",
+      "sha256": "fab208d0f3f0b696c497bfe0f53aa46999a98497461ca91f5751afedc81d9b9b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-full-outer-join/",
+      "sha256": "f2b529548d7a38a73ab573a157a9db377797bf2d8b1f3f7e8b7e1e0ac94469a2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-full-outer-join/index.html",
+      "sha256": "f2b529548d7a38a73ab573a157a9db377797bf2d8b1f3f7e8b7e1e0ac94469a2",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-joins/",
+      "sha256": "bd9ddc308b3a55d3603fb8c2bb8b11e16102fa634d53fa6f9f747b681478b078",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-joins/index.html",
+      "sha256": "bd9ddc308b3a55d3603fb8c2bb8b11e16102fa634d53fa6f9f747b681478b078",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-anti-join/",
+      "sha256": "6215b52ddaaf3be043b6978b0a2fa234377490d95d282683667308bebb6e139b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-anti-join/index.html",
+      "sha256": "6215b52ddaaf3be043b6978b0a2fa234377490d95d282683667308bebb6e139b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-outer-join/",
+      "sha256": "ab5c11d642778d4d39236bc0e3c9150505a39d1f6210295399523ebed3869673",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-outer-join/index.html",
+      "sha256": "ab5c11d642778d4d39236bc0e3c9150505a39d1f6210295399523ebed3869673",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-semi-join/",
+      "sha256": "246172560b4d7087c55661f68cbe1e94a81a3c21489dc07456d32b421503a07c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-left-semi-join/index.html",
+      "sha256": "246172560b4d7087c55661f68cbe1e94a81a3c21489dc07456d32b421503a07c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-right-outer-join/",
+      "sha256": "4d8dbdc70f57a785557a0eb8c97074b66da8c5a10fbbc2509121675756790c91",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/table-right-outer-join/index.html",
+      "sha256": "4d8dbdc70f57a785557a0eb8c97074b66da8c5a10fbbc2509121675756790c91",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/tail-recursion/",
+      "sha256": "6c1c2c51e8268f9b7e988acee1f8e2a23afff8085975d9a65f99dca4101e549b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/tail-recursion/index.html",
+      "sha256": "6c1c2c51e8268f9b7e988acee1f8e2a23afff8085975d9a65f99dca4101e549b",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/touched-equal/",
+      "sha256": "b8fc2b4175968b237a39caca1c2c1858ef4d31257c970a2ef7c0aa0d35bc1d1c",
+      "matches": true
+    },
+    {
+      "url": "https://mech-lang.org/metrics/tasks/touched-equal/index.html",
+      "sha256": "b8fc2b4175968b237a39caca1c2c1858ef4d31257c970a2ef7c0aa0d35bc1d1c",
+      "matches": true
+    }
+  ]
+}
