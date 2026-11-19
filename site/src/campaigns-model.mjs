@@ -197,12 +197,29 @@ export function comparisonLabel(change,metric) {
 export function formatRatio(ratio) {
   if(ratio===Infinity)return '∞';
   let digits=ratio<10?3:ratio<100?2:1;
-  // A rounded label must never turn a non-tie into 1× or a positive value into 0×.
+  // Preserve tie, zero and severity boundaries in rounded labels.
   if(ratio!==1&&ratio>0){
-    while(digits<15&&(Number(ratio.toFixed(digits))===1||Number(ratio.toFixed(digits))===0))digits++;
-    if(Number(ratio.toFixed(digits))===1)return ratio.toPrecision(17);
+    const ambiguous=rounded=>rounded===1||rounded===0||ratio>10&&rounded===10;
+    while(digits<15&&ambiguous(Number(ratio.toFixed(digits))))digits++;
+    if(ambiguous(Number(ratio.toFixed(digits))))return ratio.toPrecision(17);
   }
   return ratio.toLocaleString(undefined,{maximumFractionDigits:digits});
+}
+
+export function ratioColor(ratio,direction=typeof ratio==='number'&&ratio>=0?(ratio<1?'faster':ratio>1?'slower':'equal'):'unmatched') {
+  if(typeof ratio!=='number'||Number.isNaN(ratio)||ratio<0)return 'var(--unknown)';
+  if(direction==='faster')return 'var(--faster)';
+  if(direction==='equal')return 'var(--equal)';
+  if(direction!=='slower')return 'var(--unknown)';
+  // A throughput loss is the reciprocal of its displayed rate ratio.
+  const cost=ratio===0?Infinity:ratio<1?1/ratio:ratio;
+  const mild=cost<=10;
+  const fraction=mild?Math.max(0,Math.log10(cost)):Math.min(1,Math.log10(cost/10)/2);
+  const from=mild?[243,214,107]:[242,155,137],to=mild?[231,172,76]:[255,107,122];
+  return '#'+from.map((value,index)=>Math.round(value+(to[index]-value)*fraction).toString(16).padStart(2,'0')).join('');
+}
+export function comparisonStyle(change,metric) {
+  return '--comparison-color:'+ratioColor(change?.ratio,comparisonDirection(change,metric));
 }
 
 export function comparisonPlot(points,{width=900,label='Mech compared with its reference',measure='time'}={}) {
@@ -220,7 +237,7 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
   return `<svg class="comparison-plot" viewBox="0 0 ${width} ${height}" role="group" aria-label="${escape(label)}">
     ${ticks.map(({r})=>`<line x1="${left}" x2="${width-right}" y1="${y(r)}" y2="${y(r)}" class="${r===1?'reference-line':'chart-grid'}"/><text x="${left-9}" y="${y(r)+4}" text-anchor="end">${tickText(r)}×</text>`).join('')}
     <text x="${left}" y="15" class="chart-axis-label">Mech / reference ${escape(measure)} · log₁₀</text>
-    ${valid.map((p,i)=>`<circle data-compare="${escape(p.id)}" class="plot-point ${escape(p.direction??(p.ratio<1?'faster':p.ratio>1?'slower':'equal'))}" cx="${x(i)}" cy="${y(p.ratio)}" r="4.2" tabindex="0" role="button" aria-label="${escape(p.title)} · ${escape(p.label??p.ratio+' times reference')}"/>`).join('')}
+    ${valid.map((p,i)=>`<circle data-compare="${escape(p.id)}" class="plot-point ${escape(p.direction??(p.ratio<1?'faster':p.ratio>1?'slower':'equal'))}" style="--comparison-color:${ratioColor(p.ratio,p.direction)}" cx="${x(i)}" cy="${y(p.ratio)}" r="4.2" tabindex="0" role="button" aria-label="${escape(p.title)} · ${escape(p.label??p.ratio+' times reference')}"/>`).join('')}
     <text x="${left}" y="${height-30}">Lowest ratio</text><text x="${width-right}" y="${height-30}" text-anchor="end">Highest ratio</text>
     <text x="${(left+width-right)/2}" y="${height-9}" text-anchor="middle">${valid.length} cases, ordered by relative ${escape(measure)}</text>
   </svg>`;

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import {metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,comparisonPlot} from '../src/campaigns-model.mjs';
+import {metrics,formatMetric,recordFor,compareRecords,stageFor,filteredCases,compatibleHistory,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,comparisonPlot,ratioColor,comparisonStyle,formatRatio} from '../src/campaigns-model.mjs';
 
 const baseline={case_id:'scalar',backend:'source',lane:'candidate',task_hash:'t',measurement_hash:'m',source_sha256:'s',
   environment_hash:'e',outcome:'ok',progress:'measured',revision:'abc',summary:{resident_turn_seconds:{median:2,samples:[1,2,3]}}};
@@ -103,7 +103,20 @@ assert.equal(comparisonDirection({ratio:1.000001},'native_program_call_seconds')
 assert.equal(comparisonLabel({ratio:.5},'native_program_call_seconds'),'0.5× time');
 assert.equal(comparisonLabel({ratio:2},'artifact_bytes'),'2× size');
 assert.equal(comparisonLabel({ratio:1.000001},'native_program_call_seconds'),'1.000001× time');
+assert.equal(ratioColor(.5),'var(--faster)');
+assert.equal(ratioColor(1),'var(--equal)');
+assert.equal(ratioColor(10),'#e7ac4c','tenfold losses stay in the yellow/amber band');
+assert.equal(ratioColor(10.00001),'#f29b89','losses above tenfold enter the red band');
+assert.equal(ratioColor(1000),'#ff6b7a');
+assert.equal(ratioColor(Infinity),'#ff6b7a');
+assert.notEqual(ratioColor(2),ratioColor(5),'smaller losses have distinct yellow shades');
+assert.notEqual(ratioColor(11),ratioColor(1000),'larger losses have distinct red shades');
+for(const invalid of [NaN,undefined,-1])assert.equal(ratioColor(invalid),'var(--unknown)');
+assert.equal(comparisonStyle({ratio:.05},'accepted_turns_per_second'),'--comparison-color:'+ratioColor(20),'throughput losses use reciprocal slowdown severity');
+assert.equal(comparisonStyle({ratio:0},'accepted_turns_per_second'),'--comparison-color:#ff6b7a');
+assert.ok(Number(formatRatio(10.00001))>10,'rounding cannot hide the red-band threshold');
 const plot=comparisonPlot([{id:'low',title:'Low',ratio:.1},{id:'same',title:'Same',ratio:1},{id:'high',title:'High',ratio:10}],{width:700});
+assert.ok(plot.includes('style="--comparison-color:#e7ac4c"'),'chart points use the same scale as table ratios');
 const coordinates=[...plot.matchAll(/cx="([0-9.]+)" cy="([0-9.]+)"/g)].map(m=>m.slice(1).map(Number));
 assert.equal(coordinates.length,3);
 assert.ok(Math.abs((coordinates[1][0]-coordinates[0][0])-(coordinates[2][0]-coordinates[1][0]))<1e-8,'case positions are evenly spaced');
