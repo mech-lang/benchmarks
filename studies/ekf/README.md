@@ -23,7 +23,7 @@ in the article and the recorded protocol. This is a library diagnostic, not
 the eight-worker SIMD language experiment. Other paths retain absolute times; reference cells remain empty where the
 recorded campaign supplies no comparable peer.
 
-The three paired checked rows also appear under Applications in the main
+The three paired checked rows also appear in their own EKF section in the main
 metrics overview. The seven-row page preserves source links, sortable columns,
 shared selections, Mech-only CSV exports and optional samples. Sample plots
 normalize Mech observations by their own peer median rather than putting

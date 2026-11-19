@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
-import * as model from '../src/ekf-model.mjs';import {comparisonStyle,formatMetric} from '../src/campaigns-model.mjs';import {ekfMeasurements} from '../src/metrics-model.mjs';
+import * as model from '../src/ekf-model.mjs';import {comparisonStyle,formatMetric} from '../src/campaigns-model.mjs';import {ekfMeasurements,publishedComparisons} from '../src/metrics-model.mjs';
 const row=(id,label,mode,rate,category='cpu-jit',publication='per-turn',summary_path)=>({id,label,mode,category,publication,summary_path,is_mech:label.startsWith('Mech'),n:3,samples_million_filter_turns_per_second:[rate,rate,rate],median:rate,mad:0,time_seconds:1e-6/rate,samples_seconds_per_filter_turn:[rate,rate,rate].map(x=>1e-6/x),version:'v1',source_url:'/benchmarks/ekf-sources/'+id+'.txt'});
 const study=(id,rows)=>({id,title:id,machine:id==='resident'?'Apple M3':'Apple M1',precision:id==='resident'?'f64':'f32',instances:500000,turns:40,recorded_at:'2026-09-25',scope:'Recorded execution boundary.',methods:{sample:'fresh process'},evidence_url:'/benchmarks/ekf-evidence/'+id+'.json',rows});
 const data={schema:'mech.ekf-study.v1',method:'Retained trials.',studies:[
@@ -16,7 +16,11 @@ assert.equal(primary.find(r=>r.path==='gpu-batched').mode,'unchecked');assert.eq
 assert.equal(primary.find(r=>r.path==='workers-8').peer.label,'Julia','fused JIT cannot use a per-turn JIT or AOT peer');
 assert.ok(model.peerChartRows(primary).every(row=>Math.abs(row.median-row.ratio)<1e-12));assert.ok(model.sampleChart(model.peerChartRows(primary),{reference:1,axisLabel:'Mech / peer time',tickSuffix:'×'}).includes('reference-line'));assert.equal(primary.find(r=>r.path==='aot').peer.label,'Rust scalar');assert.equal(primary.find(r=>r.path==='resident').peer,null,'managed Resident cannot use the bare numerical Rust control');
 assert.equal(model.selectedMeasurements(data,{mode:'checked'}).length,6);assert.equal(model.selectedMeasurements(data,{mode:'unchecked'}).length,5);assert.equal(model.selectedMeasurements(data,{mode:'both'}).length,11);
-assert.equal(model.selectedMeasurements(data,{query:'Julia'})[0].variant,'8 workers');assert.equal(ekfMeasurements(data).length,3);assert.ok(ekfMeasurements(data).every(r=>r.group==='applications'&&r.value>0&&r.reference>0));
+assert.equal(model.selectedMeasurements(data,{query:'Julia'})[0].variant,'8 workers');assert.equal(ekfMeasurements(data).length,3);assert.ok(ekfMeasurements(data).every(r=>r.group==='ekf'&&r.value>0&&r.reference>0));
+const emptyBundle={catalog:{cases:[]},campaigns:[]};
+assert.equal(publishedComparisons(emptyBundle,undefined,{group:'applications',ekf:data}).length,0,'EKF results stay out of Applications');
+assert.equal(publishedComparisons(emptyBundle,undefined,{group:'ekf',ekf:data}).length,3);
+assert.ok(publishedComparisons(emptyBundle,undefined,{ekf:data}).every(r=>r.group==='ekf'));
 assert.ok(model.sampleChart(primary,{medians:false}).includes('ekf-sample'));assert.ok(!model.sampleChart(primary,{samples:false}).includes('class="ekf-sample"'));assert.ok(model.sampleChart(primary,{samples:false,medians:false}).includes('table still shows'));
 assert.equal(model.exportRows(data.studies).trim().split('\r\n').length,34);assert.equal(model.exportRows(data.studies,primary).trim().split('\r\n').length,22);
 const invalid=structuredClone(data);invalid.studies[0].rows[0].median=200;assert.throws(()=>model.validateEKF(invalid),/differs/);

@@ -2,7 +2,7 @@ import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparis
 import {mechMeasurements} from './ekf-model.mjs';
 
 export const metricGroups=[
-  {id:'ekf',title:'EKF comparisons',description:'Mech execution paths and their closest comparable peers',href:'/metrics/ekf/',metrics:[]},
+  {id:'ekf',title:'EKF',description:'Mech execution paths and their closest comparable peers',href:'/metrics/ekf/',metrics:[]},
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
   {id:'applications',title:'Applications',description:'Application timings and their measured peers',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
   {id:'benchmarks-game',title:'Benchmarks Game',description:'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process',href:'/metrics/benchmarks-game/',metrics:[]},
@@ -36,7 +36,8 @@ export function groupForMetric(metric) {
 }
 export function groupForMeasurement(definition,metric) {
   const group=groupForMetric(metric);
-  if(group?.id==='runtime'&&(definition.family==='applications'||definition.id==='ekf'))return metricGroups.find(group=>group.id==='applications');
+  if(group?.id==='runtime'&&definition.id==='ekf')return metricGroups.find(group=>group.id==='ekf');
+  if(group?.id==='runtime'&&definition.family==='applications')return metricGroups.find(group=>group.id==='applications');
   return group;
 }
 export function countsFor(rows) {
@@ -116,7 +117,7 @@ export function ekfMeasurements(data){
   if(!data)return [];
   return mechMeasurements(data).filter(row=>row.mode==='checked'&&row.peer).map(row=>{
     const metric='ekf_filter_turn_seconds';
-    return {key:'ekf:'+row.result_id,group:'applications',title:'EKF · '+row.variant.replace(/^Mech /,''),metric,
+    return {key:'ekf:'+row.result_id,group:'ekf',title:'EKF · '+row.variant.replace(/^Mech /,''),metric,
       value:row.time_seconds,reference:row.peer.time_seconds,ratio:row.ratio,
       record:{source_url:row.source_url,execution_mode:row.category==='cpu-jit'?'jit':row.category==='cpu-aot'?'aot':'gpu'},
       control:{kind:row.category==='cpu-jit'?'jit':row.category==='cpu-aot'?'aot':'gpu',label:row.peer.label,record:{reference_url:row.peer.implementation_url??row.peer.source_url,source_url:row.peer.source_url}},
@@ -137,5 +138,5 @@ export function publishedComparisons(bundle,data,{group='all',games,ekf}={}) {
   const native=(!group||group==='all'||group==='deflate')&&data?nativeMeasurements(data).filter(row=>row.group==='deflate'):[];
   const processing=suite.map(row=>row.definition.id==='related-post-gen'&&row.metric==='post_json_seconds'?{...row,title:row.title+' · processing'}:row);
   const process=(!secondary&&(group==='all'||group==='applications'))?suiteMeasurements(bundle,{task:'related-post-gen',metric:'native_process_seconds'}).filter(row=>row.direction!=='unmatched').map(row=>({...row,title:row.title+' · whole process'})):[];
-  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[]),...(group==='all'||group==='jit'?jitMeasurements(games):[]),...(group==='all'||group==='applications'?ekfMeasurements(ekf):[])];
+  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[]),...(group==='all'||group==='jit'?jitMeasurements(games):[]),...(group==='all'||group==='ekf'?ekfMeasurements(ekf):[])];
 }

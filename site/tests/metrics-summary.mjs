@@ -30,7 +30,7 @@ assert.equal(model.referenceLink({kind:'rust',record:{reference_url:'javascript:
 assert.equal(model.implementationLink(base),'<a href="/benchmarks/implementation-sources/scalar.mec.txt">Mech</a>');
 assert.equal(model.implementationLink({...base,backend:'source-native'}),'<a href="/benchmarks/implementation-sources/scalar.mec.txt">Mech (JIT)</a>');
 assert.equal(model.implementationLink({source_url:'javascript:alert(1)'}),'Mech');
-assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'resident_turn_seconds').id,'applications');
+assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'resident_turn_seconds').id,'ekf');
 assert.equal(grouping.groupForMeasurement({id:'numerical-application',family:'applications'},'resident_turn_seconds').id,'applications');
 assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'execution_allocations').id,'memory');
 const games={schema:'mech.benchmarks-game-comparisons.v1',hardware:'Apple M3',cases:Array.from({length:10},(_,i)=>({key:'game-'+i,title:'Game '+i,workload:'full input',mech:{seconds:i===0?.5:2,source_url:'/benchmarks/implementation-sources/game.mec.txt',implementation_url:'/benchmarks/?detail.program=game-'+i},rust:{seconds:1,source_url:'/benchmarks/implementation-sources/game.rs.txt',original_url:'https://example.org/original.rs'}}))};

@@ -5,12 +5,12 @@ const $=selector=>document.querySelector(selector);
 const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const initial=new URLSearchParams(location.search),route=metricsRoute(location.pathname,location.search);
 const pageGroup=route.group==='all'?undefined:route.group;
-const groupOrder=['benchmarks-game','jit','applications','compiler','deflate','runtime','scaling','size','memory','lifecycle'];
+const groupOrder=['benchmarks-game','jit','applications','ekf','compiler','deflate','runtime','scaling','size','memory','lifecycle'];
 let bundle,native,games,ekf,all=[],visible=[],result=initial.get('result')??'all';
 if(!['all','faster','slower','equal'].includes(result))result='all';
 let sort=['name','mech','reference','ratio','outcome'].includes(initial.get('sort'))?initial.get('sort'):'name';
 let descending=initial.get('dir')==='desc';
-const defaultExpanded='applications,benchmarks-game,compiler';
+const defaultExpanded='applications,ekf,benchmarks-game,compiler';
 const expanded=new Set((initial.get('expand')??defaultExpanded).split(',').filter(id=>groupOrder.includes(id)));
 let lastQuery=initial.has('expand')?(initial.get('q')??''):'';
 const countLabel=(count,singular,plural=singular+'s')=>`${count} ${count===1?singular:plural}`;
@@ -64,7 +64,7 @@ function exportCSV(){
 }
 async function start(){
   $('#summary-search').value=initial.get('q')??'';
-  const loaded=await Promise.allSettled([loadCampaigns(),!pageGroup?loadNative():Promise.resolve(undefined),!pageGroup||['benchmarks-game','jit'].includes(pageGroup)?loadGames():Promise.resolve(undefined),!pageGroup||pageGroup==='applications'?loadEKF():Promise.resolve(undefined)]);
+  const loaded=await Promise.allSettled([loadCampaigns(),!pageGroup?loadNative():Promise.resolve(undefined),!pageGroup||['benchmarks-game','jit'].includes(pageGroup)?loadGames():Promise.resolve(undefined),!pageGroup||pageGroup==='ekf'?loadEKF():Promise.resolve(undefined)]);
   if(loaded[0].status==='rejected')throw loaded[0].reason;
   bundle=loaded[0].value;
   if(loaded[1].status==='fulfilled')native=loaded[1].value;
