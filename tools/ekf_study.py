@@ -81,8 +81,6 @@ def ekf_study(root, output=None):
             base['rows'].append(item)
     cohorts.append(base)
 
-    reference_commit = 'cfb51ba74b4eda5e13a77cb357f24767d288d650'
-    prefix = 'https://github.com/mech-lang/mech/blob/' + reference_commit + '/'
     source_paths = {
         'Rust packed SIMD': 'benchmarks/archive/compute/parallel-ekf/minimal/rust_simd.rs',
         'Julia SIMD.jl': 'benchmarks/archive/compute/parallel-ekf/minimal/julia_simd_threads.jl',
@@ -128,64 +126,6 @@ def ekf_study(root, output=None):
                 base['rows'].append(item)
         cohorts.append(base)
 
-    name = 'apple-m1-mech-aot-2026-09-24.json'
-    data = load(name)
-    base = cohort('aot-session', 'AOT and JIT through Mech', name, data['configuration']['instances'], data['configuration']['turns'],
-                  data['configuration']['timed_region'], {**data['configuration'], 'toolchain': data['toolchain'], 'artifact': data['artifact']}, data['generated_at'])
-    for label, summary in data['rows'].items():
-        base['rows'].append(row(label, 'checked', summary['samples_million_ekf_turns_per_second'],
-                               'https://github.com/mech-lang/mech/blob/' + data['implementation_commit'] + '/hosts/gpu/fixtures/ekf-kernel.mec',
-                               'Cranelift ' + data['toolchain']['cranelift'] + ' · ' + data['implementation_commit'][:8], summary['median_million_ekf_turns_per_second']))
-    cohorts.append(base)
-
-    name = 'apple-m1-aot-vs-rust-dylib-2026-09-24.json'
-    data = load(name)
-    base = cohort('aot-library', 'AOT direct library calls', name, data['configuration']['instances'], data['configuration']['turns'],
-                  data['configuration']['timed_region'], {**data['configuration'], 'toolchain': data['toolchain'], 'validation': data['validation']}, data['generated_at'])
-    for label, summary in data['rows'].items():
-        rates = summary['throughput_million_ekf_turns_per_second']
-        path = data['sources']['rust_library' if label == 'Rust cdylib' else 'mech']
-        base['rows'].append(row(label, 'checked', rates['samples'],
-                               'https://github.com/mech-lang/mech/blob/' + data['implementation_commit'] + '/' + path,
-                               data['toolchain']['rustc'] if label == 'Rust cdylib' else 'Cranelift ' + data['toolchain']['cranelift'] + ' · ' + data['implementation_commit'][:8], rates['median'], library_bytes=summary['library_bytes'],
-                               peak_rss_bytes=summary['maximum_resident_set_bytes']['median']))
-    cohorts.append(base)
-
-    name = 'apple-m1-mech-progression-2026-09-01.json'
-    data = load(name)
-    base = cohort('batching', 'Earlier backends and GPU batching', name, data['configuration']['instances'], None,
-                  'CPU: 5 turns; GPU: 120 turns. Per-turn synchronization, fused CPU blocks and one-submit GPU batching are distinct execution strategies.',
-                  {**data['configuration'], 'command': data['command'], 'note': 'Earlier campaign; do not substitute these values into the September 24/25 comparisons.'}, data['generated_at'])
-    for label, summary in data['rows'].items():
-        base['rows'].append(row(label, summary['mode'], summary['throughput_millions'],
-                               prefix + 'hosts/gpu/fixtures/ekf-kernel.mec', 'Not recorded in this campaign',
-                               summary['median_throughput_millions']))
-    cohorts.append(base)
-
-    # The f64 reactive episode has a different machine, workload and timer. It
-    # remains a separate Mech-only study, never paired with the bare Rust task.
-    path = root / 'results/campaigns/2026-11-17-rust-resident-001/campaign.json'
-    data = json.loads(path.read_text())
-    base = {'id': 'resident', 'title': 'Managed resident runtime · f64', 'machine': 'Apple M3', 'precision': 'f64',
-            'instances': 1, 'turns': 4096, 'recorded_at': data['started_at'], 'rows': [],
-            'scope': 'Full reactive turn: captured-input submission, managed execution and publication. Mech-only; no equivalent Rust runtime reference is qualified.',
-            'methods': {'reference': 'Rollback, admission, scheduling, budget accounting and publication are not supplied by the retained bare Rust task control.'},
-            'evidence_url': 'https://github.com/mech-lang/benchmarks/blob/codex/m3-deflate-metrics-20261118/results/campaigns/2026-11-17-rust-resident-001/campaign.json'}
-    for record in data['results']:
-        if record['case_id'] != 'ekf' or record['backend'] not in ['source', 'bytecode'] or record['lane'] != 'candidate' or record['outcome'] != 'ok':
-            continue
-        times = [sample['metrics']['resident_turn_seconds'] for sample in record['samples']]
-        source = record['source'].encode()
-        assert hashlib.sha256(source).hexdigest() == record['source_sha256']
-        url = '/benchmarks/ekf-sources/' + record['source_sha256'] + '.mec.txt'
-        if output:
-            (Path(output) / url.removeprefix('/benchmarks/')).write_bytes(source)
-        item = row('Resident · ' + ('source artifact' if record['backend'] == 'source' else 'decoded bytecode'), 'checked',
-                   [1e-6 / x for x in times], url, record['revision'])
-        item.update(time_seconds=statistics.median(times), samples_seconds_per_filter_turn=times, time_derived_from_reported_throughput=False)
-        base['rows'].append(item)
-    assert len(base['rows']) == 2
-    cohorts.append(base)
     programs = {}
     for original, entry in provenance.get('program_sources', {}).items():
         source = study / entry['file']

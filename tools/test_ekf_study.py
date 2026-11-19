@@ -12,15 +12,11 @@ ROOT = Path(__file__).resolve().parents[1]
 class EkfStudyTest(unittest.TestCase):
     def test_every_retained_sample_and_separate_scope_is_preserved(self):
         data = ekf_study(ROOT)
-        self.assertEqual([len(s['rows']) for s in data['studies']], [10, 18, 12, 2, 3, 19, 2])
-        self.assertEqual(sum(r['n'] for s in data['studies'] for r in s['rows']), 536)
+        self.assertEqual([len(s['rows']) for s in data['studies']], [10, 18, 12])
+        self.assertEqual(sum(r['n'] for s in data['studies'] for r in s['rows']), 400)
         studies = {s['id']: s for s in data['studies']}
         self.assertEqual(studies['backends']['rows'][0]['n'], 10)
         self.assertEqual(studies['backends']['instances'], 500000)
-        self.assertEqual(studies['resident']['machine'], 'Apple M3')
-        self.assertEqual(studies['resident']['precision'], 'f64')
-        self.assertEqual(studies['resident']['instances'], 1)
-        self.assertTrue(all('Rust' not in r['label'] for r in studies['resident']['rows']))
         backend = next(r for r in studies['backends']['rows'] if r['backend'] == 'metal' and r['mode'] == 'checked')
         cross = next(r for r in studies['metal']['rows'] if r['label'] == 'Mech generated MSL' and r['mode'] == 'checked')
         self.assertAlmostEqual(backend['median'], 420.89616624669395)

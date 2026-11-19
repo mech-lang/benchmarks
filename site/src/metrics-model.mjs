@@ -1,7 +1,7 @@
 import {backendLabels,metrics,measuredRows,controlFor,controlComparison,comparisonDirection,comparisonLabel,nativeMechSource} from './campaigns-model.mjs';
 
 export const metricGroups=[
-  {id:'ekf',title:'EKF comparisons',description:'Retained EKF studies · execution modes, CPU implementations, Metal and GPU batching',href:'/metrics/ekf/',metrics:[]},
+  {id:'ekf',title:'EKF comparisons',description:'IROS EKF comparisons · Mech backends, CPU implementations and Metal',href:'/metrics/ekf/',metrics:[]},
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
   {id:'applications',title:'Applications',description:'Application performance · Rust',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
   {id:'benchmarks-game',title:'Benchmarks Game',description:'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process',href:'/metrics/benchmarks-game/',metrics:[]},
