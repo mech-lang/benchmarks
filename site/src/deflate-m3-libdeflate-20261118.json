@@ -1,0 +1,57 @@
+{
+  "schema": "mech.deflate-libdeflate-m3.v1",
+  "date": "2026-11-18",
+  "cpu": "Apple M3",
+  "reference": {
+    "name": "libdeflate",
+    "version": "1.26",
+    "level": 12,
+    "revision": "92e6a0db9fa848d742f9eb286c92afc60f2c3dda",
+    "worker_sha256": "06e3b4b11fafb5a79ee4a44a0462682662e72f3520b94fd8dd34b6f5e9c2e1d2"
+  },
+  "mech": {
+    "source_commit": "5c33bb99adb8fe2f5d13395f2c00c234f56bc59b",
+    "encoder_text_bytes": 64652,
+    "worker_sha256": "61258d6e2856a9a4ab8cc61287caef3834744c47bd62a8efead2ee31f166368f",
+    "encoder_object_sha256": "a42f47a761ca918853eea1d411e363a0e1456a7a2cec90d70d66a651f4f51b5e",
+    "metadata_sha256": "2dbc017e1a5a0f89e669b5caaeb6dbf3d42c30d2ae4161808643c10a7c04f470"
+  },
+  "cases_per_order": 81,
+  "wins": {
+    "forward": 61,
+    "reverse": 61
+  },
+  "measurement": {
+    "scope": "in-memory native diagnostic call",
+    "boundary": "Includes heap construction, allocation transfer and physical private cleanup; excludes preparation, validation and process startup.",
+    "seconds": "Per-actor medians from the retained complete acquisition.",
+    "ratio": "Geometric mean of 96 balanced-block Mech/libdeflate time ratios; not the ratio of the displayed medians.",
+    "win_rule": "ratio < 1; exact equality is a tie",
+    "balanced_blocks_per_case": 96,
+    "warmup_ms_per_actor_per_case": 200,
+    "batch_calls": {
+      "stored_three_cases": 512,
+      "other_inputs_at_most_1024_bytes": 64,
+      "other": 1
+    },
+    "background_activity_guard": {
+      "max_external_cpu_percent": 40,
+      "check_interval_seconds": 2,
+      "boundary": "between balanced blocks with all native benchmark workers idle",
+      "action": "abort acquisition on any observed CPU-heavy nonbenchmark process; retain all completed observations",
+      "score_independent": true
+    }
+  },
+  "csv": {
+    "file": "deflate-m3-libdeflate-20261118.csv",
+    "rows": 162,
+    "sha256": "38985e178c12626492ea726b5c2302cd6bd46ec4a030334328cfd8531b9ad88d"
+  },
+  "evidence": {
+    "source_timing_receipt_sha256": "739aa16edfc6a7aeeed8d350e88dbc5d54308c35a32e17783a1b895490ed126d",
+    "plan_sha256": "bd061f7788fa52db812874ee1d63e2d0614b4eeb4bcd4c12b52f2da4de5079c3",
+    "fixture_inventory_sha256": "5bfd407e42356ac57c61f858ad9920f1f9bf2e2fce1b2853c50cc20eda186b38",
+    "raw_archive_url": "https://github.com/mech-lang/mech/releases/download/evidence-native-compression-experiments-6/pr995-deflate-shared-integration-20261118-cbec7c8e2a77.tar.gz",
+    "raw_archive_sha256": "cbec7c8e2a779b3df1a6c960e2b0453565d11cd75bdc3efa9ede06630d71baf9"
+  }
+}

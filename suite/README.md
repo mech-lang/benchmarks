@@ -134,6 +134,8 @@ to change while preserving task obligations and recording the footprint.
 
 ## Interpreting comparisons
 
+The retained Rust resident task controls verify successful outputs, input validation and ownership. They do not establish equivalent transactional rollback, admission, dependency scheduling, budget accounting and publication semantics. Resident and worker-group timings, allocations and cleanup are therefore Mech-only measurements in the published explorer; these controls do not qualify Rust ratios or win/loss claims. Raw observations remain preserved for inspection.
+
 Task contracts describe required values, shapes, ordering, multiplicity,
 arithmetic and ownership. Measurement contracts describe the timed boundary,
 input schedule, reset, warmup, cache and thread policy. Implementation details

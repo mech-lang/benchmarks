@@ -39,7 +39,7 @@ class ExplorerHandler(SimpleHTTPRequestHandler):
             self.send_header("Content-Length", "0")
             self.end_headers()
             return False
-        if not path.startswith("/benchmarks/") and path not in ("/metrics/", "/metrics/index.html", "/metrics/project/", "/metrics/project/index.html"):
+        if not path.startswith("/benchmarks/") and not path.startswith("/metrics/"):
             self.send_error(HTTPStatus.NOT_FOUND)
             return False
         return True
@@ -47,8 +47,8 @@ class ExplorerHandler(SimpleHTTPRequestHandler):
     def translate_path(self, path):
         if urlsplit(path).path in ("/metrics/project/", "/metrics/project/index.html"):
             return super().translate_path("/project.html")
-        if urlsplit(path).path in ("/metrics/", "/metrics/index.html"):
-            return super().translate_path("/campaigns.html")
+        if urlsplit(path).path.startswith("/metrics/"):
+            return super().translate_path(path)
         return super().translate_path(path[len("/benchmarks"):])
 
     def do_GET(self):

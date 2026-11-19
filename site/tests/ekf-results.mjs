@@ -1,0 +1,36 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';import vm from 'node:vm';
+import * as model from '../src/ekf-model.mjs';import {comparisonStyle,formatMetric} from '../src/campaigns-model.mjs';import {ekfMeasurements,publishedComparisons} from '../src/metrics-model.mjs';
+const row=(id,label,mode,rate,category='cpu-jit',publication='per-turn',summary_path)=>({id,label,mode,category,publication,summary_path,is_mech:label.startsWith('Mech'),n:3,samples_million_filter_turns_per_second:[rate,rate,rate],median:rate,mad:0,time_seconds:1e-6/rate,samples_seconds_per_filter_turn:[rate,rate,rate].map(x=>1e-6/x),version:'v1',source_url:'/benchmarks/ekf-sources/'+id+'.txt'});
+const study=(id,rows)=>({id,title:id,machine:id==='resident'?'Apple M3':'Apple M1',precision:id==='resident'?'f64':'f32',instances:500000,turns:40,recorded_at:'2026-09-25',scope:'Recorded execution boundary.',methods:{sample:'fresh process'},evidence_url:'/benchmarks/ekf-evidence/'+id+'.json',rows});
+const data={schema:'mech.ekf-study.v1',method:'Retained trials.',studies:[
+ study('backends',[row('a','Mech scalar JIT','checked',20,'cpu-jit','per-turn','jit'),row('b','Mech scalar JIT','unchecked',25,'cpu-jit','per-turn','jit'),row('c','Mech managed AOT','checked',30,'cpu-aot','per-turn','aot-managed'),row('d','Mech managed AOT','unchecked',35,'cpu-aot','per-turn','aot-managed')]),
+ study('cpu',[row('e','Mech fused SIMD/JIT','checked',150,'cpu-jit','fused-block'),row('f','Mech fused SIMD/JIT','unchecked',180,'cpu-jit','fused-block'),row('g','Julia','checked',130,'cpu-jit','fused-block'),row('h','Julia','unchecked',140,'cpu-jit','fused-block'),row('i','Taichi','checked',160),row('j','Rust','checked',200,'cpu-aot','fused-block'),row('x','Mech per-turn SIMD/JIT','checked',160)]),
+ study('metal',[row('k','Mech Metal','checked',400,'metal'),row('l','Mech Metal','unchecked',410,'metal'),row('m','Rust + MSL','checked',425,'metal'),row('n','Rust + MSL','unchecked',430,'metal')]),
+ study('aot-library',[row('o','Mech SIMD AOT','checked',35,'cpu-aot','per-turn','aot'),row('p','Rust scalar','checked',21,'cpu-aot')]),
+ study('gpu-batched',[row('q','Mech batched GPU','unchecked',2000,'metal','fused-block','gpu-batched'),row('r','GPU per-turn control','unchecked',500,'metal','per-turn')]),
+ study('resident',[row('s','Mech resident','checked',1,'resident','per-turn','resident')]) ]};
+assert.equal(model.validateEKF(data),data);
+const all=model.mechMeasurements(data),primary=model.selectedMeasurements(data);
+assert.equal(all.length,11);assert.equal(primary.length,7);assert.deepEqual(primary.map(r=>r.variant),['8 workers','AOT','AOT managed','GPU','GPU batched','JIT','Resident']);assert.ok(primary.every(r=>r.is_mech));
+assert.equal(primary.find(r=>r.path==='gpu-batched').mode,'unchecked');assert.equal(primary.find(r=>r.path==='gpu-batched').peer,null,'a per-turn GPU control is not a batched peer');
+assert.equal(primary.find(r=>r.path==='workers-8').peer.label,'Julia','fused JIT cannot use a per-turn JIT or AOT peer');
+assert.ok(model.peerChartRows(primary).every(row=>Math.abs(row.median-row.ratio)<1e-12));assert.ok(model.sampleChart(model.peerChartRows(primary),{reference:1,axisLabel:'Mech / peer time',tickSuffix:'×'}).includes('reference-line'));assert.equal(primary.find(r=>r.path==='aot').peer.label,'Rust scalar');assert.equal(primary.find(r=>r.path==='resident').peer,null,'managed Resident cannot use the bare numerical Rust control');
+assert.equal(model.selectedMeasurements(data,{mode:'checked'}).length,6);assert.equal(model.selectedMeasurements(data,{mode:'unchecked'}).length,5);assert.equal(model.selectedMeasurements(data,{mode:'both'}).length,11);
+assert.equal(model.selectedMeasurements(data,{query:'Julia'})[0].variant,'8 workers');assert.equal(ekfMeasurements(data).length,3);assert.ok(ekfMeasurements(data).every(r=>r.group==='ekf'&&r.value>0&&r.reference>0));
+const emptyBundle={catalog:{cases:[]},campaigns:[]};
+assert.equal(publishedComparisons(emptyBundle,undefined,{group:'applications',ekf:data}).length,0,'EKF results stay out of Applications');
+assert.equal(publishedComparisons(emptyBundle,undefined,{group:'ekf',ekf:data}).length,3);
+assert.ok(publishedComparisons(emptyBundle,undefined,{ekf:data}).every(r=>r.group==='ekf'));
+assert.ok(model.sampleChart(primary,{medians:false}).includes('ekf-sample'));assert.ok(!model.sampleChart(primary,{samples:false}).includes('class="ekf-sample"'));assert.ok(model.sampleChart(primary,{samples:false,medians:false}).includes('table still shows'));
+assert.equal(model.exportRows(data.studies).trim().split('\r\n').length,34);assert.equal(model.exportRows(data.studies,primary).trim().split('\r\n').length,22);
+const invalid=structuredClone(data);invalid.studies[0].rows[0].median=200;assert.throws(()=>model.validateEKF(invalid),/differs/);
+class Element{constructor(){this.innerHTML='';this.textContent='';this.hidden=false;this.value='';this.checked=true;this.clientWidth=900;this.events={};}addEventListener(t,c){this.events[t]=c;}querySelectorAll(){return [];}}
+const script=fs.readFileSync(new URL('../src/ekf-results.mjs',import.meta.url),'utf8').replace(/^import .*;\n/gm,'').replaceAll('import.meta.url',"'https://mech-lang.org/benchmarks/ekf-results.mjs?v=build'").replace('start().catch(error=>','globalThis.ready=start().catch(error=>');
+const elements=new Map(),element=k=>{if(!elements.has(k))elements.set(k,new Element());return elements.get(k);};let fetches=0;
+const context=vm.createContext({...model,comparisonStyle,formatMetric,URL,URLSearchParams,Blob,console,setTimeout,clearTimeout,location:{pathname:'/metrics/ekf/',search:'?samples=0&study=cpu&peer_cpu-jit=Julia',hash:''},history:{replaceState(_a,_b,url){this.url=url;}},document:{querySelector:element},fetch:async()=>{fetches++;return {ok:true,json:async()=>data};}});
+vm.runInContext(script,context);await context.ready;
+assert.equal(element('#ekf-error').textContent,'');assert.equal((element('#ekf-rows').innerHTML.match(/data-ekf-row=/g)||[]).length,7);assert.equal((element('#ekf-headings').innerHTML.match(/<th /g)||[]).length,5);
+const names=[...element('#ekf-rows').innerHTML.matchAll(/<tr[^>]*><td><a[^>]*>(.*?)<\/a>/g)].map(m=>m[1]);assert.deepEqual(names,primary.map(r=>r.variant));assert.ok(!context.history.url.includes('peer_'));assert.ok(!context.history.url.includes('study='));assert.ok(element('#ekf-rows').innerHTML.includes('unchecked'));
+const chart=element('#ekf-chart').innerHTML;element('#ekf-chart').events.pointerover({target:{closest:()=>({dataset:{ekfRow:'0'}})}});assert.equal(chart,element('#ekf-chart').innerHTML);assert.equal(fetches,1);assert.ok(element('#ekf-readout').innerHTML.includes('Julia'));
+element('#ekf-modes').events.click({target:{closest:()=>({dataset:{ekfMode:'both'}})}});assert.equal((element('#ekf-rows').innerHTML.match(/data-ekf-row=/g)||[]).length,11);assert.equal((element('#ekf-headings').innerHTML.match(/<th /g)||[]).length,6);assert.ok(context.history.url.includes('mode=both'));
+console.log('Exactly seven Mech paths, fixed comparable peers, explicit checking mode/scope, Mech-only exports, compact summary and overview integration pass.');

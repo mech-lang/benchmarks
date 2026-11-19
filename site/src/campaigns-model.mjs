@@ -1,6 +1,6 @@
 export const backendLabels = {
   source:'Source artifact', bytecode:'Decoded bytecode', native:'Linked scalar application', jit:'Checked scalar JIT',
-  'source-native':'K-nucleotide application', 'fused-native':'Numerical application',
+  'source-native':'Source JIT application', 'fused-native':'Numerical JIT application',
   'program-jit':'Checked program JIT · source', 'program-jit-bytecode':'Checked program JIT · decoded',
   'program-linked':'Linked program qualification', 'process-workers':'Worker scaling',
   'related-managed':'Related posts · managed', 'related-compact':'Related posts · compact',
@@ -19,18 +19,20 @@ export function implementationFor(campaign,record) {
   return campaign.workers?.[record.lane]??{};
 }
 export const metrics = {
+  ekf_filter_turn_seconds: {label:'EKF filter-turn',unit:'seconds',note:'Warm numerical kernel time per filter-turn. The measured population, publication boundary, checks, worker count and machine are retained with each result; compilation and setup are excluded.'},
+  native_compression_call_seconds: {label:'Native compression call',unit:'seconds',note:'In-memory native encoder call, including private heap construction, allocation transfer and physical cleanup. Process startup, compilation and external validation are excluded.'},
   rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
-  output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. Mech level 12 and Rust zlib-rs maximum level 9 use different codecs; inspect size alongside time. Smaller is better.'},
-  post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
+  output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. The level-12 reference is libdeflate. Historical zlib-rs level-9 observations are separate codec results. Smaller is better.'},
+  post_json_seconds: {label:'Processing',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
   reported_processing_seconds: {label:'Rust example processing timer',unit:'seconds',note:'Unchanged related_post_gen rust_con timer. Its Rayon pool is initialized before the clock; this is retained as an explicitly asymmetric reference.'},
   jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
   jit_compile_seconds: {label:'JIT preparation',unit:'seconds',note:'Checked native code generation and executable-memory preparation. The complete Deflate program is compiled once per independent fork, shared by its 12 corpus cases.'},
   native_program_call_seconds: {label:'Checked program call',unit:'seconds',note:'Complete stateless canonical native call, including activation, managed checks, publication and scratch cleanup. Input import, warmup and returned-output destruction are outside the call.'},
-  control_call_seconds: {label:'Compressor control call',unit:'seconds',note:'Complete pinned Roc/libdeflate compressor call including scratch allocation and cleanup. Input loading, held aliases and output preparation are outside. Transport, allocator and ownership details differ from Mech; no automatic cross-runtime ratio is qualified.'},
+  control_call_seconds: {label:'Compressor control call',unit:'seconds',note:'Complete pinned libdeflate compressor call including scratch allocation and cleanup. Input loading, held aliases and output preparation are outside. Transport, allocator and ownership details differ from Mech; no automatic cross-runtime ratio is qualified.'},
   worker_group_process_seconds: {label:'Complete worker group',unit:'seconds',note:'Fixed total 196,608 accepted turns across 1, 2 or 4 independent Mech processes. Includes supervisor/process startup, compilation, activation, warmup, execution and complete teardown.'},
   accepted_turns_per_second: {label:'Accepted turns per second',unit:'rate',higherBetter:true,note:'Fixed total accepted turns divided by complete group lifecycle time. Higher is better. Worker counts are separate, explicit strong-scaling cases.'},
   source_to_executable_seconds: {label:'Source → executable',unit:'seconds',note:'Complete source compiler worker, dependency resolution, generated support build and final link. The separate qualification build warms support dependencies; each measured fork generates a new project.'},
-  native_process_seconds: {label:'Whole process lifecycle',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. Compilation and JIT preparation are included when the selected application performs them at startup.'},
+  native_process_seconds: {label:'Whole process',unit:'seconds',note:'Complete fresh-process startup, execution, output and shutdown. Compilation and JIT preparation are included when the selected application performs them at startup.'},
   object_text_bytes: {label:'Object code section',unit:'bytes',note:'Emitted object __text/.text section bytes, from the saved platform size report.'},
   linked_text_bytes: {label:'Linked code section',unit:'bytes',note:'Linked executable __text/.text section bytes. The generated release profile strips symbols.'},
   executable_bytes: {label:'Executable size',unit:'bytes',note:'Entire linked native executable under the generated release profile (strip=symbols).'},
@@ -50,15 +52,16 @@ export const metrics = {
 export function formatMetric(value, metric) {
   if (!Number.isFinite(value)) return '—';
   const unit=metrics[metric]?.unit;
+  const fixed=(number,digits)=>number.toFixed(digits).replace(/(?:\.0+|(\.\d*?[1-9])0+)$/,'$1');
   if(unit==='seconds') {
-    if(value<1e-6)return `${(value*1e9).toFixed(1)} ns`;
-    if(value<1e-3)return `${(value*1e6).toFixed(2)} µs`;
-    if(value<1)return `${(value*1e3).toFixed(2)} ms`;
-    return `${value.toFixed(3)} s`;
+    if(value<1e-6)return `${fixed(value*1e9,1)} ns`;
+    if(value<1e-3)return `${fixed(value*1e6,2)} µs`;
+    if(value<1)return `${fixed(value*1e3,2)} ms`;
+    return `${fixed(value,3)} s`;
   }
   if(unit==='bytes') {
-    if(value>=1024**2)return `${(value/1024**2).toFixed(2)} MiB`;
-    if(value>=1024)return `${(value/1024).toFixed(2)} KiB`;
+    if(value>=1024**2)return `${fixed(value/1024**2,2)} MiB`;
+    if(value>=1024)return `${fixed(value/1024,2)} KiB`;
     return `${value.toLocaleString()} B`;
   }
   return value.toLocaleString(undefined,{maximumFractionDigits:2});
@@ -76,7 +79,7 @@ export function compareRecords(baseline,candidate,metric) {
   const a=baseline.summary?.[metric]?.median,b=candidate.summary?.[metric]?.median;
   if(baseline.outcome!=='ok'||candidate.outcome!=='ok'||!(a>0)||!Number.isFinite(b))return {status:'unavailable',label:'—'};
   const percent=(b/a-1)*100;
-  return {status:'informational',percent,ratio:b/a,label:`${percent>0?'+':''}${percent.toFixed(1)}%`,reason:'Median change; informational. Separate campaigns are independent samples.'};
+  return {status:'informational',percent,ratio:b/a,label:comparisonLabel({ratio:b/a},metric),reason:'Median change; informational. Separate campaigns are independent samples.'};
 }
 
 export function stageFor(caseDefinition,record) { return record?.progress ?? caseDefinition.progress; }
@@ -133,33 +136,154 @@ export function measuredRows(bundle,{campaign='$latest',backend='$auto',metric='
 
 export function controlFor(bundle,row) {
   const {record,campaign,metric}=row;
-  const held=bundle.control_policy?.controls?.find(c=>c.case_id===record.case_id&&c.backend===record.backend&&c.metric===metric);
-  if(held){
-    const origin=bundle.campaigns.find(c=>c.id===held.campaign_id);
-    const reference=recordFor(origin,held.case_id,held.backend);
-    // A retained control remains pinned; new source or boundary needs qualification.
-    if(reference&&origin.started_at<=campaign.started_at&&compareRecords(reference,record,metric).status==='informational')return {kind:'mech',label:held.label,record:reference,campaign:origin,metric,reason:held.reason,promotion:held};
+  if(isJitRecord(record))return {kind:'pending',label:'JIT reference needed',href:'/metrics/jit/',
+    reason:'This JIT measurement has no qualified JIT peer for the same task and timing boundary. AOT Rust is not used as a JIT reference. The JIT view compares retained whole-process measurements with their fastest recorded JIT peers.'};
+  // The retained resident.rs controls match successful task outputs, not the
+  // managed runtime contract. Their shared control hash does not qualify
+  // rollback, admission, scheduling, accounting or publication semantics.
+  // This also covers allocation, cleanup and complete worker-group costs.
+  if(isManagedResidentRecord(record)||['resident_turn_seconds','initial_turn_seconds','activation_seconds','owned_snapshot_seconds','teardown_seconds','managed_retained_bytes','worker_group_process_seconds','accepted_turns_per_second'].includes(metric))return {
+    kind:'pending',label:'No equivalent resident reference',
+    reason:'Mech-only measurement. The saved Rust task controls do not establish equivalent rollback, input admission, dependency scheduling, budget accounting, snapshot retention and publication semantics. Matching inputs, outputs and timer boundaries does not qualify a resident-runtime comparison.'};
+  if(record.case_id==='deflate'||record.case_id.startsWith('deflate-')) {
+    const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
+    if(!mapped)return {kind:'pending',label:'No matched reference',reason:'No reference measures the same compiler, preparation or support operation. A compressor execution time is not a compiler measurement.'};
+    // These immutable source identities bind the retained wrapper's explicit
+    // libdeflate_alloc_compressor(12) call and its pinned libdeflate 1.26 build.
+    const references=mapped&&record.control_contract?bundle.campaigns.flatMap(origin=>origin.started_at<=campaign.started_at
+      ?origin.results.filter(reference=>reference.case_id===record.case_id&&reference.backend==='libdeflate'&&reference.outcome==='ok'
+        &&reference.revision==='92e6a0db9fa848d742f9eb286c92afc60f2c3dda'
+        &&reference.source_sha256==='a82938cd20ecb3404f0b0e3fc7d1553706442b8b956443d8ca98ebebacecec05'
+        &&reference.control_contract===record.control_contract
+        &&reference.task_hash===record.task_hash&&reference.environment_hash===record.environment_hash
+        &&Number.isFinite(reference.summary?.[mapped]?.median)).map(reference=>({origin,reference})):[]):[];
+    references.sort((a,b)=>a.origin.started_at.localeCompare(b.origin.started_at)||a.origin.id.localeCompare(b.origin.id));
+    const retained=references.at(-1);
+    if(retained)return {kind:'libdeflate',label:'libdeflate',record:retained.reference,campaign:retained.origin,metric:mapped,
+      reason:'Same task, environment and explicitly shared measurement contract; libdeflate 1.26 level 12.'};
+    return {kind:'pending',label:'No matched libdeflate timing',
+      reason:'This row reports a Mech measurement. No level-12 libdeflate timing has the same task, environment and shared measurement contract.'};
   }
   const control=campaign.results.find(r=>r.case_id===record.case_id&&r.lane==='control'&&r.backend==='rust'&&r.outcome==='ok');
   if(control){
     const mapped=control.measurement?.metric_mapping?.[metric]??metric;
-    if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:control.title??'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
+    if(record.control_contract&&record.control_contract===control.control_contract&&Number.isFinite(control.summary?.[mapped]?.median))return {kind:'rust',label:'Rust',record:control,campaign,metric:mapped,reason:control.measurement?.comparison_note??'Same task and timed boundary; independent Rust implementation.'};
   }
-  return {kind:'pending',label:'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
+  return {kind:'pending',label:['source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds','source_to_executable_seconds'].includes(metric)?'No matched compiler reference':'Rust · not measured',reason:'No qualified Rust control for this task, execution boundary and run. Previous Mech revisions remain available in the history comparison.'};
 }
 
 export function controlComparison(row,control) {
-  if(control.kind==='pending')return {status:'unavailable',label:'Control needed',reason:control.reason};
+  if(control.kind==='pending')return {status:'unavailable',label:'No matched comparison',reason:control.reason};
   if(control.kind==='mech'){
     if(control.record===row.record)return {status:'baseline',label:'Baseline held',reason:control.reason};
     return compareRecords(control.record,row.record,row.metric);
   }
   const a=control.record.summary[control.metric].median,b=row.record.summary?.[row.metric]?.median;
-  if(!(a>0)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
+  if(!(a>=0)||!(b>=0)||!Number.isFinite(a)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
   const percent=(b/a-1)*100;
-  const ratio=b/a,unit=metrics[row.metric]?.unit;
-  const label=unit==='seconds'&&(ratio>=2||ratio<=.5)
-    ?`${(ratio>=2?ratio:1/ratio).toLocaleString(undefined,{maximumFractionDigits:1})}× ${ratio>=2?'slower':'faster'}`
-    :`${percent>0?'+':''}${percent.toFixed(1)}%`;
+  const ratio=a===0?(b===0?1:Infinity):b/a;
+  const label=comparisonLabel({ratio},row.metric);
   return {status:'informational',percent,ratio,label,reason:control.reason+' Median change; informational.'};
+}
+
+export function comparisonDirection(change,metric) {
+  if(typeof change?.ratio!=='number'||!(change.ratio>=0)||Number.isNaN(change.ratio))return 'unmatched';
+  if(change.ratio===1)return 'equal';
+  return (change.ratio<1)!==!!metrics[metric]?.higherBetter?'faster':'slower';
+}
+
+export function comparisonLabel(change,metric) {
+  if(change?.status==='baseline')return 'Fixed Mech baseline';
+  const direction=comparisonDirection(change,metric);
+  if(direction==='unmatched')return '—';
+  if(direction==='equal')return '1× · equal';
+  const ratio=change.ratio,unit=metrics[metric]?.unit;
+  const suffix=unit==='bytes'?'size':unit==='count'?'count':unit==='rate'?'throughput':'time';
+  return `${formatRatio(ratio)}× ${suffix}`;
+}
+
+export function formatRatio(ratio) {
+  if(ratio===Infinity)return '∞';
+  let digits=ratio<10?3:ratio<100?2:1;
+  // Preserve tie, zero and severity boundaries in rounded labels.
+  if(ratio!==1&&ratio>0){
+    const ambiguous=rounded=>rounded===1||rounded===0||ratio>10&&rounded===10;
+    while(digits<15&&ambiguous(Number(ratio.toFixed(digits))))digits++;
+    if(ambiguous(Number(ratio.toFixed(digits))))return ratio.toPrecision(17);
+  }
+  return ratio.toLocaleString(undefined,{maximumFractionDigits:digits});
+}
+
+export function ratioColor(ratio,direction=typeof ratio==='number'&&ratio>=0?(ratio<1?'faster':ratio>1?'slower':'equal'):'unmatched') {
+  if(typeof ratio!=='number'||Number.isNaN(ratio)||ratio<0)return 'var(--unknown)';
+  if(direction==='faster')return 'var(--faster)';
+  if(direction==='equal')return 'var(--equal)';
+  if(direction!=='slower')return 'var(--unknown)';
+  // A throughput loss is the reciprocal of its displayed rate ratio.
+  const cost=ratio===0?Infinity:ratio<1?1/ratio:ratio;
+  const mild=cost<=10;
+  const fraction=mild?Math.max(0,Math.log10(cost)):Math.min(1,Math.log10(cost/10)/2);
+  const from=mild?[243,214,107]:[242,155,137],to=mild?[231,172,76]:[255,107,122];
+  return '#'+from.map((value,index)=>Math.round(value+(to[index]-value)*fraction).toString(16).padStart(2,'0')).join('');
+}
+export function comparisonStyle(change,metric) {
+  return '--comparison-color:'+ratioColor(change?.ratio,comparisonDirection(change,metric));
+}
+
+export function comparisonPlot(points,{width=900,label='Mech compared with its reference',measure='time'}={}) {
+  const valid=points.filter(p=>p.ratio>0&&Number.isFinite(p.ratio)).sort((a,b)=>a.ratio-b.ratio);
+  if(!valid.length)return '<p class="empty">No matched comparisons in this selection.</p>';
+  const escape=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  width=Math.max(300,Math.round(width));
+  const height=300,left=58,right=20,top=26,bottom=58;
+  const logs=valid.map(p=>Math.log10(p.ratio));
+  const low=Math.min(0,...logs)-.18,high=Math.max(0,...logs)+.18;
+  const y=r=>top+(high-Math.log10(r))/(high-low)*(height-top-bottom);
+  const x=i=>left+(valid.length===1?.5:i/(valid.length-1))*(width-left-right);
+  const ticks=Array.from({length:Math.floor(high)-Math.ceil(low)+1},(_,i)=>Math.ceil(low)+i).map(e=>({e,r:10**e}));
+  const tickText=r=>r>=1e6?`${(r/1e6).toLocaleString()}m`:r>=1000?`${(r/1000).toLocaleString()}k`:r<1?r.toLocaleString(undefined,{maximumFractionDigits:Math.min(12,Math.ceil(-Math.log10(r)))}):r.toLocaleString();
+  return `<svg class="comparison-plot" viewBox="0 0 ${width} ${height}" role="group" aria-label="${escape(label)}">
+    ${ticks.map(({r})=>`<line x1="${left}" x2="${width-right}" y1="${y(r)}" y2="${y(r)}" class="${r===1?'reference-line':'chart-grid'}"/><text x="${left-9}" y="${y(r)+4}" text-anchor="end">${tickText(r)}×</text>`).join('')}
+    <text x="${left}" y="15" class="chart-axis-label">Mech / reference ${escape(measure)} · log₁₀</text>
+    ${valid.map((p,i)=>`<circle data-compare="${escape(p.id)}" class="plot-point ${escape(p.direction??(p.ratio<1?'faster':p.ratio>1?'slower':'equal'))}" style="--comparison-color:${ratioColor(p.ratio,p.direction)}" cx="${x(i)}" cy="${y(p.ratio)}" r="4.2" tabindex="0" role="button" aria-label="${escape(p.title)} · ${escape(p.label??p.ratio+' times reference')}"/>`).join('')}
+    <text x="${left}" y="${height-30}">Lowest ratio</text><text x="${width-right}" y="${height-30}" text-anchor="end">Highest ratio</text>
+    <text x="${(left+width-right)/2}" y="${height-9}" text-anchor="middle">${valid.length} cases, ordered by relative ${escape(measure)}</text>
+  </svg>`;
+}
+
+export function referenceName(control) {
+  return control?.kind==='rust'?'Rust':['jit','gpu','aot'].includes(control?.kind)?(control.label??'Reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+}
+export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
+export function isJitRecord(record) {
+  return record?.execution_mode?record.execution_mode==='jit':['source-native','fused-native','program-jit','program-jit-bytecode','jit'].includes(record?.backend);
+}
+export function isManagedResidentRecord(record) {
+  return ['source','bytecode','process-workers'].includes(record?.backend);
+}
+export function implementationName(record) {
+  if(record?.execution_mode==='gpu')return 'Mech (GPU)';
+  if(record?.execution_mode==='aot'||['native','program-linked'].includes(record?.backend))return 'Mech (AOT)';
+  if(isJitRecord(record))return 'Mech (JIT)';
+  return 'Mech';
+}
+export function implementationURL(record) {
+  const url=record?.source_url;
+  if(typeof url==='string'&&(url.startsWith('/benchmarks/')||/^https?:\/\//.test(url)))return url;
+}
+export function implementationLink(record,label=implementationName(record)) {
+  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const url=implementationURL(record);
+  return url?`<a href="${escape(url)}">${escape(label)}</a>`:escape(label);
+}
+export function referenceURL(control) {
+  if(control?.kind==='pending')return undefined;
+  if(control?.kind==='libdeflate')return 'https://github.com/ebiggers/libdeflate/tree/92e6a0db9fa848d742f9eb286c92afc60f2c3dda';
+  const url=control?.record?.reference_url??(control?.record?.detail_path?'/benchmarks/'+control.record.detail_path:undefined);
+  if(url&&(url.startsWith('/benchmarks/')||/^https?:\/\//.test(url)))return url;
+}
+export function referenceLink(control) {
+  const name=referenceName(control),url=referenceURL(control);
+  const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  return url?`<a href="${escape(url)}">${escape(name)}</a>`:escape(name);
 }
