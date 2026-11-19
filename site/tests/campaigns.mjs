@@ -51,6 +51,8 @@ assert.equal(measuredRows(data,{progress:'failed'})[0].record.outcome,'error');
 assert.equal(measuredRows(data,{metric:'native_program_call_seconds'}).length,1);
 assert.equal(controlFor(data,rows[0]).kind,'rust');
 assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).percent,-50);
+assert.equal(controlComparison(rows[0],controlFor(data,rows[0])).label,'2× faster');
+assert.equal(formatMetric(3e-8,'rust_call_seconds'),'30.0 ns');
 assert.equal(controlFor(data,rows[1]).kind,'pending');
 data.control_policy={controls:[{case_id:'scalar',backend:'source',metric:'resident_turn_seconds',campaign_id:'resident',label:'Mech frozen baseline'}]};
 assert.equal(controlFor(data,rows[0]).record,measured);

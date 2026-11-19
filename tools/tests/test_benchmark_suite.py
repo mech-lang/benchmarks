@@ -228,6 +228,27 @@ class NativeFootprint(unittest.TestCase):
 
 
 class RetainedMeasurements(unittest.TestCase):
+    def test_compressed_size_is_bound_to_the_actual_worker_bytes(self):
+        import hashlib
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); parent=root/'raw/program/stdout.json'
+            save(parent,{'outcome':'ok','application_results':[{'name':'case','raw_hex':'abcdef','metrics':{'seconds':1}}],'metrics':{'artifact_bytes':12}})
+            metrics={'seconds':1,'artifact_bytes':12,'output_bytes':3}
+            receipt={'outcome':'ok','metrics':metrics,'derived_metrics':['output_bytes'],
+                'final_output':{'sha256':hashlib.sha256(bytes.fromhex('abcdef')).hexdigest()},
+                'parent_observation':{'path':'raw/program/stdout.json','sha256':file_digest(parent),'case':'case'}}
+            record={'case_id':'case','backend':'program-jit','lane':'candidate','progress':'measured','outcome':'ok',
+                'task':{},'task_hash':digest({}),'measurement':{},'measurement_hash':digest({}),
+                'source':'test','source_sha256':hashlib.sha256(b'test').hexdigest(),'environment_hash':digest({}),
+                'samples':[{'fork':0,'raw':'raw/fork-1','metrics':metrics}]}
+            record['summary']=summarize(record['samples'])
+            campaign={'schema':'mech.benchmark-campaign.v1','complete':True,'environment':{},'environment_hash':digest({}),'results':[record]}
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            self.assertTrue(validate_campaign(root,campaign))
+            metrics['output_bytes']=2;record['summary']=summarize(record['samples'])
+            save(root/'raw/fork-1/supervised.json',receipt);seal_evidence(root)
+            with self.assertRaisesRegex(ValueError,'actual program worker'):validate_campaign(root,campaign)
+
     def test_resealed_receipt_cannot_replace_original_retained_timing(self):
         import gzip
         import hashlib
@@ -255,6 +276,74 @@ class RetainedMeasurements(unittest.TestCase):
 
 
 class ExportPreservation(unittest.TestCase):
+    def test_large_download_is_compressed_without_changing_any_bytes(self):
+        import gzip
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); campaign=root/'results/campaigns/compressed'
+            campaign.mkdir(parents=True)
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'compressed','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':digest({}),'results':[]})
+            raw=campaign/'raw/verify/supervised.json';save(raw,{'outputs':['complete trajectory']*10000})
+            original=raw.read_bytes();seal_evidence(campaign);archive_evidence(campaign)
+            archive=campaign/'raw.tar.gz'
+            pin={'sha256':file_digest(archive),'bytes':archive.stat().st_size}
+            save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':pin}})
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                bundle=export_suite.export(root/'public',root)
+            index=bundle['campaigns'][0]
+            self.assertNotIn('compressed_evidence',index)
+            record=json.loads((root/'public'/index['context_path']).read_text())['campaign']
+            self.assertEqual(record['compressed_evidence']['raw/verify/supervised.json'],'raw/verify/supervised.json.gz')
+            self.assertEqual(gzip.decompress((root/'public/campaign-evidence/compressed/raw/verify/supervised.json.gz').read_bytes()),original)
+            self.assertFalse((root/'public/campaign-evidence/compressed/raw.tar.gz').exists())
+            self.assertEqual(bundle['external_evidence']['campaign-evidence/compressed/raw.tar.gz']['sha256'],pin['sha256'])
+            self.assertIn('/'+('a'*40)+'/results/campaigns/compressed/raw.tar.gz',record['raw_archive_url'])
+            self.assertEqual(file_digest(archive),pin['sha256'])
+            save(root/'suite/evidence-hosting.json',{'schema':'mech.benchmark-evidence-hosting.v1','source_commit':'a'*40,'archives':{'compressed':{**pin,'sha256':'0'*64}}})
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                with self.assertRaisesRegex(ValueError,'differs from retained bytes'):export_suite.export(root/'public',root)
+
+    def test_summary_defers_sources_schedules_and_observations(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory);campaign=root/'results/campaigns/lazy'
+            case=copy.deepcopy(load_catalog()['cases'][0]);host=digest({})
+            samples=[{'fork':0,'raw':'raw/fork-1','metrics':{'resident_turn_seconds':.00001}}]
+            record={'case_id':case['id'],'backend':'source','lane':'candidate','revision':'revision',
+                'task':case['task'],'task_hash':digest(case['task']),'measurement':case['measurement'],
+                'measurement_hash':digest(case['measurement']),'source':'exact measured source',
+                'source_sha256':__import__('hashlib').sha256(b'exact measured source').hexdigest(),
+                'environment_hash':host,'outcome':'ok','progress':'measured','samples':samples,'summary':summarize(samples)}
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'lazy','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':host,'results':[record]})
+            save(campaign/'raw/fork-1/supervised.json',{'outcome':'ok','metrics':samples[0]['metrics']})
+            save(campaign/'raw/fork-1/request.json',{'schedule':case['measurement']['schedule']})
+            seal_evidence(campaign)
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[case]}):
+                bundle=export_suite.export(root/'public',root)
+            self.assertEqual(bundle['schema'],'mech.benchmark-dashboard.v2')
+            summary=bundle['campaigns'][0]['results'][0]
+            for field in ('source','samples','task','verification'):self.assertNotIn(field,summary)
+            self.assertNotIn('schedule',summary['measurement'])
+            self.assertNotIn('measurement',bundle['catalog']['cases'][0])
+            detail=json.loads((root/'public'/summary['detail_path']).read_text())
+            self.assertEqual(detail['record'],record)
+            self.assertEqual(detail['definition'],case)
+            self.assertEqual(summary['summary']['resident_turn_seconds']['median'],record['summary']['resident_turn_seconds']['median'])
+            self.assertFalse((root/'public/campaign-evidence/lazy/raw/fork-1/request.json').exists())
+            self.assertEqual((root/'public/campaign-evidence/lazy/raw/fork-1/supervised.json').read_bytes(),(campaign/'raw/fork-1/supervised.json').read_bytes())
+
+    def test_independent_c_oracle_source_is_downloadable(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); campaign=root/'results/campaigns/oracle-source'
+            campaign.mkdir(parents=True)
+            save(campaign/'campaign.json',{'schema':'mech.benchmark-campaign.v1','id':'oracle-source','complete':True,
+                'started_at':'2026-11-17','environment':{},'environment_hash':digest({}),'results':[]})
+            (campaign/'oracle.c').write_text('int main(void) { return 0; }\n')
+            seal_evidence(campaign)
+            with patch.object(export_suite,'load_catalog',return_value={'cases':[]}):
+                export_suite.export(root/'public',root)
+            self.assertEqual((root/'public/campaign-evidence/oracle-source/oracle.c').read_bytes(),(campaign/'oracle.c').read_bytes())
+
     def test_bad_incoming_evidence_preserves_existing_export(self):
         with tempfile.TemporaryDirectory() as directory:
             root=Path(directory)

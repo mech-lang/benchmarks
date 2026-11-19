@@ -74,6 +74,23 @@ class PagesPublication(unittest.TestCase):
             with self.assertRaisesRegex(RuntimeError, 'exceeds expected size'):
                 pages.check_live_asset('https://mech-lang.org/metrics/', {'bytes': 1})
 
+    def test_external_archives_require_an_immutable_expected_repository(self):
+        name='campaign-evidence/run-001/raw.tar.gz'
+        pin={'url':'https://raw.githubusercontent.com/mech-lang/benchmarks/'+('a'*40)+'/results/campaigns/run-001/raw.tar.gz',
+             'sha256':'b'*64,'bytes':10}
+        manifest={**self.manifest,'external_files':{name:pin}}
+        self.assertEqual(pages.external_assets(manifest),{name:pin})
+        for url in [pin['url'].replace('a'*40,'main'),pin['url'].replace('mech-lang/benchmarks','different/repo'),pin['url'].replace('https:','http:')]:
+            with self.subTest(url=url),self.assertRaisesRegex(RuntimeError,'immutable repository'):
+                pages.external_assets({**manifest,'external_files':{name:{**pin,'url':url}}})
+
+    def test_archive_redirect_must_reach_its_pinned_commit(self):
+        response=io.BytesIO(b'complete archive');response.status=200
+        response.geturl=lambda:'https://raw.githubusercontent.com/mech-lang/benchmarks/main/results/campaigns/run-001/raw.tar.gz'
+        with patch.object(pages,'request',return_value=response),self.assertRaisesRegex(RuntimeError,'redirect differs'):
+            pages.check_live_asset('https://mech-lang.org/benchmarks/campaign-evidence/run-001/raw.tar.gz',{'bytes':16},
+                'https://raw.githubusercontent.com/mech-lang/benchmarks/'+('a'*40)+'/results/campaigns/run-001/raw.tar.gz')
+
 
 if __name__ == '__main__':
     unittest.main()

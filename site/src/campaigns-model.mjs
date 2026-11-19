@@ -19,6 +19,8 @@ export function implementationFor(campaign,record) {
   return campaign.workers?.[record.lane]??{};
 }
 export const metrics = {
+  rust_call_seconds: {label:'Rust checked task call',unit:'seconds',controlOnly:true,note:'Independent AOT Rust implementation, including typed input validation and owned publication. Mech runtime admission and accounting remain specific to Mech.'},
+  output_bytes: {label:'Compressed output size',unit:'bytes',note:'Complete owned prefix plus raw DEFLATE stream. Mech level 12 and Rust zlib-rs maximum level 9 use different codecs; inspect size alongside time. Smaller is better.'},
   post_json_seconds: {label:'Complete post-JSON work',unit:'seconds',note:'Related Post Gen: input admission, preparation, allocations, fresh worker creation/run/join, internal cleanup and result materialization. JSON IO and artifact restoration remain in whole-process time. The original Rust example excludes pool initialization; that advantage is preserved and disclosed.'},
   reported_processing_seconds: {label:'Rust example processing timer',unit:'seconds',note:'Unchanged related_post_gen rust_con timer. Its Rayon pool is initialized before the clock; this is retained as an explicitly asymmetric reference.'},
   jit_invocation_seconds: {label:'Checked scalar JIT call',unit:'seconds',note:'Warm checked native scalar call, including managed admission and result validation. Source compilation, native lowering and JIT preparation are separate.'},
@@ -155,5 +157,9 @@ export function controlComparison(row,control) {
   const a=control.record.summary[control.metric].median,b=row.record.summary?.[row.metric]?.median;
   if(!(a>0)||!Number.isFinite(b)||row.record.outcome!=='ok')return {status:'unavailable',label:'No comparison'};
   const percent=(b/a-1)*100;
-  return {status:'informational',percent,ratio:b/a,label:`${percent>0?'+':''}${percent.toFixed(1)}%`,reason:control.reason+' Median change; informational.'};
+  const ratio=b/a,unit=metrics[row.metric]?.unit;
+  const label=unit==='seconds'&&(ratio>=2||ratio<=.5)
+    ?`${(ratio>=2?ratio:1/ratio).toLocaleString(undefined,{maximumFractionDigits:1})}× ${ratio>=2?'slower':'faster'}`
+    :`${percent>0?'+':''}${percent.toFixed(1)}%`;
+  return {status:'informational',percent,ratio,label,reason:control.reason+' Median change; informational.'};
 }

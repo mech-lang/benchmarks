@@ -1,0 +1,95 @@
+# Paired Rust task controls
+
+Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric.
+
+| Task / Mech path | Mech seconds | Rust seconds | Mech / Rust |
+| --- | ---: | ---: | ---: |
+| scalar-changed / source | 1.893195e-07 | 2.27153333e-08 | 8.334 |
+| scalar-changed / bytecode | 1.92111167e-07 | 2.27153333e-08 | 8.457 |
+| scalar-unchanged / source | 1.449445e-07 | 4.69433333e-09 | 30.876 |
+| scalar-unchanged / bytecode | 1.43993e-07 | 4.69433333e-09 | 30.674 |
+| numerical-pipeline / source | 3.62298667e-07 | 2.77776667e-08 | 13.043 |
+| numerical-pipeline / bytecode | 3.78027833e-07 | 2.77776667e-08 | 13.609 |
+| matrix-product / source | 8.92129167e-06 | 2.27568333e-08 | 392.027 |
+| matrix-product / bytecode | 8.927007e-06 | 2.27568333e-08 | 392.278 |
+| filter-cardinality / source | 0.000118837692 | 7.9625e-08 | 1492.467 |
+| filter-cardinality / bytecode | 0.000119764817 | 7.9625e-08 | 1504.111 |
+| map-lookup / source | 1.14798645e-05 | 2.59375e-08 | 442.597 |
+| map-lookup / bytecode | 1.14730312e-05 | 2.59375e-08 | 442.334 |
+| branch-selection / source | 2.59470825e-06 | 2.32605e-08 | 111.550 |
+| branch-selection / bytecode | 2.59697925e-06 | 2.32605e-08 | 111.648 |
+| function-call / source | 3.15035417e-06 | 2.33125e-08 | 135.136 |
+| function-call / bytecode | 3.1336735e-06 | 2.33125e-08 | 134.420 |
+| tail-recursion / source | 0.000388082451 | 3.34096667e-08 | 11615.873 |
+| tail-recursion / bytecode | 0.000386199188 | 3.34096667e-08 | 11559.504 |
+| state-evolution / source | 3.07138833e-07 | 5.56933333e-09 | 55.148 |
+| state-evolution / bytecode | 3.086945e-07 | 5.56933333e-09 | 55.428 |
+| set-union / source | 2.5766243e-05 | 6.84583333e-08 | 376.378 |
+| set-union / bytecode | 2.56832015e-05 | 6.84583333e-08 | 375.165 |
+| record-projection / source | 2.7615389e-05 | 2.30555e-08 | 1197.779 |
+| record-projection / bytecode | 2.76865555e-05 | 2.30555e-08 | 1200.866 |
+| numerical-application / source | 5.76715167e-07 | 6.59016667e-09 | 87.511 |
+| numerical-application / bytecode | 5.7325e-07 | 6.59016667e-09 | 86.986 |
+| dependency-fanout / source | 5.05903483e-06 | 2.89236667e-08 | 174.910 |
+| dependency-fanout / bytecode | 5.06372217e-06 | 2.89236667e-08 | 175.072 |
+| touched-equal / source | 1.47e-07 | 2.34375e-08 | 6.272 |
+| touched-equal / bytecode | 1.45e-07 | 2.34375e-08 | 6.187 |
+| retained-snapshots / source | 0.000118981292 | 6.9225e-08 | 1718.762 |
+| retained-snapshots / bytecode | 0.000118537925 | 6.9225e-08 | 1712.357 |
+| abort-recovery / source | 6.78264e-07 | 6.35416667e-09 | 106.743 |
+| abort-recovery / bytecode | 6.783265e-07 | 6.35416667e-09 | 106.753 |
+| compile-chain / source | 1.40413472e-05 | 2.26826333e-07 | 61.904 |
+| compile-chain / bytecode | 1.39179167e-05 | 2.26826333e-07 | 61.359 |
+| ekf / source | 1.31176758e-06 | 1.10748291e-07 | 11.845 |
+| ekf / bytecode | 1.32829785e-06 | 1.10748291e-07 | 11.994 |
+| table-joins / source | 4.10323584e-05 | 1.579418e-07 | 259.794 |
+| table-joins / bytecode | 4.062545e-05 | 1.579418e-07 | 257.218 |
+| graphs / source | 1.70039666e-05 | 7.775e-08 | 218.701 |
+| graphs / bytecode | 1.7028275e-05 | 7.775e-08 | 219.013 |
+| strings / source | 2.55770455e-06 | 2.53939091e-08 | 100.721 |
+| strings / bytecode | 2.57478409e-06 | 2.53939091e-08 | 101.394 |
+| state-machines / source | 5.9795e-06 | 8.35e-08 | 71.611 |
+| state-machines / bytecode | 6.0835e-06 | 8.35e-08 | 72.856 |
+| jit / jit | 1.38966675e-06 | 2.3284375e-07 | 5.968 |
+| capacity-growth / source | 0.00051636705 | 7.1725e-08 | 7199.262 |
+| capacity-growth / bytecode | 0.000514905125 | 7.1725e-08 | 7178.879 |
+| rejected-recovery / source | 2.37e-07 | 2.74332e-08 | 8.639 |
+| rejected-recovery / bytecode | 2.38575e-07 | 2.74332e-08 | 8.697 |
+| table-left-outer-join / source | 4.55357666e-05 | 1.9565e-07 | 232.741 |
+| table-left-outer-join / bytecode | 4.35645416e-05 | 1.9565e-07 | 222.666 |
+| table-right-outer-join / source | 4.7506425e-05 | 2.171666e-07 | 218.756 |
+| table-right-outer-join / bytecode | 4.7446725e-05 | 2.171666e-07 | 218.481 |
+| table-full-outer-join / source | 5.14194334e-05 | 2.467666e-07 | 208.373 |
+| table-full-outer-join / bytecode | 5.13614418e-05 | 2.467666e-07 | 208.138 |
+| table-left-semi-join / source | 3.80295666e-05 | 1.260334e-07 | 301.742 |
+| table-left-semi-join / bytecode | 3.80543666e-05 | 1.260334e-07 | 301.939 |
+| table-left-anti-join / source | 3.76346916e-05 | 9.96832e-08 | 377.543 |
+| table-left-anti-join / bytecode | 3.75815832e-05 | 9.96832e-08 | 377.010 |
+| string-graphemes / source | 3.01665832e-05 | 4.9521e-08 | 609.167 |
+| string-graphemes / bytecode | 3.0100823e-05 | 4.9521e-08 | 607.840 |
+| capacity-growth-7 / source | 0.000577892733 | 1.286834e-07 | 4490.810 |
+| capacity-growth-7 / bytecode | 0.000573684675 | 1.286834e-07 | 4458.109 |
+| capacity-growth-8 / source | 0.000586027025 | 1.3855e-07 | 4229.715 |
+| capacity-growth-8 / bytecode | 0.000587964142 | 1.3855e-07 | 4243.696 |
+| capacity-growth-9 / source | 0.000597187542 | 1.553168e-07 | 3844.964 |
+| capacity-growth-9 / bytecode | 0.000603068317 | 1.553168e-07 | 3882.827 |
+| capacity-growth-15 / source | 0.000671592183 | 1.672e-07 | 4016.700 |
+| capacity-growth-15 / bytecode | 0.000668625208 | 1.672e-07 | 3998.955 |
+| capacity-growth-16 / source | 0.000681112725 | 1.789082e-07 | 3807.051 |
+| capacity-growth-16 / bytecode | 0.000683051967 | 1.789082e-07 | 3817.891 |
+| capacity-growth-17 / source | 0.000699863258 | 2.001418e-07 | 3496.837 |
+| capacity-growth-17 / bytecode | 0.0006987524 | 2.001418e-07 | 3491.287 |
+| capacity-growth-31 / source | 0.0008728166 | 2.0465e-07 | 4264.924 |
+| capacity-growth-31 / bytecode | 0.000870815183 | 2.0465e-07 | 4255.144 |
+| capacity-growth-32 / source | 0.000881725733 | 2.164834e-07 | 4072.948 |
+| capacity-growth-32 / bytecode | 0.0008906818 | 2.164834e-07 | 4114.319 |
+| capacity-growth-33 / source | 0.000896505542 | 2.31725e-07 | 3868.834 |
+| capacity-growth-33 / bytecode | 0.0009034909 | 2.31725e-07 | 3898.979 |
+| capacity-growth-63 / source | 0.00125252085 | 2.582416e-07 | 4850.190 |
+| capacity-growth-63 / bytecode | 0.00126451672 | 2.582416e-07 | 4896.642 |
+| capacity-growth-64 / source | 0.00126740693 | 2.71475e-07 | 4668.595 |
+| capacity-growth-64 / bytecode | 0.00127051952 | 2.71475e-07 | 4680.061 |
+| capacity-growth-65 / source | 0.0012804097 | 1.61325e-07 | 7936.834 |
+| capacity-growth-65 / bytecode | 0.00128833281 | 1.61325e-07 | 7985.946 |
+
+Initial capacity measurements are retained with the known progress-monitor interference. Use the independent 2026-11-17-rust-capacity-002 sweep for the current capacity comparison. The complete original index is preserved losslessly in complete-campaign.json.gz.

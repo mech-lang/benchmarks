@@ -1,0 +1,2061 @@
+{
+  "schema": "mech.benchmark-campaign.v1",
+  "id": "2026-11-17-rust-concurrent-001",
+  "started_at": "2026-11-17T17:21:22.573786+00:00",
+  "profile": "paired-rust-concurrent",
+  "environment": {
+    "system": "Darwin",
+    "release": "25.2.0",
+    "machine": "arm64",
+    "cpu": "Apple M3",
+    "logical_cpus": 8,
+    "python": "3.14.8",
+    "thread_environment": {}
+  },
+  "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+  "workers": {
+    "candidate": {
+      "protocol": 1,
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "source_checkout": "/Users/cim310/.codex/worktrees/level12-compile-profile/mech",
+      "dirty": false,
+      "tracked_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/target/release/mech-benchmark-worker",
+      "binary_sha256": "2746bd2ce9f5d633086e6b06d4ebebed348e3d984251c8d734d110cc4290fc4d",
+      "adapter_sha256": "bd5e6f51c55a1a8b2ceda48bf4241382115902acb7d465b3377de1ba7d554e16",
+      "manifest_sha256": "57e1d8c3efac72a80ca18a0ae3404cf15e66cdfec1aac415fa0e6cdf9ac77def",
+      "lock_sha256": "bbab11f0a3a09351b1a12e2f2820405b5e3b696dd87ddc6c91e840cd38b72746",
+      "rustc": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0",
+      "cargo": "cargo 1.96.0-nightly (f298b8c82 2026-02-24)",
+      "build_command": [
+        "cargo",
+        "build",
+        "--release",
+        "--manifest-path",
+        "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/Cargo.toml",
+        "--offline",
+        "--features",
+        "native"
+      ],
+      "feature_profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact",
+      "native_generation": true,
+      "applications": {},
+      "auxiliary_adapter_sha256": {
+        "application.rs": "e222e1d6f8b0237f3dd0086d41588d968b69a060203db2e02ab633e62c5ee628",
+        "numerical_application.rs": "765caa3d80273ddf6966d4f5534e38e206380cde3a2a0a5a3c86c56618953e3a",
+        "program.rs": "fad83badc89f6d7f62bea145f964d90e5f8acb6101551d01f7d02901cd8b2a2c"
+      },
+      "worker_build_seconds": 2.219266875181347,
+      "build_environment": {
+        "RUSTC_BOOTSTRAP": "1",
+        "CARGO_TARGET_DIR": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/target"
+      },
+      "manifest_path": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/workers/program-complete-9087/worker.json"
+    }
+  },
+  "sampling": {
+    "forks": 5,
+    "cycles": 1000,
+    "seed": 202611172,
+    "order": "Seeded random order within every case/fork block; verification separate; all measured observations retained"
+  },
+  "results": [
+    {
+      "case_id": "concurrent",
+      "title": "Worker scaling · 1 process",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 1,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "ec588d9b1aff5dbdf38f60b442218a9477fbd7013720d82dc3bc71d10eeb0e91",
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact"
+      },
+      "control_contract": "a77f4855c60f2d43432fa04076f063f4993d7d62a687a448a62496de64875936",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent/process-workers/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.09836195921525359,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1998821.5115738646,
+            "sum_worker_execution_block_seconds": 0.0752105,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent/process-workers/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.10504395794123411,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1871673.5722200277,
+            "sum_worker_execution_block_seconds": 0.075270875,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent/process-workers/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.10489816591143608,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1874274.9054925626,
+            "sum_worker_execution_block_seconds": 0.074995792,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent/process-workers/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.1051851250231266,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1869161.632472012,
+            "sum_worker_execution_block_seconds": 0.074974542,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent/process-workers/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.10597791709005833,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 1855178.941032835,
+            "sum_worker_execution_block_seconds": 0.075827458,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent/process-workers/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 1871673.5722200277,
+          "min": 1855178.941032835,
+          "max": 1998821.5115738646,
+          "stdev": 59158.59810807165,
+          "samples": [
+            1998821.5115738646,
+            1871673.5722200277,
+            1874274.9054925626,
+            1869161.632472012,
+            1855178.941032835
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.0752105,
+          "min": 0.074974542,
+          "max": 0.075827458,
+          "stdev": 0.000344884919806301,
+          "samples": [
+            0.0752105,
+            0.075270875,
+            0.074995792,
+            0.074974542,
+            0.075827458
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.10504395794123411,
+          "min": 0.09836195921525359,
+          "max": 0.10597791709005833,
+          "stdev": 0.0031202540080520454,
+          "samples": [
+            0.09836195921525359,
+            0.10504395794123411,
+            0.10489816591143608,
+            0.1051851250231266,
+            0.10597791709005833
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent",
+      "title": "Rust · task control",
+      "family": "concurrency",
+      "backend": "rust",
+      "lane": "control",
+      "revision": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 1,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "ec588d9b1aff5dbdf38f60b442218a9477fbd7013720d82dc3bc71d10eeb0e91",
+      "source": "//! Independent task controls. No Mech compiler, runtime, or oracle is linked.\nuse serde_json::{json, Value};\nuse std::alloc::{GlobalAlloc, Layout, System};\nuse std::hint::black_box;\nuse std::io::{self, Read};\nuse std::sync::{atomic::{AtomicU64, Ordering::Relaxed}, Arc, Weak};\nuse std::time::Instant;\nuse unicode_segmentation::UnicodeSegmentation;\n\nstruct Counting;\nstatic ALLOCS: AtomicU64 = AtomicU64::new(0);\nstatic BYTES: AtomicU64 = AtomicU64::new(0);\nunsafe impl GlobalAlloc for Counting {\n    unsafe fn alloc(&self, l: Layout) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(l.size() as u64, Relaxed);\n        System.alloc(l)\n    }\n    unsafe fn dealloc(&self, p: *mut u8, l: Layout) { System.dealloc(p, l) }\n    unsafe fn realloc(&self, p: *mut u8, l: Layout, n: usize) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(n as u64, Relaxed);\n        System.realloc(p, l, n)\n    }\n}\n#[global_allocator] static ALLOCATOR: Counting = Counting;\n\n#[derive(Clone, PartialEq)]\nenum Input { Numbers(Vec<f64>), Text(String) }\nimpl Input {\n    fn numbers(&self) -> &[f64] { match self { Self::Numbers(v) => v, _ => panic!(\"numeric frame required\") } }\n    fn text(&self) -> &str { match self { Self::Text(s) => s, _ => panic!(\"string frame required\") } }\n}\n#[derive(Clone)]\nenum Output {\n    Unpublished, Number(f64), Bool(bool),\n    Matrix([usize; 2], Arc<Vec<f64>>), Set(Arc<Vec<f64>>),\n    Table(bool, Arc<Vec<Vec<Option<f64>>>>),\n}\nimpl Output {\n    fn json(&self) -> Value {\n        match self {\n            Self::Unpublished => json!({\"kind\":\"unpublished\"}),\n            Self::Number(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Bool(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Matrix(shape,v) => json!({\"kind\":\"matrix\",\"shape\":shape,\"values\":**v}),\n            Self::Set(v) => json!({\"kind\":\"set\",\"values\":**v}),\n            Self::Table(two,v) => json!({\"kind\":\"table\",\"columns\":if *two {vec![\"key\",\"left\"]} else {vec![\"key\",\"left\",\"right\"]},\"rows\":**v}),\n        }\n    }\n}\n\n#[derive(Clone, Copy, PartialEq)]\nenum Task { Scalar, Pipeline, Matrix, Map, Branch, Recursion, Record, State, Oscillator, Wide, Chain, Filter, Collection, Strings, Graphemes, Fsm, Graph, Join(u8), Ekf }\nimpl Task {\n    fn parse(s: &str) -> Self {\n        match s {\n            \"scalar\"=>Self::Scalar,\"pipeline\"=>Self::Pipeline,\"matrix\"=>Self::Matrix,\n            \"map\"=>Self::Map,\"branch\"=>Self::Branch,\"recursion\"=>Self::Recursion,\n            \"record\"=>Self::Record,\"state\"=>Self::State,\"oscillator\"=>Self::Oscillator,\n            \"wide\"=>Self::Wide,\"chain\"=>Self::Chain,\"filter\"=>Self::Filter,\n            \"collection\"=>Self::Collection,\"strings\"=>Self::Strings,\"graphemes\"=>Self::Graphemes,\n            \"fsm\"=>Self::Fsm,\"graph\"=>Self::Graph,\"ekf\"=>Self::Ekf,\n            \"table-join\"=>Self::Join(0),\"table-left-outer-join\"=>Self::Join(1),\n            \"table-right-outer-join\"=>Self::Join(2),\"table-full-outer-join\"=>Self::Join(3),\n            \"table-left-semi-join\"=>Self::Join(4),\"table-left-anti-join\"=>Self::Join(5),\n            _=>panic!(\"unimplemented Rust task {s}\"),\n        }\n    }\n    fn stateful(self) -> bool { matches!(self,Self::State|Self::Oscillator|Self::Fsm|Self::Ekf) }\n    fn validate(self, input: &Input) -> bool {\n        match input {\n            Input::Text(_)=>matches!(self,Self::Strings|Self::Graphemes|Self::Fsm),\n            Input::Numbers(v)=>v.iter().all(|x|x.is_finite()) && match self {\n                Self::Strings|Self::Graphemes|Self::Fsm=>false,\n                Self::Filter=>true, Self::State|Self::Oscillator=>v.is_empty(),\n                Self::Ekf=>v.len()==4, _=>v.len()==1,\n            }\n        }\n    }\n}\n\nstruct Instance {\n    task: Task, previous: Option<Input>, published: Output, turns: usize,\n    position: f64, velocity: f64, captured: Option<String>, ekf: Ekf,\n}\nimpl Instance {\n    fn new(task: Task) -> Self { Self {task,previous:None,published:Output::Unpublished,turns:0,position:1.,velocity:0.,captured:None,ekf:Ekf::new()} }\n    fn prepare<'a>(&self, input: &'a Input) -> Result<&'a Input, ()> { if self.task.validate(input) { Ok(input) } else { Err(()) } }\n    fn turn(&mut self, input: &Input) {\n        let input = self.prepare(input).expect(\"rejected valid frame\");\n        self.turns += 1;\n        if !self.task.stateful() && self.previous.as_ref()==Some(input) { return; }\n        let x = match input {Input::Numbers(v)=>v.first().copied().unwrap_or(0.),_=>0.};\n        self.published = match self.task {\n            Task::Scalar=>Output::Number(x*x+1.),\n            Task::Pipeline=>Output::Number((x*x+1.).sqrt()+x.sin()),\n            Task::Matrix=>{\n                let a=[[x,2.],[3.,4.]];let b=[[2.,0.],[1.,3.]];let mut c=[[0.;2];2];\n                for i in 0..2 {for j in 0..2 {for k in 0..2 {c[i][j]+=a[i][k]*b[k][j];}}}\n                Output::Number(c[0][0]+c[1][1])\n            },\n            Task::Map=>Output::Number([(1.,10.),(2.,20.),(3.,30.)].iter().find(|(k,_)|*k==x).expect(\"missing map key\").1+1.),\n            Task::Branch=>Output::Number(if x==0. {100.} else {x*x+1.}),\n            Task::Recursion=>{let mut sum=0.;for i in 1..=x as u64 {sum+=i as f64;} Output::Number(sum)},\n            Task::Record=>{struct Record{square:f64,value:f64} let r=Record{square:x*x,value:x};Output::Number(r.square+r.value+1.)},\n            Task::State=>{let n=self.turns as f64;Output::Number(n*n+1.)},\n            Task::Oscillator=>{self.velocity-=self.position*0.01;self.position+=self.velocity*0.01;Output::Number(self.position)},\n            Task::Wide=>{let mut sum=0.;for i in 0..32 {sum+=x*(i+1) as f64+i as f64;}Output::Number(sum)},\n            Task::Chain=>{let mut v=x;for _ in 0..128 {v=v*1.0001+0.01;}Output::Number(v)},\n            Task::Filter=>{let v:Vec<_>=input.numbers().iter().filter(|v|**v>0.).map(|v|v*v).collect();Output::Matrix([1,v.len()],Arc::new(v))},\n            Task::Collection=>{let mut v=vec![x,2.,3.];v.sort_by(f64::total_cmp);v.dedup();Output::Set(Arc::new(v))},\n            Task::Strings=>Output::Number(match input.text() {\"\"=>0.,\"é\"=>1.,\"é\"=>2.,\"👩🏽‍💻\"=>3.,\"\\r\\n\"=>4.,_=>9.}),\n            Task::Graphemes=>{let line=input.text().lines().next().unwrap_or(\"\");Output::Number(match line.graphemes(true).nth(1) {Some(\"é\")=>1.,Some(\"é\")=>2.,_=>3.})},\n            Task::Fsm=>if self.turns==1 {self.captured=Some(input.text().to_owned());Output::Unpublished} else {Output::Bool(self.captured.as_deref()==Some(\"é\"))},\n            Task::Join(op)=>join(op,x),\n            Task::Graph=>{\n                let mut v=[0.;8];v[0]=1.;\n                for _ in 0..7 {let mut n=v;n[1]+=v[0]*2.;for(a,b)in[(1,2),(2,3),(3,1),(4,5),(5,6),(6,7)]{n[b]+=v[a];}n[4]+=v[3]*x;v=n;}\n                Output::Matrix([8,1],Arc::new(v.to_vec()))\n            },\n            Task::Ekf=>Output::Matrix([1,12],Arc::new(self.ekf.step(input.numbers()).to_vec())),\n        };\n        // Input admission keeps an owned copy; callers can change their next frame without publishing a result.\n        self.previous=Some(input.clone());\n    }\n}\n\nfn join(op:u8,key:f64)->Output {\n    let left=[(key,10.),(key,11.),(2.,12.),(3.,13.)];let right=[(1.,20.),(1.,21.),(2.,22.),(4.,23.)];\n    let mut rows=Vec::new();let mut matched=[false;4];\n    for (k,l) in left {\n        let mut any=false;\n        for (i,(rk,r)) in right.iter().enumerate() {if k==*rk {any=true;matched[i]=true;if op<4 {rows.push(vec![Some(k),Some(l),Some(*r)]);}}}\n        if (op==4 && any)||(op==5 && !any) {rows.push(vec![Some(k),Some(l)]);}\n        if !any && (op==1||op==3) {rows.push(vec![Some(k),Some(l),None]);}\n    }\n    if op==2||op==3 {for (i,(k,r)) in right.iter().enumerate() {if !matched[i] {rows.push(vec![Some(*k),None,Some(*r)]);}}}\n    Output::Table(op>=4,Arc::new(rows))\n}\n\nfn mul<const R:usize,const K:usize,const C:usize>(a:[[f64;K];R],b:[[f64;C];K])->[[f64;C];R] {\n    let mut out=[[0.;C];R];for i in 0..R {for j in 0..C {for k in 0..K {out[i][j]+=a[i][k]*b[k][j];}}}out\n}\nfn transpose<const R:usize,const C:usize>(a:[[f64;C];R])->[[f64;R];C] {let mut out=[[0.;R];C];for i in 0..R {for j in 0..C {out[j][i]=a[i][j];}}out}\nfn add<const R:usize,const C:usize>(a:[[f64;C];R],b:[[f64;C];R])->[[f64;C];R] {let mut out=a;for i in 0..R {for j in 0..C {out[i][j]+=b[i][j];}}out}\nstruct Ekf { state:[f64;3], covariance:[[f64;3];3] }\nimpl Ekf {\n    fn new()->Self {Self{state:[2.,1.,0.15],covariance:[[1.,0.,0.],[0.,1.,0.],[0.,0.,0.05]]}}\n    fn step(&mut self,v:&[f64])->[f64;12] {\n        let [speed,yaw,distance,bearing]:[f64;4]=v.try_into().unwrap();let dt=0.05;\n        let (si,co)=(self.state[2].sin(),self.state[2].cos());\n        let f=[[1.,0.,-speed*si*dt],[0.,1.,speed*co*dt],[0.,0.,1.]];\n        let g=[[co*dt,0.],[si*dt,0.],[0.,dt]];\n        let predicted=[self.state[0]+speed*co*dt,self.state[1]+speed*si*dt,self.state[2]+yaw*dt];\n        let p=add(mul(mul(f,self.covariance),transpose(f)),mul(mul(g,[[0.04,0.],[0.,0.0025]]),transpose(g)));\n        let (dx,dy)=(25.-predicted[0],-10.-predicted[1]);let q=dx*dx+dy*dy;let r=q.sqrt();\n        let h=[[-dx/r,-dy/r,0.],[dy/q,-dx/q,-1.]];let noise=[[0.25,0.],[0.,0.0009]];\n        let innovation=[[distance-r],[bearing-(dy.atan2(dx)-predicted[2])]];\n        let s=add(mul(mul(h,p),transpose(h)),noise);let d=s[0][0]*s[1][1]-s[0][1]*s[1][0];\n        let inv=[[s[1][1]/d,-s[0][1]/d],[-s[1][0]/d,s[0][0]/d]];\n        let gain=mul(mul(p,transpose(h)),inv);let correction=mul(gain,innovation);\n        for i in 0..3 {self.state[i]=predicted[i]+correction[i][0];}\n        let kh=mul(gain,h);let mut a=[[0.;3];3];for i in 0..3 {for j in 0..3 {a[i][j]=if i==j {1.} else {0.};a[i][j]-=kh[i][j];}}\n        let joseph=add(mul(mul(a,p),transpose(a)),mul(mul(gain,noise),transpose(gain)));\n        for i in 0..3 {for j in 0..3 {self.covariance[i][j]=0.5*(joseph[i][j]+joseph[j][i]);}}\n        let mut out=[0.;12];out[..3].copy_from_slice(&self.state);for i in 0..3 {for j in 0..3 {out[3+i*3+j]=self.covariance[i][j];}}out\n    }\n}\n\nenum Probe { Numbers(Weak<Vec<f64>>), Rows(Weak<Vec<Vec<Option<f64>>>>) }\nfn probe(v:&Output)->Option<Probe> {match v {Output::Matrix(_,v)|Output::Set(v)=>Some(Probe::Numbers(Arc::downgrade(v))),Output::Table(_,v)=>Some(Probe::Rows(Arc::downgrade(v))),_=>None}}\nfn run(request:Value)->Value {\n    assert_eq!(request[\"protocol\"],1);let task=Task::parse(request[\"oracle\"].as_str().unwrap());\n    let text=request[\"input_kind\"]==\"string\";\n    let frames:Vec<Input>=request[\"schedule\"].as_array().unwrap().iter().map(|frame| {\n        let f=frame.as_array().unwrap();if text {assert_eq!(f.len(),1);Input::Text(f[0].as_str().unwrap().to_owned())}\n        else {Input::Numbers(f.iter().map(|x|x.as_f64().unwrap()).collect())}\n    }).collect();assert!(!frames.is_empty());assert!(frames.iter().all(|f|task.validate(f)));\n    let count=request[\"iterations\"].as_u64().unwrap() as usize;assert!(count>0);\n    let warm=request[\"warmup\"].as_u64().unwrap_or(0) as usize;\n    {let mut w=Instance::new(task);for i in 0..warm {w.turn(black_box(&frames[i%frames.len()]));black_box(&w.published);}}\n    let verify=request[\"action\"]==\"verify\";let retain=request[\"retain_snapshots\"]==true;\n    let abort=request[\"abort_before_accept\"]==true;let reject=request[\"reject_before_accept\"]==true;\n    let mut instance=Instance::new(task);let mut outputs=Vec::new();let mut before=Vec::new();let mut retained=Vec::new();\n    // Probes are outside the measured loop. Snapshots themselves are retained inside it.\n    let mut probes=Vec::new();let invalid=Input::Numbers(vec![0.,1.]);\n    let (alloc0,bytes0)=(ALLOCS.load(Relaxed),BYTES.load(Relaxed));let start=Instant::now();\n    for i in 0..count {\n        let frame=black_box(&frames[i%frames.len()]);\n        if verify && i>0 {before.push(instance.published.json());}\n        if abort {let prepared=instance.prepare(frame).unwrap();black_box(prepared);}\n        if reject {assert!(instance.prepare(black_box(&invalid)).is_err());}\n        instance.turn(frame);black_box(&instance.published);\n        if retain {retained.push(instance.published.clone());}\n        if verify {outputs.push(instance.published.json());}\n    }\n    let seconds=start.elapsed().as_secs_f64();let (allocs,bytes)=(ALLOCS.load(Relaxed)-alloc0,BYTES.load(Relaxed)-bytes0);\n    let final_output=instance.published.json();let retained_outputs:Vec<_>=if verify {retained.iter().map(Output::json).collect()} else {vec![]};\n    if let Some(p)=probe(&instance.published) {probes.push(p);}\n    for v in &retained {if let Some(p)=probe(v) {probes.push(p);}}\n    let teardown=Instant::now();drop(retained);drop(instance);let teardown_seconds=teardown.elapsed().as_secs_f64();\n    let released=probes.iter().all(|p|match p {Probe::Numbers(p)=>p.upgrade().is_none(),Probe::Rows(p)=>p.upgrade().is_none()});assert!(released);\n    json!({\"protocol\":1,\"outcome\":\"ok\",\"iterations\":count,\"output_name\":request[\"output\"],\n        \"outputs\":outputs,\"before_execution\":before,\"retained_outputs\":retained_outputs,\"final_output\":final_output,\n        \"owned_outputs_released\":released,\"metrics\":{\"resident_turn_seconds\":seconds/count as f64,\n        \"rust_call_seconds\":seconds/count as f64,\"execution_block_seconds\":seconds,\"execution_allocations\":allocs,\n        \"execution_requested_bytes\":bytes,\"teardown_seconds\":teardown_seconds}})\n}\nfn main() {let mut input=String::new();io::stdin().read_to_string(&mut input).unwrap();let response=run(serde_json::from_str(&input).unwrap());println!(\"{response}\");}\n",
+      "source_sha256": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "rust-aot"
+      },
+      "control_contract": "a77f4855c60f2d43432fa04076f063f4993d7d62a687a448a62496de64875936",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent/rust/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.02798120817169547,
+            "accepted_turns_per_second": 7026429.980921259,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004530958,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent/rust/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.01968308398500085,
+            "accepted_turns_per_second": 9988678.611025676,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004552375,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent/rust/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.0199868343770504,
+            "accepted_turns_per_second": 9836875.429645445,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004468875,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent/rust/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.020163082983344793,
+            "accepted_turns_per_second": 9750889.790137902,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004447958,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent/rust/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.021056917030364275,
+            "accepted_turns_per_second": 9336979.37435425,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004478791,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "implementation": {
+        "toolchain": "nightly-2026-03-03",
+        "version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+        "build_command": [
+          "cargo",
+          "+nightly-2026-03-03",
+          "build",
+          "--release",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/results/campaigns/2026-11-17-rust-concurrent-001/rust-source/Cargo.toml",
+          "--target-dir",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target"
+        ],
+        "build_environment": {
+          "RUSTFLAGS": "-Ctarget-cpu=native"
+        },
+        "source_sha256": {
+          "Cargo.toml": "cef1b8e7d5d85ae5d4f3dfd816f58cb557ceac2f0e305a26a6778709822802fa",
+          "resident.rs": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+          "deflate.rs": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+          "Cargo.lock": "47d8ff6a31a8acff770609d0a1094c024dffda1eb243848b5f3ddec6b516e488",
+          "README.md": "511cc872d9e35afbc85fdb6f9894d8966be065087886a7127815c2529bd48012"
+        },
+        "binaries": {
+          "resident": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/resident",
+            "binary_sha256": "4f5d399fa1d2ada3a0edf8726c7830a93977b10d1f60afdfba9290b7dc020b13"
+          },
+          "deflate": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/deflate",
+            "binary_sha256": "6d1bb6686fe695369de30c8e2aa2f3ac78395c70ee4b58db9a77b9c61a7ba6fd"
+          }
+        }
+      },
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent/rust/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 9750889.790137902,
+          "min": 7026429.980921259,
+          "max": 9988678.611025676,
+          "stdev": 1232228.6997799196,
+          "samples": [
+            7026429.980921259,
+            9988678.611025676,
+            9836875.429645445,
+            9750889.790137902,
+            9336979.37435425
+          ]
+        },
+        "execution_allocations": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.004478791,
+          "min": 0.004447958,
+          "max": 0.004552375,
+          "stdev": 4.398844703214693e-05,
+          "samples": [
+            0.004530958,
+            0.004552375,
+            0.004468875,
+            0.004447958,
+            0.004478791
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.020163082983344793,
+          "min": 0.01968308398500085,
+          "max": 0.02798120817169547,
+          "stdev": 0.0035072990105801095,
+          "samples": [
+            0.02798120817169547,
+            0.01968308398500085,
+            0.0199868343770504,
+            0.020163082983344793,
+            0.021056917030364275
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-2",
+      "title": "Worker scaling · 2 processes",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 2,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "62f35ea1a546abd1b92840747d6ebd72a3d618919897871789503eaf1dcfb309",
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact"
+      },
+      "control_contract": "90921ecb18a8d33c612054a6f1ce263bb3efd7f6e2a03533abb43c2becf930f1",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-2/process-workers/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.07425070786848664,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2647893.948004286,
+            "sum_worker_execution_block_seconds": 0.077002458,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-2/process-workers/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.07702062465250492,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2552666.9108052445,
+            "sum_worker_execution_block_seconds": 0.077052749,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-2/process-workers/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.0752885420806706,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2611393.3749618544,
+            "sum_worker_execution_block_seconds": 0.077553542,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent-2/process-workers/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.07843983266502619,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2506481.6346511818,
+            "sum_worker_execution_block_seconds": 0.07782666599999999,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent-2/process-workers/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.07460391614586115,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2635357.634786942,
+            "sum_worker_execution_block_seconds": 0.07741466699999999,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent-2/process-workers/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 2611393.3749618544,
+          "min": 2506481.6346511818,
+          "max": 2647893.948004286,
+          "stdev": 59650.858139865035,
+          "samples": [
+            2647893.948004286,
+            2552666.9108052445,
+            2611393.3749618544,
+            2506481.6346511818,
+            2635357.634786942
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.07741466699999999,
+          "min": 0.077002458,
+          "max": 0.07782666599999999,
+          "stdev": 0.00034639643460534884,
+          "samples": [
+            0.077002458,
+            0.077052749,
+            0.077553542,
+            0.07782666599999999,
+            0.07741466699999999
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.0752885420806706,
+          "min": 0.07425070786848664,
+          "max": 0.07843983266502619,
+          "stdev": 0.001766230498473519,
+          "samples": [
+            0.07425070786848664,
+            0.07702062465250492,
+            0.0752885420806706,
+            0.07843983266502619,
+            0.07460391614586115
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-2",
+      "title": "Rust · task control",
+      "family": "concurrency",
+      "backend": "rust",
+      "lane": "control",
+      "revision": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 2,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "62f35ea1a546abd1b92840747d6ebd72a3d618919897871789503eaf1dcfb309",
+      "source": "//! Independent task controls. No Mech compiler, runtime, or oracle is linked.\nuse serde_json::{json, Value};\nuse std::alloc::{GlobalAlloc, Layout, System};\nuse std::hint::black_box;\nuse std::io::{self, Read};\nuse std::sync::{atomic::{AtomicU64, Ordering::Relaxed}, Arc, Weak};\nuse std::time::Instant;\nuse unicode_segmentation::UnicodeSegmentation;\n\nstruct Counting;\nstatic ALLOCS: AtomicU64 = AtomicU64::new(0);\nstatic BYTES: AtomicU64 = AtomicU64::new(0);\nunsafe impl GlobalAlloc for Counting {\n    unsafe fn alloc(&self, l: Layout) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(l.size() as u64, Relaxed);\n        System.alloc(l)\n    }\n    unsafe fn dealloc(&self, p: *mut u8, l: Layout) { System.dealloc(p, l) }\n    unsafe fn realloc(&self, p: *mut u8, l: Layout, n: usize) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(n as u64, Relaxed);\n        System.realloc(p, l, n)\n    }\n}\n#[global_allocator] static ALLOCATOR: Counting = Counting;\n\n#[derive(Clone, PartialEq)]\nenum Input { Numbers(Vec<f64>), Text(String) }\nimpl Input {\n    fn numbers(&self) -> &[f64] { match self { Self::Numbers(v) => v, _ => panic!(\"numeric frame required\") } }\n    fn text(&self) -> &str { match self { Self::Text(s) => s, _ => panic!(\"string frame required\") } }\n}\n#[derive(Clone)]\nenum Output {\n    Unpublished, Number(f64), Bool(bool),\n    Matrix([usize; 2], Arc<Vec<f64>>), Set(Arc<Vec<f64>>),\n    Table(bool, Arc<Vec<Vec<Option<f64>>>>),\n}\nimpl Output {\n    fn json(&self) -> Value {\n        match self {\n            Self::Unpublished => json!({\"kind\":\"unpublished\"}),\n            Self::Number(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Bool(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Matrix(shape,v) => json!({\"kind\":\"matrix\",\"shape\":shape,\"values\":**v}),\n            Self::Set(v) => json!({\"kind\":\"set\",\"values\":**v}),\n            Self::Table(two,v) => json!({\"kind\":\"table\",\"columns\":if *two {vec![\"key\",\"left\"]} else {vec![\"key\",\"left\",\"right\"]},\"rows\":**v}),\n        }\n    }\n}\n\n#[derive(Clone, Copy, PartialEq)]\nenum Task { Scalar, Pipeline, Matrix, Map, Branch, Recursion, Record, State, Oscillator, Wide, Chain, Filter, Collection, Strings, Graphemes, Fsm, Graph, Join(u8), Ekf }\nimpl Task {\n    fn parse(s: &str) -> Self {\n        match s {\n            \"scalar\"=>Self::Scalar,\"pipeline\"=>Self::Pipeline,\"matrix\"=>Self::Matrix,\n            \"map\"=>Self::Map,\"branch\"=>Self::Branch,\"recursion\"=>Self::Recursion,\n            \"record\"=>Self::Record,\"state\"=>Self::State,\"oscillator\"=>Self::Oscillator,\n            \"wide\"=>Self::Wide,\"chain\"=>Self::Chain,\"filter\"=>Self::Filter,\n            \"collection\"=>Self::Collection,\"strings\"=>Self::Strings,\"graphemes\"=>Self::Graphemes,\n            \"fsm\"=>Self::Fsm,\"graph\"=>Self::Graph,\"ekf\"=>Self::Ekf,\n            \"table-join\"=>Self::Join(0),\"table-left-outer-join\"=>Self::Join(1),\n            \"table-right-outer-join\"=>Self::Join(2),\"table-full-outer-join\"=>Self::Join(3),\n            \"table-left-semi-join\"=>Self::Join(4),\"table-left-anti-join\"=>Self::Join(5),\n            _=>panic!(\"unimplemented Rust task {s}\"),\n        }\n    }\n    fn stateful(self) -> bool { matches!(self,Self::State|Self::Oscillator|Self::Fsm|Self::Ekf) }\n    fn validate(self, input: &Input) -> bool {\n        match input {\n            Input::Text(_)=>matches!(self,Self::Strings|Self::Graphemes|Self::Fsm),\n            Input::Numbers(v)=>v.iter().all(|x|x.is_finite()) && match self {\n                Self::Strings|Self::Graphemes|Self::Fsm=>false,\n                Self::Filter=>true, Self::State|Self::Oscillator=>v.is_empty(),\n                Self::Ekf=>v.len()==4, _=>v.len()==1,\n            }\n        }\n    }\n}\n\nstruct Instance {\n    task: Task, previous: Option<Input>, published: Output, turns: usize,\n    position: f64, velocity: f64, captured: Option<String>, ekf: Ekf,\n}\nimpl Instance {\n    fn new(task: Task) -> Self { Self {task,previous:None,published:Output::Unpublished,turns:0,position:1.,velocity:0.,captured:None,ekf:Ekf::new()} }\n    fn prepare<'a>(&self, input: &'a Input) -> Result<&'a Input, ()> { if self.task.validate(input) { Ok(input) } else { Err(()) } }\n    fn turn(&mut self, input: &Input) {\n        let input = self.prepare(input).expect(\"rejected valid frame\");\n        self.turns += 1;\n        if !self.task.stateful() && self.previous.as_ref()==Some(input) { return; }\n        let x = match input {Input::Numbers(v)=>v.first().copied().unwrap_or(0.),_=>0.};\n        self.published = match self.task {\n            Task::Scalar=>Output::Number(x*x+1.),\n            Task::Pipeline=>Output::Number((x*x+1.).sqrt()+x.sin()),\n            Task::Matrix=>{\n                let a=[[x,2.],[3.,4.]];let b=[[2.,0.],[1.,3.]];let mut c=[[0.;2];2];\n                for i in 0..2 {for j in 0..2 {for k in 0..2 {c[i][j]+=a[i][k]*b[k][j];}}}\n                Output::Number(c[0][0]+c[1][1])\n            },\n            Task::Map=>Output::Number([(1.,10.),(2.,20.),(3.,30.)].iter().find(|(k,_)|*k==x).expect(\"missing map key\").1+1.),\n            Task::Branch=>Output::Number(if x==0. {100.} else {x*x+1.}),\n            Task::Recursion=>{let mut sum=0.;for i in 1..=x as u64 {sum+=i as f64;} Output::Number(sum)},\n            Task::Record=>{struct Record{square:f64,value:f64} let r=Record{square:x*x,value:x};Output::Number(r.square+r.value+1.)},\n            Task::State=>{let n=self.turns as f64;Output::Number(n*n+1.)},\n            Task::Oscillator=>{self.velocity-=self.position*0.01;self.position+=self.velocity*0.01;Output::Number(self.position)},\n            Task::Wide=>{let mut sum=0.;for i in 0..32 {sum+=x*(i+1) as f64+i as f64;}Output::Number(sum)},\n            Task::Chain=>{let mut v=x;for _ in 0..128 {v=v*1.0001+0.01;}Output::Number(v)},\n            Task::Filter=>{let v:Vec<_>=input.numbers().iter().filter(|v|**v>0.).map(|v|v*v).collect();Output::Matrix([1,v.len()],Arc::new(v))},\n            Task::Collection=>{let mut v=vec![x,2.,3.];v.sort_by(f64::total_cmp);v.dedup();Output::Set(Arc::new(v))},\n            Task::Strings=>Output::Number(match input.text() {\"\"=>0.,\"é\"=>1.,\"é\"=>2.,\"👩🏽‍💻\"=>3.,\"\\r\\n\"=>4.,_=>9.}),\n            Task::Graphemes=>{let line=input.text().lines().next().unwrap_or(\"\");Output::Number(match line.graphemes(true).nth(1) {Some(\"é\")=>1.,Some(\"é\")=>2.,_=>3.})},\n            Task::Fsm=>if self.turns==1 {self.captured=Some(input.text().to_owned());Output::Unpublished} else {Output::Bool(self.captured.as_deref()==Some(\"é\"))},\n            Task::Join(op)=>join(op,x),\n            Task::Graph=>{\n                let mut v=[0.;8];v[0]=1.;\n                for _ in 0..7 {let mut n=v;n[1]+=v[0]*2.;for(a,b)in[(1,2),(2,3),(3,1),(4,5),(5,6),(6,7)]{n[b]+=v[a];}n[4]+=v[3]*x;v=n;}\n                Output::Matrix([8,1],Arc::new(v.to_vec()))\n            },\n            Task::Ekf=>Output::Matrix([1,12],Arc::new(self.ekf.step(input.numbers()).to_vec())),\n        };\n        // Input admission keeps an owned copy; callers can change their next frame without publishing a result.\n        self.previous=Some(input.clone());\n    }\n}\n\nfn join(op:u8,key:f64)->Output {\n    let left=[(key,10.),(key,11.),(2.,12.),(3.,13.)];let right=[(1.,20.),(1.,21.),(2.,22.),(4.,23.)];\n    let mut rows=Vec::new();let mut matched=[false;4];\n    for (k,l) in left {\n        let mut any=false;\n        for (i,(rk,r)) in right.iter().enumerate() {if k==*rk {any=true;matched[i]=true;if op<4 {rows.push(vec![Some(k),Some(l),Some(*r)]);}}}\n        if (op==4 && any)||(op==5 && !any) {rows.push(vec![Some(k),Some(l)]);}\n        if !any && (op==1||op==3) {rows.push(vec![Some(k),Some(l),None]);}\n    }\n    if op==2||op==3 {for (i,(k,r)) in right.iter().enumerate() {if !matched[i] {rows.push(vec![Some(*k),None,Some(*r)]);}}}\n    Output::Table(op>=4,Arc::new(rows))\n}\n\nfn mul<const R:usize,const K:usize,const C:usize>(a:[[f64;K];R],b:[[f64;C];K])->[[f64;C];R] {\n    let mut out=[[0.;C];R];for i in 0..R {for j in 0..C {for k in 0..K {out[i][j]+=a[i][k]*b[k][j];}}}out\n}\nfn transpose<const R:usize,const C:usize>(a:[[f64;C];R])->[[f64;R];C] {let mut out=[[0.;R];C];for i in 0..R {for j in 0..C {out[j][i]=a[i][j];}}out}\nfn add<const R:usize,const C:usize>(a:[[f64;C];R],b:[[f64;C];R])->[[f64;C];R] {let mut out=a;for i in 0..R {for j in 0..C {out[i][j]+=b[i][j];}}out}\nstruct Ekf { state:[f64;3], covariance:[[f64;3];3] }\nimpl Ekf {\n    fn new()->Self {Self{state:[2.,1.,0.15],covariance:[[1.,0.,0.],[0.,1.,0.],[0.,0.,0.05]]}}\n    fn step(&mut self,v:&[f64])->[f64;12] {\n        let [speed,yaw,distance,bearing]:[f64;4]=v.try_into().unwrap();let dt=0.05;\n        let (si,co)=(self.state[2].sin(),self.state[2].cos());\n        let f=[[1.,0.,-speed*si*dt],[0.,1.,speed*co*dt],[0.,0.,1.]];\n        let g=[[co*dt,0.],[si*dt,0.],[0.,dt]];\n        let predicted=[self.state[0]+speed*co*dt,self.state[1]+speed*si*dt,self.state[2]+yaw*dt];\n        let p=add(mul(mul(f,self.covariance),transpose(f)),mul(mul(g,[[0.04,0.],[0.,0.0025]]),transpose(g)));\n        let (dx,dy)=(25.-predicted[0],-10.-predicted[1]);let q=dx*dx+dy*dy;let r=q.sqrt();\n        let h=[[-dx/r,-dy/r,0.],[dy/q,-dx/q,-1.]];let noise=[[0.25,0.],[0.,0.0009]];\n        let innovation=[[distance-r],[bearing-(dy.atan2(dx)-predicted[2])]];\n        let s=add(mul(mul(h,p),transpose(h)),noise);let d=s[0][0]*s[1][1]-s[0][1]*s[1][0];\n        let inv=[[s[1][1]/d,-s[0][1]/d],[-s[1][0]/d,s[0][0]/d]];\n        let gain=mul(mul(p,transpose(h)),inv);let correction=mul(gain,innovation);\n        for i in 0..3 {self.state[i]=predicted[i]+correction[i][0];}\n        let kh=mul(gain,h);let mut a=[[0.;3];3];for i in 0..3 {for j in 0..3 {a[i][j]=if i==j {1.} else {0.};a[i][j]-=kh[i][j];}}\n        let joseph=add(mul(mul(a,p),transpose(a)),mul(mul(gain,noise),transpose(gain)));\n        for i in 0..3 {for j in 0..3 {self.covariance[i][j]=0.5*(joseph[i][j]+joseph[j][i]);}}\n        let mut out=[0.;12];out[..3].copy_from_slice(&self.state);for i in 0..3 {for j in 0..3 {out[3+i*3+j]=self.covariance[i][j];}}out\n    }\n}\n\nenum Probe { Numbers(Weak<Vec<f64>>), Rows(Weak<Vec<Vec<Option<f64>>>>) }\nfn probe(v:&Output)->Option<Probe> {match v {Output::Matrix(_,v)|Output::Set(v)=>Some(Probe::Numbers(Arc::downgrade(v))),Output::Table(_,v)=>Some(Probe::Rows(Arc::downgrade(v))),_=>None}}\nfn run(request:Value)->Value {\n    assert_eq!(request[\"protocol\"],1);let task=Task::parse(request[\"oracle\"].as_str().unwrap());\n    let text=request[\"input_kind\"]==\"string\";\n    let frames:Vec<Input>=request[\"schedule\"].as_array().unwrap().iter().map(|frame| {\n        let f=frame.as_array().unwrap();if text {assert_eq!(f.len(),1);Input::Text(f[0].as_str().unwrap().to_owned())}\n        else {Input::Numbers(f.iter().map(|x|x.as_f64().unwrap()).collect())}\n    }).collect();assert!(!frames.is_empty());assert!(frames.iter().all(|f|task.validate(f)));\n    let count=request[\"iterations\"].as_u64().unwrap() as usize;assert!(count>0);\n    let warm=request[\"warmup\"].as_u64().unwrap_or(0) as usize;\n    {let mut w=Instance::new(task);for i in 0..warm {w.turn(black_box(&frames[i%frames.len()]));black_box(&w.published);}}\n    let verify=request[\"action\"]==\"verify\";let retain=request[\"retain_snapshots\"]==true;\n    let abort=request[\"abort_before_accept\"]==true;let reject=request[\"reject_before_accept\"]==true;\n    let mut instance=Instance::new(task);let mut outputs=Vec::new();let mut before=Vec::new();let mut retained=Vec::new();\n    // Probes are outside the measured loop. Snapshots themselves are retained inside it.\n    let mut probes=Vec::new();let invalid=Input::Numbers(vec![0.,1.]);\n    let (alloc0,bytes0)=(ALLOCS.load(Relaxed),BYTES.load(Relaxed));let start=Instant::now();\n    for i in 0..count {\n        let frame=black_box(&frames[i%frames.len()]);\n        if verify && i>0 {before.push(instance.published.json());}\n        if abort {let prepared=instance.prepare(frame).unwrap();black_box(prepared);}\n        if reject {assert!(instance.prepare(black_box(&invalid)).is_err());}\n        instance.turn(frame);black_box(&instance.published);\n        if retain {retained.push(instance.published.clone());}\n        if verify {outputs.push(instance.published.json());}\n    }\n    let seconds=start.elapsed().as_secs_f64();let (allocs,bytes)=(ALLOCS.load(Relaxed)-alloc0,BYTES.load(Relaxed)-bytes0);\n    let final_output=instance.published.json();let retained_outputs:Vec<_>=if verify {retained.iter().map(Output::json).collect()} else {vec![]};\n    if let Some(p)=probe(&instance.published) {probes.push(p);}\n    for v in &retained {if let Some(p)=probe(v) {probes.push(p);}}\n    let teardown=Instant::now();drop(retained);drop(instance);let teardown_seconds=teardown.elapsed().as_secs_f64();\n    let released=probes.iter().all(|p|match p {Probe::Numbers(p)=>p.upgrade().is_none(),Probe::Rows(p)=>p.upgrade().is_none()});assert!(released);\n    json!({\"protocol\":1,\"outcome\":\"ok\",\"iterations\":count,\"output_name\":request[\"output\"],\n        \"outputs\":outputs,\"before_execution\":before,\"retained_outputs\":retained_outputs,\"final_output\":final_output,\n        \"owned_outputs_released\":released,\"metrics\":{\"resident_turn_seconds\":seconds/count as f64,\n        \"rust_call_seconds\":seconds/count as f64,\"execution_block_seconds\":seconds,\"execution_allocations\":allocs,\n        \"execution_requested_bytes\":bytes,\"teardown_seconds\":teardown_seconds}})\n}\nfn main() {let mut input=String::new();io::stdin().read_to_string(&mut input).unwrap();let response=run(serde_json::from_str(&input).unwrap());println!(\"{response}\");}\n",
+      "source_sha256": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "rust-aot"
+      },
+      "control_contract": "90921ecb18a8d33c612054a6f1ce263bb3efd7f6e2a03533abb43c2becf930f1",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-2/rust/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.024216665886342525,
+            "accepted_turns_per_second": 8118706.386863975,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004576833000000001,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-2/rust/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.025294375140219927,
+            "accepted_turns_per_second": 7772795.291842523,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004559917,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-2/rust/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.025899291969835758,
+            "accepted_turns_per_second": 7591249.993589953,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.00457925,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent-2/rust/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.025124667212367058,
+            "accepted_turns_per_second": 7825297.678101148,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004586999,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent-2/rust/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.02408287487924099,
+            "accepted_turns_per_second": 8163809.386788477,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004559959000000001,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "implementation": {
+        "toolchain": "nightly-2026-03-03",
+        "version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+        "build_command": [
+          "cargo",
+          "+nightly-2026-03-03",
+          "build",
+          "--release",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/results/campaigns/2026-11-17-rust-concurrent-001/rust-source/Cargo.toml",
+          "--target-dir",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target"
+        ],
+        "build_environment": {
+          "RUSTFLAGS": "-Ctarget-cpu=native"
+        },
+        "source_sha256": {
+          "Cargo.toml": "cef1b8e7d5d85ae5d4f3dfd816f58cb557ceac2f0e305a26a6778709822802fa",
+          "resident.rs": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+          "deflate.rs": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+          "Cargo.lock": "47d8ff6a31a8acff770609d0a1094c024dffda1eb243848b5f3ddec6b516e488",
+          "README.md": "511cc872d9e35afbc85fdb6f9894d8966be065087886a7127815c2529bd48012"
+        },
+        "binaries": {
+          "resident": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/resident",
+            "binary_sha256": "4f5d399fa1d2ada3a0edf8726c7830a93977b10d1f60afdfba9290b7dc020b13"
+          },
+          "deflate": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/deflate",
+            "binary_sha256": "6d1bb6686fe695369de30c8e2aa2f3ac78395c70ee4b58db9a77b9c61a7ba6fd"
+          }
+        }
+      },
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent-2/rust/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 7825297.678101148,
+          "min": 7591249.993589953,
+          "max": 8163809.386788477,
+          "stdev": 242052.43812600162,
+          "samples": [
+            8118706.386863975,
+            7772795.291842523,
+            7591249.993589953,
+            7825297.678101148,
+            8163809.386788477
+          ]
+        },
+        "execution_allocations": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.004576833000000001,
+          "min": 0.004559917,
+          "max": 0.004586999,
+          "stdev": 1.2146244349591927e-05,
+          "samples": [
+            0.004576833000000001,
+            0.004559917,
+            0.00457925,
+            0.004586999,
+            0.004559959000000001
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.025124667212367058,
+          "min": 0.02408287487924099,
+          "max": 0.025899291969835758,
+          "stdev": 0.0007642727940832838,
+          "samples": [
+            0.024216665886342525,
+            0.025294375140219927,
+            0.025899291969835758,
+            0.025124667212367058,
+            0.02408287487924099
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-4",
+      "title": "Worker scaling · 4 processes",
+      "family": "concurrency",
+      "backend": "process-workers",
+      "lane": "candidate",
+      "revision": "9087b1f07727a9bfcb7c09059f48edaca6dc2301",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 4,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "513cdc2aaa04e2252964dfe8cd618f0d137a0286db1b85047f56371754d59c01",
+      "source": "+> math\nx := signal<f64>\nanswer := math/sqrt(x * x + 1.0) + math/sin(x)\nanswer\n",
+      "source_sha256": "7f41a7eb29ba1512f6d4106dd47ad5c9bf4acacd1b43ecacce76c0134d2f1e20",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "standard_compiler + u8/u64 + integer_bits + resident-artifact"
+      },
+      "control_contract": "c21fd71bce35f3c31767fe9cae97429fe64ccc18a5e738e10ae19c5ec587f17e",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-4/process-workers/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.07123324973508716,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2760059.392645642,
+            "sum_worker_execution_block_seconds": 0.083502958,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-4/process-workers/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.06359437527135015,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 3091594.172615038,
+            "sum_worker_execution_block_seconds": 0.081634333,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-4/process-workers/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.06845833407714963,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2871936.669952137,
+            "sum_worker_execution_block_seconds": 0.08269425,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent-4/process-workers/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.062454457860440016,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 3148021.8824305204,
+            "sum_worker_execution_block_seconds": 0.082730417,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent-4/process-workers/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.06944204168394208,
+            "total_turns": 196608,
+            "accepted_turns_per_second": 2831253.1606550394,
+            "sum_worker_execution_block_seconds": 0.078215249,
+            "execution_allocations": 0,
+            "managed_after_drop_bytes": 0
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent-4/process-workers/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 2871936.669952137,
+          "min": 2760059.392645642,
+          "max": 3148021.8824305204,
+          "stdev": 169624.1204226333,
+          "samples": [
+            2760059.392645642,
+            3091594.172615038,
+            2871936.669952137,
+            3148021.8824305204,
+            2831253.1606550394
+          ]
+        },
+        "execution_allocations": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "managed_after_drop_bytes": {
+          "median": 0,
+          "min": 0,
+          "max": 0,
+          "stdev": 0.0,
+          "samples": [
+            0,
+            0,
+            0,
+            0,
+            0
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.08269425,
+          "min": 0.078215249,
+          "max": 0.083502958,
+          "stdev": 0.0020876651281319758,
+          "samples": [
+            0.083502958,
+            0.081634333,
+            0.08269425,
+            0.082730417,
+            0.078215249
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.06845833407714963,
+          "min": 0.062454457860440016,
+          "max": 0.07123324973508716,
+          "stdev": 0.0038165522428962274,
+          "samples": [
+            0.07123324973508716,
+            0.06359437527135015,
+            0.06845833407714963,
+            0.062454457860440016,
+            0.06944204168394208
+          ]
+        }
+      }
+    },
+    {
+      "case_id": "concurrent-4",
+      "title": "Rust · task control",
+      "family": "concurrency",
+      "backend": "rust",
+      "lane": "control",
+      "revision": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "task": {
+        "oracle": "pipeline",
+        "outputs": [
+          "result"
+        ],
+        "absolute_tolerance": 1e-09,
+        "relative_tolerance": 1e-10,
+        "dtype": "f64",
+        "logical_input_elements": 196608,
+        "arithmetic": "Ordered IEEE-754 f64; independent stateless source instances",
+        "ordering": "196608 accepted turns partitioned evenly among independent workers; no shared mutable state; every worker endpoint verified"
+      },
+      "task_hash": "ad7fe245ed166a580b4c39aca6d6f7018b93b1511fd29aba8fe918bcd85435d0",
+      "measurement": {
+        "boundary": "worker_group_process_lifecycle",
+        "primary_metric": "worker_group_process_seconds",
+        "schedule": [
+          [
+            2.0
+          ],
+          [
+            3.0
+          ],
+          [
+            2.0
+          ],
+          [
+            -1.0
+          ],
+          [
+            0.0
+          ],
+          [
+            7.0
+          ]
+        ],
+        "setup": "Executable built before timing; binary, dependencies and compiler revision pinned",
+        "reset": "Fresh process for every independent fork",
+        "warmup": 32,
+        "destruction": "Complete shutdown and owned output release included",
+        "cache": "OS caches uncontrolled; independent process forks",
+        "threads": "One application thread per worker process; supervisor uses one waiting thread per process; source-catalog setup may start its short-lived builder thread",
+        "retain_snapshots": false,
+        "abort_before_accept": false,
+        "workers": 4,
+        "total_turns": 196608,
+        "partition": "Strong scaling: fixed total turns; contiguous equal partitions; no other timed campaigns overlap",
+        "comparison_note": "Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. This measures the cost of completing the task through each path, not a language-wide speed claim. Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric. Complete supervised group startup through exit, fixed total work; one execution thread per process."
+      },
+      "measurement_hash": "513cdc2aaa04e2252964dfe8cd618f0d137a0286db1b85047f56371754d59c01",
+      "source": "//! Independent task controls. No Mech compiler, runtime, or oracle is linked.\nuse serde_json::{json, Value};\nuse std::alloc::{GlobalAlloc, Layout, System};\nuse std::hint::black_box;\nuse std::io::{self, Read};\nuse std::sync::{atomic::{AtomicU64, Ordering::Relaxed}, Arc, Weak};\nuse std::time::Instant;\nuse unicode_segmentation::UnicodeSegmentation;\n\nstruct Counting;\nstatic ALLOCS: AtomicU64 = AtomicU64::new(0);\nstatic BYTES: AtomicU64 = AtomicU64::new(0);\nunsafe impl GlobalAlloc for Counting {\n    unsafe fn alloc(&self, l: Layout) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(l.size() as u64, Relaxed);\n        System.alloc(l)\n    }\n    unsafe fn dealloc(&self, p: *mut u8, l: Layout) { System.dealloc(p, l) }\n    unsafe fn realloc(&self, p: *mut u8, l: Layout, n: usize) -> *mut u8 {\n        ALLOCS.fetch_add(1, Relaxed); BYTES.fetch_add(n as u64, Relaxed);\n        System.realloc(p, l, n)\n    }\n}\n#[global_allocator] static ALLOCATOR: Counting = Counting;\n\n#[derive(Clone, PartialEq)]\nenum Input { Numbers(Vec<f64>), Text(String) }\nimpl Input {\n    fn numbers(&self) -> &[f64] { match self { Self::Numbers(v) => v, _ => panic!(\"numeric frame required\") } }\n    fn text(&self) -> &str { match self { Self::Text(s) => s, _ => panic!(\"string frame required\") } }\n}\n#[derive(Clone)]\nenum Output {\n    Unpublished, Number(f64), Bool(bool),\n    Matrix([usize; 2], Arc<Vec<f64>>), Set(Arc<Vec<f64>>),\n    Table(bool, Arc<Vec<Vec<Option<f64>>>>),\n}\nimpl Output {\n    fn json(&self) -> Value {\n        match self {\n            Self::Unpublished => json!({\"kind\":\"unpublished\"}),\n            Self::Number(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Bool(v) => json!({\"kind\":\"scalar\",\"value\":v}),\n            Self::Matrix(shape,v) => json!({\"kind\":\"matrix\",\"shape\":shape,\"values\":**v}),\n            Self::Set(v) => json!({\"kind\":\"set\",\"values\":**v}),\n            Self::Table(two,v) => json!({\"kind\":\"table\",\"columns\":if *two {vec![\"key\",\"left\"]} else {vec![\"key\",\"left\",\"right\"]},\"rows\":**v}),\n        }\n    }\n}\n\n#[derive(Clone, Copy, PartialEq)]\nenum Task { Scalar, Pipeline, Matrix, Map, Branch, Recursion, Record, State, Oscillator, Wide, Chain, Filter, Collection, Strings, Graphemes, Fsm, Graph, Join(u8), Ekf }\nimpl Task {\n    fn parse(s: &str) -> Self {\n        match s {\n            \"scalar\"=>Self::Scalar,\"pipeline\"=>Self::Pipeline,\"matrix\"=>Self::Matrix,\n            \"map\"=>Self::Map,\"branch\"=>Self::Branch,\"recursion\"=>Self::Recursion,\n            \"record\"=>Self::Record,\"state\"=>Self::State,\"oscillator\"=>Self::Oscillator,\n            \"wide\"=>Self::Wide,\"chain\"=>Self::Chain,\"filter\"=>Self::Filter,\n            \"collection\"=>Self::Collection,\"strings\"=>Self::Strings,\"graphemes\"=>Self::Graphemes,\n            \"fsm\"=>Self::Fsm,\"graph\"=>Self::Graph,\"ekf\"=>Self::Ekf,\n            \"table-join\"=>Self::Join(0),\"table-left-outer-join\"=>Self::Join(1),\n            \"table-right-outer-join\"=>Self::Join(2),\"table-full-outer-join\"=>Self::Join(3),\n            \"table-left-semi-join\"=>Self::Join(4),\"table-left-anti-join\"=>Self::Join(5),\n            _=>panic!(\"unimplemented Rust task {s}\"),\n        }\n    }\n    fn stateful(self) -> bool { matches!(self,Self::State|Self::Oscillator|Self::Fsm|Self::Ekf) }\n    fn validate(self, input: &Input) -> bool {\n        match input {\n            Input::Text(_)=>matches!(self,Self::Strings|Self::Graphemes|Self::Fsm),\n            Input::Numbers(v)=>v.iter().all(|x|x.is_finite()) && match self {\n                Self::Strings|Self::Graphemes|Self::Fsm=>false,\n                Self::Filter=>true, Self::State|Self::Oscillator=>v.is_empty(),\n                Self::Ekf=>v.len()==4, _=>v.len()==1,\n            }\n        }\n    }\n}\n\nstruct Instance {\n    task: Task, previous: Option<Input>, published: Output, turns: usize,\n    position: f64, velocity: f64, captured: Option<String>, ekf: Ekf,\n}\nimpl Instance {\n    fn new(task: Task) -> Self { Self {task,previous:None,published:Output::Unpublished,turns:0,position:1.,velocity:0.,captured:None,ekf:Ekf::new()} }\n    fn prepare<'a>(&self, input: &'a Input) -> Result<&'a Input, ()> { if self.task.validate(input) { Ok(input) } else { Err(()) } }\n    fn turn(&mut self, input: &Input) {\n        let input = self.prepare(input).expect(\"rejected valid frame\");\n        self.turns += 1;\n        if !self.task.stateful() && self.previous.as_ref()==Some(input) { return; }\n        let x = match input {Input::Numbers(v)=>v.first().copied().unwrap_or(0.),_=>0.};\n        self.published = match self.task {\n            Task::Scalar=>Output::Number(x*x+1.),\n            Task::Pipeline=>Output::Number((x*x+1.).sqrt()+x.sin()),\n            Task::Matrix=>{\n                let a=[[x,2.],[3.,4.]];let b=[[2.,0.],[1.,3.]];let mut c=[[0.;2];2];\n                for i in 0..2 {for j in 0..2 {for k in 0..2 {c[i][j]+=a[i][k]*b[k][j];}}}\n                Output::Number(c[0][0]+c[1][1])\n            },\n            Task::Map=>Output::Number([(1.,10.),(2.,20.),(3.,30.)].iter().find(|(k,_)|*k==x).expect(\"missing map key\").1+1.),\n            Task::Branch=>Output::Number(if x==0. {100.} else {x*x+1.}),\n            Task::Recursion=>{let mut sum=0.;for i in 1..=x as u64 {sum+=i as f64;} Output::Number(sum)},\n            Task::Record=>{struct Record{square:f64,value:f64} let r=Record{square:x*x,value:x};Output::Number(r.square+r.value+1.)},\n            Task::State=>{let n=self.turns as f64;Output::Number(n*n+1.)},\n            Task::Oscillator=>{self.velocity-=self.position*0.01;self.position+=self.velocity*0.01;Output::Number(self.position)},\n            Task::Wide=>{let mut sum=0.;for i in 0..32 {sum+=x*(i+1) as f64+i as f64;}Output::Number(sum)},\n            Task::Chain=>{let mut v=x;for _ in 0..128 {v=v*1.0001+0.01;}Output::Number(v)},\n            Task::Filter=>{let v:Vec<_>=input.numbers().iter().filter(|v|**v>0.).map(|v|v*v).collect();Output::Matrix([1,v.len()],Arc::new(v))},\n            Task::Collection=>{let mut v=vec![x,2.,3.];v.sort_by(f64::total_cmp);v.dedup();Output::Set(Arc::new(v))},\n            Task::Strings=>Output::Number(match input.text() {\"\"=>0.,\"é\"=>1.,\"é\"=>2.,\"👩🏽‍💻\"=>3.,\"\\r\\n\"=>4.,_=>9.}),\n            Task::Graphemes=>{let line=input.text().lines().next().unwrap_or(\"\");Output::Number(match line.graphemes(true).nth(1) {Some(\"é\")=>1.,Some(\"é\")=>2.,_=>3.})},\n            Task::Fsm=>if self.turns==1 {self.captured=Some(input.text().to_owned());Output::Unpublished} else {Output::Bool(self.captured.as_deref()==Some(\"é\"))},\n            Task::Join(op)=>join(op,x),\n            Task::Graph=>{\n                let mut v=[0.;8];v[0]=1.;\n                for _ in 0..7 {let mut n=v;n[1]+=v[0]*2.;for(a,b)in[(1,2),(2,3),(3,1),(4,5),(5,6),(6,7)]{n[b]+=v[a];}n[4]+=v[3]*x;v=n;}\n                Output::Matrix([8,1],Arc::new(v.to_vec()))\n            },\n            Task::Ekf=>Output::Matrix([1,12],Arc::new(self.ekf.step(input.numbers()).to_vec())),\n        };\n        // Input admission keeps an owned copy; callers can change their next frame without publishing a result.\n        self.previous=Some(input.clone());\n    }\n}\n\nfn join(op:u8,key:f64)->Output {\n    let left=[(key,10.),(key,11.),(2.,12.),(3.,13.)];let right=[(1.,20.),(1.,21.),(2.,22.),(4.,23.)];\n    let mut rows=Vec::new();let mut matched=[false;4];\n    for (k,l) in left {\n        let mut any=false;\n        for (i,(rk,r)) in right.iter().enumerate() {if k==*rk {any=true;matched[i]=true;if op<4 {rows.push(vec![Some(k),Some(l),Some(*r)]);}}}\n        if (op==4 && any)||(op==5 && !any) {rows.push(vec![Some(k),Some(l)]);}\n        if !any && (op==1||op==3) {rows.push(vec![Some(k),Some(l),None]);}\n    }\n    if op==2||op==3 {for (i,(k,r)) in right.iter().enumerate() {if !matched[i] {rows.push(vec![Some(*k),None,Some(*r)]);}}}\n    Output::Table(op>=4,Arc::new(rows))\n}\n\nfn mul<const R:usize,const K:usize,const C:usize>(a:[[f64;K];R],b:[[f64;C];K])->[[f64;C];R] {\n    let mut out=[[0.;C];R];for i in 0..R {for j in 0..C {for k in 0..K {out[i][j]+=a[i][k]*b[k][j];}}}out\n}\nfn transpose<const R:usize,const C:usize>(a:[[f64;C];R])->[[f64;R];C] {let mut out=[[0.;R];C];for i in 0..R {for j in 0..C {out[j][i]=a[i][j];}}out}\nfn add<const R:usize,const C:usize>(a:[[f64;C];R],b:[[f64;C];R])->[[f64;C];R] {let mut out=a;for i in 0..R {for j in 0..C {out[i][j]+=b[i][j];}}out}\nstruct Ekf { state:[f64;3], covariance:[[f64;3];3] }\nimpl Ekf {\n    fn new()->Self {Self{state:[2.,1.,0.15],covariance:[[1.,0.,0.],[0.,1.,0.],[0.,0.,0.05]]}}\n    fn step(&mut self,v:&[f64])->[f64;12] {\n        let [speed,yaw,distance,bearing]:[f64;4]=v.try_into().unwrap();let dt=0.05;\n        let (si,co)=(self.state[2].sin(),self.state[2].cos());\n        let f=[[1.,0.,-speed*si*dt],[0.,1.,speed*co*dt],[0.,0.,1.]];\n        let g=[[co*dt,0.],[si*dt,0.],[0.,dt]];\n        let predicted=[self.state[0]+speed*co*dt,self.state[1]+speed*si*dt,self.state[2]+yaw*dt];\n        let p=add(mul(mul(f,self.covariance),transpose(f)),mul(mul(g,[[0.04,0.],[0.,0.0025]]),transpose(g)));\n        let (dx,dy)=(25.-predicted[0],-10.-predicted[1]);let q=dx*dx+dy*dy;let r=q.sqrt();\n        let h=[[-dx/r,-dy/r,0.],[dy/q,-dx/q,-1.]];let noise=[[0.25,0.],[0.,0.0009]];\n        let innovation=[[distance-r],[bearing-(dy.atan2(dx)-predicted[2])]];\n        let s=add(mul(mul(h,p),transpose(h)),noise);let d=s[0][0]*s[1][1]-s[0][1]*s[1][0];\n        let inv=[[s[1][1]/d,-s[0][1]/d],[-s[1][0]/d,s[0][0]/d]];\n        let gain=mul(mul(p,transpose(h)),inv);let correction=mul(gain,innovation);\n        for i in 0..3 {self.state[i]=predicted[i]+correction[i][0];}\n        let kh=mul(gain,h);let mut a=[[0.;3];3];for i in 0..3 {for j in 0..3 {a[i][j]=if i==j {1.} else {0.};a[i][j]-=kh[i][j];}}\n        let joseph=add(mul(mul(a,p),transpose(a)),mul(mul(gain,noise),transpose(gain)));\n        for i in 0..3 {for j in 0..3 {self.covariance[i][j]=0.5*(joseph[i][j]+joseph[j][i]);}}\n        let mut out=[0.;12];out[..3].copy_from_slice(&self.state);for i in 0..3 {for j in 0..3 {out[3+i*3+j]=self.covariance[i][j];}}out\n    }\n}\n\nenum Probe { Numbers(Weak<Vec<f64>>), Rows(Weak<Vec<Vec<Option<f64>>>>) }\nfn probe(v:&Output)->Option<Probe> {match v {Output::Matrix(_,v)|Output::Set(v)=>Some(Probe::Numbers(Arc::downgrade(v))),Output::Table(_,v)=>Some(Probe::Rows(Arc::downgrade(v))),_=>None}}\nfn run(request:Value)->Value {\n    assert_eq!(request[\"protocol\"],1);let task=Task::parse(request[\"oracle\"].as_str().unwrap());\n    let text=request[\"input_kind\"]==\"string\";\n    let frames:Vec<Input>=request[\"schedule\"].as_array().unwrap().iter().map(|frame| {\n        let f=frame.as_array().unwrap();if text {assert_eq!(f.len(),1);Input::Text(f[0].as_str().unwrap().to_owned())}\n        else {Input::Numbers(f.iter().map(|x|x.as_f64().unwrap()).collect())}\n    }).collect();assert!(!frames.is_empty());assert!(frames.iter().all(|f|task.validate(f)));\n    let count=request[\"iterations\"].as_u64().unwrap() as usize;assert!(count>0);\n    let warm=request[\"warmup\"].as_u64().unwrap_or(0) as usize;\n    {let mut w=Instance::new(task);for i in 0..warm {w.turn(black_box(&frames[i%frames.len()]));black_box(&w.published);}}\n    let verify=request[\"action\"]==\"verify\";let retain=request[\"retain_snapshots\"]==true;\n    let abort=request[\"abort_before_accept\"]==true;let reject=request[\"reject_before_accept\"]==true;\n    let mut instance=Instance::new(task);let mut outputs=Vec::new();let mut before=Vec::new();let mut retained=Vec::new();\n    // Probes are outside the measured loop. Snapshots themselves are retained inside it.\n    let mut probes=Vec::new();let invalid=Input::Numbers(vec![0.,1.]);\n    let (alloc0,bytes0)=(ALLOCS.load(Relaxed),BYTES.load(Relaxed));let start=Instant::now();\n    for i in 0..count {\n        let frame=black_box(&frames[i%frames.len()]);\n        if verify && i>0 {before.push(instance.published.json());}\n        if abort {let prepared=instance.prepare(frame).unwrap();black_box(prepared);}\n        if reject {assert!(instance.prepare(black_box(&invalid)).is_err());}\n        instance.turn(frame);black_box(&instance.published);\n        if retain {retained.push(instance.published.clone());}\n        if verify {outputs.push(instance.published.json());}\n    }\n    let seconds=start.elapsed().as_secs_f64();let (allocs,bytes)=(ALLOCS.load(Relaxed)-alloc0,BYTES.load(Relaxed)-bytes0);\n    let final_output=instance.published.json();let retained_outputs:Vec<_>=if verify {retained.iter().map(Output::json).collect()} else {vec![]};\n    if let Some(p)=probe(&instance.published) {probes.push(p);}\n    for v in &retained {if let Some(p)=probe(v) {probes.push(p);}}\n    let teardown=Instant::now();drop(retained);drop(instance);let teardown_seconds=teardown.elapsed().as_secs_f64();\n    let released=probes.iter().all(|p|match p {Probe::Numbers(p)=>p.upgrade().is_none(),Probe::Rows(p)=>p.upgrade().is_none()});assert!(released);\n    json!({\"protocol\":1,\"outcome\":\"ok\",\"iterations\":count,\"output_name\":request[\"output\"],\n        \"outputs\":outputs,\"before_execution\":before,\"retained_outputs\":retained_outputs,\"final_output\":final_output,\n        \"owned_outputs_released\":released,\"metrics\":{\"resident_turn_seconds\":seconds/count as f64,\n        \"rust_call_seconds\":seconds/count as f64,\"execution_block_seconds\":seconds,\"execution_allocations\":allocs,\n        \"execution_requested_bytes\":bytes,\"teardown_seconds\":teardown_seconds}})\n}\nfn main() {let mut input=String::new();io::stdin().read_to_string(&mut input).unwrap();let response=run(serde_json::from_str(&input).unwrap());println!(\"{response}\");}\n",
+      "source_sha256": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "environment_hash": "edf2f311f537dc7082a97e5f8490ae6eeee2733962a2994e6b0350893b595703",
+      "feature_profile": {
+        "profile": "rust-aot"
+      },
+      "control_contract": "c21fd71bce35f3c31767fe9cae97429fe64ccc18a5e738e10ae19c5ec587f17e",
+      "progress": "measured",
+      "outcome": "ok",
+      "capability": "supported",
+      "samples": [
+        {
+          "fork": 0,
+          "raw": "raw/concurrent-4/rust/fork-1",
+          "metrics": {
+            "worker_group_process_seconds": 0.03304337523877621,
+            "accepted_turns_per_second": 5949997.498115195,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004831584,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 1,
+          "raw": "raw/concurrent-4/rust/fork-2",
+          "metrics": {
+            "worker_group_process_seconds": 0.01874829176813364,
+            "accepted_turns_per_second": 10486715.399542343,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.005001208,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 2,
+          "raw": "raw/concurrent-4/rust/fork-3",
+          "metrics": {
+            "worker_group_process_seconds": 0.02156629180535674,
+            "accepted_turns_per_second": 9116449.02955294,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.0049265,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 3,
+          "raw": "raw/concurrent-4/rust/fork-4",
+          "metrics": {
+            "worker_group_process_seconds": 0.018616416957229376,
+            "accepted_turns_per_second": 10561001.101968259,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004984126,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        },
+        {
+          "fork": 4,
+          "raw": "raw/concurrent-4/rust/fork-5",
+          "metrics": {
+            "worker_group_process_seconds": 0.03269362496212125,
+            "accepted_turns_per_second": 6013649.456974855,
+            "total_turns": 196608,
+            "sum_worker_execution_block_seconds": 0.004833166,
+            "execution_allocations": 196608
+          },
+          "final_output": [
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            },
+            {
+              "kind": "scalar",
+              "value": 7.728054410584265
+            }
+          ]
+        }
+      ],
+      "implementation": {
+        "toolchain": "nightly-2026-03-03",
+        "version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+        "build_command": [
+          "cargo",
+          "+nightly-2026-03-03",
+          "build",
+          "--release",
+          "--offline",
+          "--locked",
+          "--manifest-path",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/results/campaigns/2026-11-17-rust-concurrent-001/rust-source/Cargo.toml",
+          "--target-dir",
+          "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target"
+        ],
+        "build_environment": {
+          "RUSTFLAGS": "-Ctarget-cpu=native"
+        },
+        "source_sha256": {
+          "Cargo.toml": "cef1b8e7d5d85ae5d4f3dfd816f58cb557ceac2f0e305a26a6778709822802fa",
+          "resident.rs": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+          "deflate.rs": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+          "Cargo.lock": "47d8ff6a31a8acff770609d0a1094c024dffda1eb243848b5f3ddec6b516e488",
+          "README.md": "511cc872d9e35afbc85fdb6f9894d8966be065087886a7127815c2529bd48012"
+        },
+        "binaries": {
+          "resident": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/resident",
+            "binary_sha256": "4f5d399fa1d2ada3a0edf8726c7830a93977b10d1f60afdfba9290b7dc020b13"
+          },
+          "deflate": {
+            "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/deflate",
+            "binary_sha256": "6d1bb6686fe695369de30c8e2aa2f3ac78395c70ee4b58db9a77b9c61a7ba6fd"
+          }
+        }
+      },
+      "verification": {
+        "outcome": "ok",
+        "raw": "raw/concurrent-4/rust/verify",
+        "reason": "All independent processes checked; complete group lifecycle and exact fixed accepted-turn count retained.",
+        "outputs": [
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          },
+          {
+            "kind": "scalar",
+            "value": 7.728054410584265
+          }
+        ],
+        "before_execution": null,
+        "retained_outputs": null
+      },
+      "summary": {
+        "accepted_turns_per_second": {
+          "median": 9116449.02955294,
+          "min": 5949997.498115195,
+          "max": 10561001.101968259,
+          "stdev": 2303883.6830696007,
+          "samples": [
+            5949997.498115195,
+            10486715.399542343,
+            9116449.02955294,
+            10561001.101968259,
+            6013649.456974855
+          ]
+        },
+        "execution_allocations": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "sum_worker_execution_block_seconds": {
+          "median": 0.0049265,
+          "min": 0.004831584,
+          "max": 0.005001208,
+          "stdev": 8.061793215656192e-05,
+          "samples": [
+            0.004831584,
+            0.005001208,
+            0.0049265,
+            0.004984126,
+            0.004833166
+          ]
+        },
+        "total_turns": {
+          "median": 196608,
+          "min": 196608,
+          "max": 196608,
+          "stdev": 0.0,
+          "samples": [
+            196608,
+            196608,
+            196608,
+            196608,
+            196608
+          ]
+        },
+        "worker_group_process_seconds": {
+          "median": 0.02156629180535674,
+          "min": 0.018616416957229376,
+          "max": 0.03304337523877621,
+          "stdev": 0.007339789605857013,
+          "samples": [
+            0.03304337523877621,
+            0.01874829176813364,
+            0.02156629180535674,
+            0.018616416957229376,
+            0.03269362496212125
+          ]
+        }
+      }
+    }
+  ],
+  "order": [
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "fork": 0,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "rust",
+      "fork": 0,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "rust",
+      "fork": 1,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "fork": 1,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "rust",
+      "fork": 2,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "fork": 2,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "fork": 3,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "rust",
+      "fork": 3,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "process-workers",
+      "fork": 4,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent",
+      "backend": "rust",
+      "fork": 4,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "rust",
+      "fork": 0,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "fork": 0,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "rust",
+      "fork": 1,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "fork": 1,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "rust",
+      "fork": 2,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "fork": 2,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "rust",
+      "fork": 3,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "fork": 3,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "process-workers",
+      "fork": 4,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-2",
+      "backend": "rust",
+      "fork": 4,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "fork": 0,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "rust",
+      "fork": 0,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "rust",
+      "fork": 1,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "fork": 1,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "fork": 2,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "rust",
+      "fork": 2,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "rust",
+      "fork": 3,
+      "lane": "control"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "fork": 3,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "process-workers",
+      "fork": 4,
+      "lane": "candidate"
+    },
+    {
+      "case_id": "concurrent-4",
+      "backend": "rust",
+      "fork": 4,
+      "lane": "control"
+    }
+  ],
+  "comparisons": [],
+  "complete": true,
+  "performance_gate": false,
+  "catalog_sha256": "31c14d1625099f88df24433ddefdd9714a7c09c451b619c3ba66e7080b27100b",
+  "harness_sha256": {
+    "run_rust_suite.py": "e2fce4dbca53a9427ddb55aaf7e27b404e6861217996fea874a99615c4205721",
+    "run_concurrent.py": "2c36666a9be7e85bc89b823b062f2c610490a28ae16cccdcbef763e39f267784",
+    "benchmark_suite.py": "acf4463f26f00bef4c5e6b31d9d812c8fa7c610656629d77bb22a00614945ab4",
+    "application_tasks.py": "566db6bc0b347278bb722a0163a17c9c54358adb5232ec5ac377c0748ceb1f98",
+    "run_native.py": "ef41be90a18779c89d04e396b6bd1c03f4931a5357e11310b081aa94a679791c",
+    "extended_oracles.py": "3533d575e4e8ba51b3038ecf3daa25ce4097968237000a11e47777cb2090fbe1",
+    "suite_oracle.py": "1e7454f72bcf05ed0798ecb307c3b204029f119dfa48d1c99a9eea980f53bdb7"
+  },
+  "rust": {
+    "toolchain": "nightly-2026-03-03",
+    "version": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n",
+    "build_command": [
+      "cargo",
+      "+nightly-2026-03-03",
+      "build",
+      "--release",
+      "--offline",
+      "--locked",
+      "--manifest-path",
+      "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/results/campaigns/2026-11-17-rust-concurrent-001/rust-source/Cargo.toml",
+      "--target-dir",
+      "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target"
+    ],
+    "build_environment": {
+      "RUSTFLAGS": "-Ctarget-cpu=native"
+    },
+    "source_sha256": {
+      "Cargo.toml": "cef1b8e7d5d85ae5d4f3dfd816f58cb557ceac2f0e305a26a6778709822802fa",
+      "resident.rs": "2d3aeb864f9a52c9a929578c683f89e9195e054c9129ae86d53c0a47662fe25c",
+      "deflate.rs": "47a84f03a19b907d0e5af2e33871ed6861fcaeb93577ea4a319c00ed24acdac8",
+      "Cargo.lock": "47d8ff6a31a8acff770609d0a1094c024dffda1eb243848b5f3ddec6b516e488",
+      "README.md": "511cc872d9e35afbc85fdb6f9894d8966be065087886a7127815c2529bd48012"
+    },
+    "binaries": {
+      "resident": {
+        "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/resident",
+        "binary_sha256": "4f5d399fa1d2ada3a0edf8726c7830a93977b10d1f60afdfba9290b7dc020b13"
+      },
+      "deflate": {
+        "binary": "/Users/cim310/.codex/worktrees/benchmark-suite/benchmarks/.local/rust-controls-target/release/deflate",
+        "binary_sha256": "6d1bb6686fe695369de30c8e2aa2f3ac78395c70ee4b58db9a77b9c61a7ba6fd"
+      }
+    }
+  },
+  "outcome": "ok",
+  "finished_at": "2026-11-17T17:21:26.312758+00:00"
+}

@@ -1,0 +1,57 @@
+{
+  "progress": "implemented",
+  "backends": [
+    "jit"
+  ],
+  "task": {
+    "oracle": "chain",
+    "outputs": [
+      "result"
+    ],
+    "dtype": "f64",
+    "arithmetic": "ordered IEEE-754 f64; no fast-math or reassociation requested",
+    "absolute_tolerance": 1e-09,
+    "relative_tolerance": 1e-10,
+    "logical_input_elements": 1,
+    "ordering": "source order for matrices; canonical set order for sets",
+    "ownership": "borrowed observations remain valid until next turn; retained snapshots must preserve earlier values"
+  },
+  "measurement": {
+    "boundary": "checked_native_jit_call",
+    "input_submission": "NativeScalarValue slice passed to JitArtifact.evaluate_into; admission and output validation included",
+    "output_observation": "Named scalar result checked after measured block; complete output trajectory in separate verification process",
+    "setup": "Source compile, bytecode roundtrip, checked native lowering, JIT compilation and warmup excluded; each separately measured",
+    "reset": "Pure scalar program; no retained state",
+    "destruction": "JIT module and transport output destruction excluded and separately timed",
+    "cache": "warm process; fresh activation per fork; OS caches uncontrolled",
+    "threads": 1,
+    "schedule": [
+      [
+        2.0
+      ],
+      [
+        3.0
+      ],
+      [
+        -1.0
+      ],
+      [
+        7.0
+      ]
+    ],
+    "scenario": "changing_values",
+    "retain_snapshots": false,
+    "abort_before_accept": false,
+    "primary_metric": "jit_invocation_seconds"
+  },
+  "id": "jit",
+  "title": "Checked scalar JIT preparation and warm calls",
+  "family": "compilation",
+  "source": "suite/fixtures/compile-chain.mec",
+  "compiler_tests": [
+    {
+      "repository": "mech-lang/mech",
+      "path": "hosts/gpu/tests/canonical_artifact_native.rs"
+    }
+  ]
+}

@@ -2,6 +2,7 @@
 """Build and serve the recorded benchmark explorer locally."""
 
 import argparse
+import json
 from functools import partial
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
@@ -21,8 +22,17 @@ def port_number(value):
 
 
 class ExplorerHandler(SimpleHTTPRequestHandler):
+    external_files={}
+
     def route(self):
         path = urlsplit(self.path).path
+        external=self.external_files.get(path.removeprefix('/benchmarks/')) if path.startswith('/benchmarks/') else None
+        if external:
+            self.send_response(HTTPStatus.FOUND)
+            self.send_header('Location',external['url'])
+            self.send_header('Content-Length','0')
+            self.end_headers()
+            return False
         if path in ("/", "/benchmarks", "/metrics", "/metrics/project"):
             self.send_response(HTTPStatus.FOUND)
             self.send_header("Location", path + "/" if path.startswith("/metrics") else "/benchmarks/")
@@ -59,6 +69,7 @@ def main():
     if not all((dist / name).is_file() for name in ("index.html", "data.json")):
         parser.error(f"saved explorer is missing from {dist}")
     handler = partial(ExplorerHandler, directory=str(dist))
+    ExplorerHandler.external_files=json.loads((dist/'build.json').read_text()).get('external_files',{})
     with ThreadingHTTPServer(("127.0.0.1", args.port), handler) as server:
         print(f"Saved chart: http://127.0.0.1:{args.port}/benchmarks/", flush=True)
         print(f"Mech metrics: http://127.0.0.1:{args.port}/metrics/", flush=True)

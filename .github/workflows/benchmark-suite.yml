@@ -11,6 +11,24 @@ permissions:
   contents: read
 
 jobs:
+  rust-controls-correctness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: nightly-2026-03-03
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: cargo build --release --locked --manifest-path suite/controls/rust/Cargo.toml --target-dir .local/rust-controls-target
+      - run: python3 tools/qualify_rust_controls.py --binaries .local/rust-controls-target/release --output .local/rust-correctness
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rust-control-correctness-evidence
+          path: .local/rust-correctness
+
   harness-and-explorer:
     runs-on: ubuntu-latest
     steps:

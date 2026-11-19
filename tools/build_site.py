@@ -265,7 +265,7 @@ def build():
                               logical_reports=logical_source_reports())
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
-    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'tools/export_suite.py', ROOT/'tools/project_metrics.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json')) + sorted((ROOT/'results/project').glob('*/snapshot.json')) + sorted((ROOT/'results/project').glob('*/evidence.json'))
+    inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'suite/evidence-hosting.json', ROOT/'tools/export_suite.py', ROOT/'tools/project_metrics.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json')) + sorted((ROOT/'results/project').glob('*/snapshot.json')) + sorted((ROOT/'results/project').glob('*/evidence.json'))
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():
@@ -298,12 +298,19 @@ def build():
     if recipe_payload:
         (output/'reproduction.json').write_bytes(recipe_payload)
         (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
+    external={}
     if (ROOT/'suite/catalog.json').exists():
-        export_suite(output, root=ROOT)
+        external=export_suite(output, root=ROOT).get('external_evidence',{})
     if (ROOT/'results/project').exists():
         export_project(output, root=ROOT)
+    if external:
+        (output/'evidence-redirects.txt').write_text(''.join(
+            f'/benchmarks/{name} {pin["url"]} 302\n' for name,pin in sorted(external.items())))
+    else:
+        (output/'evidence-redirects.txt').unlink(missing_ok=True)
     manifest = {'version': version, 'files': {p.relative_to(output).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
                 for p in sorted(output.rglob('*')) if p.is_file() and p != output / 'build.json'}}
+    if external:manifest['external_files']=external
     (output / 'build.json').write_text(json.dumps(manifest, indent=2) + '\n')
     print(f'Built site/public ({len(manifest["files"])} files, {version})')
     return output
