@@ -29,7 +29,8 @@ class EkfStudyTest(unittest.TestCase):
             output = Path(directory)
             manifest = json.loads((ROOT/'studies/ekf/provenance.json').read_text())
             for item in manifest['evidence']:
-                self.assertEqual(hashlib.sha256((output/'ekf-evidence'/item['file']).read_bytes()).hexdigest(), item['sha256'])
+                path = output/'ekf-evidence'/item['file'] if item.get('publish', True) else ROOT/item['repository_file']
+                self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), item['sha256'])
             for study in data['studies']:
                 for row in study['rows']:
                     self.assertTrue((output/row['source_url'].removeprefix('/benchmarks/')).is_file())

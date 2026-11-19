@@ -32,9 +32,9 @@ def ekf_study(root, output=None):
         shutil.copyfile(source, target)
 
     def load(name):
-        data = (study / 'evidence' / name).read_bytes()
+        data = (root / entries[name]['repository_file'] if 'repository_file' in entries[name] else study / 'evidence' / name).read_bytes()
         assert hashlib.sha256(data).hexdigest() == entries[name]['sha256'], name
-        if output:
+        if output and entries[name].get('publish', True):
             target = Path(output) / 'ekf-evidence' / name
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes(data)
@@ -43,7 +43,7 @@ def ekf_study(root, output=None):
     def cohort(key, title, name, instances, turns, scope, methods, date):
         return {'id': key, 'title': title, 'machine': 'Apple M1', 'precision': 'f32',
                 'instances': instances, 'turns': turns, 'scope': scope, 'methods': methods,
-                'recorded_at': date, 'evidence_url': '/benchmarks/ekf-evidence/' + name,
+                'recorded_at': date, 'evidence_url': '/benchmarks/ekf-evidence/' + name if entries[name].get('publish', True) else entries[name]['original_url'],
                 'original_evidence_url': entries[name]['original_url'], 'rows': []}
 
     def row(label, mode, rates, source_url, version, expected=None, elapsed_ns=None, total=None, **extra):
