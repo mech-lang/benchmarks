@@ -152,7 +152,9 @@ def ekf_study(root, output=None):
     data = load(name)
     base = cohort('gpu-batched', 'Batched GPU submission', name, data['configuration']['instances'], data['configuration']['gpu_turns'],
                   'One unchecked GPU submission containing 120 dependent turns. Publication and synchronization occur after the batch.',
-                  {**data['configuration'], 'command': data['command'], 'reference_scope': 'No external one-submit batched peer was measured in this campaign. Per-turn GPU timings are not a reference for this boundary.'}, data['generated_at'])
+                  {**data['configuration'], 'command': data['command'],
+                   'source_identity': 'The measured compiler revision and source hash are not recorded. The code link is the kernel snapshot at the archive revision.',
+                   'reference_scope': 'No external one-submit batched peer was measured in this campaign. Per-turn GPU timings are not a reference for this boundary.'}, data['generated_at'])
     summary = data['rows']['GPU unchecked one-submit']
     base['rows'].append(row('Mech batched GPU', 'unchecked', summary['throughput_millions'],
                            'https://github.com/mech-lang/mech/blob/cfb51ba74b4eda5e13a77cb357f24767d288d650/hosts/gpu/fixtures/ekf-kernel.mec',
