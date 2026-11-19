@@ -20,8 +20,8 @@ Rust with hand-written MSL is the per-turn Metal peer. The direct AOT library
 experiment uses the same checked loader/ABI and one host thread; its Rust
 control is scalar while Mech's selected AOT uses four-wide SIMD, as disclosed
 in the article and the recorded protocol. This is a library diagnostic, not
-the eight-worker SIMD language experiment. Other paths retain absolute times
-without a fabricated cross-campaign or non-equivalent runtime ratio.
+the eight-worker SIMD language experiment. Other paths retain absolute times; reference cells remain empty where the
+recorded campaign supplies no comparable peer.
 
 The three paired checked rows also appear under Applications in the main
 metrics overview. The seven-row page preserves source links, sortable columns,
