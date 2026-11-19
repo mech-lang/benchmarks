@@ -172,7 +172,9 @@ def ekf_study(root, output=None):
         (Path(output) / url.removeprefix('/benchmarks/')).write_bytes(source)
     base = cohort('resident', 'Managed resident runtime', name, 1, 4096,
                   'Captured-input submission, managed f64 execution and publication. No equivalent external rollback/admission/scheduling/accounting/publication control is qualified.',
-                  {'revision': record['revision'], 'measurement': record['measurement'], 'reference_scope': 'The saved bare Rust task does not supply equivalent managed runtime semantics.'}, data['started_at'])
+                  {'revision': record['revision'], 'measurement': {key: value for key, value in record['measurement'].items() if key != 'schedule'},
+                   'input_schedule': 'Complete input schedule is preserved in the linked canonical evidence.',
+                   'reference_scope': 'The saved bare Rust task does not supply equivalent managed runtime semantics.'}, data['started_at'])
     base.update(machine='Apple M3', precision='f64')
     item = row('Mech resident', 'checked', [1e-6 / value for value in times], url, record['revision'],
                is_mech=True, category='resident', publication='per-turn', summary_path='resident')
