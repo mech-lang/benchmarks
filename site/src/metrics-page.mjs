@@ -1,7 +1,7 @@
-import {metricGroups,metricsRoute} from './metrics-model.mjs';
+import {metricGroups,metricsRoute,measurementOnlyGroups} from './metrics-model.mjs';
 const route=metricsRoute(location.pathname,location.search);
 const $=selector=>document.querySelector(selector);
-const view=route.kind==='suite'&&!route.task&&route.group!=='all'?'summary':route.kind;
+const view=route.kind==='suite'&&!route.task&&route.group!=='all'&&!measurementOnlyGroups.includes(route.group)?'summary':route.kind;
 for(const [kind,id] of [['summary','summary-panel'],['deflate','deflate-m3'],['suite','suite-panel']])$('#'+id).hidden=view!==kind;
 for(const link of document.querySelectorAll('.metrics-nav a')){
   if(link.getAttribute('href')===(route.kind==='summary'?'/metrics/':route.kind==='deflate'?'/metrics/deflate/':metricGroups.find(group=>group.id===route.group)?.href))link.setAttribute('aria-current','page');
@@ -13,7 +13,7 @@ $('#page-title').textContent=title;
 $('#page-intro').textContent=route.kind==='summary'?'Compare Mech with measured reference implementations. The reference is always 1×.':group?.description??'Measurements, matched references and implementation details for this task.';
 if(route.kind==='suite'){
   $('#suite-title').textContent=route.task?'Task measurements':group?.title??'All task measurements';
-  $('#suite-reference-note').textContent=route.group==='compiler'?'Compiler costs are compared only with matched compiler costs. Source-to-artifact and JIT preparation without an equivalent reference are shown as Mech-only measurements.':route.group==='compression-history'?'Historical managed calls; no matched level-12 reference shares this timing scope.':'Each row names its own reference and measurement scope. The reference is 1×.';
+  $('#suite-reference-note').textContent=measurementOnlyGroups.includes(route.group)?'Mech-only measurements. The saved Rust controls do not establish equivalent rollback and managed runtime semantics, so no cross-runtime ratios or wins/losses are assigned.':route.group==='compiler'?'Compiler costs are compared only with matched compiler costs. Source-to-artifact and JIT preparation without an equivalent reference are shown as Mech-only measurements.':route.group==='compression-history'?'Historical managed calls; no matched level-12 reference shares this timing scope.':'Each row names its own reference and measurement scope. The reference is 1×.';
   if(route.group==='compiler')$('#suite-report').hidden=true;
 }
 document.title=`Mech · ${title}`;

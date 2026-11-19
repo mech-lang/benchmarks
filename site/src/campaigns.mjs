@@ -1,4 +1,4 @@
-import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot,referenceName,referenceLink,implementationLink,isJitRecord,comparisonStyle} from './campaigns-model.mjs';
+import {backendLabels,primaryMetric,implementationFor,metrics,formatMetric,recordFor,compareRecords,stageFor,compatibleHistory,measuredRows,controlFor,controlComparison,isMechRecord,comparisonDirection,comparisonLabel,comparisonPlot,referenceName,referenceLink,implementationLink,comparisonStyle} from './campaigns-model.mjs';
 import {metricsRoute,metricGroups,suiteMeasurements} from './metrics-model.mjs';
 
 const $=selector=>document.querySelector(selector);
@@ -12,7 +12,7 @@ const parameters=new URLSearchParams(location.search);
 const route=metricsRoute(location.pathname,location.search);
 const scoped=route.group!=='all'||!!route.task;
 const defaultMetric=route.task?'$primary':scoped?'$all':'$primary';
-const defaultOutcome=['compiler','size','memory','lifecycle','compression-history'].includes(route.group)||route.task?'all':'matched';
+const defaultOutcome=['compiler','size','memory','lifecycle','compression-history','runtime','scaling'].includes(route.group)||route.task?'all':'matched';
 let suiteSort=['name','mech','reference','ratio'].includes(parameters.get('sort'))?parameters.get('sort'):'name',suiteDescending=parameters.get('dir')==='desc';
 let outcome=parameters.get('result')??(parameters.has('case')?'all':defaultOutcome);
 if(!['matched','faster','slower','all'].includes(outcome))outcome='matched';
@@ -101,7 +101,6 @@ function trend(points,metric) {
 
 function renderLoadedDetail(row) {
   const {definition,campaign:current,record,metric}=row,backend=record.backend;
-  $('#suite-report').hidden=isJitRecord(record);
   let html=`<button class="back-summary" data-close-detail>Back to tasks</button><h2 id="detail-title">${escape(definition.title)}</h2>`;
   if(!record) {
     const available=[...bundle.campaigns].reverse().flatMap(c=>c.results.filter(r=>r.case_id===selected&&r.lane==='candidate'&&r.progress==='measured').map(r=>({c,r})));
@@ -113,6 +112,7 @@ function renderLoadedDetail(row) {
     const verification=record.verification??{};
     const summary=record.summary?.[metric],comparison=compareRecords(baselineRecord(row),record,metric);
     const control=referenceFor(row),change=changeFor(row,control);
+    $('#suite-report').hidden=control.kind!=='rust';
     const direction=comparisonDirection(change,metric);
     const screening=current.comparisons?.find(result=>result.case_id===selected&&result.backend===backend);
     html+=`<div class="measurement"><strong>${escape(formatMetric(summary?.median,metric))}</strong><span>${escape(metrics[metric].label)} · ${record.samples.length} independent ${record.samples.length===1?'fork':'forks'}</span></div>
@@ -177,6 +177,16 @@ function render() {
   const metric=$('#metric').value,backend=$('#backend').value;
   const available=pageRows({campaign:$('#campaign').value,backend,metric});
   const counts=summarize(available);
+  const measurementOnly=!available.some(row=>comparisonDirection(changeFor(row),row.metric)!=='unmatched');
+  if(measurementOnly)outcome='all';
+  $('#suite-reference-caption').textContent=measurementOnly?'Mech measurements':'the reference is named on every row.';
+  $('#stats').hidden=!!route.task||measurementOnly;
+  $('#suite-outcomes').hidden=!!route.task||measurementOnly;
+  $('#suite-comparison-chart').hidden=measurementOnly;
+  $('#suite-reference-heading').hidden=measurementOnly;
+  $('#suite-ratio-heading').hidden=measurementOnly;
+  $('#suite-report').hidden=measurementOnly;
+  $('#suite-reference-note').textContent=measurementOnly?'Mech-only measurements. No reference is qualified for the same execution and runtime semantics; no ratios or wins/losses are assigned.':'Each row names its reference and measurement scope. Ratios are Mech divided by the reference.';
   const dates=available.map(row=>row.campaign.started_at).filter(Boolean).sort();
   const asof=dates.at(-1);
   $('#suite-asof').textContent=asof?'Latest measurement '+asof.slice(0,10):'Published measurements';
@@ -194,7 +204,7 @@ function render() {
   $('#cases').innerHTML=rows.map(row=>{
     const {definition,record,metric:rowMetric}=row,control=referenceFor(row),change=changeFor(row,control);
     const direction=comparisonDirection(change,rowMetric);
-    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" data-metric="${escape(rowMetric)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span></td><td class="control-value"><span>${referenceLink(control)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td><span class="result-tag ${direction}" style="${comparisonStyle(change,rowMetric)}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
+    return `<tr class="${definition.id===selected?'selected':''}"><td><button data-case="${escape(definition.id)}" data-metric="${escape(rowMetric)}" aria-pressed="${definition.id===selected}">${escape(definition.title)}</button><span class="family">${escape(nice(definition.family))} · ${escape(backendLabels[record.backend])}</span>${record.outcome!=='ok'?badge(record.outcome,'failure'):''}</td><td class="number mech-value">${record.outcome==='ok'?escape(formatMetric(record.summary?.[rowMetric]?.median,rowMetric)):escape(nice(record.outcome))}<span class="family">${escape(metrics[rowMetric]?.label??rowMetric)}</span></td><td class="control-value"${measurementOnly?' hidden':''}><span>${referenceLink(control)}</span>${control.record?`<strong>${escape(formatMetric(control.record.summary?.[control.metric]?.median,control.metric))}</strong>`:''}</td><td${measurementOnly?' hidden':''}><span class="result-tag ${direction}" style="${comparisonStyle(change,rowMetric)}">${escape(comparisonLabel(change,rowMetric))}</span></td></tr>`;
   }).join('');
   renderSuiteChart();
   if(selected)previewSuite(selected);else $('#suite-readout').textContent='Select a point or task to see its timings.';

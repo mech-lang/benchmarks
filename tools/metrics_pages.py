@@ -9,11 +9,11 @@ PAGES = {
     'applications': ('Applications', 'Application performance · Rust', 'suite'),
     'benchmarks-game': ('Benchmarks Game', 'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process', 'suite'),
     'jit': ('JIT comparisons', 'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup', 'suite'),
-    'runtime': ('Microbenchmarks', 'Individual operations and runtime checks · Rust', 'suite'),
-    'scaling': ('Worker scaling', 'Complete worker groups · Rust', 'suite'),
+    'runtime': ('Microbenchmarks', 'Mech resident operations · no equivalent runtime reference', 'suite'),
+    'scaling': ('Worker scaling', 'Mech worker groups · no equivalent runtime reference', 'suite'),
     'compiler': ('Compiler', 'Source-to-executable build time · Rust', 'suite'),
     'size': ('Code size', 'Compiled executable and code sizes · Rust', 'suite'),
-    'memory': ('Allocations', 'Allocation counts · Rust', 'suite'),
+    'memory': ('Allocations', 'Mech allocation counts and retained storage', 'suite'),
     'lifecycle': ('Activation & cleanup', 'Initial turns, activation, snapshots and teardown', 'suite'),
     'compression-history': ('Checked compression · historical', 'Earlier managed program calls · Mech measurements without a matched level-12 timer', 'suite'),
     'knucleotide': ('K-nucleotide', 'Whole-process runtime · full FASTA N=25,000,000 · Rust', 'suite'),
@@ -34,7 +34,7 @@ def build_metrics_pages(output, catalog=None):
         pages['tasks/' + case['id']] = (case['title'], 'Measurements, matched references and implementation details for this task.', 'suite')
     written = []
     for route, (title, intro, kind) in pages.items():
-        if kind == 'suite' and route in PAGES and route not in ('knucleotide','nbody','related-post-gen'):
+        if kind == 'suite' and route in PAGES and route not in ('knucleotide','nbody','related-post-gen','runtime','scaling','memory','lifecycle'):
             kind = 'summary'
         path = output / 'metrics' / route / 'index.html'
         path.parent.mkdir(parents=True, exist_ok=True)

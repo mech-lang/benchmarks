@@ -21,9 +21,33 @@ from run_concurrent import group as mech_group
 TOOLCHAIN = 'nightly-2026-03-03'
 NOTE = ('Same inputs, accepted turns, warmup and output/retention obligations, paired on the same machine. '
         'Rust is an independent AOT task implementation with typed input validation, change detection and owned publication. '
-        'Rust uses native ownership; Mech additionally performs its runtime admission, dependency scheduling, budget accounting and turn summary. '
-        'This measures the cost of completing the task through each path, not a language-wide speed claim. '
+        'Rust uses native ownership; it is not qualified for equivalent transactional rollback, runtime admission, dependency scheduling, budget accounting and turn publication. '
+        'These resident measurements are not semantically equivalent cross-runtime performance comparisons. No Mech/Rust ratio or win/loss is assigned. '
         'Compilation is outside the resident timer. Rust preparation is not presented as a Mech artifact or JIT metric.')
+
+
+def task_report(campaign, group, introduction):
+    resident = group in ('resident', 'concurrent')
+    if resident:
+        lines = ['# Mech resident measurements', '', introduction, '',
+                 'Rust task controls are retained as separate correctness evidence; their runtime semantics are not equivalent.', '',
+                 '| Task / Mech path | Measurement | Mech seconds |', '| --- | --- | ---: |']
+    else:
+        lines = ['# Paired Rust task controls', '', introduction, '',
+                 '| Task / Mech path | Mech seconds | Rust seconds | Mech / Rust |', '| --- | ---: | ---: | ---: |']
+    for record in campaign['results']:
+        if record['lane'] == 'control':
+            continue
+        metric = record['measurement'].get('primary_metric', 'resident_turn_seconds')
+        measured = record['summary'][metric]['median']
+        if resident:
+            lines.append(f'| {record["case_id"]} / {record["backend"]} | {metric} | {measured:.9g} |')
+            continue
+        control = next(r for r in campaign['results'] if r['case_id'] == record['case_id'] and r['lane'] == 'control')
+        mapped = control['measurement'].get('metric_mapping', {}).get(metric, metric)
+        reference = control['summary'][mapped]['median']
+        lines.append(f'| {record["case_id"]} / {record["backend"]} | {measured:.9g} | {reference:.9g} | {measured/reference:.3f} |')
+    return '\n'.join(lines) + '\n'
 
 
 def rust_response(response, expected, case, count, verify=False):
@@ -423,15 +447,7 @@ def run(args):
         introduction = {'resident': NOTE, 'concurrent': NOTE + ' The primary clock is the complete supervised process group.',
                         'native': campaign['results'][0]['measurement']['comparison_note'],
                         'applications': 'Full-size K-nucleotide uses the complete fresh-process boundary. The 12 compressor cases use complete checked compressor calls, with output allocation and scratch destruction included. Compilation, input import, one warmup and returned-output destruction are outside the call. Rust zlib-rs level 9 and Mech level 12 may produce different compressed sizes; inspect size with time.'}[args.group]
-        lines = ['# Paired Rust task controls', '', introduction, '', '| Task / Mech path | Mech seconds | Rust seconds | Mech / Rust |', '| --- | ---: | ---: | ---: |']
-        for record in campaign['results']:
-            if record['lane'] == 'control': continue
-            control = next(r for r in campaign['results'] if r['case_id'] == record['case_id'] and r['lane'] == 'control')
-            metric = record['measurement'].get('primary_metric', 'resident_turn_seconds')
-            mapped = control['measurement'].get('metric_mapping', {}).get(metric, metric)
-            m = record['summary'][metric]['median']; r = control['summary'][mapped]['median']
-            lines.append(f'| {record["case_id"]} / {record["backend"]} | {m:.9g} | {r:.9g} | {m/r:.3f} |')
-        (directory / 'report.md').write_text('\n'.join(lines) + '\n')
+        (directory / 'report.md').write_text(task_report(campaign, args.group, introduction))
         seal_evidence(directory); archive_evidence(directory); validate_campaign(directory, campaign)
     print(directory / 'report.md', flush=True)
 

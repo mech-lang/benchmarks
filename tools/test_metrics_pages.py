@@ -47,6 +47,9 @@ class MetricsPagesTest(unittest.TestCase):
             self.assertTrue(root.panels['summary-panel'])
             compiler = PageParser();compiler.feed((output/'metrics/compiler/index.html').read_text())
             self.assertTrue(compiler.panels['summary-panel'])
+            for route in ['runtime','scaling','memory','lifecycle']:
+                measurements = PageParser();measurements.feed((output/f'metrics/{route}/index.html').read_text())
+                self.assertTrue(measurements.panels['suite-panel'],'standalone resident measurements must stay accessible')
             deflate = PageParser();deflate.feed((output/'metrics/deflate/index.html').read_text())
             self.assertTrue(deflate.panels['deflate-m3'])
             task = PageParser();task.feed((output/'metrics/tasks/knucleotide/index.html').read_text())

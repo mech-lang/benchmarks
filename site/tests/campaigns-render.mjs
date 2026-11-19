@@ -111,9 +111,9 @@ assert.ok(element('#detail').innerHTML.includes('/raw/fork-1/supervised.json.gz"
 assert.ok(element('#detail').innerHTML.includes('/campaign-evidence/run-001/raw.tar.gz"'),'archive download keeps its site URL for the pinned redirect');
 console.log('Lossless compressed observation links and stable archive download routes passed.');
 
-const candidate={...base,control_contract:'same-task'};
+const candidate={...base,backend:'native',control_contract:'same-task',measurement:{primary_metric:'native_process_seconds'},summary:{native_process_seconds:{median:.0001,samples:[.0001]}},samples:[{fork:0,raw:'raw/fork-1',metrics:{native_process_seconds:.0001}}]};
 const control={...candidate,backend:'rust',lane:'control',title:'Rust',source:'independent Rust source',
-  measurement:{primary_metric:'rust_call_seconds',metric_mapping:{resident_turn_seconds:'rust_call_seconds'}},
+  measurement:{primary_metric:'rust_call_seconds',metric_mapping:{native_process_seconds:'rust_call_seconds'}},
   summary:{rust_call_seconds:{median:.00001,samples:[.00001]}},samples:[{fork:0,raw:'raw/rust-1',metrics:{rust_call_seconds:.00001}}]};
 const summary=(record,path)=>{
   const {source,samples,task,verification,...index}=record;
@@ -148,6 +148,17 @@ lazy=await mount(structuredClone(lazyBundle),'?case=scalar',invalid);
 assert.ok(lazy.element('#detail').innerHTML.includes('task_hash differs from its summary'));
 assert.ok(!lazy.element('#detail').innerHTML.includes('class="measurement"'));
 console.log('Summary-only loading, selected task/control requests, cache, shared links and detail identity checks passed.');
+
+const residentBundle=structuredClone(lazyBundle),residentFiles=structuredClone(detailFiles);
+for(const record of [residentBundle.campaigns[0].results[0],residentFiles[candidatePath].record]){
+  record.backend='source';record.measurement={primary_metric:'resident_turn_seconds'};record.summary={resident_turn_seconds:{median:.0001,samples:[.0001]}};
+}
+const residentUI=await mount(residentBundle,'?case=scalar&backend=source&result=slower',residentFiles);
+assert.ok(residentUI.element('#detail').innerHTML.includes('100 µs'),'old win/loss filter links still expose the standalone resident observation');
+assert.ok(residentUI.element('#detail').innerHTML.includes('rollback'));
+assert.ok(!residentUI.requests.some(url=>url.includes(controlPath)),'unqualified Rust controls are not loaded into resident details');
+assert.ok(!residentUI.element('#detail').innerHTML.includes('independent Rust source'));
+for(const selector of ['#stats','#suite-report','#suite-outcomes','#suite-comparison-chart','#suite-reference-heading','#suite-ratio-heading'])assert.equal(residentUI.element(selector).hidden,true,selector+' is hidden for standalone resident measurements');
 
 const jitBundle=structuredClone(lazyBundle),jitFiles=structuredClone(detailFiles);
 jitBundle.campaigns[0].results[0].backend='jit';

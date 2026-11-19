@@ -34,9 +34,9 @@ console.log('Campaign filtering, compatibility, units, missing data and history 
 
 const application={...candidate,case_id:'app',backend:'program-jit',measurement:{primary_metric:'native_program_call_seconds'},summary:{native_program_call_seconds:{median:3}}};
 const failed={...candidate,outcome:'error',progress:'implemented',summary:{}};
-const reference={...candidate,backend:'rust',lane:'control',title:'Rust reference',control_contract:'matched',summary:{resident_turn_seconds:{median:2}}};
-const measured={...candidate,control_contract:'matched'};
-const data={catalog:{cases:[{...cases[0],backends:['source','bytecode']},{id:'app',title:'Full application',family:'applications',backends:['program-jit']},cases[1]]},campaigns:[
+const reference={...candidate,backend:'rust',lane:'control',title:'Rust reference',control_contract:'matched',summary:{native_process_seconds:{median:2}}};
+const measured={...candidate,backend:'native',control_contract:'matched',measurement:{primary_metric:'native_process_seconds'},summary:{native_process_seconds:{median:1}}};
+const data={catalog:{cases:[{...cases[0],backends:['native','source','bytecode']},{id:'app',title:'Full application',family:'applications',backends:['program-jit']},cases[1]]},campaigns:[
   {...campaign,id:'resident',results:[measured,reference]},
   {...campaign,id:'application',started_at:'2026-11-17',results:[application]},
   {...campaign,id:'failed',started_at:'2026-11-18',results:[failed,{...reference,case_id:'jvm',backend:'jvm',lane:'candidate'}]},
@@ -57,7 +57,7 @@ assert.equal(controlFor(data,rows[1]).kind,'pending');
 data.control_policy={controls:[{case_id:'scalar',backend:'source',metric:'resident_turn_seconds',campaign_id:'resident',label:'Mech frozen baseline'}]};
 assert.equal(controlFor(data,rows[0]).record,reference,'a retained Mech checkpoint cannot displace a measured Rust reference');
 assert.equal(controlFor(data,rows[0]).label,'Rust');
-const newer={...campaign,id:'new',started_at:'2026-11-19',results:[{...measured,summary:{resident_turn_seconds:{median:.5}}}]};
+const newer={...campaign,id:'new',started_at:'2026-11-19',results:[{...measured,summary:{native_process_seconds:{median:.5}}}]};
 data.campaigns.push(newer);rows=measuredRows(data);
 assert.equal(controlFor(data,rows[0]).kind,'pending','a missing Rust run does not automatically substitute an internal Mech checkpoint');
 assert.equal(compareRecords(measured,rows[0].record,rows[0].metric).percent,-50,'explicit history comparisons remain available');
@@ -86,6 +86,16 @@ assert.equal(controlFor(deflateData,{...deflateRow,record:{...deflate,backend:'p
 compressor.environment_hash='different-machine';
 assert.equal(controlFor(deflateData,deflateRow).kind,'pending','a shared timing contract does not permit a different machine');
 console.log('DEFLATE comparisons require the same task, machine and explicit measurement contract.');
+for(const backend of ['source','bytecode','process-workers'])for(const metric of ['resident_turn_seconds','execution_allocations','teardown_seconds','worker_group_process_seconds','accepted_turns_per_second']){
+  const record={...candidate,backend,control_contract:'same-task-and-timer',summary:{[metric]:{median:2}}};
+  const bare={...record,backend:'rust',lane:'control',summary:{[metric]:{median:1}}};
+  const origin={...campaign,results:[record,bare]};
+  const row={campaign:origin,record,metric};
+  const control=controlFor({campaigns:[origin]},row);
+  assert.equal(control.kind,'pending','a shared task hash cannot qualify '+backend+' '+metric+' runtime semantics');
+  assert.ok(control.reason.includes('rollback'));
+  assert.equal(controlComparison(row,control).ratio,undefined,'an unqualified runtime comparison cannot produce a ratio');
+}
 for(const backend of ['source-native','fused-native','jit','program-jit','program-jit-bytecode']){
   const record={...candidate,backend,control_contract:reference.control_contract};
   const origin={...campaign,results:[record,reference]};

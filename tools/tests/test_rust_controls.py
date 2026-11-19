@@ -5,11 +5,23 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from benchmark_suite import load_catalog
-from run_rust_suite import rust_response
+from run_rust_suite import rust_response, task_report, NOTE
 from suite_oracle import outputs
 
 
 class RustQualification(unittest.TestCase):
+    def test_resident_reports_do_not_compare_different_runtime_semantics(self):
+        for group, backend, metric in [('resident', 'source', 'resident_turn_seconds'), ('concurrent', 'process-workers', 'worker_group_process_seconds')]:
+            measured = {'case_id': 'ekf', 'backend': backend, 'lane': 'candidate',
+                        'measurement': {'primary_metric': metric}, 'summary': {metric: {'median': 1.31e-6}}}
+            control = {**measured, 'backend': 'rust', 'lane': 'control', 'summary': {metric: {'median': 110.7e-9}}}
+            report = task_report({'results': [measured, control]}, group, NOTE)
+            self.assertIn('1.31e-06', report)
+            self.assertIn('rollback', report)
+            self.assertNotIn('110.7', report)
+            self.assertNotIn('Rust seconds', report)
+            self.assertNotIn('| Mech / Rust |', report)
+
     def setUp(self):
         self.case = next(c for c in load_catalog()['cases'] if c['id'] == 'retained-snapshots')
         self.expected = outputs(self.case, 10)

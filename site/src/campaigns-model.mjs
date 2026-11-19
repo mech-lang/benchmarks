@@ -137,6 +137,13 @@ export function controlFor(bundle,row) {
   const {record,campaign,metric}=row;
   if(isJitRecord(record))return {kind:'pending',label:'JIT reference needed',href:'/metrics/jit/',
     reason:'This JIT measurement has no qualified JIT peer for the same task and timing boundary. AOT Rust is not used as a JIT reference. The JIT view compares retained whole-process measurements with their fastest recorded JIT peers.'};
+  // The retained resident.rs controls match successful task outputs, not the
+  // managed runtime contract. Their shared control hash does not qualify
+  // rollback, admission, scheduling, accounting or publication semantics.
+  // This also covers allocation, cleanup and complete worker-group costs.
+  if(isManagedResidentRecord(record)||['resident_turn_seconds','initial_turn_seconds','activation_seconds','owned_snapshot_seconds','teardown_seconds','managed_retained_bytes','worker_group_process_seconds','accepted_turns_per_second'].includes(metric))return {
+    kind:'pending',label:'No equivalent resident reference',
+    reason:'Mech-only measurement. The saved Rust task controls do not establish equivalent rollback, input admission, dependency scheduling, budget accounting, snapshot retention and publication semantics. Matching inputs, outputs and timer boundaries does not qualify a resident-runtime comparison.'};
   if(record.case_id==='deflate'||record.case_id.startsWith('deflate-')) {
     const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
     if(!mapped)return {kind:'pending',label:'No matched reference',reason:'No reference measures the same compiler, preparation or support operation. A compressor execution time is not a compiler measurement.'};
@@ -249,6 +256,9 @@ export function referenceName(control) {
 export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
 export function isJitRecord(record) {
   return record?.execution_mode?record.execution_mode==='jit':['source-native','fused-native','program-jit','program-jit-bytecode','jit'].includes(record?.backend);
+}
+export function isManagedResidentRecord(record) {
+  return ['source','bytecode','process-workers'].includes(record?.backend);
 }
 export function implementationName(record) {
   if(record?.execution_mode==='aot'||['native','program-linked'].includes(record?.backend))return 'Mech (AOT)';
