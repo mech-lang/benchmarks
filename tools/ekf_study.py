@@ -69,6 +69,8 @@ def ekf_study(root, output=None):
                   data['methods'], data['finished_at'])
     labels = {'evaluator': 'Resident numerical evaluator · 1 worker', 'scalar-jit': 'Scalar JIT · 1 worker',
               'simd-aot': 'SIMD AOT · Mech session · 1 worker', 'simd-jit-8w': 'SIMD JIT · 8 workers', 'metal': 'Metal GPU · per turn'}
+    categories = {'evaluator': 'cpu-interpreted', 'scalar-jit': 'cpu-jit', 'simd-aot': 'cpu-aot',
+                  'simd-jit-8w': 'cpu-jit', 'metal': 'metal'}
     for backend, modes in data['summary'].items():
         for mode, summary in modes.items():
             records = [r for r in data['records'] if r['backend'] == backend and r['mode'] == mode]
@@ -76,7 +78,8 @@ def ekf_study(root, output=None):
             rates = [r['measurement']['throughput_million_filter_turns_per_second'] for r in records]
             item = row(labels[backend], mode, rates, measured_url, 'f4b69052 · Cranelift 0.131.3',
                        summary['median_million_filter_turns_per_second'],
-                       [r['measurement']['elapsed_ns'] for r in records], data['instances'] * data['turns'], backend=backend)
+                       [r['measurement']['elapsed_ns'] for r in records], data['instances'] * data['turns'],
+                       backend=backend, is_mech=True, category=categories[backend])
             assert math.isclose(item['mad'], summary['mad_million_filter_turns_per_second'], abs_tol=1e-10)
             base['rows'].append(item)
     cohorts.append(base)
@@ -120,7 +123,10 @@ def ekf_study(root, output=None):
             for mode, summary in modes.items():
                 rates = [r['throughput_million_ekf_turns_per_second'] for r in summary['records']]
                 assert len(rates) == 10
+                category = ('metal' if key == 'metal' else
+                            'cpu-jit' if label.startswith(('Mech', 'Julia', 'NumPy', 'Taichi', 'Halide')) else 'cpu-aot')
                 item = row(label, mode, rates, url, version_for(label, data, key), summary['median_million_ekf_turns_per_second'],
+                           is_mech=label.startswith('Mech'), category=category,
                            implementation_url=sources[path]['original_url'] if path else url)
                 assert math.isclose(item['mad'], summary['median_absolute_deviation_million_ekf_turns_per_second'], abs_tol=1e-9)
                 base['rows'].append(item)

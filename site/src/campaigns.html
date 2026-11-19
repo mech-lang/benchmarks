@@ -51,12 +51,13 @@
 
     <section id="ekf-results" aria-labelledby="ekf-study-title" hidden>
       <div class="result-toolbar ekf-controls"><label>Study <select id="ekf-study" aria-label="EKF study"></select></label><div class="table-tools"><button id="ekf-export-selection">Export selection</button><button id="ekf-export-all">Export all samples</button></div></div>
-      <h2 id="ekf-study-title">EKF execution backends</h2><p class="caption" id="ekf-study-meta"></p><p class="scope-note" id="ekf-scope"></p>
+      <h2 id="ekf-study-title">EKF CPU comparisons</h2><p class="caption" id="ekf-study-meta"></p><p class="scope-note" id="ekf-scope"></p>
+      <div class="ekf-reference-controls" id="ekf-references"></div><p class="caption" id="ekf-comparison-note"></p>
       <div id="ekf-error" class="empty" role="alert" hidden></div>
       <div class="result-toolbar"><div class="result-filters" id="ekf-modes"><button data-ekf-mode="both" aria-pressed="true">Both modes</button><button data-ekf-mode="checked">Checked</button><button data-ekf-mode="unchecked">Unchecked</button></div><div class="ekf-view-options"><label><input type="checkbox" id="ekf-samples" checked> Samples</label><label><input type="checkbox" id="ekf-medians" checked> Medians ± MAD</label></div></div>
       <div class="chart-card"><div class="chart-readout" id="ekf-readout" aria-live="polite">Loading retained measurements…</div><div id="ekf-chart"></div><p class="chart-key">Dots: independent trials. Square: median. Line: median absolute deviation. Yellow: checked; blue: unchecked.</p></div>
       <div class="table-heading"><h3>Results <span id="ekf-row-count"></span></h3><label><span class="sr-only">Search EKF implementations</span><input id="ekf-search" type="search" placeholder="Find an implementation"></label></div>
-      <p class="caption">× best time uses the fastest result in the same study and checked/unchecked mode. These are measured execution costs, without a claim of identical runtime guarantees across implementations. Seconds per filter-turn are derived from the retained throughput when raw elapsed time is unavailable.</p>
+      <p class="caption">These are measured kernel execution costs; fault interfaces and publication boundaries are recorded for each study. Seconds per filter-turn are derived from retained throughput when raw elapsed time is unavailable.</p>
       <div class="table-scroll ekf-table"><table><thead id="ekf-headings"></thead><tbody id="ekf-rows"></tbody></table></div>
       <details class="method"><summary>Timing scope, versions and raw evidence</summary><div id="ekf-methods"></div></details>
       <p class="downloads"><a href="/iros-r4r-2026/index.html">IROS article</a><a href="/benchmarks/ekf-results.json" download>All EKF results (JSON)</a></p>

@@ -26,10 +26,20 @@ The projection preserves 40 result rows and 400 timing observations.
 Median throughput and unscaled median absolute deviation are recomputed
 from every retained sample and checked against the archived summaries.
 Seconds per filter-turn use raw elapsed time when present and otherwise
-are derived from recorded throughput. Relative times use the fastest
-result in the same cohort and checked/unchecked mode; search does not
-change that denominator. These descriptive ratios do not establish
-identical runtime guarantees across all implementations.
+are derived from recorded throughput. Relative times use an external
+peer in the same cohort, execution category and checked/unchecked mode.
+CPU JIT peers are Julia SIMD.jl, NumPy/Numba, Taichi LLVM CPU and Halide's
+runtime-compiled callable; CPU AOT peers are Rust, Futhark and Mojo. The
+recorded launch commands and implementation sources establish these paths.
+Halide's `compile_to_callable` performs JIT compilation, as documented in
+the [Pipeline API](https://halide-lang.org/docs/api/generated/Pipeline.html).
+Metal peers use their native GPU
+paths. The default reference is the fastest external peer in each
+category/mode, with a selector for every other eligible peer. Mech is
+never its own reference, and search does not change the denominator.
+The Mech-only backend study shows absolute timings without peer ratios.
+These descriptive kernel ratios do not establish identical runtime
+guarantees across all implementations.
 
 `tools/ekf_study.py` exports the compact website dataset, raw records and
 source snapshots. `tools/build_site.py` includes their identities in the

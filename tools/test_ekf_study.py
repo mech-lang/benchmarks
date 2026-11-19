@@ -37,6 +37,20 @@ class EkfStudyTest(unittest.TestCase):
             measured = next(r for r in data['studies'][0]['rows'] if r['backend'] == 'simd-aot')
             self.assertEqual(hashlib.sha256((output/measured['source_url'].removeprefix('/benchmarks/')).read_bytes()).hexdigest(), 'da531cddcb25d002d49f1a77800122e84b573e2685e191c1955908ef6fccd625')
 
+    def test_execution_categories_follow_measured_implementations(self):
+        data = ekf_study(ROOT)
+        backends, cpu, metal = data['studies']
+        self.assertTrue(all(r['is_mech'] for r in backends['rows']))
+        categories = {r['label']: r['category'] for r in cpu['rows']}
+        self.assertEqual({name for name, kind in categories.items() if kind == 'cpu-jit'},
+                         {'Mech fused SIMD/JIT', 'Mech per-turn SIMD/JIT', 'Julia SIMD.jl',
+                          'NumPy/Numba', 'Taichi LLVM CPU', 'Halide native CPU'})
+        self.assertEqual({name for name, kind in categories.items() if kind == 'cpu-aot'},
+                         {'Rust packed SIMD', 'Futhark ISPC AOT', 'Mojo SIMD-4'})
+        self.assertTrue(all(r['category'] == 'metal' for r in metal['rows']))
+        self.assertTrue(all(r['is_mech'] == r['label'].startswith('Mech')
+                            for study in [cpu, metal] for r in study['rows']))
+
     def test_modified_evidence_is_not_silently_projected(self):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)

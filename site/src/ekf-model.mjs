@@ -2,6 +2,7 @@ import {formatRatio} from './campaigns-model.mjs';
 
 export const escape=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 export const number=(value,digits=4)=>Number(value).toLocaleString(undefined,{maximumSignificantDigits:digits});
+export const categoryLabels={'cpu-jit':'CPU · JIT','cpu-aot':'CPU · AOT','cpu-interpreted':'CPU · interpreted',metal:'Metal GPU'};
 const median=values=>{const a=[...values].sort((x,y)=>x-y),i=Math.floor(a.length/2);return a.length%2?a[i]:(a[i-1]+a[i])/2;};
 export function validateEKF(data){
   if(data?.schema!=='mech.ekf-study.v1'||!Array.isArray(data.studies)||!data.studies.length)throw Error('Unsupported EKF evidence');
@@ -10,7 +11,7 @@ export function validateEKF(data){
     if(!/^[a-z0-9-]+$/.test(study.id)||ids.has(study.id)||!study.rows?.length)throw Error('Invalid EKF study');
     ids.add(study.id);const rows=new Set();
     for(const row of study.rows){
-      if(rows.has(row.id)||!['checked','unchecked'].includes(row.mode)||!row.source_url||!/^https:\/\/|^\/benchmarks\//.test(row.source_url))throw Error('Invalid EKF implementation');
+      if(rows.has(row.id)||!['checked','unchecked'].includes(row.mode)||typeof row.is_mech!=='boolean'||!categoryLabels[row.category]||!row.source_url||!/^https:\/\/|^\/benchmarks\//.test(row.source_url))throw Error('Invalid EKF implementation');
       rows.add(row.id);const samples=row.samples_million_filter_turns_per_second;
       if(samples?.length!==row.n||samples.length!==row.samples_seconds_per_filter_turn?.length||samples.some(x=>!Number.isFinite(x)||x<=0)||row.samples_seconds_per_filter_turn.some(x=>!Number.isFinite(x)||x<=0))throw Error('Incomplete EKF samples');
       const m=median(samples),mad=median(samples.map(x=>Math.abs(x-m)));
@@ -19,16 +20,24 @@ export function validateEKF(data){
   }
   return data;
 }
-export function relativeTime(study,row){
-  // Checked and unchecked are distinct contracts. Filtering the table never
-  // changes the denominator or imports a trial from another experiment.
-  return row.time_seconds/Math.min(...study.rows.filter(r=>r.mode===row.mode).map(r=>r.time_seconds));
+export function referenceOptions(study,category){
+  return [...new Set(study.rows.filter(row=>!row.is_mech&&row.category===category).map(row=>row.label))].sort((a,b)=>a.localeCompare(b));
 }
-export function selectedRows(study,{mode='both',query='',sort='name',descending=false}={}){
-  const value=row=>({name:row.label,mode:row.mode,rate:row.median,mad:row.mad,n:row.n,time:row.time_seconds,ratio:relativeTime(study,row),version:row.version})[sort];
+export function referenceFor(study,row,references={}){
+  // A peer is external to Mech, in this study, category and checking mode.
+  // Search and visibility never select a faster Mech backend or another cohort.
+  const peers=study.rows.filter(peer=>!peer.is_mech&&peer.category===row.category&&peer.mode===row.mode);
+  return peers.find(peer=>peer.label===references[row.category])??peers.sort((a,b)=>a.time_seconds-b.time_seconds||a.label.localeCompare(b.label))[0]??null;
+}
+export function relativeTime(study,row,references={}){
+  const peer=referenceFor(study,row,references);return peer?row.time_seconds/peer.time_seconds:null;
+}
+export function selectedRows(study,{mode='both',query='',sort='name',descending=false,references={}}={}){
+  const value=row=>({name:row.label,mode:row.mode,category:categoryLabels[row.category],peer:referenceFor(study,row,references)?.label,rate:row.median,mad:row.mad,n:row.n,time:row.time_seconds,ratio:relativeTime(study,row,references),version:row.version})[sort];
   return study.rows.filter(row=>(mode==='both'||row.mode===mode)&&`${row.label} ${row.version}`.toLowerCase().includes(query.toLowerCase().trim())).sort((a,b)=>{
-    const x=value(a),y=value(b),difference=typeof x==='string'?x.localeCompare(y):x-y;
-    return (descending?-1:1)*(difference||a.mode.localeCompare(b.mode));
+    const x=value(a),y=value(b);if(x==null||y==null)return x==null&&y==null?a.label.localeCompare(b.label):x==null?1:-1;
+    const difference=typeof x==='string'?x.localeCompare(y):x-y;
+    return (descending?-1:1)*(difference||a.label.localeCompare(b.label)||a.mode.localeCompare(b.mode));
   });
 }
 export function sampleChart(rows,{width=900,samples=true,medians=true}={}){
@@ -47,11 +56,11 @@ export function sampleChart(rows,{width=900,samples=true,medians=true}={}){
       (samples?row.samples_million_filter_turns_per_second.map((sample,j)=>'<circle class="ekf-sample" fill="'+color+'" cx="'+x(sample)+'" cy="'+(y+(j%5-2)*2)+'" r="2.6"/>').join(''):'')+
       (medians?'<line stroke="'+color+'" stroke-width="2" x1="'+x(Math.max(row.median-row.mad,Number.MIN_VALUE))+'" x2="'+x(row.median+row.mad)+'" y1="'+y+'" y2="'+y+'"/><rect fill="'+color+'" x="'+(x(row.median)-4)+'" y="'+(y-4)+'" width="8" height="8"/>':'')+'</g>';}).join('')+'</svg>';
 }
-export function exportRows(studies,selection){
+export function exportRows(studies,selection,references={}){
   const quote=value=>'"'+String(value??'').replaceAll('"','""')+'"';
   const absolute=value=>value?new URL(value,'https://mech-lang.org').href:'';
-  const header=['study','machine','precision','filters','turns','recorded_at','implementation','mode','sample','million_filter_turns_per_second','seconds_per_filter_turn','median_throughput','mad_throughput','median_seconds_per_filter_turn','time_divided_by_best_same_mode','version','source','evidence','timing_scope'];
-  const records=studies.flatMap(study=>(selection?.study===study.id?selection.rows:selection?[]:study.rows).flatMap(row=>row.samples_million_filter_turns_per_second.map((sample,i)=>[study.id,study.machine,study.precision,study.instances,study.turns,study.recorded_at,row.label,row.mode,i+1,sample,row.samples_seconds_per_filter_turn[i],row.median,row.mad,row.time_seconds,relativeTime(study,row),row.version,absolute(row.source_url),absolute(study.evidence_url),study.scope])));
+  const header=['study','machine','precision','filters','turns','recorded_at','implementation','mode','sample','million_filter_turns_per_second','seconds_per_filter_turn','median_throughput','mad_throughput','median_seconds_per_filter_turn','category','peer','peer_median_seconds_per_filter_turn','time_divided_by_peer_time','peer_source','version','source','evidence','timing_scope'];
+  const records=studies.flatMap(study=>(selection?.study===study.id?selection.rows:selection?[]:study.rows).flatMap(row=>{const peer=referenceFor(study,row,references);return row.samples_million_filter_turns_per_second.map((sample,i)=>[study.id,study.machine,study.precision,study.instances,study.turns,study.recorded_at,row.label,row.mode,i+1,sample,row.samples_seconds_per_filter_turn[i],row.median,row.mad,row.time_seconds,categoryLabels[row.category],peer?.label,peer?.time_seconds,relativeTime(study,row,references),absolute(peer?.source_url),row.version,absolute(row.source_url),absolute(study.evidence_url),study.scope]);}));
   return [header,...records].map(row=>row.map(quote).join(',')).join('\r\n')+'\r\n';
 }
 export {formatRatio};
