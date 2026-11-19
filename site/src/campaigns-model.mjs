@@ -252,7 +252,7 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
 }
 
 export function referenceName(control) {
-  return control?.kind==='rust'?'Rust':['jit','gpu'].includes(control?.kind)?(control.label??'Reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+  return control?.kind==='rust'?'Rust':['jit','gpu','aot'].includes(control?.kind)?(control.label??'Reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
 }
 export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
 export function isJitRecord(record) {

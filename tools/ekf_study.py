@@ -133,6 +133,54 @@ def ekf_study(root, output=None):
                 base['rows'].append(item)
         cohorts.append(base)
 
+    name = 'apple-m1-aot-vs-rust-dylib-2026-09-24.json'
+    data = load(name)
+    base = cohort('aot-library', 'AOT direct library calls', name, data['configuration']['instances'], data['configuration']['turns'],
+                  data['configuration']['timed_region'], {**data['configuration'], 'toolchain': data['toolchain'], 'validation': data['validation'],
+                  'reference_scope': 'The retained Rust library is scalar; Mech SIMD AOT uses four lanes. This is the same-loader library experiment, not the eight-worker SIMD language campaign.'}, data['generated_at'])
+    for label, summary in data['rows'].items():
+        rust = label == 'Rust cdylib'
+        rates = summary['throughput_million_ekf_turns_per_second']
+        url = 'https://github.com/mech-lang/mech/blob/' + data['implementation_commit'] + '/' + data['sources']['rust_library' if rust else 'mech']
+        base['rows'].append(row('Rust scalar' if rust else label, 'checked', rates['samples'], url,
+                               data['toolchain']['rustc'] if rust else 'Cranelift ' + data['toolchain']['cranelift'] + ' · ' + data['implementation_commit'][:8],
+                               rates['median'], is_mech=not rust, category='cpu-aot', publication='per-turn',
+                               summary_path='aot' if label == 'Mech Cranelift SIMD AOT' else None))
+    cohorts.append(base)
+
+    name = 'apple-m1-mech-progression-2026-09-01.json'
+    data = load(name)
+    base = cohort('gpu-batched', 'Batched GPU submission', name, data['configuration']['instances'], data['configuration']['gpu_turns'],
+                  'One unchecked GPU submission containing 120 dependent turns. Publication and synchronization occur after the batch.',
+                  {**data['configuration'], 'command': data['command'], 'reference_scope': 'No external one-submit batched peer was measured in this campaign. Per-turn GPU timings are not a reference for this boundary.'}, data['generated_at'])
+    summary = data['rows']['GPU unchecked one-submit']
+    base['rows'].append(row('Mech batched GPU', 'unchecked', summary['throughput_millions'],
+                           'https://github.com/mech-lang/mech/blob/cfb51ba74b4eda5e13a77cb357f24767d288d650/hosts/gpu/fixtures/ekf-kernel.mec',
+                           'Measured compiler revision not recorded', summary['median_throughput_millions'],
+                           is_mech=True, category='metal', publication='fused-block', summary_path='gpu-batched',
+                           source_identity_basis='Kernel snapshot at the archive revision; the measured source hash is not recorded.'))
+    cohorts.append(base)
+
+    name = 'apple-m3-managed-resident-2026-11-17.json'
+    data = load(name)
+    record = next(r for r in data['results'] if r['case_id'] == 'ekf' and r['backend'] == 'source' and r['lane'] == 'candidate' and r['outcome'] == 'ok')
+    times = [sample['metrics']['resident_turn_seconds'] for sample in record['samples']]
+    source = record['source'].encode()
+    assert hashlib.sha256(source).hexdigest() == record['source_sha256']
+    url = '/benchmarks/ekf-sources/' + record['source_sha256'] + '.mec.txt'
+    if output:
+        (Path(output) / url.removeprefix('/benchmarks/')).write_bytes(source)
+    base = cohort('resident', 'Managed resident runtime', name, 1, 4096,
+                  'Captured-input submission, managed f64 execution and publication. No equivalent external rollback/admission/scheduling/accounting/publication control is qualified.',
+                  {'revision': record['revision'], 'measurement': record['measurement'], 'reference_scope': 'The saved bare Rust task does not supply equivalent managed runtime semantics.'}, data['started_at'])
+    base.update(machine='Apple M3', precision='f64')
+    item = row('Mech resident', 'checked', [1e-6 / value for value in times], url, record['revision'],
+               is_mech=True, category='resident', publication='per-turn', summary_path='resident')
+    item.update(time_seconds=statistics.median(times), samples_seconds_per_filter_turn=times, time_derived_from_reported_throughput=False)
+    assert item['time_seconds'] == record['summary']['resident_turn_seconds']['median']
+    base['rows'].append(item)
+    cohorts.append(base)
+
     programs = {}
     for original, entry in provenance.get('program_sources', {}).items():
         source = study / entry['file']

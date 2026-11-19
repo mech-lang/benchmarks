@@ -118,9 +118,9 @@ export function ekfMeasurements(data){
     const metric='ekf_filter_turn_seconds';
     return {key:'ekf:'+row.result_id,group:'applications',title:'EKF · '+row.variant.replace(/^Mech /,''),metric,
       value:row.time_seconds,reference:row.peer.time_seconds,ratio:row.ratio,
-      record:{source_url:row.source_url,execution_mode:row.category==='cpu-jit'?'jit':'gpu'},
-      control:{kind:row.category==='cpu-jit'?'jit':'gpu',label:row.peer.label,record:{reference_url:row.peer.implementation_url??row.peer.source_url,source_url:row.peer.source_url}},
-      scope:row.study.machine+' · checked · warm kernel · per filter-turn · '+row.publication,
+      record:{source_url:row.source_url,execution_mode:row.category==='cpu-jit'?'jit':row.category==='cpu-aot'?'aot':'gpu'},
+      control:{kind:row.category==='cpu-jit'?'jit':row.category==='cpu-aot'?'aot':'gpu',label:row.peer.label,record:{reference_url:row.peer.implementation_url??row.peer.source_url,source_url:row.peer.source_url}},
+      scope:row.study.machine+' · '+row.study.precision+' · '+row.study.instances.toLocaleString()+' filters · checked · per filter-turn · '+row.publication,
       direction:comparisonDirection({ratio:row.ratio},metric),label:comparisonLabel({ratio:row.ratio},metric),
       date:row.study.recorded_at,referenceDate:row.study.recorded_at,
       href:'/metrics/ekf/?'+new URLSearchParams({q:row.label})};

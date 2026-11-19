@@ -12,8 +12,8 @@ ROOT = Path(__file__).resolve().parents[1]
 class EkfStudyTest(unittest.TestCase):
     def test_every_retained_sample_and_separate_scope_is_preserved(self):
         data = ekf_study(ROOT)
-        self.assertEqual([len(s['rows']) for s in data['studies']], [10, 18, 12])
-        self.assertEqual(sum(r['n'] for s in data['studies'] for r in s['rows']), 400)
+        self.assertEqual([len(s['rows']) for s in data['studies']], [10, 18, 12, 3, 1, 1])
+        self.assertEqual(sum(r['n'] for s in data['studies'] for r in s['rows']), 431)
         studies = {s['id']: s for s in data['studies']}
         self.assertEqual(studies['backends']['rows'][0]['n'], 10)
         self.assertEqual(studies['backends']['instances'], 500000)
@@ -39,7 +39,7 @@ class EkfStudyTest(unittest.TestCase):
 
     def test_execution_categories_follow_measured_implementations(self):
         data = ekf_study(ROOT)
-        backends, cpu, metal = data['studies']
+        backends, cpu, metal = data['studies'][:3]
         self.assertTrue(all(r['is_mech'] for r in backends['rows']))
         categories = {r['label']: r['category'] for r in cpu['rows']}
         self.assertEqual({name for name, kind in categories.items() if kind == 'cpu-jit'},
