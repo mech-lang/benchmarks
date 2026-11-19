@@ -32,6 +32,9 @@ export function loadNative() {
 export function validateGames(data) {
   if(data.schema!=='mech.benchmarks-game-comparisons.v1'||data.cases?.length!==10||new Set(data.cases.map(row=>row.key)).size!==10
     ||data.cases.some(row=>!['mech','rust'].every(language=>Number.isFinite(row[language]?.seconds)&&row[language].seconds>0&&row[language].source_url)))throw new Error('The Benchmarks Game result set is incomplete.');
+  if(data.jit_cases?.length!==10||new Set(data.jit_cases.map(row=>row.key)).size!==10
+    ||data.jit_cases.some(row=>!['mech','reference'].every(language=>Number.isFinite(row[language]?.seconds)&&row[language].seconds>0&&row[language].source_url)
+      ||row.reference.execution_mode!=='jit'||!row.reference.label))throw new Error('The JIT comparison set is incomplete.');
   return data;
 }
 export function loadGames() {

@@ -4,10 +4,11 @@ from pathlib import Path
 import re
 
 PAGES = {
-    '': ('Mech performance', 'Compare Mech with Rust and libdeflate. The reference is always 1×.', 'summary'),
+    '': ('Mech performance', 'Compare Mech with measured reference implementations. The reference is always 1×.', 'summary'),
     'deflate': ('DEFLATE compression', 'Native compression calls · libdeflate 1.26, level 12 · Apple M3', 'deflate'),
     'applications': ('Applications', 'Application performance · Rust', 'suite'),
     'benchmarks-game': ('Benchmarks Game', 'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process', 'suite'),
+    'jit': ('JIT comparisons', 'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup', 'suite'),
     'runtime': ('Microbenchmarks', 'Individual operations and runtime checks · Rust', 'suite'),
     'scaling': ('Worker scaling', 'Complete worker groups · Rust', 'suite'),
     'compiler': ('Compiler', 'Source-to-executable build time · Rust', 'suite'),

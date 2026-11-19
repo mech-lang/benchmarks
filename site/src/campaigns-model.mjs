@@ -1,6 +1,6 @@
 export const backendLabels = {
   source:'Source artifact', bytecode:'Decoded bytecode', native:'Linked scalar application', jit:'Checked scalar JIT',
-  'source-native':'Source JIT application', 'fused-native':'Numerical application',
+  'source-native':'Source JIT application', 'fused-native':'Numerical JIT application',
   'program-jit':'Checked program JIT · source', 'program-jit-bytecode':'Checked program JIT · decoded',
   'program-linked':'Linked program qualification', 'process-workers':'Worker scaling',
   'related-managed':'Related posts · managed', 'related-compact':'Related posts · compact',
@@ -135,6 +135,8 @@ export function measuredRows(bundle,{campaign='$latest',backend='$auto',metric='
 
 export function controlFor(bundle,row) {
   const {record,campaign,metric}=row;
+  if(isJitRecord(record))return {kind:'pending',label:'JIT reference needed',href:'/metrics/jit/',
+    reason:'This JIT measurement has no qualified JIT peer for the same task and timing boundary. AOT Rust is not used as a JIT reference. The JIT view compares retained whole-process measurements with their fastest recorded JIT peers.'};
   if(record.case_id==='deflate'||record.case_id.startsWith('deflate-')) {
     const mapped={native_program_call_seconds:'control_call_seconds',output_bytes:'output_bytes'}[metric];
     if(!mapped)return {kind:'pending',label:'No matched reference',reason:'No reference measures the same compiler, preparation or support operation. A compressor execution time is not a compiler measurement.'};
@@ -225,12 +227,15 @@ export function comparisonPlot(points,{width=900,label='Mech compared with its r
 }
 
 export function referenceName(control) {
-  return control?.kind==='rust'?'Rust':control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
+  return control?.kind==='rust'?'Rust':control?.kind==='jit'?(control.label??'JIT reference'):control?.kind==='libdeflate'?'libdeflate':['mech','history'].includes(control?.kind)?'Mech':'—';
 }
 export const nativeMechSource='https://github.com/mech-lang/mech/blob/5c33bb99adb8fe2f5d13395f2c00c234f56bc59b/benchmarks/mech-deflate/native-profile/native-compact-20261116/program.mec';
+export function isJitRecord(record) {
+  return record?.execution_mode?record.execution_mode==='jit':['source-native','fused-native','program-jit','program-jit-bytecode','jit'].includes(record?.backend);
+}
 export function implementationName(record) {
   if(record?.execution_mode==='aot'||['native','program-linked'].includes(record?.backend))return 'Mech (AOT)';
-  if(record?.execution_mode==='jit'||['source-native','program-jit','program-jit-bytecode','jit'].includes(record?.backend))return 'Mech (JIT)';
+  if(isJitRecord(record))return 'Mech (JIT)';
   return 'Mech';
 }
 export function implementationURL(record) {
@@ -251,5 +256,5 @@ export function referenceURL(control) {
 export function referenceLink(control) {
   const name=referenceName(control),url=referenceURL(control);
   const escape=value=>String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-  return url?`<a href="${escape(url)}">${name}</a>`:name;
+  return url?`<a href="${escape(url)}">${escape(name)}</a>`:escape(name);
 }

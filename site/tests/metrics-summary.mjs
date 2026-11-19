@@ -32,15 +32,21 @@ assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'residen
 assert.equal(grouping.groupForMeasurement({id:'numerical-application',family:'applications'},'resident_turn_seconds').id,'applications');
 assert.equal(grouping.groupForMeasurement({id:'ekf',family:'numerical'},'execution_allocations').id,'memory');
 const games={schema:'mech.benchmarks-game-comparisons.v1',hardware:'Apple M3',cases:Array.from({length:10},(_,i)=>({key:'game-'+i,title:'Game '+i,workload:'full input',mech:{seconds:i===0?.5:2,source_url:'/benchmarks/implementation-sources/game.mec.txt',implementation_url:'/benchmarks/?detail.program=game-'+i},rust:{seconds:1,source_url:'/benchmarks/implementation-sources/game.rs.txt',original_url:'https://example.org/original.rs'}}))};
+games.jit_cases=games.cases.map(row=>({...row,reference:{seconds:1,label:'Java (JIT)',execution_mode:'jit',source_url:'/benchmarks/implementation-sources/game.java.txt',original_url:'https://example.org/original.java'}}));
 assert.equal(validateGames(games),games);
 assert.throws(()=>validateGames({...games,cases:games.cases.slice(1)}),/incomplete/);
+assert.throws(()=>validateGames({...games,jit_cases:games.jit_cases.map(row=>({...row,reference:{...row.reference,execution_mode:'aot'}}))}),/JIT comparison/);
 const aotRows=grouping.gameMeasurements(games);
 assert.equal(aotRows.length,10);assert.equal(aotRows[0].ratio,.5);
 assert.equal(model.implementationName(aotRows[0].record),'Mech (AOT)');
+const jitRows=grouping.jitMeasurements(games);
+assert.equal(jitRows.length,10);assert.equal(jitRows[0].ratio,.5);
+assert.equal(model.referenceName(jitRows[0].control),'Java (JIT)');
+assert.equal(model.implementationName(jitRows[0].record),'Mech (JIT)');
 const jit={...base,case_id:'knucleotide',backend:'source-native',measurement:{primary_metric:'native_process_seconds'},summary:{native_process_seconds:{median:2}}};
 const jitBundle={...bundle,catalog:{cases:[{id:'knucleotide',family:'applications',title:'K-nucleotide',backends:['source-native']}]},campaigns:[{...bundle.campaigns[0],results:[jit,{...jit,backend:'rust',lane:'control',summary:{native_process_seconds:{median:1}}}]}]};
 assert.equal(grouping.suiteMeasurements(jitBundle,{task:'knucleotide',metric:'$primary'}).length,1,'the measured JIT record remains available in task details');
-assert.equal(grouping.publishedComparisons(jitBundle,undefined,{games}).length,10,'a JIT observation must not replace an AOT headline');
+assert.equal(grouping.publishedComparisons(jitBundle,undefined,{games}).length,20,'a JIT observation must not replace an AOT headline or fall back to Rust');
 assert.equal(grouping.metricsRoute('/metrics/','?view=suite&deflate-order=reverse').kind,'suite');
 
 class Element {
@@ -104,6 +110,11 @@ const csv=await ui.exported();
 assert.ok(csv.includes('"mech_implementation"'));assert.ok(csv.includes('"Mech (AOT)"'));
 assert.ok(csv.includes('https://example.org/benchmarks/implementation-sources/game.mec.txt'));
 assert.ok(csv.includes('https://example.org/original.rs'));
+ui=await mount('/metrics/jit/','',undefined,games);
+assert.equal((ui.element('#summary-bodies').innerHTML.match(/data-summary-row=/g)||[]).length,10);
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('>Mech (JIT)</a>'));
+assert.ok(ui.element('#summary-bodies').innerHTML.includes('>Java (JIT)</a>'));
+assert.ok(!ui.element('#summary-bodies').innerHTML.includes('>Rust</a>'));
 ui=await mount('/metrics/','',undefined,games);
 assert.ok(ui.element('#summary-bodies').innerHTML.includes('>1 win</span>'));
 assert.ok(!ui.element('#summary-bodies').innerHTML.includes('>1 wins</span>'));

@@ -27,7 +27,7 @@ function visibleRows() {
 function readout(row) {
   if(!row)return;
   const run=row.runs[order];
-  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>${implementationLink({source_url:nativeMechSource})} <strong>${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</strong></span><span>${referenceLink({kind:'libdeflate'})} <strong>${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
+  $('#deflate-readout').innerHTML=`<strong>${escape(row.title)}</strong> · ${row.input_bytes.toLocaleString()} input bytes${row.prefix_bytes?` · ${row.prefix_bytes.toLocaleString()} prefix bytes`:''}<div class="readout-values"><span>${implementationLink({source_url:nativeMechSource,execution_mode:'aot'})} <strong>${escape(formatMetric(run.mech_seconds,'native_compression_call_seconds'))}</strong></span><span>${referenceLink({kind:'libdeflate'})} <strong>${escape(formatMetric(run.libdeflate_seconds,'native_compression_call_seconds'))}</strong></span><strong class="${direction(row)}">${escape(label(row))}</strong></div>`;
 }
 function renderChart(rows=visibleRows()) {
   $('#deflate-chart').innerHTML=comparisonPlot(rows.map(row=>({id:row.id,title:row.title,ratio:ratio(row),direction:direction(row),label:label(row)})),{width:$('#deflate-chart').clientWidth,label:'Mech and libdeflate level 12, one point per input case'});

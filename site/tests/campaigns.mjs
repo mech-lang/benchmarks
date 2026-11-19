@@ -66,7 +66,7 @@ assert.equal(controlFor(data,measuredRows(data)[0]).kind,'pending','changed sour
 console.log('Consolidated measured rows, side-by-side Rust controls and fixed Mech promotion checks passed.');
 
 // Matching inputs and hardware do not establish an equivalent timed scope.
-const deflate={...candidate,case_id:'deflate',backend:'program-jit-bytecode',control_contract:'checked-call',
+const deflate={...candidate,case_id:'deflate',backend:'program-linked',control_contract:'checked-call',
   measurement:{primary_metric:'native_program_call_seconds'},summary:{native_program_call_seconds:{median:1}}};
 const compressor={...baseline,case_id:'deflate',backend:'libdeflate',lane:'control',
   revision:'92e6a0db9fa848d742f9eb286c92afc60f2c3dda',
@@ -82,9 +82,17 @@ assert.equal(controlFor(deflateData,deflateRow).kind,'pending','different timing
 compressor.control_contract='checked-call';
 assert.equal(controlFor(deflateData,deflateRow).kind,'libdeflate');
 assert.equal(controlComparison(deflateRow,controlFor(deflateData,deflateRow)).ratio,.5);
+assert.equal(controlFor(deflateData,{...deflateRow,record:{...deflate,backend:'program-jit-bytecode'}}).kind,'pending','a native library must not become a JIT peer');
 compressor.environment_hash='different-machine';
 assert.equal(controlFor(deflateData,deflateRow).kind,'pending','a shared timing contract does not permit a different machine');
 console.log('DEFLATE comparisons require the same task, machine and explicit measurement contract.');
+for(const backend of ['source-native','fused-native','jit','program-jit','program-jit-bytecode']){
+  const record={...candidate,backend,control_contract:reference.control_contract};
+  const origin={...campaign,results:[record,reference]};
+  const comparison=controlFor({campaigns:[origin]},{campaign:origin,record,metric:'resident_turn_seconds'});
+  assert.equal(comparison.kind,'pending',backend+' must not fall back to AOT Rust');
+  assert.ok(comparison.reason.includes('JIT peer'));
+}
 
 assert.equal(comparisonDirection({ratio:.5},'native_program_call_seconds'),'faster');
 assert.equal(comparisonDirection({ratio:2},'native_program_call_seconds'),'slower');

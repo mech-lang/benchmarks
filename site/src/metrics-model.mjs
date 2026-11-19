@@ -4,6 +4,7 @@ export const metricGroups=[
   {id:'deflate',title:'DEFLATE compression',description:'Native compression calls · libdeflate 1.26, level 12 · Apple M3',href:'/metrics/deflate/',metrics:['native_compression_call_seconds']},
   {id:'applications',title:'Applications',description:'Application performance · Rust',href:'/metrics/applications/',metrics:['native_process_seconds','post_json_seconds']},
   {id:'benchmarks-game',title:'Benchmarks Game',description:'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process',href:'/metrics/benchmarks-game/',metrics:[]},
+  {id:'jit',title:'JIT comparisons',description:'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup',href:'/metrics/jit/',metrics:[]},
   {id:'runtime',title:'Microbenchmarks',description:'Individual operations and runtime checks · Rust',href:'/metrics/runtime/',metrics:['resident_turn_seconds','jit_invocation_seconds']},
   {id:'scaling',title:'Worker scaling',description:'Complete worker groups · Rust',href:'/metrics/scaling/',metrics:['worker_group_process_seconds','accepted_turns_per_second']},
   {id:'compiler',title:'Compiler',description:'Source-to-executable build time · Rust',href:'/metrics/compiler/',metrics:['source_to_executable_seconds','source_to_artifact_seconds','artifact_decode_seconds','jit_compile_seconds']},
@@ -61,7 +62,7 @@ export function nativeMeasurements(data,order='forward') {
       ratio:row.runs[order].ratio,scope:`${row.input_bytes.toLocaleString()} input bytes · native call`,kind:'time'},
     {key:`native:${row.id}:size`,group:'size',title:row.title,metric:'output_bytes',value:row.mech_output_bytes,reference:row.libdeflate_output_bytes,
       ratio:row.mech_output_bytes/row.libdeflate_output_bytes,scope:'Native compression · complete output bytes',kind:'size'},
-  ].map(entry=>({...entry,record:{source_url:nativeMechSource},control:{kind:'libdeflate',label:'libdeflate'},date:'2026-11-18',
+  ].map(entry=>({...entry,record:{source_url:nativeMechSource,execution_mode:'aot'},control:{kind:'libdeflate',label:'libdeflate'},date:'2026-11-18',
     direction:comparisonDirection({ratio:entry.ratio},entry.metric),label:comparisonLabel({ratio:entry.ratio},entry.metric),
     href:`/metrics/deflate/?${new URLSearchParams({'deflate-case':row.id,...(order==='reverse'?{'deflate-order':order}:{})})}`})));
 }
@@ -91,6 +92,20 @@ export function gameMeasurements(data) {
   });
 }
 
+export function jitMeasurements(data) {
+  return (data?.jit_cases??[]).map(row=>{
+    const ratio=row.mech.seconds/row.reference.seconds,metric='native_process_seconds';
+    return {key:'jit:'+row.key,group:'jit',title:row.title+' · '+row.workload,metric,
+      value:row.mech.seconds,reference:row.reference.seconds,ratio,
+      record:{source_url:row.mech.source_url,execution_mode:'jit'},
+      control:{kind:'jit',label:row.reference.label,record:{reference_url:row.reference.original_url??row.reference.source_url,source_url:row.reference.source_url}},
+      scope:'JIT · '+data.hardware+' · whole process including startup',
+      direction:comparisonDirection({ratio},metric),label:comparisonLabel({ratio},metric),
+      date:row.mech.recorded_at,referenceDate:row.reference.recorded_at,
+      href:row.mech.implementation_url};
+  });
+}
+
 // The comparison overview uses one main timing per task. Supporting measurements
 // stay in task details; size and allocation pages show their matched metrics.
 export function publishedComparisons(bundle,data,{group='all',games}={}) {
@@ -103,5 +118,5 @@ export function publishedComparisons(bundle,data,{group='all',games}={}) {
   const native=(!group||group==='all'||group==='deflate')&&data?nativeMeasurements(data).filter(row=>row.group==='deflate'):[];
   const processing=suite.map(row=>row.definition.id==='related-post-gen'&&row.metric==='post_json_seconds'?{...row,title:row.title+' · processing'}:row);
   const process=(!secondary&&(group==='all'||group==='applications'))?suiteMeasurements(bundle,{task:'related-post-gen',metric:'native_process_seconds'}).filter(row=>row.direction!=='unmatched').map(row=>({...row,title:row.title+' · whole process'})):[];
-  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[])];
+  return [...processing,...process,...native,...(group==='all'||group==='benchmarks-game'?gameMeasurements(games):[]),...(group==='all'||group==='jit'?jitMeasurements(games):[])];
 }

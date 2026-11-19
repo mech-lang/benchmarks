@@ -149,6 +149,16 @@ assert.ok(lazy.element('#detail').innerHTML.includes('task_hash differs from its
 assert.ok(!lazy.element('#detail').innerHTML.includes('class="measurement"'));
 console.log('Summary-only loading, selected task/control requests, cache, shared links and detail identity checks passed.');
 
+const jitBundle=structuredClone(lazyBundle),jitFiles=structuredClone(detailFiles);
+jitBundle.campaigns[0].results[0].backend='jit';
+jitFiles[candidatePath].record.backend='jit';
+const jitUI=await mount(jitBundle,'?case=scalar&backend=jit',jitFiles);
+assert.ok(jitUI.element('#detail').innerHTML.includes('Mech (JIT)'));
+assert.ok(jitUI.element('#detail').innerHTML.includes('JIT peer'));
+assert.ok(jitUI.element('#detail').innerHTML.includes('href="/metrics/jit/"'));
+assert.ok(!jitUI.element('#detail').innerHTML.includes('independent Rust source'));
+assert.ok(!jitUI.requests.some(url=>url.includes(controlPath)),'a JIT result must not load its old AOT Rust comparison');
+
 const standalone={...base,case_id:'no-reference',title:'Standalone measurement'};
 ({element,history}=await mount({...bundle,catalog:{...catalog,cases:[catalog.cases[0],{id:'no-reference',title:'Standalone measurement',family:'arithmetic',progress:'implemented'}]},campaigns:[{...campaign,results:[candidate,control,standalone]}]}));
 assert.ok(element('#cases').innerHTML.includes('result-tag slower'));
