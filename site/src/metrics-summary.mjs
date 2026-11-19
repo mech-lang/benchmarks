@@ -48,7 +48,7 @@ function render(){
       const rows=all.filter(row=>row.group===id),counts=countsFor(rows),group=metricGroups.find(group=>group.id===id);
       const main=id==='deflate'?`${counts.faster}/${rows.length} wins`:countText(rows);
       return `<a class="performance-highlight" href="${group.href}"><span>${title}</span><strong class="${id==='deflate'?'faster':''}">${escape(main)}</strong><span>${id==='deflate'?'libdeflate':id==='benchmarks-game'?'Mech AOT / Rust AOT':'Fastest recorded JIT per workload'}</span></a>`;
-    }).join('');
+    }).join('')+'<a class="performance-highlight" href="/metrics/ekf/"><span>Extended Kalman filter</span><strong>CPU &amp; GPU</strong><span>Execution modes · checked &amp; unchecked · all samples</span></a>';
   }
   renderGroupChart();
   const params=new URLSearchParams(location.search);

@@ -2,7 +2,8 @@ import {metricGroups,metricsRoute,measurementOnlyGroups} from './metrics-model.m
 const route=metricsRoute(location.pathname,location.search);
 const $=selector=>document.querySelector(selector);
 const view=route.kind==='suite'&&!route.task&&route.group!=='all'&&!measurementOnlyGroups.includes(route.group)?'summary':route.kind;
-for(const [kind,id] of [['summary','summary-panel'],['deflate','deflate-m3'],['suite','suite-panel']])$('#'+id).hidden=view!==kind;
+for(const [kind,id] of [['summary','summary-panel'],['deflate','deflate-m3'],['suite','suite-panel'],['ekf','ekf-results']])$('#'+id).hidden=view!==kind;
+$('#comparison-legend').hidden=view==='ekf';
 for(const link of document.querySelectorAll('.metrics-nav a')){
   if(link.getAttribute('href')===(route.kind==='summary'?'/metrics/':route.kind==='deflate'?'/metrics/deflate/':metricGroups.find(group=>group.id===route.group)?.href))link.setAttribute('aria-current','page');
   else link.removeAttribute('aria-current');
@@ -28,4 +29,5 @@ if(view==='summary'){
   await import('./metrics-summary.mjs');
 }
 else if(route.kind==='deflate')await import('./deflate-results.mjs');
+else if(route.kind==='ekf')await import('./ekf-results.mjs');
 else await import('./campaigns.mjs');

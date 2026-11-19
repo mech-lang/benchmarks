@@ -15,8 +15,8 @@
   <header><a class="brand" href="/benchmarks/">MECH <span>/ performance</span></a><nav aria-label="Benchmark views"><a href="/benchmarks/">Languages</a><a href="/metrics/" aria-current="page">Performance</a><a href="/metrics/project/">Project</a></nav></header>
   <main>
     <div class="heading"><p class="eyebrow">Benchmark results</p><h1 id="page-title">Mech performance</h1><p class="intro" id="page-intro">Compare Mech with measured reference implementations. The reference is always 1×.</p></div>
-    <div class="legend" aria-label="Comparison colors"><span class="faster">Mech better</span><span class="slower">Worse · up to 10×</span><span class="much-slower">Worse · over 10×</span><span class="equal">Equal</span></div>
-    <nav class="metrics-nav" aria-label="Performance comparisons"><a href="/metrics/" aria-current="page">Summary</a><a href="/metrics/applications/">Applications</a><a href="/metrics/benchmarks-game/">Benchmarks Game · AOT</a><a href="/metrics/jit/">JIT</a><a href="/metrics/deflate/">DEFLATE</a><a href="/metrics/runtime/">Microbenchmarks</a><a href="/metrics/compiler/">Compiler</a><a href="/metrics/scaling/">Scaling</a></nav>
+    <div class="legend" id="comparison-legend" aria-label="Comparison colors"><span class="faster">Mech better</span><span class="slower">Worse · up to 10×</span><span class="much-slower">Worse · over 10×</span><span class="equal">Equal</span></div>
+    <nav class="metrics-nav" aria-label="Performance comparisons"><a href="/metrics/" aria-current="page">Summary</a><a href="/metrics/applications/">Applications</a><a href="/metrics/benchmarks-game/">Benchmarks Game · AOT</a><a href="/metrics/jit/">JIT</a><a href="/metrics/ekf/">EKF</a><a href="/metrics/deflate/">DEFLATE</a><a href="/metrics/runtime/">Microbenchmarks</a><a href="/metrics/compiler/">Compiler</a><a href="/metrics/scaling/">Scaling</a></nav>
     <section id="summary-panel" aria-labelledby="summary-title">
       <div id="summary-highlights" class="performance-highlights"></div>
       <h2 id="summary-title">Results</h2>
@@ -42,6 +42,18 @@
       <details class="method"><summary>Earlier builds</summary><div class="table-scroll"><table><thead><tr><th scope="col">Mech build</th><th scope="col">Wins · run 1</th><th scope="col">Wins · run 2</th></tr></thead><tbody><tr><td>Current shared build</td><td class="faster">61/81</td><td class="faster">61/81</td></tr><tr><td>Retained confirmation</td><td>61/81</td><td>61/81</td></tr><tr><td>Previous build · fresh rerun</td><td>58/81</td><td>60/81</td></tr><tr><td>Rebased build · fresh rerun</td><td>58/81</td><td>60/81</td></tr></tbody></table></div></details>
     </section>
 
+    <section id="ekf-results" aria-labelledby="ekf-study-title" hidden>
+      <div class="result-toolbar ekf-controls"><label>Study <select id="ekf-study" aria-label="EKF study"></select></label><div class="table-tools"><button id="ekf-export-selection">Export selection</button><button id="ekf-export-all">Export all samples</button></div></div>
+      <h2 id="ekf-study-title">EKF execution backends</h2><p class="caption" id="ekf-study-meta"></p><p class="scope-note" id="ekf-scope"></p>
+      <div id="ekf-error" class="empty" role="alert" hidden></div>
+      <div class="result-toolbar"><div class="result-filters" id="ekf-modes"><button data-ekf-mode="both" aria-pressed="true">Both modes</button><button data-ekf-mode="checked">Checked</button><button data-ekf-mode="unchecked">Unchecked</button></div><div class="ekf-view-options"><label><input type="checkbox" id="ekf-samples" checked> Samples</label><label><input type="checkbox" id="ekf-medians" checked> Medians ± MAD</label></div></div>
+      <div class="chart-card"><div class="chart-readout" id="ekf-readout" aria-live="polite">Loading retained measurements…</div><div id="ekf-chart"></div><p class="chart-key">Dots: independent trials. Square: median. Line: median absolute deviation. Yellow: checked; blue: unchecked.</p></div>
+      <div class="table-heading"><h3>Results <span id="ekf-row-count"></span></h3><label><span class="sr-only">Search EKF implementations</span><input id="ekf-search" type="search" placeholder="Find an implementation"></label></div>
+      <p class="caption">× best time uses the fastest result in the same study and checked/unchecked mode. These are measured execution costs, without a claim of identical runtime guarantees across implementations. Seconds per filter-turn are derived from the retained throughput when raw elapsed time is unavailable.</p>
+      <div class="table-scroll ekf-table"><table><thead id="ekf-headings"></thead><tbody id="ekf-rows"></tbody></table></div>
+      <details class="method"><summary>Timing scope, versions and raw evidence</summary><div id="ekf-methods"></div></details>
+      <p class="downloads"><a href="/iros-r4r-2026/index.html">IROS article</a><a href="/benchmarks/ekf-results.json" download>All EKF results (JSON)</a></p>
+    </section>
     <section id="suite-panel" class="results-panel" aria-labelledby="suite-title" hidden>
       <div class="panel-heading"><div><h2 id="suite-title">Task measurements</h2><p class="caption"><span id="suite-asof">Published measurements</span> · <span id="suite-reference-caption">the reference is named on every row.</span></p></div><a id="suite-report" class="text-link" href="/benchmarks/rust-controls-2026-11-17.md">Comparison report</a></div>
       <p id="suite-reference-note" class="scope-note">Every ratio is Mech ÷ its named reference.</p>

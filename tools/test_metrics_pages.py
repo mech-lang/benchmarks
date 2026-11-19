@@ -21,7 +21,7 @@ class PageParser(HTMLParser):
             if identity in self.ids:
                 self.duplicates.append(identity)
             self.ids.add(identity)
-        if tag == 'section' and identity in ('summary-panel','deflate-m3','suite-panel'):
+        if tag == 'section' and identity in ('summary-panel','deflate-m3','suite-panel','ekf-results'):
             self.panels[identity] = 'hidden' not in attributes
         if tag == 'link' and attributes.get('rel') == 'canonical':
             self.canonical = attributes['href']
@@ -52,6 +52,8 @@ class MetricsPagesTest(unittest.TestCase):
                 self.assertTrue(measurements.panels['suite-panel'],'standalone resident measurements must stay accessible')
             deflate = PageParser();deflate.feed((output/'metrics/deflate/index.html').read_text())
             self.assertTrue(deflate.panels['deflate-m3'])
+            ekf = PageParser();ekf.feed((output/'metrics/ekf/index.html').read_text())
+            self.assertTrue(ekf.panels['ekf-results'])
             task = PageParser();task.feed((output/'metrics/tasks/knucleotide/index.html').read_text())
             self.assertTrue(task.panels['suite-panel'])
     def test_missing_template_and_invalid_task_route(self):

@@ -6,6 +6,7 @@ import re
 PAGES = {
     '': ('Mech performance', 'Compare Mech with measured reference implementations. The reference is always 1×.', 'summary'),
     'deflate': ('DEFLATE compression', 'Native compression calls · libdeflate 1.26, level 12 · Apple M3', 'deflate'),
+    'ekf': ('EKF comparisons', 'Retained EKF studies · execution modes, CPU implementations, Metal and GPU batching', 'ekf'),
     'applications': ('Applications', 'Application performance · Rust', 'suite'),
     'benchmarks-game': ('Benchmarks Game', 'Mech AOT vs Rust AOT · Apple M3 · October 2026 · whole process', 'suite'),
     'jit': ('JIT comparisons', 'Mech JIT vs the fastest recorded JIT per workload · whole process, including startup', 'suite'),
@@ -42,7 +43,7 @@ def build_metrics_pages(output, catalog=None):
         html = re.sub(r'(<link rel="canonical" href=")[^"]+', r'\g<1>https://mech-lang.org/metrics/' + (route + '/' if route else ''), html)
         html = re.sub(r'(<h1 id="page-title">).*?(</h1>)', lambda m: m[1] + escape(title) + m[2], html)
         html = re.sub(r'(<p class="intro" id="page-intro">).*?(</p>)', lambda m: m[1] + escape(intro) + m[2], html)
-        for panel, view in [('summary-panel', 'summary'), ('deflate-m3', 'deflate'), ('suite-panel', 'suite')]:
+        for panel, view in [('summary-panel', 'summary'), ('deflate-m3', 'deflate'), ('suite-panel', 'suite'), ('ekf-results', 'ekf')]:
             html = re.sub(r'(<section id="' + panel + r'"[^>]*?)(?: hidden)?>', lambda m: m[1].removesuffix(' hidden') + ('' if kind == view else ' hidden') + '>', html, count=1)
         html = html.replace('href="/metrics/" aria-current="page">Summary', 'href="/metrics/">Summary')
         current = '/metrics/' + (route + '/' if route else '')

@@ -10,6 +10,7 @@ from export_suite import export as export_suite
 from project_metrics import export_project
 from metrics_pages import build_metrics_pages
 from game_comparisons import export_game_comparisons
+from ekf_study import ekf_study
 from source_metrics import canonical, metadata_for, partition_text, totals
 from logical_source_payload import bind as bind_logical_source_units, load_reports as logical_source_reports
 
@@ -268,6 +269,7 @@ def build():
     reproduction=ROOT/'data/reproducibility.json'
     recipe_payload=(json.dumps(json.loads(reproduction.read_text()),ensure_ascii=False,separators=(',',':'))+'\n').encode() if reproduction.exists() else None
     inputs = sorted(source.iterdir()) + [Path(__file__), ROOT/'tools/logical_source_payload.py', ROOT/'suite/catalog.json', ROOT/'suite/evidence-hosting.json', ROOT/'tools/export_suite.py', ROOT/'tools/project_metrics.py', ROOT/'tools/metrics_pages.py', ROOT/'tools/reference_sources.py', ROOT/'tools/game_comparisons.py'] + sorted((ROOT/'results/campaigns').glob('*/campaign.json')) + sorted((ROOT/'results/campaigns').glob('*/evidence.json')) + sorted((ROOT/'results/project').glob('*/snapshot.json')) + sorted((ROOT/'results/project').glob('*/evidence.json'))
+    inputs += [ROOT/'tools/ekf_study.py'] + sorted((ROOT/'studies/ekf').rglob('*'))
     digest = hashlib.sha256()
     for path in inputs:
         if path.is_file():
@@ -301,6 +303,8 @@ def build():
         (output/'reproduction.json').write_bytes(recipe_payload)
         (output/'reproduction.json.gz').write_bytes(gzip.compress(recipe_payload,mtime=0))
     export_game_comparisons(json.loads(catalog_raw), output, json.loads(recipe_payload) if recipe_payload else None)
+    if (ROOT/'studies/ekf/provenance.json').exists():
+        ekf_study(ROOT, output)
     external={}
     if (ROOT/'suite/catalog.json').exists():
         external=export_suite(output, root=ROOT).get('external_evidence',{})
