@@ -28,7 +28,7 @@
     {
       "priority": 1,
       "source": "vendor/cranelift-codegen/src/isa/aarch64/lower/isle/i32_extensions.rs",
-      "finding": "The current zero-extension reuse helper admits only I32 add/sub/mul. Narrowed I32 shifts produce extra register copies. The retained balanced matcher adds about 2.1 million mov instructions on random1M despite preserving both prefetch hints.",
+      "finding": "The zero-extension reuse helper admits only I32 add/sub/mul. The focus shift recipe adds 2,097,078 MOV instructions versus the selected focus control. The balanced shift recipe adds 2,503,998 MOVs and removes 404,180 stack-load instructions because allocation also changes. Both retain all 2,097,082 prefetches on random1M. Keep these allocation-specific totals separate when diagnosing the shift copies.",
       "experiment": "Add an independently opt-in zero-extension reuse case for proven scalar I32 word-shift definitions. Start with nonzero fixed logical-right shifts, matching the relevant hash shift, and preserve current flag-off images.",
       "proof_requirement": "Inspect actual AArch64 lowering. Do not assume arbitrary I32 parameters/reductions have zero upper bits. Exclude immediate identity shifts unless a W-register write is proved; shift counts are modulo 32. Test dirty high bits,0/1/16/31/32/33/63/64 counts, shared uses and overflow with actual JIT original/optimized comparisons before codec clocks."
     },
@@ -62,5 +62,25 @@
     "Use actual final-image counts and declared positive nine-case weights; never time instrumented images.",
     "Full81/96 in both orders and every named win are required for promotion. Preserve promising partials for repair."
   ],
-  "limits": "Focused native tests and full benchmark qualification are verified; full GPU/CI and formal statistical confidence are not claimed."
+  "limits": "Focused native tests and full benchmark qualification are verified; full GPU/CI and formal statistical confidence are not claimed.",
+  "allocation_counts_random1M": {
+    "selected": {
+      "instructions": 170329253,
+      "mov": 22792419,
+      "stack_loads": 11621419,
+      "prfm": 2097082
+    },
+    "shift_focus": {
+      "instructions": 172423211,
+      "mov": 24889497,
+      "stack_loads": 11618299,
+      "prfm": 2097082
+    },
+    "shift_balanced": {
+      "instructions": 172429071,
+      "mov": 25296417,
+      "stack_loads": 11217239,
+      "prfm": 2097082
+    }
+  }
 }

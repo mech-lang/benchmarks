@@ -35,3 +35,5 @@ python3 verify.py
 ```
 
 Use `--role control` for the selected random-data recipe or `--role shift-balanced` for the retained broad gain. `--compiler /path/to/compile_profile` reuses a prebuilt compiler. Profiles are named by content hash; the script checks exact object, metadata and bytecode hashes. Source emission replay is separate from performance qualification. `raw-manifest.json` maps logical evidence paths to the content-addressed blobs in `raw.tar.gz`; compiler/test build caches are excluded.
+
+The counter comparison in `next-experiments.json` separates allocation effects: the focus shift recipe adds 2,097,078 MOVs versus the selected control. The balanced recipe adds 2,503,998 MOVs and removes 404,180 stack-load instructions. Both preserve all 2,097,082 prefetches on random 1 MiB.
