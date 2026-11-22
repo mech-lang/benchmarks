@@ -10,3 +10,5 @@ python3 -B archive/compiler/mech-pr-995-32259dc9b4/verify.py --asset-dir /tmp/me
 ```
 
 Original qualifications remain unchanged. This migration makes no new measurement or completed-CI claim.
+
+The [compiler commit map](compiler-commit-map.json) records the restack onto the cleaned PR 993. It preserves all 162 original commit objects as base64 metadata, maps 87 retained compiler commits to their rewritten IDs, and identifies 75 benchmark-only commits that became empty after relocation. The retained compiler files are byte-identical; the regression test now reads the same program from a maintained local fixture.
