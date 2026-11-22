@@ -1,0 +1,149 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases. Preserve every named81Roc/63C win; next milestone64.",
+  "source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
+  "goal_complete": false,
+  "selected_role": "keep-pairs2",
+  "compact_qualified_role": "keep-pairs65536",
+  "closest_remaining": {
+    "case": "prefix-random-1048576",
+    "mean_paired_x_C": 1.031372381892311,
+    "Mech_time_reduction_to_parity": 0.03041809383605032,
+    "orders": [
+      {
+        "order": "forward",
+        "Mech_seconds": 0.020983583,
+        "C_seconds": 0.020345604,
+        "x_C": 1.0311993313345371
+      },
+      {
+        "order": "reverse",
+        "Mech_seconds": 0.020972458,
+        "C_seconds": 0.0203407295,
+        "x_C": 1.0315454614905377
+      }
+    ]
+  },
+  "largest_remaining": [
+    {
+      "case": "prefix-random-4096",
+      "mean_paired_x_C": 1.3410425182662564,
+      "Mech_time_reduction_to_parity": 0.25431148798113223,
+      "orders": [
+        {
+          "order": "forward",
+          "Mech_seconds": 0.00010185399999999999,
+          "C_seconds": 7.58955e-05,
+          "x_C": 1.3448879288283133
+        },
+        {
+          "order": "reverse",
+          "Mech_seconds": 0.0001028125,
+          "C_seconds": 7.76665e-05,
+          "x_C": 1.3372081028080098
+        }
+      ]
+    },
+    {
+      "case": "prefix-random-8192",
+      "mean_paired_x_C": 1.2994203239548954,
+      "Mech_time_reduction_to_parity": 0.23042607417712568,
+      "orders": [
+        {
+          "order": "forward",
+          "Mech_seconds": 0.000163563,
+          "C_seconds": 0.000125729,
+          "x_C": 1.301600007586774
+        },
+        {
+          "order": "reverse",
+          "Mech_seconds": 0.0001635005,
+          "C_seconds": 0.000126708,
+          "x_C": 1.2972442904618515
+        }
+      ]
+    },
+    {
+      "case": "prefix-random-16384",
+      "mean_paired_x_C": 1.220678671938014,
+      "Mech_time_reduction_to_parity": 0.18078358949915374,
+      "orders": [
+        {
+          "order": "forward",
+          "Mech_seconds": 0.0002872295,
+          "C_seconds": 0.000236833,
+          "x_C": 1.2136102055244278
+        },
+        {
+          "order": "reverse",
+          "Mech_seconds": 0.000291792,
+          "C_seconds": 0.0002384585,
+          "x_C": 1.2277883074330833
+        }
+      ]
+    },
+    {
+      "case": "prefix-natural-1024",
+      "mean_paired_x_C": 1.2098601063662797,
+      "Mech_time_reduction_to_parity": 0.17345815872595238,
+      "orders": [
+        {
+          "order": "forward",
+          "Mech_seconds": 7.1083e-05,
+          "C_seconds": 5.9e-05,
+          "x_C": 1.2069880514827371
+        },
+        {
+          "order": "reverse",
+          "Mech_seconds": 7.1166e-05,
+          "C_seconds": 5.8958e-05,
+          "x_C": 1.2127389953682248
+        }
+      ]
+    },
+    {
+      "case": "reymont-prefix-1024",
+      "mean_paired_x_C": 1.2092412542398103,
+      "Mech_time_reduction_to_parity": 0.1730351602760608,
+      "orders": [
+        {
+          "order": "forward",
+          "Mech_seconds": 7.1083e-05,
+          "C_seconds": 5.9e-05,
+          "x_C": 1.2078445488501
+        },
+        {
+          "order": "reverse",
+          "Mech_seconds": 7.1125e-05,
+          "C_seconds": 5.8958e-05,
+          "x_C": 1.2106395747263867
+        }
+      ]
+    }
+  ],
+  "completed_diagnosis": "FP1 preserves the pair and removes one million SP load instructions but random1M is flat. Mirroring paired cells removes1044385 extra instructions versus oldFP2 while retaining broad periodic/repeated gains. SP traffic alone is not the remaining target bottleneck.",
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Profile the largest remaining losses and identify avoidable work",
+      "procedure": "After all primary clocks stop, sample the exact selected Mech worker and pinned C worker on random4KiB and random1MiB. Record complete invocation work: allocation/zero fill/table initialization, matcher, scorer and encoding. Reuse the historical profiles, but verify against the current image. Choose a structural target that improves losing cases; do not keep varying FP spill limits."
+    },
+    {
+      "priority": 2,
+      "title": "Inspect repeated constant materialization and checked guards in hot matcher blocks",
+      "procedure": "Use actual final-image block visits and optimized CLIF to identify repeated MOV/MOVK or redundant bounds/overflow checks. Inspect earlier attempts before changing lowering. Preserve exact values, aliases, error origins, finite accounting and efficient scalar native execution. Use one fixed compiler choice for all inputs."
+    }
+  ],
+  "run_rules": [
+    "No heavy jobs, Git or archive work during primary clocks.",
+    "Freeze Rust while source producers are live.",
+    "Keep promising partials; a lost win is a repair target, not a reason to erase a candidate.",
+    "No source rewrite, LLVM dependency or runtime benchmark dispatch.",
+    "No subagents without explicit authorization."
+  ],
+  "fresh_hot_block_evidence": "hot-block-census.json",
+  "compiler_candidates": [
+    "Hot table access repeats two0xffff index masks. Nearby producers include32-bit right shifts and16-bit loads, but register reuse is not a proof that the masks are redundant. Trace optimized SSA through every phi predecessor before changing lowering.",
+    "The byte-to-bin projection uses LSR5,AND6,AND1,ORR. A generic disjoint-field rewrite may express the same bits with AND1,LSR6,BFI1:2, saving an instruction. Prove the algebra for all supported widths and dirty inputs.",
+    "The hash block materializes0x1e35a7bd with MOV/MOVK on1048541 random1M visits. Inspect rematerialization cost and previous constant-hoisting trials before adding register pressure."
+  ]
+}
