@@ -1,11 +1,11 @@
 {
   "source_repository": "mech-lang/mech",
   "source_pr": "https://github.com/mech-lang/mech/pull/995",
-  "source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
+  "source_commit": "09d4ea14c9a560d91d5e6ff9404dcde4655408f6",
   "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
-  "study": "experiments/mech/mechdeflate-spill-pairs-v1",
+  "study": "experiments/mech/mechdeflate-masked-fields-v1",
   "recipe_file": "recipes.json",
-  "role": "keep-pairs2",
+  "role": "control",
   "score": {
     "roc": 81,
     "libdeflate": 63
@@ -13,32 +13,45 @@
   "text_bytes": 63720,
   "stripped_executable_bytes": 210024,
   "global_compiler_defaults_changed": false,
-  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/pair-replay",
-  "source_through_final_link_seconds": 2.1926075206138194,
-  "retained_alternative": {
-    "role": "shared-linear65536",
-    "text_bytes": 63688,
-    "status": "All native gates and both six-case screens pass; full81 not measured. Retain and repair natural4K margin."
-  },
-  "previous_selected": {
-    "role": "control",
-    "text_bytes": 63640
-  },
-  "runtime_measurement_source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
+  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/field-primary --role control",
+  "source_through_final_link_seconds": 2.1952551044523716,
+  "runtime_worker_original_source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
+  "runtime_image_reproduced_by_source_commit": "09d4ea14c9a560d91d5e6ff9404dcde4655408f6",
   "source_basis_verification": {
-    "study": "experiments/mech/mechdeflate-spill-pairs-v1",
-    "role": "keep-pairs2",
+    "study": "experiments/mech/mechdeflate-masked-fields-v1",
+    "role": "control",
     "all_three_artifacts_exact": true
   },
-  "compile_time_source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
-  "qualified_alternative": {
-    "study": "experiments/mech/mechdeflate-spill-pairs-v1",
-    "role": "keep-pairs65536",
-    "text_bytes": 63688,
-    "score": {
-      "roc": 81,
-      "libdeflate": 63
+  "compile_time_source_commit": "09d4ea14c9a560d91d5e6ff9404dcde4655408f6",
+  "selection_reason": "Retain the previous qualified recipe as primary. Both new variants keep every named win and save16B, but standard random1M is effectively flat across directions and distribution16K is4.9-5.2percent slower. Preserve all source/partials for repair and combination.",
+  "qualified_alternatives": [
+    {
+      "role": "tied-linear4096",
+      "text_bytes": 63704,
+      "score": {
+        "roc": 81,
+        "libdeflate": 63
+      },
+      "both_full_orders": true,
+      "status": "All named wins held; mixed runtime; retained for repair and combination."
     },
-    "both_full_orders": true
+    {
+      "role": "tied-linear65536",
+      "text_bytes": 63672,
+      "score": {
+        "roc": 81,
+        "libdeflate": 63
+      },
+      "both_full_orders": true,
+      "status": "All named wins held; mixed runtime; retained for repair and combination."
+    }
+  ],
+  "primary_loss_margins": "primary-losses.json",
+  "previous_selected": {
+    "study": "experiments/mech/mechdeflate-spill-pairs-v1",
+    "role": "keep-pairs2",
+    "source_commit": "269922ab8023547874fb72f31be4ceff9187f6e7",
+    "text_bytes": 63720,
+    "all_three_artifacts_exact": true
   }
 }
