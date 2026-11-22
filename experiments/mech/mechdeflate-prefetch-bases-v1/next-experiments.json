@@ -1,0 +1,81 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases; retain every named81Roc/63C win, unchanged original idiomatic source and canonical bytecode. Track complete builds, text, readonly, stripped size and stack.",
+  "source_commit": "442345f1916fe2a752a32491420f95da0c34cdd6",
+  "selected_role": "shared-linear4096",
+  "score": {
+    "roc": 81,
+    "libdeflate": 63
+  },
+  "goal_complete": false,
+  "current_target": {
+    "case": "prefix-random-1048576",
+    "orders": [
+      {
+        "control_ms": 21.082729500000003,
+        "candidate_ms": 20.988479,
+        "C_ms": 20.340771,
+        "paired_x_C": 1.0313531980316466,
+        "paired_x_control": 0.9953140413484277
+      },
+      {
+        "control_ms": 21.1151045,
+        "candidate_ms": 20.9860625,
+        "C_ms": 20.345646000000002,
+        "paired_x_C": 1.0326363762327402,
+        "paired_x_control": 0.9937623247093946
+      }
+    ]
+  },
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Map hot stack cells to spill edits; test unused vector registers as spill storage",
+      "evidence": "Selected matcher has11204255 SP loads on random1M, including10159629 simple I64 SP loads. Full pre-layout capture has22 unused caller-saved FP registers and no calls. Hottest simple load offsets248/144/152 each reload about1048545times. See spill-census.json.",
+      "experiment": "Map cells to actual regalloc spill/reload edits. Test exact64-bit words in statically unused caller-saved FP registers with FMOV transfers, starting with one or two proven cells. Use one fixed compiler choice for every input. No speedup is assumed. Count actual final images, then time broad cases.",
+      "proof": "SP-relative does not prove a spill. Reject source-addressable or overlapping storage, calls, stack maps, value-label uncertainty and implicit clobbers. Preserve exact raw bits, ABI, effects, finite stack/resource admission and every named win. Retain promising partials."
+    },
+    {
+      "priority": 2,
+      "title": "Indexed prefetch addressing with proved alignment and bounds",
+      "experiment": "PRFM supports8-byte scaling. Investigate coarser2/4-byte cell indices within the same valid8-byte hint granule only when actual base/view alignment and allocation bounds are proved. Preserve both hints and their write intent/order. Do not assume allocator over-alignment or M1 cacheline size."
+    },
+    {
+      "priority": 3,
+      "title": "Retain a profitable repeated multiplier constant",
+      "evidence": "Hot matcher rematerializes0x1e35a7bd with MOV/MOVK. Account for live-register and spill cost; late bias hoisting shows why actual counts and elapsed clocks must decide."
+    },
+    {
+      "priority": 4,
+      "title": "Profile setup and table initialization on larger relative losses",
+      "experiment": "Use full-invocation allocator/zero-fill counts and compare exact private table-clear work with C. Storage changes need initialization/lifetime/alias/error and finite-admission proofs. Keep original source unchanged."
+    }
+  ],
+  "retained_partials": [
+    {
+      "role": "shared-linear65536",
+      "text_bytes": 63688,
+      "validation": "All native gates and both six-case96-block screens; full81 not measured. Natural4K reverse0.9975C; preserve and repair its margin."
+    },
+    {
+      "role": "shared-sqrt",
+      "text_bytes": 63720,
+      "validation": "All native gates/counters. Random1M instructions169303289 due spills; no elapsed qualification."
+    },
+    {
+      "study": "prefetch-base-sharing-study",
+      "validation": "Early CSE passes202860native calls and3codec image gates, but trained object/metadata/bytecode equal control. Retained evidence; no clock rerun for identical code."
+    }
+  ],
+  "run_rules": [
+    "Freeze Rust while source producers are live.",
+    "No heavy jobs, Git or archive work during primary clocks.",
+    "Use uninstrumented final images and positive declared nine-case training weights.",
+    "Require full81 both orders and every named81Roc/63C win for promotion. Small slowdowns without lost wins are allowed.",
+    "No subagents without explicit authorization."
+  ],
+  "text_bytes": 63720,
+  "lookup_table_bytes": 3200,
+  "object_const_section_bytes": 17728,
+  "stack_bytes": 4832,
+  "source_through_final_link_seconds": 2.214963603997603
+}
