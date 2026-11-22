@@ -65,7 +65,7 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--target-dir', type=Path)
     parser.add_argument('--compiler', type=Path, help='Use an already built compiler.')
-    parser.add_argument('--role', action='append', help='Default: control and biased-pair-linear.')
+    parser.add_argument('--role', action='append', help='Default: control and paired-word-all-balanced.')
     parser.add_argument('--checked', action='store_true')
     args = parser.parse_args()
     mech = args.mech_root.resolve()
@@ -81,7 +81,7 @@ def main():
     compiler = args.compiler.resolve() if args.compiler else build_compiler(
         mech, output, args.target_dir.resolve() if args.target_dir else output / 'target')
     records = []
-    for role in args.role or ['control', 'biased-pair-linear']:
+    for role in args.role or ['control', 'paired-word-all-balanced']:
         recipe = recipes['roles'][role]
         flags = recipe['flags'].copy()
         for key in ('MECH_COMPACT_PHASE_BLOCK_LAYOUT', 'MECH_COMPACT_PHASE_REGISTER_WEIGHTS'):
