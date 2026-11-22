@@ -1,27 +1,31 @@
 {
   "source_repository": "mech-lang/mech",
   "source_pr": "https://github.com/mech-lang/mech/pull/995",
-  "source_commit": "0b15e658c123b4aa12e30bde2ad9d47d1f156318",
+  "source_commit": "94eeda948abddf988fc470848847a23cd3331aa7",
   "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
-  "study": "experiments/mech/mechdeflate-prefetch-shifts-v1",
+  "study": "experiments/mech/mechdeflate-word-shift-reuse-v1",
   "recipe_file": "recipes.json",
-  "role": "control",
+  "role": "reuse-byte-all-sqrt",
   "score": {
     "roc": 81,
     "libdeflate": 63
   },
-  "text_bytes": 64040,
+  "text_bytes": 63992,
   "stripped_executable_bytes": 210024,
   "global_compiler_defaults_changed": false,
-  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/prefetch-replay --role control",
-  "source_through_final_link_seconds": 2.1745146873872727,
+  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/word-replay --role reuse-byte-all-sqrt",
+  "source_through_final_link_seconds": 2.1866418125573546,
   "retained_alternative": {
-    "role": "shift-balanced",
+    "role": "previous-shift-balanced",
     "text_bytes": 64024,
     "score": {
       "roc": 81,
       "libdeflate": 63
     },
-    "status": "Qualified broad gain; random1M copy regression retained for repair. Current faster random-data image stays selected."
+    "status": "Previous qualified broad variant retained for combinations."
+  },
+  "previous_selected": {
+    "role": "control",
+    "text_bytes": 64040
   }
 }
