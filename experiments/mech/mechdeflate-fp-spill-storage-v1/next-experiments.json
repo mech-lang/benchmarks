@@ -1,0 +1,50 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases; retain every named81Roc/63C win. Next milestone64.",
+  "source_commit": "48a08687f1e850b098b675262d900fd89b98cdbd",
+  "goal_complete": false,
+  "qualified_alternative": "fp2",
+  "selected_default_changed": false,
+  "diagnosis": {
+    "FP2_spill_cells": [
+      {
+        "slot": 18,
+        "SP_offset": 240
+      },
+      {
+        "slot": 13,
+        "SP_offset": 200
+      }
+    ],
+    "original_hot_pair": "ldp x1, x19, [sp, #0xc0] loads SP192 and200",
+    "hot_pair_visits_random1M": 1044385,
+    "lost_LDP_instructions": 1044385,
+    "extra_executed_instructions": 1044385,
+    "interpretation": "The two-cell trial removes one half of a hot paired reload. Extra instructions exactly equal lost LDPs. Scalar FMOV versus UMOV does not recover the target. This explains an instruction-count tradeoff; latency still needs measurement."
+  },
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Test one cached cell using the existing compiler option",
+      "recipe": "MECH_COMPACT_FP_SPILL_SLOTS=mech_compact_numeric_475_vector@1",
+      "procedure": "Emit fp1-raw with current source, prove all native/error/recovery/stack gates, count all nine cases, derive a fresh matcher layout, emit/count final fp1, then both broad screens and full81 both orders if promising. The existing native probe already covers limit1. No Rust change or compiler reconstruction is needed.",
+      "reason": "It selects the top-ranked scalar cell240 and leaves the hot192/200 LDP pair intact. Test whether it recovers random-input performance while retaining periodic/repeated gains; do not assume a speedup."
+    },
+    {
+      "priority": 2,
+      "title": "Protect profitable paired spill transfers in generic cache selection",
+      "procedure": "Identify actual adjacent allocator spill edits and verify which final LDP/STP instructions would split. Prefer retaining profitable pairs, using declared positive profile weights. Do not hardcode benchmark slots or native byte offsets. Retain FP2 and all partials."
+    },
+    {
+      "priority": 3,
+      "title": "Retain repeated nontrivial multiplier constants without increasing hot spills",
+      "procedure": "Generic constant reuse with exact bit/ABI/dominance proofs; inspect repeated MOV/MOVK work. Recount actual final images and time broad cases."
+    }
+  ],
+  "run_rules": [
+    "Freeze Rust while source producers are live.",
+    "No heavy jobs, Git or archive work during primary runtime/complete-build clocks.",
+    "Every named win in both full81 orders is required for qualification; small slowdowns without losses are allowed.",
+    "Original codec/canonical bytecode unchanged; no LLVM dependency or runtime benchmark dispatch.",
+    "No subagents without explicit authorization."
+  ]
+}
