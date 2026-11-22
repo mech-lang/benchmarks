@@ -22,6 +22,10 @@ jobs:
         with:
           node-version: '22'
       - run: python3 -m unittest discover -s tools/tests -v
+      - name: Check relocated compact qualification policies
+        run: |
+          python3 -B archive/compiler/mech-pr-993-1c5cc197c9/source/benchmarks/mech-deflate/native-profile/native-compact-20261116/tests/test_qualify.py
+          python3 -B archive/compiler/mech-pr-995-be392dedfe/source/benchmarks/mech-deflate/native-profile/native-compact-20261116/tests/test_qualify.py
       - run: node site/tests/campaigns.mjs
       - run: node site/tests/campaigns-render.mjs
       - run: node site/tests/project-model.mjs
