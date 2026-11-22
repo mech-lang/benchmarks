@@ -1,0 +1,265 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases, preserving every named81Roc/63C win. Track complete builds, code size and stack. Original idiomatic source/canonical bytecode unchanged; no LLVM dependency.",
+  "source_commit": "91a7702d3c280383ac8b901748987a59474c01e2",
+  "selected_role": "pack-sqrt",
+  "qualified_score": {
+    "roc": 81,
+    "libdeflate": 63
+  },
+  "new_C_wins": 0,
+  "tradeoff": "Encodertext grows16B to63640B while random1M takes0.40-0.57percent less Mech time in both full orders. All named wins hold. The shift-only63624B variant and the exactly equivalent both-options raw image are retained.",
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Reuse the two biased prefetch bases",
+      "source": "hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/indexed_addresses.rs",
+      "actual_final_image_evidence": {
+        "native_block": "0x46f8",
+        "random1M_visits": 1048541,
+        "sequence": [
+          "mov w1,#0xa7bd",
+          "movk w1,#0x1e35,lsl16",
+          "mul w2,w13,w1",
+          "lsr w2,w2,16",
+          "add x3,x26,#0x20,lsl12",
+          "add x3,x3,x2,lsl1",
+          "prfm pstl1keep,[x3]",
+          "and x3,x13,#0xffffff",
+          "mul w1,w3,w1",
+          "lsr w8,w1,16",
+          "add x1,x26,#0x40,lsl12",
+          "add x1,x1,x8,lsl2",
+          "prfm pstl1keep,[x1]"
+        ]
+      },
+      "opportunity": "The two constant biased bases are recomputed1,048,541times each. The existing pass collects Load/Store addresses, not prefetch pointers. Confirm the actual defining CLIF and domination of x26, then share/hoist these pure wrapping-pointer additions, ideally using the bases already needed by the matching cache loads/stores.",
+      "proof": "Do not move/drop the hints, change write intent, guards, memory flags, owner/view admission or effect order. Keep unknown bases and unsupported shapes unchanged. Native guard/alias/cleanup tests, original source/bytecode equality, final counts and both full81orders decide promotion. Extra live bases can cause spills; count them rather than assuming a gain."
+    },
+    {
+      "priority": 2,
+      "title": "Fold address scaling into prefetch addressing when proven valid",
+      "evidence": "The first table uses2-byte cells and the second4-byte cells; both hints currently need a scaled-index ADD after their biased-base ADD.",
+      "experiment": "Investigate whether an admitted aligned private base and a coarser index can address the same prefetch granule with an8-byte-scaled PRFM operand. Verify the ISA/granule properties and exact current hash expressions first; do not assume cacheline size or base alignment.",
+      "proof": "Every rounded address must stay in the admitted allocation/view and target the same original hint granule. Preserve both hints and their order/write intent. Decline uncertain alignments and ranges. This is a design only, not an implemented result."
+    },
+    {
+      "priority": 3,
+      "title": "Keep a profitable multi-instruction multiplier constant",
+      "evidence": "The actual prefetch block materializes0x1e35a7bd with MOV/MOVK before two multiplies on every loop visit.",
+      "experiment": "Look for a generic lowering/rematerialization policy that retains repeatedly used multi-instruction constants across hot loops. Measure extra live-register/spill cost and critical-path effects; keep immediate folding elsewhere intact. Do not special-case the benchmark constant."
+    },
+    {
+      "priority": 4,
+      "title": "Profile larger short-input losses and allocation/zero-fill setup",
+      "experiment": "Random4K is still roughly1.34-1.35C in this full panel. Profile the complete invocation and revisit historical storage/work census. A private storage/initialization change needs read/write/lifetime/alias/error and finite-admission proofs."
+    },
+    {
+      "priority": 5,
+      "title": "Avoid insert copies when existing extensions are already free",
+      "evidence": "Scorer block294 has ADD32 and OR32 inputs, then MOV64/BFI64 to pack them. Both original extensions are already reused by existing word/OR rules. It adds2,649copies on random1M. The matcher adds1,048,541MOVs but removes both halfword masks; elapsed timing still favors the insert candidate.",
+      "experiment": "A generic profitability check may prefer the original shifted logical operation when both extensions are already elided, or improve copy/coalescing where low-field values remain shared. Preserve the aggressive partials and all shared narrow/wide users; do not infer clean upper bits from arbitrary narrow inputs."
+    }
+  ],
+  "run_rules": [
+    "Freeze Rust while a source producer is live.",
+    "No heavy builds/tests/counters/profiles/Git/archive work during primary runtime or complete-build clocks.",
+    "Use actual final-image counts and declared positive nine-case weights; never time instrumented images.",
+    "Keep every named win in both full81/96orders. Small slowdowns without losses are allowed. Preserve promising partials for repair.",
+    "No subagent delegation without explicit authorization. Read applicable AGENTS.md before edits."
+  ],
+  "goal_complete": false,
+  "text_bytes": 63640,
+  "stack_bytes": 4832,
+  "source_through_link_seconds": 2.187596291769296,
+  "full81": {
+    "scores": [
+      {
+        "order": "forward",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      },
+      {
+        "order": "reverse",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      }
+    ],
+    "examples": [
+      {
+        "case": "prefix-random-1048576",
+        "orders": [
+          {
+            "control_ms": 21.115896000000003,
+            "candidate_ms": 21.024042,
+            "C_ms": 20.334374500000003,
+            "paired_x_C": 1.0352305036281373,
+            "paired_x_control": 0.9960099343205913
+          },
+          {
+            "control_ms": 21.114520999999996,
+            "candidate_ms": 21.012333,
+            "C_ms": 20.330688,
+            "paired_x_C": 1.0345849575921844,
+            "paired_x_control": 0.9942640016880581
+          }
+        ]
+      },
+      {
+        "case": "prefix-random-262144",
+        "orders": [
+          {
+            "control_ms": 5.346770500000001,
+            "candidate_ms": 5.329103999999999,
+            "C_ms": 5.050292,
+            "paired_x_C": 1.053023046687583,
+            "paired_x_control": 0.9962278148354785
+          },
+          {
+            "control_ms": 5.352646,
+            "candidate_ms": 5.3202915,
+            "C_ms": 5.048937499999999,
+            "paired_x_C": 1.053707814064732,
+            "paired_x_control": 0.993516506886674
+          }
+        ]
+      },
+      {
+        "case": "prefix-random-65536",
+        "orders": [
+          {
+            "control_ms": 1.278458,
+            "candidate_ms": 1.2734785,
+            "C_ms": 1.1615415,
+            "paired_x_C": 1.0945314702816513,
+            "paired_x_control": 0.9960183217995311
+          },
+          {
+            "control_ms": 1.2765624999999998,
+            "candidate_ms": 1.271875,
+            "C_ms": 1.1619795,
+            "paired_x_C": 1.092690783499901,
+            "paired_x_control": 0.9953861584055255
+          }
+        ]
+      },
+      {
+        "case": "prefix-periodic-1048576",
+        "orders": [
+          {
+            "control_ms": 10.471896,
+            "candidate_ms": 10.4739165,
+            "C_ms": 18.450083,
+            "paired_x_C": 0.5677709301517772,
+            "paired_x_control": 1.0009298130911268
+          },
+          {
+            "control_ms": 10.468729499999998,
+            "candidate_ms": 10.466854,
+            "C_ms": 18.3740625,
+            "paired_x_C": 0.569562520367684,
+            "paired_x_control": 0.999950021909122
+          }
+        ]
+      },
+      {
+        "case": "prefix-repeated-1048576",
+        "orders": [
+          {
+            "control_ms": 12.2768545,
+            "candidate_ms": 12.2801875,
+            "C_ms": 21.7367295,
+            "paired_x_C": 0.5657123704439192,
+            "paired_x_control": 1.0007740439350699
+          },
+          {
+            "control_ms": 12.2800005,
+            "candidate_ms": 12.27625,
+            "C_ms": 21.6636665,
+            "paired_x_C": 0.5673603186537618,
+            "paired_x_control": 0.9999016917947482
+          }
+        ]
+      },
+      {
+        "case": "16384-distribution-change",
+        "orders": [
+          {
+            "control_ms": 0.569125,
+            "candidate_ms": 0.568417,
+            "C_ms": 0.4850415,
+            "paired_x_C": 1.1747797585585829,
+            "paired_x_control": 0.9965515729052448
+          },
+          {
+            "control_ms": 0.5686045000000001,
+            "candidate_ms": 0.5664165,
+            "C_ms": 0.48304100000000005,
+            "paired_x_C": 1.1818124397824574,
+            "paired_x_control": 0.9991344974375787
+          }
+        ]
+      },
+      {
+        "case": "prefix-random-4096",
+        "orders": [
+          {
+            "control_ms": 0.103917,
+            "candidate_ms": 0.1031045,
+            "C_ms": 0.07656249999999999,
+            "paired_x_C": 1.3481081141648366,
+            "paired_x_control": 0.9928847247220565
+          },
+          {
+            "control_ms": 0.09995849999999999,
+            "candidate_ms": 0.10139599999999999,
+            "C_ms": 0.0757085,
+            "paired_x_C": 1.3425103708840378,
+            "paired_x_control": 1.01084992566528
+          }
+        ]
+      },
+      {
+        "case": "prefix-natural-4096",
+        "orders": [
+          {
+            "control_ms": 0.381521,
+            "candidate_ms": 0.379562,
+            "C_ms": 0.392792,
+            "paired_x_C": 0.9665766940227528,
+            "paired_x_control": 0.9960387563304599
+          },
+          {
+            "control_ms": 0.38131250000000005,
+            "candidate_ms": 0.383208,
+            "C_ms": 0.3918955,
+            "paired_x_C": 0.983706898221148,
+            "paired_x_control": 1.0003310820634614
+          }
+        ]
+      }
+    ],
+    "at_least_1pct_less_time_both_orders": [
+      "one-stored"
+    ]
+  }
+}
