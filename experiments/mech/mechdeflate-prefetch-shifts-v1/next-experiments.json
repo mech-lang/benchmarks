@@ -1,0 +1,66 @@
+{
+  "objective": "Get Mechdeflate to 1x libdeflate across all 81 cases; preserve every named 81 Roc / 63 C win while targeting 64 and then all 81. Keep original codec/canonical bytecode unchanged, avoid LLVM dependency, track complete build times, sizes and stack, and publish all source/evidence.",
+  "source_commit": "0b15e658c123b4aa12e30bde2ad9d47d1f156318",
+  "source_pr": "https://github.com/mech-lang/mech/pull/995",
+  "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
+  "selected_recipe": "control",
+  "selected_text_bytes": 64040,
+  "retained_recipe": "shift-balanced",
+  "retained_text_bytes": 64024,
+  "retained_qualified_score": {
+    "roc": 81,
+    "libdeflate": 63
+  },
+  "retained_broad_gain_cases_at_least_1pct_both_orders": 28,
+  "retained_random1M_slowdown_pct": [
+    0.5159472785986,
+    0.677491717489
+  ],
+  "regression_is_not_rejection": "Preserve this qualified broad variant and repair or combine it. The selected control stays closer to64th C win. Small slowdowns are allowed when named wins remain.",
+  "actual_counts": {
+    "selected_instructions": 170329253,
+    "shift_balanced_instructions": 172429071,
+    "selected_prefetches": 2097082,
+    "shift_balanced_prefetches": 2097082,
+    "extra_register_copies_versus_selected": 2503998
+  },
+  "next_experiments": [
+    {
+      "priority": 1,
+      "source": "vendor/cranelift-codegen/src/isa/aarch64/lower/isle/i32_extensions.rs",
+      "finding": "The current zero-extension reuse helper admits only I32 add/sub/mul. Narrowed I32 shifts produce extra register copies. The retained balanced matcher adds about 2.1 million mov instructions on random1M despite preserving both prefetch hints.",
+      "experiment": "Add an independently opt-in zero-extension reuse case for proven scalar I32 word-shift definitions. Start with nonzero fixed logical-right shifts, matching the relevant hash shift, and preserve current flag-off images.",
+      "proof_requirement": "Inspect actual AArch64 lowering. Do not assume arbitrary I32 parameters/reductions have zero upper bits. Exclude immediate identity shifts unless a W-register write is proved; shift counts are modulo 32. Test dirty high bits,0/1/16/31/32/33/63/64 counts, shared uses and overflow with actual JIT original/optimized comparisons before codec clocks."
+    },
+    {
+      "priority": 2,
+      "source": "hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/indexed_addresses.rs",
+      "finding": "The existing address pass collects only Load/Store pointers and skips already-canonical biased-base expressions. Future-store prefetch pointers are constructed with a biased base at the returning loop edge.",
+      "experiment": "First confirm the actual surviving loop arithmetic. Test sharing/hoisting the prefetch biased bases, ideally reusing the same proven table bases as loads/stores. Add a separate mode so current hoisted images remain exact. Do not assume the benefit before counters and clocks."
+    },
+    {
+      "priority": 3,
+      "source": "vendor/cranelift-codegen/src/isa/aarch64/lower/isle/byte_extensions.rs",
+      "finding": "Current byte reuse is restricted to I8; both current and retained matchers execute 2,097,082 uxth instructions on random1M.",
+      "experiment": "Identify the exact uxth producers in final VCode/assembly before attributing them to loads. If they are direct unsigned scalar halfword loads, investigate a separately admitted I16-load reuse case. Preserve address, flags, endianness, signed-load behavior and shared users; arbitrary narrow inputs remain excluded."
+    },
+    {
+      "priority": 4,
+      "finding": "Random4K remains the largest C losing margin (about 1.35x); do not optimize only marginal large-input cases.",
+      "experiment": "Profile complete invocation work and revisit historical allocation/zero-fill/private-storage census. Pursue a generic finite private storage or setup reduction only after proving logical lengths, all observable reads, errors, aliases and allocator cleanup remain correct."
+    }
+  ],
+  "other_retained_partials": [
+    "indexed-address-study/address-balanced:64008B, previous natural4K reverse1.001844C; combine with the new source/profile advances rather than discarding.",
+    "scorer-address-study:14 addresses normalized, two balanced allocations flat on random1M and natural4K C loss; all source/profile/counter/gate/screen evidence retained.",
+    "literal-run-group-study/next-range-guard-design.md: compile-time nonnegative biased-cost range plus packed-byte header proof; original scalar fallback before either store; not implemented."
+  ],
+  "run_rules": [
+    "Read applicable AGENTS.md before backend edits. Do not spawn subagents unless explicitly authorized.",
+    "Freeze Rust while a source producer is live.",
+    "No heavy build/test/counter/profile/Git/archive work during primary runtime or complete-build clocks.",
+    "Use actual final-image counts and declared positive nine-case weights; never time instrumented images.",
+    "Full81/96 in both orders and every named win are required for promotion. Preserve promising partials for repair."
+  ],
+  "limits": "Focused native tests and full benchmark qualification are verified; full GPU/CI and formal statistical confidence are not claimed."
+}

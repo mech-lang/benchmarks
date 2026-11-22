@@ -1,11 +1,11 @@
 {
   "source_repository": "mech-lang/mech",
   "source_pr": "https://github.com/mech-lang/mech/pull/995",
-  "source_commit": "de67745764a7cfc124c6bad8ed51c36ad11e1883",
+  "source_commit": "0b15e658c123b4aa12e30bde2ad9d47d1f156318",
   "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
-  "study": "experiments/mech/mechdeflate-indexed-addresses-v1",
+  "study": "experiments/mech/mechdeflate-prefetch-shifts-v1",
   "recipe_file": "recipes.json",
-  "role": "address-focus",
+  "role": "control",
   "score": {
     "roc": 81,
     "libdeflate": 63
@@ -13,5 +13,15 @@
   "text_bytes": 64040,
   "stripped_executable_bytes": 210024,
   "global_compiler_defaults_changed": false,
-  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/indexed-replay --role address-focus"
+  "source_replay": "python3 reproduce.py --mech-root /path/to/mech --output /tmp/prefetch-replay --role control",
+  "source_through_final_link_seconds": 2.1745146873872727,
+  "retained_alternative": {
+    "role": "shift-balanced",
+    "text_bytes": 64024,
+    "score": {
+      "roc": 81,
+      "libdeflate": 63
+    },
+    "status": "Qualified broad gain; random1M copy regression retained for repair. Current faster random-data image stays selected."
+  }
 }
