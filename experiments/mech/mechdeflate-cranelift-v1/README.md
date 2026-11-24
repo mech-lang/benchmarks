@@ -33,26 +33,26 @@ The same pinned inventory uses 96 balanced blocks per case in each order. A win 
 
 ## Full Silesia at level 12
 
-The short-prefix encoder also ran the full 12-file level-12 clock. It won 10/12 forward and 10/12 reverse against libdeflate, and 11/12 forward and 11/12 reverse against the second reference. The summed per-file medians were 28.755 s, 33.670 s and 32.616 s, respectively. All 12 streams were byte-identical and inflated independently. [Short-prefix Silesia scores](short-prefix/silesia-scores.json) · [Raw observations](short-prefix/observations.json).
+The short-prefix encoder won **10/12 against libdeflate** and **11/12 against the second reference** in each timing order. Its summed per-file medians were 28.755 s against 33.670 s and 32.616 s, respectively. All 12 streams were byte-identical and inflated independently. [Complete scores](short-prefix/silesia-scores.json) · [Raw observations](short-prefix/observations.json).
 
-The direct-4 encoder is the one timed in the 12-file run. Each order measures all six permutations of the three actors. Each file's ratio combines the forward and reverse block ratios geometrically. The total elapsed time sums the per-file medians, averaged across the two orders. All 12 inputs produced byte-identical raw streams and independently inflated. [Silesia scores](silesia-scores.json).
-
-Mech won **10/12 against libdeflate** and **11/12 against the second reference** in both orders. The summed per-file medians were 27.971 s for Mech, 33.711 s for libdeflate, and 32.650 s for the second reference.
+Each order measures all six permutations of the three actors. Each file's ratio is the geometric mean of the two orders' paired elapsed-time ratios. The corpus total sums the per-file medians, averaged across the two orders.
 
 | File | Mech / libdeflate | Mech / reference | Reference / libdeflate |
 |---|---:|---:|---:|
-| dickens | 0.792093× | 0.899778× | 0.880320× |
-| mozilla | 0.853960× | 0.862102× | 0.990556× |
-| mr | 1.059583× | 0.937299× | 1.130464× |
-| nci | 0.829639× | 0.807469× | 1.027456× |
-| ooffice | 0.866611× | 0.886796× | 0.977238× |
-| osdb | 0.856228× | 0.889158× | 0.962965× |
-| reymont | 0.713482× | 0.871393× | 0.818784× |
-| samba | 0.807910× | 0.807143× | 1.000950× |
-| sao | 0.957750× | 0.918509× | 1.042722× |
-| webster | 0.746761× | 0.906013× | 0.824228× |
-| x-ray | 1.138262× | 1.071134× | 1.062669× |
-| xml | 0.794341× | 0.781777× | 1.016071× |
+| dickens | 0.818202× | 0.931023× | 0.878820× |
+| mozilla | 0.880248× | 0.887119× | 0.992255× |
+| mr | 1.081644× | 0.956737× | 1.130555× |
+| nci | 0.863489× | 0.840328× | 1.027562× |
+| ooffice | 0.896528× | 0.919429× | 0.975092× |
+| osdb | 0.874971× | 0.909561× | 0.961971× |
+| reymont | 0.728931× | 0.889265× | 0.819701× |
+| samba | 0.827821× | 0.826959× | 1.001042× |
+| sao | 0.960923× | 0.920068× | 1.044404× |
+| webster | 0.766827× | 0.929730× | 0.824785× |
+| x-ray | 1.131622× | 1.064817× | 1.062738× |
+| xml | 0.812356× | 0.799989× | 1.015459× |
+
+The earlier direct-4 run also won 10/12 and 11/12 in each order. Its summed medians were 27.971 s, 33.711 s and 32.650 s, respectively. The streams matched byte-for-byte across the three encoders. [Direct-4 Silesia scores](silesia-scores.json).
 
 ## Build and replay
 
