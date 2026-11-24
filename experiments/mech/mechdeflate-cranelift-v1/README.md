@@ -33,6 +33,8 @@ The same pinned inventory uses 96 balanced blocks per case in each order. A win 
 
 ## Full Silesia at level 12
 
+The short-prefix encoder also ran the full 12-file level-12 clock. It won 10/12 forward and 10/12 reverse against libdeflate, and 11/12 forward and 11/12 reverse against the second reference. The summed per-file medians were 28.755 s, 33.670 s and 32.616 s, respectively. All 12 streams were byte-identical and inflated independently. [Short-prefix Silesia scores](short-prefix/silesia-scores.json) · [Raw observations](short-prefix/observations.json).
+
 The direct-4 encoder is the one timed in the 12-file run. Each order measures all six permutations of the three actors. Each file's ratio combines the forward and reverse block ratios geometrically. The total elapsed time sums the per-file medians, averaged across the two orders. All 12 inputs produced byte-identical raw streams and independently inflated. [Silesia scores](silesia-scores.json).
 
 Mech won **10/12 against libdeflate** and **11/12 against the second reference** in both orders. The summed per-file medians were 27.971 s for Mech, 33.711 s for libdeflate, and 32.650 s for the second reference.
