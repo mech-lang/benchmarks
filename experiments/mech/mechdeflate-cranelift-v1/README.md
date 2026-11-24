@@ -52,6 +52,8 @@ Each order measures all six permutations of the three actors. Each file's ratio 
 | x-ray | 1.131622× | 1.064817× | 1.062738× |
 | xml | 0.812356× | 0.799989× | 1.015459× |
 
+The pinned libdeflate Silesia encoder uses Apple Clang with `-O2 -DNDEBUG`, the upstream release setting. With the encoder revision and support objects fixed, `-O3` took 0.35% longer on `sao`, 0.42% longer on `mr`, and 1.07% longer on `x-ray` across six matched orders per file. Every compressed stream matched the reference and inflated independently. [Upstream build guidance](https://github.com/ebiggers/libdeflate/blob/92e6a0db9fa848d742f9eb286c92afc60f2c3dda/README.md#supported-compilers) · [Build and timing evidence](libdeflate-build-levels.json).
+
 The earlier direct-4 run also won 10/12 and 11/12 in each order. Its summed medians were 27.971 s, 33.711 s and 32.650 s, respectively. The streams matched byte-for-byte across the three encoders. [Direct-4 Silesia scores](silesia-scores.json).
 
 ## Build and replay
