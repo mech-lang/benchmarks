@@ -2,6 +2,32 @@
 
 On Apple M1 with macOS 15.6.1, PR #1000 emitted both pinned level-12 encoders through Cranelift. Both objects, canonical bytecode files and descriptor files reproduced byte for byte. These results supersede the earlier M3 report for this branch. [Compiler revision](https://github.com/mech-lang/mech/commit/62363b4a341860b04bbfe11d0a1cb2ea9e3b2532) · [Exact recipe](recipe.json).
 
+## Adaptive packed tally
+
+This Cranelift encoder won all 81 cases against both pinned references in each timing order. The same native object won 11/12 Silesia files against libdeflate forward and 11/12 in reverse at level 12. It won all 12 in both orders against the second reference. The libdeflate reference used `-O2 -DNDEBUG`. [Compiler revision](https://github.com/mech-lang/mech/commit/728ea55ec3ba9b35ff80420a01e3207af0b916df) · [81-case scores](adaptive-tally/scores.json) · [Silesia scores](adaptive-tally/silesia-scores.json).
+
+| File | Mech / libdeflate forward | Mech / libdeflate reverse | Mech / reference forward | Mech / reference reverse |
+|---|---:|---:|---:|---:|
+| mr | 1.049218× | 1.049534× | 0.928910× | 0.927972× |
+| sao | 0.918660× | 0.922409× | 0.881971× | 0.884650× |
+| x-ray | 0.999593× | 0.999323× | 0.936103× | 0.939664× |
+
+Summed Silesia per-file medians were 27.718 s for Mech, 33.668 s for libdeflate and 32.615 s for the second reference. All 12 streams matched byte for byte and inflated independently. The smallest 81-case margins were 0.449% against libdeflate and 1.228% against the second reference. The verifier recomputed all 1,965,312 observations. [Raw observations](adaptive-tally/observations.json).
+
+The native gate passed 162 output and alias checks and 12 recoveries across 6 failure cases. Peak native stack was 5,024 bytes. Three source-to-executable rebuilds reproduced the object, canonical bytecode and descriptor. With dependencies prebuilt, the median build took 2.959 s. The packet includes the exact timed executables, profile pins and build receipt. [Native checks](adaptive-tally/native-checks.json) · [Build receipt](adaptive-tally/rebuild.json) · [Timed executables](actors/adaptive-tally) · [Exact recipe](adaptive-tally/recipe.json).
+
+```sh
+python3 experiments/mech/mechdeflate-cranelift-v1/rebuild.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/adaptive-tally/recipe.json \
+  --mech-root /path/to/mech --output /tmp/mechdeflate-adaptive-tally
+python3 experiments/mech/mechdeflate-cranelift-v1/replay.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/adaptive-tally/recipe.json \
+  --corpus /path/to/silesia --output /tmp/mechdeflate-adaptive-tally-timing
+python3 experiments/mech/mechdeflate-cranelift-v1/verify.py \
+  --record experiments/mech/mechdeflate-cranelift-v1/adaptive-tally \
+  --output /tmp/mechdeflate-adaptive-tally-verify
+```
+
 ## Guarded byte appends
 
 The new Cranelift encoder won 81/81 against both references in both orders. The same native object won all 12 Silesia files against the second reference and 10 against libdeflate at level 12 in both orders. Libdeflate used the pinned `-O2 -DNDEBUG` encoder. [Compiler revision](https://github.com/mech-lang/mech/commit/ff48d9360c5edc8cebc8d1bfeef1c721f9266225) · [81-case scores](guarded-byte-appends/scores.json) · [Silesia scores](guarded-byte-appends/silesia-scores.json).
