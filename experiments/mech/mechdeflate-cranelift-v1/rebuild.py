@@ -134,11 +134,24 @@ def build(args):
         variant = output / name
         variant.mkdir()
         selected = flags.copy()
+        profiles = role.get("profile_inputs_sha256", {})
+        used_profiles = set()
         for key, value in role["settings_delta"].items():
             if value is None:
                 del selected[key]
+            elif key in helpers["PATH_SETTINGS"]:
+                entries = []
+                for entry in value.split(";"):
+                    symbol, relative = entry.split("@", 1)
+                    path = HERE / relative
+                    checked(path, profiles[relative])
+                    used_profiles.add(relative)
+                    entries.append(f"{symbol}@{path}")
+                selected[key] = ";".join(entries)
             else:
                 selected[key] = value
+        if used_profiles != profiles.keys():
+            raise ValueError(f"{name}: the role and profile manifest describe different files.")
         bound = variant / "bound"
         bound.mkdir()
         for file in ("mech-worker.rs", "pinned_allocator.rs"):

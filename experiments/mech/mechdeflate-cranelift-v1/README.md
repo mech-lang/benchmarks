@@ -2,6 +2,32 @@
 
 On Apple M1 with macOS 15.6.1, PR #1000 emitted both pinned level-12 encoders through Cranelift. Both objects, canonical bytecode files and descriptor files reproduced byte for byte. These results supersede the earlier M3 report for this branch. [Compiler revision](https://github.com/mech-lang/mech/commit/62363b4a341860b04bbfe11d0a1cb2ea9e3b2532) · [Exact recipe](recipe.json).
 
+## Guarded byte appends
+
+The new Cranelift encoder won 81/81 against both references in both orders. The same native object won all 12 Silesia files against the second reference and 10 against libdeflate at level 12 in both orders. Libdeflate used the pinned `-O2 -DNDEBUG` encoder. [Compiler revision](https://github.com/mech-lang/mech/commit/ff48d9360c5edc8cebc8d1bfeef1c721f9266225) · [81-case scores](guarded-byte-appends/scores.json) · [Silesia scores](guarded-byte-appends/silesia-scores.json).
+
+| Silesia file | Mech / libdeflate | Mech / reference |
+|---|---:|---:|
+| mr | 1.052716× | 0.931862× |
+| sao | 0.931410× | 0.891894× |
+| x-ray | 1.048433× | 0.986138× |
+
+Summed per-file medians were 27.790 s for Mech, 33.656 s for libdeflate and 32.607 s for the second reference. All 12 compressed streams were byte-identical and inflated independently. The smallest 81-case margins were 0.196% against libdeflate and 2.477% against the second reference. The verifier recomputed all 1,965,312 observations across both orders. [Raw observations](guarded-byte-appends/observations.json).
+
+The build passed 162 output and alias checks and 12 recoveries across 6 failure cases. Peak native stack was 5,024 bytes. Three clean source-to-executable builds reproduced the 155,216-byte object, canonical bytecode and descriptor. With compiler and support dependencies prebuilt, the median build took 2.928 s. The packet carries the exact two timed executables and SHA-256 pins for each profile. [Native checks](guarded-byte-appends/native-checks.json) · [Build receipt](guarded-byte-appends/rebuild.json) · [Timed executables](actors/guarded-byte-appends) · [Exact recipe](guarded-byte-appends/recipe.json).
+
+```sh
+python3 experiments/mech/mechdeflate-cranelift-v1/rebuild.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/guarded-byte-appends/recipe.json \
+  --mech-root /path/to/mech --output /tmp/mechdeflate-guarded-byte-appends
+python3 experiments/mech/mechdeflate-cranelift-v1/replay.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/guarded-byte-appends/recipe.json \
+  --corpus /path/to/silesia --output /tmp/mechdeflate-guarded-byte-timing
+python3 experiments/mech/mechdeflate-cranelift-v1/verify.py \
+  --record experiments/mech/mechdeflate-cranelift-v1/guarded-byte-appends \
+  --output /tmp/mechdeflate-guarded-byte-verify
+```
+
 ## 81-case qualification
 
 The short-prefix build won **81/81 against both references in both orders** on the same Apple M1. Its smallest elapsed-time margins were 0.645% against libdeflate and 5.590% against the second reference. The raw verifier recomputed all 1,965,312 observations from the two 96-block orders. [Compiler revision](https://github.com/mech-lang/mech/commit/e46c6df7ee23445523cb0e30d7820b17e17526e0) · [Exact recipe](short-prefix/recipe.json) · [All case margins](short-prefix/scores.json) · [Raw observations](short-prefix/observations.json).
