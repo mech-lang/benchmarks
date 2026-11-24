@@ -1,0 +1,85 @@
+[package]
+name = "mech-compression-native-profile"
+version = "0.0.0"
+edition = "2024"
+publish = false
+
+# An ordinary consumer does not activate mech-gpu's full-catalog dev dependencies.
+[workspace]
+
+[features]
+early-region-planning = ["mech-gpu/early-region-planning"]
+early-region-emission = ["mech-gpu/early-region-emission"]
+construction-census = ["mech-gpu/construction-census", "dep:cranelift-codegen"]
+construction-census-serde = ["construction-census", "cranelift-codegen/enable-serde"]
+# Recognized by the exact vendored SSA source in its focused test target.
+std = []
+linked-qualification = ["dep:mech-build"]
+unit-qualification = ["linked-qualification", "dep:mech-runtime"]
+
+[dependencies]
+cranelift-codegen = { version = "=0.131.3", default-features = false, features = ["std", "unwind"], optional = true }
+mech-build = { path = "@MECH_ROOT@/src/build", default-features = false, features = ["process-supervision"], optional = true }
+mech-runtime = { path = "@MECH_ROOT@/src/runtime", default-features = false, features = ["compiler", "resident-routing-source"], optional = true }
+# Retain the established compiler/value configuration while selecting only the
+# machine operations needed by compression and the scalar regression controls.
+mech-core = { path = "@MECH_ROOT@/src/core", default-features = false, features = ["full", "math_pow"] }
+mech-engine = { path = "@MECH_ROOT@/src/engine", default-features = false, features = ["full_compiler", "async"] }
+mech-syntax = { path = "@MECH_ROOT@/src/syntax", default-features = false, features = ["full"] }
+mech-gpu = { path = "@MECH_ROOT@/hosts/gpu", default-features = false, features = ["canonical-native-program"] }
+mech-stdlib = { path = "@MECH_ROOT@/src/stdlib", default-features = false, features = [
+  "compiler", "native-plan", "full_values", "integer_bits",
+  "access", "assign", "convert", "variable_define", "invariant_define",
+  "variables", "matrix_comprehensions",
+  "math_add", "math_sub", "math_mul", "math_div", "math_mod",
+  "compare_eq", "compare_neq", "compare_lt", "compare_gt", "compare_lte", "compare_gte",
+  "logic_and", "logic_or", "range_inclusive",
+] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0.149"
+miniz_oxide = "=0.8.9"
+sha2 = { version = "0.11.0", default-features = false }
+# Match the native compiler executable allocator.
+mimalloc = { version = "=0.1.39", default-features = false }
+
+[profile.release]
+debug = false
+
+# Match the production workspace's optimized compiler profile.
+[profile.compiler]
+inherits = "release"
+lto = "thin"
+codegen-units = 1
+
+[patch.crates-io]
+cranelift-codegen = { path = "@MECH_ROOT@/vendor/cranelift-codegen" }
+cranelift-frontend = { path = "@MECH_ROOT@/vendor/cranelift-frontend" }
+regalloc2 = { path = "@MECH_ROOT@/vendor/regalloc2" }
+mech-math = { path = "@MECH_ROOT@/machines/math" }
+mech-compare = { path = "@MECH_ROOT@/machines/compare" }
+mech-logic = { path = "@MECH_ROOT@/machines/logic" }
+mech-range = { path = "@MECH_ROOT@/machines/range" }
+mech-matrix = { path = "@MECH_ROOT@/machines/matrix" }
+mech-set = { path = "@MECH_ROOT@/machines/set" }
+mech-string = { path = "@MECH_ROOT@/machines/string" }
+mech-stats = { path = "@MECH_ROOT@/machines/stats" }
+mech-combinatorics = { path = "@MECH_ROOT@/machines/combinatorics" }
+
+[[bin]]
+name = "compile_profile"
+path = "compile_profile.rs"
+
+[dev-dependencies]
+cranelift-native = "=0.131.3"
+cranelift-object = "=0.131.3"
+cranelift-jit = "=0.131.3"
+cranelift-module = "=0.131.3"
+cranelift-codegen = { version = "0.131.3", default-features = false, features = ["std", "unwind"] }
+cranelift-frontend = { version = "0.131.3", default-features = false, features = ["std"] }
+
+
+
+
+[[test]]
+name = "llvm_register_results"
+path = "llvm_register_results.rs"

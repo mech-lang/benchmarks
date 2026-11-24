@@ -1,0 +1,56 @@
+{
+  "mech_basis_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+  "benchmark_basis_commit": "233e20174de20134ca2ae7f3c31b8ef9ec544f3a",
+  "timing_boundary": "Published complete diagnostic invocation, unchanged",
+  "commands": {
+    "machine": {
+      "command": [
+        "sysctl",
+        "-n",
+        "machdep.cpu.brand_string"
+      ],
+      "exit_code": 0,
+      "output": "Apple M3\n"
+    },
+    "os": {
+      "command": [
+        "sw_vers"
+      ],
+      "exit_code": 0,
+      "output": "ProductName:\t\tmacOS\nProductVersion:\t\t26.2\nBuildVersion:\t\t25C56\n"
+    },
+    "clang": {
+      "command": [
+        "clang",
+        "--version"
+      ],
+      "exit_code": 0,
+      "output": "Apple clang version 15.0.0 (clang-1500.3.9.4)\nTarget: arm64-apple-darwin25.2.0\nThread model: posix\nInstalledDir: /Library/Developer/CommandLineTools/usr/bin\n"
+    },
+    "linker": {
+      "command": [
+        "ld",
+        "-v"
+      ],
+      "exit_code": 0,
+      "output": "@(#)PROGRAM:ld PROJECT:ld-1053.12\nBUILD 15:45:29 Feb  3 2024\nconfigured to support archs: armv6 armv7 armv7s arm64 arm64e arm64_32 i386 x86_64 x86_64h armv6m armv7k armv7m armv7em\nwill use ld-classic for: armv6 armv7 armv7s arm64_32 i386 armv6m armv7k armv7m armv7em\nLTO support using: LLVM version 15.0.0 (static support for 29, runtime is 29)\nTAPI support using: Apple TAPI version 15.0.0 (tapi-1500.3.2.2)\n"
+    },
+    "sdk": {
+      "command": [
+        "xcrun",
+        "--show-sdk-version"
+      ],
+      "exit_code": 0,
+      "output": "14.4\n"
+    },
+    "rustc": {
+      "command": [
+        "rustc",
+        "+nightly-2026-03-03",
+        "-vV"
+      ],
+      "exit_code": 0,
+      "output": "rustc 1.96.0-nightly (ec818fda3 2026-03-02)\nbinary: rustc\ncommit-hash: ec818fda361ca216eb186f5cf45131bd9c776bb4\ncommit-date: 2026-03-02\nhost: aarch64-apple-darwin\nrelease: 1.96.0-nightly\nLLVM version: 22.1.0\n"
+    }
+  }
+}
