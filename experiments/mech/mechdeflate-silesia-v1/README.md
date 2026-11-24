@@ -1,5 +1,7 @@
 # Mechdeflate at level 12 on the full Silesia corpus
 
+The tuned level-12 build from Mech PR #999 has newer results, profiles, and rebuild instructions. [Silesia tuning](../mechdeflate-silesia-tuned-v2/README.md).
+
 On the Apple M1, Mech won **11/12 against Roc** and **9/12 against libdeflate** in each order. The median paired elapsed-time ratio was **0.924417× Roc** and **0.878235× libdeflate**. All 12 files produced byte-identical raw DEFLATE across all three encoders. Each stream independently inflated to the original input.
 
 The local Roc build won 6/12 against libdeflate. Its median elapsed-time lead was 0.32%. Feldman's M1 chart gives Roc 7/12 wins and a 2.48% median level-12 lead from the plotted per-file throughput pairs. [Feldman's chart](https://rtfeldman.com/fp-vs-c#chart) · [Feldman's benchmark script](https://gist.github.com/rtfeldman/7b6830809149867b79761ffb8e0456c3).
