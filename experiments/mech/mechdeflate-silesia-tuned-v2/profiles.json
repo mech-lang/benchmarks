@@ -1,0 +1,322 @@
+{
+  "method": "Time Profiler running samples in the exact encoder call, apportioned using matched unprofiled medians.",
+  "source_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+  "binaries": {
+    "baseline": "34df13ee098eca54a014c7b6c6d85f861433d58ff51f87c98d44b0e4a6a38071",
+    "libdeflate": "b53581ff8cd1ac2873077ba93e5f5855338aa24f75ef48f40e0535ae97a7c42b"
+  },
+  "files": {
+    "x-ray": {
+      "baseline": {
+        "samples": 8513,
+        "sample_export_sha256": "c1a2b6e34a6d4e1a3aac4c743b9a34887f6457c981c63f0ab394f9cd2954b01f",
+        "estimated_ms_by_stage": {
+          "frequency_tally_and_histogram": 72.36102487936098,
+          "backward_path_scoring": 147.73317173029486,
+          "output_emission": 49.68351253095266,
+          "matchfinder_and_controller": 125.5261471899448,
+          "other": 5.222414669446729
+        },
+        "estimated_ms_by_substage": {
+          "other chosen-path token tally": 51.80070766721485,
+          "backward minimum-cost scoring": 147.73317173029486,
+          "proved compressed payload loop": 40.414902712204864,
+          "standalone binary-tree matchfinder": 125.5261471899448,
+          "input literal histogram": 8.562878106660403,
+          "literal bin decrement for match-covered bytes": 11.997439105485729,
+          "closed checked body outside proved payload loop": 1.4585122049806178,
+          "other encoder work": 3.7168536836602843,
+          "checked byte append called by payload loop": 9.268609818747798,
+          "shared byte append from other callers": 0.04704878080582638
+        }
+      },
+      "libdeflate": {
+        "samples": 8418,
+        "sample_export_sha256": "d648e6887a4fba5b4a84956aa6273847b0a76d394562c881115c8e158105eb77",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 115.65417875552387,
+          "other": 11.026351788132573,
+          "backward_path_scoring": 157.26844717073533,
+          "frequency_tally_and_histogram": 46.3923541900689,
+          "output_emission": 13.43581384553932
+        },
+        "estimated_ms_by_substage": {
+          "binary-tree match search and recording": 83.63692022998337,
+          "initial cost model": 9.433656529846758,
+          "reverse minimum-cost dynamic program": 157.26844717073533,
+          "tally chosen path": 36.67282928052982,
+          "matchfinding controller and block decisions": 29.526119788221667,
+          "binary-tree window slide": 2.286947037538608,
+          "all-literal alternative": 9.678686569583036,
+          "emit block": 13.43581384553932,
+          "Huffman coding": 1.0209584989011642,
+          "deflate_near_optimal_merge_stats": 0.1225150198681397,
+          "parse-pass controller and block selection": 0.04083833995604657,
+          "exact block price": 0.1225150198681397,
+          "do_end_block_check": 0.20419169978023283,
+          "cost model from code lengths": 0.04083833995604657,
+          "minimum match heuristic": 0.20419169978023283,
+          "reset chosen-path frequencies": 0.04083833995604657,
+          "unmapped / helpers": 0.04083833995604657
+        }
+      }
+    },
+    "mr": {
+      "baseline": {
+        "samples": 8333,
+        "sample_export_sha256": "3f7f663e71346aec2fdb469e8c897ba2370527e1986b13f82af16d96810d6bb7",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 1940.36359425312,
+          "frequency_tally_and_histogram": 120.58923784543381,
+          "backward_path_scoring": 355.26535267208686,
+          "output_emission": 32.216242463608545,
+          "other": 14.482531015750629
+        },
+        "estimated_ms_by_substage": {
+          "standalone binary-tree matchfinder": 1940.36359425312,
+          "input literal histogram": 12.709159870964838,
+          "backward minimum-cost scoring": 355.26535267208686,
+          "literal bin decrement for match-covered bytes": 48.17658276668067,
+          "other chosen-path token tally": 59.70349520778831,
+          "checked byte append called by payload loop": 9.457979438857555,
+          "proved compressed payload loop": 22.75826302475099,
+          "other encoder work": 9.753541296321853,
+          "closed checked body outside proved payload loop": 4.728989719428777
+        }
+      },
+      "libdeflate": {
+        "samples": 8327,
+        "sample_export_sha256": "9070b55667ebb1b01584974edb8e1ad49b251464ce466b276e6aa185c6f13fc1",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 1653.4981340732559,
+          "backward_path_scoring": 534.3622018651375,
+          "frequency_tally_and_histogram": 53.95396020871863,
+          "other": 20.70960088819503,
+          "output_emission": 6.539873964693167
+        },
+        "estimated_ms_by_substage": {
+          "binary-tree advance under a long match": 1347.7590262238502,
+          "binary-tree window slide": 2.4524527367599376,
+          "binary-tree match search and recording": 265.68237981565994,
+          "reverse minimum-cost dynamic program": 534.3622018651375,
+          "tally chosen path": 35.151822560225774,
+          "initial cost model": 14.987211169088509,
+          "matchfinding controller and block decisions": 37.05928579992795,
+          "emit block": 6.539873964693167,
+          "exact block price": 1.3624737426444098,
+          "all-literal alternative": 18.802137648492856,
+          "Huffman coding": 3.5424317308754656,
+          "unmapped / helpers": 0.5449894970577639,
+          "do_end_block_check": 0.27249474852888195,
+          "minimum match heuristic": 0.5449894970577639
+        }
+      }
+    },
+    "sao": {
+      "baseline": {
+        "samples": 5549,
+        "sample_export_sha256": "3f651ca4294f520f3fd1256f75068d36dc6d9934b84769b0febfff2e70c42cbf",
+        "estimated_ms_by_stage": {
+          "backward_path_scoring": 103.95701512213913,
+          "output_emission": 32.00232157032798,
+          "matchfinder_and_controller": 192.88978243336638,
+          "frequency_tally_and_histogram": 40.760851684312485,
+          "other": 4.244518439854028
+        },
+        "estimated_ms_by_substage": {
+          "backward minimum-cost scoring": 103.95701512213913,
+          "proved compressed payload loop": 25.87135049053883,
+          "standalone binary-tree matchfinder": 192.88978243336638,
+          "other chosen-path token tally": 32.743427964588214,
+          "checked byte append called by payload loop": 6.13097107978915,
+          "input literal histogram": 1.482212788520454,
+          "literal bin decrement for match-covered bytes": 6.535210931203821,
+          "other encoder work": 3.0991721941791313,
+          "closed checked body outside proved payload loop": 1.1453462456748962
+        }
+      },
+      "libdeflate": {
+        "samples": 5297,
+        "sample_export_sha256": "1125dc9c898f4c5a7bfd59aa9eb3c0ee11eebcf923c157860ebfc6bc0c59435a",
+        "estimated_ms_by_stage": {
+          "backward_path_scoring": 157.20333082405136,
+          "output_emission": 13.245032016943552,
+          "matchfinder_and_controller": 178.5546119442609,
+          "frequency_tally_and_histogram": 29.529907447611855,
+          "other": 4.849274017132339
+        },
+        "estimated_ms_by_substage": {
+          "reverse minimum-cost dynamic program": 157.20333082405136,
+          "emit block": 13.245032016943552,
+          "binary-tree match search and recording": 142.80026322092695,
+          "matchfinding controller and block decisions": 33.14876865442704,
+          "binary-tree window slide": 2.5332028447706247,
+          "tally chosen path": 27.503345171795356,
+          "Huffman coding": 1.3751672585897678,
+          "initial cost model": 2.677957293043232,
+          "all-literal alternative": 2.0265622758165,
+          "exact block price": 0.2171316724089107,
+          "minimum match heuristic": 0.07237722413630357,
+          "deflate_near_optimal_merge_stats": 0.3618861206815178,
+          "do_end_block_check": 0.14475444827260714,
+          "cost model from code lengths": 0.07237722413630357
+        }
+      }
+    },
+    "nci": {
+      "libdeflate": {
+        "samples": 18491,
+        "sample_export_sha256": "5cdb9ee03eb5140fe217ff15d0dfc2cf5f123c1cb87b4923dab72d3fb7b6a04a",
+        "estimated_ms_by_stage": {
+          "backward_path_scoring": 6448.53408280043,
+          "matchfinder_and_controller": 2509.6010062686305,
+          "other": 67.14651521788977,
+          "frequency_tally_and_histogram": 94.30135593100697,
+          "output_emission": 9.874487532042613
+        },
+        "estimated_ms_by_substage": {
+          "reverse minimum-cost dynamic program": 6448.53408280043,
+          "binary-tree match search and recording": 2098.822324935658,
+          "binary-tree advance under a long match": 266.1174389885485,
+          "initial cost model": 53.81595704963225,
+          "matchfinding controller and block decisions": 134.29303043577954,
+          "tally chosen path": 38.016776998364065,
+          "emit block": 9.874487532042613,
+          "all-literal alternative": 56.28457893264291,
+          "Huffman coding": 9.874487532042613,
+          "unmapped / helpers": 1.4811731298063924,
+          "exact block price": 1.4811731298063924,
+          "binary-tree window slide": 9.874487532042613,
+          "cost model from code lengths": 0.49372437660213064,
+          "minimum match heuristic": 0.49372437660213064
+        }
+      },
+      "baseline": {
+        "samples": 15442,
+        "sample_export_sha256": "29c4323b774ccd4dd1f7192bec761530a1208d13e928fdecba02362cd7558c5b",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 2782.21673031267,
+          "frequency_tally_and_histogram": 296.4364423824796,
+          "backward_path_scoring": 4727.166331624223,
+          "output_emission": 29.082404846473903,
+          "other": 43.87871608415361
+        },
+        "estimated_ms_by_substage": {
+          "standalone binary-tree matchfinder": 2782.21673031267,
+          "input literal histogram": 47.45023948635215,
+          "backward minimum-cost scoring": 4727.166331624223,
+          "other chosen-path token tally": 60.71589783737534,
+          "literal bin decrement for match-covered bytes": 188.27030505875211,
+          "proved compressed payload loop": 20.408705155420282,
+          "closed checked body outside proved payload loop": 9.183917319939127,
+          "other encoder work": 34.69479876421448,
+          "checked byte append called by payload loop": 8.67369969105362
+        }
+      }
+    },
+    "webster": {
+      "baseline": {
+        "samples": 11501,
+        "sample_export_sha256": "12a551e9201becdb6a7d8e801a90fe5ac949f4a9a63911697e4ced158497e8dd",
+        "estimated_ms_by_stage": {
+          "frequency_tally_and_histogram": 300.15443101415093,
+          "backward_path_scoring": 2898.2653661366403,
+          "output_emission": 107.88961114794365,
+          "matchfinder_and_controller": 1970.1380702357403,
+          "other": 26.280802715524736
+        },
+        "estimated_ms_by_substage": {
+          "other chosen-path token tally": 238.8325580112599,
+          "backward minimum-cost scoring": 2898.2653661366403,
+          "checked byte append called by payload loop": 39.65173743044083,
+          "standalone binary-tree matchfinder": 1970.1380702357403,
+          "proved compressed payload loop": 68.23787371750282,
+          "input literal histogram": 13.370934714916094,
+          "literal bin decrement for match-covered bytes": 47.95093828797496,
+          "closed checked body outside proved payload loop": 5.071733857381966,
+          "other encoder work": 21.20906885814277
+        }
+      },
+      "libdeflate": {
+        "samples": 14478,
+        "sample_export_sha256": "8e577f9a944f374ea7bc5171b14a5190a176e3918e96fae0e0c1edc81b2e6a1e",
+        "estimated_ms_by_stage": {
+          "backward_path_scoring": 4820.7523408943225,
+          "matchfinder_and_controller": 1883.7753374720269,
+          "frequency_tally_and_histogram": 128.4392275549109,
+          "other": 25.68784551098218,
+          "output_emission": 28.54205056775798
+        },
+        "estimated_ms_by_substage": {
+          "reverse minimum-cost dynamic program": 4820.7523408943225,
+          "matchfinding controller and block decisions": 175.53361099171156,
+          "binary-tree match search and recording": 1693.970701196436,
+          "tally chosen path": 109.41119384307225,
+          "all-literal alternative": 19.028033711838653,
+          "binary-tree window slide": 13.319623598287055,
+          "initial cost model": 18.07663202624672,
+          "emit block": 28.54205056775798,
+          "deflate_near_optimal_merge_stats": 1.9028033711838652,
+          "Huffman coding": 2.8542050567757977,
+          "exact block price": 1.4271025283878989,
+          "minimum match heuristic": 0.9514016855919326,
+          "unmapped / helpers": 0.9514016855919326,
+          "do_end_block_check": 0.4757008427959663
+        }
+      }
+    },
+    "mozilla": {
+      "libdeflate": {
+        "samples": 12499,
+        "sample_export_sha256": "2cd1544b8ff051787ed6b0846b2da7ab66a7423d90f21c89aeeec346a7cdfa5d",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 2254.014166157612,
+          "other": 118.03942069621567,
+          "backward_path_scoring": 3490.7342377673413,
+          "output_emission": 49.95859299175934,
+          "frequency_tally_and_histogram": 209.14038438707095
+        },
+        "estimated_ms_by_substage": {
+          "binary-tree match search and recording": 1836.223187510841,
+          "initial cost model": 54.366704138091045,
+          "reverse minimum-cost dynamic program": 3490.7342377673413,
+          "Huffman coding": 41.63216082646611,
+          "matchfinding controller and block decisions": 229.22177960924873,
+          "emit block": 49.95859299175934,
+          "tally chosen path": 163.5899025416433,
+          "binary-tree advance under a long match": 169.4673840700856,
+          "exact block price": 13.224333438995117,
+          "unmapped / helpers": 4.897901273701896,
+          "all-literal alternative": 45.55048184542763,
+          "binary-tree window slide": 11.75496305688455,
+          "minimum match heuristic": 7.346851910552844,
+          "do_end_block_check": 0.4897901273701896,
+          "deflate_near_optimal_merge_stats": 2.9387407642211376,
+          "parse-pass controller and block selection": 0.4897901273701896
+        }
+      },
+      "baseline": {
+        "samples": 11506,
+        "sample_export_sha256": "6ba239afc9e982e599afee1da515f1056a9578133cfdd528ed953b3a34e94f69",
+        "estimated_ms_by_stage": {
+          "matchfinder_and_controller": 2445.2194758049714,
+          "backward_path_scoring": 2263.639114577438,
+          "other": 159.94125082217974,
+          "frequency_tally_and_histogram": 398.91229616826,
+          "output_emission": 144.88795662715108
+        },
+        "estimated_ms_by_substage": {
+          "standalone binary-tree matchfinder": 2445.2194758049714,
+          "backward minimum-cost scoring": 2263.639114577438,
+          "closed checked body outside proved payload loop": 74.32564008795411,
+          "other chosen-path token tally": 255.90600131548757,
+          "input literal histogram": 31.047419277246654,
+          "other encoder work": 85.61561073422563,
+          "proved compressed payload loop": 120.42635356022947,
+          "checked byte append called by payload loop": 24.461603066921604,
+          "literal bin decrement for match-covered bytes": 111.95887557552581
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,245 @@
+{
+  "objective": "Get Mechdeflate to 1x libdeflate across all 81 cases, preserving every named 81 Roc / 63 C win. Target 64 and continue toward all 81; track complete build times, sizes and stack. Original idiomatic source and canonical bytecode stay unchanged, without LLVM dependency.",
+  "source_commit": "94eeda948abddf988fc470848847a23cd3331aa7",
+  "source_pr": "https://github.com/mech-lang/mech/pull/995",
+  "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
+  "selected_role": "reuse-byte-all-sqrt",
+  "qualified_score": {
+    "roc": 81,
+    "libdeflate": 63
+  },
+  "text_bytes": 63992,
+  "stack_bytes": 4736,
+  "stripped_executable_bytes": 210024,
+  "full81": {
+    "scores": [
+      {
+        "order": "forward",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      },
+      {
+        "order": "reverse",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      }
+    ],
+    "examples": [
+      {
+        "case": "prefix-random-1048576",
+        "orders": [
+          {
+            "control_ms": 21.2994995,
+            "candidate_ms": 21.20575,
+            "C_ms": 20.347625,
+            "paired_x_C": 1.043016798615081,
+            "paired_x_control": 0.9953515650654791
+          },
+          {
+            "control_ms": 21.2773125,
+            "candidate_ms": 21.2108125,
+            "C_ms": 20.317228999999998,
+            "paired_x_C": 1.0449542022060325,
+            "paired_x_control": 0.9964121724977077
+          }
+        ]
+      },
+      {
+        "case": "prefix-periodic-1048576",
+        "orders": [
+          {
+            "control_ms": 11.132270499999999,
+            "candidate_ms": 10.482792000000002,
+            "C_ms": 18.437854,
+            "paired_x_C": 0.5683633671596843,
+            "paired_x_control": 0.9417197826564233
+          },
+          {
+            "control_ms": 11.125896,
+            "candidate_ms": 10.482312,
+            "C_ms": 18.372978999999997,
+            "paired_x_C": 0.5708209864557442,
+            "paired_x_control": 0.9420353842131381
+          }
+        ]
+      },
+      {
+        "case": "prefix-repeated-1048576",
+        "orders": [
+          {
+            "control_ms": 12.926458499999999,
+            "candidate_ms": 12.275396,
+            "C_ms": 21.717937499999998,
+            "paired_x_C": 0.5656309675647043,
+            "paired_x_control": 0.9496497178779514
+          },
+          {
+            "control_ms": 12.926458,
+            "candidate_ms": 12.2745415,
+            "C_ms": 21.639854,
+            "paired_x_C": 0.5676100801837013,
+            "paired_x_control": 0.949642540720949
+          }
+        ]
+      },
+      {
+        "case": "16384-distribution-change",
+        "orders": [
+          {
+            "control_ms": 0.5854579999999999,
+            "candidate_ms": 0.5825005000000001,
+            "C_ms": 0.48927049999999994,
+            "paired_x_C": 1.1860300290559969,
+            "paired_x_control": 0.9956143101518529
+          },
+          {
+            "control_ms": 0.5765835,
+            "candidate_ms": 0.5743125,
+            "C_ms": 0.485604,
+            "paired_x_C": 1.1835304379752964,
+            "paired_x_control": 0.9943522299246899
+          }
+        ]
+      },
+      {
+        "case": "prefix-random-4096",
+        "orders": [
+          {
+            "control_ms": 0.1013125,
+            "candidate_ms": 0.101646,
+            "C_ms": 0.076146,
+            "paired_x_C": 1.3364287506805619,
+            "paired_x_control": 0.9999083345585749
+          },
+          {
+            "control_ms": 0.1008545,
+            "candidate_ms": 0.0998335,
+            "C_ms": 0.07668799999999999,
+            "paired_x_C": 1.307888645617269,
+            "paired_x_control": 0.957092210617631
+          }
+        ]
+      },
+      {
+        "case": "prefix-natural-4096",
+        "orders": [
+          {
+            "control_ms": 0.3846875,
+            "candidate_ms": 0.3849995,
+            "C_ms": 0.3913125,
+            "paired_x_C": 0.9784865211619921,
+            "paired_x_control": 0.9988165236736299
+          },
+          {
+            "control_ms": 0.385021,
+            "candidate_ms": 0.3858125,
+            "C_ms": 0.392646,
+            "paired_x_C": 0.9875251584245026,
+            "paired_x_control": 1.0005320535370124
+          }
+        ]
+      }
+    ],
+    "at_least_1pct_less_time_both_orders": [
+      "33027-periodic-window",
+      "repeated-32769",
+      "prefix-periodic-4096",
+      "prefix-periodic-8192",
+      "prefix-periodic-16384",
+      "prefix-periodic-32767",
+      "prefix-periodic-32768",
+      "prefix-periodic-32769",
+      "prefix-periodic-33027",
+      "prefix-periodic-65535",
+      "prefix-periodic-65536",
+      "prefix-periodic-65537",
+      "prefix-periodic-131072",
+      "prefix-periodic-262144",
+      "prefix-periodic-1048576",
+      "prefix-repeated-4096",
+      "prefix-repeated-8192",
+      "prefix-repeated-16384",
+      "prefix-repeated-32767",
+      "prefix-repeated-32768",
+      "prefix-repeated-32769",
+      "prefix-repeated-33027",
+      "prefix-repeated-65535",
+      "prefix-repeated-65536",
+      "prefix-repeated-65537",
+      "prefix-repeated-131072",
+      "prefix-repeated-262144",
+      "prefix-repeated-1048576"
+    ]
+  },
+  "remaining_work_is_not_a_ceiling": "Definition reuse and prior partial combinations still remove real repeated work. No architectural ceiling has been demonstrated.",
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Remove the remaining redundant extension after a combined comparison",
+      "evidence": "Final raw VCode for reuse-byte-all-sqrt has CMP/CCMP, CSET x1, UXTB w1,w1 in the hot paths mapped to IR blocks 1376 and 1664. The prepared CLIF has a BOR of two zero-extended scalar comparisons, used by a masked branch or XOR1. There are 1,048,545 UXTB executions remaining on random1M.",
+      "source": [
+        "vendor/cranelift-codegen/src/isa/aarch64/lower/isle/byte_extensions.rs",
+        "vendor/cranelift-codegen/src/isa/aarch64/lower/isle/mod.rs",
+        "vendor/cranelift-codegen/src/isa/aarch64/lower/boolean_conjunction/mod.rs"
+      ],
+      "diagnosis_scope": "Likely a later narrowed Boolean OR definition; confirm the post-optimization producer/admission before coding. Do not assume it is ICMP_IMM: the observed compiled sequence is a combined comparison.",
+      "experiment": "Test a separately opt-in reuse case for proved fully clean Boolean definitions. Preserve existing load/compare/all-mode images when the new mode is off. A bounded recursive proof over scalar comparisons, exact 0/1 constants and Boolean AND/OR/XOR is one possible approach; do not infer clean upper bits from arbitrary I8 values.",
+      "proof_tests": "Actual JIT original/optimized comparisons with dirty I8/I16/I32/I64 host inputs, mixed and shared wide/narrow users, aliases, negative or unsupported producers, joins, and guarded stores. Both operands of an admitted Boolean combination must be proved physically 0/1; parameters, unknown phis, arbitrary reductions and cycles must decline. Fixed analysis work budget; no memory operations move."
+    },
+    {
+      "priority": 2,
+      "title": "Share the biased bases of prefetch pointers",
+      "source": "hosts/gpu/src/native_artifact/program/codegen/cfg_cleanup/indexed_addresses.rs",
+      "evidence": "The pass collects only Load/Store pointers and skips already-canonical biased-base expressions. Future-write hints construct biased bases at returning edges; all 2,097,082 prefetches are preserved.",
+      "experiment": "First confirm the actual surviving loop adds and whether the base is entry-defined. Add an independent mode to share/hoist the prefetch bases using the same wrapping-I64 pointer proof and existing table bases. Keep memory flags, guards and effect order; do not move the prefetch itself. Preserve old local/hoisted images exactly."
+    },
+    {
+      "priority": 3,
+      "title": "Identify the actual halfword-extension producers",
+      "evidence": "Both previous and new selected matchers execute 2,097,082 UXTH instructions on random1M.",
+      "experiment": "Trace actual hot UXTH operands in VCode/counters. Do not assume these are loads; they may be necessary packed-cache truncations or redundant masks of newly narrowed shifts. If a fresh I32 shift by 16 proves a 16-bit result, consider a late bounded range cleanup. Never assume the whole packed loop-carried cache marker is U32: its high bits legitimately change on backedges."
+    },
+    {
+      "priority": 4,
+      "title": "Profile the larger short-input C losses and setup costs",
+      "evidence": "Random4K is still about 1.31\u20131.34x C in this full panel. It is approximately flat forward and faster reverse relative to control, so a robust both-order gain is not established.",
+      "experiment": "Profile the full invocation, including allocator and zero-fill/setup work, before assuming a hot matcher instruction is the main loss. Revisit historical work/storage census and compare actual libdeflate source/work on the same pinned input. Any storage compaction or initialization change needs complete read/write/lifetime/alias/error and finite admission proof; no source rewrite or weaker accounting."
+    }
+  ],
+  "retained_partials": [
+    "Previous qualified shift-balanced:64024B, all81Roc/63C, broad gains with a small random1M regression; still reproducible.",
+    "Indexed address-balanced:64008B, earlier reverse natural4K1.001844C; retain and combine instead of rejecting.",
+    "Scorer indexed addresses:14 changes, flat target and natural4K reverse C loss; retained in prior packet.",
+    "Biased cost-pair byte-range specialization remains only a design in literal-run-group-study/next-range-guard-design.md."
+  ],
+  "native_probe_limit": "The22 tiny fixed-shift fixture bodies grow4B from changed allocation despite fewer VCode instructions. They prove correctness, not universal size/latency improvement. Actual codec final-image counts and full runtime panels decide promotion.",
+  "run_rules": [
+    "Freeze Rust while a source producer is live.",
+    "Do not overlap heavy build/test/counter/profile/Git/archive work with primary runtime or complete-build clocks.",
+    "Use untouched normal timing images; instrumented counter clones are diagnostic only.",
+    "Use actual final-image counts and declared positive nine-case weights.",
+    "Preserve every named win in both full81/96 orders; small slowdowns without losses are allowed. Retain promising partials for repair.",
+    "No subagent delegation without explicit authorization. Read applicable AGENTS.md before edits."
+  ],
+  "goal_complete": false
+}

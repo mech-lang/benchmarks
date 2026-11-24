@@ -1,0 +1,222 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases; retain every named81Roc/63C win and unchanged original source/canonical bytecode. Track complete builds, code size and stack.",
+  "source_commit": "5159c29f3ec1d1a0ff7272095d2cfa23b09cc85d",
+  "experiments": [
+    {
+      "priority": 1,
+      "title": "Eliminate the high-half extension under a word shift",
+      "evidence": {
+        "VCode_block": 43,
+        "IR_block": "block2761",
+        "sequence": [
+          "uxth w14,w7",
+          "uxth w19,w3",
+          "orr w14,w14,w19,LSL16",
+          "str w14,[x12,x10,LSL2]"
+        ],
+        "random1M_uxth_executions": 2097082,
+        "CLIF": "ireduce.i16 high64; uextend.i32 high16; ishl.i32 high32,16; bor.i32 low32,shifted; store.i32"
+      },
+      "proof": "An I32 left shift by16 discards all source bits above bit15. It can consume the existing I16 register without materializing its zero extension, including dirty high bits. Keep the low-half mask. General admission: fixed count modulo32 is nonzero and narrow_input_bits+count>=32. The original loop-carried packed marker is legitimately wide.",
+      "implementation_options": [
+        "Teach shifted-register I32 AND/OR/XOR lowering to look through the narrow unsigned extension. Preserve flags-off images and all shared narrow/wide users.",
+        "A separate more ambitious pack rule could replace both masks plus OR with a32-bit BFI. The current backend lacks a BFI machine instruction; it would need explicit read/reuse-def operands, encoding and metadata support, plus actual JIT checks. Allocation may add a copy, so count and time final images."
+      ],
+      "native_tests": "Dirty I64 host operands reduced toI8/I16; shifts around0/15/16/23/24/31/32/33/63/64; AND/OR/XOR with either commutative placement; shared original and extended results; variable-count and insufficient-shift fallbacks; guarded stores and untouched neighbors."
+    },
+    {
+      "priority": 2,
+      "title": "Share prefetch biased bases and loop-invariant bias arithmetic",
+      "evidence": "Both2,097,082 future-write hints remain. The cache pack also repeats a loop-position subtraction and add32768; prove dominating bases and live ranges before hoisting or reassociation.",
+      "scope": "Keep pointer wrapping arithmetic, flags, guards and memory order. Use a separate mode; count final images and measure compile time."
+    },
+    {
+      "priority": 3,
+      "title": "Profile larger short-input losses and setup",
+      "scope": "Full invocation including allocator/zero-fill; revisit the historical storage census and libdeflate work on identical pinned inputs. A storage change needs read/write/lifetime/alias/error and finite-admission proofs."
+    }
+  ],
+  "retained_partial": "boolean-focus retains both screened named-win sets but takes about4.5percent more time on periodic1M. Keep it available for combinations; boolean-sqrt is the current qualification candidate.",
+  "limits": "No new64th C win has been demonstrated. Full81 qualification and complete build clocks remain authoritative.",
+  "qualified_score": {
+    "roc": 81,
+    "libdeflate": 63
+  },
+  "selected_role": "boolean-sqrt",
+  "text_bytes": 63624,
+  "stack_bytes": 4832,
+  "source_through_link_seconds": 2.1815392912831157,
+  "full81": {
+    "scores": [
+      {
+        "order": "forward",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      },
+      {
+        "order": "reverse",
+        "candidate": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "control": {
+          "roc": 81,
+          "libdeflate": 63
+        },
+        "missing": {
+          "roc": [],
+          "libdeflate": []
+        }
+      }
+    ],
+    "examples": [
+      {
+        "case": "prefix-random-1048576",
+        "orders": [
+          {
+            "control_ms": 21.252354,
+            "candidate_ms": 21.183812500000002,
+            "C_ms": 20.364896,
+            "paired_x_C": 1.0407075920688948,
+            "paired_x_control": 0.9968927255325439
+          },
+          {
+            "control_ms": 21.238646,
+            "candidate_ms": 21.170479,
+            "C_ms": 20.3676665,
+            "paired_x_C": 1.0403992893323257,
+            "paired_x_control": 0.996517178007692
+          }
+        ]
+      },
+      {
+        "case": "prefix-periodic-1048576",
+        "orders": [
+          {
+            "control_ms": 10.5011875,
+            "candidate_ms": 10.497917,
+            "C_ms": 18.464542,
+            "paired_x_C": 0.5682742454773685,
+            "paired_x_control": 0.9993475683623053
+          },
+          {
+            "control_ms": 10.505042,
+            "candidate_ms": 10.4979375,
+            "C_ms": 18.4078335,
+            "paired_x_C": 0.5701980631505825,
+            "paired_x_control": 0.9991757450701614
+          }
+        ]
+      },
+      {
+        "case": "prefix-repeated-1048576",
+        "orders": [
+          {
+            "control_ms": 12.324749999999998,
+            "candidate_ms": 12.317521000000001,
+            "C_ms": 21.7593965,
+            "paired_x_C": 0.5662847840457703,
+            "paired_x_control": 0.9998439850041454
+          },
+          {
+            "control_ms": 12.313312999999999,
+            "candidate_ms": 12.313228999999998,
+            "C_ms": 21.6894165,
+            "paired_x_C": 0.5679240038398394,
+            "paired_x_control": 0.9991596431632589
+          }
+        ]
+      },
+      {
+        "case": "16384-distribution-change",
+        "orders": [
+          {
+            "control_ms": 0.5738540000000001,
+            "candidate_ms": 0.5691039999999999,
+            "C_ms": 0.483646,
+            "paired_x_C": 1.1757764544907552,
+            "paired_x_control": 0.9885535764918262
+          },
+          {
+            "control_ms": 0.5779584999999999,
+            "candidate_ms": 0.5738335,
+            "C_ms": 0.4829375,
+            "paired_x_C": 1.1878397002440388,
+            "paired_x_control": 0.9896740144718617
+          }
+        ]
+      },
+      {
+        "case": "prefix-random-4096",
+        "orders": [
+          {
+            "control_ms": 0.104979,
+            "candidate_ms": 0.10364550000000002,
+            "C_ms": 0.07547949999999999,
+            "paired_x_C": 1.3846166436039682,
+            "paired_x_control": 0.9963210280029513
+          },
+          {
+            "control_ms": 0.1015,
+            "candidate_ms": 0.1024585,
+            "C_ms": 0.076854,
+            "paired_x_C": 1.3413976005999555,
+            "paired_x_control": 1.0079222663966667
+          }
+        ]
+      },
+      {
+        "case": "prefix-natural-4096",
+        "orders": [
+          {
+            "control_ms": 0.384729,
+            "candidate_ms": 0.38485400000000003,
+            "C_ms": 0.392625,
+            "paired_x_C": 0.9771039538210943,
+            "paired_x_control": 0.9980568561036657
+          },
+          {
+            "control_ms": 0.38662500000000005,
+            "candidate_ms": 0.386167,
+            "C_ms": 0.39385400000000004,
+            "paired_x_C": 0.9882757247795214,
+            "paired_x_control": 0.9976833538579459
+          }
+        ]
+      },
+      {
+        "case": "128-biased-dynamic",
+        "orders": [
+          {
+            "control_ms": 0.0165,
+            "candidate_ms": 0.016209,
+            "C_ms": 0.021166,
+            "paired_x_C": 0.7588201731743193,
+            "paired_x_control": 0.9811556239713276
+          },
+          {
+            "control_ms": 0.015959,
+            "candidate_ms": 0.015792,
+            "C_ms": 0.020417,
+            "paired_x_C": 0.7567464431333233,
+            "paired_x_control": 0.9867952906654553
+          }
+        ]
+      }
+    ],
+    "at_least_1pct_less_time_both_orders": [
+      "128-biased-dynamic",
+      "16384-distribution-change"
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "objective": "Get Mechdeflate to1x libdeflate across all81cases; keep every named81Roc/63C win.",
+  "source_commit": "09d4ea14c9a560d91d5e6ff9404dcde4655408f6",
+  "selected_role": "control",
+  "goal_complete": false,
+  "evidence": "Actual matcher instructions fall2088774, target runtime is effectively flat, and distribution16K is4.9-5.2percent slower. Square-root profile also fails to recover timing; retained with both screens.",
+  "next_experiments": [
+    {
+      "priority": 1,
+      "title": "Measure bounded shifted logical merge against BFI on M1",
+      "hypothesis": "BFI dependency latency or tied-allocation/frame effects may dominate the instruction savings. This is an inference, not established causation.",
+      "plan": "Use a native batched loop with the actual byte projection and histogram load/update. Compare ordinary four-op emission, current masked/wide BFI modes, and AND+LSR+shifted-ORR with a proved zero upper field. Check values and all accesses. Keep clocks isolated; then measure original whole codec before promotion.",
+      "proof": "Use semantic full-word unsigned bounds, preserve arbitrary dirty narrow physical bits, shared/fixed inputs, original errors/memory order/finite admission. Do not patch shipped native bytes or rewrite codec."
+    },
+    {
+      "priority": 2,
+      "title": "Profile the distribution16K regression in complete invocation",
+      "plan": "Compare actual MF/scorer/Huffman counts and frame4848 versus previous4832; isolate allocator/stack effects without changing unrelated variables. Keep previous primary, both new full-qualified smaller variants and every partial."
+    },
+    {
+      "priority": 3,
+      "title": "Revisit hot masks and multiplier setup",
+      "plan": "Trace all SSA incoming definitions before considering either hot0xffff mask redundant. Inspect earlier constant retention/rematerialization experiments before caching the two-instruction multiplier. Target both closest and larger losses."
+    }
+  ],
+  "constraints": [
+    "Freeze Rust during any live source producer.",
+    "No heavy work during primary runtime/build clocks.",
+    "All named wins in both full81/96orders; slowdowns without losses allowed.",
+    "Keep every promising partial; source and evidence must be published.",
+    "Track original source-through-final-link, text/lookup/whole const, stripped executable and stack.",
+    "No subagents without explicit authorization."
+  ]
+}

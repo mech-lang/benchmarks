@@ -1,0 +1,88 @@
+{
+  "source_repository": "mech-lang/mech",
+  "source_pr": "https://github.com/mech-lang/mech/pull/999",
+  "source_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+  "evidence_pr": "https://github.com/mech-lang/benchmarks/pull/11",
+  "study": "experiments/mech/mechdeflate-81-v1",
+  "recipe_file": "recipe.json",
+  "role": "short-prefix-copy",
+  "score": {
+    "roc": 81,
+    "libdeflate": 81
+  },
+  "text_bytes": 67416,
+  "stripped_executable_bytes": 291768,
+  "global_compiler_defaults_changed": false,
+  "source_replay": "python3 experiments/mech/mechdeflate-81-v1/rebuild.py --mech-root /path/to/mech --output /tmp/mechdeflate-81-rebuilt",
+  "source_through_final_link_seconds": 2.2168110001366585,
+  "runtime_image_reproduced_by_source_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+  "source_basis_verification": {
+    "study": "experiments/mech/mechdeflate-81-v1",
+    "role": "short-prefix-copy",
+    "all_three_artifacts_exact": true,
+    "deployment_stripped_executable_sha256": "175c721ca8de20dc92caa6867d30c40a1f5a9f5814b2903e23b63d7450e3f6a6"
+  },
+  "compile_time_source_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+  "selection_reason": "Both complete level-12 runs qualify all 81 named wins against both references in each order.",
+  "qualified_alternatives": [
+    {
+      "role": "tied-linear4096",
+      "text_bytes": 63704,
+      "score": {
+        "roc": 81,
+        "libdeflate": 63
+      },
+      "both_full_orders": true,
+      "status": "All named wins held; mixed runtime; retained for repair and combination.",
+      "study": "experiments/mech/mechdeflate-masked-fields-v1",
+      "recipe_file": "recipes.json"
+    },
+    {
+      "role": "tied-linear65536",
+      "text_bytes": 63672,
+      "score": {
+        "roc": 81,
+        "libdeflate": 63
+      },
+      "both_full_orders": true,
+      "status": "All named wins held; mixed runtime; retained for repair and combination.",
+      "study": "experiments/mech/mechdeflate-masked-fields-v1",
+      "recipe_file": "recipes.json"
+    }
+  ],
+  "primary_loss_margins": "case-margins.json",
+  "previous_selected": {
+    "study": "experiments/mech/mechdeflate-phase-routes-v1",
+    "role": "shared-bases-linear-4096",
+    "source_commit": "f90bc52287a7e809685faf1116b2c77b7bf48ee8",
+    "text_bytes": 63592,
+    "all_three_artifacts_exact": true
+  },
+  "optimization_strategy": {
+    "handoff": "experiments/mech/mechdeflate-average-margin-v1/README.md",
+    "metric": "Equal-case mean positive paired time slowdown across the fixed18 baseline losing cases; newly won cases stay at zero.",
+    "baseline_average_slowdown_pct": 13.923364240886894,
+    "cohort_cases": 18,
+    "preserve_named_wins": {
+      "roc": 81,
+      "libdeflate": 81
+    }
+  },
+  "protected_floor": "protected-floor.json",
+  "matched_control_average_positive_slowdown_pct": 0.031150578074867763,
+  "average_positive_slowdown_pct": 0,
+  "qualification": {
+    "case_count": 81,
+    "blocks_per_case_per_order": 96,
+    "cases_won_in_each_order": {
+      "libdeflate": 81,
+      "independent_reference": 81
+    },
+    "results_sha256": {
+      "first": "b2e26dd96b420cbd0079ceaa5a8b9fdb802dc5a3a80a6081081558f529511501",
+      "confirmation": "c0b05ea03a7556165b9245148b699b1ca5a357c8873a68a46b57fc282411a060"
+    },
+    "evidence_manifest": "evidence/manifest.json",
+    "source_review": "https://github.com/mech-lang/mech/pull/999#issuecomment-7122223610"
+  }
+}
