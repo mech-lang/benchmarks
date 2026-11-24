@@ -1,0 +1,71 @@
+//! Fixed host support for the existing C deployment harness.
+
+extern crate alloc;
+
+use alloc::vec::Vec;
+use core::{alloc::Layout, ffi::c_void, mem::ManuallyDrop, ptr::{self, NonNull}};
+use compact_runtime::{Heap, NativeStatus, OwnerStorage, View};
+
+#[path = "@MECH_ROOT@/hosts/gpu/src/native_artifact/compact_runtime/mod.rs"]
+mod compact_runtime;
+mod pinned_allocator;
+
+#[global_allocator]
+static ALLOCATOR: pinned_allocator::PinnedMimalloc = pinned_allocator::PinnedMimalloc;
+
+unsafe extern "C" {
+    fn mech_compact_closed_v2(context: *mut c_void, input: *const u64, output: *mut u64) -> NativeStatus;
+}
+
+#[repr(C)]
+pub struct Output {
+    data: *mut u8,
+    len: usize,
+    capacity: usize,
+}
+
+impl Output {
+    const EMPTY: Self = Self { data: ptr::null_mut(), len: 0, capacity: 0 };
+}
+
+/// The C caller loans initialized input bytes and an exclusive empty output triple.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn deploy_encode(input: *const u8, len: usize, output: *mut Output) -> i32 {
+    if output.is_null() || len > isize::MAX as usize || (len != 0 && input.is_null()) {
+        return 1;
+    }
+    let dangling = NonNull::<u8>::dangling().as_ptr() as u64;
+    let data = if len == 0 { dangling } else { input as u64 };
+    let len = len as u64;
+    let arguments = [data, len, len, 1, len, 0, dangling, 0, 0, 1, 0, 0];
+    let mut returned: View = [0; 6];
+    let mut owner_storage = OwnerStorage::default();
+    let mut heap = Heap::with_owner_storage(&mut owner_storage);
+    // SAFETY: the fixed encoder declares two borrowed U8 views and one U8 result.
+    let status = unsafe {
+        mech_compact_closed_v2((&mut heap as *mut Heap).cast(), arguments.as_ptr(), returned.as_mut_ptr())
+    };
+    if status.status != 0 {
+        return 1;
+    }
+    // SAFETY: success returns the exact owned output from the live native heap.
+    let Ok(bytes) = (unsafe { heap.take_u8(returned) }) else {
+        return 1;
+    };
+    let mut bytes = ManuallyDrop::new(bytes);
+    // SAFETY: the C caller lends one vacant writable output; its release owns this Vec.
+    unsafe { output.write(Output { data: bytes.as_mut_ptr(), len: bytes.len(), capacity: bytes.capacity() }) };
+    0
+}
+
+/// The caller transfers an output previously returned by deploy_encode.
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn deploy_release(output: *mut Output) {
+    if let Some(output) = unsafe { output.as_mut() } {
+        let Output { data, len, capacity } = core::mem::replace(output, Output::EMPTY);
+        if !data.is_null() {
+            // SAFETY: this is the same initialized allocation and allocator used by deploy_encode.
+            drop(unsafe { Vec::from_raw_parts(data, len, capacity) });
+        }
+    }
+}
