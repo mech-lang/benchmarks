@@ -19,14 +19,15 @@ def actor(build, role, filename):
     return path
 
 
-def suite81(out, packets, build, control, candidate):
+def suite81(out, packets, build, control_build, control, candidate):
     previous = packets / "mechdeflate-81-v1"
     routes = packets / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
     helpers = run_path(str(routes / "replay_timings.py"))
     reference = run_path(str(previous / "replay_timings.py"))["prepare"](out, helpers)
     controller = out / "controller.py"
-    bindings = [actor(build, role, "bound/mech-worker").parent for role in (control, candidate)]
+    bindings = [actor(control_build, control, "bound/mech-worker").parent,
+                actor(build, candidate, "bound/mech-worker").parent]
     runs = []
     role = "cranelift"
     for order in ("forward", "reverse"):
@@ -84,9 +85,13 @@ def main():
     parser.add_argument("--output", type=Path, required=True, help="New output directory")
     parser.add_argument("--build", type=Path, default=HERE / "actors",
                         help="Use a directory from rebuild.py in place of the timed executables")
+    parser.add_argument("--control-build", type=Path,
+                        help="Existing build directory for the pinned control worker")
     parser.add_argument("--corpus", type=Path, help="Pinned Silesia corpus and corpus.json")
     parser.add_argument("--suite", choices=("all", "81", "silesia"), default="all")
     parser.add_argument("--bench-root", type=Path, help="Override the benchmark repository location")
+    parser.add_argument("--recipe", type=Path, default=HERE / "recipe.json",
+                        help="Use a different pinned source and candidate recipe")
     args = parser.parse_args()
     if args.suite in ("all", "silesia") and args.corpus is None:
         parser.error("Provide the full pinned corpus for Silesia.")
@@ -94,12 +99,13 @@ def main():
     build = args.build.resolve(strict=True)
     output = args.output.resolve()
     output.mkdir(parents=True)
-    recipe = read(HERE / "recipe.json")
+    recipe = read(args.recipe.resolve(strict=True))
     candidate, control = recipe["candidate_actor"], recipe["control_actor"]
     if args.suite in ("all", "81"):
         directory = output / "suite81"
         directory.mkdir()
-        suite81(directory, packets, build, control, candidate)
+        control_build = args.control_build.resolve(strict=True) if args.control_build else build
+        suite81(directory, packets, build, control_build, control, candidate)
     if args.suite in ("all", "silesia"):
         silesia(output / "silesia", packets, build, args.corpus.resolve(strict=True), candidate)
 

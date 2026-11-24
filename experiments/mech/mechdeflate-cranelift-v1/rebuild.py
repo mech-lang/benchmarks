@@ -49,7 +49,7 @@ def write_source(path, template, root):
 def build(args):
     root, output = args.mech_root.resolve(strict=True), args.output.resolve()
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT
-    recipe = read(HERE / "recipe.json")
+    recipe = read(args.recipe.resolve(strict=True))
     base = packets / "mechdeflate-81-v1"
     manifest = base / "recipe.json"
     checked(manifest, recipe["base_recipe_sha256"])
@@ -187,6 +187,8 @@ if __name__ == "__main__":
     parser.add_argument("--output", required=True, type=Path, help="New output directory")
     parser.add_argument("--target-dir", type=Path, help="Reuse existing Cargo build dependencies")
     parser.add_argument("--bench-root", type=Path, help="Override the benchmark repository location")
+    parser.add_argument("--recipe", type=Path, default=HERE / "recipe.json",
+                        help="Use a different pinned source and candidate recipe")
     parser.add_argument("--build-repeats", type=int, default=1)
     args = parser.parse_args()
     if args.build_repeats < 1:

@@ -2,7 +2,27 @@
 
 On Apple M1 with macOS 15.6.1, PR #1000 emitted both pinned level-12 encoders through Cranelift. Both objects, canonical bytecode files and descriptor files reproduced byte for byte. These results supersede the earlier M3 report for this branch. [Compiler revision](https://github.com/mech-lang/mech/commit/62363b4a341860b04bbfe11d0a1cb2ea9e3b2532) · [Exact recipe](recipe.json).
 
-## 81-case suite
+## 81-case qualification
+
+The short-prefix build won **81/81 against both references in both orders** on the same Apple M1. Its smallest elapsed-time margins were 0.645% against libdeflate and 5.590% against the second reference. The raw verifier recomputed all 1,965,312 observations from the two 96-block orders. [Compiler revision](https://github.com/mech-lang/mech/commit/e46c6df7ee23445523cb0e30d7820b17e17526e0) · [Exact recipe](short-prefix/recipe.json) · [All case margins](short-prefix/scores.json) · [Raw observations](short-prefix/observations.json).
+
+The build passed 162 exact byte and alias checks and 12 recoveries across 6 failure cases. It used 5,040 bytes of peak native stack. A clean rebuild produced the same 157,832-byte native object, canonical bytecode and descriptor. The packet includes the exact timed worker. The rebuilt worker has a different executable hash. With dependencies prebuilt, median source-to-executable time was 2.926 s across three rebuilds. [Native checks](short-prefix/native-checks.json) · [Build receipt](short-prefix/rebuild.json).
+
+```sh
+python3 experiments/mech/mechdeflate-cranelift-v1/rebuild.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/short-prefix/recipe.json \
+  --mech-root /path/to/mech --output /tmp/mechdeflate-short-prefix
+python3 experiments/mech/mechdeflate-cranelift-v1/replay.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/short-prefix/recipe.json \
+  --suite 81 --output /tmp/mechdeflate-short-prefix-timing
+python3 experiments/mech/mechdeflate-cranelift-v1/verify.py \
+  --record experiments/mech/mechdeflate-cranelift-v1/short-prefix \
+  --output /tmp/mechdeflate-short-prefix-verify
+```
+
+To retime the rebuilt worker, add `--build /tmp/mechdeflate-short-prefix --control-build experiments/mech/mechdeflate-cranelift-v1/actors` to the replay command.
+
+## Initial 81-case retest
 
 | Build | libdeflate forward | libdeflate reverse | Reference forward | Reference reverse |
 |---|---:|---:|---:|---:|

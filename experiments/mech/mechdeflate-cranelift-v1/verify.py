@@ -14,11 +14,13 @@ from rebuild import HERE, PARENT, checked, read
 def main():
     parser = ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True, help="New extraction directory")
+    parser.add_argument("--record", type=Path, default=HERE, help="Directory with archived observations")
     parser.add_argument("--bench-root", type=Path, help="Override the benchmark repository location")
     args = parser.parse_args()
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT
-    archive = HERE / "observations.tar.gz"
-    manifest = read(HERE / "observations.json")
+    record = args.record.resolve(strict=True)
+    archive = record / "observations.tar.gz"
+    manifest = read(record / "observations.json")
     checked(archive, manifest["archive_sha256"])
     root = args.output.resolve()
     root.mkdir(parents=True)
@@ -39,6 +41,8 @@ def main():
     print(json.dumps(result, indent=2))
 
     silesia = root / "silesia"
+    if "silesia/complete.json" not in manifest["files"]:
+        return
     package = packets / "mechdeflate-silesia-v1"
     assert read(silesia / "complete.json")["independent_inflation"] == read(
         package / "complete.json"
