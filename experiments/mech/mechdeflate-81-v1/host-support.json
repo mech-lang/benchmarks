@@ -1,0 +1,100 @@
+{
+  "schema": 1,
+  "archive": {
+    "name": "host-support.tar.gz",
+    "bytes": 2046699,
+    "sha256": "5b5989deddccb121041fe9ef414f08a4c60106106cb5d7dc659304c837ad6b27"
+  },
+  "members": {
+    "main.o": {
+      "bytes": 2024,
+      "sha256": "0479f586428ec6a033e6d7916f308768a5b5c2359e2031cfd3d4a4a4272b7a95"
+    },
+    "libmech_deploy.a": {
+      "bytes": 6508472,
+      "sha256": "1110ad67f4f4292b1669862bee784a73e17c90bfd50a61006aad00bd78f85838"
+    },
+    "mimalloc.o": {
+      "bytes": 189456,
+      "sha256": "38c6ec82a41e90a96bb9f1ae2c89058a77909da3fbb69c16e542ae5c858bf874"
+    }
+  },
+  "encoder": {
+    "bytes": 156616,
+    "sha256": "58c9177ccf6158d352d5a8f888cdb34f0897b4bd5aaeeb53e187b371dd89c553"
+  },
+  "qualified_stripped_executable": {
+    "bytes": 291768,
+    "sha256": "175c721ca8de20dc92caa6867d30c40a1f5a9f5814b2903e23b63d7450e3f6a6"
+  },
+  "toolchain": {
+    "arch": "arm64",
+    "minimum_macos": "15.0",
+    "qualification_host": "Apple M1, macOS 15.6.1, arm64",
+    "apple_clang": "17.0.0 (clang-1700.3.19.1)",
+    "apple_linker": "ld-1221.4",
+    "macos_sdk": "26.0",
+    "xcode": "26.0.1 (17A400)"
+  },
+  "runtime_debug_name_relative_to_virtual_root": "private/tmp/mechdeflate-terminal-small-prefix.inSd90aF/qualification-short-prefix-copy/short-prefix-copy-deployment-support/libmech_deploy.a",
+  "debug_map_note": "Apple ld hashes the pre-strip symbol table into the Mach-O UUID. The script extracts the archive at this relative path inside a temporary directory and asks the linker to remove that directory prefix from debug paths. This reproduces the qualified UUID when all input files move.",
+  "provenance": {
+    "main.o": {
+      "role": "Shared one-input, raw-output file harness.",
+      "published_manifest": "../mechdeflate-masked-fields-v1/raw-manifest.json",
+      "published_entry": "fixed-support/mech-control-reference/0",
+      "license": "../../../LICENSE"
+    },
+    "libmech_deploy.a": {
+      "role": "Prebuilt qualified Mech runtime.",
+      "mech_source_commit": "2b301734fb43a4abff0d38d68d881e2bf85bd969",
+      "rust_toolchain": "nightly-2026-03-03",
+      "rustc_args": [
+        "--edition",
+        "2024",
+        "--crate-name",
+        "mech_deploy",
+        "--crate-type",
+        "staticlib",
+        "-C",
+        "panic=abort",
+        "-C",
+        "opt-level=3"
+      ],
+      "runtime_sources_sha256": {
+        "fixed_transform.rs": "96988508d366370a6647bde5ab031a17b6f3e4c3125284dc06e5a86b7a5e55de",
+        "gap_kernel.rs": "bbd83ca210a04c3ae0247e97f76103422132bffcf270dae79196165664b88bde",
+        "mod.rs": "28b717913d90eadfda93fbb2412692107e2be6310cda821effdd278d6a153d7a",
+        "owner_registry.rs": "3ea0879e5c28d27514f729272dfd055df4cfa4b2766cf55c5473e753fc940974",
+        "owner_storage.rs": "7a6e5838437ff5699323db2593f3d9e99d79d02bc0a9f180e838ed22874b066f",
+        "small_scratch.rs": "ab117040e898b90e080d3b6dff14d64fea4911bfc89b206c6faf91c091883d4a",
+        "terminal_appends.rs": "00a7aa6e421830b0abb4fe1e99aab3a510110bfcacbc5c75822e99e5081fef84",
+        "zero_pages.rs": "84bda32633b7c048eb7d17dd6b1668c95b9fa9730da3d0b7458e4e64418c7848"
+      },
+      "wrapper_inputs_sha256": {
+        "deploy_wrapper.rs": "af2cb7221144555ac6d431779039a4a205da8acec84d43dba42cf7376de10f4e",
+        "pinned_allocator.rs": "94ca21ceb347ec1165ea933716ffb68bba302af963a202106478786ded16a4e2",
+        "compact_runtime/owner_storage.rs": "9345b336fb3107ad3ef81ad86c78e635d40b4888f22a91a7aa420fd2dc18fec3",
+        "compact_runtime/small_scratch.rs": "d5ef442557f730ffa902fa9a75b78863cad24597395379215d738a4e5143f20f",
+        "compact_runtime/owner_registry.rs": "c51d696bc6d82e81bb1de053f42aa6f219c8b13afa75220088edf94027f30914",
+        "compact_runtime/zero_pages.rs": "dd335e129b0e0239b1900e3efe51728a85618a2e6bcb905df2fcb9da4df2d759",
+        "compact_runtime/fixed_transform.rs": "3646af14f37b47c817b5d4d335ea2a4d78ee144089af3ee1db85317cbd4f8574",
+        "compact_runtime/gap_kernel.rs": "bbd83ca210a04c3ae0247e97f76103422132bffcf270dae79196165664b88bde",
+        "compact_runtime/mod.rs": "c14cb39a0f5e3c0342a9b76a614fc81570e2422da353a05ed33d849f2b6617d0",
+        "compact_runtime/terminal_appends.rs": "38d13576a953a54c30258bb6c0a4124076af58b66fa7d84b7dc86918b48baf85"
+      },
+      "allocator_source_sha256": "050a1d160cc235d5321866a45840c76b5dadeaac30630cfed17eb19615ded1b6",
+      "licenses": [
+        "../../../LICENSE",
+        "licenses/rust/COPYRIGHT-library.html"
+      ]
+    },
+    "mimalloc.o": {
+      "role": "Shared allocator object. mi_version() reports 217.",
+      "upstream": "https://github.com/microsoft/mimalloc/tree/v2.1.7",
+      "published_manifest": "../mechdeflate-masked-fields-v1/raw-manifest.json",
+      "published_entry": "fixed-support/mech-control-reference/2",
+      "license": "licenses/mimalloc-LICENSE"
+    }
+  }
+}
