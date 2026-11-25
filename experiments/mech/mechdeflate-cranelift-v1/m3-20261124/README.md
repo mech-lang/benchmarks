@@ -381,3 +381,22 @@ complete M3 score or compile-time improvement.
 [Trial summaries](masked-equality-studies-summary.json) ·
 [Compiler source, actors and raw screens](masked-equality-studies.tar.gz) ·
 [Verified member hashes](masked-equality-studies.tar.gz.manifest.json)
+
+## Independent prefix-cost arithmetic
+
+The next compiler prototype computed two/four-item wrapping increments
+independently of the existing previous-cell cost, while retaining every
+intermediate packed output. Native code inspection confirmed one carry-dependent
+ADD per batch. The prototype passed the focused native checks in 18 append
+modes, default M1 artifact parity, and all 162 codec, alias and boundary checks
+for each of the four timed actors.
+
+All four variants still missed protected fixture comparisons. Shortening this
+dependency did not establish a speedup, and the prototype is not selected.
+These are ten-case, 24-block screens in both orders, with eligible quiet-run
+telemetry. There is no new complete M3 score or compilation-time claim.
+The compressor source and benchmark timing protocol remain unchanged.
+
+[Trial summaries](prefix-cost-studies-summary.json) ·
+[Compiler source, actors and raw screens](prefix-cost-studies.tar.gz) ·
+[Verified member hashes](prefix-cost-studies.tar.gz.manifest.json)
