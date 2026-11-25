@@ -312,8 +312,8 @@ result-reuse setting enabled.
 Counter gathering was screened with ordinary boolean additions and conditional
 increments. The existing four-literal append option was separately rebuilt with
 the clean pinned `71bb1f90b3` compiler. Each final candidate passed all 162 output,
-inflation, capacity and alias checks. The four-literal and conditional-increment
-variants each reached 9/10 protected libdeflate wins in both orders, but still
+inflation, capacity and alias checks. One four-literal variant and one conditional-increment
+variant reached 9/10 protected libdeflate wins in both orders, but still
 missed the 16 KB distribution-change case. No candidate was promoted.
 
 These are ten-case, 24-block screens, with build activity excluded from timing.
