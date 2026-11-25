@@ -2,6 +2,32 @@
 
 On Apple M1 with macOS 15.6.1, PR #1000 emitted both pinned level-12 encoders through Cranelift. Both objects, canonical bytecode files and descriptor files reproduced byte for byte. These results supersede the earlier M3 report for this branch. [Compiler revision](https://github.com/mech-lang/mech/commit/62363b4a341860b04bbfe11d0a1cb2ea9e3b2532) · [Exact recipe](recipe.json).
 
+## Admitted word mismatch order
+
+At level 12, the same Cranelift encoder won all 81 benchmark cases and all 12 Silesia files against both pinned references in each timing order. [Compiler revision](https://github.com/mech-lang/mech/commit/35784003b9149fe8059fa83dd5d0aff10dbcd631) · [81-case scores](word-mismatch-order/scores.json) · [Silesia scores](word-mismatch-order/silesia-scores.json).
+
+| File | Mech / libdeflate forward | Mech / libdeflate reverse | Mech / reference forward | Mech / reference reverse |
+|---|---:|---:|---:|---:|
+| mr | 0.984546× | 0.982758× | 0.871051× | 0.862303× |
+| sao | 0.916720× | 0.918871× | 0.878861× | 0.880605× |
+| x-ray | 0.997789× | 0.996632× | 0.938304× | 0.937609× |
+
+Summed Silesia per-file medians were 27.861 s for Mech, 33.670 s for libdeflate and 32.616 s for the second reference. All 12 streams matched byte for byte and inflated independently. The smallest 81-case margins were 1.451% against libdeflate and 6.764% against the second reference. The verifier recomputed all 1,965,312 observations. [Raw observations](word-mismatch-order/observations.json).
+
+The native gate passed 162 output and alias checks and 12 recoveries across 6 failure cases. Peak native stack was 5,024 bytes. Three source-to-executable rebuilds reproduced the object, canonical bytecode and descriptor. With dependencies prebuilt, the median build took 2.915 s. The packet includes the exact timed executables, profile pins and build receipt. [Native checks](word-mismatch-order/native-checks.json) · [Build receipt](word-mismatch-order/rebuild.json) · [Timed executables](actors/word-mismatch-order) · [Exact recipe](word-mismatch-order/recipe.json).
+
+```sh
+python3 experiments/mech/mechdeflate-cranelift-v1/rebuild.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/word-mismatch-order/recipe.json \
+  --mech-root /path/to/mech --output /tmp/mechdeflate-word-mismatch-order
+python3 experiments/mech/mechdeflate-cranelift-v1/replay.py \
+  --recipe experiments/mech/mechdeflate-cranelift-v1/word-mismatch-order/recipe.json \
+  --corpus /path/to/silesia --output /tmp/mechdeflate-word-mismatch-order-timing
+python3 experiments/mech/mechdeflate-cranelift-v1/verify.py \
+  --record experiments/mech/mechdeflate-cranelift-v1/word-mismatch-order \
+  --output /tmp/mechdeflate-word-mismatch-order-verify
+```
+
 ## Adaptive packed tally
 
 This Cranelift encoder won all 81 cases against both pinned references in each timing order. The same native object won 11/12 Silesia files against libdeflate forward and 11/12 in reverse at level 12. It won all 12 in both orders against the second reference. The libdeflate reference used `-O2 -DNDEBUG`. [Compiler revision](https://github.com/mech-lang/mech/commit/728ea55ec3ba9b35ff80420a01e3207af0b916df) · [81-case scores](adaptive-tally/scores.json) · [Silesia scores](adaptive-tally/silesia-scores.json).

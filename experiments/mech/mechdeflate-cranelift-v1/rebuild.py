@@ -139,6 +139,11 @@ def build(args):
         for key, value in role["settings_delta"].items():
             if value is None:
                 del selected[key]
+            elif key == "MECH_COMPACT_ROOT_TAIL_PROFILE":
+                path = HERE / value
+                checked(path, profiles[value])
+                used_profiles.add(value)
+                selected[key] = str(path)
             elif key in helpers["PATH_SETTINGS"]:
                 entries = []
                 for entry in value.split(";"):
