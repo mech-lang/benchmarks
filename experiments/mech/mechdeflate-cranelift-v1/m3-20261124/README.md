@@ -400,3 +400,25 @@ The compressor source and benchmark timing protocol remain unchanged.
 [Trial summaries](prefix-cost-studies-summary.json) ·
 [Compiler source, actors and raw screens](prefix-cost-studies.tar.gz) ·
 [Verified member hashes](prefix-cost-studies.tar.gz.manifest.json)
+
+## Pairing across pure packing operations
+
+The existing admitted append-store pairing pass was extended to cross up to
+eight explicitly whitelisted nontrapping I32/I64 operations. Loads, division,
+guards, calls and unknown instructions remained barriers; all flags, geometry,
+source-location and ownership requirements stayed intact. The native tests
+covered interleaved four-word packing, full and low-word observers, wrapping
+values and eight-byte alignment, with 8,192 paired/unpaired execution calls.
+The focused checks, default M1 artifact triple and 162 codec checks per actor
+passed.
+
+Actual allocated code combined the four-item body's four separate stores into
+two paired stores with one shared output address. The body shrank from 35 to
+31 native instructions. All four timing variants still missed protected
+fixture comparisons, so the compiler prototype was archived and restored.
+These ten-case screens establish no new complete score or compilation-time
+improvement. No additional optimization setting was introduced for this pass.
+
+[Trial summaries](packing-pairs-studies-summary.json) ·
+[Compiler source, actors and raw screens](packing-pairs-studies.tar.gz) ·
+[Verified member hashes](packing-pairs-studies.tar.gz.manifest.json)
