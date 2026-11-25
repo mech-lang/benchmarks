@@ -1,0 +1,87 @@
+{
+  "status": "Rejected as a complete M3 performance candidate. The both-order 81/81 and 12/12 target remains open.",
+  "source_commit": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+  "artifacts": {
+    "program.o": "7a5261d750c19ed725dcd8b1cea151de0fd4c6619ac9ff1c5a6b835258a75efb",
+    "program.mecb": "c6529d934f020f07f8e59f13fab40927e066649e202269818ad3f009a942a8c3",
+    "metadata.json": "b2e7c83b344d74c7e0deac4e04657a43d8a6c80218a2730fb776e51699e61630"
+  },
+  "complete_source_to_executable_medians_seconds": {
+    "encoder": {
+      "word-mismatch-order": 1.80304175009951,
+      "m3-paired-append-stores": 1.7970625422894955
+    },
+    "worker": {
+      "word-mismatch-order": 2.4407989997416735,
+      "m3-paired-append-stores": 2.4546493338420987
+    }
+  },
+  "resource_checks": {
+    "source_commit": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+    "stack_bytes": 5024,
+    "stack_ceiling_bytes": 5280,
+    "per_case_stack_matches_recorded_reference": true,
+    "exact_success_observations": 162,
+    "failed_calls": 12,
+    "exact_recoveries": 12,
+    "cleanup_zero": true
+  },
+  "interruption": {
+    "utc": "2026-11-25T16:36:28.209242+00:00",
+    "status": "interrupted and excluded from complete qualification",
+    "reason": "The selected build missed the 16 KB speed target in the 96-block run, and its paired ratio was slower than the fresh control. Stop this failed candidate to profile the actual fresh benchmark boundary before another optimization. Original partial observations and wrapper telemetry are retained.",
+    "completed_forward_cases_at_stop": 81,
+    "failed_case": {
+      "case": "16384-distribution-change",
+      "input_bytes": 16384,
+      "reference_raw_bytes": 11394,
+      "libdeflate_raw_bytes": 11394,
+      "reference_capacity": 16404,
+      "libdeflate_capacity": 16404,
+      "libdeflate_same_bytes": true,
+      "raw_stream_sha256": "9009624c8f27451b6182f638b4b4d88875748fa47b718ea6255e062904021ff0",
+      "median_seconds": {
+        "mech-control": 0.000305854,
+        "mech-experiment": 0.0003190625,
+        "roc": 0.000584917,
+        "libdeflate": 0.000301354
+      },
+      "paired_x_roc": {
+        "mech-control": 0.5217733563525584,
+        "mech-experiment": 0.5453406831728291,
+        "roc": 1.0,
+        "libdeflate": 0.5132839088655439
+      },
+      "paired_x_libdeflate": {
+        "mech-control": 1.0165394771594882,
+        "mech-experiment": 1.062454274824506,
+        "roc": 1.9482395273411013,
+        "libdeflate": 1.0
+      },
+      "timed_calls": 384
+    },
+    "terminated_only_owned_replay_subtree": [
+      12080,
+      12350,
+      12351,
+      12352,
+      12353,
+      12354
+    ]
+  },
+  "fresh_root_code_proof": {
+    "scope": "Branch-displacement-normalized checked-root words and external relocation names. This is not a performance attribution.",
+    "source_commit": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+    "control_words": 11832,
+    "candidate_words": 11832,
+    "instruction_and_relocation_identity": true
+  },
+  "qualification": "The 96-block suite reached a complete 81-case forward order and then was stopped during the reverse order after the forward speed miss. The interrupted all-suite run is excluded from full qualification. No new complete peer score is claimed.",
+  "archive": {
+    "path": "paired-append-followup.tar.gz",
+    "sha256": "84dd0d4807fc4562dcccf747eb6ad4c44b300577e39d9a849fa1ada7055d2f98",
+    "files": 353,
+    "bytes": 9902097
+  },
+  "recorded_actors": "paired-append-recorded-actors/"
+}

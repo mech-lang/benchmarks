@@ -1,0 +1,372 @@
+{
+  "libdeflate_revision": "92e6a0db9fa848d742f9eb286c92afc60f2c3dda",
+  "clang": "Apple clang version 17.0.0 (clang-1700.3.19.1)\nTarget: arm64-apple-darwin24.6.0\nThread model: posix\nInstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin",
+  "target": "arm64 macOS",
+  "compression_level": 12,
+  "actor_names": {
+    "libdeflate": "libdeflate -O2",
+    "libdeflate-O3": "libdeflate -O3",
+    "baseline": "qualified Mech"
+  },
+  "actor_sha256": {
+    "libdeflate": "b53581ff8cd1ac2873077ba93e5f5855338aa24f75ef48f40e0535ae97a7c42b",
+    "libdeflate-O3": "ed712b655ec103d4893270b108c77070204cc14aa786a6f7881a963c5081736d",
+    "baseline": "4086988c1b8937d6def08cbbb44e6861b78ec45ab2b3d2949e2b2adf3da3672e"
+  },
+  "encoder_sha256": {
+    "-O2": "fd35728446cd309af78c9334d8af6539810f099b8e764bc769b852980441f726",
+    "-O3": "f6401bf298d95c3f529fcedc49c7959b120d0626c43177ba30132bd868a7b8a3"
+  },
+  "compile_arguments": [
+    "/usr/bin/clang",
+    "-arch",
+    "arm64",
+    "-std=gnu11",
+    "OPT_LEVEL",
+    "-DNDEBUG",
+    "-Wall",
+    "-Werror",
+    "-I",
+    "libdeflate-source",
+    "-c",
+    "libdeflate-source/lib/deflate_compress.c",
+    "-o",
+    "encoder.o"
+  ],
+  "link_arguments": [
+    "/usr/bin/clang",
+    "-arch",
+    "arm64",
+    "-mmacosx-version-min=15.0",
+    "-Wl,-dead_strip",
+    "clock.o",
+    "libdeflate.o",
+    "encoder.o",
+    "libdeflate-alloc.o",
+    "libdeflate-arm.o",
+    "mimalloc.o",
+    "-o",
+    "timed-encoder"
+  ],
+  "fixed_link_inputs_sha256": {
+    "clock.o": "607cb607ae467eda253aaf9e271753fc9b7b1770be17117d2e783dae75d5d07e",
+    "libdeflate.o": "32a2e4546b4c24575ea303c002dbb6934acb0d1adb86d0050a281e9840478007",
+    "libdeflate-alloc.o": "d54cc202e299bcd92c533638846c979348dc9a5b947c95f150d31434e9ba232d",
+    "libdeflate-arm.o": "1294dffb8fc3dcde0298edcb15c2314e630c17cdb9f7f1b7de1790cb27aaa7ad",
+    "mimalloc.o": "38c6ec82a41e90a96bb9f1ae2c89058a77909da3fbb69c16e542ae5c858bf874"
+  },
+  "o2_encoder_and_linked_text_reproduced": true,
+  "stream_checks": "Exact reference bytes and independent raw inflation for all actors on each file",
+  "timing": "Warmed whole-file calls in all six permutations of the three actors, using paired geometric means",
+  "cases": {
+    "sao": {
+      "compressed_bytes": 5250745,
+      "compressed_sha256": "142cf2e8af5cb7bc9e742cf0c5c0026cfeb993de848d91fbf6a36149c4556051",
+      "raw_timings": {
+        "case": "sao",
+        "warmup_ns": {
+          "libdeflate": 383666583,
+          "libdeflate-O3": 385049958,
+          "baseline": 369219250
+        },
+        "median_ns": {
+          "libdeflate": 383210354.5,
+          "libdeflate-O3": 384509645.5,
+          "baseline": 368561770.5
+        },
+        "paired_ratio": {
+          "libdeflate-O3": {
+            "baseline": 1.043242687952979,
+            "libdeflate": 1.003478159255201
+          },
+          "baseline": {
+            "baseline": 1.0,
+            "libdeflate": 0.9618837216335511
+          }
+        },
+        "blocks": [
+          {
+            "order": [
+              "libdeflate",
+              "libdeflate-O3",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate": 382864041,
+              "libdeflate-O3": 384271708,
+              "baseline": 369276375
+            }
+          },
+          {
+            "order": [
+              "libdeflate",
+              "baseline",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "libdeflate": 383890125,
+              "baseline": 368615291,
+              "libdeflate-O3": 384862708
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "libdeflate",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate-O3": 384112083,
+              "libdeflate": 382664625,
+              "baseline": 368516416
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "baseline",
+              "libdeflate"
+            ],
+            "ns": {
+              "libdeflate-O3": 384747583,
+              "baseline": 368607125,
+              "libdeflate": 383351708
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "baseline": 368406500,
+              "libdeflate": 383104042,
+              "libdeflate-O3": 384171250
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate-O3",
+              "libdeflate"
+            ],
+            "ns": {
+              "baseline": 368132709,
+              "libdeflate-O3": 385022625,
+              "libdeflate": 383316667
+            }
+          }
+        ],
+        "O3_over_O2": 1.003478159255201,
+        "O3_over_Mech": 1.043242687952979
+      }
+    },
+    "mr": {
+      "compressed_bytes": 3447985,
+      "compressed_sha256": "4e1e674a6956265dbacb48d399c6c2ac29183b74257c73f36c57181e0af5ab80",
+      "raw_timings": {
+        "case": "mr",
+        "warmup_ns": {
+          "libdeflate": 2268428292,
+          "libdeflate-O3": 2276182916,
+          "baseline": 2453082917
+        },
+        "median_ns": {
+          "libdeflate": 2267531208.5,
+          "libdeflate-O3": 2276506229.0,
+          "baseline": 2453508583.5
+        },
+        "paired_ratio": {
+          "libdeflate-O3": {
+            "baseline": 0.9281384649811331,
+            "libdeflate": 1.0041513034911072
+          },
+          "baseline": {
+            "baseline": 1.0,
+            "libdeflate": 1.0818981664675638
+          }
+        },
+        "blocks": [
+          {
+            "order": [
+              "libdeflate",
+              "libdeflate-O3",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate": 2266958458,
+              "libdeflate-O3": 2282174792,
+              "baseline": 2455493459
+            }
+          },
+          {
+            "order": [
+              "libdeflate",
+              "baseline",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "libdeflate": 2269926000,
+              "baseline": 2453631042,
+              "libdeflate-O3": 2275981166
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "libdeflate",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate-O3": 2275202208,
+              "libdeflate": 2266867958,
+              "baseline": 2453596459
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "baseline",
+              "libdeflate"
+            ],
+            "ns": {
+              "libdeflate-O3": 2277148500,
+              "baseline": 2452513958,
+              "libdeflate": 2267878500
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "baseline": 2453420708,
+              "libdeflate": 2267183917,
+              "libdeflate-O3": 2275745916
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate-O3",
+              "libdeflate"
+            ],
+            "ns": {
+              "baseline": 2452507666,
+              "libdeflate-O3": 2277031292,
+              "libdeflate": 2267977458
+            }
+          }
+        ],
+        "O3_over_O2": 1.0041513034911072,
+        "O3_over_Mech": 0.9281384649811331
+      }
+    },
+    "x-ray": {
+      "compressed_bytes": 5747146,
+      "compressed_sha256": "28965ce50ba0dc1c8c3eed8bcfa42f347532812aadfb8f8a0156307f0df87e69",
+      "raw_timings": {
+        "case": "x-ray",
+        "warmup_ns": {
+          "libdeflate": 344289291,
+          "libdeflate-O3": 348483000,
+          "baseline": 390042292
+        },
+        "median_ns": {
+          "libdeflate": 344018979.5,
+          "libdeflate-O3": 347691604.0,
+          "baseline": 389150812.5
+        },
+        "paired_ratio": {
+          "libdeflate-O3": {
+            "baseline": 0.8934477314286154,
+            "libdeflate": 1.0106607471325968
+          },
+          "baseline": {
+            "baseline": 1.0,
+            "libdeflate": 1.1311917995656653
+          }
+        },
+        "blocks": [
+          {
+            "order": [
+              "libdeflate",
+              "libdeflate-O3",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate": 343891292,
+              "libdeflate-O3": 347827417,
+              "baseline": 389201875
+            }
+          },
+          {
+            "order": [
+              "libdeflate",
+              "baseline",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "libdeflate": 344783625,
+              "baseline": 389234125,
+              "libdeflate-O3": 348055250
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "libdeflate",
+              "baseline"
+            ],
+            "ns": {
+              "libdeflate-O3": 347301500,
+              "libdeflate": 343451791,
+              "baseline": 389219791
+            }
+          },
+          {
+            "order": [
+              "libdeflate-O3",
+              "baseline",
+              "libdeflate"
+            ],
+            "ns": {
+              "libdeflate-O3": 348031708,
+              "baseline": 389099750,
+              "libdeflate": 344167459
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate",
+              "libdeflate-O3"
+            ],
+            "ns": {
+              "baseline": 388846000,
+              "libdeflate": 343287041,
+              "libdeflate-O3": 346956292
+            }
+          },
+          {
+            "order": [
+              "baseline",
+              "libdeflate-O3",
+              "libdeflate"
+            ],
+            "ns": {
+              "baseline": 388868291,
+              "libdeflate-O3": 347555791,
+              "libdeflate": 344146667
+            }
+          }
+        ],
+        "O3_over_O2": 1.0106607471325968,
+        "O3_over_Mech": 0.8934477314286154
+      }
+    }
+  }
+}

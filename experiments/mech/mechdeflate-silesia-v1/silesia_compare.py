@@ -61,18 +61,18 @@ def bind(builds, output):
                                   "original_build_plan_sha256": digest(builds / "plan.json")})
 
 
-def verify(input_path, pin, actors):
+def verify(input_path, pin, actors, order=ORDER):
     raw = input_path.read_bytes()
     assert len(raw) == pin["bytes"] and sha256(raw).hexdigest() == pin["sha256"]
     results = {}
-    for name in ORDER:
+    for name in order:
         compressed = check_output([actors[name]["path"], input_path, "--verify"])
         assert zlib.decompress(compressed, -15) == raw
         results[name] = {"bytes": len(compressed), "sha256": sha256(compressed).hexdigest()}
     return results
 
 
-def measure_case(case, input_path, actors, verified, order, cycles):
+def balanced_samples(case, input_path, actors, verified, order, cycles):
     with ExitStack() as resources:
         workers = {name: resources.enter_context(Popen([actors[name]["path"], input_path],
                                                        stdin=PIPE, stdout=PIPE))
@@ -96,6 +96,11 @@ def measure_case(case, input_path, actors, verified, order, cycles):
             worker.stdin.write(b"Q")
             worker.stdin.flush()
             assert worker.wait() == 0
+    return blocks, warmup
+
+
+def measure_case(case, input_path, actors, verified, order, cycles):
+    blocks, warmup = balanced_samples(case, input_path, actors, verified, order, cycles)
     medians = {name: median(row["ns"][name] for row in blocks) for name in order}
     paired = {peer: exp(mean(log(row["ns"]["mech-candidate"] / row["ns"][peer])
                             for row in blocks)) for peer in ("roc", "libdeflate")}

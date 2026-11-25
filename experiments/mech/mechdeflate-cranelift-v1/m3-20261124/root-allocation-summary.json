@@ -1,0 +1,766 @@
+{
+  "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+  "codec_source_sha256": "653597f08f889908c48610e90aa65e94a77847fb34500d0cc3a046f83cd3d299",
+  "status": "Exploratory only. No variant has qualified for the complete M3 target. Production recipe unchanged.",
+  "method": "Ten protected fixture cases at 24 balanced blocks in each order. Corpus screens use eight balanced blocks of control and candidate, not peers. Complete qualification uses all 81 fixtures at 96 blocks and all 12 corpus files in both orders.",
+  "weight_provenance": "Current M3 samples of the Cranelift baseline, mapped to captured VCode. Sampled instruction cost is not a measured branch count. A structural-only 4^loop_depth control reproduced the baseline artifacts exactly.",
+  "decisions": [
+    "Direct sample-only allocation weights disturbed the structural loop prior and did not clear all protected cases.",
+    "Geometric blend with the structural prior was the closest pilot: 10/10 forward and 8/10 reverse vs libdeflate, with MR 0.988939 and x-ray 0.995693 relative to control. Still unqualified.",
+    "Restoring root extent with unreachable padding did not remove the misses.",
+    "Removing matcher write-prefetch hints regressed protected cases; rejected.",
+    "The fixed-extent no-prefetch variant was prepared but not timed or qualified.",
+    "The unchanged shipped M1 executable also missed protected cases on M3. This subset is not a complete score."
+  ],
+  "screens": [
+    {
+      "variant": "root-sample-balanced-damped",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-sample-balanced-damped-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0356305111905924
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.020475927788257
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0035417117577368
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0129280041784299
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 9,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0327300874955903
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0090736305820311
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0302149952824418
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0146067210370715
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "two_actor_corpus_screen": {
+        "mr": 0.9931998697162243,
+        "x-ray": 0.9986572187329875
+      },
+      "corpus_screen": "screens/root-sample-balanced-damped-corpus",
+      "receipt": "variants/root-sample-balanced-damped/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-sample-small-damped",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-sample-small-damped-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 9,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0077061369815121
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0470370810301393
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.014805332637664
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0241697921727622
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0146899232768762
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0901327899039805
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 6,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0686332345141814
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0059979312076295
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0713870017654146
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.1036621481311761
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/root-sample-small-damped/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-sample-balanced-direct",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-sample-balanced-direct-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0695902026714321
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0106745214479356
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0278469886908674
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 6,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.027560672928342
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0338500795069459
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0530241016166833
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.042809236632827
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0591733112147075
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0193944948664395
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0569215682784912
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0085773634659878
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0019186727352454
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/root-sample-balanced-direct/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-sample-small-direct",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-sample-small-direct-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0398627349535634
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0692706220915125
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0165522201685793
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 6,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.055660730665418
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0007441056478468
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.036304000340055
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.007785855061467
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 6,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0529926680535857
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0146630751226797
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.010508985038312
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0882859385585955
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0069540161893533
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0111509467741637
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0481523816846532
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/root-sample-small-direct/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-prior-blend",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-prior-blend-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0217509709026227
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0000837620141159
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 10,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": []
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0370584782692063
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0572952677759295
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0571132228964284
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0030984885571712
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.019631245104207
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "two_actor_corpus_screen": {
+        "mr": 0.9889386246490712,
+        "x-ray": 0.9956927754264734
+      },
+      "corpus_screen": "screens/root-prior-blend-corpus",
+      "receipt": "variants/root-prior-blend/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-prior-boost",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-prior-boost-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0120725696182848
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.00204439538204
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0131149404531308
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0072269018888034
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.016318352222816
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0036572729585094
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0743778484983095
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0039282462465193
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0764267900102253
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/root-prior-boost/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "root-prior-blend-tail",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/root-prior-blend-tail-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0041166699528525
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0037108321636026
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0058218523764033
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.019950599266797
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0040359395924754
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 9,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0917621008407963
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 9,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0781717307713174
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/root-prior-blend-tail/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "no-write-prefetch-profiled",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/no-write-prefetch-profiled-fixtures",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0112828292658014
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.002918322876947
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0105785777220955
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0952579263094486
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.043330740881011
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0296843272324188
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0765550464298277
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0154515117263951
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0449248873536598
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.101667527707873
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "two_actor_corpus_screen": {
+        "mr": 0.9940614089237805,
+        "x-ray": 1.0079976680312497
+      },
+      "corpus_screen": "screens/no-write-prefetch-corpus",
+      "receipt": "variants/no-write-prefetch-profiled/receipt.json",
+      "source_commit": "8e68da6afa7983a307c8389f0682283fbc90789a",
+      "source_diff": ""
+    },
+    {
+      "variant": "shipped-m1",
+      "scope": "Exploratory 24-block subset; qualification uses 81 cases and 96 blocks.",
+      "fixture_screen": "screens/shipped-m1-fixtures-v2",
+      "orders": {
+        "forward": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 7,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.0089340801047253
+              },
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0112987979459966
+              },
+              {
+                "case": "prefix-random-4096",
+                "ratio": 1.0126493024576328
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 9,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.049513781489553
+              }
+            ]
+          }
+        },
+        "reverse": {
+          "mech-control": {
+            "cases": 10,
+            "wins_vs_libdeflate": 8,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.0003912911894193
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0778153443501994
+              }
+            ]
+          },
+          "mech-experiment": {
+            "cases": 10,
+            "wins_vs_libdeflate": 6,
+            "wins_vs_roc": 10,
+            "libdeflate_misses": [
+              {
+                "case": "prefix-natural-1024",
+                "ratio": 1.0222435660618066
+              },
+              {
+                "case": "heldout-random-65537",
+                "ratio": 1.002421689992322
+              },
+              {
+                "case": "reymont-prefix-1024",
+                "ratio": 1.015430298526137
+              },
+              {
+                "case": "16384-distribution-change",
+                "ratio": 1.0090587139766658
+              }
+            ]
+          }
+        }
+      },
+      "promoted": false,
+      "receipt": "variants/shipped-m1/receipt.json",
+      "source_commit": "35784003b9149fe8059fa83dd5d0aff10dbcd631",
+      "source_diff": "Not recorded in this preparation receipt; see pinned source and separate validation."
+    }
+  ]
+}

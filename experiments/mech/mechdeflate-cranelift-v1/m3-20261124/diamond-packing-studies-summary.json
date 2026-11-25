@@ -1,0 +1,354 @@
+{
+  "selected": false,
+  "reason": "All four timed diamond-sharing variants miss protected fixture comparisons. No new complete score or compile-time claim.",
+  "source_head": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+  "source_scope": "Share exact nontrapping I32/I64 packing expressions across a small conditional-store diamond after egraph elaboration. Operands must be available before the branch; memory operations, guards and ownership actions stay in place. V2 restricts sharing to a complete tree written by the conditional store. Compressor source and bytecode unchanged.",
+  "tests": {
+    "focused_records_per_version": 9,
+    "native_differential_calls_per_version": 143360,
+    "default_m1_artifact_triple_parity": true,
+    "each_timed_actor_codec_alias_boundary_checks": 162
+  },
+  "native_selection": "Both versions eliminate duplicated packing in the actual compressor. Static inspection also finds increased spill traffic; reduced arithmetic instruction counts do not establish a speedup. Full static counts are retained for both actual native roots.",
+  "profile_scope": "Existing matcher/scorer frequency hints transferred by original IR identity with exact VCode validation. Existing layouts projected onto the new allocated code. No workload, peer, ordering or timing-rule edits. The old exact root-tail profile is incompatible and disabled.",
+  "diagnostic_setup": "The initial root route-dump build changes the native root (48352 versus 47360 ordinary bytes) and failed artifact parity against a plain capture. It is excluded from timing. Plain matcher and scorer captures reproduce each other exactly; only ordinary actors enter the screens. An unused import in the focused harness was fixed before final tests.",
+  "timing_scope": "Ten-case, 24-balanced-block screens in both orders. Quiet telemetry is eligible for all four. These are subset screens, not full qualification. Preparation build times are excluded from primary compilation-time claims.",
+  "versions": {
+    "diamond-packing": {
+      "source": {
+        "source_head": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+        "compiler_sha256": "91609c1d1c2f26988e8a0eaa2479994a58d8c5627501f34104d091a19ce3794b",
+        "source_patch_sha256": "b2b70f7e025ff77af4bd18e44e8b98218531454e7ed4e2df610fd0d9b5d331b6",
+        "focused_test_records": 9,
+        "native_differential_calls": 143360,
+        "scope": "Post-egraph exact scalar expression sharing across a bounded diamond. Hoist only nontrapping I32/I64 operations with available operands. No load, store, ownership or guard motion. Explicit captured ISA setting; source and language unchanged."
+      },
+      "default_artifacts": {
+        "program.o": "e4325602c6a5a4507ba637eee5d34ada9bda77bbb334fefb8ff53324d720e214",
+        "metadata.json": "c2448f4197863733301810dca0e8d721d1932afa32b5172e933843b07e2464ef",
+        "program.mecb": "c6529d934f020f07f8e59f13fab40927e066649e202269818ad3f009a942a8c3"
+      },
+      "static_root_census": {
+        "scope": "Static native census, not dynamic counts or timing. Diagnostic route-dump builds excluded.",
+        "roots": {
+          "control": {
+            "counts": {
+              "and": 271,
+              "lsl": 51,
+              "orr": 258,
+              "ldr": 2553,
+              "str": 1181
+            },
+            "native_instructions": 11836
+          },
+          "candidate": {
+            "counts": {
+              "and": 265,
+              "lsl": 47,
+              "orr": 254,
+              "ldr": 2559,
+              "str": 1185
+            },
+            "native_instructions": 11840
+          }
+        }
+      }
+    },
+    "diamond-store-trees": {
+      "source": {
+        "source_head": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+        "compiler_sha256": "5e4831fb0496a1fa3afbcc5673606414d36515ade2c9822f4e3540c444f8c29b",
+        "source_patch_sha256": "f5d9babe3c9f9a35c45e84558978aa7e858e6bb2b32e32bea8fc43f17a3a5446",
+        "focused_test_records": 9,
+        "native_differential_calls": 143360,
+        "scope": "Post-egraph sharing of a complete matched scalar packing tree actually written by the conditional store, across a bounded diamond. Hoist only nontrapping I32/I64 operations with available operands. No load, store, ownership or guard motion. Explicit captured ISA setting; source and language unchanged."
+      },
+      "default_artifacts": {
+        "program.o": "e4325602c6a5a4507ba637eee5d34ada9bda77bbb334fefb8ff53324d720e214",
+        "metadata.json": "c2448f4197863733301810dca0e8d721d1932afa32b5172e933843b07e2464ef",
+        "program.mecb": "c6529d934f020f07f8e59f13fab40927e066649e202269818ad3f009a942a8c3"
+      },
+      "static_root_census": {
+        "scope": "Static actual-object census, not dynamic counts or timings. Includes control alignment padding.",
+        "roots": {
+          "control": {
+            "pacibsp": 1,
+            "stp": 179,
+            "mov": 1930,
+            "sub": 170,
+            "str": 1181,
+            "ldr": 2553,
+            "cbz": 381,
+            "add": 594,
+            "cmp": 817,
+            "b.ls": 49,
+            "b.lo": 259,
+            "movk": 65,
+            "umulh": 24,
+            "lsr": 100,
+            "cbnz": 467,
+            "mul": 19,
+            "madd": 12,
+            "b.ne": 92,
+            "adds": 19,
+            "cset": 62,
+            "tst": 2,
+            "csel": 104,
+            "b.hi": 75,
+            "b": 1113,
+            "bl": 336,
+            "uxtb": 36,
+            "b.hs": 102,
+            "b.eq": 93,
+            "ccmp": 40,
+            "ldrb": 22,
+            "strb": 28,
+            "adrp": 67,
+            "blr": 36,
+            "stur": 10,
+            "orr": 258,
+            "ldp": 34,
+            "retab": 3,
+            "ldrh": 19,
+            "strh": 20,
+            "clz": 3,
+            "lsl": 51,
+            "and": 271,
+            "eor": 17,
+            "rbit": 2,
+            "tbnz": 56,
+            "tbz": 8,
+            "bfi": 1,
+            "msub": 4,
+            "udiv": 2,
+            "ldur": 33,
+            "udf": 2,
+            "subs": 2,
+            "b.ge": 1,
+            "b.gt": 2,
+            "smulh": 2,
+            "neg": 1,
+            "mvn": 2,
+            "nop": 4
+          },
+          "candidate": {
+            "pacibsp": 1,
+            "stp": 179,
+            "mov": 1898,
+            "sub": 170,
+            "str": 1199,
+            "ldr": 2584,
+            "cbz": 381,
+            "add": 594,
+            "cmp": 817,
+            "b.ls": 49,
+            "b.lo": 259,
+            "movk": 65,
+            "umulh": 24,
+            "lsr": 100,
+            "cbnz": 467,
+            "mul": 19,
+            "madd": 12,
+            "b.ne": 92,
+            "adds": 19,
+            "cset": 62,
+            "tst": 2,
+            "csel": 104,
+            "b.hi": 75,
+            "b": 1112,
+            "bl": 336,
+            "uxtb": 36,
+            "b.hs": 102,
+            "b.eq": 93,
+            "ccmp": 40,
+            "ldrb": 22,
+            "strb": 28,
+            "adrp": 67,
+            "blr": 36,
+            "stur": 10,
+            "orr": 256,
+            "ldp": 34,
+            "retab": 3,
+            "ldrh": 19,
+            "strh": 20,
+            "clz": 3,
+            "lsl": 49,
+            "and": 268,
+            "eor": 17,
+            "rbit": 2,
+            "tbnz": 56,
+            "tbz": 8,
+            "bfi": 1,
+            "msub": 4,
+            "udiv": 2,
+            "ldur": 33,
+            "udf": 2,
+            "subs": 2,
+            "b.ge": 1,
+            "b.gt": 2,
+            "smulh": 2,
+            "neg": 1,
+            "mvn": 2
+          }
+        }
+      }
+    }
+  },
+  "screens": [
+    {
+      "candidate": "diamond-packing-ccmp-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0138399494410195
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0016635643601117
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0085029469968203
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0133020539836317
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "diamond-packing-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "cases": 10,
+          "wins": 7,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0108789937936986
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0065432734262556
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0247850937017577
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0042584751578383
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0006668509000576
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "diamond-store-trees-ccmp-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "cases": 10,
+          "wins": 7,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0359767625894076
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0200078444829177
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0356688674664136
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0325739198425972
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0372891093902845
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "diamond-store-trees-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.032862251195699
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0167203762643147
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "cases": 10,
+          "wins": 8,
+          "misses": [
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0288814002585098
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.093446736864861
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "archive": {
+    "path": "diamond-packing-studies.tar.gz",
+    "sha256": "3a0dd19bda0eb39d51c089193a82b560f339eaaa866015db92f9121587756ca8",
+    "files": 597,
+    "bytes": 27426489
+  },
+  "compiler_binary": "Compiler hashes and exact source snapshots are retained; large local compiler binaries are excluded from the archive."
+}
