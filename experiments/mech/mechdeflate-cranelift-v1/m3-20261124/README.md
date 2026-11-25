@@ -268,3 +268,33 @@ To reproduce this unqualified candidate, use the existing `rebuild.py` and
 `replay.py` commands from the M3 handoff with `--recipe` pointing to
 `m3-20261124/append-store-pairs-recipe.json`, and check out its pinned Mech
 revision. The winning M1 recipe remains the default.
+
+## Literal recurrence and counter loads
+
+Further compiler trials changed literal field packing, carried the wrapping cost
+independently of the packed output word, and loaded small batches of histogram
+counters before storing them. The latter accounts for every earlier colliding
+key and preserves source-order stores. These changes use the unchanged Mech
+compressor source and canonical bytecode.
+
+A revised profile adapter also keeps new register-copy blocks from splitting
+the literal loop's exit, removing an extra branch introduced by the first
+profile transfer. The adapter retains every executable machine block and the
+compiler's normal permutation and branch validation.
+
+The literal-packing and cost-carry patches passed six focused tests each, with
+18 and 34 native option combinations respectively. Counter gathering passed
+60,928 native differential calls covering collisions, wrapping arithmetic and
+batch boundaries. The default setting reproduced the M1 artifact triple;
+every final candidate passed all 162 output, inflation, capacity and alias
+checks.
+
+All timed candidates still missed protected libdeflate cases in the ten-case,
+24-block screens. None was promoted, and none establishes a new complete
+81-case or 12-file score. The archive includes the compiler patches, exact
+timed actors, profiles, failed setups and raw timing data. Preparation build
+times in these diagnostics are excluded from primary compile-time comparisons.
+
+[Candidate summaries and timing misses](literal-carry-counter-studies-summary.json) ·
+[Source, actors, tests and raw screens](literal-carry-counter-studies.tar.gz) ·
+[Verified member hashes](literal-carry-counter-studies.tar.gz.manifest.json)

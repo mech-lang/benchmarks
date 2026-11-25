@@ -1,0 +1,722 @@
+{
+  "status": "All timed candidates miss at least one protected case; none promoted. The complete M3 target remains open.",
+  "source_head": "71bb1f90b39ad0bceebf1b5871a375de19683ac8",
+  "source_scope": "Archived uncommitted compiler-only patches. Compressor source and canonical bytecode fixed.",
+  "changes": [
+    "Cost-first literal field packing: removes one literal tag materialization.",
+    "Separate I32 literal-cost carry: preserves the full previous packed word for every scalar or fallback continuation.",
+    "Copy-edge-aware profile transfer v2: keeps newly inserted register copies from splitting the hot literal-loop exit; all machine blocks retained.",
+    "Admitted histogram counter gathering: reads counters in batches of two or four, then corrects all colliding keys and retains wrapping stores in source order."
+  ],
+  "verification": {
+    "literal_pack_tests": 6,
+    "literal_pack_native_modes": 18,
+    "cost_carry_tests": 6,
+    "cost_carry_native_modes": 34,
+    "histogram_gather_native_differential_calls": 60928,
+    "default_m1_object_parity": true,
+    "each_final_variant_exact_output_alias_checks": 162
+  },
+  "timing_scope": "Exploratory ten-case, 24-block screens in both orders with unchanged original controllers. Fresh fixed support from the clean paired-append build is used for both Mech actors. No new full 81-case/96-block or 12-file qualification is claimed. Preparation build measurements are not primary compile timings.",
+  "screens": [
+    {
+      "candidate": "histogram-gather2-ccmp-fixed-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0515052268048877
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0425489903209153
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0170787399625387
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0005732744609563
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0044219664220604
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.083817119457449
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "histogram-gather2-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0305253900722
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.039798630118382
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0291025640546163
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0150526865311948
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0360767840549492
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0119197385027083
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0894296845470706
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "histogram-gather4-ccmp-fixed-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0634059403120808
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0217009707621552
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0038998363188194
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0129423899731755
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 8,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.041604804747407
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.116958897666708
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "histogram-gather4-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0348944691554183
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.007595969194489
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.014441272582637
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-1048576",
+              "candidate_x_libdeflate": 1.0035488516692852
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0114652275410845
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0996866959445093
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "literal-pack-ccmp-fixed-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 4,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0638418559181304
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0191248813966574
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0105070954516207
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.036927714653188
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0144354011549472
+            },
+            {
+              "case": "prefix-random-1048576",
+              "candidate_x_libdeflate": 1.001885649423069
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 5,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-1048576",
+              "candidate_x_libdeflate": 1.0022587970694945
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0224167062632952
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0543065239540257
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.007831824120633
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0917366759066587
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "literal-pack-ccmp-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0364938268433666
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.002217703517183
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0491324630591885
+            },
+            {
+              "case": "prefix-random-1048576",
+              "candidate_x_libdeflate": 1.0012003221160792
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 4,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-1048576",
+              "candidate_x_libdeflate": 1.0005492137735024
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0343532505766673
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0017849033749968
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0412807276466245
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0138334129566908
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.116956615336037
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "literal-pack-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 5,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.065609820340111
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0126028811059937
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0117242297948654
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0144895115679626
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0168575701330411
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0262243906159692
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0032569284612425
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0115028320742592
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0377647679153994
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-ccmp-fixed-edges-v2-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0371968619709055
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.016479068494039
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0125605909663344
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0316443287174135
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0262694697021786
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0201045758353244
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-ccmp-fixed-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 8,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0388957254647944
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.036812718320951
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0119695763373064
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0255840630390478
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0079642669551587
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0570006358608837
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-profiled-edges-v2-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 9,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0433230803644495
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0365983788596371
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0190020501026178
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.050836653039835
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0424074079035703
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0705769044443194
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.007761617605069
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.025284501528643
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.014318406824905
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0227692389687717
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0455448463241048
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.1174141013317773
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-tag-ccmp-fixed-edges-v2-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 8,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.05915413522087
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0047140743815655
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0488820732385096
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0508911870407949
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0286726109224311
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-tag-ccmp-fixed-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0656574938586676
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.001134486142108
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.018388134817306
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 6,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0019543561512736
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0001368068562775
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0321907793229472
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0477883988828562
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-tag-profiled-edges-v2-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 9,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0525221360315398
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 7,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0100539431706423
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.02767103967268
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0043359275903292
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "candidate": "separate-cost-tag-profiled-fixtures",
+      "orders": [
+        {
+          "order": "forward",
+          "libdeflate_wins": 8,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0434193061225807
+            },
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.016901795301312
+            }
+          ]
+        },
+        {
+          "order": "reverse",
+          "libdeflate_wins": 5,
+          "cases": 10,
+          "misses": [
+            {
+              "case": "prefix-random-4096",
+              "candidate_x_libdeflate": 1.0153808525712142
+            },
+            {
+              "case": "prefix-natural-1024",
+              "candidate_x_libdeflate": 1.0169639304628744
+            },
+            {
+              "case": "heldout-random-65537",
+              "candidate_x_libdeflate": 1.0399760228632449
+            },
+            {
+              "case": "reymont-prefix-1024",
+              "candidate_x_libdeflate": 1.0106650394856247
+            },
+            {
+              "case": "16384-distribution-change",
+              "candidate_x_libdeflate": 1.0322198866622645
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "archive": {
+    "path": "literal-carry-counter-studies.tar.gz",
+    "sha256": "5c28d3d9bb8f7475d5b67d07846c1e7c9c44fd6386d14fd751a5c0014aa7ec03",
+    "files": 875,
+    "bytes": 28695652
+  }
+}
