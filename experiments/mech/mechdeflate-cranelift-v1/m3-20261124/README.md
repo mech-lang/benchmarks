@@ -362,3 +362,22 @@ claims.
 [Trial summaries](current-carrier-cost-studies-summary.json) ·
 [Compiler patches, actors, counts and raw screens](current-carrier-cost-studies.tar.gz) ·
 [Verified member hashes](current-carrier-cost-studies.tar.gz.manifest.json)
+
+## Masked equality lowering
+
+An opt-in Cranelift rule replaced equal-mask Eq/Ne comparisons with a masked
+XOR flag test. It kept independent observers and declined comparisons where
+both masks had to remain. All 583,680 native differential calls passed, along
+with seven configuration/profile checks, disabled-rule M1 artifact parity and
+162 codec/alias/boundary checks for each timed actor.
+
+The matcher emitted the intended native sequence, but all four timed variants
+missed protected fixture comparisons. The compiler prototype is not selected.
+The root also grew by 48 bytes, so the earlier exact root-padding profile was
+rejected and disabled for these trials. Original and fixed matcher extents
+were measured separately. These ten-case, 24-block screens establish no new
+complete M3 score or compile-time improvement.
+
+[Trial summaries](masked-equality-studies-summary.json) ·
+[Compiler source, actors and raw screens](masked-equality-studies.tar.gz) ·
+[Verified member hashes](masked-equality-studies.tar.gz.manifest.json)
