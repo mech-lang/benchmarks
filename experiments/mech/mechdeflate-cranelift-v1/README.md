@@ -6,6 +6,8 @@ On Apple M1 with macOS 15.6.1, PR #1000 emitted both pinned level-12 encoders th
 
 At level 12, the same Cranelift encoder won all 81 benchmark cases and all 12 Silesia files against both pinned references in each timing order. [Compiler revision](https://github.com/mech-lang/mech/commit/35784003b9149fe8059fa83dd5d0aff10dbcd631) · [81-case scores](word-mismatch-order/scores.json) · [Silesia scores](word-mismatch-order/silesia-scores.json).
 
+The M3 handoff gives the exact checkout, input download, rebuild, and timing commands. [Apple M3 handoff](word-mismatch-order/M3.md).
+
 | File | Mech / libdeflate forward | Mech / libdeflate reverse | Mech / reference forward | Mech / reference reverse |
 |---|---:|---:|---:|---:|
 | mr | 0.984546× | 0.982758× | 0.871051× | 0.862303× |
