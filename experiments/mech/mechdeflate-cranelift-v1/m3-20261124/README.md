@@ -193,3 +193,78 @@ and the fresh `shipped-m1-fixtures-v2` record is used instead.
 [Subset summary and decisions](root-allocation-summary.json) ·
 [Root allocation profiles, instruction records, test harness and raw observations](root-allocation-studies.tar.gz) ·
 [Verified member hashes](root-allocation-studies.tar.gz.manifest.json)
+
+
+## Exact counts and inline cleanup
+
+Further work tested late dead values, proved stack reads, local forwarding,
+shift-count normalization, inlining choices and allocation hints. These trials
+keep the compressor source and canonical bytecode fixed. None cleared all
+protected timing cases, so their settings were not promoted.
+
+Untimed native counters cover all 81 fixtures and all 12 complete corpus files,
+with two matching, output-verified observations per input. The root has 3,699
+instrumented machine blocks; the scorer has 61. Fixture counts use the actual
+prepared-capacity interface. Full-file counts use the deployed encoder's
+empty output loan. These counts and the sampled cost hints are distinct from
+primary latency measurements. Counter tools, failed setups, rejected compiler
+patches, tests, settings and raw observations are retained.
+
+[Study summary](late-inline-studies-summary.json) ·
+[Complete diagnostic archive](late-inline-studies.tar.gz) ·
+[Member hashes](late-inline-studies.tar.gz.manifest.json)
+
+## Paired append stores
+
+Mech `71bb1f90b39ad0bceebf1b5871a375de19683ac8` adds an optional compiler pass
+that combines two neighboring U64 writes already admitted by the exclusive
+NoGrowth append contract. It preserves memory flags and guards and rejects
+intervening effects, mismatched geometry, alignment claims and debug metadata.
+The generated scorer contains one paired store in place of the two stores.
+The compressor source and canonical bytecode remain unchanged.
+
+A clean rebuild reproduced the baseline and candidate artifacts byte for byte,
+including with host reporting enabled. Two native differential/refusal tests
+and six configuration tests passed. The archived resource gates retained all
+162 exact-output and alias checks, all 12 injected failures and exact recoveries,
+and the same per-case native stack observations: 5,024 bytes maximum under the
+5,280-byte ceiling.
+
+| Full executable build boundary | Control median | Paired-store candidate median |
+| --- | --- | --- |
+| Standalone encoder | 1.803042 s | 1.797063 s |
+| Rust benchmark worker | 2.440799 s | 2.454649 s |
+
+Each median uses three alternating serial builds from the unchanged Mech source
+through the final executable link. The compiler and fixed host support were
+prebuilt and caches were warm. These observations do not establish a compile-time
+advantage.
+
+The first ten-case, 24-block screen missed one libdeflate comparison per order,
+by 0.07% and 0.61%. Selected full-file screens measured MR at 0.994851 times
+control and x-ray at 0.992986; those are two-actor screens without peer scores.
+The longer 96-block fixture run then missed `16384-distribution-change`: the
+candidate's paired libdeflate ratio was 1.062454, versus 1.016539 for the control.
+That is about 4.5% slower than the control on that case. The forward 81-case
+order finished; the all-suite attempt was stopped during reverse order after
+that miss and is excluded from complete qualification. It did not run the full
+Silesia qualification. No new complete 81/81 or 12/12 score is claimed.
+
+Fresh PC samples cover the actual fixture timer boundary, including heap setup,
+output transfer and cleanup, while excluding preparation, validation and
+inflation. On the 16 KB control, about 32% of samples are in scoring, 32% in
+matching and 22% in the generated root. The root's normalized instruction
+sequence and external relocation names match between these two actors; sample
+shares alone do not establish a change in its generated work. Fresh-support
+screens with the original matcher also miss protected cases.
+
+[Follow-up summary and interruption record](paired-append-followup-summary.json) ·
+[Fresh rebuild, resource gates, build timings, profiles and partial observations](paired-append-followup.tar.gz) ·
+[Member hashes](paired-append-followup.tar.gz.manifest.json) ·
+[Exact timed executables](paired-append-recorded-actors/) ·
+[Portable candidate recipe](append-store-pairs-recipe.json)
+
+To reproduce this unqualified candidate, use the existing `rebuild.py` and
+`replay.py` commands from the M3 handoff with `--recipe` pointing to
+`m3-20261124/append-store-pairs-recipe.json`, and check out its pinned Mech
+revision. The winning M1 recipe remains the default.
