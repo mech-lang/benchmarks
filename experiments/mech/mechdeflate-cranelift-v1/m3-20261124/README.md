@@ -325,3 +325,40 @@ transfers, test logs, failed setups and raw measurements.
 [Trial summaries](conditional-counter-batch-studies-summary.json) ·
 [Compiler patches, exact actors and raw data](conditional-counter-batch-studies.tar.gz) ·
 [Verified member hashes](conditional-counter-batch-studies.tar.gz.manifest.json)
+
+## Previous-cell cost reuse and refreshed profiles
+
+The next compiler prototype reused an existing I32 previous-cell cost for
+proved low-word consumers of full packed loop parameters. It preserved full-word
+observers and introduced no additional loop state or memory operations. An
+initial attempt to retain value IDs across cleanup failed before timing; the
+revised implementation discovers live SSA values and proves every incoming
+append edge. Its 2,160 differential native input cases passed (4,320 calls),
+along with captured-configuration checks and default M1 artifact parity.
+
+Six source/profile combinations and four additional refreshed-profile layouts
+were timed. Every actor passed the 162 codec, boundary and alias checks, but
+every timed variant missed at least one protected fixture in at least one
+order. The prototype is not selected. These remain ten-case, 24-block screens;
+there is no new full-suite or source-to-executable timing claim.
+
+Diagnostic block counters also produced two matching, output-verified
+observations for every one of the 81 fixtures and all 12 full corpus files.
+The new four-literal CFG had eleven allocation blocks inheriting cold weight
+one from the earlier profile, including blocks executed thousands of times on
+the 16 KB input. Fresh allocation hints and layouts used 66 active non-heldout
+fixtures plus Dickens, Mozilla, MR and X-ray. Named heldout fixtures and the
+other eight corpus files were excluded from training. A checked CFG/label
+transfer allowed those native counts to guide the newly allocated body.
+
+An offline constrained layout reduced predicted branches on every training
+input, including the 16 KB case and MR, but made the measured 16 KB latency
+worse. Branch-count reductions are not reported as speedups. The solver is an
+analysis tool only; it adds no compiler or project dependency. All counters,
+profile producers, solver inputs, hashes, failed setups, exact actors and raw
+screens are retained, and diagnostic timings are excluded from performance
+claims.
+
+[Trial summaries](current-carrier-cost-studies-summary.json) ·
+[Compiler patches, actors, counts and raw screens](current-carrier-cost-studies.tar.gz) ·
+[Verified member hashes](current-carrier-cost-studies.tar.gz.manifest.json)
