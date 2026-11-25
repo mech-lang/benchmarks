@@ -19,7 +19,7 @@ def actor(build, role, filename):
     return path
 
 
-def suite81(out, packets, build, control_build, control, candidate):
+def suite81(out, packets, build, control_build, control, candidate, labels=None):
     previous = packets / "mechdeflate-81-v1"
     routes = packets / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
@@ -46,7 +46,8 @@ def suite81(out, packets, build, control_build, control, candidate):
     subprocess.run([sys.executable, "-B", routes / "verify_timings.py", out, role,
                     out / "pinned-peers/libdeflate-output-oracle.json"], check=True)
     for run in runs:
-        for label, measured in ((control, "mech-control"), (candidate, "mech-experiment")):
+        control_label, candidate_label = labels or (control, candidate)
+        for label, measured in ((control_label, "mech-control"), (candidate_label, "mech-experiment")):
             wins = {
                 peer_label: sum(row["paired_x_" + peer][measured] < 1 for row in run["results"])
                 for peer_label, peer in (("reference", reference), ("libdeflate", "libdeflate"))

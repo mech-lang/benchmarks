@@ -155,3 +155,58 @@ The standard role took 2.915 s from source through the timing executable with th
 The direct-4 role took 2.895 s from source through the timing executable with the compiler and runtime dependencies prebuilt. Its measured peak stack was 5,184 bytes.
 
 [Complete build observations](build-observations.json) · [Resource, recovery and stack receipts](native-checks.json).
+
+## Compare rebuilt stabilization snapshots
+
+Use clean source checkouts and one recipe per snapshot. Start Frozen with the
+[winning recipe](word-mismatch-order/recipe.json). The Reconciled pin includes
+only the stack integration. The Configured pin adds explicit compiler inputs
+and reporting. Keep the winning role, selected profiles and expected artifact
+hashes in each recipe. Use separate Cargo targets across different source
+checkouts.
+
+For each snapshot run the following command with its own recipe, source path
+and output directory. Pass `--with-host-report` for the Configured recipe.
+That recipe pins the supplemental configured driver. The separate report run
+checks the same output hashes and records the compiler subprocess peak RSS.
+
+```sh
+packet=experiments/mech/mechdeflate-cranelift-v1
+python3 "$packet/rebuild.py" --recipe "$recipe" --mech-root "$source_tree" \
+  --output "$build_directory" --build-repeats 3
+```
+
+Run the three paired comparisons on a quiet machine, using the full pinned
+Silesia corpus. Here `evidence` contains the three recipe directories and
+`builds` contains the corresponding rebuild directories.
+
+```sh
+compare() {
+  control=$1
+  candidate=$2
+  python3 "$packet/compare_rebuilt.py" \
+    --control "$control" --control-build "$builds/$control" \
+    --control-recipe "$evidence/$control/recipe.json" \
+    --candidate "$candidate" --candidate-build "$builds/$candidate" \
+    --candidate-recipe "$evidence/$candidate/recipe.json" \
+    --corpus "$silesia" --output "$results/$candidate-vs-$control"
+}
+compare frozen reconciled
+compare reconciled configured
+compare frozen configured
+```
+
+`binding.json` records the actual role for each rebuild, compiler, profile,
+configuration, native artifact and timing executable. `comparison.json`
+links the binding to both measured orders and their raw outputs. The
+81-case comparison uses the original 96-block controller and verifies the
+per-block results against the archived oracle. The direct Silesia comparison
+uses six balanced blocks per file in each direction. Both verify the produced
+streams. Use the existing `replay.py --suite silesia` with the explicit
+configured `--build` and `--recipe` for the historical peer comparison.
+
+Keep construction-census runs separate from primary compilation latency.
+Build the generated Configured driver with its `construction-census` Cargo
+feature in a separate target directory. Run it on the same source and pinned
+environment with `compact --host-report`. The report records the published
+census scope and the raw census path when this instrumentation is present.

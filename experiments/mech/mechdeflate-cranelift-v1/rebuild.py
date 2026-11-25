@@ -1,10 +1,11 @@
 """Rebuild the Cranelift encoder, runtime tests and native timing executables."""
 
 from argparse import ArgumentParser
-from hashlib import file_digest
+from hashlib import file_digest, sha256
 import json
 import os
 from pathlib import Path
+import re
 from runpy import run_path
 import shutil
 import subprocess
@@ -35,6 +36,22 @@ def checked(path, expected):
     return actual
 
 
+def configuration(recipe, role):
+    return {
+        "architecture": recipe["architecture"],
+        "native_backend": recipe["native_backend"],
+        "base_recipe_sha256": recipe["base_recipe_sha256"],
+        "settings_delta": role["settings_delta"],
+        "profiles_sha256": role.get("profile_inputs_sha256", {}),
+        "inline_owner_records": recipe["inline_owner_records"],
+    }
+
+
+def configuration_sha256(config):
+    canonical = json.dumps(config, sort_keys=True, separators=(",", ":")).encode()
+    return sha256(canonical).hexdigest()
+
+
 def run(command, log, env, cwd):
     with log.open("w") as stream:
         subprocess.run(command, stdout=stream, stderr=stream, check=True, env=env, cwd=cwd)
@@ -46,10 +63,64 @@ def write_source(path, template, root):
     path.write_text(text.replace("@MECH_ROOT@", json.dumps(str(root), ensure_ascii=False)[1:-1]))
 
 
+def configure_driver(driver, recipe):
+    module = recipe.get("configured_driver")
+    if module is None:
+        return
+    checked(HERE / module, recipe["inputs_sha256"][module])
+    shutil.copyfile(HERE / module, driver / "configured_profile.rs")
+    source = driver / "compile_profile.rs"
+    contents = source.read_text()
+    patches = [
+        ("use mech_engine::CanonicalSourceFrontend;",
+         "mod configured_profile;\nuse mech_engine::CanonicalSourceFrontend;"),
+        ("NativeCompileLimits, emit_compact_closed_object_for_diagnostic, emit_program_object_with_limits,",
+         "NativeCompileLimits, emit_program_object_with_limits,"),
+        ("args.len() == 4,", 'args.len() == 4 || (args.len() == 5 && args[3] == "compact" && args[4] == "--host-report"),'),
+        ('"compact" => emit_compact_closed_object_for_diagnostic(&artifact, &catalog).unwrap(),',
+         '"compact" => configured_profile::compile(&artifact, &catalog, &out, args.len() == 5),'),
+        ('    println!("{receipt}");',
+         '    if args.len() == 5 { configured_profile::finish(&out, &receipt); }\n    println!("{receipt}");'),
+    ]
+    for old, new in patches:
+        if contents.count(old) != 1:
+            raise ValueError(f"{source}: configured driver anchor changed: {old}")
+        contents = contents.replace(old, new)
+    source.write_text(contents)
+
+
+def host_report(emit, root, env, variant, recipe, role, compiler):
+    output = variant / "host-report"
+    log = variant / "host-report-process.log"
+    command = [*emit, "--host-report"]
+    command[2] = output
+    run(["/usr/bin/time", "-l", *command], log, env, root)
+    for file, expected in role["artifacts"].items():
+        checked(output / file, expected)
+    path = output / "host-report.json"
+    report = read(path)
+    if report["object_sha256"] != role["artifacts"]["program.o"]:
+        raise ValueError("Host reporting changed the emitted object.")
+    rss = re.search(r"(?m)^\s*(\d+)\s+maximum resident set size\s*$", log.read_text())
+    if rss:
+        report["peak_process_rss"] = {
+            "available": True, "bytes": int(rss[1]), "scope": "compiler subprocess lifetime on macOS",
+        }
+    report["compiler_sha256"] = sha(compiler)
+    report["source_commit"] = recipe["source_commit"]
+    report["recipe_configuration_sha256"] = configuration_sha256(configuration(recipe, role))
+    report["raw_evidence"]["process_measurement"] = str(log)
+    write(path, report)
+    return {"path": str(path), "sha256": sha(path)}
+
+
 def build(args):
     root, output = args.mech_root.resolve(strict=True), args.output.resolve()
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT
-    recipe = read(args.recipe.resolve(strict=True))
+    recipe_bytes = args.recipe.read_bytes()
+    recipe = json.loads(recipe_bytes)
+    if args.with_host_report and "configured_driver" not in recipe:
+        raise ValueError("Host reporting requires a pinned configured compiler driver.")
     base = packets / "mechdeflate-81-v1"
     manifest = base / "recipe.json"
     checked(manifest, recipe["base_recipe_sha256"])
@@ -77,6 +148,7 @@ def build(args):
     driver.mkdir()
     for name in ("Cargo.toml", "compile_profile.rs"):
         write_source(driver / name, HERE / "compiler-driver" / (name + ".in"), root)
+    configure_driver(driver, recipe)
     shutil.copyfile(HERE / "compiler-driver/Cargo.lock", driver / "Cargo.lock")
     cargo = ["cargo", "+" + rust, "build", *tools["cargo_options"],
              "--message-format=json-render-diagnostics",
@@ -95,7 +167,8 @@ def build(args):
                 assert len(paths) == 1 and name not in libraries
                 libraries[name] = paths[0]
     assert len(libraries) == 4
-    compiler = target / "release/compile_profile"
+    compiler = output / "compile_profile"
+    shutil.copy2(target / "release/compile_profile", compiler)
 
     support = HERE / "support"
     allocator = support / "mimalloc-2.1.7.o"
@@ -189,13 +262,22 @@ def build(args):
         whole_actor = variant / "silesia-encoder"
         run([*cc, "-Wl,-dead_strip", clock, whole_lib, bound / "program.o", allocator, "-o", whole_actor],
             variant / "silesia-encoder-link.log", env, root)
-        write(variant / "receipt.json", {
+        config = configuration(recipe, role)
+        receipt = {
             "source_commit": recipe["source_commit"], "compiler_sha256": sha(compiler),
+            "source_sha256": sha(source),
+            "recipe_sha256": sha256(recipe_bytes).hexdigest(),
+            "configuration": config, "configuration_sha256": configuration_sha256(config),
             "runtime_sha256": sha(runtime_lib), "artifacts": role["artifacts"],
+            "silesia_runtime_sha256": sha(whole_lib),
+            "silesia_clock_sha256": sha(clock), "allocator_sha256": sha(allocator),
             "worker_sha256": sha(worker), "silesia_actor_sha256": sha(whole_actor),
             "measurements": measurements,
             "encoder_command": list(map(str, emit)), "worker_command": list(map(str, link)),
-        })
+        }
+        if args.with_host_report:
+            receipt["host_report"] = host_report(emit, root, env | selected, variant, recipe, role, compiler)
+        write(variant / "receipt.json", receipt)
         print(f"{name}: all encoder artifact hashes match.", flush=True)
 
 
@@ -208,6 +290,8 @@ if __name__ == "__main__":
     parser.add_argument("--recipe", type=Path, default=HERE / "recipe.json",
                         help="Use a different pinned source and candidate recipe")
     parser.add_argument("--build-repeats", type=int, default=1)
+    parser.add_argument("--with-host-report", action="store_true",
+                        help="Run a separately measured host report and verify identical artifacts")
     args = parser.parse_args()
     if args.build_repeats < 1:
         parser.error("Choose at least one build repetition.")
