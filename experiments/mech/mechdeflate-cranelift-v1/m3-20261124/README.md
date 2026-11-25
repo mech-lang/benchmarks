@@ -167,3 +167,29 @@ The existing recipe uses two workers. These observations do not establish a
 useful improvement from increasing that count.
 [Raw build observations and telemetry](compile-worker-times/) ·
 [Updated compiler checks and host reports](updated-compiler-checks/)
+
+## Additional root allocation studies
+
+The current compiler's optional root-weight hook was tested against the M3
+instruction samples. The structural-only control reproduced the baseline
+object, descriptor and bytecode exactly. Sample costs were then tested alone
+and blended with the allocator's existing loop estimate. These are allocation
+cost hints, not measured branch frequencies.
+
+No new setting was promoted. The closest pilot, the geometric blend with the
+loop estimate, won all ten protected cases against libdeflate in forward order
+and eight in reverse. Its two-encoder screens measured MR at 0.988939 times
+control and x-ray at 0.995693. Those screens do not establish a peer score or a
+full-suite improvement. Changing root padding did not clear the remaining
+misses. Removing the matcher's write-prefetch hints regressed protected cases
+and was rejected. A fixed-extent no-prefetch variant was prepared but not timed.
+
+A fresh check of the unchanged shipped M1 executable also missed protected
+cases on M3: 9/10 forward and 6/10 reverse against libdeflate. The complete M3
+result remains the conditional-immediate experiment above. An attempted rerun
+that reused an existing output directory failed before timing; it is excluded
+and the fresh `shipped-m1-fixtures-v2` record is used instead.
+
+[Subset summary and decisions](root-allocation-summary.json) ·
+[Root allocation profiles, instruction records, test harness and raw observations](root-allocation-studies.tar.gz) ·
+[Verified member hashes](root-allocation-studies.tar.gz.manifest.json)
