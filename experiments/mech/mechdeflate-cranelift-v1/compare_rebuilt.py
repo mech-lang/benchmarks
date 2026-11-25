@@ -8,6 +8,7 @@ from pathlib import Path
 import platform
 from runpy import run_path
 from statistics import mean, median
+from subprocess import check_output
 
 from rebuild import HERE, PARENT, checked, configuration, configuration_sha256, read, sha, write
 from replay import actor, suite81
@@ -169,9 +170,12 @@ def main():
     out = args.output.resolve()
     out.mkdir(parents=True)
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT
-    binding = {"control": control, "candidate": candidate, "host": {
+    host = {
         "os": platform.system(), "os_version": platform.mac_ver()[0], "architecture": platform.machine(),
-    }}
+    }
+    if host["os"] == "Darwin":
+        host["cpu"] = check_output(["/usr/sbin/sysctl", "-n", "machdep.cpu.brand_string"], text=True).strip()
+    binding = {"control": control, "candidate": candidate, "host": host}
     write(out / "binding.json", binding)
     if args.prepare_only:
         return
