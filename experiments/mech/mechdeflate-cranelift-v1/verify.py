@@ -108,7 +108,7 @@ def verify_inventory(folder, expected, exclude=()):
         checked(file, entry["sha256"])
 
 
-def verify_session(folder, manifest_hash, stage, calibration_hash):
+def verify_session(folder, manifest_hash, stage, calibration_hash, host=None):
     path = folder / "record.json"
     require(path.is_file(), f"Incomplete session retained at {folder}.")
     info = read(path)
@@ -116,6 +116,12 @@ def verify_session(folder, manifest_hash, stage, calibration_hash):
             and info["calibration_sha256"] == calibration_hash and info["session"] == folder.name,
             f"Session binding differs: {folder}")
     require(info["start_utc"] <= info["end_utc"], f"Invalid timestamps: {folder}")
+    if host is not None:
+        require(info["host"] == host, f"Host or toolchain identity differs: {folder}")
+        started = read(folder / "started.json")
+        require(started == {key: info[key] for key in started}
+                and set(started) == {"manifest_sha256", "calibration_sha256", "stage", "session", "start_utc"},
+                f"Session start marker differs: {folder}")
     verify_inventory(folder, info["raw_files"], {"record.json"})
     return info
 
@@ -127,12 +133,12 @@ def session_names(policy, stage):
     return tuple(f"session-{i + 1}" for i in range(policy["sessions"][stage]))
 
 
-def sessions_for(output, policy, stage, manifest_hash, calibration_hash):
+def sessions_for(output, policy, stage, manifest_hash, calibration_hash, host):
     base = output / stage
     names = session_names(policy, stage)
     require(base.is_dir() and set(names) == {item.name for item in base.iterdir()},
             f"Incomplete session inventory for {stage}.")
-    return [(base / name, verify_session(base / name, manifest_hash, stage, calibration_hash))
+    return [(base / name, verify_session(base / name, manifest_hash, stage, calibration_hash, host))
             for name in names]
 
 
@@ -144,7 +150,10 @@ def pinned_bindings(manifest):
         require(tool_commit(Path(actor["source"])) == row["source_commit"],
                 f"Source checkout changed for {label}.")
         checked(Path(actor["build"]) / "compile_profile", row["compiler_sha256"])
-        bindings[label] = row
+        codec = read(PARENT / "mechdeflate-81-v1/recipe.json")["codec_source"]
+        source = Path(actor["source"]) / codec
+        checked(source, row["source_sha256"])
+        bindings[label] = {**row, "codec_source": str(source)}
     return bindings
 
 
@@ -196,7 +205,8 @@ def cycles_for_cases(rows, prefix, cycles, measure):
 def fixture_inputs(folder, pair):
     from replay import capture_fixture_warmups
     archived = read(PARENT / "mechdeflate-81-v1/actors/bindings.json")
-    names = sorted(row["name"] for row in read(folder / "fixtures.json"))
+    order_names = [row["name"] for row in read(folder / "fixtures.json")]
+    names = sorted(order_names)
     require(len(names) == len(set(names)) == 81, "Incomplete fixture inventory.")
     original = (folder / "compare-library.py").read_text()
     timer = original.replace("orders = list(permutations(commands))", "orders = list(permutations(commands)) * 4")
@@ -224,7 +234,8 @@ def fixture_inputs(folder, pair):
         labels, peers = validate_fixture_actor_pins(path, pair)
         rows = run["results"]
         observed_names = [row["case"] for row in rows]
-        require(len(observed_names) == 81 and set(observed_names) == set(names), "Incomplete fixture cases.")
+        require(observed_names == (order_names if order == "forward" else order_names[::-1]),
+                "Fixture case inventory or order differs.")
         peers_by_label = {peer if peer == "libdeflate" else "reference": peer for peer in peers}
         reference = {side: {name: {} for name in peers_by_label} for side in ("control", "candidate")}
         durations = {}
@@ -350,7 +361,7 @@ def compilation_inputs(folder, slots, bindings, numerator, denominator):
                 and sample["configuration_sha256"] == binding["configuration_sha256"]
                 and sample["artifacts"] == binding["artifacts"], "Ordinary compiler sample binding differs.")
         require(sample["command"][:3] == ["/usr/bin/time", "-l", str(Path(binding["build_directory"]) / "compile_profile")]
-                and sample["command"][4:] == [str(path / "frontend"), "compact"],
+                and sample["command"][3:] == [binding["codec_source"], str(path / "frontend"), "compact"],
                 "Ordinary compiler command differs or enables diagnostic instrumentation.")
         rss, = findall(r"(?m)^\s*(\d+)\s+maximum resident set size\s*$", (path / "process.log").read_text())
         require(int(rss) == sample["maximum_resident_bytes"], "Compiler RSS differs from its raw log.")
@@ -419,10 +430,10 @@ def family(sessions, kind):
     return {group: [session[kind][group] for session in sessions] for group in groups}
 
 
-def calculate_calibration(output, policy, manifest_hash, bindings):
+def calculate_calibration(output, policy, manifest_hash, bindings, host):
     selected = {control: [] for control in CONTROLS}
     sessions = {}
-    for folder, record in sessions_for(output, policy, "calibrate", manifest_hash, None):
+    for folder, record in sessions_for(output, policy, "calibrate", manifest_hash, None, host):
         sessions[folder.name] = sha(folder / "record.json")
         for control, metrics in session_metrics(folder, record, bindings, policy).items():
             selected[control].append(metrics)
@@ -435,11 +446,11 @@ def calculate_calibration(output, policy, manifest_hash, bindings):
     }
 
 
-def stage_summary(output, policy, stage, manifest_hash, calibration_hash):
+def stage_summary(output, policy, stage, manifest_hash, calibration_hash, host):
     return {
         "manifest_sha256": manifest_hash, "calibration_sha256": calibration_hash, "stage": stage,
         "sessions": {folder.name: sha(folder / "record.json")
-                     for folder, _ in sessions_for(output, policy, stage, manifest_hash, calibration_hash)},
+                     for folder, _ in sessions_for(output, policy, stage, manifest_hash, calibration_hash, host)},
     }
 
 
@@ -476,21 +487,21 @@ def point_wins(sessions, chip, policy):
             "session_wins": [counts(row) for row in raw]}
 
 
-def calculate_assessment(output, policy, manifest_hash, bindings, seal, calibration_hash, chip):
+def calculate_assessment(output, policy, manifest_hash, bindings, seal, calibration_hash, host):
     sessions = {control: [] for control in CONTROLS}
     records = {}
     for stage in ("qualify", "confirm"):
-        summary = stage_summary(output, policy, stage, manifest_hash, calibration_hash)
+        summary = stage_summary(output, policy, stage, manifest_hash, calibration_hash, host)
         require(summary == read(output / STAGE_FILES[stage]), f"{stage} seal differs.")
         records[stage] = summary["sessions"]
-        for folder, record in sessions_for(output, policy, stage, manifest_hash, calibration_hash):
+        for folder, record in sessions_for(output, policy, stage, manifest_hash, calibration_hash, host):
             for control, values in session_metrics(folder, record, bindings, policy).items():
                 sessions[control].append(values)
     comparisons, decisions = {}, []
     for control, rows in sessions.items():
         runtime = nonregression(simultaneous(family(rows, "runtime")), seal["controls"][control]["runtime"])
         compiler = nonregression(simultaneous(family(rows, "compiler")), seal["controls"][control]["compiler"])
-        refs = point_wins(rows, chip, policy)
+        refs = point_wins(rows, host["qualification_host"], policy)
         decisions.extend((runtime["decision"], compiler["decision"]))
         decisions.extend(result for group in refs["decisions"].values() for result in group.values())
         comparisons[control] = {
@@ -510,18 +521,18 @@ def verify_campaign(path, record):
     bindings = pinned_bindings(manifest)
     calibration_path = output / STAGE_FILES["calibrate"]
     calibration_hash = sha(calibration_path)
-    seal = calculate_calibration(output, policy, digest, bindings)
+    seal = calculate_calibration(output, policy, digest, bindings, manifest["host"])
     require(seal == read(calibration_path), "Calibration does not reproduce from raw sessions.")
     assessment_path = output / STAGE_FILES["assess"]
     if not assessment_path.exists():
         for stage in ("qualify", "confirm"):
             checkpoint = output / STAGE_FILES[stage]
             if checkpoint.exists():
-                require(stage_summary(output, policy, stage, digest, calibration_hash) == read(checkpoint),
+                require(stage_summary(output, policy, stage, digest, calibration_hash, manifest["host"]) == read(checkpoint),
                         f"{stage} seal differs.")
         return {"manifest_sha256": digest, "calibration_sha256": calibration_hash, "assessment": "incomplete"}
     computed = calculate_assessment(output, policy, digest, bindings, seal, calibration_hash,
-                                    manifest["host"]["qualification_host"])
+                                    manifest["host"])
     require(computed == read(assessment_path), "Assessment does not reproduce from raw sessions.")
     return {"manifest_sha256": digest, "calibration_sha256": calibration_hash, "assessment": computed["decision"]}
 

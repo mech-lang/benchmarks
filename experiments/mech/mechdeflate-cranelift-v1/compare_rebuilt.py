@@ -178,6 +178,7 @@ def campaign_host():
         "machine": platform.node(), "os": platform.system(), "os_version": platform.mac_ver()[0],
         "os_build": read_system("/usr/bin/sw_vers", "-buildVersion"),
         "rustc": read_system("rustc", "+" + toolchain, "-vV"),
+        "python": platform.python_version(),
     }
 
 
@@ -258,19 +259,20 @@ def run_campaign(path, stage, calibration_path):
                 "Use this campaign's sealed calibration.")
         calibration_hash = sha(expected)
         seal = read(expected)
-        actual = stage_summary(output, policy, "calibrate", digest, None)
+        actual = stage_summary(output, policy, "calibrate", digest, None, manifest["host"])
         require(seal["stage"] == "calibrate" and seal["manifest_sha256"] == digest
                 and seal["sessions"] == actual["sessions"], "Calibration inputs differ.")
         require(all(set(families) == {"compiler", "runtime"} for families in seal["controls"].values()),
                 "Calibration envelope is incomplete.")
     if stage in ("confirm", "assess"):
-        check = stage_summary(output, policy, "qualify", digest, calibration_hash)
+        check = stage_summary(output, policy, "qualify", digest, calibration_hash, manifest["host"])
         require(check == read(output / STAGE_FILES["qualify"]), "Qualification seal differs.")
-    if stage == "assess":
-        require(seal == calculate_calibration(output, policy, digest, bindings),
+    if stage != "calibrate":
+        require(seal == calculate_calibration(output, policy, digest, bindings, manifest["host"]),
                 "Sealed calibration does not reproduce.")
+    if stage == "assess":
         result = calculate_assessment(output, policy, digest, bindings, seal, calibration_hash,
-                                      manifest["host"]["qualification_host"])
+                                      manifest["host"])
     else:
         require(campaign_host() == manifest["host"], "Expected the pinned qualification machine.")
         ordinary = {label: ordinary_compiler_inputs(Path(actor["source"]), Path(actor["build"]),
@@ -280,13 +282,13 @@ def run_campaign(path, stage, calibration_path):
         for name in session_names(policy, stage):
             folder = output / stage / name
             if folder.exists():
-                verify_session(folder, digest, stage, calibration_hash)
+                verify_session(folder, digest, stage, calibration_hash, manifest["host"])
                 continue
             record_session(folder, manifest, policy, stage, digest, calibration_hash, bindings, ordinary)
         if stage == "calibrate":
-            result = calculate_calibration(output, policy, digest, bindings)
+            result = calculate_calibration(output, policy, digest, bindings, manifest["host"])
         else:
-            result = stage_summary(output, policy, stage, digest, calibration_hash)
+            result = stage_summary(output, policy, stage, digest, calibration_hash, manifest["host"])
     write_new(target, result)
     print(target, result.get("decision", "sealed"), flush=True)
 
