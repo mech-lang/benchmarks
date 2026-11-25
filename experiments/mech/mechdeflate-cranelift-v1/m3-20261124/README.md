@@ -422,3 +422,31 @@ improvement. No additional optimization setting was introduced for this pass.
 [Trial summaries](packing-pairs-studies-summary.json) ·
 [Compiler source, actors and raw screens](packing-pairs-studies.tar.gz) ·
 [Verified member hashes](packing-pairs-studies.tar.gz.manifest.json)
+
+## Sharing packing across conditional stores
+
+Native inspection found that egraph elaboration repeated a packed word's
+mask, shift and OR before a conditional store and again at its join. A bounded
+post-egraph compiler pass shared exact nontrapping scalar expressions when
+their inputs were available before the branch. A second version restricted
+sharing to complete packing trees actually written by the conditional store.
+Both versions retained memory operations, guards and ownership actions in place.
+
+Each version passed 143,360 differential native calls, seven captured-input
+checks, default M1 artifact parity and all 162 codec checks per timed actor.
+The small reproducer emits one packing sequence instead of two. Actual
+compressor objects also remove repeated packing, but introduce additional spill
+traffic elsewhere. Every one of the four timed actors still missed protected
+fixture comparisons. Neither prototype is selected, and the source changes
+were restored.
+
+The archive includes both compiler versions, native selection evidence,
+mechanically transferred profiles and all raw ten-case screens. An initial
+root route-dump build changed native output and failed parity against an
+ordinary capture; it is diagnostic only and was excluded from timing. Ordinary
+matcher/scorer captures reproduce one another exactly. These subset screens
+establish no new complete score or compilation-time improvement.
+
+[Trial summaries](diamond-packing-studies-summary.json) ·
+[Compiler source, actors and raw screens](diamond-packing-studies.tar.gz) ·
+[Verified member hashes](diamond-packing-studies.tar.gz.manifest.json)
