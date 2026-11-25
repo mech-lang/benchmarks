@@ -158,6 +158,9 @@ The direct-4 role took 2.895 s from source through the timing executable with th
 
 ## Compare rebuilt stabilization snapshots
 
+The [stabilization handoff](native-first-batch/README.md) includes all three source pins,
+recipes, qualification records and Apple M3 commands.
+
 Use clean source checkouts and one recipe per snapshot. Start Frozen with the
 [winning recipe](word-mismatch-order/recipe.json). The Reconciled pin includes
 only the stack integration. The Configured pin adds explicit compiler inputs
@@ -177,10 +180,10 @@ python3 "$packet/rebuild.py" --recipe "$recipe" --mech-root "$source_tree" \
 ```
 
 Run the three paired comparisons on a quiet machine, using the full pinned
-Silesia corpus. Here `evidence` contains the three recipe directories and
-`builds` contains the corresponding rebuild directories.
+Silesia corpus. Set `builds` to the directory containing the three rebuilds.
 
 ```sh
+evidence="$packet/native-first-batch/evidence"
 compare() {
   control=$1
   candidate=$2

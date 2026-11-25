@@ -1,0 +1,78 @@
+
+running 1 test
+
+thread 'tests::general_numeric_addresses_emit_one_machine_division' (59502917) panicked at evidence/reconciled/numeric-address-baseline.rs:170:13:
+assertion `left == right` failed: width=1
+  unwind Aarch64SetPointerAuth { return_addresses: false }
+block0:
+  subs xzr, x1, #1
+  cset x14, eq
+  subs xzr, x2, #1
+  cset x15, eq
+  orr w15, w14, w15
+  uxtb w15, w15
+  cbnz x15, label1 ; b label2
+block1:
+  b label3
+block2:
+  cbz x1, #trap=int_divz
+  udiv x4, x0, x1
+  msub x0, x4, x1, x0
+  madd x0, x0, x2, x4
+  b label3
+block3:
+  add x0, x3, x0
+  ret
+;; REGALLOC_INPUT_BEGIN
+VCode {
+  Entry block: 0
+Block 0([]):
+    (original IR block: block0)
+    (successor: Block 1([]))
+    (successor: Block 2([]))
+  Inst 0: args %v192=x0 %v193=x1 %v194=x2 %v195=x3
+  Inst 1: subs xzr, %v193, #1
+  Inst 2: cset %v214, eq
+  Inst 3: subs xzr, %v194, #1
+  Inst 4: cset %v213, eq
+  Inst 5: orr %v212, %v214, %v213
+  Inst 6: uxtb %v211, %v212
+  Inst 7: cbnz %v211, label1 ; b label2
+Block 1([]):
+    (successor: Block 3([VReg(vreg = 192, class = Int)]))
+  Inst 8: b label3
+Block 2([]):
+    (original IR block: block1)
+    (successor: Block 3([VReg(vreg = 208, class = Int)]))
+  Inst 9: cbz %v193, #trap=int_divz
+  Inst 10: udiv %v210, %v192, %v193
+  Inst 11: msub %v209, %v210, %v193, %v192
+  Inst 12: madd %v208, %v209, %v194, %v210
+  Inst 13: b label3
+Block 3([VReg(vreg = 205, class = Int)]):
+    (original IR block: block2)
+  Inst 14: add %v207, %v195, %v205
+  Inst 15: rets %v207=x0
+}
+
+Register operands: [Def: v192i fixed(p0i), Def: v193i fixed(p1i), Def: v194i fixed(p2i), Def: v195i fixed(p3i), Use: v193i reg, Def: v214i reg, Use: v194i reg, Def: v213i reg, Def: v212i reg, Use: v214i reg, Use: v213i reg, Def: v211i reg, Use: v212i reg, Use: v211i reg, Use: v193i reg, Def: v210i reg, Use: v192i reg, Use: v193i reg, Def: v209i reg, Use: v210i reg, Use: v193i reg, Use: v192i reg, Def: v208i reg, Use: v209i reg, Use: v194i reg, Use: v210i reg, Def: v207i reg, Use: v195i reg, Use: v205i reg, Use: v207i fixed(p0i)]
+Register types: [types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::INVALID, types::I64, types::I64, types::I64, types::I64, types::I64, types::I8, types::I8, types::I8, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64, types::I64]
+Clobbers: []
+;; REGALLOC_INPUT_END
+;; REGALLOC_BLOCK 0 offset=0 ir=Some(block0) successors=[Block(1), Block(2)]
+;; REGALLOC_BLOCK 1 offset=44 ir=None successors=[Block(3)]
+;; REGALLOC_BLOCK 2 offset=28 ir=Some(block1) successors=[Block(3)]
+;; REGALLOC_BLOCK 3 offset=44 ir=Some(block2) successors=[]
+
+  left: 2
+ right: 1
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+test tests::general_numeric_addresses_emit_one_machine_division ... FAILED
+
+failures:
+
+failures:
+    tests::general_numeric_addresses_emit_one_machine_division
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+

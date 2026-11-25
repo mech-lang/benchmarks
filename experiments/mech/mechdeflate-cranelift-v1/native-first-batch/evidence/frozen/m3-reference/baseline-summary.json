@@ -1,0 +1,97 @@
+{
+  "scope": "Complete unmodified M1-winning recipe, locally rebuilt and measured on Apple M3. Exploratory screens are separate.",
+  "source_commit": "35784003b9149fe8059fa83dd5d0aff10dbcd631",
+  "benchmark_commit": "fc7f8d82dc56321eecdf1e00d5ad48514cb504ad",
+  "host": "Apple M3; macOS 26.2 (25C56); arm64; 16 GB RAM",
+  "source_sha256": "653597f08f889908c48610e90aa65e94a77847fb34500d0cc3a046f83cd3d299",
+  "fixtures": {
+    "forward": {
+      "roc": 81,
+      "libdeflate": 80,
+      "losses": [
+        {
+          "case": "16384-distribution-change",
+          "peer": "libdeflate",
+          "ratio": 1.0133092539243307
+        }
+      ]
+    },
+    "reverse": {
+      "roc": 81,
+      "libdeflate": 80,
+      "losses": [
+        {
+          "case": "16384-distribution-change",
+          "peer": "libdeflate",
+          "ratio": 1.0503389964972263
+        }
+      ]
+    }
+  },
+  "silesia": {
+    "mech_paired_wins": {
+      "libdeflate": 11,
+      "roc": 12
+    },
+    "mech_wins_in_both_orders": {
+      "libdeflate": 11,
+      "roc": 12
+    },
+    "identical_all_three_streams": 12
+  },
+  "build_receipt": {
+    "source_commit": "35784003b9149fe8059fa83dd5d0aff10dbcd631",
+    "compiler_sha256": "ed136430899c068f2ba2157af4081e3edc14dd3c7e057779c0762d611f7dec68",
+    "runtime_sha256": "f1753c50aa6649bf6db5e31b10dd49c7f68353921d488e937eec2d976759d026",
+    "artifacts": {
+      "program.o": "e4325602c6a5a4507ba637eee5d34ada9bda77bbb334fefb8ff53324d720e214",
+      "metadata.json": "c2448f4197863733301810dca0e8d721d1932afa32b5172e933843b07e2464ef",
+      "program.mecb": "c6529d934f020f07f8e59f13fab40927e066649e202269818ad3f009a942a8c3"
+    },
+    "worker_sha256": "2cdfd18555adf82c8016e262f1915ea1e09508c6b49dbded1d169a5fa75e71a2",
+    "silesia_actor_sha256": "736cb340b3b977aed6cb2c192e305647ff6041bdcf4a8395b05afffa1bfa1248",
+    "measurements": [
+      {
+        "source_through_executable_seconds": 3.424791832920164,
+        "source_through_object_seconds": 2.7117745405994356,
+        "worker_link_seconds": 0.7130172923207283
+      }
+    ],
+    "encoder_command": [
+      "/private/tmp/mech-m3-81-20261124/target/release/compile_profile",
+      "/Users/cim310/.codex/worktrees/level12-compile-profile/mech/hosts/gpu/tests/fixtures/native/compact-compiler-regression.mec",
+      "/private/tmp/mech-m3-cranelift-20261124/build/word-mismatch-order/frontend",
+      "compact"
+    ],
+    "worker_command": [
+      "rustc",
+      "+nightly-2026-03-03",
+      "--edition=2024",
+      "-C",
+      "opt-level=3",
+      "-D",
+      "warnings",
+      "-L",
+      "dependency=/private/tmp/mech-m3-81-20261124/target/release/deps",
+      "/private/tmp/mech-m3-cranelift-20261124/build/word-mismatch-order/bound/mech-worker.rs",
+      "-o",
+      "/private/tmp/mech-m3-cranelift-20261124/build/word-mismatch-order/bound/mech-worker",
+      "-C",
+      "link-arg=/private/tmp/mech-m3-deflate-81-benchmarks/experiments/mech/mechdeflate-cranelift-v1/support/mimalloc-2.1.7.o",
+      "-C",
+      "link-arg=/private/tmp/mech-m3-cranelift-20261124/build/word-mismatch-order/bound/program.o",
+      "--extern",
+      "serde=/private/tmp/mech-m3-81-20261124/target/release/deps/libserde-2456c0391d15d182.rlib",
+      "--extern",
+      "serde_json=/private/tmp/mech-m3-81-20261124/target/release/deps/libserde_json-fcf6d49dea77c577.rlib",
+      "--extern",
+      "mech_engine=/private/tmp/mech-m3-81-20261124/target/release/deps/libmech_engine-3a3fc71407b449b6.rlib",
+      "--extern",
+      "miniz_oxide=/private/tmp/mech-m3-81-20261124/target/release/deps/libminiz_oxide-f1b9f0d26c9f2c59.rlib",
+      "--extern",
+      "mech_gpu=/private/tmp/mech-m3-cranelift-20261124/build/libmech_gpu_runtime.rlib"
+    ]
+  },
+  "fixture_calls_both_orders": 1965312,
+  "corpus_files_verified": 12
+}
