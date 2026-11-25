@@ -114,6 +114,130 @@ def host_report(emit, root, env, variant, recipe, role, compiler):
     return {"path": str(path), "sha256": sha(path)}
 
 
+def effective_settings(flags, role, path_settings):
+    selected = flags.copy()
+    profiles = role.get("profile_inputs_sha256", {})
+    used_profiles = set()
+    for key, value in role["settings_delta"].items():
+        if value is None:
+            del selected[key]
+        elif key == "MECH_COMPACT_ROOT_TAIL_PROFILE":
+            path = HERE / value
+            checked(path, profiles[value])
+            used_profiles.add(value)
+            selected[key] = str(path)
+        elif key in path_settings:
+            entries = []
+            for entry in value.split(";"):
+                symbol, relative = entry.split("@", 1)
+                path = HERE / relative
+                checked(path, profiles[relative])
+                used_profiles.add(relative)
+                entries.append(f"{symbol}@{path}")
+            selected[key] = ";".join(entries)
+        else:
+            selected[key] = value
+    if used_profiles != profiles.keys():
+        raise ValueError("The role and profile manifest describe different files.")
+    return selected
+
+
+def ordinary_compiler_inputs(root, build, recipe_path, packets):
+    """Bind the fixed source, ordinary compiler and effective recipe settings."""
+    recipe = read(recipe_path)
+    base = packets / "mechdeflate-81-v1"
+    checked(base / "recipe.json", recipe["base_recipe_sha256"])
+    original = read(base / "recipe.json")
+    original["source_commit"] = recipe["source_commit"]
+    helpers = run_path(str(base / "rebuild.py"))
+    source = helpers["check_checkout"](root, original)
+    role = recipe["roles"][recipe["candidate_actor"]]
+    flags = effective_settings(helpers["load_flags"](original), role, helpers["PATH_SETTINGS"])
+    receipt = read(build / recipe["candidate_actor"] / "receipt.json")
+    compiler = build / "compile_profile"
+    checked(compiler, receipt["compiler_sha256"])
+    checked(recipe_path, receipt["recipe_sha256"])
+    if receipt["source_commit"] != recipe["source_commit"]:
+        raise ValueError("Ordinary compiler inputs do not match the bound source.")
+    for path, digest in recipe["inputs_sha256"].items():
+        checked(HERE / path, digest)
+    environment = {key: value for key, value in os.environ.items() if not key.upper().startswith("MECH_")}
+    return root, [compiler, source, original["encoder_mode"]], environment | flags, receipt
+
+
+def measure_ordinary_compiler(folder, inputs):
+    """Measure one fresh subprocess from source entry through artifact emission."""
+    root, (compiler, source, mode), environment, receipt = inputs
+    folder.mkdir(parents=True)
+    output = folder / "frontend"
+    log = folder / "process.log"
+    command = ["/usr/bin/time", "-l", compiler, source, output, mode]
+    with log.open("x") as stream:
+        start = time.perf_counter_ns()
+        subprocess.run(command, cwd=root, env=environment, stdout=stream,
+                       stderr=subprocess.STDOUT, check=True)
+        elapsed = time.perf_counter_ns() - start
+    for name, digest in receipt["artifacts"].items():
+        checked(output / name, digest)
+    rss, = re.findall(r"(?m)^\s*(\d+)\s+maximum resident set size\s*$", log.read_text())
+    return {
+        "command": list(map(str, command)),
+        "elapsed_ns": elapsed,
+        "maximum_resident_bytes": int(rss),
+        "compiler_sha256": receipt["compiler_sha256"],
+        "configuration_sha256": receipt["configuration_sha256"],
+        "artifacts": receipt["artifacts"],
+    }
+
+
+QUALIFIED_ENCODER_TEST = (
+    "native_artifact::program::compilation_report::tests::"
+    "qualified_encoder_profile_resolution_and_retry"
+)
+
+
+def qualify_encoder(root, recipe_path, bench_root, output, target=None):
+    """Run and record the maintained ignored test as an exact selection."""
+    output.mkdir(parents=True)
+    recipe = read(recipe_path)
+    rust = read(bench_root / "experiments/mech/mechdeflate-81-v1/recipe.json")["compiler"]["toolchain"]
+    command = ["cargo", "+" + rust, "test", "--locked", "--offline", "-p", "mech-gpu",
+               "--no-default-features", "--features", "canonical-native-program", "--lib"]
+    if target is not None:
+        command += ["--target-dir", str(target)]
+    selection = ["--ignored", "--exact", QUALIFIED_ENCODER_TEST]
+    list_command = command + ["--", "--list", *selection]
+    test_command = command + ["--", *selection, "--test-threads=1"]
+    qualification_env = {"NATIVE_COMPILER_QUALIFICATION_RECIPE": str(recipe_path),
+                         "NATIVE_COMPILER_BENCH_ROOT": str(bench_root)}
+    environment = {key: value for key, value in os.environ.items() if not key.upper().startswith("MECH_")}
+    environment.update(qualification_env)
+    pin = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, text=True).strip()
+    if pin != recipe["source_commit"]:
+        raise ValueError("Qualification test source does not match the recipe.")
+    receipt = {
+        "source_commit": pin, "recipe_sha256": sha(recipe_path), "toolchain": rust,
+        "selection": QUALIFIED_ENCODER_TEST, "list_command": list_command,
+        "test_command": test_command, "inputs": qualification_env,
+        "selected": 0, "passed": 0,
+    }
+    try:
+        line = QUALIFIED_ENCODER_TEST + ": test"
+        listed = output / "selected.log"
+        run(list_command, listed, environment, root)
+        receipt["selected"] = listed.read_text().splitlines().count(line)
+        if receipt["selected"] != 1:
+            raise ValueError("Expected exactly one selected ignored encoder test.")
+        log = output / "test.log"
+        run(test_command, log, environment, root)
+        receipt["passed"] = int("test result: ok. 1 passed; 0 failed" in log.read_text())
+        if receipt["passed"] != 1:
+            raise ValueError("The exact ignored encoder test did not pass.")
+    finally:
+        write(output / "qualification-receipt.json", receipt)
+    return receipt
+
+
 def build(args):
     root, output = args.mech_root.resolve(strict=True), args.output.resolve()
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT
@@ -206,30 +330,7 @@ def build(args):
     for name, role in recipe["roles"].items():
         variant = output / name
         variant.mkdir()
-        selected = flags.copy()
-        profiles = role.get("profile_inputs_sha256", {})
-        used_profiles = set()
-        for key, value in role["settings_delta"].items():
-            if value is None:
-                del selected[key]
-            elif key == "MECH_COMPACT_ROOT_TAIL_PROFILE":
-                path = HERE / value
-                checked(path, profiles[value])
-                used_profiles.add(value)
-                selected[key] = str(path)
-            elif key in helpers["PATH_SETTINGS"]:
-                entries = []
-                for entry in value.split(";"):
-                    symbol, relative = entry.split("@", 1)
-                    path = HERE / relative
-                    checked(path, profiles[relative])
-                    used_profiles.add(relative)
-                    entries.append(f"{symbol}@{path}")
-                selected[key] = ";".join(entries)
-            else:
-                selected[key] = value
-        if used_profiles != profiles.keys():
-            raise ValueError(f"{name}: the role and profile manifest describe different files.")
+        selected = effective_settings(flags, role, helpers["PATH_SETTINGS"])
         bound = variant / "bound"
         bound.mkdir()
         for file in ("mech-worker.rs", "pinned_allocator.rs"):
@@ -292,7 +393,13 @@ if __name__ == "__main__":
     parser.add_argument("--build-repeats", type=int, default=1)
     parser.add_argument("--with-host-report", action="store_true",
                         help="Run a separately measured host report and verify identical artifacts")
+    parser.add_argument("--qualify-encoder", type=Path, metavar="EVIDENCE",
+                        help="Also run the exact maintained ignored encoder test")
     args = parser.parse_args()
     if args.build_repeats < 1:
         parser.error("Choose at least one build repetition.")
     build(args)
+    if args.qualify_encoder is not None:
+        qualify_encoder(args.mech_root.resolve(), args.recipe.resolve(),
+                        args.bench_root.resolve() if args.bench_root else HERE.parents[2],
+                        args.qualify_encoder.resolve(), args.target_dir)

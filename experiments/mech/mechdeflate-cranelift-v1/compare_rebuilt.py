@@ -2,7 +2,9 @@
 
 from argparse import ArgumentParser
 from collections import Counter
+from datetime import datetime, timezone
 from itertools import permutations
+import json
 from math import exp, log
 from pathlib import Path
 import platform
@@ -10,8 +12,9 @@ from runpy import run_path
 from statistics import mean, median
 from subprocess import check_output
 
-from rebuild import HERE, PARENT, checked, configuration, configuration_sha256, read, sha, write
-from replay import actor, suite81
+from rebuild import (HERE, PARENT, checked, configuration, configuration_sha256,
+                     measure_ordinary_compiler, ordinary_compiler_inputs, read, sha, write)
+from replay import actor, silesia, suite81
 
 
 PAIRS = (("frozen", "reconciled"), ("reconciled", "configured"), ("frozen", "configured"))
@@ -70,10 +73,11 @@ def bind(label, build, recipe_path):
     }
 
 
-def compare81(out, packets, control, candidate):
+def compare81(out, packets, control, candidate, *, retain_warmups=False):
     out.mkdir()
     suite81(out, packets, Path(candidate["build_directory"]), Path(control["build_directory"]),
-            control["role"], candidate["role"], labels=(control["label"], candidate["label"]))
+            control["role"], candidate["role"], labels=(control["label"], candidate["label"]),
+            retain_warmups=retain_warmups)
     results = out / "cranelift-results.json"
     runs = read(results)["runs"]
     paths = {}
@@ -143,20 +147,178 @@ def compare_silesia(out, packets, corpus, control, candidate):
             "verification": str(verification), "verification_sha256": sha(verification)}
 
 
+def require_pair(control, candidate, *, calibration):
+    if calibration:
+        if {key: value for key, value in control.items() if key != "label"} != {
+            key: value for key, value in candidate.items() if key != "label"
+        }:
+            raise ValueError("Calibration roles must bind the same complete control build.")
+    elif (control["build_directory"] == candidate["build_directory"]
+          or control["source_commit"] == candidate["source_commit"]):
+        raise ValueError("Supply separately rebuilt compiler trees at their distinct source pins.")
+
+
+def utc_now():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def campaign_host():
+    if (platform.system(), platform.machine()) != ("Darwin", "arm64"):
+        raise ValueError("Timing requires Apple Silicon macOS.")
+    def read_system(*command):
+        return check_output(command, text=True).strip()
+    chip = read_system("/usr/sbin/sysctl", "-n", "machdep.cpu.brand_string")
+    roles = [name for name in ("M1", "M3") if name in chip.split()]
+    if len(roles) != 1:
+        raise ValueError(f"No qualification policy for {chip}.")
+    toolchain = read(PARENT / "mechdeflate-81-v1/recipe.json")["compiler"]["toolchain"]
+    return {
+        "qualification_host": roles[0], "cpu": chip, "architecture": platform.machine(),
+        "model": read_system("/usr/sbin/sysctl", "-n", "hw.model"),
+        "machine": platform.node(), "os": platform.system(), "os_version": platform.mac_ver()[0],
+        "os_build": read_system("/usr/bin/sw_vers", "-buildVersion"),
+        "rustc": read_system("rustc", "+" + toolchain, "-vV"),
+    }
+
+
+def write_new(path, value):
+    with path.open("x") as stream:
+        json.dump(value, stream, indent=2)
+        stream.write("\n")
+
+
+def compiler_session(folder, slots, compiler_inputs):
+    folder.mkdir()
+    warmup = {slot: measure_ordinary_compiler(folder / "warmup" / slot, compiler_inputs[actor])
+              for slot, actor in slots.items()}
+    blocks = []
+    for index, sequence in enumerate(permutations(slots), 1):
+        results = {slot: measure_ordinary_compiler(folder / f"block-{index}" / slot, compiler_inputs[slots[slot]])
+                   for slot in sequence}
+        blocks.append({"order": list(sequence), "samples": results})
+    write_new(folder / "observations.json", {"slots": slots, "warmup": warmup, "blocks": blocks})
+
+
+def record_session(folder, manifest, policy, stage, digest, calibration_hash, bindings, compiler_inputs):
+    from verify import CONTROLS, expected_pair, inventory, require, session_metrics
+    actual_host = campaign_host()
+    require(actual_host == manifest["host"], "Campaign host or toolchain changed.")
+    folder.mkdir()
+    start = utc_now()
+    write_new(folder / "started.json", {"manifest_sha256": digest, "calibration_sha256": calibration_hash,
+                                       "stage": stage, "session": folder.name, "start_utc": start})
+    aa = stage == "calibrate"
+    controls = (folder.name.rsplit("-", 1)[0],) if aa else CONTROLS
+    compilation = policy["compilation"]
+    slots = (dict.fromkeys(compilation["calibration_slots"], controls[0]) if aa
+             else {name: name for name in compilation["performance_slots"]})
+    compiler_session(folder / "compiler", slots, compiler_inputs)
+    paired = folder / "pairs"
+    paired.mkdir()
+    corpus = Path(manifest["corpus"])
+    pairs, reference_replay = {}, {}
+    for control in controls:
+        pair = expected_pair(bindings, control, stage)
+        left, right = pair["control"], pair["candidate"]
+        pairs[control] = pair
+        reference_replay[control] = {"control": control, "candidate": control if aa else "candidate"}
+        pair_folder = paired / control
+        pair_folder.mkdir()
+        compare81(pair_folder / "suite81", PARENT, left, right, retain_warmups=True)
+        compare_silesia(pair_folder / "silesia", PARENT, corpus, left, right)
+    reference_dir = folder / "references"
+    reference_dir.mkdir()
+    for label in dict.fromkeys(slots.values()):
+        bound = bindings[label]
+        silesia(reference_dir / label, PARENT, Path(bound["build_directory"]), corpus, bound["role"])
+
+    require(campaign_host() == actual_host, "Campaign host changed during the session.")
+    record = {
+        "manifest_sha256": digest, "calibration_sha256": calibration_hash, "stage": stage,
+        "session": folder.name, "start_utc": start, "end_utc": utc_now(), "host": actual_host,
+        "pair_bindings": pairs, "reference_replay": reference_replay,
+        "raw_files": inventory(folder),
+    }
+    session_metrics(folder, record, bindings, policy)
+    write_new(folder / "record.json", record)
+
+
+def run_campaign(path, stage, calibration_path):
+    from verify import (STAGE_FILES, calculate_assessment, calculate_calibration, load_campaign,
+                        pinned_bindings, require, session_names, stage_summary, verify_session)
+    manifest, digest, output, policy = load_campaign(path)
+    bindings = pinned_bindings(manifest)
+    target = output / STAGE_FILES[stage]
+    require(not target.exists(), f"Completed stage is retained at {target}.")
+    seal = None
+    calibration_hash = None
+    if stage != "calibrate":
+        expected = output / STAGE_FILES["calibrate"]
+        require(calibration_path is not None and calibration_path.resolve() == expected.resolve(),
+                "Use this campaign's sealed calibration.")
+        calibration_hash = sha(expected)
+        seal = read(expected)
+        actual = stage_summary(output, policy, "calibrate", digest, None)
+        require(seal["stage"] == "calibrate" and seal["manifest_sha256"] == digest
+                and seal["sessions"] == actual["sessions"], "Calibration inputs differ.")
+        require(all(set(families) == {"compiler", "runtime"} for families in seal["controls"].values()),
+                "Calibration envelope is incomplete.")
+    if stage in ("confirm", "assess"):
+        check = stage_summary(output, policy, "qualify", digest, calibration_hash)
+        require(check == read(output / STAGE_FILES["qualify"]), "Qualification seal differs.")
+    if stage == "assess":
+        require(seal == calculate_calibration(output, policy, digest, bindings),
+                "Sealed calibration does not reproduce.")
+        result = calculate_assessment(output, policy, digest, bindings, seal, calibration_hash,
+                                      manifest["host"]["qualification_host"])
+    else:
+        require(campaign_host() == manifest["host"], "Expected the pinned qualification machine.")
+        ordinary = {label: ordinary_compiler_inputs(Path(actor["source"]), Path(actor["build"]),
+                                                     Path(actor["recipe"]), PARENT)
+                    for label, actor in manifest["actors"].items()}
+        (output / stage).mkdir(parents=True, exist_ok=True)
+        for name in session_names(policy, stage):
+            folder = output / stage / name
+            if folder.exists():
+                verify_session(folder, digest, stage, calibration_hash)
+                continue
+            record_session(folder, manifest, policy, stage, digest, calibration_hash, bindings, ordinary)
+        if stage == "calibrate":
+            result = calculate_calibration(output, policy, digest, bindings)
+        else:
+            result = stage_summary(output, policy, stage, digest, calibration_hash)
+    write_new(target, result)
+    print(target, result.get("decision", "sealed"), flush=True)
+
+
 def main():
     parser = ArgumentParser(description=__doc__)
     for side in ("control", "candidate"):
-        parser.add_argument(f"--{side}", required=True, choices=("frozen", "reconciled", "configured"))
-        parser.add_argument(f"--{side}-build", required=True, type=Path)
-        parser.add_argument(f"--{side}-recipe", required=True, type=Path)
-    parser.add_argument("--output", required=True, type=Path)
+        parser.add_argument(f"--{side}", choices=("frozen", "reconciled", "configured"))
+        parser.add_argument(f"--{side}-build", type=Path)
+        parser.add_argument(f"--{side}-recipe", type=Path)
+    parser.add_argument("--output", type=Path)
     parser.add_argument("--bench-root", type=Path)
     parser.add_argument("--corpus", type=Path)
     parser.add_argument("--suite", choices=("81", "silesia", "all"), default="all")
     parser.add_argument("--prepare-only", action="store_true", help="Verify the rebuilt actors and write bindings")
+    parser.add_argument("--campaign", type=Path, help="Immutable native route campaign manifest")
+    parser.add_argument("--stage", choices=("calibrate", "qualify", "confirm", "assess"))
+    parser.add_argument("--calibration", type=Path, help="The sealed calibration for this campaign")
     args = parser.parse_args()
     if not __debug__:
         parser.error("Use Python with assertions enabled.")
+    if args.campaign is not None:
+        if args.stage is None:
+            parser.error("--campaign requires --stage.")
+        run_campaign(args.campaign.resolve(), args.stage, args.calibration)
+        return
+    if args.stage is not None or args.calibration is not None:
+        parser.error("--stage and --calibration require --campaign.")
+    for name in ("output", "control", "control_build", "control_recipe",
+                 "candidate", "candidate_build", "candidate_recipe"):
+        if getattr(args, name) is None:
+            parser.error(f"--{name.replace('_', '-')} is required for a legacy comparison.")
     if (args.control, args.candidate) not in PAIRS:
         parser.error("Choose reconciled versus frozen, configured versus reconciled or configured versus frozen.")
     if args.suite != "81" and not args.prepare_only and args.corpus is None:
@@ -165,8 +327,7 @@ def main():
         parser.error("Timing requires Apple Silicon macOS.")
     control = bind(args.control, args.control_build.resolve(strict=True), args.control_recipe.resolve(strict=True))
     candidate = bind(args.candidate, args.candidate_build.resolve(strict=True), args.candidate_recipe.resolve(strict=True))
-    if control["build_directory"] == candidate["build_directory"] or control["source_commit"] == candidate["source_commit"]:
-        parser.error("Supply separately rebuilt compiler trees at their distinct source pins.")
+    require_pair(control, candidate, calibration=False)
     out = args.output.resolve()
     out.mkdir(parents=True)
     packets = args.bench_root.resolve() / "experiments/mech" if args.bench_root else PARENT

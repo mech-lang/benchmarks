@@ -1,0 +1,33 @@
+{
+  "schema": "mech.native-route-campaign-policy.v1",
+  "sessions": {"calibrate_per_control": 3, "qualify": 3, "confirm": 3},
+  "timing": {
+    "orders": ["forward", "reverse"],
+    "fixtures": {"cases": 81, "cycles": 4, "permutations": 24},
+    "silesia_pair": {"cases": 12, "cycles": 3, "permutations": 2},
+    "silesia_references": {"cases": 12, "cycles": 1, "permutations": 6},
+    "compiler": {"cycles": 1, "permutations": 6}
+  },
+  "bootstrap": {
+    "seed": 1296384840,
+    "replicates": 20000,
+    "interval_probability": 0.95,
+    "resolution_probability": 0.99,
+    "quantiles": "conservative nearest rank",
+    "unit": "whole sessions then complete permutation cycles",
+    "shared_indices": "sessions across groups, cycle indices across cases in each suite and order"
+  },
+  "compilation": {
+    "calibration_slots": ["control", "candidate", "third"],
+    "calibration_denominator": "control",
+    "calibration_numerator": "candidate",
+    "performance_slots": ["reviewed", "closeout", "candidate"],
+    "boundary": "fresh ordinary compiler process, source through object, elapsed and maximum resident bytes"
+  },
+  "boundaries": {
+    "fixtures": "private heap initialization through closed compression, output acquisition and heap cleanup",
+    "silesia": "one level-12 deploy_encode call with preloaded input"
+  },
+  "comparisons": [["candidate", "closeout"], ["candidate", "reviewed"]],
+  "reference_targets": {"M1": {"fixtures": 81, "silesia": 12}, "M3": "retain corresponding control wins"}
+}

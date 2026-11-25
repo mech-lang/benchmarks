@@ -18,6 +18,9 @@ The [merge map](stack.tsv) records the parent pins used for the reconciliation.
 
 ## Rebuild on Apple M3
 
+Historical checkout pin correction: use benchmark revision
+`f9eb6c48905ff02e2a5771d1812f6bb42598a57f` for the replay commands below.
+
 Use Apple Silicon macOS with Apple Command Line Tools, Python 3.12 or later,
 and Rustup. Run these commands in a folder where you can create two checkouts.
 
@@ -26,6 +29,7 @@ git clone --filter=blob:none --single-branch --branch codex/m3-deflate-81 \
   https://github.com/mech-lang/mech.git mech-stabilization
 git clone --filter=blob:none --sparse --single-branch --branch codex/m3-deflate-81 \
   https://github.com/mech-lang/benchmarks.git benchmarks-stabilization
+git -C benchmarks-stabilization checkout --detach f9eb6c48905ff02e2a5771d1812f6bb42598a57f
 git -C benchmarks-stabilization sparse-checkout set \
   experiments/mech/mechdeflate-cranelift-v1 \
   experiments/mech/mechdeflate-81-v1 \

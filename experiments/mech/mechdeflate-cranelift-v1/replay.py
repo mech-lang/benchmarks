@@ -19,13 +19,35 @@ def actor(build, role, filename):
     return path
 
 
-def suite81(out, packets, build, control_build, control, candidate, labels=None):
+def capture_fixture_warmups(program):
+    patches = (
+        ("        for actor in warmup_order:",
+         "        warmups = {}\n        for actor in warmup_order:"),
+        ("            assert valid(json.loads(worker.line()),case,actor)['warmup']",
+         "            observation = valid(json.loads(worker.line()),case,actor)\n"
+         "            assert observation['warmup']\n"
+         "            warmups[actor] = dict(calls=int(calls), seconds=float(seconds), "
+         "observation=observation)"),
+        ("        persist(lambda:(folder/'observations.json.gz').write_bytes(compressed))",
+         "        persist(lambda:(folder/'observations.json.gz').write_bytes(compressed))\n"
+         "        persist(lambda:(folder/'warmups.json').write_text(json.dumps(warmups)+'\\n'))"),
+    )
+    for old, new in patches:
+        if program.count(old) != 1:
+            raise ValueError("Pinned fixture warmup recording anchor changed.")
+        program = program.replace(old, new)
+    return program
+
+
+def suite81(out, packets, build, control_build, control, candidate, labels=None, *, retain_warmups=False):
     previous = packets / "mechdeflate-81-v1"
     routes = packets / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
     helpers = run_path(str(routes / "replay_timings.py"))
     reference = run_path(str(previous / "replay_timings.py"))["prepare"](out, helpers)
     controller = out / "controller.py"
+    if retain_warmups:
+        controller.write_text(capture_fixture_warmups(controller.read_text()))
     bindings = [actor(control_build, control, "bound/mech-worker").parent,
                 actor(build, candidate, "bound/mech-worker").parent]
     runs = []
