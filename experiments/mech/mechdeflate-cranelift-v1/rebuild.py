@@ -211,7 +211,7 @@ def build(args):
         used_profiles = set()
         for key, value in role["settings_delta"].items():
             if value is None:
-                del selected[key]
+                selected.pop(key, None)
             elif key == "MECH_COMPACT_ROOT_TAIL_PROFILE":
                 path = HERE / value
                 checked(path, profiles[value])

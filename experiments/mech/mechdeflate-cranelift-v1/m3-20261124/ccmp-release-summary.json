@@ -1,0 +1,127 @@
+{
+  "source_commit": "f15ebb6e818a8ce234575d3225af36203e442d23",
+  "benchmark_commit": "77a56ebc15e5ab2426d95cea47afb3c24175a9e4",
+  "recipe": "ccmp-release-recipe.json",
+  "timing_eligible": true,
+  "fixtures": {
+    "forward": {
+      "mech-control": {
+        "wins": {
+          "roc": 81,
+          "libdeflate": 78
+        },
+        "misses_vs_libdeflate": [
+          {
+            "case": "16384-distribution-change",
+            "ratio": 1.068424586120594
+          },
+          {
+            "case": "reymont-prefix-1024",
+            "ratio": 1.0570852351982325
+          },
+          {
+            "case": "prefix-natural-1024",
+            "ratio": 1.0550173685543929
+          }
+        ]
+      },
+      "mech-experiment": {
+        "wins": {
+          "roc": 81,
+          "libdeflate": 78
+        },
+        "misses_vs_libdeflate": [
+          {
+            "case": "16384-distribution-change",
+            "ratio": 1.041368258316581
+          },
+          {
+            "case": "reymont-prefix-1024",
+            "ratio": 1.0171530432290905
+          },
+          {
+            "case": "prefix-natural-1024",
+            "ratio": 1.0076765225431112
+          }
+        ]
+      }
+    },
+    "reverse": {
+      "mech-control": {
+        "wins": {
+          "roc": 81,
+          "libdeflate": 77
+        },
+        "misses_vs_libdeflate": [
+          {
+            "case": "prefix-natural-1024",
+            "ratio": 1.0083280787599576
+          },
+          {
+            "case": "heldout-random-65537",
+            "ratio": 1.002624332827579
+          },
+          {
+            "case": "reymont-prefix-1024",
+            "ratio": 1.0082136748111183
+          },
+          {
+            "case": "16384-distribution-change",
+            "ratio": 1.0644639266125557
+          }
+        ]
+      },
+      "mech-experiment": {
+        "wins": {
+          "roc": 81,
+          "libdeflate": 78
+        },
+        "misses_vs_libdeflate": [
+          {
+            "case": "prefix-natural-1024",
+            "ratio": 1.0046450661011208
+          },
+          {
+            "case": "reymont-prefix-1024",
+            "ratio": 1.0059207549091347
+          },
+          {
+            "case": "16384-distribution-change",
+            "ratio": 1.06808427836274
+          }
+        ]
+      }
+    }
+  },
+  "silesia": {
+    "forward": {
+      "wins": {
+        "roc": 12,
+        "libdeflate": 11
+      },
+      "misses_vs_libdeflate": [
+        {
+          "case": "mr",
+          "ratio": 1.0022555810545088
+        }
+      ]
+    },
+    "reverse": {
+      "wins": {
+        "roc": 12,
+        "libdeflate": 12
+      },
+      "misses_vs_libdeflate": []
+    }
+  },
+  "compile_times": {
+    "encoder": {
+      "word-mismatch-order": 1.7415739581920207,
+      "m3-ccmp-immediates": 1.7319053341634572
+    },
+    "worker": {
+      "word-mismatch-order": 2.422706291079521,
+      "m3-ccmp-immediates": 2.4442687081173062
+    }
+  }
+}

@@ -56,8 +56,10 @@ one pinned build.
 Experiments include spill-cache settings, address normalization, branch
 selection, root argument forwarding, function alignment, and compiler-source
 prototypes. Rejected source prototypes and their correctness checks are kept
-with the experimental record. None has been adopted into the compiler by
-this report. The Mechdeflate implementation has not been edited.
+with the experimental record. The compiler now includes optional AArch64 immediate comparison lowering
+and root allocation-profile support. The experimental build settings remain
+unqualified for the complete M3 target. The Mechdeflate implementation has
+not been edited.
 
 [Diagnostic samples and instruction records](profiles.tar.gz) ·
 [Profile archive manifest](profiles.tar.gz.manifest.json) ·
@@ -71,3 +73,97 @@ rebuilt from the clean pinned source, reproduce its three encoder artifacts,
 and run both complete suites before qualification. The first 64-byte-alignment
 corpus screen is explicitly excluded because it overlapped candidate
 preparation; its serial replacement is retained separately.
+
+## Complete conditional-immediate experiment
+
+The clean `f15ebb6e818a8ce234575d3225af36203e442d23` compiler reproduced the
+M1 baseline and the candidate artifacts. The candidate uses immediate CCMP
+and CCMN instructions in the matcher. Its matcher body is 5,088 bytes versus
+5,136 bytes in the baseline; the complete object is 157,136 versus 157,264
+bytes. The source and canonical bytecode are identical.
+
+Both full fixture orders used 96 balanced blocks per case and verified
+1,965,312 runtime observations. Both complete Silesia orders used the original
+12 manifest-verified files and pinned peers. No overlapping build or profiler
+jobs were detected. All compressed streams matched and inflated independently.
+
+| Mech actor | Fixtures vs Roc, forward / reverse | Fixtures vs libdeflate, forward / reverse |
+| --- | --- | --- |
+| Control in this run | 81 / 81 | 78 / 77 |
+| Immediate comparisons | 81 / 81 | 78 / 78 |
+
+| Candidate corpus result | Forward | Reverse |
+| --- | --- | --- |
+| Wins vs Roc | 12 / 12 | 12 / 12 |
+| Wins vs libdeflate | 11 / 12 | 12 / 12 |
+
+The fixture misses are `16384-distribution-change`, `reymont-prefix-1024`
+and `prefix-natural-1024`. The forward Silesia miss is `mr`, at 1.002256 times
+libdeflate; its reverse ratio is 0.989894. The corpus result formed by pairing
+the two orders is 12/12, while requiring a win in each order gives 11/12.
+The M3 qualification target remains open.
+
+[Complete summary](ccmp-release-summary.json) ·
+[Raw observations and build records](ccmp-release-observations.tar.gz) ·
+[Member hashes](ccmp-release-observations.tar.gz.manifest.json) ·
+[Exact timed actors](ccmp-recorded-actors/) ·
+[Release recipe](ccmp-release-recipe.json)
+
+## Complete source-to-executable timing
+
+Three serial, alternating builds measured the entire compiler subprocess,
+emitted files and final executable link. The compiler and fixed host support
+were prebuilt, and the filesystem cache was warm. These are complete executable
+builds from the same 243,209-byte Mech source.
+
+| Executable boundary | Baseline median | Candidate median |
+| --- | --- | --- |
+| Standalone compression executable | 1.741574 s | 1.731905 s |
+| Rust benchmark worker executable | 2.422706 s | 2.444269 s |
+
+The candidate has no established compile-time advantage in these observations.
+Earlier experimental settings enabled the register allocator's extra diagnostic
+checker. That setting took 2.648335 seconds for the standalone executable and
+3.315244 seconds for the worker. The release recipe uses the original setting.
+A separate check reproduced both release executables byte for byte with the
+extra checker enabled.
+
+[Portable timing tool](time-encoder-builds.py) ·
+[Diagnostic recipe](ccmp-candidate-recipe.json) ·
+[Follow-up profiles, rejected source prototypes and parity checks](followup-experiments.tar.gz) ·
+[Follow-up member hashes](followup-experiments.tar.gz.manifest.json)
+
+One earlier full-run attempt ended before completion. Its partial data is
+explicitly excluded and retained with the exploratory record. The completed
+run above is the qualifying observation for this candidate.
+
+## Updated compiler integration
+
+The follow-up integrates upstream `8ce620d1b165b868210378ef260945ee3c398d05`.
+The comparison selector consumes captured compilation inputs. The merged
+compiler reproduces both complete artifact triples, including with optional
+host reporting enabled. Six configuration/profile tests and three machine
+execution tests passed. Further root allocation experiments use the existing
+M3 Cranelift instruction samples and preserve all program checks. Their
+subset screens do not establish an 81/81 or 12/12 result.
+
+
+## Preparation worker counts
+
+The updated compiler was measured three times at each worker count, with the
+orders rotated. The full boundary includes source processing, emitted files
+and the standalone executable link. All twelve builds produced the identical
+executable, object and canonical bytecode. Count zero retains extra unused
+scorer diagnostic detail in its descriptor.
+
+| Workers | Median source-to-executable time |
+| --- | --- |
+| 0 | 1.808047 s |
+| 1 | 1.763897 s |
+| 2 | 1.775590 s |
+| 4 | 1.767959 s |
+
+The existing recipe uses two workers. These observations do not establish a
+useful improvement from increasing that count.
+[Raw build observations and telemetry](compile-worker-times/) ·
+[Updated compiler checks and host reports](updated-compiler-checks/)
