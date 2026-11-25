@@ -298,3 +298,30 @@ times in these diagnostics are excluded from primary compile-time comparisons.
 [Candidate summaries and timing misses](literal-carry-counter-studies-summary.json) ·
 [Source, actors, tests and raw screens](literal-carry-counter-studies.tar.gz) ·
 [Verified member hashes](literal-carry-counter-studies.tar.gz.manifest.json)
+
+## Conditional increments and four-literal batches
+
+The next compiler trial fuses addition of a single-use integer comparison into
+an ARM conditional increment. Tests caught and corrected its initial option
+gating; native inspection then rejected a broader form that repeated shared
+comparisons. The final rule preserves shared predicates and leaves the default
+M1 artifact triple unchanged, including when enabled without counter gathering.
+It passes 2.88 million native arithmetic checks, also with the compressor's I32
+result-reuse setting enabled.
+
+Counter gathering was screened with ordinary boolean additions and conditional
+increments. The existing four-literal append option was separately rebuilt with
+the clean pinned `71bb1f90b3` compiler. Each final candidate passed all 162 output,
+inflation, capacity and alias checks. The four-literal and conditional-increment
+variants each reached 9/10 protected libdeflate wins in both orders, but still
+missed the 16 KB distribution-change case. No candidate was promoted.
+
+These are ten-case, 24-block screens, with build activity excluded from timing.
+They do not replace the last complete M3 result or establish a compile-time
+improvement. The archive separates the broader prepared-but-untimed rule from
+the final timed candidates and includes source patches, exact actors, profile
+transfers, test logs, failed setups and raw measurements.
+
+[Trial summaries](conditional-counter-batch-studies-summary.json) ·
+[Compiler patches, exact actors and raw data](conditional-counter-batch-studies.tar.gz) ·
+[Verified member hashes](conditional-counter-batch-studies.tar.gz.manifest.json)
