@@ -73,11 +73,11 @@ def bind(label, build, recipe_path):
     }
 
 
-def compare81(out, packets, control, candidate, *, retain_warmups=False):
+def compare81(out, packets, control, candidate, *, retain_warmups=False, orders=ORDERS, cycles=4):
     out.mkdir()
     suite81(out, packets, Path(candidate["build_directory"]), Path(control["build_directory"]),
             control["role"], candidate["role"], labels=(control["label"], candidate["label"]),
-            retain_warmups=retain_warmups)
+            retain_warmups=retain_warmups, orders=orders, cycles=cycles)
     results = out / "cranelift-results.json"
     runs = read(results)["runs"]
     paths = {}
@@ -112,7 +112,7 @@ def compare81(out, packets, control, candidate, *, retain_warmups=False):
             "verification": str(out / "cranelift-verified.json")}
 
 
-def compare_silesia(out, packets, corpus, control, candidate):
+def compare_silesia(out, packets, corpus, control, candidate, *, orders=ORDERS):
     out.mkdir()
     package = packets / "mechdeflate-silesia-v1"
     checks = run_path(str(package / "silesia_compare.py"))
@@ -127,7 +127,8 @@ def compare_silesia(out, packets, corpus, control, candidate):
     verification = out / "independent-inflation.json"
     write(verification, verified)
     observations = {}
-    for direction, order in zip(ORDERS, (matched, matched[::-1]), strict=True):
+    for direction in orders:
+        order = matched if direction == "forward" else matched[::-1]
         rows = []
         raw = out / f"timings-{direction}.json"
         for case in (inputs if direction == "forward" else reversed(inputs)):
@@ -293,6 +294,105 @@ def run_campaign(path, stage, calibration_path):
     print(target, result.get("decision", "sealed"), flush=True)
 
 
+def record_crossover(folder, campaign, stage, ordinal, controls):
+    from verify import crossover_pair, crossover_plan, scoped_slots
+
+    paired = folder / "pairs"
+    paired.mkdir()
+    corpus = Path(campaign.manifest["corpus"])
+    cycles = campaign.policy["timing"]["fixtures"]["cycles_per_leg"]
+    legs = []
+    for step in crossover_plan(controls, ordinal, stage == "calibrate"):
+        order = step["order"]
+        path = paired / step["comparison"] / f"{order}-{step['leg']}"
+        path.mkdir(parents=True)
+        bindings = crossover_pair(campaign.bindings, step, stage == "calibrate")
+        write_new(path / "bindings.json", bindings)
+        started = {**step, "start_utc": utc_now()}
+        write_new(path / "started.json", started)
+        print(f"Session {ordinal} {step['comparison']} {order} leg {step['leg']} {step['slots']}", flush=True)
+        left, right = bindings["control"], bindings["candidate"]
+        compare81(path / "suite81", PARENT, left, right, retain_warmups=True, orders=(order,), cycles=cycles)
+        compare_silesia(path / "silesia", PARENT, corpus, left, right, orders=(order,))
+        legs.append({**started, "end_utc": utc_now()})
+    references = folder / "references"
+    references.mkdir()
+    for label in dict.fromkeys(scoped_slots(campaign.policy, stage, controls).values()):
+        bound = campaign.bindings[label]
+        silesia(references / label, PARENT, Path(bound["build_directory"]), corpus, bound["role"])
+    return legs
+
+
+def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, controls, compiler_inputs):
+    from verify import inventory, require, scoped_metrics, scoped_slots
+
+    actual_host = campaign_host()
+    require(actual_host == campaign.manifest["host"], "Campaign host or toolchain changed.")
+    folder.mkdir()
+    started = {**campaign.identity(stage, calibration_hash), "session": folder.name, "start_utc": utc_now()}
+    write_new(folder / "started.json", started)
+    print(campaign.scope, stage, folder.name, flush=True)
+    metadata = {}
+    if campaign.scope == "compiler":
+        slots = scoped_slots(campaign.policy, stage, controls)
+        compiler_session(folder / "processes", slots, compiler_inputs)
+    else:
+        metadata["legs"] = record_crossover(folder, campaign, stage, ordinal, controls)
+    require(campaign_host() == actual_host, "Campaign host changed during the session.")
+    record = {**started, "end_utc": utc_now(), "host": actual_host, "ordinal": ordinal,
+              "controls": list(controls), **metadata, "raw_files": inventory(folder)}
+    scoped_metrics(folder, record, campaign)
+    write_new(folder / "record.json", record)
+
+
+def run_scoped_campaign(path, stage, calibration_path, scope):
+    from verify import (STAGE_FILES, open_scope, require, scoped_assessment, scoped_calibration,
+                        scoped_calibration_seal, scoped_schedule, scoped_stage_seal, scoped_summary)
+
+    campaign = open_scope(path, scope)
+    target = campaign.output / STAGE_FILES[stage]
+    require(not target.exists(), f"Completed stage is retained at {target}.")
+    calibration_hash = None
+    if stage == "calibrate":
+        require(calibration_path is None, "Calibration creates its own seal.")
+    else:
+        seal, calibration_hash = scoped_calibration_seal(campaign, calibration_path)
+        if scope == "runtime":
+            require(seal["decision"] == "pass", "Invalid runtime calibration forbids candidate timing.")
+    if stage == "assess":
+        result = scoped_assessment(campaign, seal, calibration_hash)
+    else:
+        if stage == "confirm":
+            scoped_stage_seal(campaign, "qualify", calibration_hash)
+        require(campaign_host() == campaign.manifest["host"], "Expected the pinned qualification machine.")
+        compiler_inputs = {}
+        if scope == "compiler":
+            compiler_inputs = {
+                name: ordinary_compiler_inputs(Path(actor["source"]), Path(actor["build"]),
+                                               Path(actor["recipe"]), PARENT)
+                for name, actor in campaign.manifest["actors"].items()
+            }
+        base = campaign.output / stage
+        base.mkdir(parents=True, exist_ok=True)
+        schedule = scoped_schedule(campaign.policy, stage)
+        existing = {folder.name for folder in base.iterdir()}
+        require(existing == {name for name, _, _ in schedule[:len(existing)]},
+                "Existing sessions do not form a prefix of the scheduled stage.")
+        previous = ""
+        for name, ordinal, controls in schedule[:len(existing)]:
+            record = campaign.session(base / name, stage, calibration_hash, ordinal, controls)
+            require(previous <= record["start_utc"], "Existing sessions have invalid startup order.")
+            previous = record["end_utc"]
+        for name, ordinal, controls in schedule[len(existing):]:
+            record_scoped_session(campaign, base / name, stage, calibration_hash, ordinal, controls, compiler_inputs)
+        if stage == "calibrate":
+            result = scoped_calibration(campaign)
+        else:
+            result = scoped_summary(campaign, stage, calibration_hash)
+    write_new(target, result)
+    print(target, result.get("decision", "sealed"), flush=True)
+
+
 def main():
     parser = ArgumentParser(description=__doc__)
     for side in ("control", "candidate"):
@@ -307,16 +407,21 @@ def main():
     parser.add_argument("--campaign", type=Path, help="Immutable native route campaign manifest")
     parser.add_argument("--stage", choices=("calibrate", "qualify", "confirm", "assess"))
     parser.add_argument("--calibration", type=Path, help="The sealed calibration for this campaign")
+    parser.add_argument("--scope", choices=("compiler", "runtime"))
     args = parser.parse_args()
     if not __debug__:
         parser.error("Use Python with assertions enabled.")
     if args.campaign is not None:
         if args.stage is None:
             parser.error("--campaign requires --stage.")
-        run_campaign(args.campaign.resolve(), args.stage, args.calibration)
+        path = args.campaign.resolve()
+        if args.scope is None:
+            run_campaign(path, args.stage, args.calibration)
+        else:
+            run_scoped_campaign(path, args.stage, args.calibration, args.scope)
         return
-    if args.stage is not None or args.calibration is not None:
-        parser.error("--stage and --calibration require --campaign.")
+    if args.stage is not None or args.calibration is not None or args.scope is not None:
+        parser.error("--stage, --calibration and --scope require --campaign.")
     for name in ("output", "control", "control_build", "control_recipe",
                  "candidate", "candidate_build", "candidate_recipe"):
         if getattr(args, name) is None:

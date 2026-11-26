@@ -19,9 +19,9 @@ CLEANUP = {
 }
 
 
-def verify(directory, results, name, oracle):
+def verify(directory, results, name, oracle, *, orders=("forward", "reverse")):
     manifest = read(results)
-    assert manifest["complete"] and [row["order"] for row in manifest["runs"]] == ["forward", "reverse"]
+    assert manifest["complete"] and tuple(row["order"] for row in manifest["runs"]) == orders
     blocks_expected = manifest["blocks_per_case"]
     total_rows = 0
     previous_pins = None
@@ -96,9 +96,11 @@ def main():
     parser.add_argument("directory", type=Path)
     parser.add_argument("name")
     parser.add_argument("oracle", type=Path)
+    parser.add_argument("--order", choices=("forward", "reverse"))
     args = parser.parse_args()
     oracle = {row["case"]: row for row in read(args.oracle)}
-    result = verify(args.directory, args.directory / (args.name + "-results.json"), args.name, oracle)
+    orders = (args.order,) if args.order else ("forward", "reverse")
+    result = verify(args.directory, args.directory / (args.name + "-results.json"), args.name, oracle, orders=orders)
     write(args.directory / (args.name + "-verified.json"), result)
     print(json.dumps(result, indent=2))
 

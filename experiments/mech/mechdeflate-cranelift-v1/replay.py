@@ -39,7 +39,24 @@ def capture_fixture_warmups(program):
     return program
 
 
-def suite81(out, packets, build, control_build, control, candidate, labels=None, *, retain_warmups=False):
+def fixture_campaign_controller(program, cycles):
+    if cycles == 2:
+        permutations = "orders = list(permutations(commands)) * 4"
+        startup = "        workers[actor] = Worker(actor,out)\n"
+        for anchor in (permutations, startup):
+            if program.count(anchor) != 1:
+                raise ValueError("Pinned fixture crossover anchor changed.")
+        program = program.replace(permutations, permutations.removesuffix("4") + "2")
+        program = program.replace(
+            startup, startup + "    persist(lambda:(out/'worker-startup.json').write_text(json.dumps(list(workers))))\n"
+        )
+    elif cycles != 4:
+        raise ValueError("Expected two cycles per crossover leg or four for the historical run.")
+    return capture_fixture_warmups(program)
+
+
+def suite81(out, packets, build, control_build, control, candidate, labels=None, *,
+            retain_warmups=False, orders=("forward", "reverse"), cycles=4):
     previous = packets / "mechdeflate-81-v1"
     routes = packets / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
@@ -47,26 +64,32 @@ def suite81(out, packets, build, control_build, control, candidate, labels=None,
     reference = run_path(str(previous / "replay_timings.py"))["prepare"](out, helpers)
     controller = out / "controller.py"
     if retain_warmups:
-        controller.write_text(capture_fixture_warmups(controller.read_text()))
+        controller.write_text(fixture_campaign_controller(controller.read_text(), cycles))
+    blocks = cycles * 24
     bindings = [actor(control_build, control, "bound/mech-worker").parent,
                 actor(build, candidate, "bound/mech-worker").parent]
     runs = []
     role = "cranelift"
-    for order in ("forward", "reverse"):
+    for order in orders:
         folder = out / f"{role}-{order}"
         command = [sys.executable, "-B", controller, folder, *bindings]
         if order == "reverse":
             command.append(order)
         subprocess.run(command, check=True)
         complete = read(folder / "complete.json")
-        assert (complete["cases"], complete["balanced_blocks_per_case"], complete["timed_calls"]) == (81, 96, 982656)
+        assert (complete["cases"], complete["balanced_blocks_per_case"], complete["timed_calls"]) == (
+            81, blocks, 982656 * cycles // 4
+        )
         summary = read(folder / "summary.json")
         runs.append({"order": order, "summary_sha256": sha(folder / "summary.json"), "results": summary})
     write(out / f"{role}-results.json", {
-        "complete": True, "blocks_per_case": 96, "controller_sha256": sha(controller), "runs": runs,
+        "complete": True, "blocks_per_case": blocks, "controller_sha256": sha(controller), "runs": runs,
     })
-    subprocess.run([sys.executable, "-B", routes / "verify_timings.py", out, role,
-                    out / "pinned-peers/libdeflate-output-oracle.json"], check=True)
+    command = [sys.executable, "-B", routes / "verify_timings.py", out, role,
+               out / "pinned-peers/libdeflate-output-oracle.json"]
+    if len(orders) == 1:
+        command.extend(("--order", orders[0]))
+    subprocess.run(command, check=True)
     for run in runs:
         control_label, candidate_label = labels or (control, candidate)
         for label, measured in ((control_label, "mech-control"), (candidate_label, "mech-experiment")):
