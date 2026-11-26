@@ -4,6 +4,7 @@ from argparse import ArgumentParser
 from dataclasses import dataclass
 import gzip
 from hashlib import sha256
+from itertools import permutations
 from math import exp, isclose
 import json
 from pathlib import Path
@@ -409,12 +410,18 @@ def silesia_reference_inputs(folder, binding):
     return references, sums
 
 
-def compilation_inputs(folder, slots, bindings, numerator, denominator):
+def compilation_inputs(folder, slots, bindings, numerator, denominator, *, ordered=False):
     from re import findall
     raw = read(folder / "observations.json")
     require(raw["slots"] == slots and raw["warmup"].keys() == slots.keys(),
             "Compiler process slots differ from the fixed policy.")
     blocks, = balanced_cycles(raw["blocks"], tuple(slots), 1)
+    if ordered:
+        require(tuple(raw["warmup"]) == tuple(slots)
+                and tuple(tuple(block["order"]) for block in blocks) == tuple(permutations(slots))
+                and all(tuple(block["samples"]) == tuple(block["order"]) for block in blocks),
+                "Compiler process launch order differs from the session schedule.")
+
     def checked_sample(path, slot, sample):
         binding = bindings[slots[slot]]
         require(sample["elapsed_ns"] > 0 and sample["maximum_resident_bytes"] > 0
@@ -617,6 +624,13 @@ def scoped_slots(policy, stage, controls):
     return {name: name for name in compilation["performance_slots"]}
 
 
+def scoped_compiler_slots(policy, stage, controls, ordinal):
+    roles = scoped_slots(policy, stage, controls)
+    keys = tuple(roles)
+    offset = (ordinal - 1) % len(keys)
+    return {key: roles[key] for key in keys[offset:] + keys[:offset]}
+
+
 def crossover_plan(controls, ordinal, calibrating):
     """Each step assigns real builds to the same two worker slot names."""
     for control in controls:
@@ -659,7 +673,7 @@ def verify_leg_order(expected, observed, start, end):
 def scoped_compiler_metrics(folder, row, campaign):
     controls = row["controls"]
     stage = row["stage"]
-    slots = scoped_slots(campaign.policy, stage, controls)
+    slots = scoped_compiler_slots(campaign.policy, stage, controls, row["ordinal"])
     names = campaign.policy["compilation"]
     results = {}
     for control in controls:
@@ -667,7 +681,8 @@ def scoped_compiler_metrics(folder, row, campaign):
             numerator, denominator = names["calibration_numerator"], names["calibration_denominator"]
         else:
             numerator, denominator = "candidate", control
-        cycle = compilation_inputs(folder / "processes", slots, campaign.bindings, numerator, denominator)
+        cycle = compilation_inputs(folder / "processes", slots, campaign.bindings, numerator, denominator,
+                                   ordered=True)
         results[control] = {"compiler": {"ordinary-process": cycle}}
     return results
 
