@@ -1,5 +1,7 @@
 # Round 1 native compiler memory repair
 
+> Historical A/B handoff. The later elapsed refinement qualified in the [Round 1 compiler qualification](round-1-elapsed-resolution.md).
+
 B passed both M1 memory gates and the elapsed-time gate against R. **Elapsed time against O remains unresolved.** The compiler-only assessment reproduced independently from the sealed records. Round 2 requires the complete compiler gate to pass.
 
 | Attempt | Source | Paired median RSS change vs R | Paired median RSS change vs O | Assessment |

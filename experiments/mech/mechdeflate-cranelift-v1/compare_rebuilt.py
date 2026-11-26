@@ -324,7 +324,7 @@ def record_crossover(folder, campaign, stage, ordinal, controls):
 
 
 def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, controls, compiler_inputs):
-    from verify import inventory, require, scoped_metrics, scoped_slots
+    from verify import inventory, require, scoped_compiler_slots, scoped_metrics
 
     actual_host = campaign_host()
     require(actual_host == campaign.manifest["host"], "Campaign host or toolchain changed.")
@@ -334,7 +334,7 @@ def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, co
     print(campaign.scope, stage, folder.name, flush=True)
     metadata = {}
     if campaign.scope == "compiler":
-        slots = scoped_slots(campaign.policy, stage, controls)
+        slots = scoped_compiler_slots(campaign.policy, stage, controls, ordinal)
         compiler_session(folder / "processes", slots, compiler_inputs)
     else:
         metadata["legs"] = record_crossover(folder, campaign, stage, ordinal, controls)

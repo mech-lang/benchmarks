@@ -1,4 +1,5 @@
 import tempfile
+from itertools import permutations
 from math import log
 import unittest
 from pathlib import Path
@@ -7,9 +8,9 @@ from unittest.mock import patch
 from campaign_stats import paired_log, simultaneous
 from compare_rebuilt import require_pair, run_scoped_campaign, write_new
 from rebuild import read
-from verify import (SCOPED_POLICY, ScopedCampaign, compiler_gates, compiler_prerequisite, crossed_units,
-                    crossover_pair, crossover_plan, inventory, scoped_schedule, verify_inventory,
-                    verify_leg_order, verify_session)
+from verify import (SCOPED_POLICY, ScopedCampaign, compilation_inputs, compiler_gates, compiler_prerequisite,
+                    crossed_units, crossover_pair, crossover_plan, inventory, scoped_compiler_slots,
+                    scoped_schedule, verify_inventory, verify_leg_order, verify_session)
 
 
 class CampaignRunnerTests(unittest.TestCase):
@@ -90,6 +91,39 @@ class CampaignRunnerTests(unittest.TestCase):
             expected = ["A", "B", "B", "A"] if ordinal % 2 else ["B", "A", "A", "B"]
             self.assertEqual([step["leg"] for step in plan], expected * 2)
             self.assertEqual(plan[0]["comparison"], "reviewed" if ordinal % 2 else "previous")
+
+    def test_compiler_slots_balance_absolute_launch_positions_in_each_batch(self):
+        policy = read(SCOPED_POLICY)
+
+        def positions(stage, control=None):
+            orders = []
+            for _, ordinal, controls in scoped_schedule(policy, stage):
+                if control is not None and controls != (control,):
+                    continue
+                slots = scoped_compiler_slots(policy, stage, controls, ordinal)
+                if control is not None:
+                    self.assertEqual(set(slots.values()), {control})
+                measured = [slot for sequence in permutations(slots) for slot in sequence]
+                orders.append([*slots, *measured])
+            return orders
+
+        for schedules in (positions("calibrate", "reviewed"), positions("calibrate", "previous"),
+                          positions("qualify"), positions("confirm")):
+            self.assertEqual(len(schedules), 3)
+            for column in zip(*schedules, strict=True):
+                self.assertEqual(len(set(column)), 3)
+
+    def test_scoped_compiler_verifier_rejects_valid_permutations_in_the_wrong_launch_order(self):
+        policy = read(SCOPED_POLICY)
+        slots = scoped_compiler_slots(policy, "calibrate", ("reviewed",), 2)
+        blocks = [{"order": list(order), "samples": dict.fromkeys(order)}
+                  for order in permutations(slots)]
+        wrong = {"slots": slots, "warmup": dict.fromkeys(slots), "blocks": blocks[::-1]}
+        with tempfile.TemporaryDirectory() as temporary:
+            folder = Path(temporary)
+            write_new(folder / "observations.json", wrong)
+            with self.assertRaisesRegex(ValueError, "launch order"):
+                compilation_inputs(folder, slots, {}, "candidate", "control", ordered=True)
 
     def test_leg_verification_refuses_missing_duplicate_wrong_mapping_and_wrong_order(self):
         expected = list(crossover_plan(("reviewed",), 1, False))

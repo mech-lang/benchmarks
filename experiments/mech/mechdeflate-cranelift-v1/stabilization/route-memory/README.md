@@ -34,3 +34,9 @@ compiler assessment passes verification. Runtime calibration uses fresh
 worker-slot assignments in both legs. The verifier checks each mapping and
 startup order, then forms crossed cycles with ratios oriented to the actual
 compilers. Invalid runtime calibration stops before candidate timing.
+
+Compiler sessions rotate their starting slot by session ordinal. The
+rotation assigns each role to each absolute launch position across every
+three sessions. Each individual session retains one warmup per role and
+all six permutations. For campaigns already collected, use the tooling
+and policy pinned in their manifests.
