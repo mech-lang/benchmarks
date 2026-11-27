@@ -45,3 +45,13 @@ The integrated source passed correctness and compiler qualification on M1.
 The final runtime candidate remains unmeasured after the same-build runtime
 calibration returned unresolved. The assessment links the complete calibration
 and the timing diagnostics. [Round 2 assessment](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/assessment.md)
+
+## Shared handoff
+
+Use this evidence branch for each sealed checkpoint, including unresolved
+measurements. The Round 2 handoff binds the integrated source, recipe and
+benchmark tooling, and includes the Round 1 compiler records. [Integrated source](https://github.com/mech-lang/mech/commit/3a66a014c853e082ad907ed4db1673c9dadf0c69), [verified release assets](https://github.com/mech-lang/benchmarks/releases/tag/mech-native-route-m1-round-2-20261126)
+
+The original M1 release supplies the pinned R and O control builds. Verify
+downloaded archives against the checksum file in their respective release.
+[Original control builds](https://github.com/mech-lang/benchmarks/releases/tag/mech-native-route-m1-evidence-20261126)
