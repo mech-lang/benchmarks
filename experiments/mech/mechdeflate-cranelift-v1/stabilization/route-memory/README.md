@@ -40,3 +40,8 @@ rotation assigns each role to each absolute launch position across every
 three sessions. Each individual session retains one warmup per role and
 all six permutations. For campaigns already collected, use the tooling
 and policy pinned in their manifests.
+
+The integrated source passed correctness and compiler qualification on M1.
+The final runtime candidate remains unmeasured after the same-build runtime
+calibration returned unresolved. The assessment links the complete calibration
+and the timing diagnostics. [Round 2 assessment](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/assessment.md)
