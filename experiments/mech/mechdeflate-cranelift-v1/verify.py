@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import gzip
 from hashlib import sha256
 from itertools import permutations
-from math import exp, isclose
+from math import exp, isclose, isfinite
 import json
 from pathlib import Path
 from re import fullmatch
@@ -32,6 +32,16 @@ CONTROLS = ("closeout", "reviewed")
 ORDERS = ("forward", "reverse")
 STAGE_FILES = {"calibrate": "calibration.json", "qualify": "qualification.json",
                "confirm": "confirmation.json", "assess": "assessment.json"}
+FIXTURE_STAGING = {
+    "mode": "campaign-shared-v1", "root_basename": "fixture-stage",
+    "receipt_basename": "fixture-stage.json", "active_controller": "campaign-controller.py",
+}
+FIXTURE_ORACLE = "pinned-peers/libdeflate-output-oracle.json"
+FIXTURE_WITNESSES = {
+    "controller.py": FIXTURE_STAGING["active_controller"],
+    "compare-library.py": "compare-library.py", "fixtures.json": "fixtures.json", FIXTURE_ORACLE: FIXTURE_ORACLE,
+}
+RUNTIME_PRECISION_RULE = "current_interval95_log_width_lte_reference"
 
 
 def require(condition, message):
@@ -71,7 +81,11 @@ def load_campaign(path, record=None, *, scope=None):
     require(tool_commit(root) == manifest["tooling_commit"], "Benchmark tooling commit differs.")
     policy_path = POLICY if scope is None else SCOPED_POLICY
     policy = read(policy_path)
-    for field in ("sessions", "timing", "bootstrap", "compilation", "boundaries", "comparisons", "reference_targets"):
+    fixed = ("sessions", "timing", "bootstrap", "compilation", "boundaries", "comparisons", "reference_targets")
+    if scope is not None:
+        fixed += ("fixture_staging", "runtime_calibration_precision")
+        require(policy["fixture_staging"] == FIXTURE_STAGING, "Unexpected shared fixture staging policy.")
+    for field in fixed:
         require(manifest[field] == policy[field], f"Campaign changes the fixed {field} policy.")
     require(policy["bootstrap"]["seed"] == SEED and policy["bootstrap"]["replicates"] == REPLICATES,
             "Bootstrap algorithm and policy differ.")
@@ -115,6 +129,16 @@ def load_campaign(path, record=None, *, scope=None):
         require(output.resolve() == expected_output.resolve() == path.parent.resolve(),
                 "Scoped campaign must use the pinned source and campaign-ID record directory.")
         actors = {"reviewed": "R", "previous": "O", "candidate": candidate}
+        if purpose == "final-qualification":
+            require(root == root.resolve(strict=True) and output == output.resolve(strict=True),
+                    "Campaign checkout and run must use their canonical paths.")
+            timebase = manifest["host"]["clock_timebase"]
+            require(timebase.keys() == {"status", "numer", "denom"}
+                    and all(type(value) is int for value in timebase.values())
+                    and timebase["status"] == 0 and timebase["numer"] > 0 and timebase["denom"] > 0,
+                    f"Invalid Mach clock timebase {timebase}.")
+            verify_fixture_stage(manifest["fixture_stage"], output)
+            runtime_precision_reference(root, policy["runtime_calibration_precision"])
     expected = read(HERE / "native-first-batch/evidence/configured/recipe.json")
     require(source_pins["R"] == expected["source_commit"], "Reviewed source pin differs.")
     require(manifest["actors"].keys() == actors.keys(), "Incorrect campaign actor roles.")
@@ -154,6 +178,69 @@ def verify_inventory(folder, expected, exclude=()):
         require(not file.is_symlink() and file.stat().st_size == entry["bytes"],
                 f"Raw evidence changed: {file}")
         checked(file, entry["sha256"])
+
+
+def fixture_stage_inventory(folder):
+    require(folder.is_absolute() and folder.is_dir() and folder == folder.resolve(strict=True),
+            "Expected a canonical fixture stage directory.")
+    files = inventory(folder)
+    paths = {item.relative_to(folder) for item in folder.rglob("*")}
+    expected = {Path(name) for name in files}
+    expected |= {parent for name in files for parent in Path(name).parents if parent != Path(".")}
+    require(paths == expected, f"Unexpected paths in fixture stage {folder}.")
+    return files
+
+
+def verify_fixture_stage(binding, output):
+    root = output / FIXTURE_STAGING["root_basename"]
+    receipt_path = output / FIXTURE_STAGING["receipt_basename"]
+    require(binding.keys() == {"root", "receipt", "receipt_sha256"}
+            and binding["root"] == str(root) and binding["receipt"] == str(receipt_path)
+            and not receipt_path.is_symlink(), "Shared fixture stage paths differ from the campaign.")
+    checked(receipt_path, binding["receipt_sha256"])
+    receipt = read(receipt_path)
+    fixed = {"schema": "mech.native-route-fixture-stage.v1", "root": str(root),
+             "active_controller": FIXTURE_STAGING["active_controller"],
+             "cases": 81, "cycles_per_leg": 2, "permutations": 24}
+    require(receipt.keys() == fixed.keys() | {"reference_actor", "files"}
+            and all(receipt[name] == expected for name, expected in fixed.items()),
+            "Shared fixture stage receipt differs from the protocol.")
+    files = fixture_stage_inventory(root)
+    require(files == receipt["files"], f"Shared fixture stage inventory changed: {root}")
+    archived, _ = verify_fixture_controller(root, root / receipt["active_controller"], receipt["cycles_per_leg"])
+    checked(root / "controller.py", archived["controller_sha256"])
+    checked(root / FIXTURE_ORACLE, archived["oracle_sha256"])
+
+    fixture_hash = files["fixtures.json"]["sha256"]
+    prepared = read(root / "prepared.json")
+    require(prepared == {
+        "blocks_per_case": 96, "cases": 81, "controller_sha256": archived["controller_sha256"],
+        "oracle_sha256": archived["oracle_sha256"], "original_inventory_sha256": archived["inventory_sha256"],
+        "relocated_inventory_sha256": fixture_hash, "mech": archived["mech"], "peers": archived["peers"],
+    }, "Shared fixture preparation receipt differs from the pinned preparation.")
+    for index, row in enumerate(read(root / "fixtures.json")):
+        for field in ("input", "prefix", "expected"):
+            name = f"fixtures/{index}/{field}"
+            require(row[field] == str(root / name) and name in files, f"Shared fixture payload path differs: {name}")
+        require(row["input_sha256"] == files[f"fixtures/{index}/input"]["sha256"]
+                and row["expected_sha256"] == files[f"fixtures/{index}/expected"]["sha256"]
+                and row["prefix_bytes"] == files[f"fixtures/{index}/prefix"]["bytes"],
+                f"Shared fixture payload identity differs: {row['name']}.")
+
+    pins = read(root / "pinned-peers/pins.json")
+    reference = receipt["reference_actor"]
+    require(reference != "libdeflate" and pins["actors"].keys() == {"libdeflate", reference}
+            and pins["input_inventory_sha256"] == fixture_hash, "Shared fixture reference inventory differs.")
+    for peer, pin in pins["actors"].items():
+        expected = archived["peers"]["libdeflate" if peer == "libdeflate" else "reference"]
+        paths = [absolute(arg) for arg in pin["command"]]
+        require(all(path.is_relative_to(root) and path.relative_to(root).as_posix() in files for path in paths)
+                and paths[-1] == root / "fixtures.json", f"Shared reference paths differ: {peer}.")
+        require(all(pin[key] == value for key, value in expected.items()), f"Staged reference differs: {peer}.")
+        checked(paths[0], expected["binary_sha256"])
+        if "metadata_sha256" in expected:
+            checked(paths[1], expected["metadata_sha256"])
+    return {**receipt, "receipt_sha256": binding["receipt_sha256"]}
 
 
 def verify_session(folder, manifest_hash, stage, calibration_hash, host=None, *, scope_fields=None):
@@ -218,11 +305,19 @@ def expected_pair(bindings, control, stage):
     return {"kind": "calibration" if aa else "comparison", "control": left, "candidate": right}
 
 
-def validate_fixture_actor_pins(folder, pair):
+def validate_fixture_actor_pins(folder, pair, fixture_stage=None):
     pins = read(folder / "pins.json")
     names = ("mech-control", "mech-experiment")
     peers = tuple(sorted(set(pins["actors"]) - set(names)))
     require(len(peers) == 2 and "libdeflate" in peers, "Unexpected fixture reference actors.")
+    if fixture_stage is not None:
+        root = Path(fixture_stage["root"])
+        require(pins["input_inventory_sha256"] == fixture_stage["files"]["fixtures.json"]["sha256"]
+                and all(pin["command"][-1] == str(root / "fixtures.json") for pin in pins["actors"].values()),
+                f"Fixture actors did not use the shared case JSON in {folder}.")
+        staged = read(root / "pinned-peers/pins.json")["actors"]
+        require(staged.keys() == set(peers) and all(pins["actors"][name] == staged[name] for name in peers),
+                f"Fixture reference commands differ from the shared stage in {folder}.")
     for label, side in zip(names, ("control", "candidate"), strict=True):
         binding, pin = pair[side], pins["actors"][label]
         require(pin["command"][0] == binding["81"]["path"]
@@ -254,7 +349,7 @@ def cycles_for_cases(rows, prefix, cycles, measure):
     return coordinates
 
 
-def fixture_inputs(folder, pair, *, orders=ORDERS, cycles=4):
+def verify_fixture_controller(folder, controller, cycles):
     from replay import fixture_campaign_controller
     archived = read(PARENT / "mechdeflate-81-v1/actors/bindings.json")
     order_names = [row["name"] for row in read(folder / "fixtures.json")]
@@ -265,12 +360,44 @@ def fixture_inputs(folder, pair, *, orders=ORDERS, cycles=4):
     timer = timer.replace("selected = {case['name'] for case in cases}", f"selected = set({names!r})")
     require(sha256(timer.encode()).hexdigest() == archived["controller_sha256"],
             "Original fixture controller identity differs.")
-    require((folder / "controller.py").read_text() == fixture_campaign_controller(timer, cycles),
+    require(controller.read_text() == fixture_campaign_controller(timer, cycles),
             "Campaign fixture controller does not match the declared cycle and recording policy.")
+    return archived, order_names
+
+
+def verify_fixture_execution(folder, pair, order, fixture_stage):
+    from replay import fixture_command
+
+    root = Path(fixture_stage["root"])
+    prefix = folder / f"cranelift-{order}"
+    require(prefix.is_absolute() and prefix == prefix.resolve() and not prefix.is_relative_to(root),
+            "Expected a canonical fixture output prefix outside the shared stage.")
+    controller = root / fixture_stage["active_controller"]
+    bindings = [Path(pair[role]["81"]["path"]).parent for role in ("control", "candidate")]
+    execution = read(folder / "fixture-execution.json")
+    cwd = absolute(execution["cwd"])
+    require(execution == {
+        "fixture_stage_receipt_sha256": fixture_stage["receipt_sha256"],
+        "controller": str(controller),
+        "controller_sha256": fixture_stage["files"][fixture_stage["active_controller"]]["sha256"],
+        "command": fixture_command(controller, prefix, bindings, order),
+        "output_prefix": str(prefix), "cwd": str(cwd),
+    } and cwd == cwd.resolve(), f"Recorded fixture execution differs from the shared leg in {folder}.")
+    for local, staged in FIXTURE_WITNESSES.items():
+        witness = folder / local
+        require(witness == witness.resolve(strict=True), f"Fixture witness path differs: {witness}")
+        checked(witness, fixture_stage["files"][staged]["sha256"])
+
+
+def fixture_inputs(folder, pair, *, orders=ORDERS, cycles=4, fixture_stage=None):
+    if fixture_stage is not None:
+        order, = orders
+        verify_fixture_execution(folder, pair, order, fixture_stage)
+    archived, order_names = verify_fixture_controller(folder, folder / "controller.py", cycles)
     routes = PARENT / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
     try:
-        oracle_path = folder / "pinned-peers/libdeflate-output-oracle.json"
+        oracle_path = folder / FIXTURE_ORACLE
         checked(oracle_path, archived["oracle_sha256"])
         oracle = {row["case"]: row for row in read(oracle_path)}
         fixture_tools = run_path(str(routes / "verify_timings.py"))
@@ -284,7 +411,7 @@ def fixture_inputs(folder, pair, *, orders=ORDERS, cycles=4):
     for run in runs:
         order = run["order"]
         path = folder / f"cranelift-{order}"
-        labels, peers = validate_fixture_actor_pins(path, pair)
+        labels, peers = validate_fixture_actor_pins(path, pair, fixture_stage)
         if cycles == 2:
             startup = fixture_tools["ACTORS"]
             expected_startup = startup if order == "forward" else startup[::-1]
@@ -688,6 +815,7 @@ def scoped_compiler_metrics(folder, row, campaign):
 
 
 def scoped_runtime_metrics(folder, row, campaign):
+    fixture_stage = verify_fixture_stage(campaign.manifest["fixture_stage"], campaign.output.parent)
     calibrating = row["stage"] == "calibrate"
     controls = row["controls"]
     plan = list(crossover_plan(controls, row["ordinal"], calibrating))
@@ -720,7 +848,8 @@ def scoped_runtime_metrics(folder, row, campaign):
                 directory = path / f"{order}-{leg}"
                 bindings = crossover_pair(campaign.bindings, step, calibrating)
                 require(read(directory / "bindings.json") == bindings, "Crossover leg binary bindings differ.")
-                fixture, refs, fixture_ns = fixture_inputs(directory / "suite81", bindings, orders=(order,), cycles=fixtures)
+                fixture, refs, fixture_ns = fixture_inputs(directory / "suite81", bindings, orders=(order,),
+                                                          cycles=fixtures, fixture_stage=fixture_stage)
                 paired, silesia_ns = silesia_pair_inputs(directory / "silesia", bindings, orders=(order,))
                 legs[leg] = fixture | paired
                 fixture_refs[leg] = refs[fixture_key]
@@ -779,6 +908,51 @@ def gate_status(decisions):
     return "unresolved" if "unresolved" in decisions else "pass"
 
 
+def calibration_interval(controls, control, coordinate):
+    require(control in controls, f"Missing calibration control: {control}.")
+    coordinates = controls[control]["intervals"]["coordinates"]
+    require(coordinate in coordinates, f"Missing calibration coordinate: {control}/{coordinate}.")
+    interval = coordinates[coordinate]["interval95"]
+    require(len(interval) == 2 and all(isfinite(value) for value in interval) and interval[0] <= interval[1],
+            f"Invalid 95% log interval: {control}/{coordinate}.")
+    return interval
+
+
+def runtime_precision_reference(root, policy):
+    relative = Path(policy["reference_path"])
+    require(not relative.is_absolute() and ".." not in relative.parts, "Expected a repository-relative reference.")
+    reference = root / relative
+    require(reference == reference.resolve(strict=True), "Runtime precision reference path differs.")
+    checked(reference, policy["reference_sha256"])
+    commit = policy["reference_commit"]
+    blob = subprocess.check_output(["git", "show", f"{commit}:{relative.as_posix()}"], cwd=root)
+    require(sha256(blob).hexdigest() == policy["reference_sha256"],
+            "Runtime precision reference differs from its pinned commit.")
+    require(policy["rule"] == RUNTIME_PRECISION_RULE, "Unexpected runtime precision rule.")
+    controls = json.loads(blob)["controls"]
+    pairs = [tuple(pair) for pair in policy["coordinates"]]
+    expected = {(role, name) for role in SCOPED_CONTROLS for name in controls[role]["excludes_zero"]}
+    require(len(pairs) == len(expected) == 8 and set(pairs) == expected,
+            "Expected exactly the eight historically excluded calibration coordinates.")
+    return {pair: calibration_interval(controls, *pair) for pair in pairs}
+
+
+def runtime_calibration_precision(controls, root, policy):
+    reference = runtime_precision_reference(root, policy)
+    coordinates = []
+    for (control, coordinate), old in reference.items():
+        new = calibration_interval(controls, control, coordinate)
+        old_width, new_width = old[1] - old[0], new[1] - new[0]
+        coordinates.append({
+            "control": control, "coordinate": coordinate,
+            "reference_interval95": old, "reference_log_width": old_width,
+            "current_interval95": new, "current_log_width": new_width,
+            "decision": "pass" if new_width <= old_width else "unresolved",
+        })
+    return {"reference_sha256": policy["reference_sha256"], "rule": policy["rule"],
+            "coordinates": coordinates, "decision": gate_status([row["decision"] for row in coordinates])}
+
+
 def scoped_calibration(campaign):
     selected = {control: [] for control in SCOPED_CONTROLS}
     sessions = {}
@@ -787,8 +961,16 @@ def scoped_calibration(campaign):
         for control, metrics in scoped_metrics(folder, row, campaign).items():
             selected[control].append(metrics)
     controls = {control: calibration(simultaneous(family(rows, campaign.scope))) for control, rows in selected.items()}
-    return {**campaign.identity("calibrate", None), "sessions": sessions, "controls": controls,
-            "decision": gate_status([row["decision"] for row in controls.values()])}
+    result = {**campaign.identity("calibrate", None), "sessions": sessions, "controls": controls}
+    decisions = [row["decision"] for row in controls.values()]
+    if campaign.scope == "runtime":
+        require(all(len(row["intervals"]["coordinates"]) == 190 for row in controls.values()),
+                "Expected complete 190-coordinate runtime calibration families.")
+        precision = runtime_calibration_precision(controls, Path(campaign.manifest["bench_root"]),
+                                                  campaign.policy["runtime_calibration_precision"])
+        result["precision"] = precision
+        decisions.append(precision["decision"])
+    return {**result, "decision": gate_status(decisions)}
 
 
 def compiler_gates(intervals, seal, control):
@@ -865,6 +1047,9 @@ def verify_scoped_assessment(campaign):
         for stage in ("qualify", "confirm"):
             if (campaign.output / STAGE_FILES[stage]).exists():
                 scoped_stage_seal(campaign, stage, calibration_hash)
+                if campaign.scope == "runtime":
+                    for folder, row in scoped_sessions(campaign, stage, calibration_hash):
+                        scoped_metrics(folder, row, campaign)
         return None
     computed = scoped_assessment(campaign, seal, calibration_hash)
     require(computed == read(path), "Scoped assessment does not reproduce.")

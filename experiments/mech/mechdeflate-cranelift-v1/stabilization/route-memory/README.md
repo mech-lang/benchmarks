@@ -9,11 +9,35 @@ recipe, and `prepared-bindings.json` in that directory. The manifest binds
 the committed tooling files, the recipes, actual builds, machine, corpus
 and policy. [Fixed policy](policy.json)
 
-Use the maintained `rebuild.py` to prepare the actors from the pinned
-checkouts. The compiler scope uses ordinary fresh compiler processes with
-reporting and census disabled. Use the explicitly selected encoder test
-and census separately before measurement. Retain previous campaign
-directories and any partial or unfavorable observations.
+Use the maintained `rebuild.py` for new actor builds. The shared-fixture
+qualification reuses the exact bound compilers, workers and correctness
+receipts from the integrated campaign. The compiler scope uses ordinary
+fresh compiler processes with reporting and census disabled. Retain
+previous campaign directories and any partial or unfavorable observations.
+
+For this final qualification, resolve `BENCH_ROOT` and the existing parent
+of the new campaign before choosing its basename. Create that new `RUN`
+directory once. In the pinned tooling checkout, run this preparation
+command from `BENCH_ROOT`.
+
+```sh
+PYTHONPATH="$PACKET" python3 -B - "$RUN" "$BENCH_ROOT" <<'PY'
+import json
+from pathlib import Path
+import sys
+from replay import prepare_fixture_stage
+
+run, bench = (Path(value).resolve(strict=True) for value in sys.argv[1:])
+binding = prepare_fixture_stage(run / "fixture-stage", bench / "experiments/mech")
+print(json.dumps(binding, indent=2))
+PY
+```
+
+Include the printed binding as `fixture_stage` in the campaign manifest.
+Bind the complete host record with the Mach timebase reported by
+`campaign_host()`. The active controller and all four actors use the
+shared stage paths through every runtime leg. Each leg writes results
+and its execution receipt under its own `suite81` directory.
 
 Set `PACKET` to the absolute benchmark packet directory and `RUN` to the
 absolute campaign directory. Run each stage serially with `SCOPE=compiler`.
@@ -28,12 +52,16 @@ python3 -B "$PACKET/compare_rebuilt.py" --campaign "$CAMPAIGN" --scope "$SCOPE" 
 python3 -B "$PACKET/verify.py" --campaign "$CAMPAIGN" --campaign-record "$RUN" --scope "$SCOPE"
 ```
 
-A memory-repair campaign ends with its compiler assessment. A final
-qualification runs the same sequence again with `SCOPE=runtime` after its
-compiler assessment passes verification. Runtime calibration uses fresh
-worker-slot assignments in both legs. The verifier checks each mapping and
-startup order, then forms crossed cycles with ratios oriented to the actual
-compilers. Invalid runtime calibration stops before candidate timing.
+A memory-repair campaign ends with its compiler assessment. After a
+passing compiler assessment for this same manifest, run the calibration
+and verification commands with `SCOPE=runtime`. Inspect the calibration
+seal before candidate timing. The verifier checks the shared execution
+paths and each crossover mapping, then forms crossed cycles with ratios
+oriented to the actual compilers. A passing seal requires zero inclusion
+for both controls and log interval widths at or below the pinned widths
+for all eight precision coordinates. With a passing seal, run qualification,
+confirmation, assessment and final verification in order. An unresolved
+seal ends the campaign at calibration. [Precision reference](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/runtime/calibration.json)
 
 Compiler sessions rotate their starting slot by session ordinal. The
 rotation assigns each role to each absolute launch position across every

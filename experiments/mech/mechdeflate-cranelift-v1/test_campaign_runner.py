@@ -1,4 +1,5 @@
 import tempfile
+from copy import deepcopy
 from itertools import permutations
 from math import log
 import unittest
@@ -7,10 +8,14 @@ from unittest.mock import patch
 
 from campaign_stats import paired_log, simultaneous
 from compare_rebuilt import require_pair, run_scoped_campaign, write_new
-from rebuild import read
-from verify import (SCOPED_POLICY, ScopedCampaign, compilation_inputs, compiler_gates, compiler_prerequisite,
+from rebuild import HERE, PARENT, read, sha, write
+from replay import fixture_campaign_controller, prepare_fixture_stage, suite81
+from verify import (FIXTURE_ORACLE, FIXTURE_WITNESSES, SCOPED_POLICY, ScopedCampaign,
+                    compilation_inputs, compiler_gates, compiler_prerequisite,
                     crossed_units, crossover_pair, crossover_plan, inventory, scoped_compiler_slots,
-                    scoped_schedule, verify_inventory, verify_leg_order, verify_session)
+                    runtime_calibration_precision, runtime_precision_reference, scoped_calibration, scoped_schedule,
+                    validate_fixture_actor_pins, verify_fixture_execution, verify_fixture_stage, verify_inventory,
+                    verify_leg_order, verify_scoped_assessment, verify_session)
 
 
 class CampaignRunnerTests(unittest.TestCase):
@@ -183,3 +188,229 @@ class CampaignRunnerTests(unittest.TestCase):
         self.assertEqual(compiler_gates(intervals, seal, "previous")["decision"], "unresolved")
         coordinates["maximum_resident_bytes"]["interval95"][1] = -0.001
         self.assertEqual(compiler_gates(intervals, seal, "previous")["decision"], "pass")
+
+    def test_precision_uses_exact_log_width_and_the_eight_pinned_coordinates(self):
+        root = HERE.parents[2]
+        policy = read(SCOPED_POLICY)["runtime_calibration_precision"]
+        reference = runtime_precision_reference(root, policy)
+        self.assertEqual(len(reference), 8)
+        self.assertIn(("previous", "fixtures/forward/suite-geomean"), reference)
+        historical = read(root / policy["reference_path"])["controls"]
+        control, coordinate = next(iter(reference))
+        lo, hi = reference[control, coordinate]
+        width = hi - lo
+        for interval, expected in (([lo, hi], "pass"), ([-width / 4, width / 4], "pass"),
+                                   ([-width, width], "unresolved")):
+            with self.subTest(interval=interval):
+                current = deepcopy(historical)
+                current[control]["intervals"]["coordinates"][coordinate]["interval95"] = interval
+                result = runtime_calibration_precision(current, root, policy)
+                first = result["coordinates"][0]
+                self.assertEqual(first["reference_log_width"], width)
+                self.assertEqual(first["current_log_width"], interval[1] - interval[0])
+                self.assertEqual(first["decision"], expected)
+                self.assertEqual(result["decision"], expected)
+        del current[control]["intervals"]["coordinates"][coordinate]
+        with self.assertRaisesRegex(ValueError, "Missing calibration coordinate"):
+            runtime_calibration_precision(current, root, policy)
+        with self.assertRaisesRegex(ValueError, "expected"):
+            runtime_precision_reference(root, {**policy, "reference_sha256": "0" * 64})
+        with self.assertRaisesRegex(ValueError, "eight historically excluded"):
+            runtime_precision_reference(root, {**policy, "coordinates": policy["coordinates"][:-1]})
+
+    def test_precision_only_miss_refuses_candidate_timing_and_records(self):
+        root = HERE.parents[2]
+        policy = read(SCOPED_POLICY)
+        declaration = policy["runtime_calibration_precision"]
+        historical = read(root / declaration["reference_path"])["controls"]
+        intervals = [deepcopy(historical[role]["intervals"]) for role in ("reviewed", "previous")]
+        for family in intervals:
+            for row in family["coordinates"].values():
+                row["interval95"] = [0.0, 0.0]
+        coordinate = declaration["coordinates"][0][1]
+        lo, hi = historical["reviewed"]["intervals"]["coordinates"][coordinate]["interval95"]
+        intervals[0]["coordinates"][coordinate]["interval95"] = [lo - hi, hi - lo]
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary) / "runtime"
+            output.mkdir()
+            folder = Path(temporary)
+            (folder / "record.json").write_text("{}")
+            campaign = ScopedCampaign({"bench_root": str(root)}, "manifest", output, policy, "runtime", {})
+            metrics = [{role: {"runtime": {"fixture": []}}} for role in ("reviewed", "previous")]
+            with (patch("verify.scoped_sessions", return_value=[(folder, {}), (folder, {})]),
+                  patch("verify.scoped_metrics", side_effect=metrics),
+                  patch("verify.simultaneous", side_effect=intervals)):
+                seal = scoped_calibration(campaign)
+            self.assertTrue(all(row["decision"] == "pass" for row in seal["controls"].values()))
+            self.assertEqual(seal["precision"]["decision"], "unresolved")
+            self.assertEqual(seal["decision"], "unresolved")
+            path = output / "calibration.json"
+            write_new(path, seal)
+            with (patch("verify.open_scope", return_value=campaign),
+                  patch("verify.scoped_calibration", return_value=seal),
+                  patch("compare_rebuilt.record_scoped_session") as record):
+                for stage in ("qualify", "confirm"):
+                    with self.subTest(stage=stage), self.assertRaisesRegex(ValueError, "Invalid runtime calibration"):
+                        run_scoped_campaign(Path("campaign.json"), stage, path, "runtime")
+                    self.assertFalse((output / stage).exists())
+                record.assert_not_called()
+                self.assertIsNone(verify_scoped_assessment(campaign))
+                (output / "qualify").mkdir()
+                with self.assertRaisesRegex(ValueError, "Invalid runtime calibration"):
+                    verify_scoped_assessment(campaign)
+
+
+class SharedFixtureTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        temporary = tempfile.TemporaryDirectory()
+        cls.output = Path(temporary.name).resolve(strict=True)
+        cls.root = cls.output / "fixture-stage"
+
+        def cleanup():
+            if cls.root.is_dir():
+                cls.root.chmod(0o755)
+                for item in cls.root.rglob("*"):
+                    if item.is_dir():
+                        item.chmod(0o755)
+            temporary.cleanup()
+
+        cls.addClassCleanup(cleanup)
+        with patch("replay.subprocess.run") as launch:
+            cls.binding = prepare_fixture_stage(cls.root, PARENT)
+            launch.assert_not_called()
+        cls.stage = verify_fixture_stage(cls.binding, cls.output)
+
+    def test_preparation_creates_a_read_only_stage_once(self):
+        with patch("replay.prepare_fixture_inputs") as prepare:
+            with self.assertRaises(FileExistsError):
+                prepare_fixture_stage(self.root, PARENT)
+            prepare.assert_not_called()
+        self.assertEqual(verify_fixture_stage(self.binding, self.output), self.stage)
+        self.assertEqual(self.root.stat().st_mode & 0o777, 0o555)
+        self.assertEqual((self.root / "fixtures.json").stat().st_mode & 0o777, 0o444)
+        self.assertEqual((self.root / "peers/libdeflate-worker").stat().st_mode & 0o777, 0o555)
+        baseline = (self.root / "controller.py").read_text()
+        active = (self.root / "campaign-controller.py").read_text()
+        self.assertEqual(fixture_campaign_controller(baseline, 2), active)
+        anchor = "orders = list(permutations(commands)) * 4"
+        for variant in (baseline.replace(anchor, ""), baseline + anchor):
+            with self.assertRaisesRegex(ValueError, "crossover anchor"):
+                fixture_campaign_controller(variant, 2)
+
+    def test_stage_rejects_changed_or_additional_inputs(self):
+        for name in ("fixtures/0/input", "campaign-controller.py", FIXTURE_ORACLE, "peers/reference-metadata.json"):
+            with self.subTest(name=name):
+                path = self.root / name
+                original = path.read_bytes()
+                mode = path.stat().st_mode & 0o777
+                path.chmod(0o644)
+                try:
+                    path.write_bytes(original + b"changed")
+                    with self.assertRaisesRegex(ValueError, "stage inventory changed"):
+                        verify_fixture_stage(self.binding, self.output)
+                finally:
+                    path.write_bytes(original)
+                    path.chmod(mode)
+        extra = self.root / "extra.json"
+        self.root.chmod(0o755)
+        try:
+            extra.touch()
+            with self.assertRaisesRegex(ValueError, "stage inventory changed"):
+                verify_fixture_stage(self.binding, self.output)
+            extra.unlink()
+            extra.symlink_to(self.root / "fixtures.json")
+            with self.assertRaisesRegex(ValueError, "symbolic link"):
+                verify_fixture_stage(self.binding, self.output)
+        finally:
+            extra.unlink(missing_ok=True)
+            self.root.chmod(0o555)
+
+    def test_legs_share_execution_inputs_and_keep_separate_results(self):
+        worker = self.root / "actors/control/bound/mech-worker"
+        metadata = worker.with_name("metadata.json")
+        binary = {"81": {"path": str(worker), "sha256": sha(worker)},
+                  "artifacts": {"metadata.json": sha(metadata)}}
+        pair = dict.fromkeys(("control", "candidate"), binary)
+        shared_cases = str(self.root / "fixtures.json")
+        prefixes = []
+
+        def fake_run(command, **options):
+            if Path(command[2]).name != "campaign-controller.py":
+                self.assertEqual(Path(command[2]).name, "verify_timings.py")
+                return
+            self.assertNotIn("cwd", options)
+            self.assertEqual(command[2], str(self.root / "campaign-controller.py"))
+            prefix = Path(command[3])
+            prefixes.append(prefix)
+            prefix.mkdir()
+            write(prefix / "complete.json", {"cases": 81, "balanced_blocks_per_case": 48, "timed_calls": 491328})
+            write(prefix / "summary.json", [])
+            pin = {"command": [str(worker), str(metadata), shared_cases],
+                   "binary_sha256": sha(worker), "metadata_sha256": sha(metadata)}
+            pins = read(self.root / "pinned-peers/pins.json")
+            pins["actors"].update(dict.fromkeys(("mech-control", "mech-experiment"), pin))
+            write(prefix / "pins.json", pins)
+
+        with (patch("replay.actor", return_value=worker),
+              patch("replay.prepare_fixture_inputs") as prepare,
+              patch("replay.subprocess.run", side_effect=fake_run)):
+            for step in tuple(crossover_plan(("reviewed",), 1, True))[:2]:
+                leg = self.output / f"leg-{step['leg']}" / "suite81"
+                leg.mkdir(parents=True)
+                suite81(leg, PARENT, self.output, self.output, "fixture", "fixture", orders=("forward",),
+                        retain_warmups=True, cycles=2, fixture_stage=self.binding)
+                verify_fixture_execution(leg, pair, "forward", self.stage)
+                validate_fixture_actor_pins(leg / "cranelift-forward", pair, self.stage)
+                self.assertEqual(read(leg / "fixture-execution.json")["cwd"], str(Path.cwd()))
+            prepare.assert_not_called()
+        self.assertEqual(prefixes, [self.output / f"leg-{name}/suite81/cranelift-forward" for name in "AB"])
+
+        prefix = prefixes[0]
+        leg = prefix.parent
+        path = prefix / "pins.json"
+        original_pins = read(path)
+        for name in original_pins["actors"]:
+            with self.subTest(actor=name):
+                copied = deepcopy(original_pins)
+                copied["actors"][name]["command"][-1] = str(leg / "fixtures.json")
+                write(path, copied)
+                with self.assertRaisesRegex(ValueError, "shared case JSON"):
+                    validate_fixture_actor_pins(prefix, pair, self.stage)
+        write(path, original_pins)
+        receipt_path = leg / "fixture-execution.json"
+        original_receipt = read(receipt_path)
+        for field, offset, alternate in (("controller", 2, leg / "controller.py"),
+                                         ("output_prefix", 3, self.root / "results")):
+            with self.subTest(field=field):
+                receipt = deepcopy(original_receipt)
+                receipt[field] = receipt["command"][offset] = str(alternate)
+                write(receipt_path, receipt)
+                with self.assertRaisesRegex(ValueError, "Recorded fixture execution differs"):
+                    verify_fixture_execution(leg, pair, "forward", self.stage)
+        write(receipt_path, original_receipt)
+        for witness in FIXTURE_WITNESSES:
+            self.assertEqual(sha(leg / witness), sha(self.root / FIXTURE_WITNESSES[witness]))
+
+    def test_standalone_replay_prepares_its_own_inputs(self):
+        out = self.output / "standalone"
+        out.mkdir()
+        folder = out / "cranelift-forward"
+
+        def prepare(path, packets):
+            (path / "controller.py").touch()
+            return self.stage["reference_actor"]
+
+        def fake_run(command, **options):
+            if Path(command[2]).name == "controller.py":
+                self.assertEqual(command[2:4], [str(out / "controller.py"), str(folder)])
+                folder.mkdir()
+                write(folder / "complete.json", {"cases": 81, "balanced_blocks_per_case": 96, "timed_calls": 982656})
+                write(folder / "summary.json", [])
+
+        with (patch("replay.prepare_fixture_inputs", side_effect=prepare) as prepare_inputs,
+              patch("replay.actor", return_value=out / "worker"),
+              patch("replay.subprocess.run", side_effect=fake_run)):
+            suite81(out, PARENT, out, out, "fixture", "fixture", orders=("forward",))
+        prepare_inputs.assert_called_once_with(out, PARENT)
+        self.assertFalse((out / "fixture-execution.json").exists())

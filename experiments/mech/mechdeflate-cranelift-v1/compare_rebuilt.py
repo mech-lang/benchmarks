@@ -2,6 +2,7 @@
 
 from argparse import ArgumentParser
 from collections import Counter
+import ctypes
 from datetime import datetime, timezone
 from itertools import permutations
 import json
@@ -73,11 +74,12 @@ def bind(label, build, recipe_path):
     }
 
 
-def compare81(out, packets, control, candidate, *, retain_warmups=False, orders=ORDERS, cycles=4):
+def compare81(out, packets, control, candidate, *, retain_warmups=False, orders=ORDERS, cycles=4,
+              fixture_stage=None):
     out.mkdir()
     suite81(out, packets, Path(candidate["build_directory"]), Path(control["build_directory"]),
             control["role"], candidate["role"], labels=(control["label"], candidate["label"]),
-            retain_warmups=retain_warmups, orders=orders, cycles=cycles)
+            retain_warmups=retain_warmups, orders=orders, cycles=cycles, fixture_stage=fixture_stage)
     results = out / "cranelift-results.json"
     runs = read(results)["runs"]
     paths = {}
@@ -166,6 +168,19 @@ def utc_now():
 def campaign_host():
     if (platform.system(), platform.machine()) != ("Darwin", "arm64"):
         raise ValueError("Timing requires Apple Silicon macOS.")
+
+    class Timebase(ctypes.Structure):
+        _fields_ = [("numer", ctypes.c_uint32), ("denom", ctypes.c_uint32)]
+
+    timebase = Timebase()
+    mach_timebase_info = ctypes.CDLL(None).mach_timebase_info
+    mach_timebase_info.argtypes = [ctypes.POINTER(Timebase)]
+    mach_timebase_info.restype = ctypes.c_int
+    status = mach_timebase_info(ctypes.byref(timebase))
+    clock_timebase = {"status": status, "numer": timebase.numer, "denom": timebase.denom}
+    if status != 0 or not (timebase.numer and timebase.denom):
+        raise ValueError(f"Invalid Mach clock timebase {clock_timebase}.")
+
     def read_system(*command):
         return check_output(command, text=True).strip()
     chip = read_system("/usr/sbin/sysctl", "-n", "machdep.cpu.brand_string")
@@ -179,7 +194,7 @@ def campaign_host():
         "machine": platform.node(), "os": platform.system(), "os_version": platform.mac_ver()[0],
         "os_build": read_system("/usr/bin/sw_vers", "-buildVersion"),
         "rustc": read_system("rustc", "+" + toolchain, "-vV"),
-        "python": platform.python_version(),
+        "python": platform.python_version(), "clock_timebase": clock_timebase,
     }
 
 
@@ -312,7 +327,8 @@ def record_crossover(folder, campaign, stage, ordinal, controls):
         write_new(path / "started.json", started)
         print(f"Session {ordinal} {step['comparison']} {order} leg {step['leg']} {step['slots']}", flush=True)
         left, right = bindings["control"], bindings["candidate"]
-        compare81(path / "suite81", PARENT, left, right, retain_warmups=True, orders=(order,), cycles=cycles)
+        compare81(path / "suite81", PARENT, left, right, retain_warmups=True, orders=(order,), cycles=cycles,
+                  fixture_stage=campaign.manifest["fixture_stage"])
         compare_silesia(path / "silesia", PARENT, corpus, left, right, orders=(order,))
         legs.append({**started, "end_utc": utc_now()})
     references = folder / "references"
@@ -324,7 +340,7 @@ def record_crossover(folder, campaign, stage, ordinal, controls):
 
 
 def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, controls, compiler_inputs):
-    from verify import inventory, require, scoped_compiler_slots, scoped_metrics
+    from verify import inventory, require, scoped_compiler_slots, scoped_metrics, verify_fixture_stage
 
     actual_host = campaign_host()
     require(actual_host == campaign.manifest["host"], "Campaign host or toolchain changed.")
@@ -337,7 +353,10 @@ def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, co
         slots = scoped_compiler_slots(campaign.policy, stage, controls, ordinal)
         compiler_session(folder / "processes", slots, compiler_inputs)
     else:
+        stage_binding = campaign.manifest["fixture_stage"]
+        verify_fixture_stage(stage_binding, campaign.output.parent)
         metadata["legs"] = record_crossover(folder, campaign, stage, ordinal, controls)
+        verify_fixture_stage(stage_binding, campaign.output.parent)
     require(campaign_host() == actual_host, "Campaign host changed during the session.")
     record = {**started, "end_utc": utc_now(), "host": actual_host, "ordinal": ordinal,
               "controls": list(controls), **metadata, "raw_files": inventory(folder)}
@@ -347,7 +366,7 @@ def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, co
 
 def run_scoped_campaign(path, stage, calibration_path, scope):
     from verify import (STAGE_FILES, open_scope, require, scoped_assessment, scoped_calibration,
-                        scoped_calibration_seal, scoped_schedule, scoped_stage_seal, scoped_summary)
+                        scoped_calibration_seal, scoped_metrics, scoped_schedule, scoped_stage_seal, scoped_summary)
 
     campaign = open_scope(path, scope)
     target = campaign.output / STAGE_FILES[stage]
@@ -382,6 +401,8 @@ def run_scoped_campaign(path, stage, calibration_path, scope):
         for name, ordinal, controls in schedule[:len(existing)]:
             record = campaign.session(base / name, stage, calibration_hash, ordinal, controls)
             require(previous <= record["start_utc"], "Existing sessions have invalid startup order.")
+            if scope == "runtime":
+                scoped_metrics(base / name, record, campaign)
             previous = record["end_utc"]
         for name, ordinal, controls in schedule[len(existing):]:
             record_scoped_session(campaign, base / name, stage, calibration_hash, ordinal, controls, compiler_inputs)

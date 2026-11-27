@@ -29,6 +29,28 @@
     "fixtures": "private heap initialization through closed compression, output acquisition and heap cleanup",
     "silesia": "one level-12 deploy_encode call with preloaded input"
   },
+  "fixture_staging": {
+    "mode": "campaign-shared-v1",
+    "root_basename": "fixture-stage",
+    "receipt_basename": "fixture-stage.json",
+    "active_controller": "campaign-controller.py"
+  },
+  "runtime_calibration_precision": {
+    "reference_commit": "1f1913cbf33be59502320cf6b4e11ae530e12c4f",
+    "reference_path": "experiments/mech/mechdeflate-cranelift-v1/stabilization/route-memory/3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/runtime/calibration.json",
+    "reference_sha256": "f0997aa7c72b92e70ade50ad55d84e7260e56b15c75926c197059d8102b913e4",
+    "coordinates": [
+      ["reviewed", "fixtures/forward/prefix-natural-65536"],
+      ["reviewed", "fixtures/reverse/prefix-random-4096"],
+      ["reviewed", "fixtures/reverse/repeated-32769"],
+      ["previous", "fixtures/forward/empty"],
+      ["previous", "fixtures/forward/prefix-periodic-65535"],
+      ["previous", "fixtures/forward/prefix-random-1024"],
+      ["previous", "fixtures/forward/suite-geomean"],
+      ["previous", "fixtures/reverse/prefix-random-1048576"]
+    ],
+    "rule": "current_interval95_log_width_lte_reference"
+  },
   "comparisons": [["candidate", "reviewed"], ["candidate", "previous"]],
   "reference_targets": {"M1": {"fixtures": 81, "silesia": 12}, "M3": "retain corresponding control wins"}
 }

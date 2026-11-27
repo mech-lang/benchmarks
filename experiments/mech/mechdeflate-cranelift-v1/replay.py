@@ -3,6 +3,7 @@
 from argparse import ArgumentParser
 from pathlib import Path
 from runpy import run_path
+from shutil import copyfile
 import subprocess
 import sys
 
@@ -55,16 +56,86 @@ def fixture_campaign_controller(program, cycles):
     return capture_fixture_warmups(program)
 
 
-def suite81(out, packets, build, control_build, control, candidate, labels=None, *,
-            retain_warmups=False, orders=("forward", "reverse"), cycles=4):
+def prepare_fixture_inputs(out, packets):
     previous = packets / "mechdeflate-81-v1"
     routes = packets / "mechdeflate-phase-routes-v1"
     sys.path.insert(0, str(routes))
-    helpers = run_path(str(routes / "replay_timings.py"))
-    reference = run_path(str(previous / "replay_timings.py"))["prepare"](out, helpers)
-    controller = out / "controller.py"
-    if retain_warmups:
-        controller.write_text(fixture_campaign_controller(controller.read_text(), cycles))
+    try:
+        helpers = run_path(str(routes / "replay_timings.py"))
+        return run_path(str(previous / "replay_timings.py"))["prepare"](out, helpers)
+    finally:
+        sys.path.pop(0)
+
+
+def prepare_fixture_stage(stage_root, packets):
+    from compare_rebuilt import write_new
+    from verify import FIXTURE_STAGING, fixture_stage_inventory, require
+
+    require(stage_root.is_absolute() and stage_root == stage_root.resolve()
+            and stage_root.name == FIXTURE_STAGING["root_basename"], "Expected the canonical campaign stage path.")
+    require(packets.is_absolute() and packets == packets.resolve(strict=True),
+            "Expected the canonical benchmark packet directory.")
+    receipt = stage_root.parent / FIXTURE_STAGING["receipt_basename"]
+    if receipt.exists() or receipt.is_symlink():
+        raise FileExistsError(receipt)
+    stage_root.mkdir()
+    reference = prepare_fixture_inputs(stage_root, packets)
+    active = FIXTURE_STAGING["active_controller"]
+    program = fixture_campaign_controller((stage_root / "controller.py").read_text(), 2)
+    with (stage_root / active).open("x") as controller:
+        controller.write(program)
+    files = fixture_stage_inventory(stage_root)
+    for name in files:
+        item = stage_root / name
+        item.chmod(0o555 if item.stat().st_mode & 0o111 else 0o444)
+    for directory in stage_root.rglob("*"):
+        if directory.is_dir():
+            directory.chmod(0o555)
+    stage_root.chmod(0o555)
+    write_new(receipt, {
+        "schema": "mech.native-route-fixture-stage.v1",
+        "root": str(stage_root),
+        "active_controller": active,
+        "reference_actor": reference,
+        "cases": 81,
+        "cycles_per_leg": 2,
+        "permutations": 24,
+        "files": files,
+    })
+    return {"root": str(stage_root), "receipt": str(receipt), "receipt_sha256": sha(receipt)}
+
+
+def fixture_command(controller, prefix, bindings, order):
+    command = [sys.executable, "-B", str(controller), str(prefix), *map(str, bindings)]
+    if order == "reverse":
+        command.append(order)
+    return command
+
+
+def suite81(out, packets, build, control_build, control, candidate, labels=None, *,
+            retain_warmups=False, orders=("forward", "reverse"), cycles=4, fixture_stage=None):
+    routes = packets / "mechdeflate-phase-routes-v1"
+    if fixture_stage is None:
+        reference = prepare_fixture_inputs(out, packets)
+        controller = out / "controller.py"
+        if retain_warmups:
+            controller.write_text(fixture_campaign_controller(controller.read_text(), cycles))
+    else:
+        from compare_rebuilt import write_new
+        from verify import FIXTURE_WITNESSES, require, verify_fixture_stage
+
+        stage_root = Path(fixture_stage["root"])
+        stage = verify_fixture_stage(fixture_stage, stage_root.parent)
+        require(retain_warmups and len(orders) == 1 and cycles == stage["cycles_per_leg"],
+                "The shared stage supplies one complete crossover leg.")
+        require(out.is_absolute() and out == out.resolve(strict=True) and not out.is_relative_to(stage_root),
+                "Fixture results must use a canonical directory outside the shared stage.")
+        reference = stage["reference_actor"]
+        controller = stage_root / stage["active_controller"]
+        for local, staged in FIXTURE_WITNESSES.items():
+            witness = out / local
+            witness.parent.mkdir(parents=True, exist_ok=True)
+            copyfile(stage_root / staged, witness)
     blocks = cycles * 24
     bindings = [actor(control_build, control, "bound/mech-worker").parent,
                 actor(build, candidate, "bound/mech-worker").parent]
@@ -72,9 +143,18 @@ def suite81(out, packets, build, control_build, control, candidate, labels=None,
     role = "cranelift"
     for order in orders:
         folder = out / f"{role}-{order}"
-        command = [sys.executable, "-B", controller, folder, *bindings]
-        if order == "reverse":
-            command.append(order)
+        command = fixture_command(controller, folder, bindings, order)
+        if fixture_stage is not None:
+            require(folder == folder.resolve() and not folder.is_relative_to(stage_root),
+                    "Fixture output prefix must be outside the shared stage.")
+            write_new(out / "fixture-execution.json", {
+                "fixture_stage_receipt_sha256": fixture_stage["receipt_sha256"],
+                "controller": str(controller),
+                "controller_sha256": stage["files"][stage["active_controller"]]["sha256"],
+                "command": command,
+                "output_prefix": str(folder),
+                "cwd": str(Path.cwd()),
+            })
         subprocess.run(command, check=True)
         complete = read(folder / "complete.json")
         assert (complete["cases"], complete["balanced_blocks_per_case"], complete["timed_calls"]) == (
