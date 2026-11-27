@@ -1,0 +1,11 @@
+cd /Users/coreymontella/.codex/worktrees/mech-native-route-stabilization.4xX2Ip/runtime-continuation
+PYTHONPATH=/Users/coreymontella/.codex/worktrees/mech-native-route-stabilization.4xX2Ip/runtime-continuation/experiments/mech/mechdeflate-cranelift-v1 python3 -B - /Users/coreymontella/.codex/worktrees/mech-native-route-stabilization.4xX2Ip/runtime-continuation/experiments/mech/mechdeflate-cranelift-v1/stabilization/route-memory/3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-runtime-continuation-20261127T063331Z /Users/coreymontella/.codex/worktrees/mech-native-route-stabilization.4xX2Ip/runtime-continuation <<'PY'
+import json
+from pathlib import Path
+import sys
+from replay import prepare_fixture_stage
+
+run, bench = (Path(value).resolve(strict=True) for value in sys.argv[1:])
+binding = prepare_fixture_stage(run / "fixture-stage", bench / "experiments/mech")
+print(json.dumps(binding, indent=2))
+PY
