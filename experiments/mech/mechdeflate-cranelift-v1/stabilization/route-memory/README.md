@@ -73,3 +73,35 @@ The integrated source passed correctness and compiler qualification on M1.
 The final runtime candidate remains unmeasured after the same-build runtime
 calibration returned unresolved. The assessment links the complete calibration
 and the timing diagnostics. [Round 2 assessment](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/assessment.md)
+
+## Runtime continuation
+
+Use purpose `runtime-continuation` for the fixed M1 continuation. Its compiler
+parent is the completed shared-fixture campaign
+`F-m1-shared-fixtures-20261127T044557Z` at tooling
+`0108617d529244d87e34fcbda26fb64170333f44` and evidence
+`d827ea55471c2d7000cd2addc9b105a15699e2ec`. Keep its original compiler
+records available at the paths declared in its manifest. The verifier reads the
+pinned Git blobs and reconstructs its calibration, qualification, confirmation
+and assessment from the raw records. It writes `parent-verification.json` in
+the new run after successful reconstruction.
+
+Create a new canonical run named `F-m1-runtime-continuation-<UTC timestamp>`.
+Use the shared-stage preparation command above with this new run. Carry the
+parent's complete R, O and F bindings, recipes, corpus, host and fixed policy
+into the new manifest. Bind the parent paths and hashes in `compiler_parent`
+and pin the continuation tooling commit. The runtime precision reference is
+the earlier calibration pinned in the policy.
+
+After preparation, run the verifier with `--scope runtime` before collecting
+observations. A valid prepared continuation reports its reconstructed compiler
+decision and runtime `not_run`. A verified unresolved compiler parent is
+eligible for runtime calibration. The continuation forbids compiler collection.
+
+Run the six-session runtime calibration once and verify its seal. Use the
+runtime calibration decision, including its precision checks, to determine
+whether to collect qualification and confirmation. An unresolved calibration
+ends collection before candidate timing. The report records the compiler,
+calibration, runtime and combined decisions and the completed session counts.
+A passing runtime assessment with an unresolved compiler parent leaves the
+combined assessment unresolved.

@@ -366,7 +366,8 @@ def record_scoped_session(campaign, folder, stage, calibration_hash, ordinal, co
 
 def run_scoped_campaign(path, stage, calibration_path, scope):
     from verify import (STAGE_FILES, open_scope, require, scoped_assessment, scoped_calibration,
-                        scoped_calibration_seal, scoped_metrics, scoped_schedule, scoped_stage_seal, scoped_summary)
+                        scoped_calibration_seal, scoped_schedule, scoped_stage_seal, scoped_summary,
+                        verified_scoped_prefix)
 
     campaign = open_scope(path, scope)
     target = campaign.output / STAGE_FILES[stage]
@@ -394,17 +395,8 @@ def run_scoped_campaign(path, stage, calibration_path, scope):
         base = campaign.output / stage
         base.mkdir(parents=True, exist_ok=True)
         schedule = scoped_schedule(campaign.policy, stage)
-        existing = {folder.name for folder in base.iterdir()}
-        require(existing == {name for name, _, _ in schedule[:len(existing)]},
-                "Existing sessions do not form a prefix of the scheduled stage.")
-        previous = ""
-        for name, ordinal, controls in schedule[:len(existing)]:
-            record = campaign.session(base / name, stage, calibration_hash, ordinal, controls)
-            require(previous <= record["start_utc"], "Existing sessions have invalid startup order.")
-            if scope == "runtime":
-                scoped_metrics(base / name, record, campaign)
-            previous = record["end_utc"]
-        for name, ordinal, controls in schedule[len(existing):]:
+        complete = verified_scoped_prefix(campaign, stage, calibration_hash)
+        for name, ordinal, controls in schedule[complete:]:
             record_scoped_session(campaign, base / name, stage, calibration_hash, ordinal, controls, compiler_inputs)
         if stage == "calibrate":
             result = scoped_calibration(campaign)

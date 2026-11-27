@@ -21,6 +21,7 @@ from rebuild import HERE, PARENT, checked, read, sha
 
 POLICY = HERE / "stabilization/closeout-p3/policy.json"
 SCOPED_POLICY = HERE / "stabilization/route-memory/policy.json"
+SCOPED_POLICY_PATH = SCOPED_POLICY.relative_to(HERE.parents[2]).as_posix()
 SCOPES = ("compiler", "runtime")
 SCOPED_BASELINE = "3936f4b1d693aa7a26cd7954ba8cb011ee7cbed7"
 STARTING_SOURCE = "146626d6f9bad465efaa2993f49da4a674b993a9"
@@ -42,6 +43,21 @@ FIXTURE_WITNESSES = {
     "compare-library.py": "compare-library.py", "fixtures.json": "fixtures.json", FIXTURE_ORACLE: FIXTURE_ORACLE,
 }
 RUNTIME_PRECISION_RULE = "current_interval95_log_width_lte_reference"
+RUNTIME_CONTINUATION = "runtime-continuation"
+CONTINUATION_PARENT = {
+    "campaign_id": "F-m1-shared-fixtures-20261127T044557Z",
+    "tooling_commit": "0108617d529244d87e34fcbda26fb64170333f44",
+    "evidence_commit": "d827ea55471c2d7000cd2addc9b105a15699e2ec",
+}
+CONTINUATION_SOURCES = {
+    "R": "8ce620d1b165b868210378ef260945ee3c398d05", "O": PREVIOUS_SOURCE,
+    "N": "3f6782cd1a7af24b1a3f43088e6e1a9ead0ff0ea", "F": "3a66a014c853e082ad907ed4db1673c9dadf0c69",
+}
+CONTINUATION_PARENT_PATH = Path(SCOPED_POLICY_PATH).parent / CONTINUATION_SOURCES["F"] / CONTINUATION_PARENT["campaign_id"]
+SCOPED_TOOL_PACKETS = tuple("experiments/mech/" + name for name in (
+    "mechdeflate-cranelift-v1", "mechdeflate-81-v1", "mechdeflate-phase-routes-v1",
+    "mechdeflate-masked-fields-v1", "mechdeflate-silesia-v1",
+))
 
 
 def require(condition, message):
@@ -60,13 +76,45 @@ def tool_commit(root):
 
 
 def scoped_tool_files(root):
-    packets = ("mechdeflate-cranelift-v1", "mechdeflate-81-v1", "mechdeflate-phase-routes-v1",
-               "mechdeflate-masked-fields-v1", "mechdeflate-silesia-v1")
     tracked = subprocess.check_output(
-        ["git", "ls-files", "-z", "--", *(str((PARENT / name).relative_to(root)) for name in packets)],
-        cwd=root,
+        ["git", "ls-files", "-z", "--", *SCOPED_TOOL_PACKETS], cwd=root,
     ).decode().split("\0")
-    return {name for name in tracked if name.endswith(".py")} | {str(SCOPED_POLICY.relative_to(root))}
+    return scoped_tool_paths(tracked)
+
+
+def scoped_tool_paths(names):
+    return {name for name in names if name.endswith(".py")} | {SCOPED_POLICY_PATH}
+
+
+def committed_tree(root, commit, paths):
+    tree = subprocess.check_output(
+        ["git", "--no-replace-objects", "ls-tree", "--full-tree", "-rz", commit, "--", *paths], cwd=root,
+    ).decode()
+    entries = {}
+    for entry in tree.split("\0")[:-1]:
+        header, name = entry.split("\t", 1)
+        entries[name] = tuple(header.split())
+    return entries
+
+
+def committed_blob(root, tree, name):
+    entry = tree.get(name)
+    path = Path(name)
+    require(not path.is_absolute() and ".." not in path.parts and entry is not None
+            and entry[0] in {"100644", "100755"} and entry[1] == "blob",
+            f"Expected an ordinary committed file: {name}.")
+    return subprocess.check_output(["git", "--no-replace-objects", "cat-file", "blob", entry[2]], cwd=root)
+
+
+def verify_campaign_policy(manifest, policy, *, scoped):
+    fixed = ("sessions", "timing", "bootstrap", "compilation", "boundaries", "comparisons", "reference_targets")
+    if scoped:
+        fixed += ("fixture_staging", "runtime_calibration_precision")
+        require(policy["fixture_staging"] == FIXTURE_STAGING, "Unexpected shared fixture staging policy.")
+    for field in fixed:
+        require(manifest[field] == policy[field], f"Campaign changes the fixed {field} policy.")
+    require(policy["bootstrap"]["seed"] == SEED and policy["bootstrap"]["replicates"] == REPLICATES,
+            "Bootstrap algorithm and policy differ.")
 
 
 def load_campaign(path, record=None, *, scope=None):
@@ -74,6 +122,8 @@ def load_campaign(path, record=None, *, scope=None):
     require(scope is None or scope in SCOPES, "Unknown campaign scope.")
     version = 1 if scope is None else 2
     require(manifest["schema"] == f"mech.native-route-campaign.v{version}", "Campaign schema and scope differ.")
+    if manifest.get("purpose") == RUNTIME_CONTINUATION:
+        require(scope == "runtime", "A runtime continuation forbids compiler collection.")
     baseline_commit = BASELINE if scope is None else SCOPED_BASELINE
     require(manifest["baseline_benchmark_commit"] == baseline_commit, "Benchmark baseline pin differs.")
     root = absolute(manifest["bench_root"])
@@ -81,14 +131,7 @@ def load_campaign(path, record=None, *, scope=None):
     require(tool_commit(root) == manifest["tooling_commit"], "Benchmark tooling commit differs.")
     policy_path = POLICY if scope is None else SCOPED_POLICY
     policy = read(policy_path)
-    fixed = ("sessions", "timing", "bootstrap", "compilation", "boundaries", "comparisons", "reference_targets")
-    if scope is not None:
-        fixed += ("fixture_staging", "runtime_calibration_precision")
-        require(policy["fixture_staging"] == FIXTURE_STAGING, "Unexpected shared fixture staging policy.")
-    for field in fixed:
-        require(manifest[field] == policy[field], f"Campaign changes the fixed {field} policy.")
-    require(policy["bootstrap"]["seed"] == SEED and policy["bootstrap"]["replicates"] == REPLICATES,
-            "Bootstrap algorithm and policy differ.")
+    verify_campaign_policy(manifest, policy, scoped=scope is not None)
     output = absolute(manifest["output_directory"])
     if record is not None:
         require(record.resolve() == output.resolve(), "Campaign record directory differs from the manifest.")
@@ -116,8 +159,8 @@ def load_campaign(path, record=None, *, scope=None):
                 "Expected distinct R/I/C/S/O source pins.")
     else:
         purpose = manifest["purpose"]
-        require(purpose in ("memory-repair", "final-qualification"), "Unknown campaign purpose.")
-        require(scope == "compiler" or purpose == "final-qualification", "Runtime is not a memory-repair scope.")
+        require(purpose in ("memory-repair", "final-qualification", RUNTIME_CONTINUATION), "Unknown campaign purpose.")
+        require(scope == "compiler" or purpose != "memory-repair", "Runtime is not a memory-repair scope.")
         candidate = "N" if purpose == "memory-repair" else "F"
         pins = {"R", "O", "N"} if candidate == "N" else {"R", "O", "N", "F"}
         require(source_pins.keys() == pins and all(fullmatch("[0-9a-f]{40}", pin) for pin in source_pins.values())
@@ -125,11 +168,14 @@ def load_campaign(path, record=None, *, scope=None):
         require(source_pins["O"] == PREVIOUS_SOURCE, "Previous compiler pin differs.")
         identifier = manifest["campaign_id"]
         require(fullmatch("[A-Za-z0-9][A-Za-z0-9._-]{0,79}", identifier), "Invalid campaign ID.")
+        if purpose == RUNTIME_CONTINUATION:
+            require(fullmatch(r"F-m1-runtime-continuation-[0-9]{8}T[0-9]{6}Z", identifier),
+                    "Invalid runtime continuation campaign ID.")
         expected_output = SCOPED_POLICY.parent / source_pins[candidate] / identifier
         require(output.resolve() == expected_output.resolve() == path.parent.resolve(),
                 "Scoped campaign must use the pinned source and campaign-ID record directory.")
         actors = {"reviewed": "R", "previous": "O", "candidate": candidate}
-        if purpose == "final-qualification":
+        if candidate == "F":
             require(root == root.resolve(strict=True) and output == output.resolve(strict=True),
                     "Campaign checkout and run must use their canonical paths.")
             timebase = manifest["host"]["clock_timebase"]
@@ -720,6 +766,7 @@ class ScopedCampaign:
     scope: str
     bindings: dict
     compiler_assessment: str | None = None
+    parent_compiler_decision: str | None = None
 
     def identity(self, stage, calibration_hash):
         return {"manifest_sha256": self.digest, "calibration_sha256": calibration_hash,
@@ -896,6 +943,25 @@ def scoped_sessions(campaign, stage, calibration_hash):
         yield folder, row
 
 
+def verified_scoped_prefix(campaign, stage, calibration_hash):
+    base = campaign.output / stage
+    if not base.exists():
+        return 0
+    schedule = scoped_schedule(campaign.policy, stage)
+    existing = {folder.name for folder in base.iterdir()}
+    require(existing == {name for name, _, _ in schedule[:len(existing)]},
+            "Existing sessions do not form a prefix of the scheduled stage.")
+    previous = ""
+    for name, ordinal, controls in schedule[:len(existing)]:
+        folder = base / name
+        record = campaign.session(folder, stage, calibration_hash, ordinal, controls)
+        require(previous <= record["start_utc"], "Existing sessions have invalid startup order.")
+        if campaign.scope == "runtime":
+            scoped_metrics(folder, record, campaign)
+        previous = record["end_utc"]
+    return len(existing)
+
+
 def scoped_summary(campaign, stage, calibration_hash):
     return {**campaign.identity(stage, calibration_hash),
             "sessions": {folder.name: sha(folder / "record.json")
@@ -1036,12 +1102,20 @@ def scoped_assessment(campaign, seal, calibration_hash):
 
 def verify_scoped_assessment(campaign):
     seal, calibration_hash = scoped_calibration_seal(campaign, campaign.output / STAGE_FILES["calibrate"])
+    return verify_scoped_result(campaign, seal, calibration_hash)
+
+
+def require_no_candidate_timing(output):
+    require(not (output / STAGE_FILES["assess"]).exists() and all(
+        not (output / name).exists()
+        for stage in ("qualify", "confirm") for name in (stage, STAGE_FILES[stage])
+    ), "Invalid runtime calibration forbids candidate comparisons.")
+
+
+def verify_scoped_result(campaign, seal, calibration_hash):
     path = campaign.output / STAGE_FILES["assess"]
     if campaign.scope == "runtime" and seal["decision"] != "pass":
-        require(not path.exists() and all(
-            not (campaign.output / name).exists()
-            for stage in ("qualify", "confirm") for name in (stage, STAGE_FILES[stage])
-        ), "Invalid runtime calibration forbids candidate comparisons.")
+        require_no_candidate_timing(campaign.output)
         return None
     if not path.exists():
         for stage in ("qualify", "confirm"):
@@ -1065,6 +1139,85 @@ def compiler_prerequisite(campaign):
     return sha(path)
 
 
+def verify_compiler_parent(reference, continuation_manifest, continuation_bindings):
+    """Reconstruct the pinned compiler scope without checking out or invoking its tooling."""
+    required = {"manifest_path", "record_directory", "manifest_sha256",
+                "prepared_bindings_sha256", "compiler_assessment_sha256"}
+    require(reference.keys() == CONTINUATION_PARENT.keys() | required
+            and all(reference[key] == value for key, value in CONTINUATION_PARENT.items()),
+            "The continuation requires the pinned latest compiler parent.")
+    record = absolute(reference["record_directory"])
+    manifest_path = absolute(reference["manifest_path"])
+    require(record == record.resolve(strict=True) and manifest_path == record / "campaign.json",
+            "Compiler parent paths must use the original canonical record directory.")
+    root = absolute(continuation_manifest["bench_root"])
+    evidence_tree = committed_tree(root, reference["evidence_commit"], (CONTINUATION_PARENT_PATH.as_posix(),))
+    files = {}
+    for name in ("campaign.json", "prepared-bindings.json", "candidate-recipe.json", "fixture-stage.json",
+                 "compiler-verification.json", *("compiler/" + file for file in STAGE_FILES.values())):
+        path = record / name
+        require(path.is_file() and path == path.resolve(), f"Missing or noncanonical compiler parent file: {path}.")
+        blob = committed_blob(root, evidence_tree, (CONTINUATION_PARENT_PATH / name).as_posix())
+        require(path.read_bytes() == blob, f"Compiler parent evidence differs from the committed file: {name}.")
+        files[name] = blob
+    manifest_hash, bindings_hash, assessment_hash = (
+        sha256(files[name]).hexdigest()
+        for name in ("campaign.json", "prepared-bindings.json", "compiler/assessment.json")
+    )
+    require((manifest_hash, bindings_hash, assessment_hash) == (
+        reference["manifest_sha256"], reference["prepared_bindings_sha256"], reference["compiler_assessment_sha256"],
+    ), "Compiler parent manifest, bindings or assessment digest differs.")
+
+    manifest = json.loads(files["campaign.json"])
+    require(manifest["schema"] == "mech.native-route-campaign.v2"
+            and manifest["purpose"] == "final-qualification" and "compiler_parent" not in manifest
+            and manifest["campaign_id"] == reference["campaign_id"]
+            and manifest["tooling_commit"] == reference["tooling_commit"]
+            and manifest["source_commits"] == CONTINUATION_SOURCES,
+            "Compiler parent must be the pinned ordinary final qualification.")
+    parent_root = absolute(manifest["bench_root"])
+    require(record == parent_root / CONTINUATION_PARENT_PATH and record == absolute(manifest["output_directory"])
+            and manifest_path == record / "campaign.json"
+            and manifest["actors"]["candidate"]["recipe"] == str(record / "candidate-recipe.json"),
+            "Compiler parent files must remain at their original declared locations.")
+    require(manifest["prepared_bindings_sha256"] == bindings_hash, "Compiler parent bindings digest differs.")
+    for field in ("baseline_benchmark_commit", "source_commits", "actors", "corpus", "corpus_manifest_sha256",
+                  "qualification_root", "host", "prepared_bindings_sha256"):
+        require(continuation_manifest[field] == manifest[field], f"Continuation changes compiler parent {field}.")
+
+    tools = committed_tree(root, reference["tooling_commit"], SCOPED_TOOL_PACKETS)
+    hashes = manifest["tooling_files_sha256"]
+    require(hashes.keys() == scoped_tool_paths(tools), "Compiler parent historical tooling inventory differs.")
+    for name, digest in hashes.items():
+        require(sha256(committed_blob(root, tools, name)).hexdigest() == digest,
+                f"Compiler parent historical tooling contents differ: {name}.")
+    policy = json.loads(committed_blob(root, tools, SCOPED_POLICY_PATH))
+    verify_campaign_policy(manifest, policy, scoped=True)
+    verify_campaign_policy(continuation_manifest, policy, scoped=True)
+    verify_fixture_stage(manifest["fixture_stage"], record)
+    runtime_precision_reference(parent_root, policy["runtime_calibration_precision"])
+
+    bindings = pinned_bindings(manifest)
+    require(bindings == json.loads(files["prepared-bindings.json"]) == continuation_bindings,
+            "Actual compiler parent and continuation bindings differ.")
+    compiler = ScopedCampaign(manifest, manifest_hash, record / "compiler", policy, "compiler", bindings)
+    assessment = verify_scoped_assessment(compiler)
+    require(assessment is not None and assessment["decision"] in {"pass", "unresolved"},
+            "Runtime continuation requires a complete pass or unresolved compiler parent.")
+    decision = assessment["decision"]
+    require(json.loads(files["compiler-verification.json"]) == {
+        "manifest_sha256": manifest_hash, "scope": "compiler", "scope_assessment": decision,
+        "assessment": "runtime required" if decision == "pass" else decision,
+    }, "Compiler parent verification receipt differs from the reconstruction.")
+    count = 0
+    for stage in ("calibrate", "qualify", "confirm"):
+        for name, _, _ in scoped_schedule(policy, stage):
+            sample = read(compiler.output / stage / name / "processes/observations.json")
+            count += len(sample["warmup"]) + sum(len(row["samples"]) for row in sample["blocks"])
+    require(count == 252, "Compiler parent must account for all 252 existing invocations.")
+    return decision, assessment_hash, count
+
+
 def open_scope(path, scope, record=None):
     manifest, digest, output, policy = load_campaign(path, record, scope=scope)
     bindings_file = output / "prepared-bindings.json"
@@ -1081,6 +1234,31 @@ def open_scope(path, scope, record=None):
     ancestry = subprocess.run(["git", "merge-base", "--is-ancestor", parent, candidate],
                               cwd=candidate_source, check=False)
     require(parent != candidate and ancestry.returncode == 0, "Candidate is not descended from its pinned starting source.")
+    if manifest["purpose"] == RUNTIME_CONTINUATION:
+        from compare_rebuilt import write_new
+
+        compiler_path = output / "compiler"
+        require(scope == "runtime" and not compiler_path.exists() and not compiler_path.is_symlink(),
+                "A runtime continuation forbids compiler collection.")
+        reference = manifest["compiler_parent"]
+        decision, assessment_hash, count = verify_compiler_parent(reference, manifest, bindings)
+        receipt = {
+            "continuation_manifest_sha256": digest,
+            "parent_manifest_sha256": reference["manifest_sha256"],
+            "parent_compiler_assessment_sha256": assessment_hash,
+            "parent_tooling_commit": reference["tooling_commit"],
+            "parent_evidence_commit": reference["evidence_commit"],
+            "compiler_assessment": decision,
+            "verified_compiler_invocations": count,
+            "verification_implementation_commit": manifest["tooling_commit"],
+        }
+        receipt_path = output / "parent-verification.json"
+        require(not receipt_path.is_symlink(), "Continuation parent receipt must be a local file.")
+        if receipt_path.exists():
+            require(read(receipt_path) == receipt, "Continuation parent verification receipt differs.")
+        else:
+            write_new(receipt_path, receipt)
+        return ScopedCampaign(manifest, digest, output / "runtime", policy, scope, bindings, assessment_hash, decision)
     compiler = ScopedCampaign(manifest, digest, output / "compiler", policy, "compiler", bindings)
     if scope == "compiler":
         return compiler
@@ -1088,8 +1266,72 @@ def open_scope(path, scope, record=None):
                           compiler_prerequisite(compiler))
 
 
+def combined_assessment(compiler, calibration, runtime):
+    require(compiler in ("pass", "fail", "unresolved"), "Invalid compiler assessment.")
+    require(calibration in ("not_run", "incomplete", "pass", "unresolved"), "Invalid runtime calibration status.")
+    require(runtime in ("not_run", "incomplete", "pass", "fail", "unresolved"), "Invalid runtime assessment.")
+    if "fail" in (compiler, runtime):
+        return "fail"
+    if "unresolved" in (compiler, calibration, runtime):
+        return "unresolved"
+    if calibration != "pass" or runtime != "pass":
+        return "incomplete"
+    return "pass"
+
+
+def verify_runtime_continuation(campaign):
+    output = campaign.output
+    require(not output.is_symlink() and (not output.exists() or output.is_dir()),
+            "Invalid continuation runtime record directory.")
+    counts = dict.fromkeys(("calibrate", "qualify", "confirm"), 0)
+    calibration, runtime = "not_run", "not_run"
+    state = "Prepared. Runtime calibration has not started."
+    calibration_path = output / STAGE_FILES["calibrate"]
+    if calibration_path.exists():
+        seal, digest = scoped_calibration_seal(campaign, calibration_path)
+        calibration = seal["decision"]
+        counts["calibrate"] = len(seal["sessions"])
+        require(not (output / "confirm").exists() or (output / STAGE_FILES["qualify"]).is_file(),
+                "Runtime confirmation requires sealed qualification.")
+        result = verify_scoped_result(campaign, seal, digest)
+        if calibration == "unresolved":
+            state = "Runtime calibration sealed as unresolved. Candidate timing stopped before collection."
+        elif result is not None:
+            runtime = result["decision"]
+            counts.update({stage: len(result["sessions"][stage]) for stage in ("qualify", "confirm")})
+            state = "Final runtime assessment reproduced from all qualification and confirmation sessions."
+        else:
+            for stage in ("qualify", "confirm"):
+                summary = output / STAGE_FILES[stage]
+                if summary.exists():
+                    counts[stage] = len(read(summary)["sessions"])
+                else:
+                    counts[stage] = verified_scoped_prefix(campaign, stage, digest)
+            if any((output / stage).exists() for stage in ("qualify", "confirm")):
+                runtime = "incomplete"
+                state = f"Runtime calibration passed. Qualification has {counts['qualify']} completed sessions " \
+                        f"and confirmation has {counts['confirm']}. The runtime assessment is pending."
+            else:
+                state = "Runtime calibration passed. Candidate timing has not started."
+    else:
+        require_no_candidate_timing(output)
+        if (output / "calibrate").exists():
+            counts["calibrate"] = verified_scoped_prefix(campaign, "calibrate", None)
+            calibration = "incomplete"
+            state = f"Runtime calibration has {counts['calibrate']} completed sessions. Its seal is pending."
+    compiler = campaign.parent_compiler_decision
+    return {
+        "manifest_sha256": campaign.digest, "scope": "runtime",
+        "compiler_assessment": compiler, "runtime_calibration": calibration, "runtime_assessment": runtime,
+        "overall_assessment": combined_assessment(compiler, calibration, runtime),
+        "collection_state": state, "runtime_sessions": counts,
+    }
+
+
 def verify_scoped_campaign(path, record, scope):
     campaign = open_scope(path, scope, record)
+    if campaign.manifest["purpose"] == RUNTIME_CONTINUATION:
+        return verify_runtime_continuation(campaign)
     result = verify_scoped_assessment(campaign)
     decision = "incomplete" if result is None else result["decision"]
     # A final campaign is only decided after its separately gated runtime scope.

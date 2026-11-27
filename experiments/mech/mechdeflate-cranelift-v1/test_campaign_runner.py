@@ -1,21 +1,29 @@
 import tempfile
+from contextlib import redirect_stdout
 from copy import deepcopy
+from io import StringIO
 from itertools import permutations
 from math import log
+import subprocess
+from types import SimpleNamespace
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from campaign_stats import paired_log, simultaneous
-from compare_rebuilt import require_pair, run_scoped_campaign, write_new
+from compare_rebuilt import record_scoped_session, require_pair, run_scoped_campaign, write_new
 from rebuild import HERE, PARENT, read, sha, write
 from replay import fixture_campaign_controller, prepare_fixture_stage, suite81
-from verify import (FIXTURE_ORACLE, FIXTURE_WITNESSES, SCOPED_POLICY, ScopedCampaign,
-                    compilation_inputs, compiler_gates, compiler_prerequisite,
+from verify import (CONTINUATION_PARENT, CONTINUATION_PARENT_PATH, CONTINUATION_SOURCES, FIXTURE_ORACLE,
+                    FIXTURE_WITNESSES, RUNTIME_CONTINUATION, SCOPED_BASELINE, SCOPED_POLICY, SCOPED_POLICY_PATH,
+                    ScopedCampaign, combined_assessment, committed_blob, committed_tree, compilation_inputs,
+                    compiler_gates, compiler_prerequisite, open_scope,
                     crossed_units, crossover_pair, crossover_plan, inventory, scoped_compiler_slots,
-                    runtime_calibration_precision, runtime_precision_reference, scoped_calibration, scoped_schedule,
+                    runtime_calibration_precision, runtime_precision_reference, scoped_assessment, scoped_calibration,
+                    scoped_schedule, scoped_summary, scoped_tool_files,
                     validate_fixture_actor_pins, verify_fixture_execution, verify_fixture_stage, verify_inventory,
-                    verify_leg_order, verify_scoped_assessment, verify_session)
+                    verify_compiler_parent, verify_leg_order, verify_runtime_continuation,
+                    verify_scoped_assessment, verify_scoped_campaign, verify_session)
 
 
 class CampaignRunnerTests(unittest.TestCase):
@@ -235,7 +243,8 @@ class CampaignRunnerTests(unittest.TestCase):
             output.mkdir()
             folder = Path(temporary)
             (folder / "record.json").write_text("{}")
-            campaign = ScopedCampaign({"bench_root": str(root)}, "manifest", output, policy, "runtime", {})
+            campaign = ScopedCampaign({"bench_root": str(root), "purpose": RUNTIME_CONTINUATION}, "manifest", output,
+                                      policy, "runtime", {}, "parent-assessment", "unresolved")
             metrics = [{role: {"runtime": {"fixture": []}}} for role in ("reviewed", "previous")]
             with (patch("verify.scoped_sessions", return_value=[(folder, {}), (folder, {})]),
                   patch("verify.scoped_metrics", side_effect=metrics),
@@ -255,9 +264,263 @@ class CampaignRunnerTests(unittest.TestCase):
                     self.assertFalse((output / stage).exists())
                 record.assert_not_called()
                 self.assertIsNone(verify_scoped_assessment(campaign))
+                self.assertEqual(verify_runtime_continuation(campaign)["runtime_calibration"], "unresolved")
+                self.assertEqual(verify_runtime_continuation(campaign)["runtime_assessment"], "not_run")
                 (output / "qualify").mkdir()
                 with self.assertRaisesRegex(ValueError, "Invalid runtime calibration"):
                     verify_scoped_assessment(campaign)
+
+
+class RuntimeContinuationTests(unittest.TestCase):
+    def test_combined_assessment_order_and_invalid_statuses(self):
+        cases = (
+            ("unresolved", "not_run", "not_run", "unresolved"),
+            ("unresolved", "unresolved", "not_run", "unresolved"),
+            ("unresolved", "pass", "incomplete", "unresolved"),
+            ("unresolved", "pass", "pass", "unresolved"),
+            ("unresolved", "pass", "fail", "fail"),
+            ("pass", "not_run", "not_run", "incomplete"),
+            ("pass", "unresolved", "not_run", "unresolved"),
+            ("pass", "pass", "pass", "pass"),
+            ("fail", "pass", "pass", "fail"),
+        )
+        for compiler, calibration, runtime, result in cases:
+            with self.subTest(compiler=compiler, calibration=calibration, runtime=runtime):
+                self.assertEqual(combined_assessment(compiler, calibration, runtime), result)
+        for invalid in ((None, "pass", "pass"), ("pass", "fail", "pass"), ("pass", "pass", "unknown")):
+            with self.subTest(invalid=invalid), self.assertRaisesRegex(ValueError, "Invalid"):
+                combined_assessment(*invalid)
+
+    def test_unresolved_parent_allows_runtime_calibration_and_prepared_verification(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary).resolve()
+            policy = read(SCOPED_POLICY)
+            bindings = {role: {"build_directory": role, "configuration_sha256": "same"}
+                        for role in ("reviewed", "previous", "candidate")}
+            path = output / "prepared-bindings.json"
+            write_new(path, bindings)
+            manifest = {"purpose": RUNTIME_CONTINUATION, "compiler_parent": {**CONTINUATION_PARENT, "manifest_sha256": "parent"},
+                        "source_commits": CONTINUATION_SOURCES, "actors": {"candidate": {"source": str(output)}},
+                        "tooling_commit": "continuation", "host": {}, "prepared_bindings_sha256": sha(path)}
+            with (patch("verify.load_campaign", return_value=(manifest, "manifest", output, policy)),
+                  patch("verify.pinned_bindings", return_value=bindings),
+                  patch("verify.subprocess.run", return_value=SimpleNamespace(returncode=0)),
+                  patch("verify.verify_compiler_parent", return_value=("unresolved", "parent-assessment", 252)),
+                  patch("compare_rebuilt.campaign_host", return_value={}),
+                  patch("compare_rebuilt.ordinary_compiler_inputs") as compiler_inputs,
+                  patch("compare_rebuilt.record_scoped_session") as record,
+                  patch("verify.scoped_calibration", return_value={"decision": "unresolved"})):
+                prepared = verify_scoped_campaign(output / "campaign.json", output, "runtime")
+                self.assertEqual(prepared["runtime_calibration"], "not_run")
+                self.assertEqual(prepared["runtime_assessment"], "not_run")
+                self.assertEqual(prepared["overall_assessment"], "unresolved")
+                self.assertFalse((output / "runtime").exists())
+                run_scoped_campaign(output / "campaign.json", "calibrate", None, "runtime")
+                self.assertEqual(record.call_count, 6)
+                for call in record.call_args_list:
+                    self.assertEqual(call.args[0].compiler_assessment, "parent-assessment")
+                    self.assertEqual(call.args[0].parent_compiler_decision, "unresolved")
+                compiler_inputs.assert_not_called()
+                self.assertFalse((output / "compiler").exists())
+            self.assertEqual(read(output / "parent-verification.json")["verified_compiler_invocations"], 252)
+
+    def test_continuation_rejects_compiler_collection(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary) / "campaign.json"
+            write_new(path, {"schema": "mech.native-route-campaign.v2", "purpose": RUNTIME_CONTINUATION})
+            with (patch("compare_rebuilt.record_scoped_session") as record,
+                  self.assertRaisesRegex(ValueError, "forbids compiler collection")):
+                run_scoped_campaign(path, "calibrate", None, "compiler")
+            record.assert_not_called()
+
+    def test_passing_runtime_does_not_replace_the_compiler_result(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            (output / "calibration.json").touch()
+            campaign = ScopedCampaign({}, "manifest", output, {}, "runtime", {}, "parent", "unresolved")
+            seal = {"decision": "pass", "sessions": dict.fromkeys(range(6))}
+            result = {"decision": "pass", "sessions": {stage: dict.fromkeys(range(3))
+                                                       for stage in ("qualify", "confirm")}}
+            with (patch("verify.scoped_calibration_seal", return_value=(seal, "calibration")),
+                  patch("verify.verify_scoped_result", return_value=result)):
+                verified = verify_runtime_continuation(campaign)
+            self.assertEqual(verified["runtime_assessment"], "pass")
+            self.assertEqual(verified["overall_assessment"], "unresolved")
+            self.assertEqual(verified["runtime_sessions"], {"calibrate": 6, "qualify": 3, "confirm": 3})
+
+
+class CompilerParentTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        temp = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(temp.cleanup)
+        cls.root = Path(temp.name).resolve()
+        cls.record = cls.root / CONTINUATION_PARENT_PATH
+        cls.policy = read(SCOPED_POLICY)
+        cls.tool = str(Path(SCOPED_POLICY_PATH).parents[2] / "verify.py")
+        (cls.root / SCOPED_POLICY_PATH).parent.mkdir(parents=True)
+        write(cls.root / SCOPED_POLICY_PATH, cls.policy)
+        (cls.root / cls.tool).write_text("historical tooling\n")
+        cls.git("init", "-q")
+        cls.git("add", "--", cls.tool, SCOPED_POLICY_PATH)
+        cls.git("commit", "-qm", "Synthetic historical tooling")
+        tooling = cls.git("rev-parse", "HEAD")
+
+        cls.record.mkdir(parents=True)
+        cls.bindings = {role: {"build_directory": str(cls.root / role), "codec_source": str(cls.root / "source"),
+                               "compiler_sha256": role, "configuration_sha256": "configuration", "artifacts": {}}
+                        for role in ("reviewed", "previous", "candidate")}
+        write_new(cls.record / "prepared-bindings.json", cls.bindings)
+        for name in ("candidate-recipe.json", "fixture-stage.json"):
+            write_new(cls.record / name, {})
+        cls.manifest = {**cls.policy, "schema": "mech.native-route-campaign.v2", "purpose": "final-qualification",
+                        "source_commits": CONTINUATION_SOURCES, "campaign_id": CONTINUATION_PARENT["campaign_id"],
+                        "tooling_commit": tooling, "bench_root": str(cls.root), "output_directory": str(cls.record),
+                        "host": {}, "baseline_benchmark_commit": SCOPED_BASELINE, "fixture_stage": {},
+                        "actors": {"candidate": {"recipe": str(cls.record / "candidate-recipe.json")}},
+                        "qualification_root": str(cls.root), "corpus": str(cls.root / "corpus"), "corpus_manifest_sha256": "",
+                        "prepared_bindings_sha256": sha(cls.record / "prepared-bindings.json"),
+                        "tooling_files_sha256": {name: sha(cls.root / name) for name in scoped_tool_files(cls.root)}}
+        manifest_path = cls.record / "campaign.json"
+        write_new(manifest_path, cls.manifest)
+        scope = ScopedCampaign(cls.manifest, sha(manifest_path), cls.record / "compiler", cls.policy,
+                               "compiler", cls.bindings)
+        calibration_hash = None
+        with (patch("compare_rebuilt.measure_ordinary_compiler", side_effect=cls.fake_sample),
+              patch("compare_rebuilt.campaign_host", return_value={}), redirect_stdout(StringIO())):
+            for stage, seal_name in (("calibrate", "calibration"), ("qualify", "qualification"),
+                                     ("confirm", "confirmation")):
+                (scope.output / stage).mkdir(parents=True)
+                for name, ordinal, controls in scoped_schedule(cls.policy, stage):
+                    inputs = {role: (row, ordinal) for role, row in cls.bindings.items()}
+                    record_scoped_session(scope, scope.output / stage / name, stage, calibration_hash,
+                                          ordinal, controls, inputs)
+                seal_path = scope.output / (seal_name + ".json")
+                if stage == "calibrate":
+                    calibration = scoped_calibration(scope)
+                    write_new(seal_path, calibration)
+                    calibration_hash = sha(seal_path)
+                else:
+                    write_new(seal_path, scoped_summary(scope, stage, calibration_hash))
+        assessment = scoped_assessment(scope, calibration, calibration_hash)
+        if assessment["decision"] != "unresolved":
+            raise AssertionError("Expected a synthetic unresolved compiler parent.")
+        write_new(scope.output / "assessment.json", assessment)
+        write_new(cls.record / "compiler-verification.json", {
+            "manifest_sha256": scope.digest, "scope": "compiler", "scope_assessment": "unresolved",
+            "assessment": "unresolved",
+        })
+        names = ["campaign.json", "prepared-bindings.json", "candidate-recipe.json", "fixture-stage.json",
+                 "compiler-verification.json", "compiler/calibration.json", "compiler/qualification.json",
+                 "compiler/confirmation.json", "compiler/assessment.json"]
+        cls.git("add", "--", *(str(CONTINUATION_PARENT_PATH / name) for name in names))
+        cls.git("commit", "-qm", "Synthetic sealed compiler evidence")
+        cls.pins = {**CONTINUATION_PARENT, "tooling_commit": tooling, "evidence_commit": cls.git("rev-parse", "HEAD")}
+        cls.reference = {**cls.pins, "manifest_path": str(manifest_path), "record_directory": str(cls.record),
+                         "manifest_sha256": scope.digest, "prepared_bindings_sha256": cls.manifest["prepared_bindings_sha256"],
+                         "compiler_assessment_sha256": sha(scope.output / "assessment.json")}
+        cls.continuation = {**cls.manifest, "purpose": RUNTIME_CONTINUATION}
+        (cls.root / cls.tool).write_text("different checkout contents\n")
+
+    @classmethod
+    def git(cls, *args):
+        return subprocess.check_output(["git", "-c", "user.name=Test", "-c", "user.email=test@example.invalid",
+                                        "-c", "commit.gpgsign=false",
+                                        "-C", str(cls.root), *args], text=True).strip()
+
+    @staticmethod
+    def fake_sample(folder, inputs):
+        binding, ordinal = inputs
+        is_candidate = binding["compiler_sha256"] == "candidate"
+        elapsed = (98 if ordinal % 2 else 102) if is_candidate else 100
+        rss = 90 if is_candidate else 100
+        folder.mkdir(parents=True)
+        (folder / "process.log").write_text(f"{rss} maximum resident set size\n")
+        return {**{key: binding[key] for key in ("compiler_sha256", "configuration_sha256", "artifacts")},
+                "elapsed_ns": elapsed, "maximum_resident_bytes": rss,
+                "command": ["/usr/bin/time", "-l", binding["build_directory"] + "/compile_profile", binding["codec_source"],
+                            str(folder / "frontend"), "compact"]}
+
+    def verify_parent(self, reference=None, continuation=None):
+        with (patch("verify.CONTINUATION_PARENT", self.pins),
+              patch("verify.verify_fixture_stage"), patch("verify.runtime_precision_reference"),
+              patch("verify.pinned_bindings", return_value=self.bindings),
+              patch("compare_rebuilt.measure_ordinary_compiler") as measure):
+            try:
+                return verify_compiler_parent(reference or self.reference, continuation or self.continuation, self.bindings)
+            finally:
+                measure.assert_not_called()
+
+    def test_reconstructs_all_252_invocations_from_the_original_identity(self):
+        before = self.git("rev-parse", "HEAD")
+        self.assertNotEqual(before, self.pins["tooling_commit"])
+        identity = read(self.record / "compiler/calibrate/reviewed-1/started.json")
+        self.assertEqual(set(identity), {"manifest_sha256", "calibration_sha256", "stage", "scope",
+                                         "compiler_assessment_sha256", "session", "start_utc"})
+        self.assertIsNone(identity["compiler_assessment_sha256"])
+        self.assertEqual(self.verify_parent(), ("unresolved", self.reference["compiler_assessment_sha256"], 252))
+        self.assertEqual(self.git("rev-parse", "HEAD"), before)
+        self.assertEqual((self.root / self.tool).read_text(), "different checkout contents\n")
+
+    def test_missing_partial_changed_and_mismatched_parent_evidence_is_rejected(self):
+        for name, data, error in (
+            ("compiler/qualification.json", None, "Missing or noncanonical"),
+            ("compiler/calibrate/reviewed-1/record.json", None, "Incomplete session"),
+            ("compiler/assessment.json", b"{}", "committed file"),
+            ("compiler/calibrate/reviewed-1/processes/observations.json", b"{}", "Raw evidence changed"),
+        ):
+            path = self.record / name
+            contents = path.read_bytes()
+            with self.subTest(name=name):
+                try:
+                    if data is None:
+                        path.unlink()
+                    else:
+                        path.write_bytes(data)
+                    with self.assertRaisesRegex(ValueError, error):
+                        self.verify_parent()
+                finally:
+                    path.write_bytes(contents)
+        with self.assertRaisesRegex(ValueError, "changes compiler parent host"):
+            self.verify_parent(continuation={**self.continuation, "host": {"machine": "different"}})
+        with self.assertRaisesRegex(ValueError, "pinned latest"):
+            self.verify_parent(reference={**self.reference, "campaign_id": "F-m1-20261126T181433Z"})
+        with (patch("verify.verify_scoped_assessment", return_value={"decision": "fail"}),
+              self.assertRaisesRegex(ValueError, "complete pass or unresolved")):
+            self.verify_parent()
+
+    def test_rejects_changed_historical_blobs_and_wrong_policy(self):
+        tree = committed_tree(self.root, self.pins["tooling_commit"], (SCOPED_POLICY_PATH,))
+        self.assertEqual(committed_blob(self.root, tree, SCOPED_POLICY_PATH), (self.root / SCOPED_POLICY_PATH).read_bytes())
+        with self.assertRaisesRegex(ValueError, "ordinary committed file"):
+            committed_blob(self.root, {SCOPED_POLICY_PATH: ("120000", "blob", tree[SCOPED_POLICY_PATH][2])},
+                           SCOPED_POLICY_PATH)
+        def wrong_tool(root, tree, name):
+            return b"wrong tooling" if name == self.tool else committed_blob(root, tree, name)
+        with patch("verify.committed_blob", side_effect=wrong_tool):
+            with self.assertRaisesRegex(ValueError, "historical tooling contents differ"):
+                self.verify_parent()
+        changed = {**self.continuation, "sessions": {**self.policy["sessions"], "confirm": 4}}
+        with self.assertRaisesRegex(ValueError, "fixed sessions policy"):
+            self.verify_parent(continuation=changed)
+
+    def test_rejects_recursive_parent_and_saved_pass_even_with_matching_blobs(self):
+        for name, field, replacement, digest_key, error in (
+            ("campaign.json", "purpose", RUNTIME_CONTINUATION, "manifest_sha256", "ordinary final qualification"),
+            ("compiler/assessment.json", "decision", "pass", "compiler_assessment_sha256", "assessment does not reproduce"),
+        ):
+            with self.subTest(name=name):
+                path = self.record / name
+                original = path.read_bytes()
+                try:
+                    write(path, {**read(path), field: replacement})
+                    relative = (CONTINUATION_PARENT_PATH / name).as_posix()
+                    def substitute(root, tree, requested):
+                        return path.read_bytes() if requested == relative else committed_blob(root, tree, requested)
+                    with patch("verify.committed_blob", side_effect=substitute), self.assertRaisesRegex(ValueError, error):
+                        self.verify_parent(reference={**self.reference, digest_key: sha(path)})
+                finally:
+                    path.write_bytes(original)
 
 
 class SharedFixtureTests(unittest.TestCase):
