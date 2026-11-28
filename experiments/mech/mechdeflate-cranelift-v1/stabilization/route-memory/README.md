@@ -41,10 +41,36 @@ three sessions. Each individual session retains one warmup per role and
 all six permutations. For campaigns already collected, use the tooling
 and policy pinned in their manifests.
 
-The integrated source passed correctness and compiler qualification on M1.
-The final runtime candidate remains unmeasured after the same-build runtime
-calibration returned unresolved. The assessment links the complete calibration
-and the timing diagnostics. [Round 2 assessment](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/assessment.md)
+In Round 2, the integrated source passed M1 correctness and compiler
+qualification. The same-build runtime calibration was unresolved, so that
+campaign stopped before candidate timing.
+[Round 2 assessment](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-20261126T181433Z/assessment.md)
+
+## Direct M1 comparison
+
+The integrated compiler recorded **81/81 fixture and 12/12 Silesia wins**
+against the pinned libdeflate peers in all three sessions and both case
+orders after combining the two slot mappings.
+[Completed direct comparison](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-direct-20261127T162006Z/report.md)
+
+The original tooling and checkout commits are available at their recorded
+identities. The exact collector and summarizer are in the record's
+[`commands` directory](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-direct-20261127T162006Z/commands).
+[Tooling tag](https://github.com/mech-lang/benchmarks/tree/mech-native-route-direct-m1-tooling-20261127)
+· [Checkout tag](https://github.com/mech-lang/benchmarks/tree/mech-native-route-direct-m1-checkout-20261127)
+
+From the benchmark checkout root, use Python 3.11 or later on Linux or
+macOS. Choose a new absolute scratch directory for the regenerated files.
+
+```sh
+RECORD="$(pwd)/experiments/mech/mechdeflate-cranelift-v1/stabilization/route-memory/3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-direct-20261127T162006Z"
+python3 -B experiments/mech/mechdeflate-cranelift-v1/verify_direct_runtime.py \
+  --record "$RECORD" --output /tmp/mech-direct-m1-replay
+```
+
+The replay checks the retained artifact bytes and timing records offline.
+It regenerates all 1,116 case rows and the three individual-leg exceptions.
+[Replay result](3a66a014c853e082ad907ed4db1673c9dadf0c69/F-m1-direct-20261127T162006Z/replay-verification.json)
 
 ## Shared handoff
 
